@@ -1,0 +1,139 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30CB;&#x30F3;&#x30B8;&#x30E3;&#x30AD;&#x30E3;&#x30C3;&#x30C8;&#x1F431;&#x200D;&#x1F464; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2021/12/ninjacatdies/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2021-12-19T15:07:48">2021-12-19</time></span><span>更新: <time datetime="2021-12-19T15:17:36">2021-12-19</time></span></div><h1 id="section">ニンジャキャット🐱‍👤</h1>
+<p>ニンジャキャット終了のお知らせ。</p>
+<p><img src="/assets/media/1199/ninjacat11.png" alt="ニンジャキャット終了のお知らせ" /></p>
+<p>そんなキャラはいなかった。いいね？</p>
+<h2 id="windows"><a id="new-emoji-glyph-win11">Windows の絵文字の絵柄一新</a></h2>
+<p>Windows 11 で Unicode 絵文字の絵柄が一新されると言われていたわけですが。
+Windows 11 初期リリースでは変更がなく、<a href="https://forest.watch.impress.co.jp/docs/news/1368473.html">先月ようやく新絵文字の一般提供開始</a>されました。
+そろそろ万人に(Dev 版とか Beta 版に登録してない人にも)届く頃ではないかと思います。</p>
+<p>その結果が冒頭の絵文字。
+ちなみに、同じものをこれまでの(Windows 10 とかの)絵文字で表示すると以下のようになります。</p>
+<p><img src="/assets/media/1200/ninjacat10.png" alt="Windows 10 のとき" /></p>
+<h2 id="windows-1"><a id="windows-original-emoji">Windows オリジナル絵文字</a></h2>
+<p>この猫の絵文字、Windows のオリジナル絵文字です。
+一応、ニュースになるくらいにはなってたんですが:</p>
+<ul>
+<li><a href="https://gigazine.net/news/20160413-emoji-ninja-cat/">Windows 10にオリジナル絵文字「ニンジャキャット」が追加されることが明らかに</a></li>
+</ul>
+<p>こいつ、元々は「内輪ネタ」だそうです。</p>
+<p>このバージョンの Windows 10 (Build 14316)は ZWJ シーケンス(後述)に対応した初めてのバージョンっぽい(たぶん)ので、
+それの社内テスト用に「内輪のキャラ」を使っていたんですかね。
+なぜ公開した…</p>
+<p>ちなみに、<a href="https://blogs.windows.com/windows-insider/2016/04/06/announcing-windows-10-insider-preview-build-14316/">Windows 公式ブログ</a>では「いろんな絵文字に対応したよ」というアピールはあるものの、
+「オリジナル絵文字を足したよ」なんて言葉はどこにもないので、
+特に「良かれと思って足した文字」ではないんじゃないかと思います。
+ただの茶目っ気。</p>
+<h2 id="unicode"><a id="uax29">Unicode の仕様的な話</a></h2>
+<p>Unicode の絵文字がらみの仕様には何段階かあるんですが…</p>
+<ul>
+<li><a href="https://unicode.org/reports/tr29/#Grapheme_Cluster_Boundaries">Graphme Cluster Boundaries</a>
+<ul>
+<li>「一連の文字を、ユーザーインターフェース上は1文字として扱え」という仕様</li>
+<li>例えば、「<a href="https://ja.wikipedia.org/wiki/%E3%83%80%E3%82%A4%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%86%E3%82%A3%E3%82%AB%E3%83%AB%E3%83%9E%E3%83%BC%E3%82%AF">発音区別符号</a>の手前で切ってはいけない」みたいなの</li>
+</ul>
+</li>
+<li><a href="https://unicode.org/reports/tr29/#GB11">ZWJ シーケンス</a>
+<ul>
+<li>Graphme Cluster の作り方の1つ</li>
+<li>「<a href="https://ja.wikipedia.org/wiki/%E3%82%BC%E3%83%AD%E5%B9%85%E6%8E%A5%E5%90%88%E5%AD%90">接合子</a>と呼ばれる文字の前後で切ってはいけない」という仕様</li>
+<li>わりかし機械的に判定可能</li>
+<li>「複数の絵文字を ZWJ でつないで別の絵文字を作る」という仕様あり</li>
+</ul>
+</li>
+<li><a href="https://unicode.org/reports/tr51/#def_rgi_set">RGI 絵文字</a>
+<ul>
+<li>Recommended for General Interchange (一般にやり取り可能にすることを推奨)</li>
+<li>最低ラインどのベンダーでも実装してくれることを期待する絵文字の一覧</li>
+<li>1文字1文字リストアップしていて機械判定できない</li>
+</ul>
+</li>
+<li><a href="https://unicode.org/reports/tr51/#def_emoji_ZWJ_sequences">RGI 絵文字 ZWJ シーケンス</a>
+<ul>
+<li>ZWJ シーケンスとして定義されている RGI 絵文字</li>
+<li>もし対応していない場合、ZWJ を無視して複数の絵文字で描画すればいいと言うことになってる</li>
+</ul>
+</li>
+</ul>
+<p>みたいな仕様があります。</p>
+<p>(<a href="/blog/2021/12/regional-indicator/">12月4日に書いたブログのネタ</a>もこの類です。)</p>
+<h2 id="section-1"><a id="ninja-cat-dies">ニンジャキャット終了</a></h2>
+<p>で、ニンジャキャットは、「RGI ではない ZWJ 絵文字シーケンス」ということになります。なので、</p>
+<ul>
+<li>ZWJ シーケンスの仕様に沿って機械判定で「1文字扱い」はどのベンダーでもできる</li>
+<li>RGI ではないので別に Windows 以外のベンダーが実装する義理は全くない</li>
+<li>対応していないベンダーでは単に「🐱 と 👤 の2文字」とかで描画すればいい</li>
+</ul>
+<p>という文字。</p>
+<p>で、冒頭の画像に戻るわけですが、</p>
+<p>Windows 10 の頃:</p>
+<p><img src="/assets/media/1200/ninjacat10.png" alt="Windows 10" /></p>
+<p>Windows 11 (最近のアップデート):</p>
+<p><img src="/assets/media/1199/ninjacat11.png" alt="Windows 11" /></p>
+<p>はい、オリジナル絵文字だったものが、「対応していないので2文字で表示します」状態に変わりました。</p>
+<p>元から本当に公開するつもりで作った絵文字なのかどうかすら定かではないですからねぇ。
+絵柄一新時に追加するとも思えず…</p>
+<p>消えたのは順当。
+むしろ、IME の変換候補に痕跡が残ってることが問題…</p>
+<p>まあ、「<a href="https://github.com/ufcpp/emoji/blob/3e1196a129e5dc1aa557ef2e2c4eeee982a012fc/src/RgiSequenceFinder.Test/FallbackFindIndexTest.cs#L177-L185">対応する必要性がない ZWJ シーケンス用のテストデータ</a>」としては結構便利だったんですけどね。</p>
+<h2 id="windows-2"><a id="kankyo-izon-windows">Windows 曰く、環境依存</a></h2>
+<p>もう1個、IME の問題なんですけども…
+Windows の IME は「<a href="https://ja.wikipedia.org/wiki/Shift_JIS">JIS X 0208</a> にない文字は全部環境依存扱いする」というのがありまして。</p>
+<p>要するに Unicode が普及する前、Shift_JIS が主流、かつ、Windows (<a href="https://ja.wikipedia.org/wiki/Microsoft%E3%82%B3%E3%83%BC%E3%83%89%E3%83%9A%E3%83%BC%E3%82%B8932">CP932</a>) と Mac (<a href="https://ja.wikipedia.org/wiki/MacJapanese">MacJapanese</a>) でそれぞれが Shift_JIS の独自拡張をしていた時代の名残り。</p>
+<p>今となっては Windows でも Mac でも Linux でも iOS でも Android でも表示できる文字も「環境依存」扱いしてきます。
+以下一例。</p>
+<p><img src="/assets/media/1201/kankyoizon.png" alt="環境依存文字の例" /></p>
+<p>ちなみに、ひとくくりに環境依存と言っても「何の環境に依存した文字か」が全然違います。</p>
+<ul>
+<li>Unicode からの逆輸入で現在の Shift_JIS (<a href="https://ja.wikipedia.org/wiki/Shift_JIS-2004">Shift_JIS-2004</a>) には入っている文字
+<ul>
+<li>スペード(♠): MacJapanese にあった文字</li>
+<li>あお(靑): CP932 にあった文字</li>
+<li>おんぷ(♬): Unicode 1.1 での追加</li>
+</ul>
+</li>
+<li>Unicode にもない文字
+<ul>
+<li>にんじゃきゃっと(🐱‍👤とか): Windows 以外で表示するつもりのない真に独自の文字</li>
+</ul>
+</li>
+</ul>
+<p>真に Windows 独自の文字と、今となっては Shift_JIS にすら入っている文字を同じ「環境依存」でくくるのはさすがにどうかと思うんですけどねぇ…</p>
+<h2 id="section-2"><a id="kankyo-izon-nowadays">現代の環境依存文字</a></h2>
+<h3 id="section-3"><a id="benzene">⌬</a></h3>
+<p>ちなみに、<a href="/blog/2021/12/unicode-benzene/">12月8日に書いたベンゼン環 ⌬ ⏣</a>は、Unicode にはあるけども意図的に Shift_JIS には逆輸入されなかった文字です。</p>
+<p>あと、Unicode に入っている以上、たいていの環境で表示はできる(実際、iOS でも Android でも大丈夫)ので、「環境依存」かと言われると微妙。</p>
+<p>(まあ、こいつは IME では変換できませんが。文字コード直打ちからの変換とかネットで検索してコピペ以外の手段で入力する方法、一通りどの OS でも僕は知らないです。)</p>
+<h3 id="section-4"><a id="apple-log">林檎</a></h3>
+<p>他に、MacJapanese にはあって Unicode には輸入されなかった文字として<a href="https://emojipedia.org/apple-logo/">某林檎マーク</a>とかがあったりします。
+「特定の一社のロゴマークとかは Unicode に採用しかねる」という理由で Unicode には入らず、
+Mac、iOS では<a href="https://ja.wikipedia.org/wiki/%E7%A7%81%E7%94%A8%E9%9D%A2">私用領域</a>を使って林檎マークを表示しています。</p>
+<p>私用領域なのでどこの誰がどういう文字のために使おうと自由です。
+そういう意味で本当に環境依存。
+どこかの誰かがこの文字コードに対して💩を表示しようとも文句は言えません。</p>
+<p>今だったら🍎(U+1F34E、red apple)と🌈(U+1F308、rainbow)を使った ZWJ シーケンスとかで表現するんでしょうけどねぇ。
+MacJapanese から Unicode への移行期には絵文字も ZWJ シーケンスの仕様もありませんでしたから。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2021/12/">12&#x6708;</a></li><li><a href="/blog/2021/12/regional-indicator/">Regional Indicator (&#x56FD;&#x65D7;&#x7D75;&#x6587;&#x5B57;)</a></li><li><a href="/blog/2021/12/activator-net48/">&#x3010;C# 10.0 &#x95A2;&#x9023;&#x3011;&#x5F15;&#x6570;&#x306A;&#x3057;&#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;&#x306E; Activator &#x30D0;&#x30B0;</a></li><li><a href="/blog/2021/12/unicode-benzene/">&#x30D9;&#x30F3;&#x30BC;&#x30F3;&#x74B0;&#x306E;&#x6587;&#x5B57;&#x30B3;&#x30FC;&#x30C9;: &#x232C; (U&#x2B;232C), &#x23E3; (U&#x2B;23E3)</a></li><li><a href="/blog/2021/12/newlines-in-interpolated-string/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011; {} &#x4E2D;&#x306E;&#x6539;&#x884C;</a></li><li><a href="/blog/2021/12/lower-cased-type-names/">&#x3010;&#x8FD1;&#x3005;&#x8B66;&#x544A;&#x8FFD;&#x52A0;&#x3011;&#x5C0F;&#x6587;&#x5B57; a&#xFF5E;z &#x578B;&#x540D;</a></li><li><a href="/blog/2021/12/full-color-emoji/">&#x4EFB;&#x610F;&#x8272;&#x7D75;&#x6587;&#x5B57;&#xFF1F;</a></li><li><a href="/blog/2021/12/notorious-compat-char/">&#x60AA;&#x3044;&#x610F;&#x5473;&#x3067;&#x304A;&#x6C17;&#x306B;&#x5165;&#x308A;&#x306E;&#x6587;&#x5B57; &#x3020;&#x3004;</a></li><li><a href="/blog/2021/12/semi-auto-property/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011; &#x534A;&#x81EA;&#x52D5;&#x30D7;&#x30ED;&#x30D1;&#x30C6;&#x30A3;</a></li><li><a href="/blog/2021/12/utf8-literal/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011; UTF-8 &#x30EA;&#x30C6;&#x30E9;&#x30EB;</a></li><li><a href="/blog/2021/12/list-pattern/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011;&#x30EA;&#x30B9;&#x30C8; &#x30D1;&#x30BF;&#x30FC;&#x30F3;&#x3010;VS 17.1 p2 &#x3067;&#x8FFD;&#x52A0;&#x4E88;&#x5B9A;&#x3011;</a></li><li><a href="/blog/2021/12/immutable-array-init/">ImmutableArray &#x306B;&#x5BFE;&#x3057;&#x3066;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2021/12/collection-literal/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3; &#x30EA;&#x30C6;&#x30E9;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

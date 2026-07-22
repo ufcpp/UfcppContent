@@ -1,0 +1,222 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x4F8B;&#x5916;&#x51E6;&#x7406; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/powershell/syntax/exception/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">例外処理</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>PowerShell では throw で例外を投げて、trap で例外を処理します。</p>
+<p>シェルスクリプト言語の割には例外処理がきっちりしていると思います。
+（微妙に挙動がつかめないところもあるんだけど・・・。
+外部スクリプト内で 0 除算（1/0 とか）すると例外が trap できなかったり。）</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="exception"></a>例外</h2>
+<p>PowerShell では、（タイプミスしたりして）未定義のコマンドを入力したり、
+不正な型変換をしたり、0 除算したり、
+なんらかのエラーが起きたとき、例外を投げます。</p>
+<p>例外は、特に何もしなければ、例外の内容を赤字で表示します。</p>
+<pre><code class="language-console">&gt;  UndefinedName
+用語 'UndefinedName' は、コマンドレット、関数、操作可能なプ
+ログラム、またはスクリプト ファイルとして認識されません。用
+語を確認し、再試行してください。
+発生場所 行:1 文字:13
++ UndefinedName &lt;&lt;&lt;&lt;
+&gt;  1/0
+0 で除算しようとしました。
+発生場所 行:1 文字:3
++ 1/0 &lt;&lt;&lt;&lt;
+&gt;  [int]'test'
+値 &quot;test&quot; を型 &quot;System.Int32&quot; に変換できません。エラー: &quot;入
+力文字列の形式が正しくありません。&quot;
+発生場所 行:1 文字:6
++ [int]' &lt;&lt;&lt;&lt; test'</code></pre>
+<p>.NET Framework オブジェクトのメソッドが投げる例外も同様の扱いになります。</p>
+<pre><code class="language-console">&gt;  [int]::Parse('test')
+&quot;1&quot; 個の引数を指定して &quot;Parse&quot; を呼び出し中に例外が発生しました: 
+&quot;入力文字列の形式が正しくありません。&quot;
+発生場所 行:1 文字:13</code></pre>
+<h2 id="error"><a id="sec-generated-title-3"></a> <a id="error"></a>$Error</h2>
+<p>ちなみに、例外の詳細は $Error 自動変数の中身を覗くことで分かります。
+$Error には、過去に発生した例外のリストが格納されていて、
+直前に発生した例外は $Error[0] に入っています。</p>
+<p>$Error は ArrayList で、 System.Management.Automation.RuntimeException 型の値か System.Management.Automation.ErrorRecord 型が入っています。
+「コマンドが見つからない」とか「型変換に失敗した」とか「0 除算」とかの、
+PowerShell 内のエラーは RuntimeException に、
+.NET Framework オブジェクトのメソッド中などで起きたエラーは ErrorRecord になります。</p>
+<p>RuntimeException の場合、InnerException プロパティに例外の内容が格納されています。</p>
+<pre><code class="language-console">&gt;  1/0
+0 で除算しようとしました。
+発生場所 行:1 文字:3
++ 1/0 &lt;&lt;&lt;&lt;
+&gt;  $Error[0].InnerException.GetType().Name
+DivideByZeroException</code></pre>
+<p>ErrorRecord 型の CategoryInfo プロパティに例外に関する情報が格納されています。</p>
+<pre><code class="language-console">&gt;  [int]::Parse('test')
+&quot;1&quot; 個の引数を指定して &quot;Parse&quot; を呼び出し中に例外が発生しました: 
+&quot;入力文字列の形式が正しくありません。&quot;
+発生場所 行:1 文字:13
++ [int]::Parse( &lt;&lt;&lt;&lt; 'test')
+&gt;  $Error[0].CategoryInfo
+
+Category   : NotSpecified
+Activity   :
+Reason     : MethodInvocationException
+TargetName :
+TargetType :</code></pre>
+<p><a href="http://d.hatena.ne.jp/newpops/">PowerShell Memo</a> で、
+↑の説明に沿って発生した例外の型を調べる関数の例が示されています。
+「<a href="http://d.hatena.ne.jp/newpops/20051211">発生した例外クラス名を調べる</a>」</p>
+<h2 id="throw"><a id="sec-generated-title-4"></a> <a id="throw"></a>例外の throw</h2>
+<p>例外は throw キーワードを使って自分で投げることもできます。
+throw は文字列、.Net Framework の例外クラス、ErrorRecord 型のいずれかを受け取ります。
+（どれを throw しても、
+$Error の中身は RuntimeException になるみたい。）</p>
+<p>文字列を throw に渡した場合、
+$Error の中身は、
+渡した文字列を Message プロパティに格納した RuntimeException になります。</p>
+<pre><code class="language-console">&gt;  throw 'error message'
+error message
+発生場所 行:1 文字:6
++ throw  &lt;&lt;&lt;&lt; 'error message'
+&gt;  $Error[0].InnerException.Message
+error message
+&gt;  $Error[0].InnerException.GetType().Fullname
+System.Management.Automation.RuntimeException</code></pre>
+<p>.Net Framework の例外クラスを throw した場合には、
+throw した例外を InnerException として含む RuntimeException になります。</p>
+<pre><code class="language-console">&gt;  throw New-Object ArgumentException
+値が有効な範囲にありません。
+発生場所 行:1 文字:6
++ throw  &lt;&lt;&lt;&lt; New-Object ArgumentException
+&gt;  $Error[0].InnerException.GetType().Fullname
+System.ArgumentException</code></pre>
+<p>ErrorRecord を throw するのはちょっと複雑なんですが、
+例としては以下のような感じ。</p>
+<pre><code class="language-console">&gt;  throw New-Object Management.Automation.ErrorRecord
+  (New-Object ArgumentException), 'test',
+  ([Management.Automation.ErrorCategory]::InvalidArgument), ($null)
+値が有効な範囲にありません。
+発生場所 行:1 文字:6
++ throw  &lt;&lt;&lt;&lt; New-Object Management.Automation.ErrorRecord (
+New-Object ArgumentException), 'test', ([Management.Automat
+ion.ErrorCategory]::InvalidArgument), ($null)
+&gt;  $Error[0].ErrorRecord.FullyQualifiedErrorId
+test
+&gt;  $Error[0].ErrorRecord.CategoryInfo
+
+Category   : InvalidArgument
+Activity   :
+Reason     : ArgumentException
+TargetName :
+TargetType :</code></pre>
+<h2 id="trap"><a id="sec-generated-title-5"></a> <a id="trap"></a>例外の trap</h2>
+<p>今までは例外を投げっぱなしの状態でしたが、
+ちゃんと例外を拾って処理することもできます。
+例外処理は trap キーワードを使って行います。</p>
+<p>C# や Java なんかだと、
+try ブロックを書いて、
+try ブロック内で生じた例外を catch ブロックで拾うわけですが
+（参考： 「<a href="/study/csharp/structured/oo_exception/">例外処理</a>」）、
+PowerShell の trap はちょっと書き方が違います。</p>
+<p>PowerShell の trap は、C# や Java でいうところの catch の方に相当するもので、
+例外を拾いたいブロック内のどこでもいいので書いておけば、ブロック内で生じた例外を拾います。</p>
+<p>例えば、以下のようなスクリプトを書くと、
+trap はスクリプト内で生じた例外を拾います。
+（trap はスクリプト内のどこに書いても同じ）</p>
+<pre><code class="language-powershell">1
+<span class="powershellOperator">[</span><span class="powershellType">int</span><span class="powershellOperator">]</span><span class="string">&#39;test&#39;</span>
+2
+
+<span class="keyword">trap</span> { <span class="string">&#39;trap exception&#39;</span> }</code></pre>
+<pre><code class="language-console">1
+trap exception
+値 &quot;test&quot; を型 &quot;System.Int32&quot; に変換できません。エラー: &quot;入力
+文字列の形式が正しくありません。&quot;
+2</code></pre>
+<p>まあ、結果を見ての通り、
+例外を trap しても、その後、エラーメッセージを表示した上で処理は続行します。</p>
+<h3 id="trap-break-continue"><a id="sec-generated-title-6"></a> <a id="trap_break"></a>trap 内の break, continue</h3>
+<p>ここで、trap ブロック内に break か continue を書くことで、
+挙動を変更することができます。
+まず、continue を書くと、
+エラーメッセージは表示せず、trap 内に書かれた処理だけして、
+あとは何事もなかったかのように処理を続行します。</p>
+<pre><code class="language-powershell">1
+<span class="powershellOperator">[</span><span class="powershellType">int</span><span class="powershellOperator">]</span><span class="string">&#39;test&#39;</span>
+2
+
+<span class="keyword">trap</span> { <span class="string">&#39;trap exception&#39;</span>; <span class="keyword">continue</span> }</code></pre>
+<pre><code class="language-console">1
+trap exception
+2</code></pre>
+<p>一方、break を書くと、
+エラーメッセージを表示して、残った処理はせずにブロック（あるいはスクリプト）を抜けます。</p>
+<pre><code class="language-powershell">1
+<span class="powershellOperator">[</span><span class="powershellType">int</span><span class="powershellOperator">]</span><span class="string">&#39;test&#39;</span>
+2
+
+<span class="keyword">trap</span> { <span class="string">&#39;trap exception&#39;</span>; <span class="keyword">break</span> }</code></pre>
+<pre><code class="language-console">1
+trap exception
+値 &quot;test&quot; を型 &quot;System.Int32&quot; に変換できません。エラー: &quot;入力
+文字列の形式が正しくありません。&quot;</code></pre>
+<p>ちなみに、この挙動は、要するに、break によって例外が再 throw されています。
+上位のブロックで trap すればエラーメッセージは表示されなくなります。
+（以下の例では、
+function f 内の trap では break しているので、エラー発生後の 2 は表示されません。
+一方、function 外の trap では continue しているので、エラーの発生源である f より後ろの 'b' が表示されます。）</p>
+<pre><code class="language-powershell"><span class="keyword">function</span> f
+{
+  <span class="keyword">trap</span> { <span class="string">&#39;trap in function&#39;</span>; <span class="keyword">break</span> }
+  1
+  <span class="powershellOperator">[</span><span class="powershellType">int</span><span class="powershellOperator">]</span><span class="string">&#39;test&#39;</span>
+  2
+}
+
+<span class="string">&#39;a&#39;</span>
+f
+<span class="string">&#39;b&#39;</span>
+
+<span class="keyword">trap</span> { <span class="string">&#39;trap in script&#39;</span>; <span class="keyword">continue</span> }</code></pre>
+<pre><code class="language-console">&gt;  .\test.ps1
+a
+1
+trap in function
+trap in script
+b</code></pre>
+<h3 id="trap-1"><a id="sec-generated-title-7"></a> <a id="trap_certain"></a>特定の例外だけ trap</h3>
+<p>trap {ブロック} と書くことで任意の例外を拾っていましたが、
+trap [型] {ブロック} と書くことで特定の型の例外だけを拾えます</p>
+<pre><code class="language-powershell">1
+<span class="powershellOperator">[</span><span class="powershellType">int</span><span class="powershellOperator">]</span><span class="string">&#39;test&#39;</span>
+2
+UndefinedName
+3
+
+<span class="keyword">trap</span> <span class="powershellOperator">[</span><span class="powershellType">InvalidCastException</span><span class="powershellOperator">]</span> { <span class="string">&#39;trap for invalid cast&#39;</span>; <span class="keyword">continue</span> }
+<span class="keyword">trap</span> <span class="powershellOperator">[</span><span class="powershellType">SystemException</span><span class="powershellOperator">]</span> { <span class="string">&#39;trap for system&#39;</span>; <span class="keyword">continue</span> }</code></pre>
+<pre><code class="language-console">&gt;  .\test.ps1
+1
+trap for invalid cast
+2
+trap for system
+3</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/powershell/syntax/">PowerShel &#x306E;&#x69CB;&#x6587;</a></li><li><a href="/study/powershell/syntax/basic/">&#x57FA;&#x790E;&#x77E5;&#x8B58;</a></li><li><a href="/study/powershell/syntax/variable/">&#x5909;&#x6570;</a></li><li><a href="/study/powershell/syntax/dotnet/">.NET Framework &#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;</a></li><li><a href="/study/powershell/syntax/valuetype/">&#x5024;&#x578B;</a></li><li><a href="/study/powershell/syntax/string/">&#x6587;&#x5B57;&#x5217;</a></li><li><a href="/study/powershell/syntax/array/">&#x914D;&#x5217;</a></li><li><a href="/study/powershell/syntax/xml/">XML</a></li><li><a href="/study/powershell/syntax/flow/">&#x5236;&#x5FA1;&#x69CB;&#x6587;</a></li><li><a href="/study/powershell/syntax/function/">&#x95A2;&#x6570;&#x3001;&#x30D5;&#x30A3;&#x30EB;&#x30BF;&#x3001;&#x30B9;&#x30AF;&#x30EA;&#x30D7;&#x30C8;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

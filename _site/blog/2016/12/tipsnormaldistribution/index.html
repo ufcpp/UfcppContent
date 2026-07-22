@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5C0F;&#x30CD;&#x30BF; &#x6B63;&#x898F;&#x5206;&#x5E03;&#x306E;&#x4E38;&#x307F; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/12/tipsnormaldistribution/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-12-30T00:35:19">2016-12-30</time></span><span>更新: <time datetime="2016-12-30T00:55:56">2016-12-30</time></span></div><h1 id="section">小ネタ 正規分布の丸み</h1>
+<p>今日もたいがい、数学の話です。
+一瞬、「<a href="http://togetter.com/li/1044668">動きにコクが出る</a>」って表現で話題になったあれの話。</p>
+<p>そっかー、アニメーション付ける人に一言で説明するには「コク」って言葉になるのかー…
+という衝撃は結構ありますが、まあ、乱数をいくつか足すと丸みが出るというの自体は事実。</p>
+<h2 id="section-1">正規分布</h2>
+<p>ちゃんとした数学的な説明をすると、</p>
+<ul>
+<li><a href="https://ja.wikipedia.org/wiki/%E4%B8%AD%E5%BF%83%E6%A5%B5%E9%99%90%E5%AE%9A%E7%90%86">中心極限定理</a>によって、独立な乱数を数多く足せば足すほど正規分布に近づく</li>
+<li>自然界は多数の独立な乱雑さが重なってできてるので結構な頻度で正規分布が出てくる</li>
+<li>正規分布で作った図形は丸みがかってる(というか、完全に真円・真球を作れる)</li>
+</ul>
+<p>みたいな話です。</p>
+<p>C#関係ない… こころなし程度にC#に関係している点というと、「<a href="http://www.mathdotnet.com/">Math.NET</a> っていう数学ライブラリがあるよ」という話。</p>
+<h2 id="section-2">例: 2次元上の点の分布を作る</h2>
+<p>「丸み」の例として、2次元上の点(x, y)を乱数を使って作ることを考えます。</p>
+<p>以降のサンプル コードでは、<a href="https://www.nuget.org/packages/MathNet.Numerics/">Math.NET Numerics</a>を使って、
+以下の<code>using</code>ディレクティブがあるものとして説明します。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> MathNet.Numerics.Distributions;
+<span class="keyword">using</span> <span class="keyword">static</span> System.Math;</code></pre>
+<p>例えば、x, yそれぞれに対して、一様乱数(一定の範囲内で、全ての値が均等な確率で出現する乱数)を使って点を作ると、完全に真四角になります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> rand = <span class="keyword">new</span> ContinuousUniform(-<span class="number">1</span>, <span class="number">1</span>);
+<span class="keyword">var</span> p = (rand.Sample(), rand.Sample());</code></pre>
+<p>このコードで1万点ほどプロットすると、以下のようになります。</p>
+<p><img src="/assets/media/1124/uniformxy.png" alt="一様乱数でx, yを生成した結果" /></p>
+<p>で、四角いのはあまりに不自然なので、これを丸くしたいです。
+割と軽い計算量で実現する方法があって、
+それが冒頭で言った、「乱数をいくつか足す」というやつです。</p>
+<p>乱数を足すために、以下のようなメソッドを用意してみます。
+<code>n</code>個足して平均を取るだけの関数です。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">double</span> Mean(IContinuousDistribution d, <span class="keyword">int</span> n)
+    =&gt; Enumerable.Range(<span class="number">0</span>, n).Select(_ =&gt; d.Sample()).Sum() / n;</code></pre>
+<p>これを使って、<code>n</code> = 2～5に対して、以下のコードで点を生成してみます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> rand = <span class="keyword">new</span> ContinuousUniform(-<span class="number">1</span>, <span class="number">1</span>);
+<span class="keyword">var</span> p = (Mean(rand, n), Mean(rand, n));</code></pre>
+<p>先ほどと同様、1万点ずつプロットした結果を以下に示します。
+上から順に、<code>n</code> = 2～5です。</p>
+<p><img src="/assets/media/1120/uniform2xy.png" alt="一様乱数を2個足してx, yを生成した結果" />
+<img src="/assets/media/1121/uniform3xy.png" alt="一様乱数を3個足してx, yを生成した結果" />
+<img src="/assets/media/1122/uniform4xy.png" alt="一様乱数を4個足してx, yを生成した結果" />
+<img src="/assets/media/1123/uniform5xy.png" alt="一様乱数を5個足してx, yを生成した結果" /></p>
+<p><code>n</code> = 5 くらいまでくると、だいぶ丸くなります。</p>
+<p>ちなみに、正規分布乱数を使うと、真円になります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> rand = <span class="keyword">new</span> Normal(-<span class="number">1</span>, <span class="number">1</span>);
+<span class="keyword">var</span> p = (rand.Sample(), rand.Sample());</code></pre>
+<p><img src="/assets/media/1119/normalxy.png" alt="正規分布乱数でx, yを生成した結果" /></p>
+<p>要するに、以下のような感じ。</p>
+<ul>
+<li>一様乱数を足していくと、数が多いほど正規分布乱数に近づく</li>
+<li>5個も足すと結構いい感じに丸くなる</li>
+<li>正規分布乱数は真円(理論上、本当に完全に円)</li>
+</ul>
+<h2 id="section-3">乱数の和</h2>
+<p>まあ、一様乱数を複数足すと正規分布乱数になるってのは、
+結構難しい話になります。</p>
+<p>確率って、連続な分布を持つものをまっとうに考えようと思うと、
+<a href="https://ja.wikipedia.org/wiki/%E6%B8%AC%E5%BA%A6%E8%AB%96">測度</a>とか、
+<a href="https://ja.wikipedia.org/wiki/%E3%83%AB%E3%83%99%E3%83%BC%E3%82%B0%E7%A9%8D%E5%88%86">ルベーグ積分</a>とか、
+<a href="https://ja.wikipedia.org/wiki/%E3%83%95%E3%83%BC%E3%83%AA%E3%82%A8%E5%A4%89%E6%8F%9B">フーリエ変換</a>とか、
+数学の中でもそこそこ高等な部類に入る理論が出まくる結構ガチな分野です。</p>
+<p>とりあえず、大学学部くらいで習う言葉で要約すると、</p>
+<ul>
+<li>乱数の和を取ると、確率密度関数が畳み込み積(convolution)になる</li>
+<li>一様分布を何度も畳み込みしていくと、徐々に正規分布に収束する
+<ul>
+<li>参考: <a href="http://ogyahogya.hatenablog.com/entry/2014/09/22/%E7%A2%BA%E7%8E%87%E5%A4%89%E6%95%B0%E3%81%AE%E5%92%8C_-%E5%90%88%E6%88%90%E7%A9%8D%E3%81%A8%E3%81%AE%E9%96%A2%E4%BF%82-">確率変数の和 -合成積との関係-</a></li>
+<li>参考: <a href="http://www.biwako.shiga-u.ac.jp/sensei/mnaka/ut/irwinhalldist.html">連続型一様分布の和の分布</a></li>
+</ul>
+</li>
+<li>正規分布同士を畳み込みすると、結果もまた正規分布になる
+<ul>
+<li>参考: <a href="http://fussy.web.fc2.com/algo/stat5_gaussian.htm">確率・統計 正規分布</a></li>
+</ul>
+</li>
+</ul>
+<p>という感じ。</p>
+<p>微分しても元通りになる指数関数が微分・積分の分野で最も自然な関数になるのと同様に、
+確率分布では正規分布が最も自然な分布になる、という感じです。</p>
+<h2 id="section-4">正規分布は丸い</h2>
+<p>まあ、「正規分布乱数を使うと自然に見える」というのは正しいんですが。
+ちょっとまだ不思議なことがあります。</p>
+<p>これまで例を示してきた話はまとめると以下のようになります。</p>
+<ul>
+<li>一様乱数は四角い、そして、不自然に見える</li>
+<li>正規分布乱数は丸い、そして、自然に見える</li>
+</ul>
+<p>ここで疑問に思うべきは、丸いのは自然なのか。
+自然は丸くなるのか。</p>
+<p>まあ実際、丸いんですよね。自然物にはあんまり角がない。
+いろいろ根拠はあるんですが。
+いろんな物理法則が、計算してみると円や球を解に持ちます。
+例えば、わかりやすい例だと以下のようなやつ。</p>
+<ul>
+<li>距離に反比例するような物理法則が多くて、等ポテンシャル面をプロットすると球</li>
+<li>体積に対して表面積が最小になる図形が球なので、真球状態が一番安定して存在できる</li>
+</ul>
+<p>そして、正規分布乱数の話でも、やっぱり真円や真球が出てきたりします。
+先ほど、「正規分布同士を畳み込みすると、結果もまた正規分布になる」と書きましたが、
+これから言えることは、「正規分布乱数同士の和や差は、やっぱり正規分布乱数になる」ということです。</p>
+<p>回転を表す座標変換は、以下の通り、和と差になるので、
+<math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mrow><mi>x</mi></mrow><mrow><mn>1</mn></mrow></msub></math>, <math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mrow><mi>y</mi></mrow><mrow><mn>1</mn></mrow></msub></math>が正規分布乱数で作られているとき、
+回転した結果の <math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mrow><mi>x</mi></mrow><mrow><mn>2</mn></mrow></msub></math>, <math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mrow><mi>y</mi></mrow><mrow><mn>2</mn></mrow></msub></math> も正規分布乱数になります。</p>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mrow><mi>x</mi></mrow><mrow><mn>2</mn></mrow></msub><mo>=</mo><mrow><mrow><mi mathvariant="normal">cos</mi></mrow><mo>⁡</mo><mrow><mi>θ</mi></mrow></mrow><mi> </mi><msub><mrow><mi>x</mi></mrow><mrow><mn>1</mn></mrow></msub><mo>-</mo><mrow><mrow><mi mathvariant="normal">sin</mi></mrow><mo>⁡</mo><mrow><mi>θ</mi></mrow></mrow><mi> </mi><msub><mrow><mi>y</mi></mrow><mrow><mn>1</mn></mrow></msub></math></p>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mrow><mi>y</mi></mrow><mrow><mn>2</mn></mrow></msub><mo>=</mo><mrow><mrow><mi mathvariant="normal">sin</mi></mrow><mo>⁡</mo><mrow><mi>θ</mi></mrow></mrow><mi> </mi><msub><mrow><mi>x</mi></mrow><mrow><mn>1</mn></mrow></msub><mo>+</mo><mrow><mrow><mi mathvariant="normal">cos</mi></mrow><mo>⁡</mo><mrow><mi>θ</mi></mrow></mrow><mi> </mi><msub><mrow><mi>y</mi></mrow><mrow><mn>1</mn></mrow></msub></math></p>
+<p>正規分布乱数は、回転対象な分布を作ります。
+どの方向も均一です。</p>
+<p>例えばの話、以下のような乱数で2次元の点を作ってみましょう。
+角度を一様分布にしたものです。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> chi = <span class="keyword">new</span> ChiSquared(<span class="number">2</span>);
+<span class="keyword">var</span> uni = <span class="keyword">new</span> ContinuousUniform(<span class="number">0</span>, <span class="number">2</span> * PI));
+<span class="keyword">var</span> r = Sqrt(chi.Sample());
+<span class="keyword">var</span> θ = uni.Sample();
+<span class="keyword">var</span> p = (r * Cos(θ), r * Sin(θ));</code></pre>
+<p><code>ChiSquared</code>は<a href="https://ja.wikipedia.org/wiki/%E3%82%AB%E3%82%A4%E4%BA%8C%E4%B9%97%E5%88%86%E5%B8%83">カイ二乗分布</a>っていうやつで、
+正規分布なx, yに対して、<math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mrow><mi>x</mi></mrow><mrow><mn>2</mn></mrow></msup><mo>+</mo><msup><mrow><mi>y</mi></mrow><mrow><mn>2</mn></mrow></msup></math>
+の分布がカイ二乗分布になります。</p>
+<p>これも1万点プロットすると、以下のようになります。</p>
+<p><img src="/assets/media/1118/chisquaredr.png" alt="カイ二乗分布で半径を、一様分布で角度を生成した結果" /></p>
+<p>比較のために、正規分布乱数でx, yを作ったものを再度並べてみましょう。</p>
+<p><img src="/assets/media/1119/normalxy.png" alt="正規分布乱数でx, yを生成した結果" /></p>
+<p>ほとんど同じ分布になっていると思います。
+理論上は完全一致するはずで、点の数を増やせば増やすほど一致するはずです。</p>
+<p>適当にx軸、y軸を決めて、それぞれ独立に乱雑に座標を振っても、
+x, yともに正規分布乱数(= 自然な乱数)になっている限り、
+軸のとり方に依らない(回転する座標変換を掛けても、元の法則と同じ式が現れる)ということです。</p>
+<p>自然物は向きを持たなくて、自然法則は軸のとり方に依らない。
+ということが、自然法則を表すいろいろな数式上に現れます。
+その結果が、真円や真球に結びついたりします。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/12/">2016/12</a></li><li><a href="/blog/2016/12/tipstryroslyn/">C#&#x5C0F;&#x30CD;&#x30BF;&#x96C6;: C#&#x3092;Web&#x4E0A;&#x3067;&#x8A66;&#x3059;</a></li><li><a href="/blog/2016/12/tipsildasm/">&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x3092;&#x8997;&#x3044;&#x3066;&#x307F;&#x3088;&#x3046;</a></li><li><a href="/blog/2016/12/tipscorefxlab/">&#x5C0F;&#x30CD;&#x30BF; corefxlab&#x3068;System.Memory</a></li><li><a href="/blog/2016/12/tipsevalorder/">&#x5C0F;&#x30CD;&#x30BF; &#x5F0F;&#x306E;&#x8A55;&#x4FA1;&#x9806;&#x5E8F;</a></li><li><a href="/blog/2016/12/tipsobjectinitializer/">&#x5C0F;&#x30CD;&#x30BF; &#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2016/12/tipscollectioninitializer/">&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2016/12/tipsindexedforeach/">&#x5C0F;&#x30CD;&#x30BF; &#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;&#x4ED8;&#x304D; foreach</a></li><li><a href="/blog/2016/12/tipsuniontypes/">&#x5C0F;&#x30CD;&#x30BF; &#x30C1;&#x30A7;&#x30C3;&#x30AF;&#x4F8B;&#x5916;&#x3068;Union&#x578B;</a></li><li><a href="/blog/2016/12/tipscontextfreetask/">&#x5C0F;&#x30CD;&#x30BF; &#x540C;&#x671F;&#x30B3;&#x30F3;&#x30C6;&#x30AD;&#x30B9;&#x30C8;&#x3092;&#x62FE;&#x308F;&#x306A;&#x3044;Task&#x578B;</a></li><li><a href="/blog/2016/12/tipsformattingcharacter/">&#x5C0F;&#x30CD;&#x30BF; &#x30D5;&#x30A9;&#x30FC;&#x30DE;&#x30C3;&#x30C8;&#x6587;&#x5B57;&#x8B58;&#x5225;&#x5B50;</a></li><li><a href="/blog/2016/12/tipsimplicitmembers/">&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/blog/2016/12/tipstadpoleoperator/">&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x6F14;&#x7B97;&#x5B50;(&#xFF1F;)</a></li><li><a href="/blog/2016/12/tipsnulloperation/">&#x5C0F;&#x30CD;&#x30BF; null&#x95A2;&#x4FC2;&#x306E;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/blog/2016/12/vs2017rc2/">Updating Visual Studio 2017 Release Candidate</a></li><li><a href="/blog/2016/12/patternmatching/">&#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30DE;&#x30C3;&#x30C1;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/pickuproslyn1214/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/14</a></li><li><a href="/blog/2016/12/tipsdeconstruct/">&#x5C0F;&#x30CD;&#x30BF; &#x300C;deconstruct&#x300D;&#x3068;&#x3044;&#x3046;&#x5358;&#x8A9E;</a></li><li><a href="/blog/2016/12/tipsgeneratedil/">&#x5C0F;&#x30CD;&#x30BF; &#x69CB;&#x6587;&#x7CD6;&#x8863;&#x3068;&#x3001;&#x305D;&#x3046;&#x3067;&#x306F;&#x306A;&#x3044;&#x69CB;&#x6587;&#x3068;</a></li><li><a href="/blog/2016/12/tipsprimitives/">&#x5C0F;&#x30CD;&#x30BF; &#x30D7;&#x30EA;&#x30DF;&#x30C6;&#x30A3;&#x30D6;&#x578B;</a></li><li><a href="/blog/2016/12/tipsapisurface/">&#x5C0F;&#x30CD;&#x30BF; private&#x30E1;&#x30F3;&#x30D0;&#x30FC;&#x306F;API&#x306E;&#x4E00;&#x90E8;&#x304B;</a></li><li><a href="/blog/2016/12/tipsstringmarshal/">&#x5C0F;&#x30CD;&#x30BF; string&#x578B;&#x306E;&#x30DE;&#x30FC;&#x30B7;&#x30E3;&#x30EA;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/tipsnumargs/">&#x5C0F;&#x30CD;&#x30BF; &#x5F15;&#x6570;&#x306E;&#x500B;&#x6570;&#x306E;&#x4E0A;&#x9650;</a></li><li><a href="/blog/2016/12/tipsotherlangs/">&#x5C0F;&#x30CD;&#x30BF; C# &#x3068;&#x4ED6;&#x306E;&#x8A00;&#x8A9E;&#x3068;&#x306E;&#x5DEE;&#x3068;&#x3044;&#x3046;&#x3068;</a></li><li><a href="/blog/2016/12/tipsconcurrentcollections/">&#x5C0F;&#x30CD;&#x30BF; Concurrent &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/blog/2016/12/discards/">discards</a></li><li><a href="/blog/2016/12/tipssmallheapallocation/">&#x5C0F;&#x30CD;&#x30BF; &#x5C0F;&#x3055;&#x306A;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x5272;&#x308A;&#x5F53;&#x3066;</a></li><li><a href="/blog/2016/12/tipsparallelism/">&#x5C0F;&#x30CD;&#x30BF; &#x4E26;&#x5217;&#x5316;</a></li><li><a href="/blog/2016/12/tipsdowhile/">&#x5C0F;&#x30CD;&#x30BF; do-while</a></li><li><a href="/blog/2016/12/tipsatan2/">&#x5C0F;&#x30CD;&#x30BF; atan2</a></li><li><a href="/blog/2016/12/lookbackattheyear/">&#x4ECA;&#x5E74;&#x306E;&#x632F;&#x308A;&#x8FD4;&#x308A;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

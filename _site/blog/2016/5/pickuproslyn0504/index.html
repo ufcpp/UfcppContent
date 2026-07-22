@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 5/4 | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/5/pickuproslyn0504/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-05-04T09:07:34">2016-05-04</time></span><span>更新: <time datetime="2016-05-04T09:07:34">2016-05-04</time></span></div><h1 id="roslyn-54">ピックアップRoslyn 5/4</h1>
+<p>4月に紹介した<a href="https://github.com/dotnet/roslyn/blob/master/docs/Language%20Feature%20Status.md">Language Feature Status</a>、だんだんはっきりとC# 7、VB 15に入りそうな範囲が結構絞られてきた感じ。</p>
+<p>最近は、タプル型がらみに注力してる感じがします。</p>
+<h2 id="section">パターン マッチングも部分的に実装</h2>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/10866">Split the features/patterns branch into two branches for subfeatures in/out C# 7 #10866</a></li>
+</ul>
+<p>これまで出てたアイディア全部を一気にC# 7に入れるんじゃなくて、将来的な拡張を阻害しないように気を付けつつ、部分的に実装しようという感じになってる様子。</p>
+<p>上記リンクのうち、「Part 1 (targeting future)」になってる方がC# 7に入りそうなやつで、「Part 2 (to remain in features/patterns)」に入ってる方がそれより後のバージョンになりそうなもの。</p>
+<p>要するに、C# 7としては、いったん、単純な型による分岐だけを実装するみたい。以下のものはその後の予定。</p>
+<ul>
+<li>再帰的なオブジェクト分解の構文</li>
+<li>let ステートメント</li>
+<li>match 式</li>
+<li>throw 式</li>
+</ul>
+<h2 id="c-design-notes">C# Design Notes (タプル型関連)</h2>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/11031">C# Design Notes for Apr 12-22, 2016 #11031</a></li>
+</ul>
+<p>4月中にあったC# Designミーティングの議事録。タプル型関連の議題が多かったみたいです(あと、out varの話が少し)。以下のような内容。</p>
+<ul>
+<li><code>ValueTuple</code>以外の型
+<ul>
+<li>C#のタプル型の実装に使われる<code>ValueTuple</code>構造体の他に、既存の<code>Tuple</code>クラスとか、あと、<code>KeyValuePair</code>なんかも性質としてはタプルっぽい。これらを統一的に扱いたい</li>
+</ul>
+</li>
+<li>タプル型の分解(代入、宣言、パターン マッチング)用の構文案
+<ul>
+<li><code>(int x, int y) = Get();</code>的なのか、<code>(int, int) (x, y) = Get();</code> 的なのか、いくつか候補あり。今のところ前者が有力</li>
+</ul>
+</li>
+<li><code>(byte, short)</code>から<code>(int, int)</code>みたいな、メンバー単位で暗黙の型変換がある場合の、タプル型間の変換
+<ul>
+<li>認める方向で検討中。ただ、コンパイラーが頑張ることになるし、C# 6と7でオーバーロード解決ルールとかが変わっちゃう問題がある</li>
+</ul>
+</li>
+<li>(C#の構文糖衣としての)タプル型と、構造体の<code>ValueType</code>
+<ul>
+<li>null許容型が<code>int?</code>でも<code>Nullable&lt;int&gt;</code>でも使えるように、タプル型も<code>(int, int)</code>でも<code>ValueTuple&lt;int, int&gt;</code>でも使えるようにしたい</li>
+</ul>
+</li>
+<li>パターン マッチングとの兼ね合い</li>
+</ul>
+<p>ちなみに、その<code>ValueTuple</code>構造体ですが、ついに<a href="https://github.com/dotnet/corefx">corefx</a>の方に入ったみたい。</p>
+<ul>
+<li><a href="https://github.com/dotnet/corefx/blob/master/src/System.Threading.Tasks.Extensions/src/System/Threading/Tasks/ValueTask.cs">ValueTask.cs</a></li>
+</ul>
+<p>(ちょっと前までは、<a href="https://github.com/dotnet/roslyn">roslyn</a>リポジトリ内でだけ実装してた)</p>
+<h2 id="section-1">非同期メソッドの戻り値を任意の型に</h2>
+<ul>
+<li><a href="https://github.com/ljw1004/roslyn/blob/features/async-return/docs/specs/feature%20-%20arbitrary%20async%20returns.md">C# feature proposal: arbitrary async returns</a></li>
+<li><a href="https://github.com/ljw1004/roslyn/blob/features/async-return/docs/specs/feature%20-%20arbitrary%20async%20returns%20-%20discussion.md">C# design rationale and alternatives: arbitrary async returns</a></li>
+<li><a href="https://github.com/dotnet/roslyn/issues/10902">Discussion thread for arbitrary async returns #10902</a></li>
+</ul>
+<p>今、<code>Task</code>クラスしか返せない非同期メソッドに、任意の型を返せるように拡張したいという話。</p>
+<p>あと、非同期ストリーム(<code>await</code>と<code>yield</code>を両方含めて、<code>IObservable</code>とか<code>IAsyncEnumerable</code>のような戻り値を返せるもの)の実装もまとめてディスカッション中。</p>
+<p>これは、<a href="https://github.com/dotnet/roslyn/blob/master/docs/Language%20Feature%20Status.md">Language Feature Status</a>の「(C# 7.0 and VB 15) + 1」にすら並んでないんで、さらにもうちょっと先になりそうなんですかね。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/5/">2016&#x5E74;5&#x6708;</a></li><li><a href="/blog/2016/5/pickuproslyn0512/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 5/12</a></li><li><a href="/blog/2016/5/csugbuild2016/">&#x3010;&#x958B;&#x50AC;&#x5831;&#x544A;&#x3011; //build/ &#x632F;&#x308A;&#x8FD4;&#x308A;&#x52C9;&#x5F37;&#x4F1A;</a></li><li><a href="/blog/2016/5/cs7binaryliterals/">2&#x9032;&#x6570;&#x30EA;&#x30C6;&#x30E9;&#x30EB;&#x3068;&#x6570;&#x5B57;&#x533A;&#x5207;&#x308A;&#x6587;&#x5B57;</a></li><li><a href="/blog/2016/5/pickuproslyn0529/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 5/29</a></li><li><a href="/blog/2016/5/dotnet/">dot.net &#x306B;C#&#x30AA;&#x30F3;&#x30E9;&#x30A4;&#x30F3; &#x30A8;&#x30C7;&#x30A3;&#x30BF;&#x30FC;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

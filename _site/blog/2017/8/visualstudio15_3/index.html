@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Visual Studio 2017 Update 3&#x6B63;&#x5F0F;&#x30EA;&#x30EA;&#x30FC;&#x30B9; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2017/8/visualstudio15_3/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2017-08-15T02:57:18">2017-08-15</time></span><span>更新: <time datetime="2017-11-09T13:25:19">2017-11-09</time></span></div><h1 id="visual-studio-2017-update-3">Visual Studio 2017 Update 3正式リリース</h1>
+<p><a href="https://blogs.msdn.microsoft.com/visualstudio/2017/08/14/visual-studio-2017-version-15-3-released/">Visual Studio 2017 Update 3の正式リリース</a>が来てるみたいですね。
+普通にVisual Studio 2017上の「通知」や「拡張機能と更新」辺りからや、Visual Studio Installerから更新できます。</p>
+<p>先週くらいから、中の人のブログとかtwitter周りで「リリース近い」的な言葉がちらほら出てきてた中、
+一昨日、<a href="https://twitter.com/ufcpp/status/896725639494901762">Preview 7.1</a>とか出されたときにはちょっとひやひやしましたが
+(細かいリリース挟まないといけないような緊急のバグでも見つけてしまったの？と)。</p>
+<p>なんかしかし、最近アップデートのたびに言ってますけども、2017 Update 3 Preview 7.1とか、某<a href="https://www.amazon.co.jp/dp/B000BYUIPC">ZERO3↑↑</a>とか<a href="https://www.amazon.co.jp/dp/B0000E5SEP/">ハイパーIIアニバーサリースペシャル</a>とかが可愛く見えるバージョン名はどうにかならないですかね…</p>
+<h2 id="section">いろいろ正式リリース</h2>
+<p>Visual Studio に伴って、</p>
+<ul>
+<li>C# 7.1</li>
+<li><a href="https://blogs.msdn.microsoft.com/dotnet/2017/08/14/announcing-net-core-2-0/">.NET Core 2.0</a></li>
+<li><a href="https://blogs.msdn.microsoft.com/dotnet/2017/08/14/announcing-net-standard-2-0/">.NET Standard 2.0</a></li>
+<li><a href="https://blogs.msdn.microsoft.com/webdev/2017/08/14/announcing-asp-net-core-2-0/">ASP.NET Core 2.0</a></li>
+<li><a href="https://blogs.msdn.microsoft.com/dotnet/2017/08/14/announcing-entity-framework-core-2-0/">Entity Framework Core 2.0</a></li>
+</ul>
+<p>とかも正式リリースみたいです。</p>
+<p>あと、Visual Studio for Mac version 7.1も同時に利用可能とのこと。</p>
+<p>C# 7.1の機能自体は、<a href="/blog/2017/6/vs2017u3p2/">6月のPreview 2の時点</a>でfixしてたみたいで、その後全く変わっていません。
+うちの「<a href="/study/csharp/">C# によるプログラミング入門</a>」的にはだいぶ前から<a href="/study/csharp/cheatsheet/ap_ver7_1/">対応済み</a>。
+これくらい機能のふらつきが少ないと、記事書き的にはものっっすごい楽です。</p>
+<h3 id="c-7.1">C# 7.1を使う設定(プロパティ→ビルド→ビルドの詳細設定)</h3>
+<p>ただ、デフォルトで使われるC#のバージョンはC# 7.0で、7.1を使うには設定が必要みたいです。
+この辺り、<a href="/blog/2017/5/vs15_3preview/">Previewの頃</a>のまま。</p>
+<p>プロジェクトのプロパティを開いて、ビルド→ビルドの詳細設定で変更可能。</p>
+<ul>
+<li>既定(default) オプションだと「最新のメジャー バージョン」= C# 7.0</li>
+<li>最新(latest)オプションだと「最新のマイナー バージョン」 = C# 7.1</li>
+</ul>
+<p>になるみたいです。csproj に以下の行を無差別に追加してしまいたい。</p>
+<pre><code class="language-xml">  <span class="xmlDelimiter">&lt;</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">LangVersion</span><span class="xmlDelimiter">&gt;</span>latest<span class="xmlDelimiter">&lt;/</span><span class="xmlName">LangVersion</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<h2 id="net-ide">.NET IDE の機能強化</h2>
+<p>今回、C# エディター上でのクイック アクションの類が結構いい感じに強化されてるんですが。
+リリースノート上は</p>
+<ul>
+<li>Resolve merge conflicts</li>
+<li>Add null checks</li>
+<li>Add parameter</li>
+</ul>
+<p>くらいしか書かれてないんですよね…
+他は「many more」扱い。</p>
+<p>追記: <a href="https://docs.microsoft.com/ja-jp/visualstudio/ide/quick-actions">https://docs.microsoft.com/ja-jp/visualstudio/ide/quick-actions</a>この辺りにある程度は一覧があるっぽい。ただ、全部ではなさそうだし、Update 3での差分はわからなさそう。</p>
+<p>個人的には他のクイック アクションの方がよく使ってるんで、ちょっとちゃんと調べて改めてまとめた方がいいかも。
+(最近、C# の新機能以外は大体スルーしてたけど、久々に、IDE周りも真面目に。)</p>
+<h2 id="section-1">リリース ノート</h2>
+<p>そういえば、リリース ノートがちゃんと日本語でも即日来てますね。</p>
+<ul>
+<li><a href="https://www.visualstudio.com/ja-jp/news/releasenotes/vs2017-relnotes">https://www.visualstudio.com/ja-jp/news/releasenotes/vs2017-relnotes</a></li>
+</ul>
+<p>最近、ドキュメントのページはあんまり翻訳を期待してなかったんですが、さすがに正式リリースくらいはちゃんとしますか…</p>
+<p>それも割かし、機械翻訳っぽくないちゃんとした文面。</p>
+<p>「Resolve merge conflicts」が「結合の競合の解決」になってたりとか、人手による翻訳でもやらかしそうなやつはきっちりやらかしてますが。
+(ちなみに、Visual Studio上ではちゃんと「マージ競合」って翻訳されてました。↓みたいな機能。)</p>
+<p><img src="/assets/media/1138/mergeconflict.png" alt="enter image description here" /></p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2017/8/">8&#x6708;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

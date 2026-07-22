@@ -1,0 +1,336 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x53EF;&#x5909;&#x9577;&#x5F15;&#x6570; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/structured/sp_params/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">可変長引数</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>C# では <em>
+<code>params</code>
+</em> キーワードを用いることでメソッドの引数の数を可変にすることが出来ます。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p class="..">定義側の例：<code>int Sum(params int[] args) </code></p>
+</li>
+<li><p>利用側の例：<code>Sum(1, 2, 3, 4, 5);</code>… これで、<code>Sum(new int[] { 1, 2, 3, 4, 5 });</code>と同じ意味。</p>
+</li>
+</ul>
+<h2 id="params"><a id="sec-generated-title-3"></a> <a id="params"></a>params キーワード</h2>
+<p>例えば、可変個の整数のうち最大の整数を求めるメソッドを作りたいとします。
+可変長引数を使わずにメソッドを実装すると以下のようになるでしょう。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> ParamsTest
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="keyword">int</span> a = <span class="number">314</span>, b = <span class="number">159</span>, c = <span class="number">265</span>, d = <span class="number">358</span>, e  = <span class="number">979</span>;
+    <span class="comment">// ↑こいつらの最大値を探したいとき、</span>
+
+    <span class="keyword">int</span>[] tmp = <span class="keyword">new</span> <span class="keyword">int</span>[]{a, b, c, d, e};
+    <span class="comment">// ↑こんな風に一度配列に格納してから</span>
+
+    <span class="keyword">int</span> max = Max(tmp);
+    <span class="comment">// ↑Max メソッドを呼び出す必要がある。</span>
+
+    Console.Write(<span class="string">&quot;{0}\n&quot;</span>, max);
+  }
+
+  <span class="keyword">static</span> <span class="keyword">int</span> Max(<span class="keyword">int</span>[] a)
+  {
+    <span class="keyword">int</span> max = a[<span class="number">0</span>];
+    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;a.Length; ++i)
+    {
+      <span class="keyword">if</span>(max &lt; a[i])
+        max = a[i];
+    }
+    <span class="keyword">return</span> max;
+  }
+}</code></pre>
+<p>この方法では、1度値を配列に格納してからメソッドを呼び出すという操作が必要になります。
+このメソッドを呼び出すたびに1時的に配列を作成して、
+値を格納してという作業を行うのは面倒です。
+そこで、この作業を自動化しようというのが C# の可変長引数の考え方です。</p>
+<p>C# では <code>params</code> というキーワードを使って可変個の引数を取るメソッドを定義することが出来ます。
+例えば、上の例を <code>params</code> キーワードを使って書き直すと以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> ParamsTest
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="keyword">int</span> a = <span class="number">314</span>, b = <span class="number">159</span>, c = <span class="number">265</span>, d = <span class="number">358</span>, e  = <span class="number">979</span>;
+    <span class="comment">// ↑こいつらの最大値を探したいとき、</span>
+
+    <span class="keyword">int</span> max = Max(a, b, c, d, e);
+    <span class="comment">// ↑こうすると、自動的に配列を作って値を格納してくれる。</span>
+
+    Console.Write(<span class="string">&quot;{0}\n&quot;</span>, max);
+  }
+
+  <span class="keyword">static</span> <span class="keyword">int</span> Max(<span class="keyword">params</span> <span class="keyword">int</span>[] a)
+  {
+    <span class="keyword">int</span> max = a[<span class="number">0</span>];
+    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;a.Length; ++i)
+    {
+      <span class="keyword">if</span>(max &lt; a[i])
+        max = a[i];
+    }
+    <span class="keyword">return</span> max;
+  }
+}</code></pre>
+<p>メソッド定義側の変更点は引数 <code>int[] a</code> の前に <code>params</code> キーワードが付いただけです。
+呼び出し側では、手動で配列を用意して値を格納しなくても、
+可変個の引数を与えてメソッドを呼び出すことが出来ます。</p>
+<h5 id="section-3"><a id="sec-generated-title-4"></a>サンプル</h5>
+<p>今まで何気なく <code>Console.Write(&quot;(x, y) = ({0}, {1})\n&quot;, x, y)</code> というような書き方をしていましたが、この Console.Write メソッドは可変長引数の機構を使っています。</p>
+<p>ここでは、params の例として、
+かなり簡略化したものですが、Console.Write もどきを作ってみます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> TestParams
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+  {
+    <span class="keyword">double</span> x = <span class="number">3</span>.<span class="number">14</span>;
+    <span class="keyword">int</span>    n = <span class="number">99</span>;
+    <span class="keyword">string</span> s = <span class="string">&quot;test string&quot;</span>;
+    <span class="keyword">bool</span>   b = <span class="keyword">true</span>;
+
+    Write(<span class="string">&quot;x = {0}, n = {1}, s = {2}, b = {3}\n&quot;</span>, x, n, s, b);
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> Console.Write もどき。</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> {0:d5} のような書式指定は出来ません。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;format&quot;&gt;</span><span class="xmlDocComment">書式指定文字列&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;args&quot;&gt;</span><span class="xmlDocComment">format を使用して書き込むオブジェクトの配列&lt;/param&gt;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> Write(<span class="keyword">string</span> format, <span class="keyword">params</span> <span class="keyword">object</span>[] args)
+  {
+    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;args.Length; ++i)
+    {
+      format = format.Replace(<span class="string">&quot;{&quot;</span> + i.ToString() + <span class="string">&quot;}&quot;</span>, args[i].ToString());
+    }
+    Console.Write(format);
+  }
+}</code></pre>
+<pre><code class="language-console">x = 3.14, n = 99, s = test string, b = True</code></pre>
+<h2 id="params-1"><a id="sec-generated-title-5"></a> <a id="params-collections">params コレクション</a></h2>
+<h5 class="version version13">Ver. 13</h5>
+<!-- 昔この id のセクションがあったのでアンカーだけは残す -->
+<p><a id="params-IEnumerable"></a></p>
+<p>C# 13 で、配列以外にも <code>params</code> にできる型が増えました。
+<a href="/study/csharp/datatype/collection-expression/">コレクション式</a>で使える型であれば何でも <code>params</code> にできます。
+例えば、以下のコードの <code>M1</code>～<code>M4</code> のようなコードを書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> M1(<span class="keyword">params</span> List&lt;<span class="keyword">int</span>&gt; x) { }
+<span class="keyword">static</span> <span class="keyword">void</span> M2(<span class="keyword">params</span> IEnumerable&lt;<span class="keyword">int</span>&gt; x) { }
+<span class="keyword">static</span> <span class="keyword">void</span> M3(<span class="keyword">params</span> Span&lt;<span class="keyword">int</span>&gt; x) { }
+<span class="keyword">static</span> <span class="keyword">void</span> M4(<span class="keyword">params</span> ReadOnlySpan&lt;<span class="keyword">int</span>&gt; x) { }
+
+M1(<span class="number">1</span>, <span class="number">2</span>);
+M2(<span class="number">1</span>, <span class="number">2</span>);
+M3(<span class="number">1</span>, <span class="number">2</span>);
+M4(<span class="number">1</span>, <span class="number">2</span>);</code></pre>
+<p>俗称として、このような機能を「<code>params</code> コレクション」と言います。</p>
+<p>昔から <code>IEnumerable&lt;T&gt;</code> を使いたいという要望は多くありました。
+また、<a href="/study/csharp/cheatsheet/ap_ver7_2/#span-safety">C# 7.2</a> 以降では <a href="/study/csharp/resource/span/"><code>Span&lt;T&gt;</code> や <code>ReadOnlySpan&lt;T&gt;</code></a> を使いたいという要望も出てきました。
+どちらも、「具体的に何の型のインスタンスを作って渡すのがいいか」を決めかねていたり、
+オーバーロード解決をどうするかという課題があって、今の今まで実装されてきませんでした。
+ただ、これらの課題はコレクション式でも全く同じものを抱えます。
+つまるところ、コレクション式(当然課題を解決済み)が <a href="/study/csharp/cheatsheet/ap_ver12/#collection-expression">C# 12</a> で入ったのであれば、「コレクション式と同じ解決方法をとる」だけで <code>params</code> コレクションを実装できます。</p>
+<p>そうなると今度は、「コレクション式だけもう十分なのでは？」という話になります。
+なんせ、コレクション式のおかげで、<code>params</code> がなくても <code>[]</code> のたった2文字の追加だけでほぼ同様のことができます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> A(<span class="keyword">params</span> ReadOnlySpan&lt;<span class="keyword">int</span>&gt; x) { }
+<span class="keyword">static</span> <span class="keyword">void</span> B(ReadOnlySpan&lt;<span class="keyword">int</span>&gt; x) { }
+
+<span class="comment">// params</span>
+A(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);
+
+<span class="comment">// params がなくても、[] を足すだけ。</span>
+<span class="comment">// params の価値とは…</span>
+B([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);</code></pre>
+<p>なので、「パフォーマンス的に明らかに有利な <code>params ReadOnlySpan&lt;T&gt;</code> 以外は要らないのではないか」という話も出ました。
+実際、需要があるのはこれと、あとはせいぜい <code>params Span&lt;T&gt;</code> くらいな可能性があります。
+あくまで、「コレクション式が先に実装されている以上、あえて <code>ReadOnlySpan&lt;T&gt;</code> だけに制限する理由がない」という感じです。</p>
+<p>既存の <code>params T[]</code> なメソッドがあったとして、
+このメソッドを <code>params ReadOnlySpan&lt;T&gt;</code> に置き換えれば、
+メソッドを呼んでいる側のコードは書き換えることなく、パフォーマンスが改善します。</p>
+<p>例えば元コードとして以下のようなものがあったとします。</p>
+<pre><code class="language-csharp"><span class="comment">// 初期状態。</span>
+<span class="keyword">static</span> <span class="keyword">void</span> A(<span class="keyword">params</span> <span class="keyword">int</span>[] x) { }
+
+<span class="comment">// これはコンパイル結果的には</span>
+<span class="comment">// A(new int[] { 1, 2, 3 });</span>
+<span class="comment">// になる。</span>
+<span class="comment">// この new int[3] がそこそこ重たい。</span>
+A(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</code></pre>
+<p>これが、以下のように、メソッド定義側だけの書き換えで、利用側はノータッチでパフォーマンス改善が見込めます。</p>
+<pre><code class="language-csharp"><span class="comment">// メソッド定義側だけ ReadOnlySpan に変更。</span>
+<span class="keyword">static</span> <span class="keyword">void</span> A(<span class="keyword">params</span> ReadOnlySpan&lt;<span class="keyword">int</span>&gt; x) { }
+
+<span class="comment">// 呼び出し側はノータッチ。</span>
+<span class="comment">// (C# 13 で再コンパイルだけ必要。)</span>
+<span class="comment">// 何もせず、 new int[3] のアロケーションが消える。</span>
+A(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</code></pre>
+<p>利用個所が非常に多い場合、
+「コレクション式があるから <code>[]</code> の2文字を足して回るだけ」というのもそんなに簡単な話ではないので、
+<code>params ReadOnlySpan&lt;T&gt;</code> にはそれなりの需要が出てきます。</p>
+<p>実際、 .NET 9 では、<code>string.Join</code> や <code>Task.WhenAll</code> などのメソッドに
+<code>params ReadOnlySpan&lt;T&gt;</code> なオーバーロードが増えています。</p>
+<pre><code class="language-csharp"><span class="comment">// .NET 8 以前なら Join(string, string[])</span>
+<span class="comment">// .NET 9 以降なら Join(string, ReadOnlySpan&lt;string&gt;)</span>
+<span class="keyword">var</span> joiend = <span class="keyword">string</span>.Join(<span class="string">&quot;,&quot;</span>, <span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>, <span class="string">&quot;c&quot;</span>);</code></pre>
+<p>ちなみに、この理屈でのパフォーマンス改善のためには、
+コンパイラーを C# 13 にアップグレードした後、1度は再コンパイルが必要です。
+再コンパイルしないままだと(以前コンパイルした dll のまま .NET 9 環境に持って行って動かしても)、<code>params T[]</code> の方を参照したままになります。</p>
+<p>また、こういう「以前コンパイルした dll をそのまま使う」という利用形態がある以上、
+<code>params T[]</code> なオーバーロードを消すことは破壊的変更になるためためらわれます。
+メソッド作者と利用者が同じなら <code>params T[]</code> を単に <code>params ReadOnlySpan&lt;T&gt;</code> に書き換えてもいいですが、
+誰が利用するかわからないメソッドの場合には実質的には <code>params ReadOnlySpan&lt;T&gt;</code> オーバーロードの追加(<code>params T[]</code> も残す)しかできません。</p>
+<p>幸い、<a href="/study/csharp/datatype/collection-expression/#priority">コレクション式の時点でこの辺りは考慮していて</a>、<code>params</code> でも同様に配列よりも <code>ReadOnlySpan&lt;T&gt;</code> (パフォーマンス的に有利)の方が優先度が高い仕様になっています。</p>
+<pre><code class="language-csharp"><span class="comment">// ReadOnlySpan の方が呼ばれる。</span>
+A.M(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);
+
+<span class="keyword">class</span> A
+{
+    <span class="comment">// int[] と ReadOnlySpan&lt;int&gt; の両方ある。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">params</span> <span class="keyword">int</span>[] x) { }
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">params</span> ReadOnlySpan&lt;<span class="keyword">int</span>&gt; x) { }
+}</code></pre>
+<p>こういった背景から、基本的に、コレクション式と <code>params</code> コレクションでは、どちらからも生成されるコードはほぼ同じになります。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> M1(<span class="keyword">params</span> <span class="keyword">int</span>[] x) { }
+
+<span class="comment">// どちらで呼んでも new int[] { 1 } 生成。</span>
+M1(<span class="number">1</span>, <span class="number">2</span>);
+M1([<span class="number">1</span>, <span class="number">2</span>]);
+
+<span class="keyword">static</span> <span class="keyword">void</span> M2(<span class="keyword">params</span> Span&lt;<span class="keyword">int</span>&gt; x) { }
+
+<span class="comment">// どちらで呼んでも InlineArray に展開。</span>
+M2(<span class="number">1</span>, <span class="number">2</span>);
+M2([<span class="number">1</span>, <span class="number">2</span>]);
+
+<span class="keyword">static</span> <span class="keyword">void</span> M3(<span class="keyword">params</span> ReadOnlySpan&lt;<span class="keyword">int</span>&gt; x) { }
+
+<span class="comment">// どちらで呼んでも静的データ最適化が掛かる。</span>
+M3(<span class="number">1</span>, <span class="number">2</span>);
+M3([<span class="number">1</span>, <span class="number">2</span>]);</code></pre>
+<h4 id="section-4"><a id="sec-generated-title-6"></a> <a id="diff-from-collection-expr">余談:  コレクション式との差</a></h4>
+<p>ただ、実装都合でどうしても「全く同じ」にはできないこともあるそうで、ちょっとだけ差があります。
+例えば以下のようなコードの場合、<code>[]</code> の有無で呼ばれるオーバーロード解決ルールが変わるそうです。</p>
+<pre><code class="language-csharp">A.M([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]); <span class="comment">// こちらは解決できなくてエラーに。</span>
+A.M(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>); <span class="comment">// こちらは int[] 側に解決。</span>
+
+<span class="keyword">class</span> A
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">params</span> <span class="keyword">int</span>[] _) { }
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">params</span> <span class="keyword">long</span>[] _) { }
+}</code></pre>
+<h4 id="params-ref"><a id="sec-generated-title-7"></a> <a id="params-ref-struct">余談:  params ref 構造体</a></h4>
+<p>ref 構造体 (<code>Span&lt;T&gt;</code> や <code>ReadOnlySpan&lt;T&gt;</code> など)に <code>params</code> を付けた場合、
+暗黙的に <a href="/study/csharp/resource/refstruct/#scoped-modifier"><code>scoped</code></a> 扱い(<code>scoped</code> 修飾子を付けた場合と同じルールで解析)になるそうです。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+    <span class="comment">// 普通の ReadOnlySpan 引数は、戻り値に素通し可能。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> ReadOnlySpan&lt;<span class="keyword">int</span>&gt; M1(ReadOnlySpan&lt;<span class="keyword">int</span>&gt; x) =&gt; x;
+
+    <span class="comment">// scoped を付けると外に漏らせなくなる。</span>
+    <span class="comment">// 戻り値に返そうとするとコンパイル エラー。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> ReadOnlySpan&lt;<span class="keyword">int</span>&gt; M2(scoped ReadOnlySpan&lt;<span class="keyword">int</span>&gt; x) =&gt; x;
+
+    <span class="comment">// params を付けると自動的に scoped 扱い。</span>
+    <span class="comment">// 戻り値に返そうとするとコンパイル エラー。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> ReadOnlySpan&lt;<span class="keyword">int</span>&gt; M3(<span class="keyword">params</span> ReadOnlySpan&lt;<span class="keyword">int</span>&gt; x) =&gt; x;
+}</code></pre>
+<p><code>scoped</code> が付いていると、メソッド定義側での自由が減る代わりに、呼び出し側の自由が増えます。
+<code>params</code> の用途的に、定義側が <code>scoped</code> 困ることもなく、呼び出し側は <code>scoped</code> でないと困ることがありそうということでこういう仕様になりました。</p>
+<h2 id="section-5"><a id="sec-generated-title-8"></a> <a id="no-param"></a>余談: 可変長引数を引数なしで呼ぶ</h2>
+<p>可変長引数にしたメソッドは、引数なしで呼ぶこともできます。
+この場合、呼び出された側のメソッドには、空配列(長さ0の配列)が渡ります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+    {
+        <span class="keyword">var</span> x = Sum();
+        Console.WriteLine(x); <span class="comment">// 0</span>
+    }
+
+    <span class="keyword">static</span> <span class="keyword">int</span> Sum(<span class="keyword">params</span> <span class="keyword">int</span>[] source)
+    {
+        <span class="comment">// 引数なしで呼ばれた場合、source には空配列が入る</span>
+        <span class="comment">// source が null にはならない</span>
+        <span class="keyword">var</span> sum = <span class="number">0</span>;
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> source) sum += x;
+        <span class="keyword">return</span> sum;
+    }
+}</code></pre>
+<p>ちなみに、空配列の作られ方ですが、
+.NET Frameworkのバージョンによって変化します。
+.NET Framework 4.6以降/.NET Coreでは、<code>Array.Empty</code>という空配列を作るためのメソッドが用意されています。
+これがある(つまり、.NET Framework 4.6以降か、.NET Coreがターゲットになっている)場合、このメソッドが呼ばれます。
+なければ、<code>new T[0]</code>で空配列を作ります。</p>
+<p>つまり、上記の<code>var x = Sum()</code>は、.NET Framework 4.5以前であれば以下のように解釈されます。</p>
+<pre><code class="language-csharp"><span class="comment">// .NET Framework 4.5 以前はこういう扱い</span>
+<span class="keyword">var</span> x = Sum(<span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">0</span>]);</code></pre>
+<p>一方、.NET Framework 4.6以降であれば以下のように解釈されます。</p>
+<pre><code class="language-csharp"><span class="comment">// .NET Framework 4.6 以降はこういう扱い</span>
+<span class="keyword">var</span> x = Sum(Array.Empty&lt;<span class="keyword">int</span>&gt;());</code></pre>
+<p>これらの差・変更の理由は単純で、<code>Array.Empty</code>を使う方がパフォーマンスが良いです。
+<code>new int[0]</code>だと、メソッド呼び出しのために新しい配列のインスタンスが作られますが、
+<code>Array.Empty</code>は最初に作った1つのインスタンスをキャッシュしてずっと使いまわします。</p>
+<p>一応、昔からあるプログラムの挙動が変わる可能性がある破壊的変更なので注意してください。
+狙ってやらないと起こせないような珍しい問題ですが、
+例えば以下のようなコードの挙動は、.NET Framework のバージョンによって変化します。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+    {
+        <span class="keyword">var</span> x = IsCached();
+        Console.WriteLine(x);
+        <span class="keyword">var</span> y = IsCached();
+        Console.WriteLine(y); <span class="comment">// ターゲットによって結果が変わる</span>
+    }
+
+    <span class="keyword">static</span> <span class="keyword">int</span>[] prev;
+
+    <span class="keyword">static</span> <span class="keyword">bool</span> IsCached(<span class="keyword">params</span> <span class="keyword">int</span>[] source)
+    {
+        <span class="comment">// .NET 4.5 以前だと、毎回違う配列がnewされて渡ってくる</span>
+        <span class="comment">// .NET 4.6 以降だと、毎回同じインスタンスが使いまわされる</span>
+        <span class="keyword">if</span> (prev == source) <span class="keyword">return</span> <span class="keyword">true</span>;
+
+        prev = source;
+        <span class="keyword">return</span> <span class="keyword">false</span>;
+    }
+}</code></pre>
+<h2 id="arglist"><a id="sec-generated-title-9"></a> <a id="arglist"></a>__arglist</h2>
+<p>ちなみに、仕様書にない隠し機能ではあるんですが、
+マイクロソフト製や、Mono 製の C# コンパイラーには、可変長引数のための構文として、もう1つ、__arglist というものがあります。
+詳しくは「<a href="/study/csharp/interop/sp_makeref/">型付き参照</a>」で説明します。</p>
+<p>この隠し機能は主に C# 以外のプログラミング言語との相互運用にあるためのものです。
+実際のところ、あまり性能はよくない(params を使ったものと比べると1桁は余裕で遅い)ので、わざわざ使うものではないでしょう。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/structured/">&#x69CB;&#x9020;&#x5316;</a></li><li><a href="/study/csharp/structured/st_structured/">&#x69CB;&#x9020;&#x5316;</a></li><li><a href="/study/csharp/structured/st_control/">&#x5236;&#x5FA1;&#x30D5;&#x30ED;&#x30FC;</a></li><li><a href="/study/csharp/structured/st_branch/">&#x6761;&#x4EF6;&#x5206;&#x5C90;</a></li><li><a href="/study/csharp/structured/st_loop/">&#x53CD;&#x5FA9;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/structured/st_array/">&#x914D;&#x5217;</a></li><li><a href="/study/csharp/structured/st_function/">&#x95A2;&#x6570;</a></li><li><a href="/study/csharp/structured/miscentrypoint/">[&#x96D1;&#x8A18;] &#x30A8;&#x30F3;&#x30C8;&#x30EA;&#x30FC;&#x30DD;&#x30A4;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/structured/miscinlining/">[&#x96D1;&#x8A18;] &#x30A4;&#x30F3;&#x30E9;&#x30A4;&#x30F3;&#x5316;</a></li><li><a href="/study/csharp/structured/miscoverloadresolution/">[&#x96D1;&#x8A18;] &#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30ED;&#x30FC;&#x30C9;&#x89E3;&#x6C7A;</a></li><li><a href="/study/csharp/structured/sp4_optional/">&#x30AA;&#x30D7;&#x30B7;&#x30E7;&#x30F3;&#x5F15;&#x6570;&#x30FB;&#x540D;&#x524D;&#x4ED8;&#x304D;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/st_command/">&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x30E9;&#x30A4;&#x30F3;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/st_library/">&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li><li><a href="/study/csharp/structured/st_enum/">&#x5217;&#x6319;&#x578B;</a></li><li><a href="/study/csharp/structured/st_struct/">&#x30C7;&#x30FC;&#x30BF;&#x306E;&#x69CB;&#x9020;&#x5316;(&#x8907;&#x5408;&#x578B;)</a></li><li><a href="/study/csharp/structured/st_anonymoustype/">&#x540D;&#x524D;&#x306E;&#x306A;&#x3044;&#x8907;&#x5408;&#x578B;</a></li><li><a href="/study/csharp/structured/sp_namespace/">&#x540D;&#x524D;&#x7A7A;&#x9593;</a></li><li><a href="/study/csharp/structured/oo_exception/">&#x4F8B;&#x5916;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/structured/misc_exception/">[&#x96D1;&#x8A18;] &#x4F8B;&#x5916;&#x306E;&#x4F7F;&#x3044;&#x65B9;</a></li><li><a href="/study/csharp/structured/misc_stacktrace/">[&#x96D1;&#x8A18;] &#x4F8B;&#x5916;&#x306E;&#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x30C8;&#x30EC;&#x30FC;&#x30B9;</a></li><li><a href="/study/csharp/structured/miscexpressions/">[&#x96D1;&#x8A18;] &#x5F0F;&#x306B;&#x307E;&#x3064;&#x308F;&#x308B;&#x88DC;&#x8DB3;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

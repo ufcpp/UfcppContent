@@ -1,0 +1,265 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5024;&#x306E;&#x5165;&#x51FA;&#x529B; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/start/st_consoleio/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">値の入出力</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>これから本格的に C# によるプログラミングを解説して行くことになりますが、
+ただ文章で説明するよりも実際にサンプルプログラムを挙げて説明するほうが分かりやすいと思うので、
+そうして行きたいと思います。
+また、ただ単に計算を行うだけのプログラムよりも、
+ユーザーからの入力を受け取って、計算結果を出力するようなもののほうが面白いでしょうから、
+そのようなサンプルプログラムを挙げていきたいと思っています。</p>
+<p>そのためにまず、C# の文字ベースプログラムにおける入出力の行い方について簡単に説明しておきます。
+ただ、現時点ではまだ詳しい説明は出来ませんので、
+「とりあえずこうすれば入出力が行える」ということだけ覚えておいてもらうことになります。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/io.png"><img src="/assets/media/ufcpp2000/csharp/fig/io.png" alt="値の入出力" /></a></p>
+<figcaption>値の入出力</figcaption>
+</figure>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li>「まずは慣れろ」ということで、とりあえず今は詳しい説明省略。</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="input"></a>入力</h2>
+<p>C#でユーザーからの入力を受け取りたい場合、<em>
+<code>Console.ReadLine</code>
+</em> というものを使います。</p>
+<div class="tab-container">
+<ul>
+	<li>C#</li>
+	<li>VB</li>
+	<li>F#</li>
+	<li>C++</li>
+</ul>
+<div>
+<pre><code class="language-csharp"><span class="keyword">var</span> str = Console.ReadLine(); <span class="comment">// ユーザーの入力した文字列を1行読み込む</span></code></pre>
+</div>
+<div>
+<pre><code class="language-vbnet"><span class="keyword">Dim</span> str = Console.ReadLine()</code></pre>
+</div>
+<div>
+<pre><code class="language-fsharp"><span class="keyword">let</span> str = Console.ReadLine()</code></pre>
+</div>
+<div>
+<pre><code class="language-cpp"><span class="keyword">auto</span> str = Console::ReadLine();</code></pre>
+</div>
+</div>
+<p>数値を入力したい場合には、さらに <code>Parse</code> というものを使って、以下のようにします。</p>
+<div class="tab-container">
+<ul>
+	<li>C#</li>
+	<li>VB</li>
+	<li>F#</li>
+	<li>C++</li>
+</ul>
+<div>
+<pre><code class="language-csharp"><span class="keyword">var</span> n    = <span class="keyword">int</span>.Parse(Console.ReadLine());  <span class="comment">// ユーザーの入力した整数を読み込む</span>
+<span class="keyword">var</span> x = <span class="keyword">double</span>.Parse(Console.ReadLine()); <span class="comment">// ユーザーの入力した実数を読み込む</span></code></pre>
+</div>
+<div>
+<pre><code class="language-vbnet"><span class="keyword">Dim</span> n = <span class="keyword">Integer</span>.Parse(Console.ReadLine())
+<span class="keyword">Dim</span> x = <span class="keyword">Double</span>.Parse(Console.ReadLine())</code></pre>
+</div>
+<div>
+<pre><code class="language-fsharp"><span class="keyword">let</span> n = Int32.Parse(Console.ReadLine())
+<span class="keyword">let</span> x = Double.Parse(Console.ReadLine())</code></pre>
+</div>
+<div>
+<pre><code class="language-cpp"><span class="keyword">auto</span> n = Int32::Parse(Console::ReadLine());
+<span class="keyword">auto</span> x = <span class="keyword">double</span>::Parse(Console::ReadLine());</code></pre>
+</div>
+</div>
+<p><code>int</code> や <code>double</code> については「<a href="/study/csharp/start/st_variable/">変数と式</a>」で、
+<code>var</code> については「<a href="/study/csharp/start/st_variable/#infer">型推論</a>」で、
+<code>Console</code> については「<a href="/study/csharp/structured/st_library/">ライブラリ</a>」で説明します。</p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="output"></a>出力</h2>
+<p>計算結果などを出力したい場合には <em>
+<code>Console.Write</code>
+</em> というものを使います。</p>
+<div class="tab-container">
+<ul>
+	<li>C#</li>
+	<li>VB</li>
+	<li>F#</li>
+	<li>C++</li>
+</ul>
+<div>
+<pre><code class="language-csharp"><span class="keyword">int</span> m = <span class="number">1</span>, n = <span class="number">3</span>;
+Console.Write(<span class="string">&quot;m = {0}, n = {1}&quot;</span>, m, n); <span class="comment">// 文字や数値の出力</span></code></pre>
+</div>
+<div>
+<pre><code class="language-vbnet"><span class="keyword">Dim</span> m = 1, n = 3
+Console.Write(<span class="string">&quot;m = {0}, n = {1}&quot;</span>, m, n)</code></pre>
+</div>
+<div>
+<pre><code class="language-fsharp"><span class="keyword">let</span> m, n = 1, 3
+Console.Write(<span class="string">&quot;m = {0}, n = {1}&quot;</span>, m, n)</code></pre>
+</div>
+<div>
+<pre><code class="language-cpp"><span class="keyword">int</span> m = 1, n = 3;
+Console::Write(<span class="string">&quot;m = {0}, n = {1}&quot;</span>, m, n);</code></pre>
+</div>
+</div>
+<p>この出力の仕方はフォーマット出力といって、
+<code>{0}</code> とある場所に <code>m</code> の値が、
+<code>{1}</code> とある場所に <code>n</code> の値が書き込まれます。
+例えば上述のサンプルの出力結果は以下のようなものになります。</p>
+<pre><code class="language-console">m = 1, n = 3</code></pre>
+<h5 id="section-5"><a id="sec-generated-title-5"></a>サンプル</h5>
+<div class="tab-container">
+<ul>
+	<li>C#</li>
+	<li>VB</li>
+	<li>F#</li>
+	<li>C++</li>
+</ul>
+<div>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// 入力を促すメッセージの表示して、文字を入力してもらう</span>
+        Console.Write(<span class="string">&quot;あなたのお名前は？ : &quot;</span>);
+        <span class="keyword">var</span> name = Console.ReadLine();
+
+        <span class="comment">// 入力を促すメッセージの表示して、数値を入力してもらう</span>
+        Console.Write(<span class="string">&quot;あなたのお年は？   : &quot;</span>);
+        <span class="keyword">var</span> age = <span class="keyword">int</span>.Parse(Console.ReadLine());
+
+        <span class="comment">// メッセージの出力</span>
+        Console.WriteLine(<span class="string">&quot;{0} ({1}歳) さん、ようこそお越しくださいました。&quot;</span>, name, age);
+    }
+}</code></pre>
+</div>
+<div>
+<pre><code class="language-vbnet"><span class="keyword">Module</span> Program
+
+    <span class="keyword">Sub</span> Main()
+        Console.Write(<span class="string">&quot;あなたのお名前は？ : &quot;</span>)
+        <span class="keyword">Dim</span> name = Console.ReadLine()
+
+        Console.Write(<span class="string">&quot;あなたのお年は？   : &quot;</span>)
+        <span class="keyword">Dim</span> age = <span class="keyword">Integer</span>.Parse(Console.ReadLine())
+
+        Console.WriteLine(<span class="string">&quot;{0} ({1}歳) さん、ようこそお越しくださいました。&quot;</span>, name, age)
+    <span class="keyword">End</span> <span class="keyword">Sub</span>
+
+<span class="keyword">End</span> <span class="keyword">Module</span></code></pre>
+</div>
+<div>
+<pre><code class="language-fsharp"><span class="keyword">open</span> System
+
+Console.Write(<span class="string">&quot;あなたのお名前は？ : &quot;</span>)
+<span class="keyword">let</span> name = Console.ReadLine()
+
+Console.Write(<span class="string">&quot;あなたのお年は？   : &quot;</span>)
+<span class="keyword">let</span> age = Int32.Parse(Console.ReadLine())
+
+Console.WriteLine(<span class="string">&quot;{0} ({1}歳) さん、ようこそお越しくださいました。&quot;</span>, name, age)</code></pre>
+</div>
+<div>
+<pre><code class="language-cpp">Console::Write(<span class="string">&quot;あなたのお名前は？ : &quot;</span>);
+<span class="keyword">auto</span> name = Console::ReadLine();
+
+Console::Write(<span class="string">&quot;あなたのお年は？   : &quot;</span>);
+<span class="keyword">auto</span> age = <span class="keyword">int</span>::Parse(Console::ReadLine());
+
+Console::WriteLine(<span class="string">&quot;{0} ({1}歳) さん、ようこそお越しくださいました。&quot;</span>, name, age);</code></pre>
+</div>
+</div>
+<pre><code class="language-console">あなたのお名前は？ : tiyu
+あなたのお年は？   : 12
+tiyu (12歳) さん、ようこそお越しくださいました。</code></pre>
+<h2 id="gui"><a id="sec-generated-title-6"></a> <a id="gui"></a>GUI 雛形プログラム</h2>
+<p>GUI プログラム（Windows アプリ）を使って演習問題（の一部）を解いてもらうために、
+演習用 GUI プログラムの雛形を用意しました。</p>
+<p><a href="https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Old/UserInputSample">GUI 雛形プログラム1</a></p>
+<p>プログラムは図1に示すような見た目で、
+A ～ E のテキストボックスに値を入力し、
+[実行] ボタンを押してプログラムを実行します。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/InputGui.png"><img src="/assets/media/ufcpp2000/csharp/fig/InputGui.png" alt="GUI 雛形プログラム1" /></a></p>
+<figcaption>GUI 雛形プログラム1</figcaption>
+</figure>
+<p>GUI プログラムの大部分は、この時点までの知識では説明できませんが、
+今はとりあえず、分からない大部分は無視してもらって、
+InputData.cs 中の「TODO: ↓ここに演習問題の回答コードを書いてください」というコメントのある部分だけ書き換えてください。</p>
+<p><span class="expand-button" title="展開/折畳">（旧バージョン）</span></p>
+<div class="expand-panel" title="（旧バージョン）"><p>(※旧ウェブサイトから未移植につきコードなし)</p>
+<p>プログラムは図1に示すような見た目で、
+A ～ E のテキストボックスに値を入力し、
+[Run] ボタンを押してプログラムを実行します。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/Form1.png"><img src="/assets/media/ufcpp2000/csharp/fig/Form1.png" alt="GUI 雛形プログラム1" /></a></p>
+<figcaption>GUI 雛形プログラム1</figcaption>
+</figure>
+<p>GUI プログラムの大部分は、この時点までの知識では説明できませんが、
+今はとりあえず、分からない大部分は無視してもらって、
+Form1.cs 中の「TODO: ↓ここに演習問題の回答コードを書いてください」というコメントのある部分だけ書き換えてください。</p></div>
+<p>演習問題の多くは基本的に CUI プログラム（コマンドプロンプト）を前提に作っていますが、
+値を入力してもらって、何らかの計算を行って、結果を出力するタイプの演習問題には、
+この雛形プログラムを利用できます。</p>
+<h2 id="section-6"><a id="exercise"></a>演習問題</h2>
+<h3 id="section-7"><a id="exercise-console1"></a>問題 1</h3>
+<p>Console.Write を用いて、自分の名前を画面に表示せよ。</p>
+<h4 id="section-8">解答例 1</h4>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Sample
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    Console.Write(<span class="string">&quot;岩永信之&quot;</span>);
+  }
+}</code></pre>
+<h3 id="section-9"><a id="exercise-console2"></a>問題 2</h3>
+<p>Console.ReadLine を用いて文字列を1行読み込み、
+Console.Write を用いて読んだ文字列をそのまま鸚鵡返しするプログラムを作成せよ。</p>
+<p>おまけ： 1度読み込んだ文字列を2度ずつ鸚鵡返しするものを作成せよ。</p>
+<h4 id="section-10">解答例 1</h4>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Sample
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="keyword">string</span> line = Console.ReadLine();
+    Console.Write(line);
+  }
+}</code></pre>
+<h4 id="section-11">解答例 2</h4>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Sample
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="keyword">string</span> line = Console.ReadLine();
+    Console.Write(line);
+    Console.Write(line);
+  }
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/start/">&#x57FA;&#x790E;</a></li><li><a href="/study/csharp/start/st_basis/">C#&#x306E;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x57FA;&#x672C;&#x69CB;&#x9020;</a></li><li><a href="/study/csharp/start/st_compile/">&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x4F5C;&#x6210;&#x30FB;&#x5B9F;&#x884C;</a></li><li><a href="/study/csharp/start/st_comment/">&#x30B3;&#x30E1;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/start/st_variable/">&#x5909;&#x6570;&#x3068;&#x5F0F;</a></li><li><a href="/study/csharp/start/misc_identifier/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x540D;&#x306B;&#x4F7F;&#x3048;&#x308B;&#x6587;&#x5B57;</a></li><li><a href="/study/csharp/start/misc_unicode/">[&#x96D1;&#x8A18;] C# &#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x3068; Unicode</a></li><li><a href="/study/csharp/start/st_embeddedtype/">&#x7D44;&#x8FBC;&#x307F;&#x578B;</a></li><li><a href="/study/csharp/start/stnumber/">&#x6570;&#x5024;</a></li><li><a href="/study/csharp/start/st_string/">&#x7279;&#x6B8A;&#x306A;&#x6587;&#x5B57;&#x5217;&#x30EA;&#x30C6;&#x30E9;&#x30EB;</a></li><li><a href="/study/csharp/start/improvedinterpolatedstring/">C# 10.0 &#x306E;&#x88DC;&#x9593;&#x6587;&#x5B57;&#x5217;&#x306E;&#x6539;&#x5584;</a></li><li><a href="/study/csharp/start/st_operator/">&#x7D44;&#x8FBC;&#x307F;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/study/csharp/start/st_cast/">&#x7D44;&#x8FBC;&#x307F;&#x578B;&#x5909;&#x63DB;</a></li><li><a href="/study/csharp/start/sp_checked/">&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30D5;&#x30ED;&#x30FC;&#x306E;&#x30C1;&#x30A7;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/start/sp_const/">&#x5B9A;&#x6570;</a></li><li><a href="/study/csharp/start/sp3_inference/">&#x578B;&#x63A8;&#x8AD6;(&#x6697;&#x9ED9;&#x7684;&#x578B;&#x4ED8;&#x3051;)&#x3068;&#x533F;&#x540D;&#x578B;</a></li><li><a href="/study/csharp/start/sp3_var/">[&#x96D1;&#x8A18;] &#x578B;&#x63A8;&#x8AD6;&#x306E;&#x662F;&#x975E;</a></li><li><a href="/study/csharp/start/st_scope/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x306E;&#x30B9;&#x30B3;&#x30FC;&#x30D7;&#x3068;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x5BFF;&#x547D;</a></li><li><a href="/study/csharp/start/misctyperesolution/">[&#x96D1;&#x8A18;] &#x578B;&#x306E;&#x6C7A;&#x5B9A;</a></li><li><a href="/study/csharp/start/miscreservedattribute/">[&#x96D1;&#x8A18;] &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x306B;&#x5F71;&#x97FF;&#x3092;&#x53CA;&#x307C;&#x3059;&#x5C5E;&#x6027;</a></li><li><a href="/study/csharp/start/definiteassignment/">[&#x96D1;&#x8A18;] &#x660E;&#x78BA;&#x306A;&#x4EE3;&#x5165;&#x30EB;&#x30FC;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x96C6;&#x5408;&#x306E;&#x516C;&#x7406;&#x7CFB; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/math/set/axiom/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">集合の公理系</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="axiom"></a>公理系</h2>
+<p>公理とは「数学の理論体系で定理を証明するにあたって、前提として仮定するいくつかの事柄」を指します。
+どのような理論体系にも公理、すなわち「前提とする仮定」が存在します。
+もちろん、この「仮定」が間違っていれば、理論全体が間違いになりますが、
+そもそもの仮定が正しいのかどうかを証明するすべはありません。</p>
+<p>正しいかどうか分からないものは少ないに越したことはありません。
+したがって、公理と言うものは必要最小限である必要があります。
+極力少ない仮定から出発して、より多くの結論を導き出せるものこそが優れた理論であると言えます。</p>
+<p>では、自然数や実数などの、数学の集合を構築するためには、
+最低限どのような公理が必要になるのでしょうか。
+自然数という集合の存在そのものや、1＋1＝2という計算法則は公理として仮定しなければいけないのでしょうか。
+それとも、もっとシンプルな公理から出発して証明できるものなのでしょうか。</p>
+<p>結論から言うと、自然数などの集合はこれから説明していくような、
+たかだか10個程度の公理系から構築することができます。
+公理系にもさまざまな決め方がありますが、
+現在、一般的に使われている集合の公理系は ZFC と呼ばれる公理系です。</p>
+<h2 id="zfc"><a id="sec-generated-title-2"></a> <a id="zfc"></a>ZFC公理系</h2>
+<p>まず、ZFC公理系の前に、Zermelo、Fraenkelの2名により体系化された<strong id="zf" class="keyword">ZF公理系</strong>というものがあります。</p>
+<table summary="">
+
+	<tr>
+		<th>名前</th>
+		<th>式</th>
+		<th>説明</th>
+	</tr>
+	<tr>
+		<td><p><strong id="extensionality" class="keyword">外延性公理</strong>（Axiom of extensionality）</p></td>
+		<td><p>∀a∀b[a=b⇔∀x(x∈a⇔x∈b)]</p></td>
+		<td><p>二つの集合が等しいというのと、それぞれの集合に含まれる元が全て等しいというのは同じである。（等値性の定義）</p></td>
+	</tr>
+	<tr>
+		<td><p><strong id="empty" class="keyword">空集合の存在公理</strong>（Axiom of empty set）</p></td>
+		<td><p>∃a∀x[￢(x∈a)]</p></td>
+		<td><p> という集合（要素を持たない集合、空集合）が存在する。</p></td>
+	</tr>
+	<tr>
+		<td><p><strong id="pair" class="keyword">対の公理</strong>（Axiom of pairing）</p></td>
+		<td><p>∀a∀b∃c∃x(x∈c⇔x=a∨x=b)</p></td>
+		<td><p>x, y が集合であるとき、{x, y} という集合（「対（もしくは非順序対）」と呼ぶ）が存在する。</p></td>
+	</tr>
+	<tr>
+		<td><p><strong id="union" class="keyword">合併集合の公理</strong>（Axiom of union）</p></td>
+		<td><p>∀a∃b∀x[x∈b⇔∃c(c∈a∧x∈c)]</p></td>
+		<td><p>A を集合とすると、A の全ての元の合併 B、つまり B の元はすべて A の元の元となるような集合が存在する。</p></td>
+	</tr>
+	<tr>
+		<td><p><strong id="infinity" class="keyword">無限集合の公理</strong>（Axiom of infinity）</p></td>
+		<td><p>∃a[φ∈a∧∀x(x∈a⇒x+∈a]</p></td>
+		<td><p x="">空集合を含み、またある元 x を含むなら、x ∪  も含むような集合が存在する。 x+ = x∪ … 「後継ぎ」と呼ぶ。</p></td>
+	</tr>
+	<tr>
+		<td><p><strong id="power" class="keyword">ベキ集合の公理</strong>（Axiom of power set）</p></td>
+		<td><p>∀a∃b∀x(x∈b⇔x⊆a)</p></td>
+		<td><p>どんな集合 x に対しても x の部分集合全てからなるような集合が存在する。</p></td>
+	</tr>
+	<tr>
+		<td><p><strong id="replacement" class="keyword">置換公理</strong>（Axiom of replacement）</p></td>
+		<td><p>∀x[x∈a⇒∀y∀z(P(a,y)∧P(x,y)⇒y=z)]⇒∃b∀u[u∈b⇔∃x(x∈a∧P(x,y))]</p></td>
+		<td><p>関数の、集合による値域は集合である；関数はここでは、論理式 P(x, y) で、どんな a に対しても「P(a, y) かつ P(a, z) なら y = z」が結論されるようなものである。</p></td>
+	</tr>
+	<tr>
+		<td><p><strong id="regularity" class="keyword">正則性の公理</strong>（Axiom of regularity）</p></td>
+		<td><p>∀a[a≠φ⇒∃b(b∈a∧a∩b=φ)]</p></td>
+		<td><p>X が空集合でなければ、ある X の元 Y があって、X ∩ Y = （交わらない）である。</p></td>
+	</tr>
+</table>
+<p>そして、ZF公理系に以下の定理を加えたものを<strong id="zfc" class="keyword">ZFC公理系</strong>(Zermelo-Fraenkel に、公理の名前（Choice）の頭文字を加えたもの)と呼びます。</p>
+<table summary="">
+
+	<tr>
+		<th>名前</th>
+		<th>式</th>
+		<th>説明</th>
+	</tr>
+	<tr>
+		<td><p><strong id="choice" class="keyword">選択公理</strong>（Axiom of choice）</p></td>
+		<td><p>∀a∃f[f∈(∪a)^a∧∀x(x∈a∧x≠φ⇒f(x)∈x)]</p></td>
+		<td><p>X をそのどの元も互いに交わらないような空集合でない集合とするとき、X の各元から一つずつとってきたような集合が存在する。</p></td>
+	</tr>
+</table>
+<p>ZF 公理系のうちで、置換公理は以下に挙げる分出公理の変わりに後から導入されたものです。
+（置換公理の方が強い条件で、分出公理は置換公理から導き出すことが出来る。）</p>
+<table summary="">
+
+	<tr>
+		<th>名前</th>
+		<th>式</th>
+		<th>説明</th>
+	</tr>
+	<tr>
+		<td><p><strong id="comprehension" class="keyword">分出公理</strong>（Axiom of comprehension）</p></td>
+		<td><p>∀a∃b∀x[x∈b⇔x∈a∧P(x)]</p></td>
+		<td><p>任意の集合 A とある集合に関する性質 P(X) に対して A の元で、P(x) を満たすような x 全体は集合をなす。</p></td>
+	</tr>
+</table>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/math/set/">&#x96C6;&#x5408;&#x8AD6;</a></li><li><a href="/study/math/set/set/">&#x96C6;&#x5408;</a></li><li><a href="/study/math/set/map/">&#x5199;&#x50CF;</a></li><li><a href="/study/math/set/natural/">&#x81EA;&#x7136;&#x6570;</a></li><li><a href="/study/math/set/integer/">&#x6574;&#x6570;</a></li><li><a href="/study/math/set/rational/">&#x6709;&#x7406;&#x6570;</a></li><li><a href="/study/math/set/real/">&#x5B9F;&#x6570;</a></li><li><a href="/study/math/set/complex-s_complex/">&#x8907;&#x7D20;&#x6570;</a></li><li><a href="/study/math/set/cardinality/">&#x6FC3;&#x5EA6;</a></li><li><a href="/study/math/set/metric/">&#x8DDD;&#x96E2;</a></li><li><a href="/study/math/set/topology/">&#x4F4D;&#x76F8;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

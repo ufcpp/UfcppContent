@@ -1,0 +1,183 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 3/21: Design Notes&#x4E00;&#x6589;&#x30A2;&#x30C3;&#x30D7;&#x30ED;&#x30FC;&#x30C9;&#x796D;&#x308A; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2018/3/pickuproslyn0321/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2018-03-22T00:13:56">2018-03-22</time></span><span>更新: <time datetime="2018-03-22T00:51:10">2018-03-22</time></span></div><h1 id="roslyn-321-design-notes">ピックアップRoslyn 3/21: Design Notes一斉アップロード祭り</h1>
+<p>昨日なんですけども、2018年に入ってからのC# Language Design Meetingの議事録(design notes)が一斉にアップロードされました。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/tree/master/meetings/2018">C# Language Design Notes for 2018</a></li>
+</ul>
+<p>読むの大変だった… 春分の日でよかった…</p>
+<p>一通りなんとなくは目を通したんですけど、ブログ1回の内容じゃなさすぎるので、少しずつネタにしていこうかと。</p>
+<h2 id="section">ここ数時の状況</h2>
+<p>2週間前に<a href="/blog/2018/3/vs15_6/">Visual Studio 15.6が正式リリース</a>されて、
+その後ほどなくして15.7のプレビュー1もリリースされたわけですけども。</p>
+<p>このプレビュー1の時点では 15.7 に C# 7.3 は入っていなかったわけですけども、
+<a href="https://github.com/dotnet/roslyn/milestone/32">roslynリポジトリの15.7マイルストーン</a>を見るとだいぶC# 7.3がらみの作業がマージされている状況です。
+作業進捗を表す<a href="https://github.com/dotnet/roslyn/blob/master/docs/Language%20Feature%20Status.md">Language Feature Status</a>のページもつい5日前に更新されて、C# 7.3のところの大半の機能が Merged になりました。</p>
+<p>要するに、15.7向けのC# 7.3の最低限の作業が完了したんでしょうね。
+あとは正式リリースに向けてバグ出し・バグ修正するフェーズに。
+おそらく近々15.7プレビューにC# 7.3対応が来るのではないかと思われます。</p>
+<p>ちなみに、<a href="https://dotnet.myget.org/gallery/roslyn">roslynのナイトリービルド</a>に挙がっているVSIXやNuGetパッケージをインストールすれば、<a href="https://gist.github.com/ufcpp/b4b505077f589235afb169652e10ee8d">結構ちゃんとC# 7.3が使えていました</a>。</p>
+<p>そして、作業が落ち着いたタイミングで毎度やってくる「一斉投稿」が昨日来たと…</p>
+<h2 id="section-1">最近採用が決まった提案</h2>
+<p>とりあえず今日はこの話題のみ。
+<a href="https://github.com/dotnet/csharplang/blob/master/meetings/2018/LDM-2018-03-19.md">3/19のDesign Note</a>で今後取り組む作業の選別をしたようで、
+いろんな提案issueが新たにChampioned(将来取り組むこと自体は決定)に昇格しています。</p>
+<p>取り組み時期はたいてい「8.X」。「8.0ですらなくさらにその後」という意味で、実際のところ「未定」と大差ないやつです。
+そんな状態のものなので、具体的な文法はこれからまだだいぶ変わると思います。</p>
+<h3 id="default-in-deconstruction">default in deconstruction</h3>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/1394">Champion: allow 'default' in deconstruction #1394</a></li>
+</ul>
+<p>↓みたいな書き方を認めてほしいというもの。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> x;
+<span class="keyword">int</span> y;
+(x, y) = <span class="keyword">default</span>; <span class="comment">// x = default; y = default; と同じ意味</span></code></pre>
+<h3 id="and-or-and-not">and, or, and not パターン</h3>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/1350">Champion &quot;and, or, and not patterns&quot; #1350</a></li>
+</ul>
+<p>↓みたいに、パターン マッチングで条件のところに and, or, not を書けるようにしたいとのこと。</p>
+<pre><code class="language-csharp"><span class="keyword">switch</span> (o)
+{
+    <span class="keyword">case</span> <span class="number">1</span> or <span class="number">2</span>:
+    <span class="keyword">case</span> Point(<span class="number">0</span>, <span class="number">0</span>) or <span class="keyword">null</span>:
+    <span class="keyword">case</span> Point(<span class="keyword">var</span> x, <span class="keyword">var</span> y) and <span class="keyword">var</span> p:
+    <span class="keyword">case</span> not <span class="keyword">string</span> _:
+}</code></pre>
+<h3 id="section-2">型引数の部分的な型推論</h3>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/1349">Champion: &quot;Partial Type Inference&quot; #1349</a></li>
+</ul>
+<p>いくつか文法案は出ているものの、そのうちの1つで書くと、↓みたいな感じ。</p>
+<pre><code class="language-csharp">M&lt;<span class="keyword">int</span>, &gt;(args); <span class="comment">// 2個目の型引数だけは args から推論できて、1個目は無理な時、こう書けるようにしたい</span></code></pre>
+<h3 id="is-null">制約なしの型引数に対して is null を認めたい</h3>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/1284">Champion &quot;permit <code>t is null</code> for unconstrained type parameter&quot; #1284</a></li>
+</ul>
+<p>ちょっと説明しにくいんですけど、以下のような感じ。<code>where T : class</code>なしの<code>T t</code>に対して、<code>t is null</code>を認めたい。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> M(<span class="keyword">string</span> s)
+{
+    <span class="keyword">if</span> (s <span class="keyword">is</span> <span class="keyword">null</span>) { } <span class="comment">// OK。クラスだし、null チェックしたい</span>
+}
+
+<span class="keyword">void</span> M(<span class="keyword">int</span> x)
+{
+    <span class="keyword">if</span> (x == <span class="keyword">null</span>) { } <span class="comment">// 警告は出るけど別にエラーにはならない。常にfalse</span>
+    <span class="comment">// ↑あんまり良い話ではないけど、default とかジェネリクスがなかった頃の名残っぽい</span>
+}
+
+<span class="keyword">void</span> M1&lt;T&gt;(T t)
+    <span class="keyword">where</span> T : <span class="keyword">class</span>
+{
+    <span class="keyword">if</span> (t <span class="keyword">is</span> <span class="keyword">null</span>) { } <span class="comment">// OK。クラス制約あるし。</span>
+}
+
+<span class="keyword">void</span> M2&lt;T&gt;(T t)
+{
+    <span class="keyword">if</span> (t <span class="keyword">is</span> <span class="keyword">null</span>) { } <span class="comment">// 今は NG。</span>
+    <span class="comment">// とはいえ、構造体の == null が OK なんだから別にこれも認めていいでしょ。常にfalseで</span>
+}</code></pre>
+<h3 id="using">暗黙的なスコープのusingステートメント</h3>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/1174">Champion &quot;Implicitly scoped using statement&quot; #1174</a></li>
+</ul>
+<p>以下のような、<code>using</code>したいリソースがたくさんあるときのネスト問題への対処。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> (<span class="keyword">var</span> d = SomeDisposable())
+{
+    <span class="comment">// ここのネストが1段深くなるのがしんどい時がある</span>
+}
+
+<span class="comment">// 特に、多段の時。最後の1個以外は {} を省略できるとはいえ</span>
+<span class="keyword">using</span> (<span class="keyword">var</span> d1 = SomeDisposable())
+<span class="keyword">using</span> (<span class="keyword">var</span> d2 = SomeDisposable())
+<span class="keyword">using</span> (<span class="keyword">var</span> d3 = SomeDisposable())
+<span class="keyword">using</span> (<span class="keyword">var</span> d4 = SomeDisposable())
+<span class="keyword">using</span> (<span class="keyword">var</span> d5 = SomeDisposable())
+{
+}</code></pre>
+<p>以下のような書き方を予定。</p>
+<pre><code class="language-csharp">{
+    <span class="comment">// 変数宣言の前に using を付けることで、その変数のスコープを using のスコープにする</span>
+    <span class="keyword">using</span> <span class="keyword">var</span> d1 = SomeDisposable();
+    <span class="keyword">using</span> <span class="keyword">var</span> d2 = SomeDisposable();
+    <span class="keyword">using</span> <span class="keyword">var</span> d3 = SomeDisposable();
+    <span class="keyword">using</span> <span class="keyword">var</span> d4 = SomeDisposable();
+    <span class="keyword">using</span> <span class="keyword">var</span> d5 = SomeDisposable();
+
+    <span class="comment">// Dispose が走るのは、変数がスコープを抜ける時</span>
+    <span class="comment">// = このブロックから抜けるとき</span>
+}</code></pre>
+<h3 id="defer">defer ステートメント</h3>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/1398">Champion &quot;defer statement&quot; #1398</a></li>
+</ul>
+<p>Swift にあるやつ。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> Main()
+{
+    defer
+    {
+        Console.WriteLine(<span class="string">&quot;関数を抜ける時に呼ばれる&quot;</span>); <span class="comment">// 例外があっても常に</span>
+    }
+
+    Console.WriteLine(<span class="string">&quot;こっちの方が先に表示される&quot;</span>);
+}</code></pre>
+<p>「一回り外側のブロックに影響する」っていう点が気持ち悪くて据え置きになっていたんですが…
+前節の<code>using var</code>を認めてしまった以上、それを理由にリジェクトできなくなった感じ。</p>
+<p>前節の<code>using var</code>を使って、以下のように代用できないこともないんですが、
+これだとラムダ式のオーバーヘッド(デリゲートのヒープ確保とインライン展開の阻害)が掛かるのが嫌だそうです。</p>
+<pre><code class="language-csharp">    <span class="keyword">using</span> <span class="keyword">var</span> d = <span class="keyword">new</span> ActionDisposable(() =&gt;
+    {
+        Console.WriteLine(<span class="string">&quot;関数を抜ける時に呼ばれる&quot;</span>);
+    });
+
+    Console.WriteLine(<span class="string">&quot;こっちの方が先に表示される&quot;</span>);</code></pre>
+<h3 id="positional-patterns">ユーザー定義の位置指定パターン(positional patterns)</h3>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/1047">Champion &quot;User-defined Positional Patterns&quot; #1047</a></li>
+</ul>
+<p><a href="https://github.com/dotnet/csharplang/blob/master/proposals/patterns.md">パターン マッチング</a>、C# 7.0時点では「型パターン」とか「定数パターン」とか、一部分だけが実装されました。
+残りの大部分は、現状、C# 8.0で提供する予定になっています。</p>
+<p>そんな中、さらに C# 8.0からも外れて「8.X」にしようという風に外されたのがこいつ。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> Cartesian
+{
+    <span class="keyword">public</span> <span class="keyword">double</span> X;
+    <span class="keyword">public</span> <span class="keyword">double</span> Y;
+    <span class="keyword">public</span> Cartesian(<span class="keyword">double</span> x, <span class="keyword">double</span> y) =&gt; (X, Y) = (x, y);
+
+    <span class="comment">// こいつを使った positional パターンは C# 8.0 で入る予定</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> Deconstruct(<span class="keyword">out</span> <span class="keyword">double</span> x, <span class="keyword">out</span> <span class="keyword">double</span> y) =&gt; (x, y) = (X, Y);
+}
+
+<span class="keyword">class</span> Polar
+{
+    <span class="comment">// こんな感じの定義を書くことで、Cartesian p を p is Polar(var r, var t) みたいなパターンに掛けることができる仕様がある</span>
+    <span class="comment">// が、こいつは C# 8.0 では入らない</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> <span class="keyword">operator</span> <span class="keyword">is</span>(Cartesian p, <span class="keyword">out</span> <span class="keyword">double</span> radius, <span class="keyword">out</span> <span class="keyword">double</span> theta)
+    {
+        radius = Math.Sqrt(p.X * p.X + p.Y * p.Y);
+        theta = Math.Atan2(p.Y, p.X);
+    }
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2018/3/">3&#x6708;</a></li><li><a href="/blog/2018/3/upload-cszip/">cszip&#x3001;nuget.org &#x306B;&#x4E0A;&#x3052;&#x307E;&#x3057;&#x305F;</a></li><li><a href="/blog/2018/3/vs15_6/">Visual Studio 15.6 &#x30EA;&#x30EA;&#x30FC;&#x30B9;</a></li><li><a href="/blog/2018/3/jitoptimization2_1/">.NET Core 2.1 &#x306E; JIT &#x6700;&#x9069;&#x5316;&#x306E;&#x8A71;</a></li><li><a href="/blog/2018/3/pickuproslyn0323/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 3/23: no-allocation&#x975E;&#x540C;&#x671F;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x3001;&#x6700;&#x8FD1;&#x306E; Utf8String</a></li><li><a href="/blog/2018/3/ranges/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 3/24: Ranges</a></li><li><a href="/blog/2018/3/pickuproslyn0331/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 3/31: C# 7.3</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,169 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>C# 5.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/cheatsheet/ap_ver5/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="c-5.0">C# 5.0 の新機能</h1>
+<h2 id="c-5.0-1"><a id="sec-generated-title-1"></a> <a id="ver5"></a>C# 5.0</h2>
+<div class="version version5">Ver. 5.0</div>
+<table>
+<tr>
+<th>リリース時期</th>
+<td>2012/8</td>
+</tr>
+<tr>
+<th>同世代技術</th>
+<td>
+<ul>
+<li>Visual Studio 2012</li>
+<li>.NET Framework 4.5</li>
+<li>Visual Basic 11</li>
+<li>Windows Runtime</li>
+<li>.NET Core Profile (現在の.NET Coreの原型)</li>
+</td>
+</tr>
+<tr>
+<th>要約・目玉機能</ht>
+<td>
+<ul>
+<li>非同期メソッド</li>
+</ul>
+</td>
+</tr>
+</table>
+<p>2010年10月、PDC 10 にて C# 5.0 がらみの情報が少し。</p>
+<p>.NET 4 以降、ライブラリもツールも、拡張という形で小出しにされるようになりましたが、
+言語機能も多分に漏れず、小出しに出て来ることになりました。
+PDC 10 では、「C# 5.0 / VB 11」という形での発表ではなく、
+「Asynchronous Programming for C# and Visual Basic」という名前で、非同期処理に関する部分だけが公開されました。</p>
+<p>2011年9月の BUILD でも、少し C# 5.0 の追加機能、Caller Info 属性についての情報が公開されました。</p>
+<h2 id="section"><a id="sec-generated-title-2"></a> <a id="async"></a>非同期処理</h2>
+<p>async/await キーワードを使うことで、非同期処理を簡単に行えるようになります。</p>
+<ul>
+<li>「<a href="/study/csharp/async/sp5_async/">非同期処理</a>」</li>
+</ul>
+<p>非同期処理には、処理の内容をシーケンス図やフローチャートに起こすと、同期の時と全く同じになるものがあります。
+このようなタイプのものに対しては、async/await を使うことによって、同期処理とほぼ同じコードで非同期処理を行えます。</p>
+<h2 id="caller-info"><a id="sec-generated-title-3"></a> <a id="CallerInfo"></a>Caller Info 属性</h2>
+<p>C++ でいうところの <strong>FILE</strong> や <strong>LINE</strong> マクロに相当するデバッグ用診断を実現するための機能です。</p>
+<p>以下のように、メソッドの引数に属性をつけておくと、その引数に対して、コンパイラーが診断情報を渡してくれます。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> Trace
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> WriteLine(<span class="keyword">string</span> message,
+        [CallerFilePath] <span class="keyword">string</span> file = <span class="string">&quot;&quot;</span>,
+        [CallerLineNumber] <span class="keyword">int</span> line = <span class="number">0</span>,
+        [CallerMemberName] <span class="keyword">string</span> member = <span class="string">&quot;&quot;</span>)
+    {
+        <span class="keyword">var</span> s = <span class="keyword">string</span>.Format(<span class="string">&quot;{0}:{1} - {2}: {3}&quot;</span>, file, line, member, message);
+        Console.WriteLine(s);
+    }
+}</code></pre>
+<ul>
+<li><p>CallerFilePath: 呼び出し元のファイル名。</p>
+</li>
+<li><p>CallerLineNumber: 呼び出し元の行番号。</p>
+</li>
+<li><p>CallerMemberName: 呼び出し元のメンバー名（メソッド名、プロパティ名、イベント名等々）。</p>
+</li>
+</ul>
+<p>ちなみに、コンパイル結果的には、定数やオプション引数と同様、コンパイル時のリテラル埋め込みになります。（実行時のコストは 0。ファイル名などを直接手書きで埋め込んだ場合と全く同じ結果になる。）</p>
+<p>イテレーター ブロックや非同期メソッド内から呼び出しても、ちゃんとメソッド名を拾えます。
+また、匿名関数（ラムダ式や匿名メソッド式）中で呼び出した場合も、匿名関数を書いているメソッドの名前が使われます。
+（これらの機能は内部的に別のクラスやメソッドを生成していますが、そのコンパイラー生成名ではなく、元のメソッド名を拾います。）</p>
+<p>詳しくは「<a href="/study/csharp/start/miscreservedattribute/#CallerInfo">呼び出し元情報(caller info)</a>」で説明します。</p>
+<h2 id="foreach"><a id="sec-generated-title-4"></a> <a id="foreach"></a>foreach の仕様変更</h2>
+<p>C# 5.0 で、foreach の仕様が少しだけ変わるそうです。
+（一応、破壊的変更になります（既存のコードが動かなくなる可能性が0ではない）。）</p>
+<p>C# 4.0 までは、foreach ステートメントは以下のように展開されていました。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> ForeachSample&lt;T&gt;(IEnumerable&lt;T&gt; data)
+{
+    <span class="comment">// 展開前</span>
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> data)
+    {
+        Console.WriteLine(x);
+    }
+
+    <span class="comment">// 展開後</span>
+    <span class="keyword">using</span> (<span class="keyword">var</span> e = data.GetEnumerator())
+    {
+        T x;
+        <span class="keyword">while</span>(e.MoveNext())
+        {
+            x = e.Current;
+            Console.WriteLine(x);
+        }
+    }
+}</code></pre>
+<p>これで何が嫌かというと、ラムダ式で、foreach のループ変数（上記の例でいう x）をキャプチャしたときの挙動がいまいちなことです。
+例えば、以下のコードを実行したとします。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> data = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> };
+
+Action a = <span class="keyword">null</span>;
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> data)
+{
+    a += () =&gt; Console.WriteLine(x);
+}
+
+a();</code></pre>
+<p>C# 4.0 まででは、以下のような結果が得られる仕様になっていました。</p>
+<pre><code class="language-console">5
+5
+5
+5
+5</code></pre>
+<p>C# 5.0 では foreach の展開結果が以下のように変わる予定です。ループ変数の位置が、while ループの中に移動しました。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> ForeachSample&lt;T&gt;(IEnumerable&lt;T&gt; data)
+{
+    <span class="comment">// 展開前</span>
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> data)
+    {
+        Console.WriteLine(x);
+    }
+
+    <span class="comment">// 展開後</span>
+    <span class="keyword">using</span> (<span class="keyword">var</span> e = data.GetEnumerator())
+    {
+        <span class="keyword">while</span>(e.MoveNext())
+        {
+            T x;
+            x = e.Current;
+            Console.WriteLine(x);
+        }
+    }
+}</code></pre>
+<p>これで、先ほどのラムダ式の例の実行結果は、以下のように変わります。</p>
+<pre><code class="language-console">1
+2
+3
+4
+5</code></pre>
+<p>C# 4.0 までの仕様が前述のようになっていたのは、以下のような理由によるものです。</p>
+<ul>
+<li><p>x と data の登場順序が変わらないように展開したかった。</p>
+</li>
+<li><p>for ステートメントのループ変数と挙動をそろえたかった。</p>
+</li>
+</ul>
+<p>C# 5.0 で、破壊的変更になってまでこの仕様を変えたのは、ラムダ式の利用が広まって、上記のようなループ変数のキャプチャでの問題が大きくなったからのようです。
+破壊的変更にならないように、構文自体を少し変えるという案もあったようですが、影響範囲は狭いだろうということで、仕様変更に決まったようです。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/cheatsheet/">C# &#x306E;&#x6A5F;&#x80FD;&#x4E00;&#x89A7;&#xFF08;&#x7D22;&#x5F15;&#x7684;&#x306A;&#x3082;&#x306E;&#xFF09;</a></li><li><a href="/study/csharp/cheatsheet/list_expression/">C# &#x306E;&#x5F0F;&#x3068;&#x6587;&#x306E;&#x4E00;&#x89A7;</a></li><li><a href="/study/csharp/cheatsheet/list_type/">C# &#x306E;&#x578B;&#x3068;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/study/csharp/cheatsheet/list_versions/">&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver1/">C# 1.0</a></li><li><a href="/study/csharp/cheatsheet/ap_ver2/">C# 2.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver3/">C# 3.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver4/">C# 4.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver6/">C# 6 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7/">C# 7 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_1/">C# 7.1 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_2/">C# 7.2 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_3/">C# 7.3 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver8/">C# 8.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver9/">C# 9.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver10/">C# 10.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver11/">C# 11.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver12/">C# 12.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver13/">C# 13.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver14/">C# 14.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/langversionoption/">&#x8A00;&#x8A9E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x306E;&#x6307;&#x5B9A;</a></li><li><a href="/study/csharp/cheatsheet/listfxlangversion/">C#&#x306E;&#x8A00;&#x8A9E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x3068;.NET&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/cheatsheet/ap_modern/">&#x4F7F;&#x308F;&#x306A;&#x304F;&#x306A;&#x3063;&#x305F;&#x6A5F;&#x80FD;&#x30FB;&#x65B0;&#x3057;&#x3044;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/apscripting/">C#&#x30B9;&#x30AF;&#x30EA;&#x30D7;&#x30C8;&#x5B9F;&#x884C;</a></li><li><a href="/study/csharp/cheatsheet/file-based-app/">&#x30D5;&#x30A1;&#x30A4;&#x30EB; &#x30D9;&#x30FC;&#x30B9;&#x5B9F;&#x884C;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

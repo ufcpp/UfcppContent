@@ -1,0 +1,224 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: C# 9.0 &#x5411;&#x3051; Design Notes | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2020/5/pickuproslyn0503/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2020-05-03T20:01:09">2020-05-03</time></span><span>更新: <time datetime="2020-05-03T20:02:55">2020-05-03</time></span></div><h1 id="roslyn-c-9.0-design-notes">ピックアップRoslyn: C# 9.0 向け Design Notes</h1>
+<p>C# Language Design Notes が3件に、</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2020/LDM-2020-04-15.md">C# Language Design Notes for Apr 15, 2020</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2020/LDM-2020-04-20.md">C# Language Design Meeting for March 20, 2020</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2020/LDM-2020-04-27.md">C# Language Design Meeting for April 27, 2020</a></li>
+</ul>
+<p>提案ドキュメントのアップロードが3件。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/proposals/extending-partial-methods.md">Extending Partial Methods</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/proposals/covariant-returns.md">covariant return types</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/proposals/module-initializers.md">Module Initializers</a></li>
+</ul>
+<p>特に partial メソッドの拡張の話は Source Generator 関連です。
+最初、Source Generator ネタでまとめて投稿しようかと思っていたものの、ちょっとまとまり悪くなりそうだったので1日3件ブログに。</p>
+<ul>
+<li>1個前: <a href="/blog/2020/5/featureswitch/">.NET 5 への Xamarin 統合に向けて</a></li>
+<li>2個前: <a href="/blog/2020/5/sourcegenerator/">C# Source Generator (first preview)を試してみる</a></li>
+</ul>
+<h2 id="partial">partial メソッドの拡張</h2>
+<p>コンパイル時のソースコード生成ができるようになると、</p>
+<ul>
+<li>手書きで <code>int M();</code> みたいなメソッド宣言だけを書く</li>
+<li>それに反応して、何らかの <code>M</code> の実装をコード生成したい</li>
+</ul>
+<p>みたいな要件が出てきます。</p>
+<p>こういう、コード生成物と手書きコードのつなぎ用の機能として、
+C# には 2.0 の頃から <a href="/study/csharp/cheatsheet/ap_ver2/#partial">partial type</a>、
+3.0 の頃から <a href="/study/csharp/cheatsheet/ap_ver3/#partial_method">partial method</a> という機能があったりします。
+ですがこれは、</p>
+<ul>
+<li>Windows Forms とかが生成する中身が空っぽのメソッドが先にある</li>
+<li>手書きコードを足す必要がないのであれば、一切痕跡を残さず消す</li>
+<li>手書きコードを足した場合、コード生成物の中から呼ばれるようになる</li>
+</ul>
+<p>みたいな機能で、以下のような制限があります。</p>
+<ul>
+<li><a href="/study/csharp/oop/oo_conceal/#level">アクセス修飾子</a>は付けれない(暗黙的に private)</li>
+<li>戻り値は <code>void</code> 出ないとダメ</li>
+<li><a href="/study/csharp/resource/sp_ref/#out"><code>out</code> 引数</a>は使えない</li>
+</ul>
+<p>これに対して、今出ている要件は逆方向のつなぎ(手書きが先にあって、コード生成物が後)になります。
+微妙に挙動に差があるんですが、同じ <code>partial</code> というキーワードを使いまわしたいみたいです。</p>
+<ul>
+<li>手書きコードで中身が空っぽのメソッドを先に書く</li>
+<li>コード生成でメソッドの中身を埋める、埋めないとコンパイル エラー</li>
+<li>アクセス修飾子を付けたら(private であっても)この挙動になる</li>
+<li>この場合は <code>void</code> 以外の戻り値と、<code>out</code> 引数を持てる</li>
+</ul>
+<p>という感じ。
+<code>partial void M();</code> と <code>private partial void M();</code> で挙動が違うのがなかなか気持ち悪いですけども、
+新しいキーワードを足すよりはこの方がマシだろいうという判断みたいです。</p>
+<h2 id="section">トップレベルのステートメント</h2>
+<p><code>Program.Main</code> を書かなくても、ステートメントを直接ファイル直下に書けるようにするという話。
+今回の議題は、</p>
+<ul>
+<li>スクリプト方言みたいに式だけ書く(<code>;</code> を付けない式を書く)とそれが戻り値になるべきか
+<ul>
+<li>→ やらない</li>
+</ul>
+</li>
+<li>トップレベルに書いた変数などの名前はどう扱うべきか
+<ul>
+<li>プログラム全域がその名前のスコープになる(= 同名別変数を定義するとエラーになる)</li>
+<li>かといって、今の仕様だとその変数を参照して使おうとするとエラーになる</li>
+<li>使えない変数はスコープから外すべき？</li>
+<li>→ 今は使ってないけども将来はわからないのでいったんこの仕様で行きたい</li>
+</ul>
+</li>
+<li>コマンドライン引数の受け取り方
+<ul>
+<li><code>void Main(string[] args)</code> みたいな部分が消えるので、コマンドライン引数の <code>args</code> はどう受け取ればいいか</li>
+<li>案1: 暗黙の変数 (プロパティの <code>set</code> 中の <code>value</code> みたいなもの)を用意する(名前はおそらく <code>args</code> 変数になる)</li>
+<li>案2: <code>Environment.Args</code> なりなんなり、何らかの API を用意する</li>
+<li>→ もうちょっと要検討。どっちの案にするかはともかく、こういう手段は必要</li>
+</ul>
+</li>
+<li><a href="/study/csharp/async/sp5_async/#async"><code>await</code></a> の扱い
+<ul>
+<li>今の仕様
+<ul>
+<li>トップレベル ステートメント中に <code>await</code> が1つでもあれば、生成されるのは <code>Task Main()</code></li>
+<li>1つもなければ、生成されるのは <code>void Main()</code></li>
+</ul>
+</li>
+<li>これでいい？常に <code>Task Main()</code> で生成するとかしなくていい？</li>
+<li>→ とりあえず今の仕様で行く</li>
+</ul>
+</li>
+</ul>
+<h2 id="records">Records がらみ</h2>
+<h3 id="with-clone">with 式の Clone</h3>
+<p><code>with</code> 式ではオブジェクトの Clone → 特定のプロパティだけ書き換え みたいな処理になります。
+で、このクローンをどうするか。</p>
+<ul>
+<li>現状、ユーザー定義の Clone メソッドには対応していない</li>
+<li>将来的にはユーザー定義で Clone の挙動を自由に変えれるようにしたい</li>
+<li>C# 9.0 時点では、将来の拡張性だけつぶさないように気を付けつつ、いったん現状の実装で進める</li>
+</ul>
+<h3 id="records-positional">Records: positional</h3>
+<p><a href="/blog/2020/4/pickuproslyn0419/">4/13の Design Notes での検討</a>によれば、
+positional な Records (プライマリ コンストラクター)の優先度は低めになったんですが。
+それでも、これに関していろいろ検討しているみたいです。</p>
+<h3 id="section-1">プライマリ コンストラクター</h3>
+<ul>
+<li>プライマリ コンストラクターは常に呼ばれないといけない
+<ul>
+<li>手書きのコンストラクターがある場合、<code>Point () : this(0, 0)</code> みたいにプライマリ コンストラクター呼び出しが必要</li>
+</ul>
+</li>
+<li>positional な Records にはコピー コンストラクターも自動生成したい
+<ul>
+<li><code>Point(Point other) : this(other.X, other.Y) { }</code> みたいなプライマリ コンストラクター呼び出しをしたい</li>
+</ul>
+</li>
+<li>プライマリ コンストラクターでは、
+<ul>
+<li><code>class MyClass(int x, int y) { public int P =&gt; x + y; }</code> みたいにキャプチャが発生したときには自動的にフィールドを生成する</li>
+<li>そうでないときは何も生成しない(単なるコンストラクターの引数扱い)</li>
+</ul>
+</li>
+<li>positional な Records では、init-only なプロパティを生成する</li>
+<li>Records でない普通のクラスでプライマリ コンストラクターを認める場合と、positional な Records とで不整合は起きないか
+<ul>
+<li>→ 生成されるものがフィールドか init-only プロパティかの差があるけど、それくらいは許容する</li>
+</ul>
+</li>
+</ul>
+<h3 id="section-2">プライマリ コンストラクター本体とバリデーター</h3>
+<p>プライマリ コンストラクターに対してコンストラクター本体を持ちたい場合、
+以下のような構文になるみたいです。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> TypeName(<span class="keyword">int</span> X, <span class="keyword">int</span> Y) <span class="comment">// プライマリ コンストラクター</span>
+{
+    <span class="comment">// 引数リストなしの型名 = プライマリ コンストラクターの本体</span>
+    <span class="keyword">public</span> TypeName
+    {
+        <span class="comment">// new TypeName(x, y) の時点で呼ばれる処理</span>
+    }
+ 
+    <span class="comment">// init キーワード = バリデーター</span>
+    init
+    {
+        <span class="comment">// new TypeName { X = x, Y = y } みたいな、初期化子での初期化の後に呼ばれる</span>
+    }
+}</code></pre>
+<p>元々はこの2つを区別していなかったものの、結局は両方必要そうで、両方を認めそう。</p>
+<h3 id="section-3">プライマリ コンストラクターからの基底クラス コストラクター呼び出し</h3>
+<p>2種類の書き方ができるけども、どちらも認めてしまえとのこと。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> TypeName(<span class="keyword">int</span> X, <span class="keyword">int</span> Y) : BaseType(X, Y);
+ 
+<span class="keyword">class</span> TypeName(<span class="keyword">int</span> X, <span class="keyword">int</span> Y) : BaseType
+{
+    <span class="keyword">public</span> TypeName : <span class="keyword">base</span>(X, Y) { }
+}</code></pre>
+<h2 id="section-4">共変戻り値</h2>
+<p>要は以下のようなやつ。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Compilation ...
+{
+    <span class="keyword">virtual</span> Compilation WithOptions(Options options)...
+}
+<span class="keyword">class</span> CSharpCompilation : Compilation
+{
+    <span class="comment">// 戻り値の型が Compilation.WithOptions と違う</span>
+    <span class="comment">// けど、派生型で共変なので問題ないはず。</span>
+    <span class="keyword">override</span> CSharpCompilation WithOptions(Options options)...
+}</code></pre>
+<p>これも需要は非常に高いものの、
+「.NET ランタイム側の修正が必要なので C# だけでできなくて重たい」みたいに言われ続けてたやつ。</p>
+<p>.NET 5 で実装するみたいです。今まさに作業中:</p>
+<ul>
+<li><a href="https://github.com/dotnet/runtime/pull/35308">Covariant Returns Feature</a></li>
+</ul>
+<p>ということで、C# 的にも C# 9.0 で入ります。
+ただ、 .NET Core 3.1 以前のバージョンでは動かないです。</p>
+<h2 id="section-5">モジュール初期化子</h2>
+<p>モジュール(dll とか)が読み込まれたタイミングで1回だけ呼ばれる処理を書きたいという要望が以前からあります。</p>
+<p>似たようなものとして、クラスの静的コンストラクターがあるんですが…</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Initializer
+{
+    <span class="keyword">static</span> Initializer()
+    {
+        <span class="comment">// 初めてこのクラスの何らかのメンバーを使おうとしたタイミングで呼ばれる</span>
+    }
+}</code></pre>
+<p>こいつだと、このクラスに一切触れなかった場合には全く呼ばれませんし、
+「初めて触ったとき」という読めないタイミングでの呼び出しになります。</p>
+<p>なのでモジュール読み込み時に確定で呼ばれるメソッドを用意したいというのがモジュール初期化子(module initializer)です。</p>
+<p>今のところ、属性 + 静的コンストラクターで実装したいみたいです。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+ 
+[<span class="keyword">module</span>: ModuleInitializer(typeof(MyModuleInitializer))]
+ 
+<span class="keyword">internal</span> <span class="keyword">static</span> <span class="keyword">class</span> MyModuleInitializer
+{
+    <span class="keyword">static</span> MyModuleInitializer()
+    {
+        <span class="comment">// モジュール読み込み時に実行される</span>
+    }
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2020/5/">5&#x6708;</a></li><li><a href="/blog/2020/5/sourcegenerator/">C# Source Generator (first preview)&#x3092;&#x8A66;&#x3057;&#x3066;&#x307F;&#x308B;</a></li><li><a href="/blog/2020/5/featureswitch/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: .NET 5 &#x3078;&#x306E; Xamarin &#x7D71;&#x5408;&#x306B;&#x5411;&#x3051;&#x3066;</a></li><li><a href="/blog/2020/5/variationselectoridentifier/">&#x898B;&#x305F;&#x76EE;&#x3067;&#x533A;&#x5225;&#x3067;&#x304D;&#x306A;&#x3044;&#x5909;&#x6570;</a></li><li><a href="/blog/2020/5/cs9net5p4/">C# 9.0 in .NET 5 Preview 4 (Build &#x3067;&#x306E;&#x30EA;&#x30EA;&#x30FC;&#x30B9;)</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

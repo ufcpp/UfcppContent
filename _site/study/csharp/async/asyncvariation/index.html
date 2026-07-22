@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406;&#x306E;&#x7A2E;&#x985E; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/async/asyncvariation/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">非同期処理の種類</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>「非同期処理」と言っても、いくつかのタイプの用途があって、それぞれ書き方や使うクラス ライブラリが異なります。
+大まかに言うと、以下のような用途があります。</p>
+<ul>
+<li><p>バックグラウンド処理: 負荷の高い計算や、I/O待ちなどによって、CPUやスレッド資源を保持し続けないために、別スレッドでの計算やI/O待ちを行います。</p>
+</li>
+<li><p>並列計算: マルチコアCPUの性能を最大限引き出すために、同じ計算を複数のコアで同時に実行します。</p>
+<ul>
+<li><p>データ並列: 同じ処理を異なるデータに対して繰り返し行います。</p>
+</li>
+<li><p>タスク並列: 異なる処理が独立して動いていて、その間で非同期にデータのやり取り（非同期データフロー）を行います。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>C# 5.0 で導入された非同期メソッド（「<a href="/study/csharp/async/sp5_async/">非同期処理</a>」参照）は、前者のバックグラウンド処理を簡単化するものです。
+一方、データ並列には.NET Framework 4 で導入された <code>Parallel</code> クラス（<code>System.Threading.Tasks</code> 名前空間）や <code>ParallelEnumerable</code> クラス（<code>System.Linq</code>名前空間。通称「並列 LINQ」） を、
+タスク並列には <a href="https://www.nuget.org/packages/Microsoft.Tpl.Dataflow">TPL Dataflow ライブラリ</a>を利用するといいでしょう。
+また、これらはいずれも、内部的には .NET Framework 4 で導入された <code>Task</code> クラス（<code>System.Threading.Tasks</code> 名前空間）を利用しています。</p>
+<p>本稿では、これらのクラス ライブラリについて簡単に説明していきます。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>※</h5>
+<p>本稿の内容は<a href="http://longgate.co.jp/books/grimoire-vol3.html">プログラミングの魔導書 Vol. 3</a>に寄稿したものがベースとなっています（分割、体裁の変更のみ）。
+また、このページ中の内容（＝ 魔導書への寄稿の一部分）は、
+@IT に書いた記事「<a href="http://www.atmarkit.co.jp/ait/articles/1109/30/news126.html">フリーズしないアプリケーションの作り方</a>」を短くまとめたものになります。</p>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="background"></a>バックグラウンド処理（非同期メソッド）</h2>
+<p>負荷の高い計算や、I/O 待ちをする場合、
+メイン スレッドとは別のスレッドを使いたい場合がある。
+例えば、GUI アプリの場合、
+メイン スレッドで時間がかかる処理をするとアプリがフリーズしてしまい、
+アプリのユーザーに与える印象が非常に悪くなってしまう。
+このような、メイン スレッド以外で行う処理のことをバックグラウンド処理処理という。</p>
+<p>バックグラウンド処理では、バックグラウンドで行った処理結果の値を受け取って、メイン スレッドで続きの処理を行いたい場合が多いです。
+この際、図1に示すように、処理手順、いわゆる制御フローは、同期の場合と変わりません。
+フローチャートに書き起こすなら同じ構造のチャートになります。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/AsyncVariation1.png"><img src="/assets/media/ufcpp2000/csharp/fig/AsyncVariation1.png" alt="同期の場合と非同期の場合の制御フロー" /></a></p>
+<figcaption>同期の場合と非同期の場合の制御フロー</figcaption>
+</figure>
+<p>処理を非同期にすることで、以下のような利点が得られます。</p>
+<ul>
+<li><p>GUIの応答性改善: 時間のかかる処理を行っている間、 UIスレッド（GUIにおいて、エンドユーザーからの入力を受け付けるためのスレッド）をブロックせず、フリーズを回避できます。</p>
+</li>
+<li><p>スレッド資源の節約: I/O待ち時にしている間、スレッドを解放することで、 メモリ（スレッド用のスタックなど）やCPU（コンテキストスイッチなど）の負担を減らせます。</p>
+</li>
+</ul>
+<p>非同期処理のこれらの利点は非常にありがたいものですが、問題はコードの書きにくくなることです。
+たとえば、同期処理で書くなら以下のようなコードがあったとします。</p>
+<pre><code class="language-csharp">前処理();
+<span class="keyword">var</span> result = obj.GetValue(x);
+後処理(result);</code></pre>
+<p>これを非同期化しようとしたとき、以前（.NET Framework 4/C# 4.0まで）なら、以下のような書き方になっていました。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> sync = System.Threading.SynchronizationContext.Current;
+
+obj.BeginGetValue(x, a =&gt;
+{
+    <span class="keyword">var</span> result = obj.EndGetValue(a);
+
+    sync.Post(arg =&gt;
+    {
+        後処理((<span class="keyword">int</span>)arg);
+    },
+    result);
+});</code></pre>
+<p>図1のところで説明したように、制御フロー的には同期の場合とまったく同じなわけですが、実装上の都合でこんなコードになっています。
+これでも、非同期処理を1つだけ、例外処理は無視して考えているのでだいぶマシな方です。
+一般には、例外処理が必要で、複雑化します。
+例外処理を考えなくても、単純に複数の非同期処理を直列につなぐ（たとえば、ウェブ認証プロトコルのように、サーバーとのやり取りが何往復か必要になるような）処理を書くのもかなり大変です。
+一本道な処理ならともかく、条件分岐や反復が必要になってくると、コードが絶望的なほど複雑化することもあります。
+（参考: 「<a href="/study/csharp/async/misc_asyncflow/">[雑記] 非同期制御フロー</a>」）</p>
+<p>意図が同じならば、できればコードも同じ構造で書きたいものです。
+それを叶えるのが、C# 5.0 で導入される非同期メソッドです。
+非同期メソッドの中では、以下のように、await 演算子を使うことで、同期処理っぽい書き方で非同期処理が書けます。</p>
+<pre><code class="language-csharp">前処理();
+<span class="keyword">var</span> result = <span class="keyword">await</span> obj.GetValueAsync(x);
+後処理(result);</code></pre>
+<p>同期処理の場合と、改めて対比してみましょう。
+図2に、同期処理版と非同期処理版を並べて示します。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/AsyncVariation2.png"><img src="/assets/media/ufcpp2000/csharp/fig/AsyncVariation2.png" alt="await 演算子を使った非同期処理" /></a></p>
+<figcaption>await 演算子を使った非同期処理</figcaption>
+</figure>
+<p>まず、await 演算子を使うためには、メソッド自体に async 修飾子を付ける必要があります。
+（この、async 修飾子が付いたメソッドのことを非同期メソッド（asynchronous method）と呼びます。）</p>
+<p>ちなみに、async 修飾子を付けるのは、破壊的変更を避けるためです。
+C# 4.0 以前の C# コード中で、await という単語を変数などの名前に使っているかもしれません。
+async 修飾子のついていない通常のメソッド内では、await をキーワード扱いしない（変数などの識別子として利用可能）ことで、互換性を保っています。</p>
+<p>async修飾子を付けたメソッドの戻り値は、対応する同期メソッドが void ならば Task 型、ある型Tの値ならば Task&lt;T&gt; 型にする必要があります。</p>
+<p>一方、await 演算子の引数として渡す部分は、
+“Awaitableパターン”（「<a href="/study/csharp/async/sp5_awaitable/#awaiter">Awaitable パターン</a>」 参照）というパターンを満たすクラスなら、何でも“待つ”ことができます。
+.NET Framework 4.5のTaskクラス（非同期処理の中心的役割を担うクラス）は Awaitableパターンを満たしていて、
+await 演算子の引数として渡せます。</p>
+<p>内部的にどう動いているかについては、詳細は別途（「<a href="/study/csharp/async/sp5_awaitable/#awaiter">Awaitable パターン</a>」）説明するとして、ポイントだけまとめておきましょう。</p>
+<ul>
+<li><p>条件分岐、反復、例外処理含め、全て同期処理の場合と同じ書き方ができる</p>
+</li>
+<li><p>イテレーター構文（yield）と同じような、中断と再開のためのコードをコンパイラーが生成している</p>
+</li>
+<li><p><code>Task</code>クラスの<code>ContinueWith</code>メソッドと同様の、継続タスク実行の仕組みを使う</p>
+</li>
+<li><p>実行コンテキストを保つ（呼び出し元のスレッドに戻って継続タスク実行する必要がある場合、内部で自動的に戻してくれます）</p>
+</li>
+</ul>
+<h2 id="parallel-linq"><a id="sec-generated-title-4"></a> <a id="data-parallel"></a>データ並列（Parallel クラスと並列 LINQ）</h2>
+<p>並列処理も非同期処理の一種になります。
+（単一のコンピューター上で）並列処理を行いたい主な同期は、
+マルチコア CPU の性能を最大限引き出すことです。
+マルチコア CPU の性能引き出す一番シンプルな方法は、同じ処理を、異なるデータに対して、複数のコアで同時に実行することです。
+このような並列処理の仕方を、データ並列（data parallelism）と呼びます。</p>
+<p>.NET 4から導入された <code>Parallel</code> クラスと <code>ParallelEnumerable</code> クラス（並列 LINQ）は、
+データ並列処理を簡単に行うためライブラリです。</p>
+<p>まずは <code>Parallel</code> クラスから見ていきましょう。
+<code>Parallel</code> クラスには、
+それぞれfor、foreachステートメントの並列版に相当する <code>For</code>、<code>ForEach</code> メソッドが定義されています。
+たとえば、for ステートメントと <code>For</code> メソッドを比較すると以下のようになります。</p>
+<pre><code class="language-csharp"><span class="comment">// 単一スレッド実行</span>
+<span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; source.Length; i++)
+{
+    result[i] = selector(source[i]);
+}
+
+<span class="comment">// 並列実行</span>
+Parallel.For(<span class="number">0</span>, source.Length, i =&gt;
+{
+    result[i] = selector(source[i]);
+});</code></pre>
+<p>一方、並列LINQは、LINQ（Language Integrated Query）によるデータ処理を並列化するものです。
+以下のように、<code>AsParallel</code> 拡張メソッドを1つ追加するだけで、データ処理が並列に行われるようになります。</p>
+<pre><code class="language-csharp"><span class="comment">// 単一スレッド実行</span>
+<span class="keyword">var</span> result = source.Select(selector);
+
+<span class="comment">// 並列実行（AsParallel 拡張メソッドは ParallelQuery クラスを返す）</span>
+<span class="keyword">var</span> result = source.AsParallel().Select(selector);</code></pre>
+<p>いずれも、プログラミング言語構文的には、匿名関数（「<a href="/study/csharp/functional/sp_delegate/#anonymous">匿名関数</a>」参照））を持つ言語ならば簡単に書けるものです。
+その他には特に複雑な構文を必要とせず、単純にライブラリだけでデータ並列処理を実現しています。</p>
+<p>ただし、見た目は簡単でも、注意すべき点はあります
+図 3に示すように、データ処理には、並列化に向くものと向かないものがあり、不向きなものを並列化してもかえって性能を落とす場合が多いです。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/AsyncVariation3.png"><img src="/assets/media/ufcpp2000/csharp/fig/AsyncVariation3.png" alt="並列化に向く処理と向かない処理" /></a></p>
+<figcaption>並列化に向く処理と向かない処理</figcaption>
+</figure>
+<p>並列化が難しくなる理由として挙げられるのは、スレッド間でのデータの受け渡しのコストが高いのことや、並列実行では処理順序の保証ができないことなどです。
+そのため、データ処理を並列化する際には、データが独立している（ようなアルゴリズムを考える）ことが重要になります。</p>
+<h2 id="tpl-dataflow"><a id="sec-generated-title-5"></a> <a id="dataflow"></a>タスク並列/非同期データフロー（TPL Dataflowライブラリ）</h2>
+<p>並列処理を行うもう1つの方法としては、
+図4に示すように、異なる処理（タスク）を独立して動かして、その間で非同期にデータのやり取りする方法があります。
+異なるタスクを並列に動かすという意味ではタスク並列（task parallelism）、
+非同期なデータの受け渡しという意味では非同期データフロー（asynchronous dataflow）と呼ばれます。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/AsyncVariation4.png"><img src="/assets/media/ufcpp2000/csharp/fig/AsyncVariation4.png" alt="非同期データフローによる並列処理" /></a></p>
+<figcaption>非同期データフローによる並列処理</figcaption>
+</figure>
+<p>（元締めとなる何者かが）「タスクを動かす」というよりは、
+（それぞれが主体になって）「独立して動いているものがある」という見方をして、
+各タスクをアクター（actor：動作主体、当事者）やエージェント（agent: （裁量を持って動く）職員、代理人）と呼ぶこともあります。</p>
+<p>非同期データフローを実現するためのライブラリが TPL Dataflow （TPL は Task Pallalel Library の略で、Task クラスや Parallel クラスの総称）です。
+TPL Dataflow は、.NET Framework 本体とは独立したリリース サイクルで提供されていて、
+<a href="https://www.nuget.org/">NuGet</a> を通して使うことができます（<a href="https://www.nuget.org/packages/Microsoft.Tpl.Dataflow/">NuGet ギャラリーの TPL Dataflow ページ</a>）。</p>
+<p>ソフトウェア技術的にいうと、
+非同期データフローを実現するために必要なのは、図5に示すような、データ受け渡しを仲介してデータをイベント駆動的に受け取れるバッファーです。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/AsyncVariation5.png"><img src="/assets/media/ufcpp2000/csharp/fig/AsyncVariation5.png" alt="非同期にデータ受け渡しするためのバッファー" /></a></p>
+<figcaption>非同期にデータ受け渡しするためのバッファー</figcaption>
+</figure>
+<p>TPL DataFlow が提供しているのはまさにこのようなバッファーを持った動作主体（DataFlowライブラリの場合、ブロックと呼んでいます）です。
+表1に、TPL DataFlow が提供する主要なクラスとインターフェイスを示します。</p>
+<table summary="TPL DataFlow が提供するクラスとインターフェイス">
+	<caption>
+		TPL DataFlow が提供するクラスとインターフェイス
+	</caption>
+	<tr>
+		<th>インターフェイス</th>
+		<th>説明</th>
+	</tr>
+	<tr>
+		<td><p><code>ISourceBlock</code></p></td>
+		<td><p>データを送ってくる元のブロックを表す</p></td>
+	</tr>
+	<tr>
+		<td><p><code>ITargetBlock</code></p></td>
+		<td><p>データを送る先のブロックを表す</p></td>
+	</tr>
+	<tr>
+		<th>インターフェイス</th>
+		<th>説明</th>
+	</tr>
+	<tr>
+		<td><p><code>BufferBlock</code></p></td>
+		<td><p>データをバッファリングして素通しするだけのブロック</p></td>
+	</tr>
+	<tr>
+		<td><p><code>TransformBlock</code></p></td>
+		<td><p>データに対して何らかの変換処理を通す</p></td>
+	</tr>
+	<tr>
+		<td><p><code>BroadcastBlock</code></p></td>
+		<td><p>複数のブロックに対して、同じ値（のコピー）をブロードキャストする</p></td>
+	</tr>
+	<tr>
+		<td><p><code>JoinBlock</code></p></td>
+		<td><p>複数のブロックから来た値を1つにまとめる</p></td>
+	</tr>
+</table>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/async/">&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/async/sp_thread/">&#x30DE;&#x30EB;&#x30C1;&#x30B9;&#x30EC;&#x30C3;&#x30C9;</a></li><li><a href="/study/csharp/async/asyncinside/">&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406;&#x3092;&#x652F;&#x3048;&#x308B;&#x30A4;&#x30F3;&#x30D5;&#x30E9;</a></li><li><a href="/study/csharp/async/asyncexecutioncontext/">&#x5B9F;&#x884C;&#x30B3;&#x30F3;&#x30C6;&#x30AD;&#x30B9;&#x30C8;</a></li><li><a href="/study/csharp/async/misc_synchronize/">[&#x96D1;&#x8A18;] &#x30B9;&#x30EC;&#x30C3;&#x30C9;&#x9593;&#x306E;&#x7AF6;&#x5408;&#x56DE;&#x907F;</a></li><li><a href="/study/csharp/async/misc_task/">[&#x96D1;&#x8A18;] &#x30B9;&#x30EC;&#x30C3;&#x30C9; &#x30D7;&#x30FC;&#x30EB;&#x3068;&#x30BF;&#x30B9;&#x30AF;</a></li><li><a href="/study/csharp/async/misc_asyncflow/">[&#x96D1;&#x8A18;] &#x975E;&#x540C;&#x671F;&#x5236;&#x5FA1;&#x30D5;&#x30ED;&#x30FC;</a></li><li><a href="/study/csharp/async/sp5_async/">&#x975E;&#x540C;&#x671F;&#x30E1;&#x30BD;&#x30C3;&#x30C9;</a></li><li><a href="/study/csharp/async/sp5_awaitable/">&#x975E;&#x540C;&#x671F;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x306E;&#x5185;&#x90E8;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/async/misc_continuation/">[&#x96D1;&#x8A18;] &#x7D99;&#x7D9A;&#x3068;&#x5148;&#x7269;</a></li><li><a href="/study/csharp/async/misc_uithread/">[&#x96D1;&#x8A18;] GUI &#x3068;&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/async/asyncstream/">&#x975E;&#x540C;&#x671F;&#x30B9;&#x30C8;&#x30EA;&#x30FC;&#x30E0;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

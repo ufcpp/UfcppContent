@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D2;&#x30FC;&#x30D7;&#x30BD;&#x30FC;&#x30C8; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/algorithm/sort/sort_heap/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">ヒープソート</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>詳しくは「<a href="/study/algorithm/collection/col_heap/">優先度付き待ち行列</a>」で説明しますが、
+ヒープというのは、
+常に最大の要素を取り出せる状態に保たれているデータ構造です。</p>
+<p>常に最大の要素を取り出せるなら、当然それをソートアルゴリズムに転用できます。
+ということで、
+そのヒープ構造を使ったソートアルゴリズムを<strong id="heap" class="keyword">ヒープソート</strong>（heap sort）と言います。
+「<a href="/study/algorithm/sort/sort/#unstable">不安定</a>」な「<a href="/study/algorithm/sort/sort/#inner">内部</a>」ソート。</p>
+<p>しかしながら、平均的なケースにおいては、クイックソートの方が高速ですが、
+平均計算量も最悪計算量もどちらも O(n log n) となり、
+常に安定して高速です。
+この点に関しては「<a href="/study/algorithm/sort/sort_quick/#quick">クイックソート</a>」よりも優れています。</p>
+<p>ただし、クイックソートも、最悪のケースに陥らないような改良策がいろいろ考えられているので、
+ヒープソートの方がクイックソート（の改良版）よりも高速になる場面はそれほどありません。</p>
+<div><iframe src="https://black-ocean-009cb0000.2.azurestaticapps.net/?a=heap&i=0&s=0&w=300" width="304" height="332"></iframe></div>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="sample"></a>サンプルソース</h2>
+<p><a href="https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/HeapSort.cs">https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/HeapSort.cs</a></p>
+<pre><code class="language-csharp"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> ヒープソート。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;a&quot;&gt;</span><span class="xmlDocComment">対象の配列&lt;/param&gt;</span>
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> HeapSort&lt;T&gt;(T[] a)
+  <span class="keyword">where</span> T : IComparable&lt;T&gt;
+{
+  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; a.Length; ++i)
+    MakeHeap(a, i);
+  <span class="keyword">for</span> (<span class="keyword">int</span> i = a.Length - <span class="number">1</span>; i &gt;= <span class="number">0</span>; --i)
+    a[i] = PopHeap(a, i);
+}
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 配列をヒープ化する。</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> n - 1 番目までの要素は既にヒープ化されていることを仮定して、</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> n 番目の要素をヒープに追加。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;a&quot;&gt;</span><span class="xmlDocComment">対象の配列&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;n&quot;&gt;</span><span class="xmlDocComment">要素数&lt;/param&gt;</span>
+<span class="keyword">static</span> <span class="keyword">void</span> MakeHeap&lt;T&gt;(T[] a, <span class="keyword">int</span> n)
+  <span class="keyword">where</span> T : IComparable&lt;T&gt;
+{
+  <span class="keyword">while</span> (n != <span class="number">0</span>)
+  {
+    <span class="keyword">int</span> i = (n - <span class="number">1</span>) / <span class="number">2</span>;
+    <span class="keyword">if</span> (a[n].CompareTo(a[i]) &gt; <span class="number">0</span>) Swap(<span class="keyword">ref</span> a[n], <span class="keyword">ref</span> a[i]);
+    n = i;
+  }
+}
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> ヒープから最大値を取り出す。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;a&quot;&gt;</span><span class="xmlDocComment">対象の配列&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;n&quot;&gt;</span><span class="xmlDocComment">要素数 - 1&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">取り出した最大値&lt;/returns&gt;</span>
+<span class="keyword">static</span> T PopHeap&lt;T&gt;(T[] a, <span class="keyword">int</span> n)
+  <span class="keyword">where</span> T : IComparable&lt;T&gt;
+{
+  T max = a[<span class="number">0</span>];
+
+  a[<span class="number">0</span>] = a[n];
+
+  <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>, j; (j = <span class="number">2</span> * i + <span class="number">1</span>) &lt; n; )
+  {
+    <span class="keyword">if</span> ((j != n - <span class="number">1</span>) &amp;&amp; (a[j].CompareTo(a[j + <span class="number">1</span>]) &lt; <span class="number">0</span>)) j++;
+    <span class="keyword">if</span> (a[i].CompareTo(a[j]) &lt; <span class="number">0</span>) Swap(<span class="keyword">ref</span> a[i], <span class="keyword">ref</span> a[j]);
+    i = j;
+  }
+
+  <span class="keyword">return</span> max;
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/algorithm/sort/">&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort/">&#x30BD;&#x30FC;&#x30C8;&#x6982;&#x8981;</a></li><li><a href="/study/algorithm/sort/sort_bubble/">&#x30D0;&#x30D6;&#x30EB;&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort_select/">&#x9078;&#x629E;&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort_insert/">&#x633F;&#x5165;&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort_shell/">&#x30B7;&#x30A7;&#x30EB;&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort_quick/">&#x30AF;&#x30A4;&#x30C3;&#x30AF;&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort_merge/">&#x30DE;&#x30FC;&#x30B8;&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort_bucket/">&#x30D0;&#x30B1;&#x30C3;&#x30C8;&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort_radix/">&#x57FA;&#x6570;&#x30BD;&#x30FC;&#x30C8;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

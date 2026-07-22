@@ -1,0 +1,384 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x305D;&#x306E;&#x4ED6;&#x306E;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/lib/lib_other/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">その他のライブラリ</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="math"></a>数学関数</h2>
+<p>System.Math クラスに、数学用の関数・定数などが定義されています。
+表1に Math クラスのメンバーを示します（全て static）。</p>
+<table summary="Math クラスのメンバー">
+	<caption>
+		Math クラスのメンバー
+	</caption>
+	<tr>
+		<td></td>
+		<th>メンバー名</th>
+		<th>意味</th>
+	</tr>
+	<tr>
+		<td rowspan="2"><p>定数</p></td>
+		<td><p><code>PI</code></p></td>
+		<td><p>円周率。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>E</code></p></td>
+		<td><p>自然対数の底</p></td>
+	</tr>
+	<tr>
+		<td rowspan="5"><p>指数・対数関数</p></td>
+		<td><p><code>Exp(x)</code></p></td>
+		<td><span class="math">
+            <span class="normal">exp</span>
+            <span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span>
+          </span></td>
+	</tr>
+	<tr>
+		<td><p><code>Pow(x, y)</code></p></td>
+		<td><span class="math">
+            x<sup>y</sup>
+          </span></td>
+	</tr>
+	<tr>
+		<td><p><code>Log(x)</code></p></td>
+		<td><span class="math">
+            <span class="normal">log</span>
+            <sub>e</sub> x
+          </span></td>
+	</tr>
+	<tr>
+		<td><p><code>Log(x, y)</code></p></td>
+		<td><span class="math">
+            <span class="normal">log</span>
+            <sub>y</sub> x
+          </span></td>
+	</tr>
+	<tr>
+		<td><p><code>Log10(x)</code></p></td>
+		<td><span class="math">
+            <span class="normal">log</span>
+            <sub><span class="normal">10</span></sub> x
+          </span></td>
+	</tr>
+	<tr>
+		<td rowspan="3"><p>三角関数</p></td>
+		<td><p><code>Sin(x)</code></p></td>
+		<td><span class="math">
+            <span class="normal">sin</span>
+            <span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span>
+          </span></td>
+	</tr>
+	<tr>
+		<td><p><code>Cos(x)</code></p></td>
+		<td><span class="math">
+            <span class="normal">cos</span>
+            <span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span>
+          </span></td>
+	</tr>
+	<tr>
+		<td><p><code>Tan(x)</code></p></td>
+		<td><span class="math">
+            <span class="normal">tan</span>
+            <span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span>
+          </span></td>
+	</tr>
+	<tr>
+		<td rowspan="4"><p>逆三角関数</p></td>
+		<td><p><code>Asin(x)</code></p></td>
+		<td><span class="math">
+            <span class="normal">sin</span>
+            <sup><span class="normal">−1</span></sup>
+            <span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span>
+          </span></td>
+	</tr>
+	<tr>
+		<td><p><code>Acos(x)</code></p></td>
+		<td><span class="math">
+            <span class="normal">cos</span>
+            <sup><span class="normal">−1</span></sup>
+            <span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span>
+          </span></td>
+	</tr>
+	<tr>
+		<td><p><code>Atan(x)</code></p></td>
+		<td><span class="math">
+            <span class="normal">tan</span>
+            <sup><span class="normal">−1</span></sup>
+            <span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span>
+          </span></td>
+	</tr>
+	<tr>
+		<td><p><code>Atan2(y, x)</code></p></td>
+		<td><span class="math">
+            <span class="normal">tan</span>
+            <sup><span class="normal">−1</span></sup>
+            <span class="paren" style="font-size:2em;">(</span>
+              <table class="frac" summary="fraction"><tr><td class="num">y</td></tr><tr><td>x</td></tr></table>
+            <span class="paren" style="font-size:2em;">)</span>
+          </span></td>
+	</tr>
+	<tr>
+		<td rowspan="3"><p>双曲線関数</p></td>
+		<td><p><code>Sinh(x)</code></p></td>
+		<td><span class="math">
+            <span class="normal">sinh</span>
+            <span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span>
+          </span></td>
+	</tr>
+	<tr>
+		<td><p><code>Cosh(x)</code></p></td>
+		<td><span class="math">
+            <span class="normal">cosh</span>
+            <span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span>
+          </span></td>
+	</tr>
+	<tr>
+		<td><p><code>Tanh(x)</code></p></td>
+		<td><span class="math">
+            <span class="normal">tanh</span>
+            <span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span>
+          </span></td>
+	</tr>
+	<tr>
+		<td rowspan="3"><p>整数化</p></td>
+		<td><p><code>Floor(x)</code></p></td>
+		<td><p>x の床（x 以下の最大の整数）。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>Ceiling(x)</code></p></td>
+		<td><p>x の天井（x 以上の最小の整数）。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>Round(x)</code></p></td>
+		<td><p>x を四捨五入。</p></td>
+	</tr>
+	<tr>
+		<td rowspan="3"><p>その他の数学関数</p></td>
+		<td><p><code>Abs(x)</code></p></td>
+		<td><p>x の絶対値。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>Sign(x)</code></p></td>
+		<td><p>x 符号。x が正ならば1、負ならば－1、0ならば0。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>Sqrt(x)</code></p></td>
+		<td><p>x の平方根。</p></td>
+	</tr>
+	<tr>
+		<td rowspan="2"><p>最大・最小</p></td>
+		<td><p><code>Max(x, y)</code></p></td>
+		<td><p>x, y のうち、大きい方を帰す。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>Min(x, y)</code></p></td>
+		<td><p>x, y のうち、小さい方を帰す。</p></td>
+	</tr>
+	<tr>
+		<td rowspan="3"><p>その他</p></td>
+		<td><p><code>BigMul(x, y)</code></p></td>
+		<td><p><code>int</code>×<code>int</code>で<code>long</code>を帰す乗算を行う。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>DivRem(x, y, out res)</code></p></td>
+		<td><p>商と剰余を同時に計算する。 res に<code>x % y</code>を代入し、<code>x / y</code>を帰す。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>IEEERemainder(x, y)</code></p></td>
+		<td><p>剰余を計算する。<code>x % y</code>が<code>x - Math.Truncate(x / y) * y</code>なのに対して、 この関数は<code>x - Math.Round(x / y) * y</code>を帰す。</p></td>
+	</tr>
+</table>
+<pre><code class="language-csharp">Console.Write(<span class="string">&quot;{0}\n&quot;</span>, Math.Sin(<span class="number">2</span>.<span class="number">0</span> / <span class="number">3</span>.<span class="number">0</span> * Math.PI));
+Console.Write(<span class="string">&quot;{0}\n&quot;</span>, Math.Log10(<span class="number">10000</span>));
+Console.Write(<span class="string">&quot;{0}\n&quot;</span>, Math.Pow(<span class="number">2</span>, <span class="number">8</span>));</code></pre>
+<pre><code class="language-console">0.866025403784439
+4
+256</code></pre>
+<p>以下、何点か補足。</p>
+<h5 id="log-log10"><a id="sec-generated-title-2"></a>Log と Log10</h5>
+<p>自然対数と常用対数については、
+「<a href="/study/math/hs/m2/#log_e">常用対数と自然対数</a>」を参照。</p>
+<h5 id="atan2"><a id="sec-generated-title-3"></a>Atan2</h5>
+<p>Math.Atan2、
+C 言語にも atan2 という関数があるんですが、
+意外と知らない人が多いみたい。</p>
+<p>直交座標 <span class="math">
+<span class="paren" style="font-size:em;">(</span>x, y<span class="paren" style="font-size:em;">)</span>
+</span> → 極座標 <span class="math">
+<span class="paren" style="font-size:em;">(</span>r, θ<span class="paren" style="font-size:em;">)</span>
+</span> の変換とか、
+複素数 <span class="math">
+z <span class="normal">=</span> x <span class="normal">+</span> i y
+</span> の偏角 <span class="math">
+<span class="normal">arg</span> z
+</span> とかを求めたいときに使う。
+（
+atan(y / x) だと、<span class="math">
+<span class="paren" style="font-size:em;">(</span>
+<span class="normal">1</span>, <span class="normal">1</span>
+<span class="paren" style="font-size:em;">)</span>
+</span> も <span class="math">
+<span class="paren" style="font-size:em;">(</span>
+<span class="normal">−</span><span class="normal">1</span>, <span class="normal">−</span><span class="normal">1</span>
+<span class="paren" style="font-size:em;">)</span>
+</span> も atan(1) になっちゃって、π/4 になってしまうので。
+）</p>
+<p>数学っぽく書くなら、<code>atan2(y, x)</code> ＝ <span class="math">
+<span class="normal">arg</span>
+<span class="paren" style="font-size:em;">(</span>x + i y<span class="paren" style="font-size:em;">)</span>
+</span> です。</p>
+<h5 id="round"><a id="sec-generated-title-4"></a>Round</h5>
+<p>上の表では“四捨五入”と説明しましたが、
+正確には、ぴったり真ん中（例えば 0.5, 1.5, 2.5, ・・・）のときの動作は四捨五入ではありません。</p>
+<p>Round 関数は、第2引数に「ぴったり真ん中のときの丸めをどうするか」を指定することが出来て、
+通常は MidpointRounding.ToEven になっています。
+これは“偶数丸め”と呼ばれているもので、
+0.5 → 0、1.5 → 2、2.5 → 2、3.5 → 4、 4.5 → 4 ・・・
+というように、必ず偶数に向かって丸めます。</p>
+<p>なぜこんなことをするかというと、
+この方式が一番誤差の蓄積が少ないから。
+“切り上げ”と“切り下げ”が半々なので、
+丸めた数値を足し合わせていったとき、
+丸め誤差が打ち消しあってくれる確率が高くなります。</p>
+<p>一方、日本語の文字通りの四捨五入（ぴったり真ん中のときは切り上げ）をしたければ、
+MidpointRounding.AwayFromZero を指定します。
+こちらの方が演算量は小さくて、
+精度よりも演算量優先の場合はこちらを指定します。
+（要するに、0.5 を足して切り捨てるだけなので。
+ToEven の場合は、0.5 のときに条件分岐したりテーブル参照したりが必要。）</p>
+<h2 id="section-2"><a id="sec-generated-title-5"></a> <a id="datetime"></a>時刻</h2>
+<p>時刻は System.DateTime で、
+時刻の差、すなわち、経過時間は System.TimeSpan クラスで表されます。</p>
+<pre><code class="language-csharp">DateTime t = DateTime.Now;
+Console.Write(<span class="string">&quot;{0}\n&quot;</span>, t);
+Console.Write(<span class="string">&quot;{0}/{1,2}/{2,2} ({3}) {4,2}:{5:d02}:{6:d02}\n&quot;</span>,
+  t.Year, t.Month, t.Day, t.DayOfWeek,
+  t.Hour, t.Minute, t.Second);
+
+Console.Write(<span class="string">&quot;エンターキーを押して&quot;</span>);
+Console.ReadLine();
+
+TimeSpan ts = DateTime.Now - t;
+Console.Write(<span class="string">&quot;キーを押すまでの時間: {0}[ms]&quot;</span>, ts.TotalSeconds);</code></pre>
+<pre><code class="language-console">2005/09/21 16:51:44
+2005/ 9/21 (Wednesday) 16:51:44
+エンターキーを押して
+キーを押すまでの時間: 2.6738448[ms]</code></pre>
+<h2 id="section-3"><a id="sec-generated-title-6"></a> <a id="collection"></a>コレクション</h2>
+<p>System.Collections 名前空間以下に、
+さまざまなコレクションクラスがあります。</p>
+<p>詳細説明に別ページを儲けました: 「<a href="/study/dotnet/bcl/bcl_collection/">コレクション</a>」</p>
+<p>どのコレクションがどういう動作をするかは、
+「<a href="/study/algorithm/collection/collection/">コレクション概要</a>」も参照。</p>
+<table summary="コレクションクラス">
+	<caption>
+		コレクションクラス
+	</caption>
+	<tr>
+		<td></td>
+		<th>クラス名</th>
+		<th>概要</th>
+	</tr>
+	<tr>
+		<td rowspan="3"><p>シーケンス</p></td>
+		<td><p><code>ArrayList</code></p></td>
+		<td><p>配列で実装されたリストです。「<a href="/study/csharp/oop/oo_indexer/#indexer">インデクサー</a>」による要素のランダムアクセスが可能です。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>Stack</code></p></td>
+		<td><p>FILO（first in last out：先入れ後出し）式のコレクション。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>Queue</code></p></td>
+		<td><p>FIFO（first in fast out：先入れ先出し）式のコレクション。</p></td>
+	</tr>
+	<tr>
+		<td rowspan="2"><p>辞書</p></td>
+		<td><p><code>Hashtable</code></p></td>
+		<td><p>名前の通り、ハッシュテーブルで実装された辞書。 (キー, 値)のペアの順序は完全に失われます。 値の挿入も、キーによる検索も高速です。 （十分に大きなキャパシティにしておけば、非常に高速）</p></td>
+	</tr>
+	<tr>
+		<td><p><code>SortedList</code></p></td>
+		<td><p>整列済みの配列で実装された辞書。 (キー, 値)のペアは、 キーの大小によってソートされた状態になります。 値の挿入には時間がかかりますが、 キーによる検索は非常に高速です。 （二分探索アルゴリズムによる検索を行います。）</p></td>
+	</tr>
+	<tr>
+		<td><p>ビット配列</p></td>
+		<td><p><code>BitArray</code></p></td>
+		<td><p>例えば、ある変数 x の n ビット目が1か0かを調べるには、<code>(x &amp; (1 &lt;&lt; (n - 1))) != 0</code>と言うように書きますが、このビット配列を用いると、<code>BitArray a; a[n]</code>というように書けます。</p></td>
+	</tr>
+</table>
+<p>少し補足すると、
+シーケンスと言うのは順番に意味のあるコレクションの事をいいます。
+int 型で番号を指定して、インデクサで <code>a[i]</code> と言うようにアクセスできたり、
+「先に入れた値ほど先に出てくる」、
+「後に入れた値ほど先に出てくる」など、値の追加・取り出しに順序があります。</p>
+<p>一方、辞書というのは、値とキーのペアを持っていて、
+キーによって値を検索できるものです。
+例えば、キーの型を string、値の型を int とすると、
+<code>a[&quot;keyword&quot;] = 5;</code> というように、
+キーの型を引数とするインデクサによる値の読み書きができます。</p>
+<h5 class="version version2">Ver. 2.0</h5>
+<p>.NET Framework 2.0 では、「<a href="/study/csharp/oop/sp2_generics/#generics">ジェネリック</a>」の導入に伴い、
+ジェネリック版のコレクションクラスが追加されました。
+ジェネリックコレクションクラスは
+System.Collections.Generic 名前空間以下にあります。</p>
+<table summary="ジェネリックコレクション">
+	<caption>
+		ジェネリックコレクション
+	</caption>
+	<tr>
+		<td></td>
+		<th>クラス名</th>
+		<th>概要</th>
+	</tr>
+	<tr>
+		<td rowspan="4"><p>シーケンス</p></td>
+		<td><p><code>List</code></p></td>
+		<td><p>非ジェネリック版の ArrayList に相当。 配列で実装されたリストです。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>LinkedList</code></p></td>
+		<td><p>連結リストです。 要素のランダムアクセスはできませんが、 シーケンスの末尾以外への要素の挿入が高速に行えます。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>Stack</code></p></td>
+		<td><p>非ジェネリック版と同様。 FILO 式のコレクションです。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>Queue</code></p></td>
+		<td><p>非ジェネリック版と同様。 FIFO 式のコレクションです。</p></td>
+	</tr>
+	<tr>
+		<td rowspan="3"><p>辞書</p></td>
+		<td><p><code>Dictionary</code></p></td>
+		<td><p>非ジェネリック版の Hashtable に相当。 ハッシュテーブルで実装された辞書です。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>SortedDictionary</code></p></td>
+		<td><p>二分探索木（赤黒木）で実装された辞書。 (キー, 値)のペアは、 キーの大小によってソートされた状態になります。 値の挿入も、キーによる検索も高速です。 （できること自体はハッシュテーブルと二分探索木に大きな差はありませんが、 演算量やメモリ使用量などの点でそれぞれ一長一短あります。）</p></td>
+	</tr>
+	<tr>
+		<td><p><code>SortedList</code></p></td>
+		<td><p>非ジェネリック版と同様。 整列済みの配列で実装された辞書。</p></td>
+	</tr>
+</table>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/lib/">&#x6A19;&#x6E96;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li><li><a href="/study/csharp/lib/lib_string/">&#x6587;&#x5B57;&#x5217;&#x95A2;&#x4FC2;</a></li><li><a href="/study/csharp/lib/lib_file/">&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x64CD;&#x4F5C;</a></li><li><a href="/study/csharp/lib/lib_drawing/">&#x30B0;&#x30E9;&#x30D5;&#x30A3;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/lib/lib_forms/">GUI &#x30A2;&#x30D7;&#x30EA;&#x30B1;&#x30FC;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/lib/lib_dotnet3/">.NET Framework 3.0 / 3.5</a></li><li><a href="/study/csharp/lib/lib_parallel/">&#x4E26;&#x5217;&#x51E6;&#x7406;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

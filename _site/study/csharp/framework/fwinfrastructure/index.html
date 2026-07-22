@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5B9F;&#x884C;&#x57FA;&#x76E4; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/framework/fwinfrastructure/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">実行基盤</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>（書きかけ）</p>
+<p>MS 実装の名前「.NET Framework」、あるいは、標準規格の名前「CLI（Common Language Infrastructure）」とは。</p>
+<ul>
+<li><p>中間言語（IL: Intermediate Language）仕様と、その中間言語を生成するコンパイラー</p>
+</li>
+<li><p>中間言語を解釈して実行する下層実行システム（VES: Virtual Execution System）</p>
+</li>
+<li><p>基礎ライブラリ（BCL: Base Class Library）</p>
+</li>
+</ul>
+<h2 id="cli"><a id="sec-generated-title-2"></a> <a id="cli"></a>CLI</h2>
+<p>IL（メタデータ含めて）、VES、BCL それぞれの意味合いを</p>
+<p>共通型システム</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/Framework/cli.png"><img src="/assets/media/ufcpp2000/csharp/fig/Framework/cli.png" alt="CLI" /></a></p>
+<figcaption>CLI</figcaption>
+</figure>
+<h2 id="android-java"><a id="sec-generated-title-3"></a> <a id="android"></a>余談: Android は Java か？</h2>
+<p>とか言われる理由。
+要は、「Java 言語だけど、実行システムもライブラリも Java じゃない」。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/Framework/android.png"><img src="/assets/media/ufcpp2000/csharp/fig/Framework/android.png" alt="Java と Android" /></a></p>
+<figcaption>Java と Android</figcaption>
+</figure>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/Framework/android2.png"><img src="/assets/media/ufcpp2000/csharp/fig/Framework/android2.png" alt="Java と Android" /></a></p>
+<figcaption>Java と Android</figcaption>
+</figure>
+<p>Write once, run anywhere しようと思ったら全部一致してないとダメ。
+Java を名乗るためには互換性テストに通らないといけない。
+「Java 言語だけど Java じゃない」状態。</p>
+<p>これに対して、 .NET は？</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/Framework/dotnet.png"><img src="/assets/media/ufcpp2000/csharp/fig/Framework/dotnet.png" alt=".NET" /></a></p>
+<figcaption>.NET</figcaption>
+</figure>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/Framework/dotnet2.png"><img src="/assets/media/ufcpp2000/csharp/fig/Framework/dotnet2.png" alt=".NET" /></a></p>
+<figcaption>.NET</figcaption>
+</figure>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/framework/">&#x30D5;&#x30EC;&#x30FC;&#x30E0;&#x30EF;&#x30FC;&#x30AF; / &#x5B9F;&#x884C;&#x74B0;&#x5883;</a></li><li><a href="/study/csharp/framework/fwmanaged/">&#x30DE;&#x30CD;&#x30FC;&#x30B8; &#x30B3;&#x30FC;&#x30C9;</a></li><li><a href="/study/csharp/framework/fwjitcompilation/">JIT&#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;</a></li><li><a href="/study/csharp/framework/fwreferenceassemblies/">&#x53C2;&#x7167;&#x30A2;&#x30BB;&#x30F3;&#x30D6;&#x30EA;</a></li><li><a href="/study/csharp/framework/fwappdomain/">AppDomain</a></li><li><a href="/study/csharp/framework/fwwinrt/">WinRT</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Visual Studio 2015&#x3067;&#x306E;C#/VB&#x306E;&#x6587;&#x5B57;&#x30B3;&#x30FC;&#x30C9; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2015/08/roslynencoding/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2015-08-04T02:52:40">2015-08-04</time></span><span>更新: <time datetime="2015-08-04T02:57:34">2015-08-04</time></span></div><h1 id="visual-studio-2015cvb">Visual Studio 2015でのC#/VBの文字コード</h1>
+<p>VSサポートチームのブログ記事が上がったことによって少々話題になっていますが、文字コード問題。</p>
+<ul>
+<li><a href="http://blogs.msdn.com/b/jpvsblog/archive/2015/08/03/vs2015-shift-jis-encoding.aspx">Visual Studio 2015 で Shift JIS エンコーディングされたソース ファイルをビルドするとコンパイラ エラーが発生する場合がある</a></li>
+</ul>
+<h2 id="section">症状</h2>
+<p>Shift JIS とか、Unicode 以前の各国文字コードで保存した C#/VB ファイルがコンパイルできない、できても文字列リテラルが狂うなどの問題が出ます。</p>
+<p>日本に限らず、中国語圏とかでも話題に。</p>
+<h2 id="section-1">原因</h2>
+<p><a href="https://github.com/dotnet/roslyn">Roslyn</a>のせいではあります。</p>
+<p>ぶっちゃけ、「by design (仕様です)」の類ではあったんですが。</p>
+<p>クロスプラットフォーム対応のために<code>Encoding.Default</code>を使うのをやめたというのがこの問題の原因です。</p>
+<h2 id="section-2">経緯を追って</h2>
+<h3 id="corefx">CoreFx 対応</h3>
+<p>最初に<code>Encoding.Default</code>撤廃をやったのは以下のpull request。CoreFx対応。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/pull/1623">More CoreFx porting work #1623</a></li>
+</ul>
+<p>日付的には3月のものです。つまるところ、CTP5とかRC版とかですでにこの現象起きてたはず。</p>
+<h3 id="windows-1252">Windows-1252 特殊対応</h3>
+<p>で、欧米圏ではこの時点で騒がれていました。
+ASCII文字圏だから大丈夫かと思いきや、結構、
+<a href="https://ja.wikipedia.org/wiki/Windows-1252">Windows-1252</a>で書かれたコードがあるそうで。
+œ みたいな合成文字や、À みたいなアクセント付きの文字、¿ (スペイン語で疑問文の頭につける記号)とか。</p>
+<p>ちなみに、どのレベルでコンパイルできないかというと、Š (<code>LF</code>+128の位置)が<code>LF</code>と誤認識されて <code>//</code> コメント中に Š を書くとその後ろがコメント扱いされなくなるレベル。</p>
+<p>これに対して、結局、4月にRoslyn チームが折れて、Windows-1252に特殊対応を入れたのがこちら。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/pull/2151">Use CodePage1252 Encoding if available, Latin1 if not. #2151</a></li>
+</ul>
+<p>当初はWindows-1252に対する<code>Encoding</code>を自前実装して解決しようとしたり。
+結局最終的には、一度<code>Encoding.GetEncoding(codepage: 1252)</code>してみて、例外が出たら別のコードページに切り替えるという方式に。</p>
+<h3 id="section-3">リリース後に改めて問題に</h3>
+<p>Visual Studio 2015が7/20にリリースされたわけですが。
+見事に、7/21に以下の報告が。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/4022">.NET compiler produces incorrect string constants in MSIL when C# source files encoded with non-UTF-8 encoding #4022</a></li>
+</ul>
+<p>そして続くようにぞろぞろと。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/4222">VS2015 (MSBuild/14) compiler can't detect file ecoding correctly #4222</a></li>
+<li><a href="https://github.com/dotnet/roslyn/issues/4255">Chinese string is compiled to garbage characters #4255</a></li>
+<li><a href="https://github.com/dotnet/roslyn/issues/4264">Roslyn can't detect 932 encoding #4264</a></li>
+</ul>
+<p>まあなんというか…</p>
+<ul>
+<li>中国語に関する問題報告はVS 2015リリースから結構後</li>
+<li>日本語に至っては、Roslyn Issueページへの直接の報告なくて、おそらくは別の口から入ったフィードバックをもとに、Microsoftの中の人が報告</li>
+</ul>
+<p>ということで、しょうがないから修正pull requestが上がったみたいです。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/pull/4303">Use default OS encoding to decode non-Unicode/non-UTF8 text, if available, instead of unconditionally falling back to cp1252 or Latin1. #4303</a></li>
+</ul>
+<p>結局、shim (くさび、詰め木)ライブラリを挟んで、<code>Encoding.Default</code>が使える環境では<code>Encoding.Default</code>を使うように変更したみたいです。</p>
+<h2 id="unicode">非Unicode問題</h2>
+<p>ちなみに、僕はRCの頃に気づいてたというか、実際、<a href="https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Old/SoundLibrary">大昔(C# 1.0時代)に書いたコード</a>がコンパイルできなくなってましたが、
+普通に文字コードを変更してスルーしてました。</p>
+<p>まあ、非Unicodeファイルとかちょっと。</p>
+<p>そりゃリリースされてから問題になりますわね。アーリーアダプターやるような人の感覚だとむしろ非Unicodeファイルが残ってることの方が大問題。「欧米の連中、Windows-1252に対する特殊対応とかやめろよ、マジで」くらいに思っておりました。</p>
+<p>ちなみに、今のVisual StudioはC#/VBファイルを作った時点で<a href="https://ja.wikipedia.org/wiki/%E3%83%90%E3%82%A4%E3%83%88%E3%82%AA%E3%83%BC%E3%83%80%E3%83%BC%E3%83%9E%E3%83%BC%E3%82%AF">BOM</a>が入ってて、UTF8で保存されるはずなんですよね。
+C#/VBファイルが<code>Encoding.Default</code>(日本だと要するにShift JIS)になってたのって、Visual Studio 2002時代だけのはず。</p>
+<p>この時代に書かれてて、その後保守されてなくて、それでもたまに使われるようなファイルがどれくらいあるんだという話。
+とはいえ、自分のところにもそれ(<a href="https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Old/SoundLibrary">C# 1.0時代に書いたコード</a>がサンプルに残ってて、たまにダウンロードしていく人がいる)があったわけですが…</p>
+<p>あと、Visual Studio の外、例えば今僕は仕事で<a href="http://japan.unity3d.com/">Unity</a>使ってるわけですが、Windows環境でUnity使ってると、Unity上で作られるC#ファイルは<code>Encoding.Default</code>でできちゃうんですよね。
+大変うざく(なのでチーム的には「C#ファイルはVisual Studio側で作って」運用をしていたり)。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2015/08/">2015&#x5E74;8&#x6708;</a></li><li><a href="/blog/2015/08/vs2015rtmmeeting/">&#x3010;&#x958B;&#x50AC;&#x7D50;&#x679C;&#x3011;Visual Studio 2015&#x30EA;&#x30EA;&#x30FC;&#x30B9;&#x8A18;&#x5FF5;&#x52C9;&#x5F37;&#x4F1A;</a></li><li><a href="/blog/2015/08/migratetoprojectjson/">packages.config &#x304B;&#x3089; project.json &#x3078;&#x306E;&#x79FB;&#x884C;</a></li><li><a href="/blog/2015/08/pickuproslyn0815/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7; Roslyn 8/15</a></li><li><a href="/blog/2015/08/pickuproslyn0829/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/29</a></li><li><a href="/blog/2015/08/meetingssept/">9&#x6708;&#x306B;3&#x3064;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,162 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>.NET 5&#x3001;Visual Studio 16.1 Preview 3 | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2019/5/build2019/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2019-05-07T20:32:59">2019-05-07</time></span><span>更新: <time datetime="2019-05-07T20:37:39">2019-05-07</time></span></div><h1 id="net-5visual-studio-16.1-preview-3">.NET 5、Visual Studio 16.1 Preview 3</h1>
+<p>今年の <a href="https://www.microsoft.com/en-us/build">build</a>、思ってたよりも .NET がらみが盛沢山…</p>
+<p><a href="https://www.publickey1.jp/blog/19/windows_terminalpowershellsshmicrosoft_build_2019.html">Windows Terminal</a>とか<a href="https://www.publickey1.jp/blog/19/webvisual_studio_onlinevscodeintellicodelive_sharemicrosoft_build_2019.html">Visual Studio Online</a>とかの方がさらにインパクト強そう？
+ですけど、 .NET がらみもだいぶ。
+まあ、3.0 が今年こそ見えてきましたからね。</p>
+<ul>
+<li><a href="https://devblogs.microsoft.com/dotnet/introducing-net-5/">Introducing .NET 5</a>
+<ul>
+<li>.NET Core 4 は Framework 4.X と紛らわしいから欠番にして、次は「5」</li>
+<li>徐々に .NET Core に一本化して、名前も「.NET」に
+<ul>
+<li><a href="https://devblogs.microsoft.com/dotnet/net-core-is-the-future-of-net/">.NET Framework は 4.8 を最後のバージョンにすると明言</a></li>
+<li>Mono の機能は徐々に取り込むとのこと
+<ul>
+<li>最初の目標は <a href="https://github.com/dotnet/corefx/">corefx</a>(ライブラリ部分)を<a href="https://github.com/dotnet/coreclr/">coreclr</a>と Mono VM で99%共有化とかからと言ってるので先は長そう</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>これからは年に1回、毎年11月にメジャー リリースする
+<ul>
+<li>2019/9 に .NET Core 3.0</li>
+<li>2019/11 に .NET Core 3.1</li>
+<li>2020/11 に .NET 5、以降毎年6, 7, 8, ...
+<ul>
+<li>5 以降、Long Term Support は偶数番だけ</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="https://devblogs.microsoft.com/dotnet/announcing-net-core-3-0-preview-5/">Announcing .NET Core 3.0 Preview 5</a>
+<ul>
+<li>Preview 4 との差分</li>
+<li>差分のみだけど今回結構大きそう</li>
+<li>令和対応とか混ざっててちょっと受ける</li>
+</ul>
+</li>
+<li><a href="https://devblogs.microsoft.com/visualstudio/visual-studio-2019-version-16-1-preview-3/">Visual Studio 2019 version 16.1 Preview 3</a>
+<ul>
+<li><a href="https://devblogs.microsoft.com/visualstudio/announcing-the-general-availability-of-intellicode-plus-a-sneak-peek/">IntelliCode が GA</a>だって
+<ul>
+<li>何を持って GA なんだろう… 「16.1 Preview 3 からはオプション指定なしでデフォルトでオン」の意味？</li>
+</ul>
+</li>
+<li>IntelliSense、 using してない名前空間の型も補完候補に出てくるように
+<ul>
+<li>IntelliCode のおかげで候補が賢くなってるおかげか、候補が多過ぎてつらい問題はそこまでなさそう？</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="https://online.visualstudio.com/">https://online.visualstudio.com/</a> 発表
+<ul>
+<li>今のところ上記 URL は<a href="https://devblogs.microsoft.com/visualstudio/intelligent-productivity-and-collaboration-from-anywhere/">発表ブログ</a>に転送</li>
+<li>将来的には「ブラウザー版 Visual Studio Code」になる予定
+<ul>
+<li>今もう、実は <a href="https://try.dot.net/">try.dot.net</a>とかが <a href="https://dotnet.microsoft.com/apps/aspnet/web-apps/client">Blazor</a> ベースで動いてたりするので、布石はあった</li>
+<li>Blazor 自体も「プレビュー」に(早期開発版フェーズは通過)</li>
+</ul>
+</li>
+<li>名前の再利用やめろ… Surface といい docs といい…
+<ul>
+<li>ALM とか Team Services とか DevOps とか呼ばれてるやつの名称が「Visual Studio Online」だった時期がある</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>「11月って言うと、確かにホリデーシーズン直前で、アメリカ製品はその時期に出るものが一番安定してるけど」とか、「build で毎年11月とかそんなタイトな公約掲げちゃって大丈夫？」とかは思ったり思わなかったり。</p>
+<p>まあ、この辺りは他の人がまとめてるので概要のみにして。</p>
+<h2 id="c-8.0-in-visual-studio-16.1-preview-3">C# 8.0 in Visual Studio 16.1 Preview 3</h2>
+<p>最近はすっかり C# 中心の話ばっかりなわけですが。</p>
+<p>今回の Preview 3 では、新機能は特に増えていないんですが、ちょこっと修正があります。
+<a href="/blog/2019/4/vs2019ga/">前々から「.NET Core 3.0 依存だから安定してない」って言っていた機能</a>に、予定通り変更あり。</p>
+<ul>
+<li>非同期イテレーターに <code>CancellationToken</code> を渡せる手段ができました
+<ul>
+<li>例を gist にアップロード: <a href="https://gist.github.com/ufcpp/ae78b9e06d77a573cd5f2fcdbefb92cd">EnumeratorCancellation.cs</a></li>
+<li><code>EnumeratorCancellation</code> 属性を付ければいいらしい</li>
+<li>後述しますがちょこっと挙動変更される予定がすでにあり</li>
+</ul>
+</li>
+<li>Index/Range がらみのコード生成結果変更
+<ul>
+<li><a href="/blog/2019/2/pickuproslyn0210/">2月にブログにした</a>通り</li>
+<li>変更内容に関する提案ドキュメント: <a href="https://github.com/dotnet/csharplang/blob/master/proposals/index-range-changes.md">Index and Range Changes</a>
+<ul>
+<li>旧仕様: コレクション側が <code>Index</code>/<code>Range</code> 構造体を受け付けるオーバーロードを用意</li>
+<li>新仕様: C# コンパイラーが <code>Index.GetOffset</code> を呼んで <code>int</code> に変換</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="roslyn-57">ピックアップ Roslyn 5/7</h2>
+<p>で、3日ほど前に1個、C# の Design Notes のアップロードがありました。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/2485">Added: LDM Notes for April 29, 2019 #2485</a></li>
+</ul>
+<h3 id="baset">base(T)</h3>
+<p>一昨日、<a href="/study/csharp/oop/oo_interface/#dim">インターフェイスのデフォルト実装</a>の話を書いたところなんですよ。
+その中には <a href="/study/csharp/oop/oo_interface/#multiple-inheritance"><code>base(T)</code> アクセスの話</a>もあります。
+これを書いてから上記の Desing Notes に気づいたわけですが。</p>
+<p>「<code>base(T)</code>、C# 8.0 からは外して、ランタイムのサポート込みで C# 9.0 に回したい」ですって。</p>
+<p>書き直さなきゃ…</p>
+<h3 id="section">非同期イテレーターのキャンセル</h3>
+<p>この話は前述の<a href="https://gist.github.com/ufcpp/ae78b9e06d77a573cd5f2fcdbefb92cd">gist に上げた例</a>にも書いてあるんですけども。
+以下のような非同期イテレーターを書いた場合、</p>
+<pre><code class="language-csharp"><span class="keyword">async</span> IAsyncEnumerable&lt;<span class="keyword">int</span>&gt; X([EnumeratorCancellation]CancellationToken ct = <span class="keyword">default</span>)</code></pre>
+<p><code>CancellationToken</code> は、<code>X(ct)</code> というのと、<code>X().WithCancellation(ct)</code> というの、どちらで書いても最終的に <code>X</code> の引数に渡ってきます。</p>
+<p>で、両方指定できちゃう。<code>X(ct1).WithCancellation(ct2)</code> が合法。
+この時どういう挙動をすべきかという話です。</p>
+<ul>
+<li>現状: <code>ct2</code> が優先で上書きされる</li>
+<li>提案: <code>ct1</code> と <code>ct2</code> を<a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.threading.cancellationtokensource.createlinkedtokensource">リンク</a>させたものを新たに作る</li>
+</ul>
+<p><code>CancellationToken</code> だけじゃなくて <code>CancellationTokenSource</code> にも依存するとか、
+コード生成が複雑になるとか、
+<code>CancellationTokenSource</code> を持つためのフィールドも増えてメモリ的にも優しくないとか、
+デメリットもあるんですが、さすがに上書き挙動はまずそう。</p>
+<h3 id="section-1">トリアージュ</h3>
+<p>buildで、.NET Core 3.0 のリリースが今年の7月にRC、9月にGA、11月に3.1と明言されたわけですが。
+C# 8.0 はこれに追従する予定です。
+要するに C# 8.0 にもスケジュールが切られました。
+逆算すると、「C# 8.0 に何を入れて何を入れないか」の決断のタイムリミットが今。</p>
+<p>ということで、なんかむっちゃ仕分けされてました。
+仕分け結果は <a href="https://github.com/dotnet/csharplang/projects/4">csharplang 内の GitHub Project</a>にも、
+<a href="https://github.com/dotnet/roslyn/blob/master/docs/Language%20Feature%20Status.md">Roslyn 内の Language Feature Status</a>にも反映済み。
+多少この2つに不整合があるんで、たぶんまだもうちょっと整理中のはずです。</p>
+<p>前々から「8.0 タグが付いてるけど怪しくない？」みたいに思ってたものはやっぱり外れました。
+急ぎ、<a href="https://github.com/ufcpp/UfcppSample/issues/208">自分用のタスク リスト</a>にも反映。</p>
+<h3 id="section-2">ローカル関数に対する属性</h3>
+<p>非同期イテレーター、属性ベースで <code>CancellationToken</code> を渡すようになったわけですが。
+そこで「ローカル関数にも属性付けれないとまずいじゃない」という話になったみたいです。</p>
+<p>ということで、それも実装予定に。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2019/5/">5&#x6708;</a></li><li><a href="/blog/2019/5/pickuproslyn0519/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 5/19: dotnet-try, .NET Core 3.0 &#x30D1;&#x30D5;&#x30A9;&#x30FC;&#x30DE;&#x30F3;&#x30B9;&#x3001;null &#x8A31;&#x5BB9;&#x53C2;&#x7167;&#x578B;&#x306E;&#x4ED5;&#x69D8;&#x6539;&#x5584;</a></li><li><a href="/blog/2019/5/vs16_2_p1/">Visual Studio 16.1.0 &amp; 16.2 Preview 1</a></li><li><a href="/blog/2019/5/deterministicbuilds/">C# &#x3067;&#x3001;&#x540C;&#x3058;&#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x304B;&#x3089;&#x5E38;&#x306B;&#x540C;&#x3058;&#x30D0;&#x30A4;&#x30CA;&#x30EA;&#x3092;&#x751F;&#x6210;&#x3059;&#x308B;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

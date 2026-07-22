@@ -1,0 +1,509 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x6761;&#x4EF6;&#x5206;&#x5C90; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/structured/st_branch/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">条件分岐</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>プログラム中で、ある条件を満たしたときだけ処理の流れを変えたい場合があります。
+このような処理を<strong id="branch" class="keyword">条件分岐</strong>といい、
+C#では条件分岐のために <code>if</code>、<code>else</code>、<code>switch</code> などのキーワードを用意しています。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>if(条件式) 真のとき</p>
+</li>
+<li><p>if(条件式) 真のとき else 偽のとき</p>
+</li>
+<li><p>switch(条件) { case 値: ... }</p>
+</li>
+<li><p>goto Label;</p>
+</li>
+</ul>
+<h2 id="if"><a id="sec-generated-title-3"></a> <a id="if"></a>if 文</h2>
+<p><strong id="if" class="keyword">if</strong> 文は以下のような書き方をします。</p>
+<pre><code class="language-csharp"><span class="keyword">if</span>(条件式)
+  文1 <span class="comment">// 条件式が真のときに実行される</span>
+<span class="keyword">else</span>
+  文2 <span class="comment">// 条件式が偽のときに実行される</span></code></pre>
+<p>英文法に近い書き方ですね。
+if A, B, else C （もし A ならば B、さもなくば C）。</p>
+<p>if 文は <code>if</code> の後の括弧内に書かれた条件式の真偽によって処理の流れを変えます。
+条件式が真のときには 文1 が、偽のときには 文2 が実行されます。
+また、<code>else</code> から後ろの部分は省略することができます。</p>
+<h5 id="section-3"><a id="sec-generated-title-4"></a>サンプル</h5>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> IfSample
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="comment">// 整数を入力してもらう</span>
+    <span class="keyword">int</span> x;
+    Console.Write(<span class="string">&quot;整数を入力してください : &quot;</span>);
+    x = <span class="keyword">int</span>.Parse(Console.ReadLine());
+
+    <span class="keyword">if</span>(x == <span class="number">0</span>)
+    {
+      <span class="comment">// 0が入力された場合、エラーメッセージだけ表示</span>
+      Console.Write(<span class="string">&quot;0が入力されました&quot;</span>);
+    }
+    <span class="keyword">else</span>
+    {
+      <span class="comment">// 0以外が入力された場合、入力された数値の逆数を求めて表示</span>
+      <span class="keyword">double</span> x_inv = <span class="number">1</span>.<span class="number">0</span> / x;
+      Console.Write(<span class="string">&quot;1/{0} = {1}&quot;</span>, x, x_inv);
+    }
+  }
+}</code></pre>
+<pre><code class="language-console">整数を入力してください : 4
+1/4 = 0.25</code></pre>
+<pre><code class="language-console">整数を入力してください : 0
+0が入力されました</code></pre>
+<h3 id="section-4"><a id="sec-generated-title-5"></a> <a id="conditional-operator"></a>条件演算子</h3>
+<p>「<a href="/study/csharp/start/st_operator/#condition">組み込み演算子</a>」で紹介した条件演算子<code>?:</code>は、「<code>if</code>文の<a href="/study/csharp/structured/miscexpressions/#term">式</a>版」とも言える機能です。
+式なので戻り値が必須ですが、以下のように、条件を満たすときと満たさないときの両方で同じ型の値を返す場合には条件演算子を使った方がすっきり書けることが多いです。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> num = <span class="keyword">int</span>.Parse(Console.ReadLine());
+ 
+        <span class="comment">// if で偶奇判定</span>
+        <span class="keyword">string</span> parity1;
+        <span class="keyword">if</span> (num % <span class="number">2</span> == <span class="number">1</span>) parity1 = <span class="string">&quot;odd&quot;</span>;
+        <span class="keyword">else</span> parity1 = <span class="string">&quot;even&quot;</span>;
+ 
+        <span class="comment">// 条件演算子で偶奇判定</span>
+        <span class="keyword">var</span> parity2 = num % <span class="number">2</span> == <span class="number">1</span> ? <span class="string">&quot;odd&quot;</span> : <span class="string">&quot;even&quot;</span>;
+    }
+}</code></pre>
+<h4 id="section-5"><a id="sec-generated-title-6"></a> <a id="terget-typed-conditional"></a>条件演算子のターゲット型推論</h4>
+<h5 class="version version9">Ver. 9</h5>
+<p>C# 9.0 から条件演算子に<a href="/study/csharp/start/misctyperesolution/#target-type">ターゲット型</a>からの型推論が働くようになりました。</p>
+<p>これまで、条件演算子の結果は第2項・第3項から判別できる共通の型で決めていました。
+(ソース型からの推論(例えば <a href="/study/csharp/start/sp3_inference/#implicit"><code>var</code></a> など)とターゲット型からの推論は両立できないので、<code>var</code> などを使う場合には C# 9.0 でもこれまで通り、共通の型で決まります。)
+共通の型が判別できないときにはコンパイル エラーになります。</p>
+<p>例えば以下のようなコードはコンパイルできません。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> M(<span class="keyword">bool</span> b)
+{
+    <span class="comment">// C# では整数型と null の共通型判定ができない。</span>
+    <span class="comment">// 自動的に int? になってくれたりはしない(int? が後入り機能なせい)。</span>
+    <span class="keyword">var</span> i = b ? <span class="number">1</span> : <span class="keyword">null</span>;
+ 
+    <span class="comment">// C# では「共通の基底クラスを探す」とかの処理はやらない。</span>
+    <span class="comment">// インターフェイスは多重継承が可能で、共通基底を探す処理はかなりの時間を要することがあって、意図的に避けている。</span>
+    <span class="keyword">var</span> c = b ? <span class="keyword">new</span> A() : <span class="keyword">new</span> B();
+}
+ 
+<span class="keyword">class</span> Base { }
+<span class="keyword">class</span> A : Base { }
+<span class="keyword">class</span> B : Base { }</code></pre>
+<p>これが、C# 9.0 から、ターゲット型を指定することでコンパイルできるようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> M(<span class="keyword">bool</span> b)
+{
+    <span class="comment">// var をやめて、int? を明示。</span>
+    <span class="keyword">int</span>? i = b ? <span class="number">1</span> : <span class="keyword">null</span>;
+ 
+    <span class="comment">// var をやめて、Base を明示。</span>
+    Base c = b ? <span class="keyword">new</span> A() : <span class="keyword">new</span> B();
+}</code></pre>
+<h2 id="switch"><a id="sec-generated-title-7"></a> <a id="switch"></a>switch 文</h2>
+<p><strong id="switch" class="keyword">switch</strong> 文は以下のような書き方をします。</p>
+<pre><code class="language-csharp"><span class="keyword">switch</span>(変数)
+{
+  <span class="keyword">case</span> 値1:
+    いくつかの文1 <span class="comment">// 変数の値 == 値1 のとき実行される</span>
+    <span class="keyword">break</span>;
+  <span class="keyword">case</span> 値2:
+    いくつかの文2 <span class="comment">// 変数の値 == 値2 のとき実行される</span>
+    <span class="keyword">break</span>;
+      ・
+      ・
+      ・
+  <span class="keyword">default</span>:
+    いくつかの文 <span class="comment">// 変数の値がどの値とも異なるとき実行される</span>
+    <span class="keyword">break</span>;
+}</code></pre>
+<p><code>switch</code> の後ろの括弧に書かれた変数の値によって処理の流れを変えます。
+<code>switch</code> 中で使える変数は、整数型もしくは文字列型の変数のみです。</p>
+<p>そして、<code>case</code> の後ろに条件となる値を書きます。
+変数の値が <code>case</code> で指定されたどの値とも異なる場合、
+<code>default</code> というラベルのついた場所に処理の流れが移ります。
+<code>break</code> は switch 文から抜けるために使います。</p>
+<h3 id="section-6"><a id="sec-generated-title-8"></a> <a id="type-switch"></a>型による分岐</h3>
+<h5 class="version version7">Ver. 7</h5>
+<p>C# 6までは、<code>case</code>に書ける条件は値のみでした。その値と一致したときにだけ、<code>case</code>以下の文が実行されます。</p>
+<p>一方、C# 7からは、型による分岐ができるようになりました。例えば以下のような書き方ができます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> TypeSwitch(<span class="keyword">object</span> obj)
+{
+    <span class="keyword">switch</span> (obj)
+    {
+        <span class="keyword">case</span> <span class="keyword">int</span> n:
+            Console.WriteLine(<span class="string">&quot;整数 &quot;</span> + n);
+            <span class="keyword">break</span>;
+        <span class="keyword">case</span> <span class="keyword">string</span> s:
+            Console.WriteLine(<span class="string">&quot;文字列 &quot;</span> + s);
+            <span class="keyword">break</span>;
+        <span class="keyword">default</span>:
+            Console.WriteLine(<span class="string">&quot;その他&quot;</span>);
+            <span class="keyword">break</span>;
+    }
+}</code></pre>
+<p>ちなみに、この書き方の場合、各<code>case</code>に対してさらに<code>when</code>句で条件を付けることができます。
+この書き方では条件が被ることもありますが、そのときは書いた順に上から調べて最初に条件を満たした<code>case</code>が実行されます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">int</span> TypeSwitch(<span class="keyword">object</span> obj)
+{
+    <span class="keyword">switch</span> (obj)
+    {
+        <span class="keyword">case</span> <span class="keyword">int</span> n when n &lt; <span class="number">1</span>: <span class="keyword">return</span> <span class="number">0</span>;
+        <span class="keyword">case</span> <span class="keyword">int</span> n when n &lt; <span class="number">10</span>: <span class="keyword">return</span> <span class="number">1</span>;
+        <span class="keyword">case</span> <span class="keyword">int</span> n when n &lt; <span class="number">100</span>: <span class="keyword">return</span> <span class="number">2</span>;
+        <span class="keyword">case</span> <span class="keyword">int</span> n when n &lt; <span class="number">1000</span>: <span class="keyword">return</span> <span class="number">3</span>;
+        <span class="keyword">case</span> <span class="keyword">int</span> n: <span class="keyword">return</span> (<span class="keyword">int</span>)Math.Log10(n);
+        <span class="keyword">case</span> <span class="keyword">int</span>[] a: <span class="keyword">return</span> a.Length;
+        <span class="keyword">default</span>: <span class="keyword">return</span> -<span class="number">1</span>;
+    }
+}</code></pre>
+<p>詳しくは「<a href="/study/csharp/datatype/typeswitch/#switch">型スイッチ</a>」で説明します。</p>
+<h3 id="switch-1"><a id="sec-generated-title-9"></a> <a id="tuple-switch"></a>複数の値で switch</h3>
+<h5 class="version version8">Ver. 8.0</h5>
+<p>C# 8.0 からは、以下のように、複数の値をまとめて <code>switch</code> 文に掛けれるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">string</span> Color(<span class="keyword">bool</span> r, <span class="keyword">bool</span> g, <span class="keyword">bool</span> b)
+{
+    <span class="keyword">switch</span> (r, g, b)
+    {
+        <span class="keyword">case</span> (<span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">false</span>): <span class="keyword">return</span> <span class="string">&quot;black&quot;</span>;
+        <span class="keyword">case</span> (<span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">false</span>): <span class="keyword">return</span> <span class="string">&quot;red&quot;</span>;
+        <span class="keyword">case</span> (<span class="keyword">false</span>, <span class="keyword">true</span>, <span class="keyword">false</span>): <span class="keyword">return</span> <span class="string">&quot;green&quot;</span>;
+        <span class="keyword">case</span> (<span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">true</span>): <span class="keyword">return</span> <span class="string">&quot;blue&quot;</span>;
+        <span class="keyword">case</span> (<span class="keyword">false</span>, <span class="keyword">true</span>, <span class="keyword">true</span>): <span class="keyword">return</span> <span class="string">&quot;cyan&quot;</span>;
+        <span class="keyword">case</span> (<span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">true</span>): <span class="keyword">return</span> <span class="string">&quot;magenta&quot;</span>;
+        <span class="keyword">case</span> (<span class="keyword">true</span>, <span class="keyword">true</span>, <span class="keyword">false</span>): <span class="keyword">return</span> <span class="string">&quot;yellow&quot;</span>;
+        <span class="keyword">case</span> (<span class="keyword">true</span>, <span class="keyword">true</span>, <span class="keyword">true</span>): <span class="keyword">return</span> <span class="string">&quot;white&quot;</span>;
+    }
+}</code></pre>
+<p>正確に言うと、これは「<a href="/study/csharp/datatype/tuples/">タプル</a>に対する<a href="/study/csharp/datatype/patterns/#positional">位置パターン</a>」だったりします。
+詳しくは「<a href="/study/csharp/datatype/patterns/#tuple-switch">タプル switch</a>」で説明します。</p>
+<h3 id="section-7"><a id="sec-generated-title-10"></a> <a id="fallthrough"></a>フォールスルーの禁止</h3>
+<p>C# の先祖に当たる C 言語や C++ 言語では、
+以下のようなコードが許されていました。</p>
+<pre><code class="language-cpp">swicth(x)
+{
+<span class="keyword">case</span> 1:
+  printf(<span class="string">&quot;x == 1 のときに実行される\n&quot;</span>); <span class="comment">// (1)</span>
+<span class="keyword">case</span> 2:
+  printf(<span class="string">&quot;x == 1 でも x == 2 でも実行される\n&quot;</span>); <span class="comment">// (2)</span>
+}</code></pre>
+<p>変数 <code>x</code> が 1 のとき、(1) と (2) の両方の行が実行されます。
+<code>x</code> が 2 のときには (2) だけが実行され、
+それ以外の場合は何も実行されません。
+すなわち、C/C++ では、switch 文中の case ラベルを超えてコードが実行され、
+このような動作を<em>フォールスルー</em>（fall through）と呼びます。</p>
+<p>ですが、実際にプログラムを作る際、多くの場合では、
+<code>x</code> が 1 のときと 2 のときで、
+全く別の処理をしたい、すなわち、
+フォールスルーして欲しくない場合がほとんどで、
+以下のように、<code>braek</code> を挿入して、
+case ラベルを超えてコードが実行されないようにします。</p>
+<pre><code class="language-cpp">swicth(x)
+{
+<span class="keyword">case</span> 1:
+  printf(<span class="string">&quot;x == 1 のときだけ実行される\n&quot;</span>);
+  <span class="keyword">break</span>;
+<span class="keyword">case</span> 2:
+  printf(<span class="string">&quot;x == 2 のときだけ実行される\n&quot;</span>);
+  <span class="keyword">break</span>;
+}</code></pre>
+<p>で、C/C++ では、
+「フォールスルーして欲しくないのに、ついうっかり break を忘れる」
+というバグが結構頻繁に起こりました。
+そのため、<em>C# ではフォールスルーを禁止しています</em>。
+すなわち、C# では、
+case ラベル毎に必ず、break, 「<a href="#goto">goto</a>」, 「<a href="/study/csharp/structured/st_function/#return">戻り値return</a>」 のいずれかを記述する必要があります。</p>
+<p>毎回いちいち break を書くのが面倒ですが、必ず書く必要があります。
+C/C++ 時代の名残です。</p>
+<p>（「どうせフォールスルーできないんだから、break を明示的に書かなくてもフォールスルーしない仕様にして欲しい」という要望も多かったりします。
+C# は C/C++ からの移行を意識して作られたので、
+C/C++ プログラマの混乱を避けるために break を付ける構文になったんだと思います。
+最初から C# でプログラミングを学び始める人もかなり出きた今となっては少々気持ち悪い構文です。
+）</p>
+<p>ただし、C# でも、以下のように、case ラベルが連続している場合に限りフォールスルー可能で、
+break 等が必須ではありません。</p>
+<pre><code class="language-csharp"><span class="keyword">switch</span>(x)
+{
+  <span class="keyword">case</span> <span class="number">1</span>:
+  <span class="keyword">case</span> <span class="number">2</span>:
+    Console.Write(<span class="string">&quot;x == 1 か x == 2 のときに実行される\n&quot;</span>);
+    <span class="keyword">break</span>;
+    <span class="comment">// case ラベルが連続している場合のみ OK。</span>
+    <span class="comment">// case 1: と case 2: の間にコードを書いては駄目。</span>
+}</code></pre>
+<h5 id="section-8"><a id="sec-generated-title-11"></a>サンプル</h5>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> SwitchSample
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="comment">// 整数を2つ入力してもらう</span>
+    <span class="keyword">int</span> x, y;
+    Console.Write(<span class="string">&quot;1つ目の整数を入力してください : &quot;</span>);
+    x = <span class="keyword">int</span>.Parse(Console.ReadLine());
+    Console.Write(<span class="string">&quot;2つ目の整数を入力してください : &quot;</span>);
+    y = <span class="keyword">int</span>.Parse(Console.ReadLine());
+
+    <span class="comment">// + - / * のいずれかを入力してもらう</span>
+    <span class="keyword">char</span> op;
+    Console.Write(<span class="string">&quot;行いたい操作を入力してください(+ - / *) : &quot;</span>);
+    op = Console.ReadLine()[<span class="number">0</span>];
+
+    <span class="keyword">switch</span>(op)
+    {
+      <span class="keyword">case</span> <span class="string">&#39;+&#39;</span>:
+        Console.Write(<span class="string">&quot;{0} + {1} = {2}&quot;</span>, x, y, x+y);
+        <span class="keyword">break</span>;
+      <span class="keyword">case</span> <span class="string">&#39;-&#39;</span>:
+        Console.Write(<span class="string">&quot;{0} - {1} = {2}&quot;</span>, x, y, x-y);
+        <span class="keyword">break</span>;
+      <span class="keyword">case</span> <span class="string">&#39;*&#39;</span>:
+        Console.Write(<span class="string">&quot;{0} &#215; {1} = {2}&quot;</span>, x, y, x*y);
+        <span class="keyword">break</span>;
+      <span class="keyword">case</span> <span class="string">&#39;/&#39;</span>:
+        <span class="keyword">if</span>(y != <span class="number">0</span>)
+          Console.Write(<span class="string">&quot;{0} &#247; {1} = {2} … {3}&quot;</span>, x, y, x/y, x%y);
+        <span class="keyword">break</span>;
+      <span class="keyword">default</span>:
+        Console.Write(<span class="string">&quot;対応していない操作です&quot;</span>);
+        <span class="keyword">break</span>;
+    }
+  }
+}</code></pre>
+<pre><code class="language-console">1つ目の整数を入力してください : 5
+2つ目の整数を入力してください : 7
+行いたい操作を入力してください(+ - / *) : +
+5 + 7 = 12</code></pre>
+<pre><code class="language-console">1つ目の整数を入力してください : 11
+2つ目の整数を入力してください : 3
+行いたい操作を入力してください(+ - / *) : /
+11 ÷ 3 = 3 … 2</code></pre>
+<pre><code class="language-console">1つ目の整数を入力してください : 1
+2つ目の整数を入力してください : 1
+行いたい操作を入力してください(+ - / *) : 0
+対応していない操作です</code></pre>
+<h3 id="switch-2"><a id="sec-generated-title-12"></a> <a id="switch-expression"></a>switch 式</h3>
+<h5 class="version version8">Ver. 8.0</h5>
+<p>C# 8.0では、<code>switch</code>の<a href="/study/csharp/structured/miscexpressions/#term">式</a>版が追加されました。
+以下のような書き方をします。</p>
+<pre><code class="language-csharp">変数 <span class="keyword">switch</span>
+{
+    パターン1 =&gt; 式1,
+    パターン2 =&gt; 式2,
+      ・
+      ・
+      ・
+}</code></pre>
+<p>詳しくは「<a href="/study/csharp/datatype/typeswitch/#switch-expression"><code>switch</code> 式</a>」で説明します。</p>
+<h2 id="goto"><a id="sec-generated-title-13"></a> <a id="goto"></a>goto 文</h2>
+<p><strong id="goto" class="keyword">goto</strong> 文は if 文や switch 文と異なり、無条件に処理の流れを変えるものです。
+例えば以下のように使います。</p>
+<pre><code class="language-csharp">START: <span class="comment">// ジャンプ先を示すラベル</span>
+Console.Write(<span class="string">&quot;gotoの例&quot;</span>);
+<span class="keyword">goto</span> START;<span class="comment">// START: というラベルのある位置に処理の流れを移す</span></code></pre>
+<p>この例では、<code>Console.Write(&quot;gotoの例&quot;);</code>が何度も繰り返し実行されます。
+(プログラムを強制終了するしか止める方法がないので注意)</p>
+<p>goto 文を使用するとプログラムの処理の流れを追いづらくなるので、あまり使うのは好ましくないとされています。
+そのため、通常は goto 文を使うのは以下のような場合に限られます。</p>
+<p>1つは以下のように、switch 文で、<code>x</code> の値が1のときも2の時も同じ処理を行いたいといった場合に使います。</p>
+<pre><code class="language-csharp"><span class="keyword">switch</span>(x)
+{
+  <span class="keyword">case</span> <span class="number">1</span>:
+    <span class="keyword">goto</span> <span class="keyword">case</span> <span class="number">2</span>; <span class="comment">// gotoを使って処理を移す</span>
+  <span class="keyword">case</span> <span class="number">2</span>:
+    <span class="comment">// x の値が1か2だった場合の処理</span>
+    <span class="keyword">break</span>;
+  <span class="keyword">case</span> <span class="number">3</span>:
+    <span class="comment">// x の値が3だった場合の処理</span>
+    <span class="keyword">break</span>;
+  <span class="keyword">default</span>:
+    <span class="comment">// そのほかの場合の処理</span>
+    <span class="keyword">break</span>;
+}</code></pre>
+<p>もう1つ、以下のように多重ループ(ループについては「<a href="/study/csharp/structured/st_loop/">反復処理</a>」で説明します)から抜け出すときにも使います。</p>
+<pre><code class="language-csharp"><span class="keyword">while</span>(x != <span class="number">0</span>)
+{
+  <span class="keyword">while</span>(y != <span class="number">0</span>)
+  {
+    <span class="comment">// 繰り返し行いたい処理</span>
+
+    <span class="keyword">if</span>(x == y)
+      <span class="keyword">goto</span> LOOPEND; <span class="comment">// break では while(y != 0) の方のループしか抜けられない</span>
+  }
+}
+LOOPEND:
+;</code></pre>
+<h2 id="section-9"><a id="exercise"></a>演習問題</h2>
+<h3 id="section-10"><a id="exercise-brancheo"></a>問題 1</h3>
+<p>ユーザから入力された整数が奇数か偶数か判定するプログラムを作成せよ。</p>
+<h4 id="section-11">解答例 1</h4>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Exercise
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    Console.Write(<span class="string">&quot;整数を入力してください: &quot;</span>);
+    <span class="keyword">int</span> n = <span class="keyword">int</span>.Parse(Console.ReadLine());
+
+    <span class="keyword">if</span> (n % <span class="number">2</span> == <span class="number">0</span>) Console.Write(<span class="string">&quot;{0} は偶数です\n&quot;</span>, n);
+    <span class="keyword">else</span>            Console.Write(<span class="string">&quot;{0} は奇数です\n&quot;</span>, n);
+  }
+}</code></pre>
+<h3 id="section-12"><a id="exercise-branch0"></a>問題 2</h3>
+<p><a href="/study/csharp/start/st_operator/">組込み演算子</a>の<a href="/study/csharp/start/st_operator/#exercise-ope5">問題 5</a>のプログラムを修正し、
+BMI 値から体型(やせ型、普通、やや肥満、肥満、高度肥満)を判定し、
+表示するプログラムを作成せよ。</p>
+<h4 id="section-13">解答例 1</h4>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Exercise
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    Console.Write(<span class="string">&quot;身長[cm]: &quot;</span>);
+    <span class="keyword">double</span> height = <span class="keyword">double</span>.Parse(Console.ReadLine()) * <span class="number">0</span>.<span class="number">01</span>;
+    Console.Write(<span class="string">&quot;体重[kg]: &quot;</span>);
+    <span class="keyword">double</span> weight = <span class="keyword">double</span>.Parse(Console.ReadLine());
+
+    <span class="keyword">double</span> bmi = weight / (height * height);
+    Console.Write(<span class="string">&quot;BMI = {0}\n&quot;</span>, bmi);
+
+    <span class="keyword">if</span>(bmi &lt; <span class="number">19</span>.<span class="number">8</span>)      Console.Write(<span class="string">&quot;やせ型&quot;</span>);
+    <span class="keyword">else</span> <span class="keyword">if</span>(bmi &lt; <span class="number">24</span>.<span class="number">2</span>) Console.Write(<span class="string">&quot;普通&quot;</span>);
+    <span class="keyword">else</span> <span class="keyword">if</span>(bmi &lt; <span class="number">26</span>.<span class="number">4</span>) Console.Write(<span class="string">&quot;やや肥満（過体重）&quot;</span>);
+    <span class="keyword">else</span> <span class="keyword">if</span>(bmi &lt; <span class="number">35</span>.<span class="number">0</span>) Console.Write(<span class="string">&quot;肥満&quot;</span>);
+    <span class="keyword">else</span>                Console.Write(<span class="string">&quot;高度肥満（要治療）&quot;</span>);
+    Console.Write(<span class="string">&quot;です\n&quot;</span>);
+  }
+}</code></pre>
+<h3 id="section-14"><a id="exercise-branch1"></a>問題 3</h3>
+<p>switch 文を使って150以下の平方数(4＝2×2、9＝3×3、16＝4×4というように、ある整数の二乗になっている数)を判別するプログラムを作成せよ。
+ユーザに整数値を1つ入力してもらい、
+判別結果を出力するものとする。</p>
+<p>ヒント：
+要するに、ユーザからの入力が 1, 4, 9, 16, ・・・になっているかどうかを switch 文で判別します。</p>
+<h4 id="section-15">解答例 1</h4>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Exercise
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    Console.Write(<span class="string">&quot;整数を入力してください: &quot;</span>);
+    <span class="keyword">int</span> n = <span class="keyword">int</span>.Parse(Console.ReadLine());
+
+    <span class="keyword">switch</span> (n)
+    {
+      <span class="keyword">case</span> <span class="number">1</span>:
+        Console.Write(<span class="string">&quot;{0} は平方数です。\n&quot;</span>, n);
+        <span class="keyword">break</span>;
+      <span class="keyword">case</span> <span class="number">2</span> * <span class="number">2</span>: <span class="keyword">goto</span> <span class="keyword">case</span> <span class="number">1</span>;
+      <span class="keyword">case</span> <span class="number">3</span> * <span class="number">3</span>: <span class="keyword">goto</span> <span class="keyword">case</span> <span class="number">1</span>;
+      <span class="keyword">case</span> <span class="number">4</span> * <span class="number">4</span>: <span class="keyword">goto</span> <span class="keyword">case</span> <span class="number">1</span>;
+      <span class="keyword">case</span> <span class="number">5</span> * <span class="number">5</span>: <span class="keyword">goto</span> <span class="keyword">case</span> <span class="number">1</span>;
+      <span class="keyword">case</span> <span class="number">6</span> * <span class="number">6</span>: <span class="keyword">goto</span> <span class="keyword">case</span> <span class="number">1</span>;
+      <span class="keyword">case</span> <span class="number">7</span> * <span class="number">7</span>: <span class="keyword">goto</span> <span class="keyword">case</span> <span class="number">1</span>;
+      <span class="keyword">case</span> <span class="number">8</span> * <span class="number">8</span>: <span class="keyword">goto</span> <span class="keyword">case</span> <span class="number">1</span>;
+      <span class="keyword">case</span> <span class="number">9</span> * <span class="number">9</span>: <span class="keyword">goto</span> <span class="keyword">case</span> <span class="number">1</span>;
+      <span class="keyword">case</span> <span class="number">10</span> * <span class="number">10</span>: <span class="keyword">goto</span> <span class="keyword">case</span> <span class="number">1</span>;
+      <span class="keyword">case</span> <span class="number">11</span> * <span class="number">11</span>: <span class="keyword">goto</span> <span class="keyword">case</span> <span class="number">1</span>;
+      <span class="keyword">case</span> <span class="number">12</span> * <span class="number">12</span>: <span class="keyword">goto</span> <span class="keyword">case</span> <span class="number">1</span>;
+      <span class="keyword">default</span>:
+        Console.Write(<span class="string">&quot;{0} は平方数ではないか、150以上です\n&quot;</span>, n);
+        <span class="keyword">break</span>;
+    }
+  }
+}</code></pre>
+<h3 id="section-16"><a id="exercise-branch2"></a>問題 4</h3>
+<p>数値を3つ入力してもらい、
+その3つの値の中の最大値、最小値を求めるプログラムを作成せよ。</p>
+<h4 id="section-17">解答例 1</h4>
+<p>単純な条件分岐による方法。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Exercise
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    Console.Write(<span class="string">&quot;値1: &quot;</span>);
+    <span class="keyword">double</span> x = <span class="keyword">double</span>.Parse(Console.ReadLine());
+    Console.Write(<span class="string">&quot;値2: &quot;</span>);
+    <span class="keyword">double</span> y = <span class="keyword">double</span>.Parse(Console.ReadLine());
+    Console.Write(<span class="string">&quot;値3: &quot;</span>);
+    <span class="keyword">double</span> z = <span class="keyword">double</span>.Parse(Console.ReadLine());
+
+    <span class="keyword">if</span> (x &gt; y)
+    {
+      <span class="keyword">if</span> (x &gt; z)
+      {
+        <span class="keyword">if</span> (y &gt; z) Console.Write(<span class="string">&quot;最大 {0}, 中間 {1}, 最小 {2}\n&quot;</span>, x, y, z);
+        <span class="keyword">else</span>       Console.Write(<span class="string">&quot;最大 {0}, 中間 {1}, 最小 {2}\n&quot;</span>, x, z, y);
+      }
+      <span class="keyword">else</span> Console.Write(<span class="string">&quot;最大 {0}, 中間 {1}, 最小 {2}\n&quot;</span>, z, x, y);
+    }
+    <span class="keyword">else</span>
+    {
+      <span class="keyword">if</span> (y &gt; z)
+      {
+        <span class="keyword">if</span> (x &gt; z) Console.Write(<span class="string">&quot;最大 {0}, 中間 {1}, 最小 {2}\n&quot;</span>, y, x, z);
+        <span class="keyword">else</span>       Console.Write(<span class="string">&quot;最大 {0}, 中間 {1}, 最小 {2}\n&quot;</span>, y, z, x);
+      }
+      <span class="keyword">else</span> Console.Write(<span class="string">&quot;最大 {0}, 中間 {1}, 最小 {2}\n&quot;</span>, z, y, x);
+    }
+  }
+}</code></pre>
+<h4 id="section-18">解答例 2</h4>
+<p>3つの数値をあらかじめ整列してしまう方法。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Exercise
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    Console.Write(<span class="string">&quot;値1: &quot;</span>);
+    <span class="keyword">double</span> x = <span class="keyword">double</span>.Parse(Console.ReadLine());
+    Console.Write(<span class="string">&quot;値2: &quot;</span>);
+    <span class="keyword">double</span> y = <span class="keyword">double</span>.Parse(Console.ReadLine());
+    Console.Write(<span class="string">&quot;値3: &quot;</span>);
+    <span class="keyword">double</span> z = <span class="keyword">double</span>.Parse(Console.ReadLine());
+
+    <span class="keyword">double</span> tmp;
+
+    <span class="keyword">if</span> (y &lt; z) { tmp = y; y = z; z = tmp; }
+    <span class="keyword">if</span> (x &lt; y) { tmp = x; x = y; y = tmp; }
+    <span class="keyword">if</span> (y &lt; z) { tmp = y; y = z; z = tmp; }
+
+    Console.Write(<span class="string">&quot;最大 {0}, 中間{1}, 最小 {2}\n&quot;</span>, x, y, z);
+  }
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/structured/">&#x69CB;&#x9020;&#x5316;</a></li><li><a href="/study/csharp/structured/st_structured/">&#x69CB;&#x9020;&#x5316;</a></li><li><a href="/study/csharp/structured/st_control/">&#x5236;&#x5FA1;&#x30D5;&#x30ED;&#x30FC;</a></li><li><a href="/study/csharp/structured/st_loop/">&#x53CD;&#x5FA9;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/structured/st_array/">&#x914D;&#x5217;</a></li><li><a href="/study/csharp/structured/st_function/">&#x95A2;&#x6570;</a></li><li><a href="/study/csharp/structured/miscentrypoint/">[&#x96D1;&#x8A18;] &#x30A8;&#x30F3;&#x30C8;&#x30EA;&#x30FC;&#x30DD;&#x30A4;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/structured/miscinlining/">[&#x96D1;&#x8A18;] &#x30A4;&#x30F3;&#x30E9;&#x30A4;&#x30F3;&#x5316;</a></li><li><a href="/study/csharp/structured/miscoverloadresolution/">[&#x96D1;&#x8A18;] &#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30ED;&#x30FC;&#x30C9;&#x89E3;&#x6C7A;</a></li><li><a href="/study/csharp/structured/sp_params/">&#x53EF;&#x5909;&#x9577;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/sp4_optional/">&#x30AA;&#x30D7;&#x30B7;&#x30E7;&#x30F3;&#x5F15;&#x6570;&#x30FB;&#x540D;&#x524D;&#x4ED8;&#x304D;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/st_command/">&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x30E9;&#x30A4;&#x30F3;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/st_library/">&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li><li><a href="/study/csharp/structured/st_enum/">&#x5217;&#x6319;&#x578B;</a></li><li><a href="/study/csharp/structured/st_struct/">&#x30C7;&#x30FC;&#x30BF;&#x306E;&#x69CB;&#x9020;&#x5316;(&#x8907;&#x5408;&#x578B;)</a></li><li><a href="/study/csharp/structured/st_anonymoustype/">&#x540D;&#x524D;&#x306E;&#x306A;&#x3044;&#x8907;&#x5408;&#x578B;</a></li><li><a href="/study/csharp/structured/sp_namespace/">&#x540D;&#x524D;&#x7A7A;&#x9593;</a></li><li><a href="/study/csharp/structured/oo_exception/">&#x4F8B;&#x5916;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/structured/misc_exception/">[&#x96D1;&#x8A18;] &#x4F8B;&#x5916;&#x306E;&#x4F7F;&#x3044;&#x65B9;</a></li><li><a href="/study/csharp/structured/misc_stacktrace/">[&#x96D1;&#x8A18;] &#x4F8B;&#x5916;&#x306E;&#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x30C8;&#x30EC;&#x30FC;&#x30B9;</a></li><li><a href="/study/csharp/structured/miscexpressions/">[&#x96D1;&#x8A18;] &#x5F0F;&#x306B;&#x307E;&#x3064;&#x308F;&#x308B;&#x88DC;&#x8DB3;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

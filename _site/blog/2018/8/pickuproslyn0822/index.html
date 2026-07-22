@@ -1,0 +1,173 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/22: ldftn &#x2B; calli | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2018/8/pickuproslyn0822/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2018-08-22T13:34:37">2018-08-22</time></span><span>更新: <time datetime="2018-08-22T13:51:23">2018-08-22</time></span></div><h1 id="roslyn-822-ldftn-calli">ピックアップRoslyn 8/22: ldftn + calli</h1>
+<p>結構前から提案は出ていて、1週間くらい前にそこそこ仕様が固まったやつがあるんですが。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/191">Champion &quot;Compiler intrinsics (calli, ldftn, etc)&quot; #191</a></li>
+</ul>
+<p>C# で、デリゲートではなく、関数ポインターを生で扱うための仕組み。</p>
+<p>C# のデリゲートも、そもそもの関数ポインターって概念も、どっちもちゃんと説明しようと思うと結構大変で、どうかこうか迷っていたものの…</p>
+<h2 id="bing.com-runs-on.net-core-2.1">Bing.com runs on .NET Core 2.1</h2>
+<p>そんな中、昨日話題になっていたブログ:</p>
+<ul>
+<li><a href="https://blogs.msdn.microsoft.com/dotnet/2018/08/20/bing-com-runs-on-net-core-2-1/">Bing.com runs on .NET Core 2.1!</a></li>
+</ul>
+<p><a href="https://www.bing.com/">Bing</a> が .NET Core 2.1 化したよという話なんですが、</p>
+<ul>
+<li>.NET Standard 1.x 時代は .NET Framework に対して足りてないものが多くて断念したけど、2.0 で行けた</li>
+<li><a href="https://github.com/dotnet/coreclr/blob/master/Documentation/building/crossgen.md">crossgen</a> コマンドを使って、CI 時にネイティブ イメージを作ってデプロイしてる</li>
+<li>.NET Core 2.1 のパフォーマンス改善の恩恵を受けて30%高速化</li>
+</ul>
+<p>という感じの内容。で、パフォーマンスに関しては、「.NET Core 2.1 ではこんな改善があった」リストも5個ほど紹介。</p>
+<p>そのパフォーマンス改善の1つが「<code>ldftn</code> + <code>calli</code>」がらみ。これらの命令は、関数ポインターの読み込みと、その呼び出し命令です。
+通常は<a href="/study/csharp/interop/sp_pinvoke/">P/Invoke</a>でしか出てこないような命令で、
+現状の C# では普通にやってこの命令が出力されるようなコードは書けません。</p>
+<p>(なのに、Bing チームは動的コード生成(<a href="/study/il/">IL</a> 出力)で<code>ldftn</code> + <code>calli</code>を使っていて、実際それで高速になっているとのこと。)</p>
+<p>という話があったので、いい加減に上記の「<a href="https://github.com/dotnet/csharplang/issues/191">Compiler intrinsics (calli, ldftn, etc)</a>」の話を書こうかなと。</p>
+<h2 id="section">デリゲートの中身</h2>
+<p>とはいえ、まずは C# のデリゲートの中身がどうなっているかの話を。</p>
+<p>例えば以下のようなデリゲート型を定義したとします。</p>
+<pre><code class="language-csharp"><span class="keyword">delegate</span> <span class="keyword">int</span> A(<span class="keyword">int</span> x, <span class="keyword">int</span> y);</code></pre>
+<p>内部的に、このデリゲートに対して、以下のようなクラスが生成されます。</p>
+<pre><code class="language-csharp"><span class="comment">// 実際には MulticastDelegate 型から派生していて、MulticastDelegate 側に処理があったりする。</span>
+<span class="comment">// C# では書けない処理が入ってて、InternalCall (.NET ランタイム内の特殊処理)になってる。</span>
+<span class="comment">// 細かいところは端折ってるけど、やらないといけないことは概ねこんな感じ。</span>
+<span class="keyword">class</span> A
+{
+    <span class="comment">// obj.Method みたいに書いた時の obj を渡す</span>
+    <span class="keyword">object</span> _target;
+
+    <span class="comment">// obj.Method みたいに書いた時の Method に当たる情報を渡す</span>
+    <span class="comment">// Method 本体が置かれてるメモリ上のアドレス</span>
+    IntPtr _functionPointer;
+
+    <span class="comment">// multicast 用</span>
+    A[] _invocationList;
+
+    <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="keyword">int</span> Invoke(<span class="keyword">int</span> x, <span class="keyword">int</span> y)
+    {
+        <span class="comment">// _target をロード</span>
+        <span class="comment">// x をロード</span>
+        <span class="comment">// y をロード</span>
+        <span class="comment">// _functionPointer をロード</span>
+        <span class="comment">// calli 命令 (現状の C# では出力できない命令)</span>
+        <span class="comment">// ret 命令</span>
+    }
+
+    <span class="comment">// single cast</span>
+    <span class="keyword">public</span> A(<span class="keyword">object</span> target, IntPtr functionPointer)
+    {
+        _target = target;
+        _functionPointer = functionPointer;
+    }
+
+    <span class="comment">// multicast</span>
+    <span class="keyword">public</span> A(A[] invocationList)
+    {
+        _target = <span class="keyword">this</span>;
+        <span class="comment">// _functionPointer に MulticastInvoke のアドレスを代入</span>
+        _invocationList = invocationList;
+    }
+
+    <span class="keyword">public</span> <span class="keyword">static</span> A Combine(A a, A b)
+    {
+        <span class="comment">// a, b がそれぞれ _invocationList を持ってたら1つの配列にまとめたりしてるかも</span>
+        <span class="keyword">return</span> <span class="keyword">new</span> A(<span class="keyword">new</span>[] { a, b });
+    }
+
+    <span class="keyword">private</span> <span class="keyword">int</span> MulticastInvoke(<span class="keyword">int</span> x, <span class="keyword">int</span> y)
+    {
+        <span class="keyword">var</span> ret = <span class="number">0</span>;
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> item <span class="keyword">in</span> _invocationList)
+        {
+            ret = item.Invoke(x, y);
+        }
+        <span class="comment">// 最後の1個しか戻り値が返らない</span>
+        <span class="keyword">return</span> ret;
+    }
+}</code></pre>
+<p>C# では「他の言語でいう関数ポインターのようなもの」としてデリゲートを使うわけですが、
+実は、.NET の IL 命令上は生の「関数ポインター」も持っています。
+メソッドの中身に当たる IL コードがメモリ上のどこに配置されているか、その先頭アドレスを指すのが関数ポインター(function pointer)です。</p>
+<p>で、デリゲートは以下のようなものになっています。</p>
+<ul>
+<li>インスタンスと関数ポインターのペアを持つ<em>クラス</em>になる</li>
+<li>マルチキャスト用に、複数のデリゲートを1つにまとめる機能を持つ</li>
+<li>デリゲート型インスタンス <code>d</code> に対して <code>d(x, y)</code> みたいな呼び出しをした場合、実際に呼ばれるのは <code>d.Invoke(x, y)</code> というメソッド(しかも<code>Invoke</code>はvirtual)</li>
+</ul>
+<p>これはそこそこ重たい仕組みになっていたりします。</p>
+<ul>
+<li>常にクラスのインスタンスが <code>new</code> される
+<ul>
+<li>特に、静的メソッドの時は <code>_target</code> が <code>null</code> で、関数ポインター1個だけしか情報を持たないにも関わらず、無駄にクラスを作ってる</li>
+<li>クラスなので、P/Invoke のときに GC されないように<a href="/study/csharp/interop/sp_unsafe/#fixed">固定</a>が必要で面倒</li>
+</ul>
+</li>
+<li>マルチキャストのために結構特殊な処理が入ってる
+<ul>
+<li>マルチキャスト機能は<a href="/study/csharp/functional/sp_event/">イベント</a>のためにあるものの、それ以外の用途でマルチキャストを必要とすることはない</li>
+</ul>
+</li>
+</ul>
+<p>なので、「マルチキャスト不要で静的なメソッドに対しては生の関数ポインターを使わせてほしい」という要望が出てきているようです。</p>
+<h2 id="ldftn-calli">ldftn と calli</h2>
+<p>ちなみに、<code>ldftn</code>. <code>calli</code> は、それぞれ関数ポインターをロードする命令と、その関数を呼び出す命令です。</p>
+<p><code>ldftn</code> (load function)は、現状のC#でも、デリゲート型のインスタンスを作るときに使われています。
+例えば以下のようなコードを書いた場合、</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        A a = Sum;
+    }
+
+    <span class="keyword">static</span> <span class="keyword">int</span> Sum(<span class="keyword">int</span> x, <span class="keyword">int</span> y) =&gt; x + y;
+    <span class="keyword">public</span> <span class="keyword">delegate</span> <span class="keyword">int</span> A(<span class="keyword">int</span> x, <span class="keyword">int</span> y);
+}</code></pre>
+<p>以下のような IL コードが生成されます。</p>
+<pre><code class="language-cil">ldnull // 静的メソッドなので target が null
+ldftn int32 C::Sum(int32, int32) // これが関数ポインター読み込み
+newobj instance void A::.ctor(object, native int) // デリゲート型のコンストラクターに関数ポインターを渡す</code></pre>
+<p>一方、<code>calli</code> (call indirect)の方は前節のデリゲート型の<code>Invoke</code>メソッドの中や、P/Invokeで使われているくらいで、
+大多数の C# コードからは生成されません。</p>
+<h2 id="compiler-intrinsics">Compiler intrinsics</h2>
+<p>で、<a href="https://github.com/dotnet/roslyn/issues/11475">当初案</a>はどうだったかというと、
+「通常の C# コードからは絶対に出力されない<code>calli</code>, <code>ldftn</code>とかの命令を直接出力するための仕組みが欲しい」というものでした。</p>
+<p>昔から、「C# コード内に IL コードを埋め込みたい」(いわゆるインライン アセンブラー)という要望もあったりはします。
+でも、それは「C# コンパイラー チームが C# 以外の言語も保守しないといけない」、「C# コンパイラーが過度に複雑になる」などの理由で否定されています。</p>
+<p>そこで出たのが Compiler intrinsics という提案。
+特定のメソッド(例えば <code>CompilerIntrinsic</code> 属性が付いてるもの)の呼び出しがあったら、
+それを<code>calli</code>, <code>ldftn</code>とかの命令に置き換えるというもの。
+これであれば、C# の文法的にはただのメソッド呼び出しなので、コストは低く所望の動作が得られるだろうという感じです。</p>
+<h2 id="intrinsics">関数ポインター intrinsics</h2>
+<p>とはいえ、結局、ディスカッションの過程で例示された実用途は、
+「マルチキャスト不要で静的なメソッドに対しては生の関数ポインターを使わせてほしい」だけでした。</p>
+<p>(だったら、最初から、「マルチキャスト不要で静的なメソッド」専用の、light weight なデリゲート構文を追加する方がいいのではないかという話もあって、別途、<a href="https://github.com/dotnet/csharplang/blob/master/proposals/static-delegates.md">Static delegate</a>っていう提案も出ていたり。)</p>
+<p>ということで、結局、Compiler intrinsics は<code>ldftn</code> + <code>calli</code>専用になりそうです。</p>
+<ul>
+<li><code>ldftn</code> の方は、単にメソッドの前に <code>&amp;</code> を付けることで関数ポインターを取れるようにする</li>
+<li><code>calli</code> だけ、<code>CallIndirect</code>属性を使ったintrinsics (C# コンパイラーが特別扱いするメソッドを用意)にする</li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2018/8/">8&#x6708;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

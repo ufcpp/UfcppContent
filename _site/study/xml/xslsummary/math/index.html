@@ -1,0 +1,109 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>XML &#x3067;&#x6570;&#x5F0F;&#x3092;&#x66F8;&#x3053;&#x3046; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/xml/xslsummary/math/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="xml">XML で数式を書こう</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>勉強用ページにある数式は全て、
+何らかのプラグインを使っているわけでも画像になっているわけでもなく、
+HTML で表示しています。</p>
+<p>数式表示のためには、
+<a href="/assets/media/ufcpp2000/xml/xslfiles/mathenv.xsl">mathenv.xsl</a> という XSL を使っています。
+mathenv.xsl の詳細は、「<a href="/study/xml/">勉強用ページの XSL</a>」を参照してください。</p>
+<p>ちなみに、XSD もあります → <a href="/assets/media/ufcpp2000/xsd/math.xsd">math.xsd</a>。</p>
+<h2 id="html"><a id="sec-generated-title-2"></a> <a id="byHtml"></a>HTMLで数式を書こう</h2>
+<p>このサイトでは勉強用ページと称して数学等の解説を書いているわけですが、
+そこでは意地でも数式を HTML で書いています。</p>
+<p>なぜかというと、
+LaTeX2HTML とかのツールを使うと数式は jpeg 画像にされちゃって、
+背景色を変えたときに数式の部分だけ浮くのが嫌だし、
+こういう変換ソフト使うとスタイルシート非対応なHTMLを吐かれたりするのも嫌だし。</p>
+<p>MathML という数式を表現するための XML 仕様もあるのですが、
+これを HTML 中に埋め込んで表示できるようなブラウザが少ない
+（IE が標準で対応していないので話にならない）ので利用は断念。</p>
+<p>それで意地でもHTMLで数式を書くことにしたわけですが、
+本来、HTML に数式を表示するような機能はないので、
+よく人から「どうやって書いてるの？」と聞かれます。</p>
+<p>種を明かすと、全部 table と CSS を使って書いています。
+が、以下の例を見てもらえるとわかる通り、
+やっぱり HTML は数式を書くのには全然適していません。
+分数一つ書くにしても、</p>
+<pre><code class="language-html">&lt;table style=&quot;
+  display:inline;
+  vertical-align:middle;
+  font-style:italic;
+  font-size:90%;text-align:center;&quot;&gt;
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">tr</span><span class="htmlTagDelimiter">&gt;</span>&lt;td style=&quot;
+  border-bottom:#000000 1pt solid;&quot;&gt;
+x
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">td</span><span class="htmlTagDelimiter">&gt;</span><span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">tr</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">tr</span><span class="htmlTagDelimiter">&gt;</span><span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">td</span><span class="htmlTagDelimiter">&gt;</span>
+y
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">td</span><span class="htmlTagDelimiter">&gt;</span><span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">tr</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">table</span><span class="htmlTagDelimiter">&gt;</span></code></pre>
+<p>となるわけです。
+ちなみに、こんな感じの見た目になります↓</p>
+<blockquote><div class="math">
+        <table class="frac" summary="fraction"><tr><td class="num">x</td></tr><tr><td>y</td></tr></table>
+      </div></blockquote>
+さすがにこんなもんがそこら中にちりばめられるのは、書くのも見るのも辛いです。
+同じことを LaTeX で書こうと思うと、
+<pre><code class="language-csharp">\begin{math}
+\frac{x}{y}
+\end{math}</code></pre>
+<p>これだけですむわけです。
+せめて XML を使ってこんな風↓に書ければいくらか書きやすくなりますよね。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">math</span><span class="xmlDelimiter">&gt;</span>
+ <span class="xmlDelimiter">&lt;</span><span class="xmlName">frac</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">num</span><span class="xmlDelimiter">&gt;</span>x<span class="xmlDelimiter">&lt;/</span><span class="xmlName">num</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">denom</span><span class="xmlDelimiter">&gt;</span>y<span class="xmlDelimiter">&lt;/</span><span class="xmlName">denom</span><span class="xmlDelimiter">&gt;</span>
+ <span class="xmlDelimiter">&lt;/</span><span class="xmlName">frac</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">math</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>そこで、XSL を使ってこの XML を先ほど書いたような HTML に変換するルールを書いてやることにしました。
+スタイルも CSS 使って指定するようにしました。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">template</span> <span class="xmlAttribute">match</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">math</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+ <span class="xmlDelimiter">&lt;</span><span class="xmlName">span</span> <span class="xmlAttribute">class</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">math</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span><span class="xmlDelimiter">&lt;</span><span class="xmlName">nobr</span><span class="xmlDelimiter">&gt;</span><span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">apply-templates</span><span class="xmlDelimiter">/&gt;</span><span class="xmlDelimiter">&lt;/</span><span class="xmlName">nobr</span><span class="xmlDelimiter">&gt;</span><span class="xmlDelimiter">&lt;/</span><span class="xmlName">span</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">template</span><span class="xmlDelimiter">&gt;</span>
+
+<span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">template</span> <span class="xmlAttribute">match</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">frac</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+ <span class="xmlDelimiter">&lt;</span><span class="xmlName">table</span> <span class="xmlAttribute">class</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">frac</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">tr</span><span class="xmlDelimiter">&gt;</span><span class="xmlDelimiter">&lt;</span><span class="xmlName">td</span> <span class="xmlAttribute">class</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">num</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span><span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">apply-templates</span> <span class="xmlAttribute">select</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">num</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span><span class="xmlDelimiter">&lt;/</span><span class="xmlName">td</span><span class="xmlDelimiter">&gt;</span><span class="xmlDelimiter">&lt;/</span><span class="xmlName">tr</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">tr</span><span class="xmlDelimiter">&gt;</span><span class="xmlDelimiter">&lt;</span><span class="xmlName">td</span><span class="xmlDelimiter">&gt;</span><span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">apply-templates</span> <span class="xmlAttribute">select</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">denom</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span><span class="xmlDelimiter">&lt;/</span><span class="xmlName">td</span><span class="xmlDelimiter">&gt;</span><span class="xmlDelimiter">&lt;/</span><span class="xmlName">tr</span><span class="xmlDelimiter">&gt;</span>
+ <span class="xmlDelimiter">&lt;/</span><span class="xmlName">table</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">template</span><span class="xmlDelimiter">&gt;</span>
+
+<span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">template</span> <span class="xmlAttribute">match</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">num</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span><span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">apply-templates</span><span class="xmlDelimiter">/&gt;</span><span class="xmlDelimiter">&lt;/</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">template</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">template</span> <span class="xmlAttribute">match</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">denom</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span><span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">apply-templates</span><span class="xmlDelimiter">/&gt;</span><span class="xmlDelimiter">&lt;/</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">template</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<pre><code class="language-csharp">span.math{font-style:italic;font-family: serif;}
+table.frac{
+  display:inline;
+  vertical-align:middle;
+  font-style:italic;
+  font-size:<span class="number">90</span>%;
+  text-align:center;
+}
+td.num{border-bottom:#<span class="number">000000</span> 1pt solid;}</code></pre>
+<p>同様にしてベクトル（太字イタリック体にする）や積分（∫を120%拡大して左右のマージンを調整）、
+微分（frac タグと同じ原理で d/dt を表現）なども定義しました。</p>
+<p>こうして出来上がったのが「<a href="/study/xml/">勉強用ページの XSL</a>」で説明しているようなXSLスタイルシートなわけです。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/xml/xslsummary/">XSL&#x6982;&#x8981;</a></li><li><a href="/study/xml/xslsummary/about/">&#x6982;&#x8981;</a></li><li><a href="/study/xml/xslsummary/logical/">&#x8AD6;&#x7406;&#x30DE;&#x30FC;&#x30AF;&#x30A2;&#x30C3;&#x30D7;&#x3068;&#x30C7;&#x30B6;&#x30A4;&#x30F3;&#x306E;&#x5909;&#x66F4;</a></li><li><a href="/study/xml/xslsummary/xsd/">XSD</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

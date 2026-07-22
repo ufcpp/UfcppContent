@@ -1,0 +1,302 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D6;&#x30ED;&#x30B0;&#x8868;&#x793A;&#xFF08;&#xFF12;&#xFF09; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/dotnet/aspx/blog2/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">ブログ表示（２）</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>「<a href="/study/dotnet/aspx/blog1/">ブログ表示（１）</a>」の続き。</p>
+<p>以下の3パターンの表示方法を実装します。</p>
+<ol>
+<li><p>BlogLatest.aspx … クエリ文字列で「何日前か」を指定してブログを表示。</p>
+</li>
+<li><p>BlogDate.aspx … クエリ文字列で日付を指定してブログを表示。</p>
+</li>
+<li><p>BlogSelect.aspx … ページ中にドロップダウンリストやカレンダーコントロールを配置して、日付を選択してブログを表示。</p>
+</li>
+</ol>
+<p>ブログもどき自体はこれで完成です。
+技術面でいうと、以下の内容のうちの 3 を説明。</p>
+<ol>
+<li><p>Web コントロール</p>
+</li>
+<li><p>XSLT</p>
+</li>
+<li><p>クエリ文字列</p>
+</li>
+<li><p>HTTP リクエストのリライト・リダイレクト</p>
+</li>
+<li><p>RSS の作成</p>
+</li>
+</ol>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="latest"></a>「何日前か」を指定して表示</h2>
+<p>まず、クエリ文字列で「何日前か」を指定してブログを表示するページを作ります。
+「<a href="/study/dotnet/aspx/blog1/#use_control">Web コントロールの利用</a>」で作った BlogLatest.aspx を元に少し書き換え。</p>
+<p>ASP.NET では、受け取ったクエリ文字列を Request.QueryString に格納します。
+例えば、
+“http://my.domain.jp/BlogLatest.aspx?days=3”と言うような URL で HTTP リクエストがあったとすると、
+Request.QueryString[&quot;days&quot;] とすることで、&quot;3&quot; という文字列が得られます。</p>
+<p>で、Request.QueryString から値を取り出すために、
+以下のようなクラスを用意しておきます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Collections.Specialized;
+<span class="keyword">using</span> System.Text.RegularExpressions;
+
+<span class="keyword">namespace</span> WebsiteSample
+{
+  <span class="keyword">public</span> <span class="keyword">class</span> Util
+  {
+    <span class="keyword">internal</span> <span class="keyword">static</span> Regex yyyyMMdd =
+      <span class="keyword">new</span> Regex(<span class="stringCSharpVerbatim">@&quot;(\d{4})(\d{2})(\d{2})\.xml&quot;</span>);
+
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> NameValueCollection から値を取り出す。</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> 「キーに year がなければ y も試す」というように、</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> 複数のキーのうちの最初に1つ合致したキーに対応する値を取得。</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> 1つも合致しなければ defaultValue を返す。</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> GetIntFrom(
+      NameValueCollection collection,
+      <span class="keyword">int</span> defultValue,
+      <span class="keyword">params</span> <span class="keyword">string</span>[] keys)
+    {
+      <span class="keyword">foreach</span> (<span class="keyword">string</span> key <span class="keyword">in</span> keys)
+      {
+        <span class="keyword">int</span> val;
+        <span class="keyword">string</span> str = collection[key];
+        <span class="keyword">if</span> (!<span class="keyword">string</span>.IsNullOrEmpty(str))
+        {
+          <span class="keyword">int</span>.TryParse(str, <span class="keyword">out</span> val);
+          <span class="keyword">return</span> val;
+        }
+      }
+      <span class="keyword">return</span> defultValue;
+    }
+  }
+}</code></pre>
+<p>この GetIntFrom メソッドを使って、
+BlogLatest の Page_Load イベントハンドラを以下のように書き換えます。</p>
+<pre><code class="language-html">protected void Page_Load(object sender, EventArgs e)
+{
+  int days = Util.GetIntFrom(Request.QueryString, 0, &quot;days&quot;, &quot;d&quot;);
+
+  string basePath = Context.Server.MapPath(&quot;~/App_Data&quot;);
+  string[] files = Directory.GetFiles(basePath, &quot;*.xml&quot;);
+  Array.Sort(files);
+
+  string xmlFile = files[files.Length - 1 - days];
+  string xslFile = basePath + @&quot;\main.xsl&quot;;
+
+  this.xmlContent.XmlFileName = xmlFile;
+  this.xmlContent.XslFileName = xslFile;
+
+  Match match = Util.yyyyMMdd.Match(xmlFile);
+  if (match.Success)
+  {
+    this.head.Text = string.Format(&quot;{0}年{1}月{2}日&quot;,
+      match.Groups[1],
+      match.Groups[2].ToString().TrimStart(&#39;0&#39;),
+      match.Groups[3].ToString().TrimStart(&#39;0&#39;));
+  }
+}</code></pre>
+<p>これで、BlogLatest.aspx?days=2 という呼び出し方をすることで、
+最新から2日前のブログを表示できるようになります。</p>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="date"></a>日付を指定して表示</h2>
+<p>次は、日付を指定して表示する Web フォームを作ります。
+ファイル名は BlogDate.aspx としておきます。</p>
+<p>Page_Load イベントハンドラ内の処理が違うだけで、
+他はほとんど BlogLatest の方と同じなので、
+コードビハインドのみを示します。</p>
+<pre><code class="language-html">using System;
+using System.Web;
+using System.IO;
+
+namespace WebsiteSample
+{
+  public partial class BlogDate : System.Web.UI.Page
+  {
+    protected void Page_Load(object sender, EventArgs e)
+    {
+      int day = Util.GetIntFrom(Request.QueryString, 0, &quot;day&quot;, &quot;d&quot;);
+      int month = Util.GetIntFrom(Request.QueryString, 0, &quot;month&quot;, &quot;m&quot;);
+      int year = Util.GetIntFrom(Request.QueryString, 0, &quot;year&quot;, &quot;y&quot;);
+
+      string basePath = Context.Server.MapPath(&quot;~/App_Data&quot;);
+
+      string xmlFile = basePath +
+        string.Format(@&quot;\{0}{1:00}{2:00}.xml&quot;, year, month, day);
+
+      if (!File.Exists(xmlFile)) return;
+
+      string xslFile = basePath + @&quot;\main.xsl&quot;;
+
+      this.xmlContent.XmlFileName = xmlFile;
+      this.xmlContent.XslFileName = xslFile;
+
+      this.head.Text = string.Format(&quot;{0}年{1}月{2}日&quot;,
+        year, month, day);
+    }
+  }
+}</code></pre>
+<p>これで例えば、BlogDate.aspx?year=1998&amp;month=5&amp;day=21 というような書き方で、
+1998年5月21日の記事が表示されます。</p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="control"></a>ドロップダウンリストやカレンダーコントロールで日付を選択</h2>
+<p>最後に、
+クエリ文字列ではなく、
+ページ中にドロップダウンリストやカレンダーコントロールを配置して、
+選択した日付の記事を表示する Web フォームを作ります。</p>
+<p>まず、年月日を選択するためのドロップダウンリスト・テキストボックスや、
+カレンダーコントロールを aspx 中に記述します。</p>
+<pre><code class="language-html">&lt;%@ Page Language=&quot;C#&quot;
+  MasterPageFile=&quot;~/Site.Master&quot; AutoEventWireup=&quot;true&quot;
+  CodeBehind=&quot;BlogSelect.aspx.cs&quot; Inherits=&quot;WebsiteSample.BlogSelect&quot;
+  Title=&quot;日記&quot; %&gt;
+
+&lt;%@ Register TagPrefix=&quot;local&quot; TagName=&quot;ShowXml&quot; Src=&quot;~/ShowXml.ascx&quot; %&gt;
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">Content</span> <span class="htmlAttributeName">ID</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;Content1&quot;</span>
+  <span class="htmlAttributeName">ContentPlaceHolderID</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;ContentPlaceHolder1&quot;</span> <span class="htmlAttributeName">runat</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;server&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">div</span> <span class="htmlAttributeName">class</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;blogHead&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">DropDownList</span> <span class="htmlAttributeName">runat</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;server&quot;</span> <span class="htmlAttributeName">ID</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;listYear&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">DropDownList</span><span class="htmlTagDelimiter">&gt;</span>
+年
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">DropDownList</span> <span class="htmlAttributeName">runat</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;server&quot;</span> <span class="htmlAttributeName">ID</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;listMonth&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">ListItem</span> <span class="htmlAttributeName">Text</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;1&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;1&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">ListItem</span> <span class="htmlAttributeName">Text</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;2&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;2&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">ListItem</span> <span class="htmlAttributeName">Text</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;3&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;3&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">ListItem</span> <span class="htmlAttributeName">Text</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;4&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;4&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">ListItem</span> <span class="htmlAttributeName">Text</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;5&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;5&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">ListItem</span> <span class="htmlAttributeName">Text</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;6&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;6&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">ListItem</span> <span class="htmlAttributeName">Text</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;7&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;7&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">ListItem</span> <span class="htmlAttributeName">Text</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;8&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;8&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">ListItem</span> <span class="htmlAttributeName">Text</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;9&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;9&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">ListItem</span> <span class="htmlAttributeName">Text</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;10&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;10&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">ListItem</span> <span class="htmlAttributeName">Text</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;11&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;11&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">ListItem</span> <span class="htmlAttributeName">Text</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;12&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;12&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">DropDownList</span><span class="htmlTagDelimiter">&gt;</span>
+月
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">TextBox</span> <span class="htmlAttributeName">runat</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;server&quot;</span> <span class="htmlAttributeName">ID</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;textDay&quot;</span> <span class="htmlAttributeName">Width</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;20&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+日の記事を
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">Button</span> <span class="htmlAttributeName">runat</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;server&quot;</span> <span class="htmlAttributeName">ID</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;buttonShow&quot;</span> <span class="htmlAttributeName">Text</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;表示&quot;</span>
+  <span class="htmlAttributeName">OnClick</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;buttonShow_Click&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">div</span><span class="htmlTagDelimiter">&gt;</span>
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">div</span> <span class="htmlAttributeName">class</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;blogHead&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">Calendar</span> <span class="htmlAttributeName">runat</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;server&quot;</span> <span class="htmlAttributeName">ID</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;calendar&quot;</span>
+  <span class="htmlAttributeName">OnSelectionChanged</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;calendar_SelectionChanged&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">div</span><span class="htmlTagDelimiter">&gt;</span>
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">div</span> <span class="htmlAttributeName">class</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;blogHead&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">Label</span> <span class="htmlAttributeName">runat</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;server&quot;</span> <span class="htmlAttributeName">ID</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;head&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">div</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">local</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">ShowXml</span> <span class="htmlAttributeName">runat</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;server&quot;</span> <span class="htmlAttributeName">ID</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;xmlContent&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">Content</span><span class="htmlTagDelimiter">&gt;</span></code></pre>
+<p>で、コードビハインド側では以下のような処理を行います。</p>
+<ul>
+<li><p>初期化： ブログを付け始めた年から今年までをドロップダウンリストの項目として追加</p>
+</li>
+<li><p>[表示] ボタン押下時の処理</p>
+</li>
+<li><p>カレンダーで日付を選択したときの処理</p>
+</li>
+</ul>
+<p>ソースコードは以下のようになります。</p>
+<pre><code class="language-html">using System;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.IO;
+
+namespace WebsiteSample
+{
+  public partial class BlogSelect : System.Web.UI.Page
+  {
+    protected override void OnInit(EventArgs e)
+    {
+      base.OnInit(e);
+
+      const int startedYear = 1998;
+      DateTime today = DateTime.Today;
+      int year = today.Year;
+      int month = today.Month;
+      int day = today.Day;
+
+      ListItem li;
+      for (int y = startedYear; y &lt;= year; ++y)
+      {
+        li = new ListItem();
+        li.Text = y.ToString();
+        li.Value = y.ToString();
+        this.listYear.Items.Add(li);
+      }
+      this.listYear.SelectedIndex = year - startedYear;
+
+      this.listMonth.SelectedIndex = month - 1;
+
+      this.textDay.Text = day.ToString();
+    }
+
+    protected void buttonShow_Click(object sender, EventArgs e)
+    {
+      int y = int.Parse(this.listYear.SelectedItem.Value);
+      int m = int.Parse(this.listMonth.SelectedItem.Value);
+      int d = int.Parse(this.textDay.Text);
+
+      this.Show(y, m, d);
+    }
+
+    protected void calendar_SelectionChanged(object sender, EventArgs e)
+    {
+      DateTime selected = this.calendar.SelectedDate;
+
+      this.Show(selected.Year, selected.Month, selected.Day);
+    }
+
+    void Show(int year, int month, int day)
+    {
+      string basePath = Context.Server.MapPath(&quot;~/App_Data&quot;);
+
+      string xmlFile = basePath +
+        string.Format(@&quot;\{0}{1:00}{2:00}.xml&quot;, year, month, day);
+
+      if (!File.Exists(xmlFile)) return;
+
+      string xslFile = basePath + @&quot;\main.xsl&quot;;
+
+      this.xmlContent.XmlFileName = xmlFile;
+      this.xmlContent.XslFileName = xslFile;
+
+      this.head.Text = string.Format(&quot;{0}年{1}月{2}日&quot;,
+        year, month, day);
+    }
+  }
+}</code></pre>
+<p>以下のような感じで、選択した日付の記事が表示されるはずです。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/dotnet/resources/BlogSelect.png"><img src="/assets/media/ufcpp2000/dotnet/resources/BlogSelect.png" alt="ドロップダウンリストなどで日付を選択" /></a></p>
+<figcaption>ドロップダウンリストなどで日付を選択</figcaption>
+</figure>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/dotnet/aspx/">ASP.NET</a></li><li><a href="/study/dotnet/aspx/aspx_abstract/">ASP.NET &#x6982;&#x8981;</a></li><li><a href="/study/dotnet/aspx/webapp/">Web &#x30A2;&#x30D7;&#x30EA;&#x30B1;&#x30FC;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/study/dotnet/aspx/logging/">&#x30A2;&#x30AF;&#x30BB;&#x30B9;&#x30ED;&#x30B0;&#x3092;&#x53D6;&#x308D;&#x3046;</a></li><li><a href="/study/dotnet/aspx/counter/">&#x30A2;&#x30AF;&#x30BB;&#x30B9;&#x30AB;&#x30A6;&#x30F3;&#x30BF;&#x3092;&#x4F5C;&#x308D;&#x3046;</a></li><li><a href="/study/dotnet/aspx/mailform/">&#x30E1;&#x30FC;&#x30EB;&#x30D5;&#x30A9;&#x30FC;&#x30E0;</a></li><li><a href="/study/dotnet/aspx/blog1/">&#x30D6;&#x30ED;&#x30B0;&#x8868;&#x793A;&#xFF08;&#xFF11;&#xFF09;</a></li><li><a href="/study/dotnet/aspx/blog3/">&#x30D6;&#x30ED;&#x30B0;&#x8868;&#x793A;&#xFF08;&#xFF13;&#xFF09;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,304 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x884C;&#x5217;&#x5F0F; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/math/linear/determinant/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">行列式</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>「<a href="/study/misc/list/lecture/">輪講発表資料</a>」の「<a href="/study/misc/list/lecture/#2006a">プログラミングのための線形代数</a>」の内容にそって説明を書く予定。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="notation"></a>記法に関して</h2>
+<p>ここでは、ベクトル・行列を以下のような記法で書きます。</p>
+<ul>
+<li><p>ベクトルも特に太字にしない。</p>
+</li>
+<li><p>行列は大文字アルファベットで書く。</p>
+</li>
+<li><p>ベクトル<span class="math">x</span>に対して、その第 i 成分を<span class="math">x<sub>i</sub></span>と書く。</p>
+</li>
+<li><p>行列<span class="math">A</span>に対して、その i 行目の行（横）ベクトルを<span class="math">a<sub>i</sub></span>、i, j 成分を<span class="math">a<sub>i j</sub></span>と書く。</p>
+</li>
+</ul>
+<p>例をあげると、2変数2式の1次方程式、</p>
+<div class="math">
+a<sub>1 1</sub> x<sub>1</sub>
+＋
+a<sub>1 2</sub> x<sub>2</sub>
+＝
+b<sub>1</sub></div><div class="math">
+a<sub>2 1</sub> x<sub>1</sub>
+＋
+a<sub>2 2</sub> x<sub>2</sub>
+＝
+b<sub>2</sub></div>
+はベクトル・行列を使って以下のように表現されます。
+<div class="math">
+a<sub>1</sub> x
+＝
+b<sub>1</sub> ,　
+a<sub>2</sub> x
+＝
+b<sub>2</sub></div><div class="math">
+A x
+＝
+b
+</div>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="equation"></a>1次方程式の解法（掃き出し法）</h2>
+<p>1次方程式の最も簡単な解法として、
+ガウスの<strong id="sweeping" class="keyword">掃き出し法</strong>（sweeping-out method）というものが知られています。</p>
+<p>1次方程式に対して、以下のような操作を行っても、解は変化しません。</p>
+<ol>
+<li><p>方程式の i 行目を両辺ともにスカラー倍する。</p>
+</li>
+<li><p>方程式の i 行目を j 行目に足す。</p>
+</li>
+</ol>
+<figure>
+<p><a href="/assets/media/ufcpp2000/math/det01.png"><img src="/assets/media/ufcpp2000/math/det01.png" alt="各行のスカラー倍と和" /></a></p>
+<figcaption>各行のスカラー倍と和</figcaption>
+</figure>
+<p>掃き出し方では、これらの操作を繰り返し行い、
+方程式の係数行列 <span class="math">A</span> を単位行列に変形することで、
+1次方程式の解を求めます。</p>
+<p>例として、以下の1次方程式を解いてみましょう。</p>
+<div class="math">
+      <span class="paren" style="font-size:4em;">[</span><table class="matrix" summary="matrix"><tr><td>2</td><td>6</td><td>4</td></tr><tr><td>1</td><td>2</td><td>5</td></tr><tr><td>3</td><td>7</td><td>8</td></tr></table><span class="paren" style="font-size:4em;">]</span>
+      <span class="paren" style="font-size:4em;">[</span><table class="matrix" summary="matrix"><tr><td>x<sub>1</sub></td></tr><tr><td>x<sub>2</sub></td></tr><tr><td>x<sub>3</sub></td></tr></table><span class="paren" style="font-size:4em;">]</span>
+＝
+<span class="paren" style="font-size:4em;">[</span><table class="matrix" summary="matrix"><tr><td>－2</td></tr><tr><td>1</td></tr><tr><td>－3</td></tr></table><span class="paren" style="font-size:4em;">]</span></div>
+まずは、1. の操作として、1行目を÷2。
+そして、2. の操作として、
+2行目を <span class="math">－1/2 a<sub>1</sub></span>、
+3行目を <span class="math">－3/2 a<sub>1</sub></span> します。
+<div class="math">
+      <span class="paren" style="font-size:4em;">[</span><table class="matrix" summary="matrix"><tr><td>1</td><td>3</td><td>2</td></tr><tr><td>0</td><td>－1</td><td>3</td></tr><tr><td>0</td><td>－2</td><td>2</td></tr></table><span class="paren" style="font-size:4em;">]</span>
+      <span class="paren" style="font-size:4em;">[</span><table class="matrix" summary="matrix"><tr><td>x<sub>1</sub></td></tr><tr><td>x<sub>2</sub></td></tr><tr><td>x<sub>3</sub></td></tr></table><span class="paren" style="font-size:4em;">]</span>
+＝
+<span class="paren" style="font-size:4em;">[</span><table class="matrix" summary="matrix"><tr><td>－1</td></tr><tr><td>2</td></tr><tr><td>0</td></tr></table><span class="paren" style="font-size:4em;">]</span></div>
+次に、1. の操作として、2行目を÷（－1）。
+そして、2. の操作として、
+1行目を <span class="math">＋3 a<sub>2</sub></span>、
+3行目を <span class="math">－2 a<sub>2</sub></span> します。
+<div class="math">
+      <span class="paren" style="font-size:4em;">[</span><table class="matrix" summary="matrix"><tr><td>1</td><td>0</td><td>11</td></tr><tr><td>0</td><td>1</td><td>－3</td></tr><tr><td>0</td><td>0</td><td>－4</td></tr></table><span class="paren" style="font-size:4em;">]</span>
+      <span class="paren" style="font-size:4em;">[</span><table class="matrix" summary="matrix"><tr><td>x<sub>1</sub></td></tr><tr><td>x<sub>2</sub></td></tr><tr><td>x<sub>3</sub></td></tr></table><span class="paren" style="font-size:4em;">]</span>
+＝
+<span class="paren" style="font-size:4em;">[</span><table class="matrix" summary="matrix"><tr><td>5</td></tr><tr><td>－2</td></tr><tr><td>－4</td></tr></table><span class="paren" style="font-size:4em;">]</span></div>
+同様に、1. の操作として、2行目を÷（－4）。
+2. の操作として、
+1行目を <span class="math">＋11/4 a<sub>3</sub></span>、
+3行目を <span class="math">－3/4 a<sub>3</sub></span>。
+<div class="math">
+      <span class="paren" style="font-size:4em;">[</span><table class="matrix" summary="matrix"><tr><td>1</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>0</td></tr><tr><td>0</td><td>0</td><td>1</td></tr></table><span class="paren" style="font-size:4em;">]</span>
+      <span class="paren" style="font-size:4em;">[</span><table class="matrix" summary="matrix"><tr><td>x<sub>1</sub></td></tr><tr><td>x<sub>2</sub></td></tr><tr><td>x<sub>3</sub></td></tr></table><span class="paren" style="font-size:4em;">]</span>
+＝
+<span class="paren" style="font-size:4em;">[</span><table class="matrix" summary="matrix"><tr><td>－6</td></tr><tr><td>1</td></tr><tr><td>1</td></tr></table><span class="paren" style="font-size:4em;">]</span></div>
+したがって、
+答えは、
+<span class="math">x<sub>1</sub> ＝ －6</span>、
+<span class="math">x<sub>2</sub> ＝ 1</span>、
+<span class="math">x<sub>3</sub> ＝ 1</span>
+となります。
+<p><em>方程式が解けるためには、</p>
+<ol>
+<li>の操作の際、÷0 にならないことが必要です</em>。</li>
+</ol>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="volume"></a>体積</h2>
+<p>ここで、一度話は変わりますが、面積・体積というものについて少し説明をします。</p>
+<p>n 個の n 次元ベクトルの作る図形の容量について考えます。
+これは、2次元なら平行四辺形の面積、
+3次元なら平行六面体の体積になります。
+4次元以上の場合、超体積とか言う場合もありますが、
+ここでは2次元の場合も含めて「n 次元体積」という言葉で統一したいと思います。</p>
+<p>n 次元体積は以下のような性質を持っています。
+（正確には、2次元の面積や、3次元の体積がこういう性質を持っているので、
+この性質を使って4次元以上の体積も定義しようという発想です。）</p>
+<ol>
+<li><p>i 番目のベクトルをスカラー倍して<span class="math">a</span>倍にすると、体積も<span class="math">a</span>倍。</p>
+</li>
+<li><p>i 番目のベクトルを j 番目のベクトルに足しても、体積は不変。</p>
+</li>
+</ol>
+<p>2次元の場合で例示すると、
+2つのベクトル<span class="math">x, y</span> の作る平行四辺形の2次元体積（面積）を
+<span class="math">S<span class="paren" style="font-size:em;">(</span>x, y<span class="paren" style="font-size:em;">)</span></span>、
+<span class="math">a, b</span> を実数として、以下のようになります。</p>
+<ol>
+<li><span class="math">
+</li>
+</ol>
+<p>S<span class="paren" style="font-size:em;">(</span>a x, y<span class="paren" style="font-size:em;">)</span>
+＝
+a S<span class="paren" style="font-size:em;">(</span>x, y<span class="paren" style="font-size:em;">)</span></span>、<span class="math">
+S<span class="paren" style="font-size:em;">(</span>x, b y<span class="paren" style="font-size:em;">)</span>
+＝
+b S<span class="paren" style="font-size:em;">(</span>x, y<span class="paren" style="font-size:em;">)</span></span></p>
+<ol start="2">
+<li><span class="math">
+</li>
+</ol>
+<p>S<span class="paren" style="font-size:em;">(</span>x, y ＋ a x<span class="paren" style="font-size:em;">)</span>
+＝
+S<span class="paren" style="font-size:em;">(</span>x, y<span class="paren" style="font-size:em;">)</span></span>、<span class="math">
+S<span class="paren" style="font-size:em;">(</span>x ＋ b y, y<span class="paren" style="font-size:em;">)</span>
+＝
+S<span class="paren" style="font-size:em;">(</span>x, y<span class="paren" style="font-size:em;">)</span></span></p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/math/det02.png"><img src="/assets/media/ufcpp2000/math/det02.png" alt="n 次元体積の性質" /></a></p>
+<figcaption>n 次元体積の性質</figcaption>
+</figure>
+<p>n 次元体積 <span class="math">S</span> は、負の体積も認めることにします。
+ベクトルのどちらか片方の向きを反転させると、
+体積の符号が入れ替わるものとします。</p>
+<div class="math">
+S<span class="paren" style="font-size:em;">(</span>－x, y<span class="paren" style="font-size:em;">)</span>
+＝
+S<span class="paren" style="font-size:em;">(</span>x, －y<span class="paren" style="font-size:em;">)</span>
+＝
+－S<span class="paren" style="font-size:em;">(</span>x, y<span class="paren" style="font-size:em;">)</span></div>
+こうしておく方がいろいろと整合性を保てるからです。
+（1. の式が <span class="math">a, b</span> が負の場合でも成り立ちます。）
+ 
+また、2. の性質から、
+<div class="math">
+S<span class="paren" style="font-size:em;">(</span>x, y<span class="paren" style="font-size:em;">)</span>
+＝
+S<span class="paren" style="font-size:em;">(</span>x－y, y<span class="paren" style="font-size:em;">)</span>
+＝
+S<span class="paren" style="font-size:em;">(</span>x－y, y ＋ <span class="paren" style="font-size:em;">(</span>x－y<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:em;">)</span>
+＝
+S<span class="paren" style="font-size:em;">(</span>x－y, x<span class="paren" style="font-size:em;">)</span></div><div class="math">
+＝
+S<span class="paren" style="font-size:em;">(</span>x－y － x, x<span class="paren" style="font-size:em;">)</span>
+＝
+S<span class="paren" style="font-size:em;">(</span>－y, x<span class="paren" style="font-size:em;">)</span>
+＝
+－S<span class="paren" style="font-size:em;">(</span>y, x<span class="paren" style="font-size:em;">)</span></div><div class="math">
+∴
+ 
+S<span class="paren" style="font-size:em;">(</span>y, x<span class="paren" style="font-size:em;">)</span>
+＝
+－S<span class="paren" style="font-size:em;">(</span>x, y<span class="paren" style="font-size:em;">)</span></div>
+となり、2. の条件を次のように言い換えることもできます。
+<ol>
+<li><p>i 番目のベクトルをスカラー倍して<span class="math">a</span>倍にすると、体積も<span class="math">a</span>倍。</p>
+</li>
+<li><p>i 番目のベクトルと j 番目のベクトルを入れ替えると、体積の符号が反転。</p>
+</li>
+</ol>
+<p>条件 1. を<strong id="multilinear" class="keyword">多重線形性</strong>（multi linearity）もしくは複線形性、
+条件 2. を<strong id="d32e712" class="keyword">交代性</strong>（alternating property）といいます。</p>
+<p>また、n 個の n 次元ベクトル → 実数の関数 <span class="math">S</span>で、
+複線形性と交代性を満たすものを<strong id="mlaform" class="keyword">多重線形交代形式</strong>（multiliear alternating form）と呼びます。</p>
+<p>n 次元の多重線形交代形式は、定数倍を除いて一意に定まります。
+なので、「<span class="math">x, y</span> が直交するとき、
+<span class="math">S<span class="paren" style="font-size:em;">(</span>x, y<span class="paren" style="font-size:em;">)</span> ＝ <span class="normal">|</span>x<span class="normal">|</span><span class="normal">|</span>y<span class="normal">|</span></span>
+となる」という条件をつけることで、
+一意に決定することができます。
+n 次元体積は、このような条件付きの多重線形交代形式だと考えることができます。</p>
+<p>4次元以上の場合、体積を計算するのは大変そうに思えるかもしれませんが、
+多重線形性と交代性を使って「<a href="#sweeping">掃き出し法</a>」と同じ要領でベクトルをどんどん簡単化していくことで、
+体積を計算することができます。
+次元が高くなると、手作業での計算は難しくなりますが、
+処理手順自体は低次元の場合と変わらないので、
+コンピュータを使えば簡単に計算することができます。</p>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="determinant"></a>行列式</h2>
+<p>これまでの話を1度振り返ってみましょう。
+まず、「<a href="#sweeping">掃き出し法</a>」は、
+以下の操作によって1次方程式の解が不変であることを利用して、
+これらの操作を繰り返すことで解を得る方法です。</p>
+<ol>
+<li><p>方程式の i 行目を両辺ともにスカラー倍する。</p>
+</li>
+<li><p>方程式の i 行目を j 行目に足す。</p>
+</li>
+</ol>
+<p>ここで、1. の操作をするときに、「0 で割る」という操作が必要になると1次方程式が解けなくなります。</p>
+<p>一方で、n 本の n 次元ベクトルが作る図形の体積は以下のような性質を持っています。</p>
+<ol>
+<li><p>i 番目のベクトルをスカラー倍して<span class="math">a</span>倍にすると、体積も<span class="math">a</span>倍。</p>
+</li>
+<li><p>i 番目のベクトルを j 番目のベクトルに足しても、体積は不変。</p>
+</li>
+</ol>
+<p>これらの条件ですが、
+掃き出し法で使う1次方程式の解を不変にする操作と似ています。
+実は、先ほどの1次方程式が解けるための条件（1. のときに ÷0 という操作がない）は、
+「1次方程式 <span class="math">A x ＝ b</span> は、係数 <span class="math">A</span> の各行ベクトル <span class="math">a<sub>i</sub></span> の作る図形の体積が 0 でなければ解ける」と言い換えることができます。</p>
+<p>そこで、<span class="math">A</span> の各行ベクトル <span class="math">a<sub>i</sub></span> の作る図形の体積を、
+1次方程式の可解性を調べるための特徴量とみなして、
+<span class="math">A</span> の<strong id="determinant" class="keyword">行列式</strong>（determinant）と呼びます。
+また、<span class="math">A</span> の行列式を、
+<span class="math"><span class="normal">|</span>A<span class="normal">|</span></span> または <span class="math"><span class="normal">det</span> A</span> と表します。</p>
+<div class="math">
+      <span class="normal">|</span>A<span class="normal">|</span>
+＝
+S<span class="paren" style="font-size:em;">(</span>
+a<sub>1</sub> , 
+a<sub>2</sub> , 
+・・・, 
+a<sub>N</sub><span class="paren" style="font-size:em;">)</span></div>
+<h3 id="section-6"><a id="sec-generated-title-6"></a> <a id="aside"></a>余談</h3>
+<p>日本には、行列が整備された後に行列や行列式の理論が入ってきたんで、
+行列が先にあって、それに付随する特徴量として行列式という言葉がありますが、
+歴史的には行列式の方が先に生まれています。</p>
+<p>元をたどると、行列式は1次方程式の可解性の判別のたための式として生まれました。
+なので英語では名前からして determinant（判定式、判別式）と呼びます。
+そのだいぶ後になってから、1次方程式を行列と言うものを用いて表現する手法が完成しました。</p>
+<h2 id="section-7"><a id="sec-generated-title-7"></a> <a id="well_posed"></a>良設定/不良設定</h2>
+<p>1次方程式 <span class="math">A x ＝ b</span> は、
+係数行列の行列式が非0のとき（<span class="math"><span class="normal">|</span>A<span class="normal">|</span> ≠ 0</span>）<strong id="well" class="keyword">良設定問題</strong>または適切な問題（well-posed problem）、
+0のとき（<span class="math"><span class="normal">|</span>A<span class="normal">|</span> ＝ 0</span>）<strong id="ill" class="keyword">不良設定問題</strong>あるいは不適切な問題（ill-posed problem）と呼びます。</p>
+<p>今まで、（簡単化のため）連立1次方程式が不良設定なら解けないみたいな書き方をしてきましたが、
+正確には以下のようになります。</p>
+<ul>
+<li><p>良設定 → 解がただ1つ定まる</p>
+</li>
+<li><p>不良設定 → 解が複数個存在する、または、解が存在しない</p>
+</li>
+</ul>
+<p>例えば、</p>
+<div class="math">
+      <span class="paren" style="font-size:3em;">[</span><table class="matrix" summary="matrix"><tr><td>1</td><td>2</td></tr><tr><td>2</td><td>4</td></tr></table><span class="paren" style="font-size:3em;">]</span>
+      <span class="paren" style="font-size:3em;">[</span><table class="matrix" summary="matrix"><tr><td>x</td></tr><tr><td>y</td></tr></table><span class="paren" style="font-size:3em;">]</span>
+＝
+<span class="paren" style="font-size:3em;">[</span><table class="matrix" summary="matrix"><tr><td>1</td></tr><tr><td>2</td></tr></table><span class="paren" style="font-size:3em;">]</span></div>
+は不良設定問題なんですが、
+これは、<span class="math">k</span> を任意定数として、
+<span class="math">x ＝ 2 k ＋ 1, y ＝ －k</span> が解になります。
+一方で、同じ不良設定問題でも
+<div class="math">
+      <span class="paren" style="font-size:3em;">[</span><table class="matrix" summary="matrix"><tr><td>1</td><td>2</td></tr><tr><td>2</td><td>4</td></tr></table><span class="paren" style="font-size:3em;">]</span>
+      <span class="paren" style="font-size:3em;">[</span><table class="matrix" summary="matrix"><tr><td>x</td></tr><tr><td>y</td></tr></table><span class="paren" style="font-size:3em;">]</span>
+＝
+<span class="paren" style="font-size:3em;">[</span><table class="matrix" summary="matrix"><tr><td>1</td></tr><tr><td>0</td></tr></table><span class="paren" style="font-size:3em;">]</span></div>
+は解なしとなります。
+<h2 id="section-8"><a id="sec-generated-title-8"></a> <a id="plan"></a>執筆予定</h2>
+<pre><code class="language-text">|AB| ＝ |A| |B| とかの性質を
+
+|A x| ＝ |det A| |x|
+
+
+行列式の交代性から、
+det A ≠ 0
+⇔
+A の各列ベクトルが独立</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/math/linear/">&#x7DDA;&#x5F62;&#x4EE3;&#x6570;</a></li><li><a href="/study/math/linear/l_vector/">&#x30D9;&#x30AF;&#x30C8;&#x30EB;&#x3068;&#x7DDA;&#x5F62;&#x7A7A;&#x9593;</a></li><li><a href="/study/math/linear/matrix/">&#x884C;&#x5217;&#x3068;&#x7DDA;&#x5F62;&#x5199;&#x50CF;</a></li><li><a href="/study/math/linear/eigen/">&#x56FA;&#x6709;&#x5024;</a></li><li><a href="/study/math/linear/principal/">&#x4E3B;&#x6210;&#x5206;&#x5206;&#x6790;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

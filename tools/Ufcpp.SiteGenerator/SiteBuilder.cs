@@ -115,9 +115,6 @@ public sealed class SiteBuilder
         _logger.LogInformation("Writing rssfeed.xml...");
         RssWriter.Write(pages, _options.OutputDirectory);
 
-        _logger.LogInformation("Writing search-index.json...");
-        SearchIndexWriter.Write(pages, _options.OutputDirectory);
-
         if (_options.IncludePreviewServer)
         {
             _logger.LogInformation("Writing server.cs...");
@@ -281,7 +278,6 @@ public sealed class SiteBuilder
         {
             "sitemap.xml",
             "rssfeed.xml",
-            "search-index.json",
         };
         if (_options.IncludePreviewServer)
         {

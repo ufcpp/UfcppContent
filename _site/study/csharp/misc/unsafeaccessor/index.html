@@ -1,0 +1,673 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>UnsafeAccessor | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/misc/unsafeaccessor/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="unsafeaccessor">UnsafeAccessor</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abstract">概要</a></h2>
+<p>.NET 8 から、<a href="/study/csharp/dynamic/sp_reflection/">リフレクション</a>なしで<a href="/study/csharp/oop/oo_conceal/#level">アクセシビリティ</a>を無視した(private や internal なメンバーにアクセス可能な)仕組みとして UnsafeAccessor というものが追加されました。</p>
+<p>用途が狭いですし、unsafe と付く名前通り割とデメリットもある機能なので、使い心地はそれほどよくありません。
+「全くできないと困るので口だけは用意した」系の機能になります。
+例えば、フィールド1個にアクセスするだけでも以下のような書き方になります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+A a = <span class="keyword">new</span>();
+
+X.RefValue(a) = <span class="number">1</span>; <span class="comment">// private であることを無視して a._value = 1; 相当の処理を実行。</span>
+Console.WriteLine(a); <span class="comment">// A(1)</span>
+
+<span class="keyword">static</span> <span class="keyword">class</span> X
+{
+    <span class="comment">// A._value にアクセスするためのメソッド。</span>
+    [UnsafeAccessor(UnsafeAccessorKind.Field, Name = <span class="string">&quot;_value&quot;</span>)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">ref</span> <span class="keyword">int</span> RefValue(A @<span class="keyword">this</span>);
+}
+
+<span class="keyword">class</span> A
+{
+    <span class="keyword">private</span> <span class="keyword">int</span> _value;
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString() =&gt; $<span class="string">&quot;A({_value})&quot;</span>;
+}</code></pre>
+<p><code>UnsafeAccessor</code> 属性(<code>System.Runtime.CompilerServices</code>)を付けた extern メソッドを書くと、.NET Runtime が静的に(JIT 時に) <code>_value</code> フィールド直参照と同等のコードを生成します。</p>
+<h2 id="section-1"><a id="sec-generated-title-2"></a> <a id="ignore-accessibility">アクセシビリティ無視とリフレクション</a></h2>
+<p>これまでアクセシビリティを無視したい場合、
+たとえ型情報が静的に既知であってもリフレクションを使っていました。
+例えば冒頭の例同様に <code>a._value = 1;</code> するためだけに、以下のようなコードが必要になっていました。</p>
+<pre><code class="language-csharp">A a = <span class="keyword">new</span>();
+
+<span class="comment">// a._value = 1; 相当のコードをリフレクションでやるとこうなる。</span>
+<span class="keyword">typeof</span>(A)
+    .GetField(<span class="string">&quot;_value&quot;</span>, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!
+    .SetValue(a, <span class="number">1</span>);
+
+<span class="comment">// Type 型インスタンスが作られて、</span>
+<span class="comment">// FieldInfo 型インスタンスが作られて、</span>
+<span class="comment">// 動的な処理で a._value = 1; 相当のコードを実行。</span>
+<span class="comment">// しかも、int 型の 1 は object にボックス化されるコストもかかる。</span>
+
+Console.WriteLine(a); <span class="comment">// A(1)</span>
+
+<span class="keyword">class</span> A
+{
+    <span class="keyword">private</span> <span class="keyword">int</span> _value;
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString() =&gt; $<span class="string">&quot;A({_value})&quot;</span>;
+}</code></pre>
+<p>コード中のコメントに書きましたが、この処理には様々なオーバーヘッドがかかります。
+本当に動的な処理がしたい(本当に実行時まで型に関する情報を知らない)なら必要なコストですが、
+この例の <code>A</code> のように型が既知の場合だいぶもったいないです。</p>
+<p>すなわち、リフレクションの持つ以下の2つの側面があるわけですが、</p>
+<ol>
+<li>実行時までわからない型のメンバーを読み書きする</li>
+<li>本来アクセスできないメンバーを読み書きする</li>
+</ol>
+<p>このうち後者だけを切り出したものが UnsafeAccessor です。</p>
+<p>UnsafeAccessor を使った冒頭のコードなら、
+パフォーマンス的には <code>a._value = 1;</code> と同水準になります。</p>
+<h5 id="unsafe"><a id="sec-generated-title-3"></a> <a id="unsafe">余談: 「unsafe」</a></h5>
+<p>名前に unsafe の文字が入っていますが、
+メモリ安全性や型安全性の保証はあります(この意味では普通に safe)。
+バッファー オーバー ランのようなメモリ脆弱性を起こせるような機能ではないですし、
+型が合わないようなコードを書くと JIT 時にエラーになります。</p>
+<p>UnsafeAccessor の「unsafe」は「private や internal な物に触れるので変更されても文句が言えない」くらいの意味です。</p>
+<p>また、C# コンパイラーのレベルでは型チェックできない(JIT 時チェックになるので実行してみる必要はある)という不利益もあります。</p>
+<h2 id="section-2"><a id="sec-generated-title-4"></a> <a id="motivation">利用場面</a></h2>
+<p>UnsafeAccessor の主な用途は以下のようなものです。</p>
+<ol>
+<li>シリアライザーや <a href="https://learn.microsoft.com/ja-jp/dotnet/core/extensions/dependency-injection/overview">DI</a> などをリフレクションから Source Generator に移行したい</li>
+<li>元々あった大きな<a href="/study/csharp/package/project/">アセンブリ</a>を複数に分ける際などにやむを得ず使う</li>
+<li>単体テスト用途</li>
+</ol>
+<p>元々の想定利用場面は 1. になります。
+シリアライザーでは private なフィールドへの読み書きをリフレクションで行うことが多かったです。
+ところがこれは、
+リフレクションを避けたい実行環境
+(<a href="https://learn.microsoft.com/ja-jp/dotnet/core/deploying/native-aot/?tabs=windows%2Cnet8">AOT</a> や、<a href="https://ja.wikipedia.org/wiki/WebAssembly">Web Assembly</a> など)で困りました。
+シリアライザーの場合まさに「型は静的に既知」な場合が多く、
+リフレクションを使った動的コード生成から、
+<a href="/study/csharp/misc/analyzer-generator/">Source Generator</a> を使った静的なコード生成への移行が進んでいます
+(例: <a href="https://learn.microsoft.com/ja-jp/dotnet/standard/serialization/system-text-json/source-generation">System.Text.Json のソース生成利用</a>)。
+これがまさに UnsafeAccessor で想定する場面になります。</p>
+<p>ただ、多くの人にとって、
+Source Generator は使う側にはなる一方で、作る側になることは希少です。
+そのため 1. の用途では、UnsafeAccessor も「ライブラリで内部的に使われている」であって、直接の利用はあまりないでしょう。</p>
+<p>続いて 2. ですが、
+これもよほど大規模でよほど歴史のあるコードでしか見られないものです。
+例えば .NET の標準ライブラリ内で、
+<a href="https://source.dot.net/#System.Net.Security/src/libraries/Common/src/System/Net/Http/X509ResourceClient.cs">System.Net.Security</a> から <a href="https://source.dot.net/#System.Net.Http/System/Net/Http/GlobalHttpSettings.cs">System.Net.Http</a> 内の internal 型への参照が残っています。
+元々大きな1つのアセンブリとして提供していたものを「Http」と「Security」で分けたときに困ったものと思われます。</p>
+<p>結局のところ、多くの人にとっては 3. の単体テスト用途で使うことが多くなると思われます。
+「private メンバー、internal メンバーの単体テストはすべきかどうか」ということ自体議論が分かれる問題ですが、まあ「private アクセスしたくなったことがある」くらいであれば多くの人が通ったことがある道だと思います。</p>
+<p>例えば以下のようなライブラリ コードがあったとして、
+「<code>Dispose</code> 後は中身が null になっていてほしい」というテストを書くみたいな用途が考えられます。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> Lib;
+
+<span class="keyword">public</span> <span class="keyword">class</span> Class1(<span class="keyword">object</span>? resource) : IDisposable
+{
+    <span class="keyword">private</span> <span class="keyword">object</span>? _someResource = resource;
+
+    <span class="keyword">public</span> <span class="keyword">void</span> Dispose()
+    {
+        _someResource = <span class="keyword">null</span>;
+    }
+}</code></pre>
+<pre><code class="language-csharp"><span class="keyword">using</span> Lib;
+<span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">namespace</span> TestProject1;
+
+<span class="keyword">public</span> <span class="keyword">class</span> UnitTest1
+{
+    [Fact]
+    <span class="keyword">public</span> <span class="keyword">void</span> Dispose後は中身がnull()
+    {
+        <span class="keyword">var</span> x = <span class="keyword">new</span> Class1(<span class="string">&quot;&quot;</span>);
+
+        <span class="keyword">using</span> (x)
+        {
+        }
+
+        Assert.Null(GetSomeResourceRef(x));
+    }
+
+    [UnsafeAccessor(UnsafeAccessorKind.Field, Name = <span class="string">&quot;_someResource&quot;</span>)]
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">ref</span> <span class="keyword">object</span>? GetSomeResourceRef(Class1 class1);
+}</code></pre>
+<p>こういう単体テストがいいのかどうかという話はありますが…
+(仕様に応じて「<code>Dispose</code> 後に何らかの操作をしても何も起きない」とか「<code>ObjectDisposedException</code> が出る」とか、別の形でのテストが望ましい可能性あり。)
+「やりたいことは時々ある」の範疇かと思われます。</p>
+<p>単体テストの場合、ライブラリと単体テストでプロジェクトは分かれているものの、同じ人がコードを書くことが非常に多いです。
+そのため「private なものは変更されても文句が言えない」問題が軽微(変更して単体テストが失敗するようになっても、修正する義務を同じ人が負うのですぐに直すことになるだけ)なので、UnsafeAccessor とは相性がいいです。</p>
+<h2 id="unsafeaccessor-1"><a id="sec-generated-title-5"></a> <a id="how-to-use">UnsafeAccessor の書き方</a></h2>
+<p>すでにいくつかの例を書いていますが、UnsafeAccessor を使うには
+<code>UnsafeAccessor</code> 属性(<code>System.Runtime.CompilerServices</code> 名前空間)を付けた extern メソッドを書きます。</p>
+<p><code>UnsafeAccessor</code> 属性の第1引数に渡す <code>UnsafeAccessorKind</code> には以下の5つの値があります
+(ほぼ名前通り):</p>
+<ul>
+<li><code>Constructor</code>: コンストラクター</li>
+<li><code>Method</code>: インスタンス メソッド</li>
+<li><code>StaticMethod</code>: 静的メソッド</li>
+<li><code>Field</code>: インスタンス フィールド</li>
+<li><code>StaticField</code>: 静的フィールド</li>
+</ul>
+<p>プロパティ、インデクサーや演算子などは「.NET の型システム上はメソッドになっている」という仕様があるので、<code>Method</code> か <code>StaticMethod</code> を使ってそのメソッドを呼び出すことになります。</p>
+<p>ちなみに、型自体は public という場面では <code>A Accessor()</code> とか <code>void Accessor(A x)</code> みたいな素直な書き方で <code>A</code> の private メンバーにアクセスできるんですが、
+型自体が internal の時はさらにちょっと面倒な書き方が必要になります。
+この場合は、<code>UnsafeAccessorType</code> というもう1つの属性を使って、文字列で型名を指定することになります。</p>
+<h3 id="section-3"><a id="sec-generated-title-6"></a> <a id="constructor">コンストラクター</a></h3>
+<p>コンストラクターへのアクセスは以下のように書きます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+Console.WriteLine(X.CreateA());
+Console.WriteLine(X.CreateA(<span class="number">1</span>));
+
+<span class="keyword">static</span> <span class="keyword">class</span> X
+{
+    <span class="comment">// new A() 相当。</span>
+    [UnsafeAccessor(UnsafeAccessorKind.Constructor)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> A CreateA();
+
+    <span class="comment">// new A(value) 相当。</span>
+    [UnsafeAccessor(UnsafeAccessorKind.Constructor)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> A CreateA(<span class="keyword">int</span> value);
+}
+
+<span class="keyword">class</span> A
+{
+    <span class="keyword">private</span> A() { }
+    <span class="keyword">private</span> A(<span class="keyword">int</span> value) =&gt; Value = value;
+
+    <span class="keyword">private</span> <span class="keyword">int</span> Value { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString() =&gt; $<span class="string">&quot;A({Value})&quot;</span>;
+}</code></pre>
+<p>「何の型のコンストラクターを呼ぶか」は戻り値の型を見ます。
+メソッドの引数の型はアクセス先のコンストラクターの引数と一致させます。
+(引数名は違っていても平気です。一致の必要があるのは型のみ。)</p>
+<p>この機能は構造体に対しても使えます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">class</span> X
+{
+    <span class="comment">// 構造体に対しても使えて、書き方はクラスの場合と同じ。</span>
+    [UnsafeAccessor(UnsafeAccessorKind.Constructor)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> A CreateA(<span class="keyword">int</span> value);
+}
+
+<span class="keyword">struct</span> A
+{
+    <span class="keyword">private</span> A(<span class="keyword">int</span> value) =&gt; Value = value;
+    <span class="keyword">private</span> <span class="keyword">int</span> Value { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString() =&gt; $<span class="string">&quot;A({Value})&quot;</span>;
+}</code></pre>
+<h3 id="section-4"><a id="sec-generated-title-7"></a> <a id="method">インスタンス メソッド</a></h3>
+<p>インスタンス メソッドへのアクセスは以下のように、
+「先頭に1つ引数を足す」書き方をします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">var</span> a = <span class="keyword">new</span> A();
+X.Add(a, <span class="number">1</span>);
+Console.WriteLine(a); <span class="comment">// A(1)</span>
+
+<span class="keyword">var</span> b = <span class="keyword">new</span> B();
+X.Add(<span class="keyword">ref</span> b, <span class="number">1</span>);
+Console.WriteLine(b); <span class="comment">// B(1)</span>
+
+<span class="keyword">static</span> <span class="keyword">class</span> X
+{
+    <span class="comment">// 第1引数をアクセス先の型にする。</span>
+    <span class="comment">// (拡張メソッドと同じ感覚。)</span>
+    [UnsafeAccessor(UnsafeAccessorKind.Method)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">void</span> Add(A a, <span class="keyword">int</span> value);
+
+    <span class="comment">// 構造体のインスタンス メソッドを呼びたい場合は ref 引数にする。</span>
+    <span class="comment">// このメソッドの名前とアクセス先のメソッドの名前が違う場合は、Name で明示的に指定する。</span>
+    [UnsafeAccessor(UnsafeAccessorKind.Method, Name = <span class="string">&quot;PrivateAdd&quot;</span>)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">void</span> Add(<span class="keyword">ref</span> B a, <span class="keyword">int</span> value);
+}
+
+<span class="keyword">class</span> A
+{
+    <span class="keyword">private</span> <span class="keyword">int</span> _value;
+    <span class="keyword">private</span> <span class="keyword">void</span> Add(<span class="keyword">int</span> value) =&gt; _value += value;
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString() =&gt; $<span class="string">&quot;A({_value})&quot;</span>;
+}
+
+<span class="keyword">struct</span> B
+{
+    <span class="keyword">private</span> <span class="keyword">int</span> _value;
+    <span class="keyword">private</span> <span class="keyword">void</span> PrivateAdd(<span class="keyword">int</span> value) =&gt; _value += value;
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">readonly</span> <span class="keyword">string</span> ToString() =&gt; $<span class="string">&quot;B({_value})&quot;</span>;
+}</code></pre>
+<p>2つ目以降の引数の型はアクセス先のメソッドの引数と一致させます。
+(コンストラクター同様、型のみの一致で OK。)
+また、戻り値の型が一致している必要もあります。</p>
+<p>アクセス先の型が構造体の場合、第1引数は <code>ref</code> もしくは <code>in</code> でないとアクセスできなくなります。
+(実行時エラーを起こします。)</p>
+<p>また、<code>UnsafeAccessor</code> 属性をつけるメソッドの名前とアクセス先のメソッドの名前が異なる場合には <code>Name</code> プロパティの明示が必要になります。</p>
+<h3 id="section-5"><a id="sec-generated-title-8"></a> <a id="field">フィールド</a></h3>
+<p>インスタンス フィールドへのアクセスは以下のように、
+「<code>ref</code> 戻り値、引数なしのメソッド」で書きます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">var</span> a = <span class="keyword">new</span> A();
+X.Value(a) = <span class="number">1</span>;
+Console.WriteLine(a); <span class="comment">// A(1)</span>
+
+<span class="keyword">static</span> <span class="keyword">class</span> X
+{
+    <span class="comment">// 引数なし、ref 戻り値なメソッドでアクセス。</span>
+    [UnsafeAccessor(UnsafeAccessorKind.Field, Name = <span class="string">&quot;_value&quot;</span>)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">ref</span> <span class="keyword">int</span> Value(A a);
+}
+
+<span class="keyword">class</span> A
+{
+    <span class="keyword">private</span> <span class="keyword">int</span> _value;
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString() =&gt; $<span class="string">&quot;A({_value})&quot;</span>;
+}</code></pre>
+<p>フィールドとメソッドでは命名規約が違う(<code>_value</code> と <code>Value</code> になる)ので、
+自然な書き方をしようとすると <code>Name</code> の明示が必要になるかと思いますが、
+メソッド名が変でもいいなら以下のように <code>Name</code> の省略もできます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">class</span> X
+{
+    <span class="comment">// あまりメソッドに _ 始まりの名前を付けないものの、気にしないのであればこれでも OK。</span>
+    [UnsafeAccessor(UnsafeAccessorKind.Field)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">ref</span> <span class="keyword">int</span> _value(A a);
+}</code></pre>
+<h3 id="section-6"><a id="sec-generated-title-9"></a> <a id="static">静的メソッド、静的フィールド</a></h3>
+<p>静的メソッド、静的フィールドへのアクセスには <code>UnsafeAccessorKind</code> の <code>StaticMethod</code> と <code>StaticField</code> を使います。
+インスタンス メソッド、インスタン フィールドの時と同様、引数の先頭にアクセス先の型を足します(静的メンバーなのでこの第1引数は使われず、ダミー引数になります)。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+X.Value(<span class="keyword">null</span>) = <span class="number">2</span>;
+
+Console.WriteLine(X.M(<span class="keyword">null</span>, <span class="number">3</span>));
+
+<span class="keyword">static</span> <span class="keyword">class</span> X
+{
+    [UnsafeAccessor(UnsafeAccessorKind.StaticField, Name = <span class="string">&quot;_value&quot;</span>)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">ref</span> <span class="keyword">int</span> Value(A? _);
+
+    [UnsafeAccessor(UnsafeAccessorKind.StaticMethod)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">int</span> M(A? _, <span class="keyword">int</span> x);
+}
+
+<span class="keyword">class</span> A
+{
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> _value;
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> M(<span class="keyword">int</span> x) =&gt; x * _value;
+}</code></pre>
+<h3 id="section-7"><a id="sec-generated-title-10"></a> <a id="property">プロパティ</a></h3>
+<p><code>UnsafeAccessorKind</code> にはプロパティを指定する方法はありませんが、
+C# のプロパティは内部的にはメソッドになっているので、
+そのメソッドに対する UnsafeAccessor を作ることでプロパティにアクセスできます。</p>
+<p>プロパティ <code>T P</code> があったとすると、
+<code>get</code>/<code>set</code> アクセサーにはそれぞれ
+<code>T get_P()</code>、 <code>void set_P(T value)</code> というメソッドが対応します。
+(元のプロパティ名 + <code>get_</code>/<code>set_</code> 接頭辞。)</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">var</span> a = <span class="keyword">new</span> A();
+X.SetValue(a, <span class="number">1</span>);
+
+Console.WriteLine(a); <span class="comment">// A(1)</span>
+Console.WriteLine(X.GetValue(a)); <span class="comment">// 1</span>
+
+<span class="keyword">static</span> <span class="keyword">class</span> X
+{
+    <span class="comment">// Value プロパティの get アクセサーは get_Value。</span>
+    [UnsafeAccessor(UnsafeAccessorKind.Method, Name = <span class="string">&quot;get_Value&quot;</span>)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">int</span> GetValue(A a);
+
+    <span class="comment">// Value プロパティの set アクセサーは set_Value。</span>
+    [UnsafeAccessor(UnsafeAccessorKind.Method, Name = <span class="string">&quot;set_Value&quot;</span>)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">void</span> SetValue(A a, <span class="keyword">int</span> value);
+}
+
+<span class="keyword">class</span> A
+{
+    <span class="keyword">private</span> <span class="keyword">int</span> Value{ <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString() =&gt; $<span class="string">&quot;A({Value})&quot;</span>;
+}</code></pre>
+<p>ちなみにこの<a href="https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/classes#153102-member-names-reserved-for-properties">「プロパティ名 + <code>get_</code>/<code>set_</code> 接頭辞」ルールは C# の言語仕様で決まっています</a>。
+少なくとも C# コンパイラーで作ったプロパティの場合は必ずこのルールに基づくメソッド名になっています。
+(<a href="https://learn.microsoft.com/ja-jp/dotnet/framework/tools/ilasm-exe-il-assembler">IL アセンブラー</a>を使えばこのルールを破れるはずですが、そんなことをやっている人は見たことがありません。)</p>
+<h3 id="section-8"><a id="sec-generated-title-11"></a> <a id="indexer">インデクサー</a></h3>
+<p><a href="#property">プロパティ</a>同様です。
+<a href="https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/classes#153104-member-names-reserved-for-indexers">C# の仕様</a>上、インデクサーからは <code>get_Item</code> / <code>set_Item</code> というメソッドが作られているはずなので、これを経由してアクセスします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">var</span> a = <span class="keyword">new</span> A(<span class="number">2</span>);
+X.SetValue(a, <span class="number">0</span>, <span class="number">1</span>);
+X.SetValue(a, <span class="number">1</span>, -<span class="number">1</span>);
+
+Console.WriteLine(a); <span class="comment">// A([1, -1])</span>
+Console.WriteLine(X.GetValue(a, <span class="number">0</span>)); <span class="comment">// 1</span>
+Console.WriteLine(X.GetValue(a, <span class="number">1</span>)); <span class="comment">// -1</span>
+
+<span class="keyword">static</span> <span class="keyword">class</span> X
+{
+    <span class="comment">// インデクサーの get アクセサーは get_Item。</span>
+    [UnsafeAccessor(UnsafeAccessorKind.Method, Name = <span class="string">&quot;get_Item&quot;</span>)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">int</span> GetValue(A a, <span class="keyword">int</span> i);
+
+    <span class="comment">// インデクサーの set アクセサーは set_Item。</span>
+    [UnsafeAccessor(UnsafeAccessorKind.Method, Name = <span class="string">&quot;set_Item&quot;</span>)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">void</span> SetValue(A a, <span class="keyword">int</span> i, <span class="keyword">int</span> value);
+}
+
+<span class="keyword">class</span> A(<span class="keyword">int</span> length)
+{
+    <span class="keyword">private</span> <span class="keyword">readonly</span> <span class="keyword">int</span>[] _items = <span class="keyword">new</span> <span class="keyword">int</span>[length];
+    <span class="keyword">private</span> <span class="keyword">int</span> <span class="keyword">this</span>[<span class="keyword">int</span> i]{ <span class="keyword">get</span> =&gt; _items[i]; <span class="keyword">set</span> =&gt; _items[i] = value; }
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString() =&gt; $<span class="string">&quot;A([{string.Join(&quot;</span>, <span class="string">&quot;, _items)}])&quot;</span>;
+}</code></pre>
+<p>(ちなみにこの <code>Item</code> の部分は <code>IndexerName</code> 属性を使って変更できたりします。
+実際、<code>string</code> 型のインデクサーは <code>Chars</code> という名前です。
+この場合、作られているメソッドの名前も <code>get_Chars</code> です。)</p>
+<h3 id="section-9"><a id="sec-generated-title-12"></a> <a id="operator">演算子</a></h3>
+<p>C# のユーザー定義の演算子は public でないといけない仕様なので、わざわざ UnsafeAccessor を使う場面はより一層少ないですが、一応触れておきます。
+(後述する<a href="#unsafe-accessor-type">型自体が internal な場合</a>に対して使えなくはないです。)</p>
+<p>ユーザー定義の演算子も、内部的にはただのメソッドになります。
+<code>+</code> 演算子の場合は <code>op_Addition</code> など、演算子ごとに名前が決まっています。
+(参考: <a href="https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/classes#153106-method-names-reserved-for-operators">演算子とメソッド名の対応関係</a>)</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">var</span> a = <span class="keyword">new</span> A(<span class="number">1</span>);
+
+X.Add(a, <span class="number">1</span>); <span class="comment">// a += 1;</span>
+
+Console.WriteLine(a); <span class="comment">// A(2)</span>
+
+a = X.Add(<span class="keyword">null</span>, a, <span class="number">1</span>); <span class="comment">// a = a + 1;</span>
+
+Console.WriteLine(a); <span class="comment">// A(3)</span>
+
+<span class="keyword">static</span> <span class="keyword">class</span> X
+{
+    <span class="comment">// + は op_Addition。</span>
+    <span class="comment">// 静的メソッドなのでダミーの第1引数が必要。</span>
+    [UnsafeAccessor(UnsafeAccessorKind.StaticMethod, Name = <span class="string">&quot;op_Addition&quot;</span>)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> A Add(A? _, A a, <span class="keyword">int</span> x);
+
+    <span class="comment">// += は op_AdditionAssignment。</span>
+    [UnsafeAccessor(UnsafeAccessorKind.Method, Name = <span class="string">&quot;op_AdditionAssignment&quot;</span>)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">void</span> Add(A a, <span class="keyword">int</span> x);
+}
+
+<span class="keyword">class</span> A(<span class="keyword">int</span> value)
+{
+    <span class="keyword">private</span> <span class="keyword">int</span> _value = value;
+
+    <span class="keyword">public</span> <span class="keyword">static</span> A <span class="keyword">operator</span> +(A a, <span class="keyword">int</span> x) =&gt; <span class="keyword">new</span>(a._value + x);
+
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="keyword">operator</span> +=(<span class="keyword">int</span> x) =&gt; _value += x;
+
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString() =&gt; $<span class="string">&quot;A({_value})&quot;</span>;
+}</code></pre>
+<h3 id="unsafeaccessor-2"><a id="sec-generated-title-13"></a> <a id="extension">拡張メンバーを UnsafeAccessor にする</a></h3>
+<p>UnsafeAccessor の「静的メソッドにして第1引数を足す」という仕様が拡張メソッドと相性がよく、
+拡張メソッドをそのまま UnsafeAccessor にすることができます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">var</span> a = <span class="keyword">new</span> A(<span class="number">1</span>);
+
+<span class="comment">// 拡張メソッド X.Add(A, int) を通して private な A.Add(int) を呼ぶ。</span>
+a.Add(<span class="number">1</span>);
+
+Console.WriteLine(a); <span class="comment">// A(2)</span>
+
+<span class="keyword">static</span> <span class="keyword">class</span> X
+{
+    [UnsafeAccessor(UnsafeAccessorKind.Method)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">void</span> Add(<span class="keyword">this</span> A a, <span class="keyword">int</span> x);
+}
+
+<span class="keyword">class</span> A(<span class="keyword">int</span> value)
+{
+    <span class="keyword">private</span> <span class="keyword">int</span> Value { <span class="keyword">get</span>; <span class="keyword">set</span>; } = value;
+    <span class="keyword">private</span> <span class="keyword">void</span> Add(<span class="keyword">int</span> x) =&gt; Value += x;
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString() =&gt; $<span class="string">&quot;A({Value})&quot;</span>;
+}</code></pre>
+<p>これは C# 14 で入る <code>extension</code> ブロック形式の拡張メンバーでもできて、
+以下のような書き方で UnsafeAccessor を書けたりします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">var</span> a = <span class="keyword">new</span> A(<span class="number">1</span>);
+
+<span class="comment">// 拡張メソッド X.Add を経由して、private な A.Add を呼ぶ。</span>
+a.Add(<span class="number">1</span>);
+
+Console.WriteLine(a); <span class="comment">// A(2)</span>
+
+<span class="comment">// 拡張プロパティ X.Value を経由して、private な A.Value を取得・設定する。</span>
+a.Value = <span class="number">3</span>;
+Console.WriteLine(a.Value); <span class="comment">// 3</span>
+
+<span class="keyword">static</span> <span class="keyword">class</span> X
+{
+    extension(A a)
+    {
+        <span class="comment">// コンパイル結果は void Add(this A, int x) と一緒。</span>
+        <span class="comment">// そのまま UnsafeAccessor にできる。</span>
+        [UnsafeAccessor(UnsafeAccessorKind.Method)]
+        <span class="keyword">public</span> <span class="keyword">extern</span> <span class="keyword">void</span> Add(<span class="keyword">int</span> x);
+
+        <span class="comment">// 拡張プロパティも通常のプロパティと同じ get_ / set_ という名前でメソッドを作る仕様で、</span>
+        <span class="comment">// int get_Value(A) / void set_Value(A, int) というメソッドができてる。</span>
+        <span class="comment">// 属性も伝搬されてて、 A.Value の UnsafeAccessor にできる。</span>
+        <span class="keyword">public</span> <span class="keyword">extern</span> <span class="keyword">int</span> Value
+        {
+            [UnsafeAccessor(UnsafeAccessorKind.Method)]
+            <span class="keyword">get</span>;
+
+            [UnsafeAccessor(UnsafeAccessorKind.Method)]
+            <span class="keyword">set</span>;
+        }
+    }
+}
+
+<span class="keyword">class</span> A(<span class="keyword">int</span> value)
+{
+    <span class="keyword">private</span> <span class="keyword">int</span> Value { <span class="keyword">get</span>; <span class="keyword">set</span>; } = value;
+    <span class="keyword">private</span> <span class="keyword">void</span> Add(<span class="keyword">int</span> x) =&gt; Value += x;
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString() =&gt; $<span class="string">&quot;A({Value})&quot;</span>;
+}</code></pre>
+<h3 id="section-10"><a id="sec-generated-title-14"></a> <a id="generics">ジェネリックな型やメンバーへのアクセス</a></h3>
+<p>.NET 9 からはジェネリックな型に対して UnsafeAccessor を書けるようになりました。
+型引数は以下のように「型は型に、メソッドはメソッドに」というルールで書けば大丈夫です。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">var</span> a = <span class="keyword">new</span> A&lt;<span class="keyword">int</span>&gt;(<span class="number">1</span>);
+
+X&lt;<span class="keyword">int</span>&gt;.M(a); <span class="comment">// 1</span>
+X&lt;<span class="keyword">int</span>&gt;.M(a, <span class="string">&quot;abc&quot;</span>); <span class="comment">// 1 abc</span>
+
+<span class="comment">// 型の型引数は型に。</span>
+<span class="comment">// A&lt;T&gt; の T はここに書く。</span>
+<span class="keyword">static</span> <span class="keyword">class</span> X&lt;T&gt;
+{
+    [UnsafeAccessor(UnsafeAccessorKind.Method)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">void</span> M(A&lt;T&gt; a);
+
+    <span class="comment">// メソッドの型引数はメソッドに。</span>
+    <span class="comment">// A&lt;T&gt;.M&lt;U&gt; の U はここに書く。</span>
+    [UnsafeAccessor(UnsafeAccessorKind.Method)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">void</span> M&lt;U&gt;(A&lt;T&gt; a, U x);
+}
+
+<span class="keyword">class</span> A&lt;T&gt;(T value)
+{
+    <span class="keyword">private</span> <span class="keyword">void</span> M() =&gt; Console.WriteLine(value);
+    <span class="keyword">private</span> <span class="keyword">void</span> M&lt;U&gt;(U x) =&gt; Console.WriteLine($<span class="string">&quot;{value} {x}&quot;</span>);
+}</code></pre>
+<p>型引数の付け方は制限がかかっていて、
+上記の例とは違う書き方、
+例えば「クラス <code>X</code> にメソッド <code>M&lt;T&gt;</code> や <code>M&lt;T, U&gt;</code> を書く」みたいなことをすると実行時エラーになります。</p>
+<h3 id="internal"><a id="sec-generated-title-15"></a> <a id="unsafe-accessor-type">型自体が internal な場合</a></h3>
+<p>.NET 10 から「型自体が internal で参照できない」という場合に対して UnsafeAccessor を使う手段が提供されるようになりました。</p>
+<p>これまでの例で <code>A</code> 型の引数や戻り値を書いていた場所をとりあえず <code>object</code> 型にして、
+その代わり、引数・戻り値に <code>UnsafeAccessorType</code> 属性を付けます。
+<code>UnsafeAccessorType</code> 属性の引数に文字列で型名を書くことで、internal な型を参照できます。</p>
+<p>例えばまず、<code>ClassLibrary1</code> という名前のプロジェクトに以下のようなクラスを用意したとします。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> Lib;
+
+<span class="comment">// ClassLibrary1 というプロジェクト内にあるものとする。</span>
+<span class="keyword">internal</span> <span class="keyword">class</span> A
+{
+    <span class="keyword">private</span> <span class="keyword">int</span> _value;
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString() =&gt; $<span class="string">&quot;A({_value})&quot;</span>;
+}</code></pre>
+<p>この型を別プロジェクトから参照するには以下のように書きます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">var</span> a = X.CreateA(); <span class="comment">// var a = new A();</span>
+X._value(a) = <span class="number">1</span>;   <span class="comment">// a._value = 1;</span>
+
+Console.WriteLine(a);
+
+<span class="keyword">static</span> <span class="keyword">class</span> X
+{
+    [UnsafeAccessor(UnsafeAccessorKind.Constructor)]
+    [<span class="keyword">return</span>: UnsafeAccessorType(<span class="string">&quot;Lib.A, ClassLibrary1&quot;</span>)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">object</span> CreateA();
+
+    [UnsafeAccessor(UnsafeAccessorKind.Field)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">ref</span> <span class="keyword">int</span> _value([UnsafeAccessorType(<span class="string">&quot;Lib.A, ClassLibrary1&quot;</span>)] <span class="keyword">object</span> @<span class="keyword">this</span>);
+}</code></pre>
+<p>型名はフルネーム(<code>Lib.A</code>)で書き、
+<code>,</code> でつなげて アセンブリ名(通常、プロジェクト名がそのままアセンブリ名になります。今回は <code>ClassLibrary1</code>)を書きます。</p>
+<p><code>UnsafeAccessorType</code> 属性は拡張メンバーでも使えます。
+(<code>object</code> 型インスタンスに対する拡張になってしまって誤用が怖いという問題はあり。)</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">var</span> a = X.CreateA(); <span class="comment">// var a = new A();</span>
+
+<span class="comment">// 拡張メソッド呼び。</span>
+a._value() = <span class="number">1</span>;   <span class="comment">// a._value = 1;</span>
+
+Console.WriteLine(a);
+
+<span class="comment">// 拡張プロパティ呼び。</span>
+a.Value = <span class="number">2</span>;   <span class="comment">// a._value = 2;</span>
+
+Console.WriteLine(a);
+
+<span class="keyword">static</span> <span class="keyword">class</span> X
+{
+    [UnsafeAccessor(UnsafeAccessorKind.Constructor)]
+    [<span class="keyword">return</span>: UnsafeAccessorType(<span class="string">&quot;Lib.A, ClassLibrary1&quot;</span>)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">object</span> CreateA();
+
+    <span class="comment">// 拡張メソッドでも使える。</span>
+    [UnsafeAccessor(UnsafeAccessorKind.Field)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">ref</span> <span class="keyword">int</span> _value([UnsafeAccessorType(<span class="string">&quot;Lib.A, ClassLibrary1&quot;</span>)] <span class="keyword">this</span> <span class="keyword">object</span> @<span class="keyword">this</span>);
+
+    <span class="comment">// extension ブロックでも使える。</span>
+    extension([UnsafeAccessorType(<span class="string">&quot;Lib.A, ClassLibrary1&quot;</span>)] <span class="keyword">object</span> @<span class="keyword">this</span>)
+    {
+        <span class="keyword">public</span> <span class="keyword">extern</span> <span class="keyword">ref</span> <span class="keyword">int</span> Value
+        {
+            [UnsafeAccessor(UnsafeAccessorKind.Field, Name = <span class="string">&quot;_value&quot;</span>)]
+            <span class="keyword">get</span>;
+        }
+    }
+}</code></pre>
+<p><a href="#generics">ジェネリックな型</a>の場合は <code>`1</code> みたいな語尾をつける必要があります。
+例として <code>ClassLibrary1</code> 側のクラス <code>A</code> を以下のようにジェネリック クラスにしてみます。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> Lib;
+
+<span class="comment">// ClassLibrary1 というプロジェクト内にあるものとする。</span>
+<span class="keyword">internal</span> <span class="keyword">class</span> A&lt;T&gt;
+{
+    <span class="keyword">private</span> T _value;
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString() =&gt; $<span class="string">&quot;A({_value})&quot;</span>;
+}</code></pre>
+<p>これを参照するためには以下のような書き方になります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">var</span> a = X&lt;<span class="keyword">int</span>&gt;.CreateA(); <span class="comment">// var a = new A();</span>
+X&lt;<span class="keyword">int</span>&gt;._value(a) = <span class="number">1</span>;   <span class="comment">// a._value = 1;</span>
+
+Console.WriteLine(a);
+
+<span class="keyword">static</span> <span class="keyword">class</span> X&lt;T&gt;
+{
+    [UnsafeAccessor(UnsafeAccessorKind.Constructor)]
+    [<span class="keyword">return</span>: UnsafeAccessorType(<span class="string">&quot;Lib.A`1, ClassLibrary1&quot;</span>)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">object</span> CreateA();
+
+    [UnsafeAccessor(UnsafeAccessorKind.Field)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">ref</span> T _value([UnsafeAccessorType(<span class="string">&quot;Lib.A`1, ClassLibrary1&quot;</span>)] <span class="keyword">object</span> @<span class="keyword">this</span>);
+}</code></pre>
+<p>UnsafeAccessor 定義側のクラス(この例だと <code>X&lt;T&gt;</code>)の書き方は<a href="#generics">前節</a>と同じです。
+一方、 <code>UnsafeAccessorType</code> 属性に渡す型名は、
+<a href="https://learn.microsoft.com/ja-jp/dotnet/api/system.type"><code>Type</code> 型</a> の <a href="https://learn.microsoft.com/ja-jp/dotnet/api/system.type.fullname"><code>FullName</code> プロパティ</a>で得られる文字列と同じです。
+<code>A&lt;T&gt;</code> であれば <code>Lib.A`1</code> になります。
+<code>`</code> はバッククオートで、日本語キーボードの場合 shift + <code>@</code> で入力するやつです。
+また、<code>1</code> の部分は型引数の個数で、
+これが <code>A&lt;T1, T2&gt;</code> の場合だと <code>`2</code>、
+<code>A&lt;T1, T2, T3&gt;</code> の場合だと <code>`3</code> になります。</p>
+<h3 id="section-11"><a id="sec-generated-title-16"></a> <a id="compiler-generated-field">コンパイラー生成のフィールド</a></h3>
+<p>ここからは C# の言語仕様にはない話になります。
+(現在の Roslyn と呼ばれる C# コンパイラーの実装ではそうなっているけども、
+将来もずっと同じ実装が続くかとかの保証はない話です。)</p>
+<p><a href="/study/csharp/oop/oo_property/#auto">自動プロパティ</a>
+(<a href="/study/csharp/oop/oo_property/#field-keyword"><code>field</code> キーワード</a>を使ったものも含む)からはフィールドが生成されています。
+現在の Roslyn の場合、このフィールドの命名ルールは「プロパティ <code>P</code> に対して <code>&lt;P&gt;k__BackingField</code>」みたいになります。
+この挙動を使えばプロパティのバッキング フィールドを読み書きすることができます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">var</span> a = <span class="keyword">new</span> A();
+X.RefValue(a) = <span class="number">1</span>;
+
+Console.WriteLine(a); <span class="comment">// A(1)</span>
+
+<span class="keyword">static</span> <span class="keyword">class</span> X
+{
+    <span class="comment">// これで Value プロパティのバッキング フィールドを参照できる。</span>
+    [UnsafeAccessor(UnsafeAccessorKind.Field, Name = <span class="string">&quot;&lt;Value&gt;k__BackingField&quot;</span>)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">ref</span> <span class="keyword">int</span> RefValue(A a);
+}
+
+<span class="keyword">class</span> A
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> Value { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString() =&gt; $<span class="string">&quot;A({Value})&quot;</span>;
+}</code></pre>
+<p>また、<a href="/study/csharp/oop/oo_construct/#capture">プライマリ コンストラクター引数のキャプチャ</a>で作られるフィールドは、引数 <code>x</code> に対して <code>&lt;x&gt;P</code> という名前になります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">var</span> a = <span class="keyword">new</span> A(<span class="number">0</span>);
+X.RefValue(a) = <span class="number">1</span>; <span class="comment">// 書き換え。</span>
+
+Console.WriteLine(a); <span class="comment">// A(1)</span>
+
+<span class="keyword">static</span> <span class="keyword">class</span> X
+{
+    <span class="comment">// プライマリ コンストラクター引数から作られるフィールドは &lt;&gt;P。</span>
+    [UnsafeAccessor(UnsafeAccessorKind.Field, Name = <span class="string">&quot;&lt;value&gt;P&quot;</span>)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">ref</span> <span class="keyword">int</span> RefValue(A a);
+}
+
+<span class="keyword">class</span> A(<span class="keyword">int</span> value)
+{
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString() =&gt; $<span class="string">&quot;A({value})&quot;</span>;
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/misc/">&#x305D;&#x306E;&#x4ED6;</a></li><li><a href="/study/csharp/misc/partial-type/">&#x578B;&#x306E;&#x5206;&#x5272;&#x5B9A;&#x7FA9; (partial)</a></li><li><a href="/study/csharp/misc/sp_preprocess/">&#x30D7;&#x30EA;&#x30D7;&#x30ED;&#x30BB;&#x30B9;</a></li><li><a href="/study/csharp/misc/sp_xmldoc/">XML Document</a></li><li><a href="/study/csharp/misc/ap_safec/">&#x201C;Safe C&#x201D; &#x3068;&#x3057;&#x3066;&#x306E; C#</a></li><li><a href="/study/csharp/misc/ap_compatibility/">&#x4E92;&#x63DB;&#x6027;&#x306E;&#x7DAD;&#x6301;</a></li><li><a href="/study/csharp/misc/misc_roslyn/">[&#x96D1;&#x8A18;] .NET Compiler Platform</a></li><li><a href="/study/csharp/misc/misclanguageevolution/">[&#x96D1;&#x8A18;] &#x69CB;&#x6587;&#x306E;&#x9032;&#x5316;</a></li><li><a href="/study/csharp/misc/miscpatternbased/">&#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30D9;&#x30FC;&#x30B9;&#x306A;&#x69CB;&#x6587;</a></li><li><a href="/study/csharp/misc/miscentrypoint/">&#x30A8;&#x30F3;&#x30C8;&#x30EA;&#x30FC; &#x30DD;&#x30A4;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/misc/analyzer-generator/">&#x30B3;&#x30FC;&#x30C9;&#x89E3;&#x6790;&#x3068;&#x30B3;&#x30FC;&#x30C9;&#x751F;&#x6210;</a></li><li><a href="/study/csharp/misc/file-local/">file &#x30ED;&#x30FC;&#x30AB;&#x30EB;&#x578B;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

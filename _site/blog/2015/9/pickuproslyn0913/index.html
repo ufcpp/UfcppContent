@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 9/13 | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2015/9/pickuproslyn0913/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2015-09-13T07:26:38">2015-09-13</time></span><span>更新: <time datetime="2015-09-13T07:29:31">2015-09-13</time></span></div><h1 id="roslyn-913">ピックアップRoslyn 9/13</h1>
+<p>なんか大変なことになってる。</p>
+<p><img src="/assets/media/1035/mailsfromroslyn.jpg" alt="GitHub Roslynリポジトリからの通知メール" /></p>
+<p>メールの大半を占めてる「Neal Gafter」はC#チームでGitHub Issue対応してくれてる人。</p>
+<p>これまでの提案Issueページの整理作業を一気にやった様子。</p>
+<p>多くのものは、</p>
+<ul>
+<li>Close 作業
+<ul>
+<li>C# 7.0に向けてやり始めたよ</li>
+<li>重複だから別エントリーに移って</li>
+<li>ちょっと無理/費用対効果合わない</li>
+<li>試験的な実装始めたしIssueは閉じる</li>
+</ul>
+</li>
+<li>提案が不明瞭だからもう少し説明求</li>
+</ul>
+<p>で、いくらか、C# 7.0に向けた新文法の提案が出ています。</p>
+<h2 id="throw">throw を「式」に</h2>
+<p><a href="https://github.com/dotnet/roslyn/issues/5143">[Proposal] Make &quot;throw expression&quot; an expression form #5143</a></p>
+<ul>
+<li>条件演算子で <code>condition ? 値 : throw new InvalidOperation()</code> とかが書けるように</li>
+</ul>
+<p>「throw の結果は任意の型に変換可能」と判定。<a href="https://github.com/dotnet/roslyn/issues/1226">never型</a>とかがあるともうちょっと融通効くようになるものの、そこまでやるのは CLR レベルの変更が必要なのでもうちょっと先になりそう。</p>
+<h2 id="swich">式ベースの swich ステートメント</h2>
+<p><a href="https://github.com/dotnet/roslyn/issues/5154">[Proposal] expression-based switch for pattern matching #5154</a></p>
+<p>前々から出てる、パターンマッチングに対応した分岐構文をどうするか。</p>
+<p>結局、match 式みたいな新しいキーワードを追加するんじゃなく、switch の拡張になりそう。</p>
+<h2 id="immutable-with">immutable データの書き換え (with ステートメント)</h2>
+<p><a href="https://github.com/dotnet/roslyn/issues/5172">[Proposal] &quot;with&quot; expressions for record types #5172</a></p>
+<p>immutable なデータを書き換えたければ、大部分のメンバーを丸ごとコピーした上で、書き換えたい場所だけ新しい値で、別インスタンスを作る必要があって大変面倒という問題の解消。レコード型に対する with ステートメントってのを足すという提案。</p>
+<h2 id="select">非同期スイッチ(selectステートメント)</h2>
+<p><a href="https://github.com/dotnet/roslyn/issues/5187">[Proposal] Asynchronous switch #5187</a></p>
+<p>「<code>Task.WhenAny</code> して、最初に返ってきたタスクがどのタスクかを判定して分岐」みたいな処理を構文化。確かに、個人的に<code>WhenAny</code>後の分岐面倒に思うこと多い。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2015/9/">2015&#x5E74;9&#x6708;</a></li><li><a href="/blog/2015/9/replacement/">&#x30B5;&#x30A4;&#x30C8;&#x306E;&#x30B7;&#x30B9;&#x30C6;&#x30E0;&#x66F4;&#x65B0;</a></li><li><a href="/blog/2015/9/pickuproslyn0906/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7; Roslyn 9/6</a></li><li><a href="/blog/2015/9/pickuproslyn0920/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7; Roslyn 9/20</a></li><li><a href="/blog/2015/9/metrocs1/">Roslyn &#x30E1;&#x30BF;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30DF;&#x30F3;&#x30B0; &amp; Code-Aware &#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

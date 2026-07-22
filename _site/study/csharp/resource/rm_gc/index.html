@@ -1,0 +1,136 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>C# &#x306E;&#x30E1;&#x30E2;&#x30EA;&#x7BA1;&#x7406; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/resource/rm_gc/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="c">C# のメモリ管理</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>C# をはじめとした .NET Framework 上で動く言語は、メモリ管理を .NET Framework のガベージ コレクションに任せることで、管理の手間を削減できます。</p>
+<p>しかし、.NET Framework に任せれたとしても、
+メモリ管理の方法を知ることは有益でしょう。
+例えば、本サイト内でも「<a href="/study/computer/">コンピュータの基礎知識</a>」の「<a href="/study/computer/essential-software/memorymanagement/">メモリ管理</a>」で説明しているので、興味があれば参照してください。</p>
+<p>本セクションでは、C# のメモリ管理と関連して、次節以降、以下のような話をしていきます。</p>
+<ul>
+<li><p>「<a href="/study/csharp/resource/oo_reference/">値型と参照型</a>」</p>
+</li>
+<li><p>「<a href="/study/csharp/resource/sp_ref/">引数の参照渡し</a>」</p>
+</li>
+<li><p>「<a href="/study/csharp/resource/misc_heap/">[雑記] スタックとヒープ</a>」</p>
+</li>
+<li><p>「<a href="/study/csharp/resource/rmboxing/">ボックス化</a>」</p>
+</li>
+<li><p>「<a href="/study/csharp/resource/sp2_nullable/">Nullable 型</a>」</p>
+</li>
+<li><p>「<a href="/study/csharp/resource/oo_dispose/">リソースの破棄</a>」</p>
+</li>
+</ul>
+<p>このページは、「<a href="/study/computer/">コンピュータの基礎知識</a>」とC#の橋渡しのようなもので、
+次節以降の話と、「<a href="/study/computer/essential-software/memorymanagement/">メモリ管理</a>」で説明しているような概念の関わりについて説明します。</p>
+<h2 id="c-1"><a id="sec-generated-title-2"></a> <a id="stack-heap"></a>C# とスタック/ヒープ</h2>
+<p>「<a href="/study/computer/essential-software/memorymanagement/">メモリ管理</a>」で説明しますが、
+一般に、メモリの管理方法には「<a href="/study/computer/essential-software/memorymanagement/#stack">スタック</a>」と「<a href="/study/computer/essential-software/memorymanagement/#heap">ヒープ</a>」という2種類のものがあります。</p>
+<p>C# では、ローカル変数はスタック上に値を置きます。
+この時、変数が「<a href="/study/csharp/resource/oo_reference/#valtype">値型</a>」の場合、値すべてがスタック上に置かれます。
+一方、「<a href="/study/csharp/resource/oo_reference/#reftype">参照型</a>」の場合、実際の値はヒープ上に置かれ、そのヒープ上の場所への参照情報（「<a href="/study/computer/general/memory/#pointer">ポインター</a>」 ）だけがスタック上に置かれます。</p>
+<p>参考: 「<a href="/study/csharp/resource/rmboxing/">ボックス化</a>」</p>
+<h2 id="c-2"><a id="sec-generated-title-3"></a> <a id="garbage-collection"></a>C# のガベージ コレクション</h2>
+<p>.NET Framework （の上で動く C# などの言語）は、
+<strong id="garbage-collection" class="keyword">ガベージ コレクション</strong>(参考: 「<a href="/study/computer/essential-software/memorymanagement/#garbage-collection">ガベージ・コレクション</a>」)
+を使ってヒープを管理しています。</p>
+<p>.NET Framework には何種類かのバリエーションがありますが、
+デスクトップ向けやサーバー向けの .NET Framework では、以下のような方式のガベージ コレクションを行っています。</p>
+<ul>
+<li><p>「<a href="/study/computer/essential-software/memorymanagement/#compaction">コンパクション</a>」付きの「<a href="/study/computer/essential-software/memorymanagement/#mark-sweep">マーク＆スイープ</a>」方式。</p>
+</li>
+<li><p>3つの世代を持つ(「<a href="/study/computer/essential-software/memorymanagement/#generational">世代別ガベージ・コレクション</a>」参照)。 ちなみに、.NET の内部用語的には、この3世代は新しいものから順に gen0、gen1、gen2 と呼ばれている。</p>
+</li>
+<li><p>サイズの大きい（規定の設定では 85,000バイト以上の）データは特別扱いされて、通常とは別のヒープ（LOH: Large Object Heap と呼ばれる）に確保される。 （統計的に、サイズの大きなデータは長寿命なことが多いため） LOH に確保したオブジェクトは最初から gen2 扱いを受ける（gen0、gen1 のガベージ コレクションでは回収されない）。</p>
+</li>
+</ul>
+<h2 id="section-1"><a id="sec-generated-title-4"></a> <a id="finalize"></a>ファイナライズ</h2>
+<p>C# では、オブジェクトがガベージ コレクションで回収される時に呼びだされるメソッドのことをファイナライザーといい、
+~ 記号を使った C++ のデストラクターに似た構文で書きます。
+(そのため C# でもかつてはこれのことをデストラクターと呼んでいました。
+今では、後述するような実態に合わせてファイナライザーと呼びます。)</p>
+<p>しかし、実は、.NET Framework 的には(そして、C# のコンパイル結果である .NET の中間言語的には)、
+ガベージ コレクション時に呼ぶメソッドは、
+(~クラス名 という名前のメソッドではなく)Finalize という名前のメソッドになります。
+これを、(デストラクターではなく)<strong id="finalizer" class="keyword">ファイナライザー</strong>(Finalizer)と呼びます。
+(C++ じゃなくて、Java が参考にされてる。
+つまり、C# の文法上は C++ っぽいのに、.NET 内部的には Java っぽい。)
+ちなみに、一般に、ガベージ コレクション時に(Finalize メソッドなどの)終了処理を行うことを<strong id="finalize" class="keyword">ファイナライズ</strong>(finalization)と言います。</p>
+<p>この仕様から、C# で書いたファイナライザーは、コンパイルすると Finalize というメソッドに変換されています。
+なので、ファイナライザーとは別に Finalize という名前のメソッドを書こうとすると、コンパイル エラーになります。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/finalizer.png"><img src="/assets/media/ufcpp2000/csharp/fig/finalizer.png" alt="Finalize メソッドとファイナライザー" /></a></p>
+<figcaption>Finalize メソッドとファイナライザー</figcaption>
+</figure>
+<p>ちなみに、挙動的に同じなのは Java のファイナライザーです。
+C++ のデストラクターとは、構文が似ているだけで、呼び出されるタイミングなどは違うので注意が必要です。</p>
+<h2 id="section-2"><a id="sec-generated-title-5"></a> <a id="cost-to-finalize"></a>ファイナライズのコスト</h2>
+<p>ファイナライズは以下の手順で行われます。</p>
+<ul>
+<li><p>ファイナライザー(＝ Finalize メソッド、C# の場合は旧称デストラクター。現在は C# でもファイナライザー呼び)を持ったクラスのオブジェクトが作られたとき、 そのオブジェクトをファイナライズ リスト(finalization list)と呼ばれるリストに入れて記憶しておく。</p>
+</li>
+<li><p>ガベージ コレクションの際、どこからも到達できない(＝ ゴミになった)オブジェクトがファイナライズ リストにあるかどうか調べて、 あった場合、そのオブジェクトを F-reachable キュー(F はファイナライズの F。ファイナライズ処理の中から到達できるオブジェクトを入れておく)という場所に移す。</p>
+</li>
+<li><p>ファイナライズ専用のスレッドで Finalize メソッドを実行する。</p>
+</li>
+<li><p>Finalize メソッドが完了したら、F-reachable キューからオブジェクトを取り出す。</p>
+</li>
+</ul>
+<p>ここで問題になるのは、Finalize メソッドを呼ぶために、オブジェクトの寿命が延びることです。
+一度ゴミ扱いされたからこそファイナライズの対象になるわけですが、
+Finalize メソッドを呼び出すまでの間はそのオブジェクトに「復活」しておいてもらう必要があります
+(これが F-reachable と呼ばれる所以。どこかから到達可能 ＝ まだ使われている ＝ ゴミ扱いされない)。
+つまり、その時のガベージ コレクション処理ではまだゴミ扱いされず、次のガベージ コレクションまでオブジェクトが残ります。</p>
+<p>しかも、「次」といっても、.NET Framework のガベージ コレクションは世代を持っている(「<a href="/study/computer/essential-software/memorymanagement/#generational">世代別ガベージ・コレクション</a>」参照)ので、
+1度生き残ってしまうと、世代が上がってしまって、次にガベージ コレクションの対象になるのはだいぶ先になってしまいます
+(これが結構深刻なコストになるので、極力ファイナライザーを使いたくない理由になります)。</p>
+<h3 id="section-3"><a id="sec-generated-title-6"></a> <a id="suppress-finalization"></a>ファイナライズ抑止</h3>
+<p>前述の通り、ファイナライズ処理はコストのかかる処理なので、できる限り避けたいものです。</p>
+<p>ファイナライザーを使いたい場合というのは、だいたい「破棄処理を忘れたらまずいものに対する保険」になります。
+基本的には明示的な破棄(「<a href="/study/csharp/resource/oo_dispose/#using">using ステートメント</a>」 を使った Dispose メソッド呼び出し)をすべきで、
+もし万が一それを忘れてしまった場合でも大丈夫なように、保険として用意しておくものです。</p>
+<p>なので、逆にいうと、明示的に Dispose メソッドを呼んだ後なら、もう、ファイナライザーを呼んでもらう必要性がなくなる場合がほとんどです。
+このため、.NET には、「もうファイナライザーを呼ばなくてもいいよ」ということをフレームワークに伝えるために、
+GC クラス(System 名前空間)に SuppressFinalize というメソッドが用意されています。
+(参考: 「<a href="/study/csharp/resource/rm_disposable/#idisposable">IDisposable インターフェイスの実装</a>」)</p>
+<h3 id="section-4"><a id="sec-generated-title-7"></a> <a id="resurrection"></a>復活</h3>
+<p>ファイナライザーを使ってしまうと、一度死んだはず(ゴミ扱いされたはず)のオブジェクトが、一時的に復活してしまうという話はしました。</p>
+<p>ここで、マナーの悪いコードを書いてしまうと、オブジェクトが完全復活(resurrection)してしまうことがあります。
+例えば、以下のように、ファイナライザーの中で、静的なオブジェクトに参照を渡してしまうなどです。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> X
+{
+    <span class="keyword">static</span> List&lt;X&gt; resurrected = <span class="keyword">new</span> List&lt;X&gt;();
+
+    ~X()
+    {
+        <span class="comment">// 死んだはずのオブジェクトを静的なもの(＝ ずっと生きてる)に渡すという暴挙</span>
+        <span class="comment">// ガベージ コレクションの対象から外れる</span>
+        resurrected.Add(<span class="keyword">this</span>);
+    }
+}</code></pre>
+<p>ちなみにこの場合、すでにファイナライズ リストからはこのオブジェクトが外れているので、
+次に不要になったときには、もうファイナライザーが呼ばれなくなります。
+この場合にさらにもう1度ファイナライザーを呼びたい場合は、GC クラスの ReRegisterForFinalize メソッドを呼び出します。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/resource/">&#x30E1;&#x30E2;&#x30EA;&#x3068;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x7BA1;&#x7406;</a></li><li><a href="/study/csharp/resource/rm_struct/">&#x69CB;&#x9020;&#x4F53;</a></li><li><a href="/study/csharp/resource/oo_reference/">&#x5024;&#x578B;&#x3068;&#x53C2;&#x7167;&#x578B;</a></li><li><a href="/study/csharp/resource/readonlyness/">readonly &#x306E;&#x6CE8;&#x610F;&#x70B9;</a></li><li><a href="/study/csharp/resource/rm_default/">&#x65E2;&#x5B9A;&#x5024;</a></li><li><a href="/study/csharp/resource/sp_ref/">&#x53C2;&#x7167;&#x6E21;&#x3057;</a></li><li><a href="/study/csharp/resource/span/">Span&lt;T&gt;&#x69CB;&#x9020;&#x4F53;</a></li><li><a href="/study/csharp/resource/refstruct/">ref&#x69CB;&#x9020;&#x4F53;</a></li><li><a href="/study/csharp/resource/misc_heap/">[&#x96D1;&#x8A18;] &#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x3068;&#x30D2;&#x30FC;&#x30D7;</a></li><li><a href="/study/csharp/resource/rmboxing/">&#x30DC;&#x30C3;&#x30AF;&#x30B9;&#x5316;</a></li><li><a href="/study/csharp/resource/sp2_nullable/">null&#x8A31;&#x5BB9;&#x5024;&#x578B;(Nullable&amp;lt;T&amp;gt; &#x578B;)</a></li><li><a href="/study/csharp/resource/nullablereferencetype/">null &#x8A31;&#x5BB9;&#x53C2;&#x7167;&#x578B;</a></li><li><a href="/study/csharp/resource/rm_nullusage/">null &#x306E;&#x53D6;&#x308A;&#x6271;&#x3044;</a></li><li><a href="/study/csharp/resource/oo_dispose/">&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x7834;&#x68C4;</a></li><li><a href="/study/csharp/resource/rm_destructor/">&#x30D5;&#x30A1;&#x30A4;&#x30CA;&#x30E9;&#x30A4;&#x30B6;&#x30FC;</a></li><li><a href="/study/csharp/resource/rm_disposable/">[&#x96D1;&#x8A18;] Dispose &#x306B;&#x307E;&#x3064;&#x308F;&#x308B;&#x4F59;&#x8AC7;</a></li><li><a href="/study/csharp/resource/rmweakreference/">&#x3010;&#x96D1;&#x8A18;&#x3011;&#x5F31;&#x53C2;&#x7167;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

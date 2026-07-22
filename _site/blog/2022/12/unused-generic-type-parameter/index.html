@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x672A;&#x4F7F;&#x7528;&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30C3;&#x30AF;&#x578B;&#x5F15;&#x6570;&#x3067; TypeLoadException &#x304C;&#x8D77;&#x3053;&#x308B;&#x554F;&#x984C; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2022/12/unused-generic-type-parameter/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2022-12-11T18:17:58">2022-12-11</time></span><span>更新: <time datetime="2023-08-03T22:39:37">2023-08-03</time></span></div><h1 id="typeloadexception">未使用ジェネリック型引数で TypeLoadException が起こる問題</h1>
+<p>今日は C# の構造体がらみで、
+できそうでできない、
+できてもいいはずだけど直されない、
+コンパイルまでは通るのに実行時にエラーになってしまう制限の話。</p>
+<p>※(2023/8/3追記) .NET 8 で直るそうです。</p>
+<h2 id="section">入れ子の構造体</h2>
+<p>C# で、構造体の中にその構造体自身のフィールドを持つことはできません。
+レイアウトの決定が無限再帰を起こすので、これはダメで当然。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> S { S _nested; }</code></pre>
+<p>これはそもそもコンパイル エラーになります。
+当然。</p>
+<h2 id="typeloadexcpetion">使ってないジェネリック型引数でも TypeLoadExcpetion</h2>
+<p>問題は以下のような場合。
+現在の C# (というか .NET の型システム)では、以下のような型はコンパイルはできるものの、実行してみようとすると実行時例外を起こします。
+(構造体 <code>S</code> のメンバーに初めて触れた瞬間に <code>TypeLoadException</code> が飛ぶ。)</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> S { Empty&lt;S&gt; _empty; }
+<span class="keyword">struct</span> Empty&lt;T&gt; { }</code></pre>
+<p><code>Empty&lt;T&gt;</code> の側が <code>T</code> のフィールドを持っていないので
+(というか空っぽなので、<code>T</code> が何かによらずサイズ1で固定)、
+レイアウト決定で無限再帰は起こさないはずです。
+実際、これは、</p>
+<ul>
+<li>原理的にはできてもいい</li>
+<li>C# は禁止していない</li>
+<li>CLI (.NET のランタイム仕様)でも禁止は名言されていない</li>
+<li>現在の .NET のランタイムの実装が過剰防衛している</li>
+</ul>
+<p>という状態。
+<a href="https://github.com/dotnet/runtime/issues/6924">C# コンパイラー チームの人がそれを指摘する issue</a> も立っていたりします。</p>
+<h3 id="section-1">実用例</h3>
+<p>まあ、<code>Empty</code> みたいな無意味なコードは誰も書かないとしても、
+例えば、以下のようなシナリオでなら似たようなことをしたくなる人はいるはずです。</p>
+<p>まず、以下のように、構造体の配列で木構造を表現する例を考えます。</p>
+<pre><code class="language-csharp"><span class="comment">// 配列に Parent と Next を持たせた型を入れて木構造を表現。</span>
+<span class="comment">// A も B もツリー。</span>
+<span class="comment">// A からは B も参照。</span>
+<span class="keyword">class</span> Tree
+{
+    A[] A;
+    B[] B;
+}
+
+<span class="keyword">struct</span> A
+{
+    <span class="keyword">int</span> Parent;
+    <span class="keyword">int</span> Next;
+    <span class="keyword">int</span> BIndex;
+}
+
+<span class="keyword">struct</span> B
+{
+    <span class="keyword">int</span> Parent;
+    <span class="keyword">int</span> Next;
+}</code></pre>
+<p>実際にはさらに、「インデックスとは関係ない別の <code>int</code> も持ちたくなったりするはずで、なおのこと「この <code>int</code> は何？」みたいになると思います。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> A
+{
+    <span class="comment">// 木とは別に持ちたいデータ。</span>
+    <span class="keyword">int</span> Value;
+    <span class="keyword">int</span> Length;
+    ...
+
+    <span class="comment">// 木構造表現用。</span>
+    <span class="keyword">int</span> Parent;
+    <span class="keyword">int</span> Next;
+
+    <span class="comment">// 別の木を参照</span>
+    <span class="keyword">int</span> BIndex;
+}</code></pre>
+<p>ということで、<code>Parent</code> や <code>Next</code> が「配列 <code>A[]</code> のインデックス」であることが一目でわかるようにしたくなったりします。
+よくやるのが、以下のように「<code>int</code> をラップした構造体を用意」みたいな手段。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> Index&lt;T&gt;
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> Value { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> Index(<span class="keyword">int</span> value) =&gt; Value = value;
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">implicit</span> <span class="keyword">operator</span> Index&lt;T&gt;(<span class="keyword">int</span> value) =&gt; <span class="keyword">new</span>(value);
+}</code></pre>
+<p>この型を使って先ほどの <code>Tree</code>, <code>A</code>, <code>B</code> を書き換えると以下のような感じになります。</p>
+<pre><code class="language-csharp"><span class="comment">// 配列に Parent と Next を持たせた型を入れて木構造を表現。</span>
+<span class="comment">// A も B もツリー。</span>
+<span class="comment">// A からは B も参照。</span>
+<span class="keyword">class</span> Tree
+{
+    A[] A;
+    B[] B;
+}
+
+<span class="keyword">struct</span> A
+{
+    <span class="keyword">int</span> Value;
+    <span class="keyword">int</span> Length;
+    Index&lt;A&gt; Parent;
+    Index&lt;A&gt; Next;
+    Index&lt;B&gt; BIndex;
+}
+
+<span class="keyword">struct</span> B
+{
+    Index&lt;B&gt; Parent;
+    Index&lt;B&gt; Next;
+}</code></pre>
+<p><strong>便利！</strong></p>
+<p>と思ったところで、冒頭の <code>Empty&lt;T&gt;</code> の例と同じ理屈の過剰防衛で、
+<code>TypeLoadException</code> を起こします…</p>
+<h2 id="section-2">回避策</h2>
+<p>ちょっと不格好でもよければ解決方法は簡単で、
+1段ダミーのクラスを挟むだけだったり。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> Index&lt;T&gt;
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> Value { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> Index(<span class="keyword">int</span> value) =&gt; Value = value;
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">implicit</span> <span class="keyword">operator</span> Index&lt;T&gt;(<span class="keyword">int</span> value) =&gt; <span class="keyword">new</span>(value);
+}
+
+<span class="comment">// Index&lt;Dummy&lt;T&gt;&gt; とか Index&lt;Empty&lt;T&gt;&gt; よりは Index&lt;Of&lt;T&gt;&gt; の方がマシかなと…</span>
+<span class="keyword">class</span> Of&lt;T&gt; { }</code></pre>
+<pre><code class="language-csharp"><span class="keyword">class</span> Tree
+{
+    A[] A；
+    B[] B;
+}
+
+<span class="keyword">struct</span> A
+{
+    <span class="keyword">int</span> Value;
+    <span class="keyword">int</span> Length;
+    Index&lt;Of&lt;A&gt;&gt; Parent;
+    Index&lt;Of&lt;A&gt;&gt; Next;
+    Index&lt;Of&lt;B&gt;&gt; BIndex;
+}
+
+<span class="keyword">struct</span> B
+{
+    Index&lt;Of&lt;B&gt;&gt; Parent;
+    Index&lt;Of&lt;B&gt;&gt; Next;
+}</code></pre>
+<p>だいぶ不格好で嫌なので、
+<a href="https://github.com/dotnet/runtime/issues/6924">件の issue</a> の優先度を上げてもらえるように👍を付けまくってもらえたりすると大変うれしかったりは…</p>
+<p>この issue は2016年からずっと「Future」(いつかね、いつか)なんですよね。
+これ、C# 6.0 (つまり、Roslyn 化/C# への移植)の頃に始めて報告されたというだけで、
+実際には .NET Framework が生まれてこの方ずっとかも。</p>
+<p>※(2023/8/3追記) .NET 8 で直るそうです。C# にジェネリクスが導入されて以来の20年越しの修正に。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2022/12/">12&#x6708;</a></li><li><a href="/blog/2022/12/rawstringwhitespace/">raw string &#x306E;&#x7A7A;&#x767D;&#x6587;&#x5B57;</a></li><li><a href="/blog/2022/12/stackalloc-natural-type/">stackalloc &#x306E;&#x81EA;&#x7136;&#x306A;&#x578B;</a></li><li><a href="/blog/2022/12/extension-resolution/">&#x62E1;&#x5F35;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x306F;&#x6697;&#x9ED9;&#x578B;&#x5909;&#x63DB;&#x3092;&#x898B;&#x306A;&#x3044;</a></li><li><a href="/blog/2022/12/unsafer-unsafe/">Unsafe &#x30AF;&#x30E9;&#x30B9;&#x306E;&#x6557;&#x5317; (&#x95A2;&#x6570;&#x30DD;&#x30A4;&#x30F3;&#x30BF;&#x30FC;)</a></li><li><a href="/blog/2022/12/no-more-t4/">&#x5FC5;&#x305A;&#x3001;&#x304B;&#x306E;&#x90AA;&#x77E5;&#x66B4;&#x8650;&#x306E; T4 &#x3092;&#x9664;&#x304B;&#x306D;&#x3070;&#x306A;&#x3089;&#x306C;&#x3068;&#x6C7A;&#x610F;&#x3057;&#x305F;</a></li><li><a href="/blog/2022/12/binarytool/">JSON &#x3068;&#x304B;&#x306E;&#x4E2D;&#x8EAB;&#x78BA;&#x8A8D;&#x30C4;&#x30FC;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,178 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Rune &#x3068; fast Utf8String | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2017/12/fastutf8string/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2017-12-06T23:21:56">2017-12-06</time></span><span>更新: <time datetime="2017-12-06T23:27:25">2017-12-06</time></span></div><h1 id="rune-fast-utf8string">Rune と fast Utf8String</h1>
+<p>今日はRoslynじゃなくてCoreFx方面の話だし、issueの投稿日時的には9月とかで割かし「今更」な話。</p>
+<ol>
+<li><a href="https://github.com/dotnet/corefx/issues/24093">Introducing System.Rune #24093</a></li>
+<li><a href="https://github.com/dotnet/corefxlab/issues/1751">New UTF8String APIs #1751</a></li>
+</ol>
+<h2 id="rune">Rune</h2>
+<p>1個目のやつ、要は「Unicode のコードポイントに相当するプリミティブ型が欲しい」的な話です。</p>
+<h3 id="section">文字とは…</h3>
+<p>プログラミングにおける「文字」に関するおさらい:</p>
+<p><img src="/assets/media/1155/unicodechar.png" alt="文字と言えば" /></p>
+<p><code>char</code>って何なんだろうね… と路頭に迷った結果が、以下のような感じ。</p>
+<table>
+<thead>
+<tr>
+<th>言語</th>
+<th>UTF-8</th>
+<th>UTF-16</th>
+<th>符号点</th>
+<th>書記素</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C#</td>
+<td>(<code>byte</code>)</td>
+<td><code>char</code></td>
+<td>(<code>uint</code>)</td>
+<td>(<code>string</code>)</td>
+</tr>
+<tr>
+<td>Swift</td>
+<td>(<code>UInt8</code>)</td>
+<td>(<code>UInt16</code>)</td>
+<td><code>UnicodeScalar</code></td>
+<td><code>Character</code></td>
+</tr>
+<tr>
+<td>Go</td>
+<td>(<code>uint8</code>)</td>
+<td>(<code>uint16</code>)</td>
+<td><code>rune</code></td>
+<td>(<code>string</code>)</td>
+</tr>
+<tr>
+<td>Rust</td>
+<td>(<code>u8</code>)</td>
+<td>(<code>u16</code>)</td>
+<td><code>char</code></td>
+<td>(<code>String</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>※ <code>()</code> 付きの物は文字としての型がないので「代わりに使うとしたら」</p>
+<p>Java とか C# とか、<code>char</code> がUTF-16を指す言語は「前世代」感を隠せないとしても…
+Unicode コンソーシアムもこういう用語をちゃんと定めないんもんだから場所によって符号点って呼ばれたりスカラーって呼ばれたり…
+Rust は Unicode 符号点を指して <code>char</code> とか呼んでるけども、結合文字とか不可視文字とかあるからやっぱ「それが<code>char</code>か？」と言われると微妙だし…</p>
+<p>そ　し　て　Go…</p>
+<p>上記の issue を最近始めてちゃんと読んだんですけども、よく見たらこんなことが書いてあるわけですよ。</p>
+<blockquote>
+<p>&quot;Code point&quot; is a bit of a mouthful, so Go introduces a shorter term for the concept: rune. The term appears in the libraries and source code, and means exactly the same as &quot;code point&quot;, with one interesting addition.</p>
+</blockquote>
+<blockquote>
+<p>「コード ポイント」とかちょっと長くて言いにくい。なので、Go ではこの概念に対して短い用語、「ルーン」を導入する。この用語がライブラリ・ソース コード中に現れた場合、完全に「コード ポイント」と同じものを意味する。</p>
+</blockquote>
+<p>(※ 最後の with one interesting additionは、次の段落に書いてある「<code>rune</code>型は<code>int32</code>のエイリアスで、『ルーン定数』も書けるよ」って話の事を指してると思う。)</p>
+<p>確かに何というか、今のUnicodeの符号点って、呪術的、儀式的な感じしちゃってるんでルーン呼ばわりもわからなくもないものの…</p>
+<p>ルーン文字って、それを文字として使ってた頃は神秘性・呪術性なかったらしいじゃないですか。
+(「使わなくなった古代文字とかかっこよくね？」的な中二病で、後世になって神秘性帯びたもの。)
+ただの文字ですぜ…</p>
+<h3 id="proposal-system.rune">Proposal: System.Rune</h3>
+<p>で、これに倣って、C# にも<code>System.Rune</code>型を足したら？と言い出したのが冒頭の1つ目のissue。</p>
+<ul>
+<li><a href="https://github.com/dotnet/corefx/issues/24093">Introducing System.Rune #24093</a></li>
+</ul>
+<p>言いたいことはわかるし、専用の型は確かに欲しいけども、Runeって名前はちょっと…</p>
+<p>ちなみに、このissueは<a href="https://github.com/migueldeicaza">Miguel</a>(Xamarin の偉い人)によるものなわけですけども、
+この人は製品名に<a href="https://github.com/NuGet/Home/wiki/NuGetizer-3000">NuGetizer 3000</a>とか<a href="https://github.com/mono/Embeddinator-4000">Embeddinator-4000</a>とか付けようとする人なので…
+ごめんなさい、Rune もこの人のネーミングセンスだと思って一瞬疑いました…
+Go が犯人とは(ちなみに、Go より前から Rune という呼び名使う人はいたっぽい)、疑ってごめんなさい。</p>
+<p>Rune。<a href="https://ja.wikipedia.org/wiki/%E3%83%AB%E3%83%BC%E3%83%B3%E6%96%87%E5%AD%97">ルーン文字</a>のrune。
+Unicode 内にも U+16A0(ᚠ) ～ U+16F0(ᛰ) の範囲で存在しているルーン文字の、rune。</p>
+<p>これ、最悪、</p>
+<pre><code class="language-csharp"><span class="comment">// ルーン(符号点のこと)がルーン(ルーン文字のこと)かどうか調べる</span>
+Rune.IsRune(<span class="string">&#39;ᚠ&#39;</span>);</code></pre>
+<p>が生まれちゃうやつじゃないですか。</p>
+<h3 id="section-1">符号点を表す型</h3>
+<p>ちなみに、.NET でこの辺りの文字列処理の新ライブラリは、今ちょうど、<a href="https://github.com/dotnet/corefxlab">corefxlab</a>で参考実装を作っているところです。
+(corefx に移ってなくて corefxlab 内で日々変更が入ってるような状態なので、リリースまではまだもうちょっと掛かりそう。)</p>
+<p>で、corefxlab 産の <code>Utf8String</code>、1年くらい前までは<code>CodePoint</code>構造体を持ってたんですよねぇ。
+それが、今は<a href="https://github.com/dotnet/corefxlab/blob/010238eb489ccfb04a47774cc606653afb82464a/src/System.Text.Utf8String/System/Text/Primitives/Utf8CodePointEnumerator.cs#L22"><code>uint</code>生利用</a>に変わっています。
+わざわざ、専用の型を削除。</p>
+<p>たぶんなんですけども、パフォーマンスのためですかねぇ。
+プリミティブ型を構造体でくるんじゃうと、JIT 結果的に、レジスターを使った最適化が掛かりにくくなるみたいな話も見たことがあり。
+(ちゃんと最適化が掛かるようにしたい的な issue だったはずなので、今なら最適化掛かるかも？)</p>
+<h2 id="fast-utf8string">Fast Utf8String</h2>
+<p>そんなRuneの提案ですが、そのさらにきっかけになった別提案が、2つ目のissue。</p>
+<ul>
+<li><a href="https://github.com/dotnet/corefxlab/issues/1751">New UTF8String APIs #1751</a></li>
+</ul>
+<p>個人的にはむしろ、こっちの方にこそ面白そうな話が。</p>
+<p>元々、<code>Utf8String</code>は以下のような型として提案されてました。</p>
+<pre><code class="language-csharp"><span class="keyword">ref</span> <span class="keyword">struct</span> Utf8String
+{
+    ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; _buffer;
+}</code></pre>
+<p>で、これだと「ヒープ上に持っていけないのが不便」と言われ、以下のように変化。</p>
+<pre><code class="language-csharp"><span class="comment">// stack-only</span>
+<span class="keyword">ref</span> <span class="keyword">struct</span> Utf8Span
+{
+    ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; _buffer;
+}
+
+<span class="comment">// ヒープに置ける</span>
+<span class="keyword">struct</span> Utf8String
+{
+    <span class="keyword">byte</span>[] _buffer;
+}</code></pre>
+<p>さらに、「構造体嫌だ…」と言われます。
+なんせ、<a href="https://source.dot.net/#System.Collections.Immutable/System/Collections/Immutable/ImmutableArray.cs"><code>ImmutableArray</code></a>とかでさんざん苦労しているそうで。
+この手の「参照型を1個ラップするのに、アロケーションを減らしたくて構造体にした」みたいな型はいろいろと事故ります。
+<code>object</code> とかインターフェイスに渡すときにボックス化でパフォーマンス落としたり、
+<code>Interlocked.Exchange</code>がしづらかったり、
+「参照型もどき」な癖にさらにそのnullableが作れてしまったり。</p>
+<p>ということで、以下のように変化。</p>
+<pre><code class="language-csharp"><span class="comment">// stack-only</span>
+<span class="keyword">ref</span> <span class="keyword">struct</span> Utf8Span
+{
+    ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; _buffer;
+}
+
+<span class="comment">// ヒープに置けるというか、最初から参照型</span>
+<span class="keyword">class</span> Utf8String
+{
+    <span class="keyword">byte</span>[] _buffer;
+}</code></pre>
+<p>もちろん、これだと、クラスの中に配列があって、ヒープ確保・間接参照が2段階になります。
+パフォーマンス的にはちょっと微妙。
+(それでも、前述の構造体であることによる問題よりはマシな感じあり。)</p>
+<p>なので、上記提案の中には、</p>
+<ul>
+<li>いつかはやっぱり <code>string</code> 並みのランタイムによる特殊実装入れたい</li>
+<li><code>Utf8String</code> は可変長クラスにしたい</li>
+</ul>
+<p>みたいな話も出ました。</p>
+<p>現状、「可変長」が許されている型は<code>string</code>と配列だけで、この2つだけかなり特殊扱いされています。
+ユーザー定義で可変長な型が許されていれば、<code>ImmutableArray</code>とか今回の<code>Utf8String</code>でこんなに悩む必要もなく、単にクラスで実装すれば済むわけです。
+ユーザー定義は認めないまでも、<code>Utf8String</code>くらいは可変長クラスであることを認めろよ、という風な流れに。
+(この場合、対応しているランタイムであればそういう「特殊実装で可変長」(fast <code>Utf8String</code>)、
+していないランタイムであれば前述の「中身は単に配列」(slow <code>Utf8String</code>)な2つの実装を用意することになります。)</p>
+<p>fast <code>Utf8String</code>、かなり欲しい…
+(「後で最適化するのも考えるから、とりあえず今はクラスにするの認めろよ」的な方便でもあるんで、
+実際この最適化版<code>Utf8String</code>がいつ実装されるかは未知ですが…)</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2017/12/">12&#x6708;</a></li><li><a href="/blog/2017/12/vs15_5/">Visual Studio 15.5 Release</a></li><li><a href="/blog/2017/12/analyzerconvention/">&#x30A2;&#x30CA;&#x30E9;&#x30A4;&#x30B6;&#x30FC;&#x306E;&#x30D7;&#x30ED;&#x30B8;&#x30A7;&#x30AF;&#x30C8; &#x30C6;&#x30F3;&#x30D7;&#x30EC;&#x30FC;&#x30C8;&#x3068;&#x304B; dotnet new &#x306E;&#x30C6;&#x30F3;&#x30D7;&#x30EC;&#x30FC;&#x30C8;&#x306E;&#x8A71;</a></li><li><a href="/blog/2017/12/%E3%83%90%E3%82%B0%E5%A0%B1%E5%91%8A%E7%A5%AD%E3%82%8A/">&#x30D0;&#x30B0;&#x5831;&#x544A;&#x796D;&#x308A;</a></li><li><a href="/blog/2017/12/msnetcompilers/">&#x30D3;&#x30EB;&#x30C9;&#x3067;&#x4F7F;&#x3046; C# &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30E9;&#x30FC;&#x3092;&#x5DEE;&#x3057;&#x66FF;&#x3048;&#x308B;</a></li><li><a href="/blog/2017/12/noncopyable/">&#x30B3;&#x30D4;&#x30FC;&#x7981;&#x6B62;(non-copyable)&#x69CB;&#x9020;&#x4F53;&#x30A2;&#x30CA;&#x30E9;&#x30A4;&#x30B6;&#x30FC;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

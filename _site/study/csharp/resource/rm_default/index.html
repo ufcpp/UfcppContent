@@ -1,0 +1,304 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x65E2;&#x5B9A;&#x5024; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/resource/rm_default/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">既定値</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst">概要</a></h2>
+<p>C# はメモリ領域の未初期化を認めていません。
+明示的な初期化を行わない場合、状況に応じて、コンパイル エラーになるか、既定値が入るかのどちらかです。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="uninitialized">補足: 未初期化領域</a></h2>
+<p>C# で気にする場面はほとんどありませんが、プログラミング言語によっては、未初期化の状態のメモリにアクセスできてしまう場合があります。
+(特に、いわゆる低レイヤーな言語ほどそういうことが可能です。C# でも、「<a href="/study/csharp/interop/sp_unsafe/#unsafe">unsafe</a>」 コード内では起こり得ます。)</p>
+<p>C++ を例に挙げてみましょう。
+C++では、<code>new[]</code> で確保したばかりで初期化していないメモリ領域がどうなっているかは未定義(コンパイラーの裁量任せ)になっています。
+以下のようなコードを見てください。</p>
+<pre><code class="language-cpp">#include &lt;stdio.h&gt;
+
+<span class="keyword">void</span> main()
+{
+    <span class="keyword">int</span>* x = <span class="keyword">new</span> <span class="keyword">int</span>[1];
+    x[0] = 0xFFFFFFFF; <span class="comment">// ちゃんと初期化</span>
+    printf(<span class="string">&quot;%08x\n&quot;</span>, x[0]);
+
+    <span class="keyword">int</span>* px = x;
+    <span class="keyword">delete</span> x;
+    printf(<span class="string">&quot;%08x\n&quot;</span>, px[0]); <span class="comment">// 削除済みの領域にアクセス</span>
+
+    <span class="keyword">int</span>* y = <span class="keyword">new</span> <span class="keyword">int</span>[1];
+    printf(<span class="string">&quot;%08x\n&quot;</span>, y[0]); <span class="comment">// 未初期化</span>
+}</code></pre>
+<p>この時、ちゃんと初期化してから使っている1つ目の printf 以外は、値がどうなっているか不定です。
+例えば、Visual Studio 付属の C++ コンパイラー(以下、Visual C++/VC++)で実行した場合、
+Debugビルド時とReleaseビルド時で挙動が違います。</p>
+<table summary="削除済み/未初期化領域のアクセス(Visual C++ の例)">
+	<caption>
+		削除済み/未初期化領域のアクセス(Visual C++ の例)
+	</caption>
+	<tr>
+		<th rowspan="2">状態</th>
+		<th rowspan="2">コード例</th>
+		<th colspan="2">Debugビルド時</th>
+		<th colspan="2">Releaseビルド時</th>
+	</tr>
+	<tr>
+		<th>結果</th>
+		<th>説明</th>
+		<th>結果</th>
+		<th>説明</th>
+	</tr>
+	<tr>
+		<th>初期化済み</th>
+		<td><pre class="source" title="未初期化領域を読む" lang=""><code class="language-csharp">int* x = new int[1];
+x[0] = 0xFFFFFFFF;
+printf(&quot;%08x\n&quot;, x[0]);</code></pre></td>
+		<td><p>ffffffff</p></td>
+		<td><p>これは問題ないコード。常に同じ動作。</p></td>
+		<td><p>ffffffff</p></td>
+		<td><p>ビルド オプションで結果が変わったりもしない。</p></td>
+	</tr>
+	<tr>
+		<th>削除済み</th>
+		<td><pre class="source" title="" lang=""><code class="language-csharp">int* px = x;
+delete x;
+printf(&quot;%08x\n&quot;, px[0]);</code></pre></td>
+		<td><p>dddddddd</p></td>
+		<td><p>削除済み領域を検知するためのパターンが入っている。<br></br>VC++ の場合は dd (ビット パターン 11011101)。</p></td>
+		<td><p>ffffffff<sup>※</sup></p></td>
+		<td><p>delete 前の値がそのまま残っている。</p></td>
+	</tr>
+	<tr>
+		<th>未初期化</th>
+		<td><pre class="source" title="" lang=""><code class="language-csharp">    int* y = new int[1];
+    printf(&quot;%08x\n&quot;, y[0]);
+}</code></pre></td>
+		<td><p>cdcdcdcd</p></td>
+		<td><p>未初期化領域を検知するためのパターンが入っている。<br></br>VC++ の場合は cd (ビット パターン 11001101)。</p></td>
+		<td><p>00000000<sup>※</sup></p></td>
+		<td><p>この例の場合は0詰め。</p></td>
+	</tr>
+</table>
+<p><sup>※</sup> 常にこうなるわけじゃない。状況次第。</p>
+<p>まだこの実行結果は値がわかりやすい方ですが、
+場合によってはもっとランダムに意味不明の数値が得られたりします。
+しかも、実行するたびに毎回結果が変わったりします。</p>
+<p>こういう不定な動作は、「テスト実行時にはうまく動いていた(ように見えた)のに、本番環境では動かない」というようなバグになることもあります。
+これは発見しにくい類のバグで、メモリ領域の未初期化を認めている言語ではよく問題になったりします。
+そのため、C# は未初期化を認めていません。</p>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="sec-default-value">既定値</a></h2>
+<p>とうことで、C# では、未初期化なメモリ領域へのアクセスを認めていません。
+明示的な変数の初期化を怠った場合、状況に応じて、以下のいずれかになります(コンパイル エラー、もしくは、0埋め = 本項の主題となる「既定値」で初期化される)。</p>
+<ul>
+<li>初期化しないと<em>コンパイル エラー</em>になる
+<ul>
+<li>ローカル変数</li>
+<li>構造体のフィールド(C# 10 以前)</li>
+</ul>
+</li>
+<li><em>0 埋め</em> (これを「既定値」と呼びます。後述)
+<ul>
+<li>クラスのフィールド(C# 11 以降は構造体のフィールドも)</li>
+<li>配列の要素</li>
+<li><code>default(T)</code> という式(後述)で作った値</li>
+</ul>
+</li>
+</ul>
+<p><strong id="default-value" class="keyword">既定値</strong>(default value)というのは、その名の通り、明示的な初期化を怠った時に既定で代入される値です。
+基本的に、既定値は「0 埋め」です。
+型に応じて、<code>0</code>、<code>false</code>、<code>null</code> のどれか(全部、メモリ上の値としては 0 で表現される値)です。
+「<a href="/study/csharp/structured/st_struct/#struct">構造体</a>」の場合は、すべてのフィールドを既定値で埋めたものになります。</p>
+<p><code>null</code> なんかは <a href="https://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare/">10億ドルの間違い (billion-dollar mistake)</a>とまで言われて忌み嫌われていますが、少なくとも未定義動作よりははるかにマシです。(参考: 「<a href="/study/csharp/resource/nullablereferencetype/">null 許容参照型</a>」)</p>
+<p>以下に、既定値の例を示します(この例ではクラスのフィールドを明示的に初期化せず使うことで既定値を得ています)。</p>
+<pre><code class="language-csharp"><span class="comment">// 初期化せずにフィールドを読んでみる(既定値が入っている)</span>
+<span class="keyword">var</span> a = <span class="keyword">new</span> DefaultValues();
+
+Console.WriteLine(a.i);         <span class="comment">// 0</span>
+Console.WriteLine(a.x);         <span class="comment">// 0.0</span>
+Console.WriteLine((<span class="keyword">int</span>)a.c);    <span class="comment">// &#39;\0&#39; (ヌル文字)は表示できないので数値化して表示</span>
+Console.WriteLine(a.b);         <span class="comment">// False</span>
+Console.WriteLine(a.s == <span class="keyword">null</span>); <span class="comment">// null は表示できないので比較で。True になる</span>
+
+<span class="keyword">class</span> DefaultValues
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> i;
+    <span class="keyword">public</span> <span class="keyword">double</span> x;
+    <span class="keyword">public</span> <span class="keyword">char</span> c;
+    <span class="keyword">public</span> <span class="keyword">bool</span> b;
+    <span class="keyword">public</span> <span class="keyword">string</span> s;
+}</code></pre>
+<p>0 埋めなのは、主にパフォーマンス上の理由です。
+(未定義動作よりはマシなので)何か決まった値で初期化するとするなら 0 が一番低コストです。
+配列などで大きめのメモリ領域を確保した際でも、0 埋めならそこまで大きなコストをかけずに初期化できます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.InteropServices;
+
+<span class="comment">// 16 MB の巨大領域。</span>
+<span class="comment">// 要素1個1個は初期化していないので、全部に既定値が入ってる。</span>
+<span class="keyword">var</span> points = <span class="keyword">new</span> Vector4[<span class="number">1024</span> * <span class="number">1024</span>];
+
+<span class="comment">// 中身が全部 0 なことを確認してみる。</span>
+<span class="comment">// (無理やり byte 配列扱いして、1 byte ずつ確認。)</span>
+<span class="keyword">var</span> bytes = MemoryMarshal.AsBytes&lt;Vector4&gt;(points);
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> v <span class="keyword">in</span> bytes)
+{
+    <span class="keyword">if</span> (v != <span class="number">0</span>)
+        Console.WriteLine(<span class="string">&quot;絶対通らないはず&quot;</span>);
+}
+
+<span class="keyword">struct</span> Vector4
+{
+    <span class="keyword">public</span> <span class="keyword">float</span> X, Y, Z, W;
+}</code></pre>
+<h3 id="default"><a id="sec-generated-title-4"></a> <a id="word-default">余談: default という英単語</a></h3>
+<p>ちなみに、既定値は英語だと default value なわけですが。
+この「デフォルト」という言葉、IT 業界内では割かし基本単語っぽく感じるものの、
+他の業界の人に通じないことがたまにあったりします。
+というか、「既定で」、「標準で」みたいな意味で「デフォルト」という言葉を多用するのは IT 業界の用法みたいです。</p>
+<p>default の元々の意味は「債務不履行」とか「怠慢」です。
+2012年頃に某国の財務破たんで有名になった金融用語の「デフォルト」と同じ単語です。
+単語の成り立ち的には de + fault で、「失敗(fault)に陥る(de)」とかになります。</p>
+<p>なので、default value ＝ やるべきことやってない(初期化しないとまずいだろっていう変数を初期化してない)時に強制的に代入される値 ＝ 既定値 という感じ。</p>
+<h2 id="defaultt"><a id="sec-generated-title-5"></a> <a id="default-keyword">default(T)</a></h2>
+<p>C# 1.0 の頃には、既定値を作るための構文がありませんでした。
+数値の場合は 0 とか 0.0 とか、bool の場合には false とか、クラスの場合には null とかいったように、個別に既定値相当の値を与える必要がありました。</p>
+<p>また、構造体 <code>T</code> に対して、<code>new T()</code> で既定値(0 埋め)を作るという仕様がありました。
+(実際、C# 10 で引数なしコンストラクターの仕様が入るまでは、構造体の <code>new T()</code> は常に既定値でした。)</p>
+<p>C# 2.0 で「<a href="/study/csharp/oop/sp2_generics/#generics">ジェネリック</a>」が導入されたことで、
+どんな型でも一律既定値を作れる構文が必要になりました。
+以下のような場面で困りました。</p>
+<pre><code class="language-csharp">T X&lt;T&gt;()
+{
+    <span class="keyword">return</span> ????; <span class="comment">// T の既定値を作りたいけども、null とか 0 とかは書けない</span>
+}</code></pre>
+<h5 class="version version2">Ver. 2.0</h5>
+<p>そこで、ジェネリックと同時に入った仕様が、<code>default</code> キーワードを使った既定値の作成機能です。</p>
+<pre><code class="language-csharp">T X&lt;T&gt;()
+{
+    <span class="keyword">return</span> <span class="keyword">default</span>(T); <span class="comment">// 型に応じて、null とか 0 とかになる</span>
+}</code></pre>
+<h3 id="defaultt-1"><a id="sec-generated-title-6"></a> <a id="default-constructor">default(T) と構造体のコンストラクター</a></h3>
+<p>前節で少し触れましたが、<code>default(T)</code> 構文が入るまで、
+構造体の既定値は <code>new T()</code> で作っていました。
+この仕様のせいで、C# では、構造体に引数なしのコンストラクターを定義できませんでした。
+(ちなみに、.NET 的にはそんな制限はありません。あくまで C# の文法上の制限。)</p>
+<p>しかし、C# 2.0 以降、<code>default(T)</code> で既定値を作れる仕様が入ったので、実は、「C# の構造体には引数なしのコンストラクターが定義できない」って仕様は今となっては不要だったりします。
+つまり、以下のよう使い分けれていいはずです。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> X&lt;T&gt;()
+    <span class="keyword">where</span> T : <span class="keyword">new</span>()
+{
+    <span class="keyword">var</span> x = <span class="keyword">new</span> T();    <span class="comment">// この場合はコンストラクターが呼ばれて欲しい</span>
+    <span class="keyword">var</span> y = <span class="keyword">default</span>(T); <span class="comment">// こいつは既定値(0 埋め)</span>
+}</code></pre>
+<h5 class="version version10">Ver. 10.0</h5>
+<p>この現状を鑑みて、
+C# 10 から構造体に引数なしのコンストラクターを定義できるようになりました。</p>
+<pre><code class="language-csharp"><span class="comment">// new T() は S(1, 2) に、</span>
+<span class="comment">// default(T) は S(0, 0) になる。</span>
+WriteNewAndDefault&lt;S&gt;();
+
+<span class="keyword">static</span> <span class="keyword">void</span> WriteNewAndDefault&lt;T&gt;()
+    <span class="keyword">where</span> T : <span class="keyword">new</span>()
+{
+    <span class="keyword">var</span> x = <span class="keyword">new</span> T();    <span class="comment">// この場合はコンストラクターが呼ばれるようになった。</span>
+    <span class="keyword">var</span> y = <span class="keyword">default</span>(T); <span class="comment">// こいつは既定値(0 埋め)。</span>
+
+    Console.WriteLine(x);
+    Console.WriteLine(y);
+}
+
+<span class="keyword">struct</span> S
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X, Y;
+    <span class="keyword">public</span> S() =&gt; (X, Y) = (<span class="number">1</span>, <span class="number">2</span>);
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString() =&gt; $<span class="string">&quot;S({X}, {Y})&quot;</span>;
+}</code></pre>
+<p>ちなみに、引数なしコンストラクターの仕様は C# 6 で一度検討されたんですが、その時にはいくつかバグを踏んでしまって撤回されました。
+この時踏んだバグは以下のようなものです。</p>
+<ul>
+<li><code>new T() == default(T)</code> という前提での最適化をしているコードが多すぎて、<code>new T()</code>で正しくコンストラクターを呼ばれない場面があった。
+<ul>
+<li>.NETランタイムの中でそういうコードがあって、C#よりも上のレイヤーでの回避ができない。</li>
+<li><code>Activator</code>クラス(<code>System</code>名前空間)の<code>CreateInstance</code>とかがそう。</li>
+</ul>
+</li>
+</ul>
+<h2 id="default-1"><a id="sec-generated-title-7"></a> <a id="default-expr">default 式</a></h2>
+<h5 class="version version7_1">Ver. 7.1</h5>
+<p>これまでの<code>default(T)</code>という構文では、型名が長い時にかなり煩雑なコードになっていました。
+これに対して、C# 7.1では、左辺(代入先)から推論できる場合に、<code>(T)</code>を省略して<code>default</code>だけで既定値を作れるようになりました。</p>
+<p>例えば、既定値をよく使う割に型名が長くてうっとおしいものの代表格に、<code>CancellationToken</code>構造体(<code>System.Threading</code>名前空間)があります。
+以下のような感じのコードを書くことが結構あったりします。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">async</span> Task DefaultExpression(CancellationToken c = <span class="keyword">default</span>(CancellationToken))
+{
+    <span class="keyword">while</span> (c != <span class="keyword">default</span>(CancellationToken) &amp;&amp; !c.IsCancellationRequested)
+    {
+        <span class="keyword">await</span> Task.Delay(<span class="number">1000</span>);
+        Console.WriteLine(<span class="string">&quot;.&quot;</span>);
+    }
+}</code></pre>
+<p>これに対して、C# 7.1では、以下のように書き直せます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">async</span> Task DefaultExpression(CancellationToken c = <span class="keyword">default</span>)
+{
+    <span class="keyword">while</span> (c != <span class="keyword">default</span> &amp;&amp; !c.IsCancellationRequested)
+    {
+        <span class="keyword">await</span> Task.Delay(<span class="number">1000</span>);
+        Console.WriteLine(<span class="string">&quot;.&quot;</span>);
+    }
+}</code></pre>
+<p>1行目の引数の既定値と、3行目の <code>!=</code>演算子の右側に<code>default</code>とだけ書かれています。
+いずれも、引数<code>c</code>の型から<code>CancellationToken</code>構造体であることが推論できるので、<code>(CancellationToken)</code>の部分を省略できます。</p>
+<p>この書き方をdefault式(default expression)、あるいは、defaultリテラル(default literal)と呼びます。</p>
+<h2 id="section-4"><a id="sec-generated-title-8"></a> <a id="constant">既定値は定数</a></h2>
+<p>既定値 <code>default(T)</code> は常に定数扱いされます。</p>
+<p>C# には定数(<code>readonly</code> の意味じゃなく、<code>const</code>)しか受け付けない文脈がいくつかあります。
+要は、コンパイル時に確定してないといけない部分なんですが、例えば以下のようなものがあります。</p>
+<ul>
+<li><p>属性に渡す値</p>
+</li>
+<li><p>引数の既定値</p>
+</li>
+</ul>
+<p>定数を求められるので、
+<code>int</code> とか <code>string</code> なら任意のリテラル(1, 2, 3, ... &quot;abc&quot; 何でも)を渡せますが、
+クラスと構造体は既定値(<code>null</code>、<code>default(T)</code>)しか渡せません。</p>
+<h2 id="section-5"><a id="sec-generated-title-9"></a> <a id="auto-default">構造体のフィールドの既定値初期化</a></h2>
+<h5 class="version version11">Ver. 11.0</h5>
+<p>C# 11 では、構造体でもフィールドの明示的な初期化が不要になりました。
+クラスと同じく、明示的に代入しなかったフィールド・自動プロパティには既定値が入ります。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> Sample
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; } = <span class="number">1</span>;
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="keyword">string</span>? Z { <span class="keyword">get</span>; }
+
+    <span class="comment">// X には初期化子が付いてるので元々 OK。</span>
+    <span class="comment">// C# 11 では Y, Z に何も入れなくても自動的に 0/null 初期化されるように。</span>
+    <span class="keyword">public</span> Sample() { }
+
+    <span class="comment">// C# 11 では Y に何も入れなくても大丈夫。0 に。</span>
+    <span class="keyword">public</span> Sample(<span class="keyword">string</span> z) =&gt; Z = z;
+}</code></pre>
+<p>今となっては「構造体の場合はフィールドの明示的な初期化が必須」という制限は、「出どころを誰も覚えていない」というレベルだったそうです。
+おそらくは、「構造体のフィールドはローカル変数的に扱う」みたいな空気感だと思われます。</p>
+<p>制限が残っていても役に立つわけでもなく、
+不便なだけだったので今更ながら「クラスと同様」に変更することになりました。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/resource/">&#x30E1;&#x30E2;&#x30EA;&#x3068;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x7BA1;&#x7406;</a></li><li><a href="/study/csharp/resource/rm_gc/">C# &#x306E;&#x30E1;&#x30E2;&#x30EA;&#x7BA1;&#x7406;</a></li><li><a href="/study/csharp/resource/rm_struct/">&#x69CB;&#x9020;&#x4F53;</a></li><li><a href="/study/csharp/resource/oo_reference/">&#x5024;&#x578B;&#x3068;&#x53C2;&#x7167;&#x578B;</a></li><li><a href="/study/csharp/resource/readonlyness/">readonly &#x306E;&#x6CE8;&#x610F;&#x70B9;</a></li><li><a href="/study/csharp/resource/sp_ref/">&#x53C2;&#x7167;&#x6E21;&#x3057;</a></li><li><a href="/study/csharp/resource/span/">Span&lt;T&gt;&#x69CB;&#x9020;&#x4F53;</a></li><li><a href="/study/csharp/resource/refstruct/">ref&#x69CB;&#x9020;&#x4F53;</a></li><li><a href="/study/csharp/resource/misc_heap/">[&#x96D1;&#x8A18;] &#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x3068;&#x30D2;&#x30FC;&#x30D7;</a></li><li><a href="/study/csharp/resource/rmboxing/">&#x30DC;&#x30C3;&#x30AF;&#x30B9;&#x5316;</a></li><li><a href="/study/csharp/resource/sp2_nullable/">null&#x8A31;&#x5BB9;&#x5024;&#x578B;(Nullable&amp;lt;T&amp;gt; &#x578B;)</a></li><li><a href="/study/csharp/resource/nullablereferencetype/">null &#x8A31;&#x5BB9;&#x53C2;&#x7167;&#x578B;</a></li><li><a href="/study/csharp/resource/rm_nullusage/">null &#x306E;&#x53D6;&#x308A;&#x6271;&#x3044;</a></li><li><a href="/study/csharp/resource/oo_dispose/">&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x7834;&#x68C4;</a></li><li><a href="/study/csharp/resource/rm_destructor/">&#x30D5;&#x30A1;&#x30A4;&#x30CA;&#x30E9;&#x30A4;&#x30B6;&#x30FC;</a></li><li><a href="/study/csharp/resource/rm_disposable/">[&#x96D1;&#x8A18;] Dispose &#x306B;&#x307E;&#x3064;&#x308F;&#x308B;&#x4F59;&#x8AC7;</a></li><li><a href="/study/csharp/resource/rmweakreference/">&#x3010;&#x96D1;&#x8A18;&#x3011;&#x5F31;&#x53C2;&#x7167;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

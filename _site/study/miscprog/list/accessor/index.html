@@ -1,0 +1,185 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Set / Get &#x3068;&#x30D7;&#x30ED;&#x30D1;&#x30C6;&#x30A3; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/miscprog/list/accessor/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="set-get">Set / Get とプロパティ</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>「<a href="/study/csharp/oop/oo_property/">プロパティ</a>」で説明しているように、
+C# にはプロパティという便利な機能が備わっています。</p>
+<p>ここでは、その C# が出てくる以前、
+C++ ではどうやって実装の隠蔽をしていたかについて説明したいと思います。
+（ちょっと記憶があいまいだけど、
+確か Effective C++ か More Effective C++ 辺りで読んだ話。）</p>
+<p>「<a href="/study/csharp/">C# によるプログラミング入門</a>」では、
+名前をあらわす name と、
+年齢をあらわす age をメンバーとして持つクラス Person を使って説明をしましたので、
+ここでも Person クラスの age を例として説明します。</p>
+<h2 id="set-get-1"><a id="sec-generated-title-2"></a> <a id="setter"></a>Set / Get</h2>
+<p>一番簡単なのは、public にしたいメンバー変数の数だけ、
+Set変数名 / Get変数名 という名前のメンバー関数を用意する方法。</p>
+<p>age なら、SetAge と GetAge というのを Person クラス内に作る。</p>
+<pre><code class="language-cpp">#include&lt;iostream&gt;
+
+<span class="keyword">class</span> Person
+{
+<span class="keyword">private</span>:
+  <span class="keyword">int</span> age;
+<span class="keyword">public</span>:
+  <span class="keyword">void</span> SetAge(<span class="keyword">int</span> a)
+  {
+    <span class="keyword">if</span>(a &lt; 0) <span class="keyword">return</span>;
+    <span class="keyword">this</span>-&gt;age = a;
+  }
+
+  <span class="keyword">int</span> GetAge()
+  {
+    <span class="keyword">return</span> <span class="keyword">this</span>-&gt;age;
+  }
+
+  Person() { <span class="keyword">this</span>-&gt;SetAge(0); }
+  Person(<span class="keyword">int</span> a) { <span class="keyword">this</span>-&gt;SetAge(a); }
+};
+
+<span class="keyword">int</span> main()
+{
+  Person p;
+
+  p.SetAge(20);
+  std::cout &lt;&lt; p.GetAge();
+
+  <span class="keyword">return</span> 0;
+}</code></pre>
+<p>まあ、これが C++ における実装の隠蔽の基本です。
+クラス中 Set/Get だらけになるのがあたりまえ。</p>
+<p>ちなみに、「<a href="/study/csharp/oop/oo_property/">プロパティ</a>」でも書いていますが、
+こういうのを <strong id="setter" class="keyword">setter</strong> / <strong id="getter" class="keyword">getter</strong> と呼びます。
+また、setter / getter をあわせて <strong id="accessor" class="keyword">accessor</strong> と呼んだりします。</p>
+<p>プログラミングになれた人なら accessor をきっちり書くんですが、
+初心者はめんどくさがって accessor を書く癖をなかなか付けてくれなかったりします。</p>
+<h2 id="set-get-2"><a id="sec-generated-title-3"></a> <a id="overload"></a>オーバーロードで Set / Get を省略</h2>
+<p>で、Set / Get だらけになるのを嫌って、
+これを省略する人もいます。
+Set / Get だらけだと、
+Visual Studio のインテリセンスなどの入力支援（変数名を途中まで書けば残りの部分を補間してくれたり）も働かなくなりますし（Set までタイピングしても、どの Set なのか分からない）。</p>
+<p>C++ は、引数が異なる同名の関数を定義（オーバーロード）できるので、
+void SetAge(int a) と int GetAge() の両方を Age という名前にしてしまっても問題ありません。</p>
+<pre><code class="language-cpp">#include&lt;iostream&gt;
+
+<span class="keyword">class</span> Person
+{
+<span class="keyword">private</span>:
+  <span class="keyword">int</span> age;
+<span class="keyword">public</span>:
+  <span class="keyword">void</span> Age(<span class="keyword">int</span> a)
+  {
+    <span class="keyword">if</span>(a &lt; 0) <span class="keyword">return</span>;
+    <span class="keyword">this</span>-&gt;age = a;
+  }
+
+  <span class="keyword">int</span> Age()
+  {
+    <span class="keyword">return</span> <span class="keyword">this</span>-&gt;age;
+  }
+
+  Person() { <span class="keyword">this</span>-&gt;Age(0); }
+  Person(<span class="keyword">int</span> a) { <span class="keyword">this</span>-&gt;Age(a); }
+};
+
+<span class="keyword">int</span> main()
+{
+  Person p;
+
+  p.Age(20);
+  std::cout &lt;&lt; p.Age();
+
+  <span class="keyword">return</span> 0;
+}</code></pre>
+<p>まあ、Set / Get がなくなって、タイピングしやすくはなりました。
+でも、それだけです。
+C# の「<a href="/study/csharp/oop/oo_property/#property">プロパティ</a>」のように、
+利用側では変数のように扱えたりはしません。</p>
+<h2 id="section-1"><a id="sec-generated-title-4"></a> <a id="proxy"></a>プロキシ</h2>
+<p>実は、C++ でも、かなり無理やりですが、（見た目だけは）プロパティのようなことができたりします。
+とりあえず、百聞は一見にしかずということで、以下の例を見てください。</p>
+<pre><code class="language-cpp">#include&lt;iostream&gt;
+
+<span class="keyword">class</span> Person
+{
+<span class="keyword">private</span>:
+  <span class="keyword">int</span> age;
+<span class="keyword">public</span>:
+  <span class="keyword">class</span> AgeProxy
+  {
+    Person&amp; p;
+  <span class="keyword">public</span>:
+    AgeProxy(Person&amp; p0) : p(p0) {}
+
+    AgeProxy&amp; <span class="keyword">operator</span>= (<span class="keyword">int</span> a)
+    {
+      <span class="keyword">if</span>(a &gt;= 0)
+        <span class="keyword">this</span>-&gt;p.age = a;
+      <span class="keyword">return</span> *<span class="keyword">this</span>;
+    }
+
+    <span class="keyword">operator</span> <span class="keyword">int</span>()
+    {
+      <span class="keyword">return</span> <span class="keyword">this</span>-&gt;p.age;
+    }
+  } Age;
+
+  <span class="keyword">friend</span> <span class="keyword">class</span> AgeProxy;
+
+  Person() : Age(*<span class="keyword">this</span>) { <span class="keyword">this</span>-&gt;Age = 0; }
+  Person(<span class="keyword">int</span> a) : Age(*<span class="keyword">this</span>) { <span class="keyword">this</span>-&gt;Age = a; }
+};
+
+<span class="keyword">int</span> main()
+{
+  Person p;
+
+  p.Age = 20;
+  std::cout &lt;&lt; (<span class="keyword">int</span>)p.Age;
+
+  <span class="keyword">return</span> 0;
+}</code></pre>
+<p>Person の中身はちょっと変な感じになっていますが、
+利用側、すなわち、main の中では、
+まるで普通の変数に対する代入・参照であるかのようなコードになっています。</p>
+<p>でも、単なる変数への代入とは違って、
+ちゃんと、p.Age = 20 のところで、
+年齢 age が負にならないようにチェックが行われます。</p>
+<p>このからくりは、
+age の読み書きに、AgeProxy という名前の別のクラスを介することで実現します。
+Age は AgeProxy 型の変数です。
+AgeProxy の代入演算子（operator =）と int 型へのキャスト（operator int）を通して、
+Person クラスの age 変数の読み書きをします。</p>
+<p>ちなみに、こういう例のように、いったん別のクラスを通して値を読み書きしたりする方法を、
+<strong id="proxy" class="keyword">プロキシ</strong>（proxy: 代理）と呼びます。</p>
+<p>まあ、このパターンは、利用側の見た目は綺麗になりますが、
+実装は面倒ですし、実行効率もあまりよいとはいえません。
+さらに言うと、プロパティを virtual 化しようとすると、
+この例よりもさらに複雑な実装が必要になります。</p>
+<p>こういう感じの話を振り返った上で、
+改めて C# の「<a href="/study/csharp/oop/oo_property/#property">プロパティ</a>」機能を見ると、
+便利な機能だなぁとつくづく思います。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/miscprog/list/">&#x672A;&#x5206;&#x985E;</a></li><li><a href="/study/miscprog/list/c/">C&#x8A00;&#x8A9E;&#x5C0F;&#x30CD;&#x30BF;&#x96C6;</a></li><li><a href="/study/miscprog/list/training/">&#x8B1B;&#x7FD2;&#x7528;&#x8CC7;&#x6599;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

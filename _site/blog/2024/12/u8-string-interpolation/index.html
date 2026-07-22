@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>(&#x6CA1;) UTF-8 &#x6587;&#x5B57;&#x5217;&#x88DC;&#x9593; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2024/12/u8-string-interpolation/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2024-12-19T22:13:12">2024-12-19</time></span><span>更新: <time datetime="2024-12-19T22:13:12">2024-12-19</time></span></div><h1 id="utf-8">(没) UTF-8 文字列補間</h1>
+<p>今日のは、C# 言語機能としては否決されたものの、ほぼ同等のものがライブラリと JIT 時最適化で実現されたという話になります。</p>
+<p>ちなみに今日のこの話は .NET 8 の頃の話で、「そういえば去年書いてなかった」ネタになります。</p>
+<h2 id="utf-8-1">UTF-8 リテラルがあるなら</h2>
+<p>C# 11 で <a href="/study/csharp/start/st_string/#utf8-literal">UTF-8 リテラル</a>が入って、
+C# プログラム中に UTF-8 なバイト列を <code>ReadOnlySpan&lt;byte&gt;</code> で直接埋め込めるようになりました。</p>
+<pre><code class="language-csharp">ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; hex = <span class="string">&quot;0123456789ABCDEF&quot;</span>u8;</code></pre>
+<p><a href="/study/csharp/start/st_string/#history">割かし何度も書いてたりはしますが</a>、
+もう今となっては世の中の多くの文字列が UTF-8 でやり取りされています。
+.NET の <code>string</code> が UTF-16 ベースなので、UTF-16 ⇔ UTF-8 の変換がそれなりのコストになっていたりします。</p>
+<p>そこで、いろんなものを直接 UTF-8 で書き込んだりするようになりました。
+今、 .NET のプリミティブ型にも <a href="https://learn.microsoft.com/ja-jp/dotnet/api/system.iutf8spanformattable"><code>IUtf8SpanFormattable</code> インターフェイス</a>とかが実装されていて、UTF-8 文字列化を直接できるようになっています。</p>
+<p>そうなると欲しくなるのが UTF-8 に直接書き込める<a href="/study/csharp/start/st_string/#string-interpolation">文字列補間</a>。
+以下のようなことをできるといいなぁという要望があります。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">byte</span>[] Format(<span class="keyword">int</span> x, <span class="keyword">int</span> y) =&gt; $<span class="string">&quot;(X: {x:X2}, Y: {y:X2})&quot;</span>u8;</code></pre>
+<p>要は、文字列補間の <code>$&quot;&quot;</code> にも <code>u8</code> を付けて、直接 UTF-8 を書き込むというもの。</p>
+<p>この提案、一瞬本気で検討はされてたんですけども:</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/7072">[Proposal]: u8 string interpolation #7072</a></li>
+</ul>
+<p>結論がどうなったかというと、「普通の文字列補間を使って、パフォーマンスを落とさずに UTF-8 補間できるように JIT 最適化したからいいや」という感じで、C# 言語機能は不要ということになりました。</p>
+<h2 id="utf8.trywrite">Utf8.TryWrite</h2>
+<p>前節の UTF-8 文字列補間(案)に類することをやるために、 .NET 8 移行、以下のような書き方ができます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Text.Unicode;
+
+<span class="keyword">static</span> <span class="keyword">byte</span>[] Format(<span class="keyword">int</span> x, <span class="keyword">int</span> y)
+{
+    <span class="keyword">var</span> temp = (<span class="keyword">stackalloc</span> <span class="keyword">byte</span>[<span class="number">64</span>]);
+
+    Utf8.TryWrite(temp, $<span class="string">&quot;(X: {x:X2}, Y: {y:X2})&quot;</span>, <span class="keyword">out</span> <span class="keyword">var</span> written);
+
+    <span class="keyword">return</span> temp[..written].ToArray();
+}</code></pre>
+<p><code>Utf8</code> クラスの <code>TryWrite</code> メソッドを使って直接 UTF-8 なバイト列を作れます。</p>
+<p>ただ、文字列補間の部分は普通の <code>$&quot;&quot;</code> で書きます。
+そして、この文字列補間の展開結果は以下の通り。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Text.Unicode;
+
+<span class="keyword">static</span> <span class="keyword">byte</span>[] Format(<span class="keyword">int</span> x, <span class="keyword">int</span> y)
+{
+    <span class="keyword">var</span> temp = (<span class="keyword">stackalloc</span> <span class="keyword">byte</span>[<span class="number">64</span>]);
+
+    Utf8.TryWriteInterpolatedStringHandler handler = <span class="keyword">new</span>(<span class="number">9</span>, <span class="number">2</span>, temp, <span class="keyword">out</span> <span class="keyword">var</span> shouldAppend);
+
+    <span class="keyword">if</span> (shouldAppend
+        &amp;&amp; handler.AppendLiteral(<span class="string">&quot;X: &quot;</span>)
+        &amp;&amp; handler.AppendFormatted(x, <span class="string">&quot;X2&quot;</span>)
+        &amp;&amp; handler.AppendLiteral(<span class="string">&quot;, Y: &quot;</span>)
+        )  handler.AppendFormatted(y, <span class="string">&quot;X2&quot;</span>);
+
+    Utf8.TryWrite(temp, <span class="keyword">ref</span> handler, <span class="keyword">out</span> <span class="keyword">var</span> written);
+
+    <span class="keyword">return</span> temp[..written].ToArray();
+}</code></pre>
+<h2 id="section">定数文字列の最適化</h2>
+<p>前節、UTF-8 補間に、普通の文字列補間構文を使っているため、
+<code>AppendLiteral(&quot;X: &quot;)</code> とかで、普通の文字列リテラル(UTF-16)が発生しています。
+当然ここで「そんなことしたら UTF-16 から UTF-8 への変換コストが発生したりするんじゃないか？」という話になるんですが、
+そこが今日の本題。
+.NET 8 移行、定数文字列の最適化がものすごい進んだみたいでして。
+結果、この変換コストはほとんど発生しないそうです。</p>
+<p><code>AppendLiteral</code> の中身はこんな感じ:</p>
+<ul>
+<li><a href="https://github.com/dotnet/runtime/blob/4695f3f0e2fcfdd94602a21d6ef0670fc85f6d2a/src/libraries/System.Private.CoreLib/src/System/Text/Unicode/Utf8.cs#L399C25-L419">Utf8.cs#L399C25-L419</a></li>
+</ul>
+<p>内部的に <code>ReadUtf8</code> ってのを呼んでるんですけども、これはこちら:</p>
+<ul>
+<li><a href="https://github.com/dotnet/runtime/blob/main/src/libraries/System.Private.CoreLib/src/System/Text/UTF8Encoding.Sealed.cs#L158-L171">UTF8Encoding.Sealed.cs#L158-L171</a></li>
+</ul>
+<p>説明文に、</p>
+<blockquote>
+<p>Same as Encoding.UTF8.TryGetBytes, except with refs, returning the number of bytes written (or -1 if the operation fails), and optimized for a constant input.</p>
+</blockquote>
+<p>(<code>Encoding.UTF8.TryGetBytes</code> とほとんど一緒で、違いは、ref を使っていて書き込んだバイト数を返すのと、<strong>定数入力に対して最適化される</strong>。)</p>
+<p>と書かれていますし、<code>Intrinsic</code> 属性が付いています。
+この属性が付いているメソッドは「JIT が特別な最適化したものに置き換える」というマーカーでして、
+定数文字列の UTF-16 → UTF-8 変換は JIT がやっちゃいます。
+この最適化の Pull Request は以下の通り:</p>
+<ul>
+<li><a href="https://github.com/dotnet/runtime/pull/85328">JIT: Intrinsify UTF16-&gt;UTF8 conversion for string literals (Encoding.UTF8.TryGetBytes) #85328</a></li>
+</ul>
+<p>これのおかげで、
+<code>AppendLiteral(&quot;X: &quot;)</code> のコストがほぼ <code>AppendLiteral(&quot;X: &quot;u8)</code> (みたいな <code>ReadOnlySpan&lt;byte&gt;</code> 引数オーバーロードを足すの)と同レベルになるそうで。</p>
+<h2 id="u8">$&quot;&quot;u8 要る？</h2>
+<p>そこで本題に戻りまして、UTF-8 文字列補間用の構文、すなわち、<code>$&quot;&quot;u8</code> みたいなものは必要かどうか。</p>
+<p>ここまでで説明したように、<code>Utf8.TryWrite(temp, $&quot;(X: {x:X2}, Y: {y:X2})&quot;, out var written);</code> みたいに普通の文字列補間(C# のコンパイル結果的には UTF-16)で書いても、JIT 時最適化で UTF-16 から UTF-8 の変換コストがかなり低コストになっています。</p>
+<p>この事実を踏まえて、<a href="https://github.com/dotnet/csharplang/blob/227c84c027dee993934d39800aaa6ba8331ea1ea/meetings/2023/LDM-2023-10-16.md#u8-string-interpolation">改めて C# コンパイラー チーム内で検討した結果</a>、
+backlog (未処理・未完成品、C# チーム用語的には「よっぽど斬新なアイディアが出てこない限りやらない」)行きになりました。</p>
+<p>まあ、確かに、<code>Utf8.TryWrite</code> で事足りた感じはあります。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2024/12/">12&#x6708;</a></li><li><a href="/blog/2024/12/satulating-float-to-int/">.NET 9 &#x306E;&#x7834;&#x58CA;&#x7684;&#x5909;&#x66F4;&#x306E;1&#x3064;&#x3092;&#x8E0F;&#x3093;&#x3060;&#x8A71;</a></li><li><a href="/blog/2024/12/euclidean-mod/">(&#x6CA1;) &#x6570;&#x5B66;&#x6E96;&#x62E0;&#x306A;&#x5270;&#x4F59;&#x6F14;&#x7B97;&#x5B50;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

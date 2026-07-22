@@ -1,0 +1,396 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x7D44;&#x307F;&#x5408;&#x308F;&#x305B;&#x56DE;&#x8DEF; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/computer/basis/combinationalcircuit/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">組み合わせ回路</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>論理演算の組み合わせで表現できるディジタル回路のことを<strong id="combinational-circuit" class="keyword">組み合わせ回路</strong>（combinational logic circuit）と呼びます。
+例えば、<span class="math">AB <span class="normal">+</span> B<span class="bar">C</span></span> という論理式を回路図で表現すると図1に示すようになります。</p>
+<figure>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/AB_BnC.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/AB_BnC.png" alt="を表す論理回路図" /></a></p>
+<figcaption><span class="math">
+            AB <span class="normal">+</span> B<span class="bar">C</span>
+          </span>を表す論理回路図</figcaption>
+</figure>
+</figure>
+<p>このように、論理演算を基本としてディジタル回路を考えることを論理レベルと呼びます。
+論理レベルで設計した回路をゲート・レベルに落とし込む作業は機械的に行うことができ、通常は設計支援ツールなどを用いて自動的に行います。</p>
+<p>ここでは、組み合わせ回路（論理レベル）の設計方法について説明してしていきます。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="design"></a>組み合わせ回路の設計</h2>
+<p>入力と出力がいずれも0, 1で表せる限り、どんな複雑なものでも否定、論理積、および、論理和を組み合わせた式で表現することができます。
+すなわち、組み合わせ回路を設計するためには、以下のような手順を考えることになります。</p>
+<ul>
+<li><p>入力、出力を0, 1で表現する</p>
+</li>
+<li><p>入出力の関係を論理式で表す</p>
+<ul>
+<li><p>加法標準形で表す</p>
+</li>
+<li><p>論理式を簡単化する</p>
+</li>
+</ul>
+</li>
+<li><p>論理式から組み合わせ回路に起こす</p>
+</li>
+</ul>
+<p>それでは具体的な例を挙げながら、これらの手順についてみていきましょう。</p>
+<h3 id="section-3"><a id="sec-generated-title-3"></a> <a id="sample-spec"></a>仕様例</h3>
+<p>例として、ディジタル時計などに見られる数字の液晶表示を考えてみましょう。</p>
+<p>説明を簡単にするため、表示する数字は1～4の4つだけに絞ります。要するに、表1に示すような入出力を得ることを考えます。</p>
+<table summary="ディジタル時計の液晶表示の入出力">
+	<caption>
+		ディジタル時計の液晶表示の入出力
+	</caption>
+	<tr>
+		<th>入力</th>
+		<th>出力</th>
+	</tr>
+	<tr>
+		<td><p>1</p></td>
+		<td><figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/7seg1.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/7seg1.png" alt="" /></a></p>
+</figure></td>
+	</tr>
+	<tr>
+		<td><p>2</p></td>
+		<td><figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/7seg2.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/7seg2.png" alt="" /></a></p>
+</figure></td>
+	</tr>
+	<tr>
+		<td><p>3</p></td>
+		<td><figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/7seg3.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/7seg3.png" alt="" /></a></p>
+</figure></td>
+	</tr>
+	<tr>
+		<td><p>4</p></td>
+		<td><figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/7seg4.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/7seg4.png" alt="" /></a></p>
+</figure></td>
+	</tr>
+</table>
+<p>ちなみに、この手の液晶表示は、数字を7つ線で表すので、7セグ ディスプレイ（7 segment display）と呼ばれます。
+7セグ ディスプレイは設計が簡単なので、組み合わせ回路設計の例としてよく使われます。</p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="0-1-in-out"></a>入出力を0, 1で表現</h2>
+<p>まず、入出力をすべて0, 1で表現します。</p>
+<p>入力は数字が4つあるだけなので、1～4をそれぞれ00, 01, 10, 11などと割り当てることで、2ビットで表現することができます。
+入力の上位ビットを <span class="math">x<sub><span class="normal">0</span></sub></span> 下位ビットを <span class="math">x<sub><span class="normal">1</span></sub></span> と表しましょう。</p>
+<p>一方、出力は7本の液晶表示部がそれぞれオン/オフという状態を持っているので、オンを1、オフを0として、7ビット使って表現します。
+こちらは図2に示すような順番で、
+<span class="math">y<sub><span class="normal">0</span></sub></span> ～ <span class="math">y<sub><span class="normal">6</span></sub></span>
+という記号を振りましょう。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/7segOut.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/7segOut.png" alt="7つの液晶表示部に番号を振る" /></a></p>
+<figcaption>7つの液晶表示部に番号を振る</figcaption>
+</figure>
+<p>このルールに基づいて、表1の入出力を
+<span class="math">x<sub><span class="normal">0</span></sub></span> ～ <span class="math">x<sub><span class="normal">1</span></sub></span>、<span class="math">y<sub><span class="normal">0</span></sub></span> ～ <span class="math">y<sub><span class="normal">6</span></sub></span>
+で表すと、表2に示すような入出力表が得られます（このような表を真偽値表と呼びます）。</p>
+<table summary="ディジタル時計の液晶表示の入出力の関係を表す真偽値表">
+	<caption>
+		ディジタル時計の液晶表示の入出力の関係を表す真偽値表
+	</caption>
+	<tr>
+		<th colspan="2">入力</th>
+		<th colspan="7">出力</th>
+	</tr>
+	<tr>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+	</tr>
+	<tr>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>1</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+	</tr>
+	<tr>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>1</p></td>
+	</tr>
+	<tr>
+		<td><p>1</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>1</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+	</tr>
+</table>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="disjunctive-normal"></a>加法標準形の論理式で表す</h2>
+<p>表2のような真偽値表から機械的に論理式を作る方法があります。
+図3に示すように、まず、真偽値表の入力のところの0, 1に応じて入力変数のAND演算を行います。
+そして、AND演算で作った項を、真偽値表の出力のところの0, 1に応じてOR演算することで式を得ます。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/DisjunctiveNormalForm.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/DisjunctiveNormalForm.png" alt="真偽値表から論理式を得る" /></a></p>
+<figcaption>真偽値表から論理式を得る</figcaption>
+</figure>
+<p>この方法を使って、表2の審議地表から論理式を作ると以下のようになります。</p>
+<div class="math">
+      y<sub><span class="normal">0</span></sub> <span class="normal">=</span> <span class="bar">x<sub><span class="normal">0</span></sub></span> x<sub><span class="normal">1</span></sub>
+      <span class="normal">+</span> x<sub><span class="normal">0</span></sub> <span class="bar">x<sub><span class="normal">1</span></sub></span>
+    </div><div class="math">
+      y<sub><span class="normal">1</span></sub> <span class="normal">=</span> x<sub><span class="normal">0</span></sub> x<sub><span class="normal">1</span></sub>
+    </div><div class="math">
+      y<sub><span class="normal">2</span></sub> <span class="normal">=</span> <span class="bar">x<sub><span class="normal">0</span></sub></span> <span class="bar">x<sub><span class="normal">1</span></sub></span>
+      <span class="normal">+</span> <span class="bar">x<sub><span class="normal">0</span></sub></span> x<sub><span class="normal">1</span></sub>
+      <span class="normal">+</span> x<sub><span class="normal">0</span></sub> <span class="bar">x<sub><span class="normal">1</span></sub></span>
+      <span class="normal">+</span> x<sub><span class="normal">0</span></sub> x<sub><span class="normal">1</span></sub>
+    </div><div class="math">
+      y<sub><span class="normal">3</span></sub> <span class="normal">=</span> <span class="bar">x<sub><span class="normal">0</span></sub></span> x<sub><span class="normal">1</span></sub>
+      <span class="normal">+</span> x<sub><span class="normal">0</span></sub> <span class="bar">x<sub><span class="normal">1</span></sub></span>
+      <span class="normal">+</span> x<sub><span class="normal">0</span></sub> x<sub><span class="normal">1</span></sub>
+    </div><div class="math">
+      y<sub><span class="normal">4</span></sub> <span class="normal">=</span> <span class="bar">x<sub><span class="normal">0</span></sub></span> x<sub><span class="normal">1</span></sub>
+    </div><div class="math">
+      y<sub><span class="normal">5</span></sub> <span class="normal">=</span> <span class="bar">x<sub><span class="normal">0</span></sub></span> <span class="bar">x<sub><span class="normal">1</span></sub></span>
+      <span class="normal">+</span> x<sub><span class="normal">0</span></sub> <span class="bar">x<sub><span class="normal">1</span></sub></span>
+      <span class="normal">+</span> x<sub><span class="normal">0</span></sub> x<sub><span class="normal">1</span></sub>
+    </div><div class="math">
+      y<sub><span class="normal">6</span></sub> <span class="normal">=</span> <span class="bar">x<sub><span class="normal">0</span></sub></span> x<sub><span class="normal">1</span></sub>
+      <span class="normal">+</span> x<sub><span class="normal">0</span></sub> <span class="bar">x<sub><span class="normal">1</span></sub></span>
+    </div>
+<h2 id="section-6"><a id="sec-generated-title-6"></a> <a id="simplify"></a>論理式の簡単化</h2>
+<p>一般に、論理式から組み合わせ回路におこす際、論理式の複雑さにほぼ比例して組み合わせ回路の規模が大きくなります。
+回路の大きさは、材料費、故障率、消費電力などに直結しますので、小さければ小さいほど良いです。
+このため、論理式可能な限り簡単化する必要があります。</p>
+<p>論理式は機械的な作業で簡単化できる場合があります。
+例えば、以下の2つの式は全く同じ出力を得ます（a, b の値が何であろうと、常に x と y の値が同じになります）。</p>
+<div class="math">
+      x <span class="normal">=</span> a <span class="normal">+</span> ab 
+    </div><div class="math">
+      y <span class="normal">=</span> a
+    </div>
+x の場合、AND演算とOR演算がそれぞれ1回ずつ必要ですが、y の場合には特に演算が必要なくなります（単に入力を出力側に素通しするだけでよくなります）。
+結果的に、y の側の式を使った方が、組み合わせ回路を小さくできます。
+<p>このような簡単化には、表3に示すようないくつかのパターンがあります。</p>
+<table summary="論理式の簡単化">
+	<caption>
+		論理式の簡単化
+	</caption>
+	<tr>
+		<th>パターン</th>
+		<th>説明</th>
+		<th>応用例</th>
+	</tr>
+	<tr>
+		<td><p><span class="math">ab <span class="normal">+</span> ac <span class="normal">=</span> a <span class="paren" style="font-size:em;">(</span>b <span class="normal">+</span> c<span class="paren" style="font-size:em;">)</span></span></p></td>
+		<td><p>AND と OR には分配法則が成り立つ</p></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><p><span class="math"><span class="normal">1</span> <span class="normal">+</span> a <span class="normal">=</span> <span class="normal">1</span></span></p></td>
+		<td><p>真との OR は常に真</p></td>
+		<td><span class="math">
+            a <span class="normal">+</span> ab
+            <span class="normal">=</span>
+            a <span class="paren" style="font-size:em;">(</span><span class="normal">1</span> <span class="normal">+</span> b<span class="paren" style="font-size:em;">)</span>
+            <span class="normal">=</span>
+            a <span class="normal">1</span>
+            <span class="normal">=</span>
+            a
+          </span></td>
+	</tr>
+	<tr>
+		<td><p><span class="math">a <span class="normal">+</span> <span class="bar">a</span> <span class="normal">=</span> <span class="normal">1</span></span></p></td>
+		<td><p>NOT との OR は常に真</p></td>
+		<td><span class="math">
+            ab <span class="normal">+</span> a<span class="bar">b</span>
+            <span class="normal">=</span>
+            a <span class="paren" style="font-size:em;">(</span>
+              b <span class="normal">+</span> <span class="bar">b</span>
+            <span class="paren" style="font-size:em;">)</span>
+            <span class="normal">=</span>
+            a <span class="normal">1</span>
+            <span class="normal">=</span>
+            a
+          </span></td>
+	</tr>
+	<tr>
+		<td><p><span class="math">a <span class="bar">a</span> <span class="normal">=</span> <span class="normal">1</span></span></p></td>
+		<td><p>NOT との AND は常に偽</p></td>
+		<td><span class="math">
+            a <span class="paren" style="font-size:em;">(</span>
+              <span class="bar">a</span> <span class="normal">+</span> b
+            <span class="paren" style="font-size:em;">)</span>
+            <span class="normal">=</span>
+            a b
+          </span></td>
+	</tr>
+	<tr>
+		<td><p><span class="math">a <span class="normal">+</span> <span class="bar">a</span>b <span class="normal">=</span> a <span class="normal">+</span> b</span></p></td>
+		<td><span class="math">
+            a <span class="normal">+</span> <span class="bar">a</span>b
+            <span class="normal">=</span>
+            a <span class="normal">1</span> <span class="normal">+</span> <span class="bar">a</span>b
+            <span class="normal">=</span>
+            a <span class="paren" style="font-size:em;">(</span><span class="normal">1</span> <span class="normal">+</span> b<span class="paren" style="font-size:em;">)</span> <span class="normal">+</span> <span class="bar">a</span>b
+            <span class="normal">=</span>
+            a <span class="normal">+</span> ab <span class="normal">+</span> <span class="bar">a</span>b
+            <span class="normal">=</span>
+            a <span class="normal">+</span> <span class="paren" style="font-size:em;">(</span>a <span class="normal">+</span> <span class="bar">a</span><span class="paren" style="font-size:em;">)</span> b
+            <span class="normal">=</span>
+            a <span class="normal">+</span> 1 b
+            <span class="normal">=</span>
+            a <span class="normal">+</span> b
+          </span></td>
+		<td></td>
+	</tr>
+</table>
+<p>これを表2の例に適用すると、以下のような論理式が得られます。</p>
+<div class="math">
+      y<sub><span class="normal">0</span></sub> <span class="normal">=</span> <span class="bar">
+        x<sub><span class="normal">0</span></sub>
+      </span> x<sub><span class="normal">1</span></sub>
+      <span class="normal">+</span> x<sub><span class="normal">0</span></sub> <span class="bar">
+        x<sub><span class="normal">1</span></sub>
+      </span>
+    </div><div class="math">
+      y<sub><span class="normal">1</span></sub> <span class="normal">=</span> x<sub><span class="normal">0</span></sub> x<sub><span class="normal">1</span></sub>
+    </div><div class="math">
+      y<sub><span class="normal">2</span></sub> <span class="normal">=</span> <span class="normal">1</span>
+    </div><div class="math">
+      y<sub><span class="normal">3</span></sub> <span class="normal">=</span> x<sub><span class="normal">0</span></sub> <span class="normal">+</span> x<sub><span class="normal">1</span></sub>
+    </div><div class="math">
+      y<sub><span class="normal">4</span></sub> <span class="normal">=</span> <span class="bar">
+        x<sub><span class="normal">0</span></sub>
+      </span> x<sub><span class="normal">1</span></sub>
+    </div><div class="math">
+      y<sub><span class="normal">3</span></sub> <span class="normal">=</span> x<sub><span class="normal">0</span></sub> <span class="normal">+</span> <span class="bar">x<sub><span class="normal">1</span></sub></span>
+    </div><div class="math">
+      y<sub><span class="normal">6</span></sub> <span class="normal">=</span> <span class="bar">
+        x<sub><span class="normal">0</span></sub>
+      </span> x<sub><span class="normal">1</span></sub>
+      <span class="normal">+</span> x<sub><span class="normal">0</span></sub> <span class="bar">
+        x<sub><span class="normal">1</span></sub>
+      </span>
+    </div>
+<h2 id="section-7"><a id="sec-generated-title-7"></a> <a id="to-circuit"></a>組み合わせ回路化</h2>
+<p>あとは、このページの冒頭で説明したように、論理式から回路に起こすことで液晶表示を行う組み合わせ回路を作ることができます。
+例として、<span class="math">
+y<sub><span class="normal">0</span></sub> <span class="normal">=</span> <span class="bar">
+x<sub><span class="normal">0</span></sub>
+</span> x<sub><span class="normal">1</span></sub>
+<span class="normal">+</span> x<sub><span class="normal">0</span></sub> <span class="bar">
+x<sub><span class="normal">1</span></sub>
+</span>
+</span> を回路化したものを図4に示します。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/CircuitY0.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/CircuitY0.png" alt="を求める回路" /></a></p>
+<figcaption><span class="math">y<sub><span class="normal">0</span></sub></span>を求める回路</figcaption>
+</figure>
+<h2 id="section-8"><a id="sec-generated-title-8"></a> <a id="dont-care"></a>ドント・ケア</h2>
+<p>入力の表現方法によっては、絶対に入力されない組み合わせが生じる場合があります。
+この絶対に入力されない組み合わせに対応する出力はどうなっても構わない（don’t care）ことになり、これをドント・ケア（“don’t care” （気にするな）を1つの名詞として使います）と呼びます。</p>
+<p>例えば、表4に示すように、入力として0～2までの3つの値を使いたいとします。
+この場合、0, 1で表現するためには2ビット（最大で4つまで値を表現可能）が必要なわけですが、4つ中、3つしか値を使わないので、1つ使わない表現が生まれます。</p>
+<table summary="3つの値を使う回路の入出力例">
+	<caption>
+		3つの値を使う回路の入出力例
+	</caption>
+	<tr>
+		<th>入力</th>
+		<th>出力</th>
+	</tr>
+	<tr>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+	</tr>
+	<tr>
+		<td><p>1</p></td>
+		<td><p>2</p></td>
+	</tr>
+	<tr>
+		<td><p>2</p></td>
+		<td><p>0</p></td>
+	</tr>
+</table>
+<p>この表4の入力2ビットを <span class="math">x<sub><span class="normal">0</span></sub>, x<sub><span class="normal">1</span></sub></span>、
+出力2ビットを <span class="math">y<sub><span class="normal">0</span></sub>, y<sub><span class="normal">1</span></sub></span> で表現すると、
+表5のような真偽値表がえられます。</p>
+<table summary="3つの値を使う回路の真理値表の例">
+	<caption>
+		3つの値を使う回路の真理値表の例
+	</caption>
+	<tr>
+		<th><span class="math">x<sub><span class="normal">0</span></sub></span></th>
+		<th><span class="math">x<sub><span class="normal">1</span></sub></span></th>
+		<th><span class="math">y<sub><span class="normal">0</span></sub></span></th>
+		<th><span class="math">y<sub><span class="normal">1</span></sub></span></th>
+	</tr>
+	<tr>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+	</tr>
+	<tr>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+	</tr>
+	<tr>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+	</tr>
+	<tr>
+		<td><p>1</p></td>
+		<td><p>1</p></td>
+		<td><ul>
+<li></li>
+</ul></td>
+		<td><ul>
+<li></li>
+</ul></td>
+	</tr>
+</table>
+<p>この表で、最下段の出力のハイフン記号がドント・ケアで、文字通り「値が0でも1でも気にしない」という意味です。
+「0でも1でも気にしない」ということは、「0か1かをとりあえず入れてみて、論理式が簡単になる方を選ぶ」ということができて、論理回路を小さくできます。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/computer/basis/">&#x56DE;&#x8DEF;&#x8A2D;&#x8A08;&#xFF08;&#x30B2;&#x30FC;&#x30C8;&#x3001;&#x7D44;&#x307F;&#x5408;&#x308F;&#x305B;&#x56DE;&#x8DEF;&#x3001;&#x9806;&#x5E8F;&#x56DE;&#x8DEF;&#xFF09;</a></li><li><a href="/study/computer/basis/gatelevel/">&#x30B2;&#x30FC;&#x30C8;</a></li><li><a href="/study/computer/basis/logicaloperation/">&#x8AD6;&#x7406;&#x6F14;&#x7B97;</a></li><li><a href="/study/computer/basis/sequentialcircuit/">&#x9806;&#x5E8F;&#x56DE;&#x8DEF;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

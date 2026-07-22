@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 3/23: no-allocation&#x975E;&#x540C;&#x671F;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x3001;&#x6700;&#x8FD1;&#x306E; Utf8String | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2018/3/pickuproslyn0323/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2018-03-23T00:36:34">2018-03-23</time></span><span>更新: <time datetime="2018-03-23T00:41:09">2018-03-23</time></span></div><h1 id="roslyn-323-no-allocation-utf8string">ピックアップRoslyn 3/23: no-allocation非同期メソッド、最近の Utf8String</h1>
+<p><a href="/blog/2018/3/pickuproslyn0321/">昨日のDesign Notes祭り</a>とはまた別件なんですが、こんな提案が。</p>
+<h2 id="asyncmethodbuilder">メソッド単位でAsyncMethodBuilder属性</h2>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/1407">Proposal: Allow [AsyncMethodBuilder(...)] on methods #1407</a></li>
+</ul>
+<p><a href="https://github.com/dotnet/corefx/">corefx</a>/<a href="https://github.com/dotnet/coreclr/">coreclr</a>方面でガッチガチのパフォーマンス改善をやりまくってる人からの提案。</p>
+<p>タイトルからは内容がちょっとわかりにくいんですが、非同期メソッドの際に必要になるヒープ確保量を0 (no-allocation)にするためにこの機能が必要とのこと。</p>
+<p>背景としては、</p>
+<ul>
+<li>C# 6.0: 非同期メソッドの戻り値は常に<code>Task</code> → <code>Task</code> のヒープ確保が必須でつらい → C# 7.0: <a href="/study/csharp/async/sp5_async/#task-like"><code>ValueTask&lt;T&gt;</code>を認めた</a>よ</li>
+<li><code>ValueTask&lt;T&gt;</code>、同期で終わるときにはヒープ確保0だけど、実際に非同期だとどうしても<code>Task</code>が発生 → <a href="https://github.com/dotnet/coreclr/pull/16618">最近Mergeされたコミット</a>: <code>IValueTaskSource</code>ってインターフェイスを使うことで、<code>Task</code>を介さず非同期処理できるようにしたよ。うまく使えば<code>Task</code>分のヒープ確保がなくなる</li>
+<li><code>IValueTaskSource</code>で、<code>await</code>毎のヒープ確保はなくせるけども、AsyncStateMachine の1インスタンスはどうしても残った → そのインスタンスをキャッシュして持ちたい</li>
+</ul>
+<p>という感じ。</p>
+<p>最終的に、ヒープ確保せざるを得ないインスタンスをキャッシュして、プログラム中で1個だけ(メソッド呼び出しのたびには新規ヒープ確保しない)とかにしたいわけですけども、キャッシュはうまくやらないと効率が悪くて困ることになります。</p>
+<p>なので、メソッド単位でどういう非同期メソッド生成するかをカスタマイズできたり、AsyncStateMachine に<code>this</code>を渡せたりしないとこれ以上の最適化が厳しいみたいで、やっと提案のタイトルにつながります。</p>
+<p><code>AsyncMethodBuilder</code>属性をメソッド単位で指定して、メソッドごとに非同期メソッドの挙動をカスタマイズできるようにしたいっていう話は昔からあったんですけども、需要が低いということで実装されずにいたんですけども。
+こういう方面から改めて需要が出てくるとは…</p>
+<h2 id="utf8">UTF8文字列がらみ</h2>
+<ul>
+<li><a href="https://github.com/dotnet/corefx/issues/24093#issuecomment-375300540">Introducing System.Rune #24093 (Comment)</a></li>
+</ul>
+<p>去年の9月くらいに<a href="/blog/2017/12/fastutf8string/">Go (Unicode Code Point のことを rune って呼んでる)に倣って Rune 型を作らない？</a>みたいな提案が立っていましたが。
+Rune って名前の評判悪すぎて、まあ、別の名前に落ち着きそう。</p>
+<p>あと、C# のキーワードも用意したいみたいです。</p>
+<table>
+<thead>
+<tr>
+<th>C# キーワード</th>
+<th>実際の型名</th>
+<th>サイズ(Byte)</th>
+<th>概要</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ubyte</code></td>
+<td><code>System.CodeUnit</code></td>
+<td>1</td>
+<td>UTF-8エンコーディングされてる文字列の1バイト1バイト</td>
+</tr>
+<tr>
+<td><code>uchar</code></td>
+<td><code>System.CodePoint</code></td>
+<td>4</td>
+<td>Unicode のコードポイント</td>
+</tr>
+<tr>
+<td><code>ustring</code></td>
+<td><code>System.Utf8String</code></td>
+<td></td>
+<td>内部的に UTF-8 でデータを持つ文字列クラス</td>
+</tr>
+<tr>
+<td><code>uspan</code></td>
+<td><code>System.Utf8Span</code></td>
+<td></td>
+<td><code>ReadOnlySpan&lt;ubyte&gt;</code>で、<code>ustring</code>の一定区間を参照する構造体</td>
+</tr>
+</tbody>
+</table>
+<p>まあまだ正式な API の提案になってる段階ではないので、まだ変わると思いますが。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2018/3/">3&#x6708;</a></li><li><a href="/blog/2018/3/upload-cszip/">cszip&#x3001;nuget.org &#x306B;&#x4E0A;&#x3052;&#x307E;&#x3057;&#x305F;</a></li><li><a href="/blog/2018/3/vs15_6/">Visual Studio 15.6 &#x30EA;&#x30EA;&#x30FC;&#x30B9;</a></li><li><a href="/blog/2018/3/jitoptimization2_1/">.NET Core 2.1 &#x306E; JIT &#x6700;&#x9069;&#x5316;&#x306E;&#x8A71;</a></li><li><a href="/blog/2018/3/pickuproslyn0321/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 3/21: Design Notes&#x4E00;&#x6589;&#x30A2;&#x30C3;&#x30D7;&#x30ED;&#x30FC;&#x30C9;&#x796D;&#x308A;</a></li><li><a href="/blog/2018/3/ranges/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 3/24: Ranges</a></li><li><a href="/blog/2018/3/pickuproslyn0331/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 3/31: C# 7.3</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

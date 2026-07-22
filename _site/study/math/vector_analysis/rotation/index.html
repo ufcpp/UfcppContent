@@ -1,0 +1,302 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x56DE;&#x8EE2; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/math/vector_analysis/rotation/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">回転</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="rot"></a>回転とは</h2>
+<em>
+        <strong id="rotation" class="keyword">回転</strong>とはある点における単位面積あたりの渦（「[](v_field.md#vortex)」参照）の強さの量です。
+      </em>
+言い換えると、渦を起こす何らかの物があると考えて、それの密度が回転です。
+流体の中で何かを回転させるとそこに渦が出来ますから、ベクトル場の渦を作るこの力のことを回転と言うわけです。
+<p>すなわち、ある点Pにおけるベクトル場<span class="math">
+<span class="vector">F</span>
+</span>の回転<span class="math">
+<span class="normal">rot</span>
+<span class="vector">F</span>
+</span>とは、点Pを通る任意の曲面を<span class="math">S</span>、その外周を<span class="math">l</span>、<span class="math">S</span>の点Pにおける法線を<span class="math">
+<span class="vector">n</span>
+</span>とすると、<span class="math">S</span>の取り方によらず常に</p>
+<div class="math">
+      <em>
+        <span class="normal">rot</span>
+        <span class="vector">F</span>・<span class="vector">n</span> = <table class="sigma" summary="limitation"><tr><td><span class="normal">lim</span></td></tr><tr><td class="sigmasub">S→0</td></tr></table><table class="frac" summary="fraction"><tr><td class="num">
+            <span class="ointegral">∮</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">l</td></tr></table><span class="vector">F</span>・<span class="normal">d</span><span class="vector">l</span>
+          </td></tr><tr><td>S</td></tr></table>
+      </em>
+    </div>
+が成り立つベクトルです。
+また、<em>
+        <span class="math">
+          <span class="normal">rot</span>φ
+        </span>は<span class="math">
+          <span class="vector">∇</span>×φ
+        </span>とも書きます
+      </em>。
+<p>これだけでは分かりにくいでしょうからもう少し直感的な回転の意味を言うと、
+回転とは<em>
+線積分（「<a href="/study/math/vector_analysis/lineint/#lineint">線積分とは</a>」参照）と面積分（「<a href="/study/math/vector_analysis/surfaceint/#surfaceint">面積分とは</a>」参照）を関係付ける微分演算
+</em>で、直交座標を用いて表すと</p>
+<div class="math">
+      <em>
+        <span class="vector">∇</span>×
+        <span class="vector">F</span> = <span class="paren" style="font-size:1.5em;">(</span>
+          <table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>z</sub>
+            </td></tr><tr><td>∂y</td></tr></table>−<table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>y</sub>
+            </td></tr><tr><td>∂z</td></tr></table>,<table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>x</sub>
+            </td></tr><tr><td>∂z</td></tr></table>−<table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>z</sub>
+            </td></tr><tr><td>∂x</td></tr></table>,<table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>y</sub>
+            </td></tr><tr><td>∂x</td></tr></table>−<table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>x</sub>
+            </td></tr><tr><td>∂y</td></tr></table>
+        <span class="paren" style="font-size:1.5em;">)</span>
+      </em>
+    </div>
+となります。
+ただし、<span class="math">
+        <span class="vector">F</span> = <span class="paren" style="font-size:em;">(</span>
+          F<sub>x</sub>, F<sub>y</sub>, F<sub>z</sub>
+        <span class="paren" style="font-size:em;">)</span>
+      </span>です。
+<span class="math">
+        <span class="vector">∇</span>×
+        <span class="vector">F</span>
+      </span>という書き方をするのは、ナブラベクトル<span class="math">
+        <span class="vector">∇</span> = <span class="paren" style="font-size:1.5em;">(</span>
+          <table class="frac" summary="fraction"><tr><td class="num">∂</td></tr><tr><td>∂x</td></tr></table>,<table class="frac" summary="fraction"><tr><td class="num">∂</td></tr><tr><td>∂y</td></tr></table>,<table class="frac" summary="fraction"><tr><td class="num">∂</td></tr><tr><td>∂z</td></tr></table>
+        <span class="paren" style="font-size:1.5em;">)</span>
+      </span>と<span class="math">
+        <span class="vector">F</span>
+      </span>の外積を取ったものが回転となるからです。
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="green"></a>グリーンの定理</h2>
+<p>いきなり3次元の線積分と面積分を関係付ける公式を出すよりも、2次元で考えたほうが分かりやすいので、まずは2次元で考えます。</p>
+<p>図1のような積分経路を考えると、ベクトル場<span class="math">
+<span class="vector">F</span>
+</span>の線積分の値は</p>
+<div class="math">
+      <span class="paren" style="font-size:em;">{</span>
+        F<sub>y</sub>(x+<span class="normal">d</span>x,y)−F<sub>y</sub>(x+,y)
+      <span class="paren" style="font-size:em;">}</span>
+      <span class="normal">d</span>y − <span class="paren" style="font-size:em;">{</span>
+        F<sub>x</sub>(x,y+<span class="normal">d</span>y)−F<sub>x</sub>(x+,y)
+      <span class="paren" style="font-size:em;">}</span><span class="normal">d</span>x
+    </div>
+となります。
+<figure>
+<p><a href="/assets/media/ufcpp2000/math/rot1.png"><img src="/assets/media/ufcpp2000/math/rot1.png" alt="積分経路" /></a></p>
+<figcaption>積分経路</figcaption>
+</figure>
+<p>ここで、<span class="math">
+F<sub>y</sub>(x,y)−F<sub>y</sub>(x+<span class="normal">d</span>x,y) = <table class="frac" summary="fraction"><tr><td class="num">
+            ∂F<sub>y</sub>
+          </td></tr><tr><td>∂x</td></tr></table><span class="normal">d</span>x
+</span>であることを用いると、この式の第一項は
+<span class="math">
+<table class="frac" summary="fraction"><tr><td class="num">
+            ∂F<sub>y</sub>
+          </td></tr><tr><td>∂x</td></tr></table><span class="normal">d</span>x<span class="normal">d</span>y
+</span>
+となります。
+同様に第二項も
+<span class="math">
+<table class="frac" summary="fraction"><tr><td class="num">
+            ∂F<sub>y</sub>
+          </td></tr><tr><td>∂y</td></tr></table><span class="normal">d</span>x<span class="normal">d</span>y
+</span>
+となりますので、この線積分の値は</p>
+<div class="math">
+      <span class="paren" style="font-size:1.5em;">{</span>
+        <table class="frac" summary="fraction"><tr><td class="num">
+            ∂F<sub>y</sub>
+          </td></tr><tr><td>∂x</td></tr></table>−<table class="frac" summary="fraction"><tr><td class="num">
+            ∂F<sub>x</sub>
+          </td></tr><tr><td>∂y</td></tr></table>
+      <span class="paren" style="font-size:1.5em;">}</span>
+      <span class="normal">d</span>x<span class="normal">d</span>y
+    </div>
+となります。
+すなわち、
+<div class="math">
+      <em>
+        <span class="ointegral">∮</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">l</td></tr></table>
+        <span class="vector">F</span>・<span class="normal">d</span><span class="vector">l</span> = <span class="integral">∫<span style="margin-left:-0.5em;">∫</span></span><table class="integral" summary="integral"><tr><td class="intsup">  </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub"></td></tr></table><span class="paren" style="font-size:1.5em;">{</span>
+          <table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>y</sub>
+            </td></tr><tr><td>∂x</td></tr></table>−<table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>x</sub>
+            </td></tr><tr><td>∂y</td></tr></table>
+        <span class="paren" style="font-size:1.5em;">}</span><span class="normal">d</span>x<span class="normal">d</span>y
+      </em>
+    </div>
+が成り立ちます。
+この式をグリーンの定理といいます。
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="stokes"></a>ストークスの定理</h2>
+<p>回転は単位面積あたりの渦の強さなわけですから、回転の面積分の値は渦の強さに等しくなります。
+つまり、</p>
+<div class="math">
+      <em>
+        <span class="ointegral">∮</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">l</td></tr></table>
+        <span class="vector">F</span>・<span class="normal">d</span><span class="vector">l</span> = <span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">S</td></tr></table><span class="vector">∇</span>×<span class="vector">F</span><span class="normal">d</span><span class="vector">S</span>
+      </em>
+    </div>
+この式をストークスの定理といい、線積分と面積分を関係付ける公式です。
+<p>この面積分の値をx方向成分、y方向成分、ｚ方向成分に分けて考えます。
+x方向成分は曲面<span class="math">S</span>をy−z平面に投影したものを考えればいいので、
+2次元の場合と同様にグリーンの定理を使って
+<span class="math">
+<span class="integral">∫<span style="margin-left:-0.5em;">∫</span></span><table class="integral" summary="integral"><tr><td class="intsup">  </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub"></td></tr></table><span class="paren" style="font-size:1.5em;">{</span>
+<table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>z</sub>
+            </td></tr><tr><td>∂y</td></tr></table>−<table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>y</sub>
+            </td></tr><tr><td>∂z</td></tr></table>
+<span class="paren" style="font-size:1.5em;">}</span><span class="normal">d</span>y<span class="normal">d</span>z
+</span>
+とあらわすことができます。
+同様に、y方向成分、z方向成分はそれぞれ
+<span class="math">
+<span class="integral">∫<span style="margin-left:-0.5em;">∫</span></span><table class="integral" summary="integral"><tr><td class="intsup">  </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub"></td></tr></table><span class="paren" style="font-size:1.5em;">{</span>
+<table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>x</sub>
+            </td></tr><tr><td>∂z</td></tr></table>−<table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>z</sub>
+            </td></tr><tr><td>∂x</td></tr></table>
+<span class="paren" style="font-size:1.5em;">}</span><span class="normal">d</span>z<span class="normal">d</span>x
+</span>、
+<span class="math">
+<span class="integral">∫<span style="margin-left:-0.5em;">∫</span></span><table class="integral" summary="integral"><tr><td class="intsup">  </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub"></td></tr></table><span class="paren" style="font-size:1.5em;">{</span>
+<table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>y</sub>
+            </td></tr><tr><td>∂x</td></tr></table>−<table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>x</sub>
+            </td></tr><tr><td>∂y</td></tr></table>
+<span class="paren" style="font-size:1.5em;">}</span><span class="normal">d</span>x<span class="normal">d</span>z
+</span>
+となります。
+これらを足し合わせたものが面積分の値になりますので、</p>
+<div class="math">
+      <span class="ointegral">∮</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">l</td></tr></table>
+      <span class="vector">F</span>・<span class="normal">d</span><span class="vector">l</span> =
+      <span class="integral">∫<span style="margin-left:-0.5em;">∫</span></span><table class="integral" summary="integral"><tr><td class="intsup">  </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub"></td></tr></table><span class="paren" style="font-size:1.5em;">[</span>
+        <span class="paren" style="font-size:1.5em;">{</span>
+          <table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>z</sub>
+            </td></tr><tr><td>∂y</td></tr></table>
+          －
+          <table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>y</sub>
+            </td></tr><tr><td>∂z</td></tr></table>
+        <span class="paren" style="font-size:1.5em;">}</span><span class="normal">d</span>y<span class="normal">d</span>z
+        ＋
+        <span class="paren" style="font-size:1.5em;">{</span>
+          <table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>x</sub>
+            </td></tr><tr><td>∂z</td></tr></table>
+          －
+          <table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>z</sub>
+            </td></tr><tr><td>∂x</td></tr></table>
+        <span class="paren" style="font-size:1.5em;">}</span><span class="normal">d</span>z<span class="normal">d</span>x
+        ＋
+        <span class="paren" style="font-size:1.5em;">{</span>
+          <table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>y</sub>
+            </td></tr><tr><td>∂x</td></tr></table>
+          －
+          <table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>x</sub>
+            </td></tr><tr><td>∂y</td></tr></table>
+        <span class="paren" style="font-size:1.5em;">}</span><span class="normal">d</span>x<span class="normal">d</span>z
+      <span class="paren" style="font-size:1.5em;">]</span>
+    </div><div class="math">
+      <em>
+        ∴
+        <span class="ointegral">∮</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">l</td></tr></table><span class="vector">F</span>・<span class="normal">d</span><span class="vector">l</span> =
+        <span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub"></td></tr></table><span class="paren" style="font-size:1.5em;">(</span>
+          <table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>z</sub>
+            </td></tr><tr><td>∂y</td></tr></table>
+          －
+          <table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>y</sub>
+            </td></tr><tr><td>∂z</td></tr></table>
+          ,
+          <table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>x</sub>
+            </td></tr><tr><td>∂z</td></tr></table>
+          －
+          <table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>z</sub>
+            </td></tr><tr><td>∂x</td></tr></table>
+          ,
+          <table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>y</sub>
+            </td></tr><tr><td>∂x</td></tr></table>
+          －
+          <table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>x</sub>
+            </td></tr><tr><td>∂y</td></tr></table>
+        <span class="paren" style="font-size:1.5em;">)</span>
+        ・<span class="normal">d</span><span class="vector">S</span>
+      </em>
+    </div>
+となります。そして回転の定義より、
+<div class="math">
+      <em>
+        <span class="vector">∇</span>×
+        <span class="vector">F</span>
+        ＝
+        <span class="paren" style="font-size:1.5em;">(</span>
+          <table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>z</sub>
+            </td></tr><tr><td>∂y</td></tr></table>
+          －
+          <table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>y</sub>
+            </td></tr><tr><td>∂z</td></tr></table>
+          ,
+          <table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>x</sub>
+            </td></tr><tr><td>∂z</td></tr></table>
+          －
+          <table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>z</sub>
+            </td></tr><tr><td>∂x</td></tr></table>
+          ,
+          <table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>y</sub>
+            </td></tr><tr><td>∂x</td></tr></table>
+          －
+          <table class="frac" summary="fraction"><tr><td class="num">
+              ∂F<sub>x</sub>
+            </td></tr><tr><td>∂y</td></tr></table>
+        <span class="paren" style="font-size:1.5em;">)</span>
+      </em>
+    </div>
+となります。
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/math/vector_analysis/">&#x30D9;&#x30AF;&#x30C8;&#x30EB;&#x89E3;&#x6790;</a></li><li><a href="/study/math/vector_analysis/v_field/">&#x5834;</a></li><li><a href="/study/math/vector_analysis/lineint/">&#x7DDA;&#x7A4D;&#x5206;</a></li><li><a href="/study/math/vector_analysis/surfaceint/">&#x9762;&#x7A4D;&#x5206;</a></li><li><a href="/study/math/vector_analysis/volumeint/">&#x4F53;&#x7A4D;&#x7A4D;&#x5206;</a></li><li><a href="/study/math/vector_analysis/gradient/">&#x52FE;&#x914D;</a></li><li><a href="/study/math/vector_analysis/divergence/">&#x767A;&#x6563;</a></li><li><a href="/study/math/vector_analysis/conservation/">&#x4FDD;&#x5B58;&#x5834;&#x3068;&#x30BD;&#x30EC;&#x30CE;&#x30A4;&#x30C0;&#x30EB;&#x5834;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

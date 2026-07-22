@@ -1,0 +1,212 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 3/24: Ranges | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2018/3/ranges/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2018-03-24T02:25:36">2018-03-24</time></span><span>更新: <time datetime="2018-03-24T02:28:07">2018-03-24</time></span></div><h1 id="roslyn-324-ranges">ピックアップRoslyn 3/24: Ranges</h1>
+<p><a href="/blog/2018/3/pickuproslyn0321/">こないだのDesign Notesアップロード祭り</a>、1月辺りの議題としては割と「Ranges」の話が多かったみたいです。今日はこれの話。</p>
+<h2 id="ranges">Ranges</h2>
+<p>レンジ、要するに「どこからどこまで」みたいな値の範囲のことです。そこそこいろんなプログラミング言語にありますけども、例えば <code>1..3</code>みたいな書き方で1～3の範囲を表そうという構文。</p>
+<p>.NET Core 2.1で、配列などの連続したメモリ領域の一定区間を指し示す<a href="/study/csharp/resource/span/"><code>Span&lt;T&gt;</code>構造体</a>っていう型が入りました。これに伴い、以下のように、配列の一部分を抜き出すような構文が欲しいという話になっています。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span>[] array = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span> };
+Span&lt;<span class="keyword">int</span>&gt; span = array[<span class="number">1</span>..<span class="number">3</span>];</code></pre>
+<p>ちなみに、現状、この機能は C# 8.0 での実現を目指しています。</p>
+<h2 id="indexingslicing">indexing/slicing 用途</h2>
+<p>C# チームとしては、前節のような書き方、つまり、<code>[]</code> の中身として使って(= indexing)、配列の一部分を切り出す(= slicing)のを当面の目標に据えたいそうです。</p>
+<p>例えば他の用途として、「Range パターン」、要するに、パターン マッチングのパターンの種類として以下のような書き方を認めたいという話もありますが、これはindexingの「次の段階」として考えたい様子。</p>
+<pre><code class="language-csharp"><span class="keyword">switch</span> (n)
+{
+    <span class="keyword">case</span> <span class="number">1</span>..<span class="number">3</span>:
+    <span class="keyword">case</span> <span class="number">5</span>..<span class="number">8</span>:
+        <span class="comment">// ...</span>
+}</code></pre>
+<p>「次の段階」としては、おそらく「ユーザー定義の Range 演算子」を認めて、任意の型に対して <code>..</code> なりなんなりの Range を作れるようにすることになると思います。
+しかし、まずは indexing を中心として構文を検討していきたいとのこと。</p>
+<h2 id="inclusiveexclusive">inclusive/exclusive</h2>
+<p>先ほど「<code>1..3</code>で1～3の範囲を表す」と言いましたが、1点不明瞭なまま説明を端折った点があります。
+両端の数字、この例の場合だと1と3は範囲に含むのか(inclusive)、含まないのか(exclusive)です。</p>
+<p>数学だとこれらを明確に区別する記法があったりします。(a, b)みたいに丸括弧を使うとexclusive、[a, b]みたいに四角括弧を使うとinclusive。
+組み合わせもあって、(a, b]ならaは含まずbは含む、[a, b)ならaは含んでbは含まない、となります。</p>
+<p><img src="/assets/media/1161/mathranges.png" alt="inclusive/exclusive" /></p>
+<p>整数だけだと、「1～3 (3は含まない)」と「1～2 (2を含む)」みたいに、±1すれば同じ意味のRangeを作れます。
+しかし、将来、ユーザー定義 Range を認めたいわけで、浮動小数点数とかのことも考えないといけません。
+浮動小数点数だと「1～3 (3は含まない)」と「1～2 (2を含む)」の意味が全然違うものになります。</p>
+<p>他のプログラミング言語だと、<code>..&lt;</code>なら含まない、<code>..=</code>なら含む、見たいに、何らかの弁別のための記号を用意していたりします。
+毎度<code>..&lt;</code>とか書くのも面倒なので、「よく使う方」と思うものを単に<code>..</code>と書いて、そうでないものに<code>..=</code>みたいな3文字の記号を割り当てたりもします。</p>
+<p>あと、気を付けないといけないのが、言語構文的にinclusive/exclusiveの両方を用意したとして、内部表現はどうすべきか。
+例えば、「どちらの構文で書くにしても、内部的には最小値をinclusive、最大値をexclusiveで持つ」と決めたとしましょう。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> Range
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> MinInclusive;
+    <span class="keyword">public</span> <span class="keyword">int</span> MaxExclusive;
+
+    <span class="keyword">public</span> Range(<span class="keyword">int</span> minInclusive, <span class="keyword">int</span> maxExclusive)
+    {
+        MinInclusive = minInclusive;
+        MaxExclusive = maxExclusive;
+    }
+}</code></pre>
+<pre><code class="language-csharp">構文は仮。C#がこれを採用するとは限らない
+<span class="keyword">var</span> inclusive = <span class="number">1</span>..=<span class="number">3</span>; <span class="comment">// new Range(1, 3) の意味</span>
+<span class="keyword">var</span> exclusive = <span class="number">1</span>..&lt;<span class="number">3</span>; <span class="comment">// new Range(1, 2) の意味</span></code></pre>
+<p>このとき、じゃあ、「0～<code>int</code>の最大値(inclusive)」は表せなくなります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> inclusive = <span class="number">1</span>..=<span class="keyword">int</span>.MaxValue;
+<span class="comment">// new Range(1, int.MaxValue + 1) の意味</span>
+<span class="comment">// = オーバーフローして new Range(1, int.MinValue) になる</span></code></pre>
+<p>Swift ではこの問題の対処として、inclusiveなRangesとexclusiveなRangesを別の型にしたんでしたっけ。それも後からの、破壊的変更で。</p>
+<h3 id="indexing">indexing 用途に絞って</h3>
+<p>何にしても、とりあえず、用途は広く考えるほどはまりどころは増えます。
+C# チームが「まずは indexing 用途に絞って検討したい」としているのもそのためです。
+では、その indexing 用途だとどうか。</p>
+<p>まあ、この用途だと大半は「最小値がinclusive、最大値がexclusive」です。</p>
+<pre><code class="language-csharp"><span class="comment">// 配列の列挙でよく書くのは &lt; Length</span>
+<span class="comment">// 要するに最大値は exclusive</span>
+<span class="comment">// inclusive だと Length - 1 になってちょっと面倒</span>
+<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; array.Length; i++)
+{
+}
+
+<span class="keyword">var</span> r = <span class="keyword">new</span> Random();
+r.Next(<span class="number">0</span>, <span class="number">100</span>); <span class="comment">// こう書いた場合 100 は含まない</span>
+
+<span class="comment">// この 100 も exclusive</span>
+Parallel.For(<span class="number">0</span>, <span class="number">100</span>, i =&gt;
+{
+});</code></pre>
+<p>なので、おそらく、C# で単に<code>a..b</code>と書くと、「a～b ただしaは含んでbは含まない」になると思われます。
+最大値もinclusiveな方は、例えば<code>..:</code>とか<code>.:</code>が使えるかもしれません。</p>
+<p>ちなみに、indexing 用途であれば、「負のインデックス」は考えないでいいかもしれません。
+そうなると、例えば先ほど言った「inclusiveかexclusiveかを型を変えるなどして弁別できないといけない」とか、
+後述する unbounded や starting/length などの表現も、1つの型で、負数の領域をフラグ的に使って弁別するとかできるかもしれません
+(別途フラグ用のフィールドを持たないでいいので、構造体がコンパクトになるというメリットあり)。</p>
+<h3 id="section">: (コロン)の利用</h3>
+<p><code>.:</code> みたいなのを使う上で、<code>.</code>も<code>:</code>も別の文法と混ざりやすくて、コンパイラーが区別できる構文が限られたりします。</p>
+<ul>
+<li><code>.</code> → <code>.1</code> みたいな書き方で <code>0.1</code> を表せる</li>
+<li><code>:</code> → 条件演算子 <code>?:</code>、名前付き引数 <code>引数名: 値</code>、<a href="/study/csharp/start/st_string/#multi-line">文字列補完</a>の書式 <code>{値:書式}</code></li>
+</ul>
+<p>例えば <code>flag ? 1:.2:.3</code>とかは、<code>flag ? (1:.2) : (.3)</code> と <code>flag ? (1) : (.2:.3)</code> で不明瞭になったりします。
+<code>.:</code> の 方は行けそうなんですが、<code>:.</code> がダメそうという。
+同様の理由で、<code>.&lt;</code>は行けても <code>&gt;.</code> はダメそう。</p>
+<p>この辺り、Swift の「単項演算子は <code>+x</code> みたいに演算子と変数が密着してないとダメ」「2項演算子は <code>x + y</code> みたいに演算子と変数の間にスペースが必須」みたいな文法は結構良い割り切りだったかもしれないです。</p>
+<p>他に、C# は<code>::</code>っていう記号も既存の文法で使っちゃってるんですが、<a href="/study/csharp/structured/sp_namespace/#extern">外部エイリアス</a>っていうめったに使わない機能です。
+これの両辺は今のところ名前空間しか出てこないはずなので、Rangesとはセマンティック的に弁別できそうとのこと。</p>
+<h2 id="startinglength">starting/length</h2>
+<p>配列などの一部分を切り出すとき、両端を指定して切り出す他に、「a番目の要素(starting index)からb要素(length)切り出す」という方法も考えられます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> sub = <span class="string">&quot;abcdefghijklmn&quot;</span>.Substring(<span class="number">2</span>, <span class="number">4</span>); <span class="comment">// 2番目から4文字 = cdef</span>
+
+<span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">10</span>];
+Stream s = File.OpenRead(<span class="string">&quot;a.txt&quot;</span>);
+s.Read(buffer, <span class="number">2</span>, <span class="number">4</span>); <span class="comment">// buffer の2番目から4バイトに書き込み</span></code></pre>
+<p>ということで、min/max 版の Range の他に、starting/length 版の Range も欲しいという話になります。
+C# チームが例に挙げたのだと以下のような構文がありました。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> r1 = <span class="number">2</span>..<span class="number">4</span>; <span class="comment">// min/max (exlusive) = 2, 3 の意味</span>
+<span class="keyword">var</span> r2 = <span class="number">2</span>..+<span class="number">4</span>; <span class="comment">// stating/length = 2, 3, 4, 5 の意味</span></code></pre>
+<p>これだと、ユーザー定義の<code>..</code>演算子を認めたときに、「<code>2</code>と<code>4</code>に対する<code>..</code>」と「<code>2</code>と<code>+4</code>に対する<code>..</code>」で意味が違うってことになるのでかなり気持ち悪い構文になりますが…
+まあ、何にしても、何らかの構文は求められています。</p>
+<h2 id="range">空 Range</h2>
+<p>長さ0の Range の扱いはどうあるべきかという話も。</p>
+<p>例えば、Range と似たような話で、LINQ の <code>.Skip(a).Take(b)</code> を考えてみます。
+「a 番目から長さ b」という意味では前節の starting/length 版の Range と似たようなものになります。
+これで、長さ0のシーケンスを2つ比較すると、常に一致扱いになります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> array = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }; <span class="comment">// 値は何でも</span>
+
+<span class="comment">// 開始地点は違うけども、長さ 0 のシーケンスを作る</span>
+<span class="comment">// それを比較すると、開始地点によらず常に一致扱い</span>
+<span class="keyword">var</span> e = Enumerable.SequenceEqual(
+    array.Skip(<span class="number">1</span>).Take(<span class="number">0</span>),
+    array.Skip(<span class="number">2</span>).Take(<span class="number">0</span>));</code></pre>
+<p>であれば、<code>1..+0</code>と<code>2..+0</code>は同じと思うべきなのかどうか。
+これに対しては、一応以下のように、開始インデックスの範囲チェックは掛かるべきなので、別扱いすべきだろうとのことです。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> array = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }; <span class="comment">// 値は何でも</span>
+
+<span class="keyword">var</span> r1 = array[<span class="number">1</span>..<span class="number">0</span>]; <span class="comment">// OK</span>
+<span class="keyword">var</span> r2 = array[<span class="number">10</span>..<span class="number">0</span>]; <span class="comment">// OutOfRange</span></code></pre>
+<h2 id="boundedunbounded">bounded/unbounded</h2>
+<p>indexing 用途を考えた場合、具体的な数値を伴った<code>a..b</code>以外に、以下のようなものが欲しくなったりします。</p>
+<ul>
+<li><code>..a</code> → 最初から a 番目まで</li>
+<li><code>a..</code> → a 番目から最後まで</li>
+<li><code>..</code> → 最初から最後まで</li>
+</ul>
+<p>端の値が決まっている(bounded: 有界)か、決まっていない(unbounded)か。
+例えば、行列とかテンソルとかのデータ構造から「1次元目は全て、2次元目は1～3行目を切り出したい」というとき、
+<code>matrix[.., 1..3]</code> というような書き方が考えられます。</p>
+<h2 id="n">末尾から n 番目</h2>
+<p>indexing用途で他によくあるのが、「末尾から n 番目」、「配列長 - n 個」の類です。これに対しても、仮に、以下のような構文を挙げています。</p>
+<ul>
+<li>案1: <code>-n</code>みたいにマイナスを付けて「末尾から n 番目」を表す</li>
+<li>案2: <code>^n</code>みたいに、インデックス専用の新演算子を用意して「末尾から n 番目」を表す</li>
+<li><code>+^n</code> みたいに、さらに <code>+</code> を付けると「配列長 - n 個」の意味</li>
+</ul>
+<p>例えば、「最初と最後の1要素ずつ削る」みたいなことをしたければ<code>array[1..-1]</code>でどうか、と言うことになります。</p>
+<h2 id="index">Index 型</h2>
+<p>前節で<code>^n</code>みたいな「インデックス用演算子」を考えたわけですが、であれば、Range 型(両端を持つ)だけじゃなくて、いっそ Index 型(1要素だけを指すためのインデックス)もあってもいいのではないかという話になります。</p>
+<p>例えば、<code>array[^1]</code>で、末尾から1番目、すなわち<code>array[array.Length - 1]</code>を表そうということです。
+そして、ここまで話してきた「indexing 用途の Range 型」はあくまで、「Index 型の2つの値に対して <code>..</code> 演算子を適用したもの」ということになります。</p>
+<h2 id="natural-type">natural type</h2>
+<p><code>1..3</code>とか書いた時、これの「自然な型」は考えるべきかどうか。</p>
+<p>例えば、C#にはいくつか、「左辺の型によって意味が変わる構文」というものがいくつかあります。</p>
+<pre><code class="language-csharp"><span class="comment">// ラムダ式: デリゲートと式ツリー</span>
+Func&lt;<span class="keyword">int</span>, <span class="keyword">bool</span>&gt; f = x =&gt; x &gt; <span class="number">0</span>;
+Predicate&lt;<span class="keyword">int</span>&gt; p = x =&gt; x &gt; <span class="number">0</span>;  <span class="comment">// シグネチャが同じでも Func とは別の型</span>
+Expression&lt;Func&lt;<span class="keyword">int</span>, <span class="keyword">bool</span>&gt;&gt; ex = x =&gt; x &gt; <span class="number">0</span>;
+
+<span class="comment">// 文字列補完: string と FormattableString</span>
+<span class="keyword">int</span> a = <span class="number">1</span>, b = <span class="number">2</span>;
+<span class="keyword">string</span> s = $<span class="string">&quot;a: {a}, b: {b}&quot;</span>;
+FormattableString fs = $<span class="string">&quot;a: {a}, b: {b}&quot;</span>;</code></pre>
+<p>前節で言ったように、indexing用途の Range の場合は、Index 型の組み合わせだと考えた方がいいかもしれません。
+とはいえ、<code>(Index)1..(Index)3</code>みたいな書き方はしたくないでしょう。
+ラムダ式のように、左辺から決定するのもありかもしれません。</p>
+<pre><code class="language-csharp">Range indexingRange = <span class="number">1</span>..<span class="number">3</span>; <span class="comment">// indexing用</span>
+IntRange intRange = <span class="number">1</span>..<span class="number">3</span>; <span class="comment">// 「末尾から」とかみたいな妙な仕組みを持ってない単なる整数の範囲</span></code></pre>
+<p>とはいえ、ラムダ式に対してよくある不満として、<code>var</code>やジェネリクスでの型推論が効かないという問題もあります。</p>
+<pre><code class="language-csharp"><span class="comment">// エラー。ラムダ式は左辺の型がないと型が決まらない</span>
+<span class="keyword">var</span> f = x =&gt; x &gt; <span class="number">0</span>;
+
+<span class="comment">// こっちはOK。特に指定がない場合、自動的に string 扱い</span>
+<span class="keyword">var</span> s = $<span class="string">&quot;a: {a}, b: {b}&quot;</span>;
+
+<span class="comment">// Range はどうあるべき？暗黙的に indexing 用の Range 型？</span>
+<span class="keyword">var</span> r = <span class="number">1</span>..<span class="number">3</span>;</code></pre>
+<p>ということで、Range はどうあるべきでしょう。
+ラムダ式の例を見ての通り、自動的に特定の「<code>Range</code> 型」に推論される(<code>1..3</code> にとって自然な型は<code>Range</code>型であるとする)方が使い勝手はいいです。
+一方、それをやってしまうと、その特定の <code>Range</code>型に C# が依存してしまうことになります。</p>
+<h2 id="section-1">まとめ</h2>
+<p>「a～bまでの範囲」みたいなのを表すRange型は、結構いろんな言語にあります。
+なのでそんなに迷うものでもないかと思ったら、案外検討事項がたくさん出ています。</p>
+<ul>
+<li>inclusive/exclusive 問題</li>
+<li>unbound な Range</li>
+<li>max/min 版と starting/length 版</li>
+<li>空 Range の扱い</li>
+<li>「末尾から」</li>
+<li>Index 型</li>
+<li>演算子を何にするか(特に inclusive/exclusive の弁別のために複数の記号が必要)</li>
+<li>ある特定の <code>Range</code>型を「自然な型」として採用すべきか</li>
+</ul>
+<p>今のところは indexing 用途に絞って、<code>a..b</code> と書いて「a要素目(inclusive)からb要素目(exclusive)まで」の意味で使うというような構文になる可能性がたかいです。
+将来的には任意の用途・任意の型に対するユーザー定義 Range が提供される予定です。</p>
+<p>現状、C# 8.0での実装を目標にしているみたいですが、
+検討が始まったの割と最近ですし、この通りの検討項目の多さなので、もしかするともっと時間が掛かるかもしれません。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2018/3/">3&#x6708;</a></li><li><a href="/blog/2018/3/upload-cszip/">cszip&#x3001;nuget.org &#x306B;&#x4E0A;&#x3052;&#x307E;&#x3057;&#x305F;</a></li><li><a href="/blog/2018/3/vs15_6/">Visual Studio 15.6 &#x30EA;&#x30EA;&#x30FC;&#x30B9;</a></li><li><a href="/blog/2018/3/jitoptimization2_1/">.NET Core 2.1 &#x306E; JIT &#x6700;&#x9069;&#x5316;&#x306E;&#x8A71;</a></li><li><a href="/blog/2018/3/pickuproslyn0321/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 3/21: Design Notes&#x4E00;&#x6589;&#x30A2;&#x30C3;&#x30D7;&#x30ED;&#x30FC;&#x30C9;&#x796D;&#x308A;</a></li><li><a href="/blog/2018/3/pickuproslyn0323/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 3/23: no-allocation&#x975E;&#x540C;&#x671F;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x3001;&#x6700;&#x8FD1;&#x306E; Utf8String</a></li><li><a href="/blog/2018/3/pickuproslyn0331/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 3/31: C# 7.3</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

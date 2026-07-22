@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Visual Studio &#x306E; .NET Core &#x5316;&#x307E;&#x3060;&#x30FC;&#xFF1F; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2022/11/vsnetfx/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2022-11-27T21:56:06">2022-11-27</time></span><span>更新: <time datetime="2022-11-27T21:56:06">2022-11-27</time></span></div><h1 id="visual-studio.net-core">Visual Studio の .NET Core 化まだー？</h1>
+<p><a href="https://www.youtube.com/@ufcppdotnet">C# 配信</a>でちょくちょく出てくる話題の1つに</p>
+<p>「Visual Studio (for Windows)はいまだに .NET Framework だから」</p>
+<p>というものがあります。
+もちろん、「.NET Core 化はよ」みたいな文脈です。</p>
+<p>Visual Studio は .NET 製アプリの中でも大規模なものの1つなわけで、ドッグフーディング的な意味で早く .NET Core 化してほしいというのもありますし。</p>
+<p>.NET Framework → .NET 5 → .NET 6 → .NET 7 と、毎度2・3割は速くなってるというベンチマークがあるわけで合計すると2倍以上速いかもしれず、
+普通にパフォーマンス上の理由でも早く .NET Core 系になってほしかったりもします。</p>
+<p>そしてもう1個、
+実は <em>.NET Framework の方は Unicode 8.0 で止まっている</em>という話があったり。</p>
+<h2 id="c-lexerparser.net">C# の lexer/parser は .NET ランタイム依存</h2>
+<p>C# では、空白文字とか識別子に使える文字とかの定義に Unicode の文字カテゴリーを使っています。</p>
+<ul>
+<li>言語仕様: 6 Lexical structure / <a href="https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/lexical-structure#643-identifiers">6.4.3 Identifiers</a></li>
+<li>うちのサイト内の解説: <a href="/study/csharp/start/misc_identifier/">識別子名に使える文字</a></li>
+</ul>
+<p>そして、<a href="https://github.com/dotnet/roslyn">C# コンパイラー自身が C# 製</a>になって以来、
+カテゴリー判定には普通に .NET の <a href="https://learn.microsoft.com/ja-jp/dotnet/api/system.char.getunicodecategory"><code>GetUnicodeCategory</code></a> を使っています。</p>
+<p>そして、
+「Visual Studio は .NET Framework 動作」
+と「.NET Framework は Unicode 8.0 止まり」
+のコンボで、
+Visual Studio 上でだけコンパイルできないコードが割かし簡単に書けたりします。</p>
+<h2 id="c-9.0-letter">C# 9.0 以降に追加された letter</h2>
+<p>C# で識別子に使える文字は、まあかなり端折って言うと、いわゆる letter と言われる文字です。</p>
+<p>で、Unicode の各バージョンで追加された文字は、 <a href="https://unicode.org/Public/UNIDATA/">unicode.org 内の各種データ置き場</a> の <a href="https://unicode.org/Public/UNIDATA/DerivedAge.txt">DerivedAge.txt</a> とかで調べられます。</p>
+<p>ちょっと Unicode 8.0 から 14.0 まで1文字ずつそれっぽい letter を適当に拾って…</p>
+<ul>
+<li>Unicode 8.0: ᏸ U+13F8, Cherokee Small Letter Ye</li>
+<li>Unicode 9.0: Ɪ U+A7AE, Small Captital I</li>
+<li>Unicode 10.0: ৼ U+09FC, Bengali Letter Vedic Anusvara</li>
+<li>Unicode 11.0: ՠ U+0560, Armenian Small Letter Turned Ayb</li>
+<li>Unicode 12.0: Ꞻ U+A7BA, Latin Capital Letter Glottal A</li>
+<li>Unicode 13.0: ഄ U+0D04, Malayalam Letter Vedic Anusvara</li>
+<li>Unicode 14.0: ౝ U+0C5D, Telugu Letter Nakaara Pollu</li>
+</ul>
+<p>これを、こうじゃ:</p>
+<pre><code class="language-csharp"><span class="comment">// Unicode 8.0</span>
+<span class="keyword">int</span> ᏸ = <span class="number">8</span>; <span class="comment">// U+13F8, Cherokee Small Letter Ye</span>
+
+<span class="comment">// Unicode 9.0</span>
+<span class="keyword">int</span> Ɪ = <span class="number">9</span>; <span class="comment">// U+A7AE, Small Captital I</span>
+
+<span class="comment">// Unicode 10.0</span>
+<span class="keyword">int</span> ৼ = <span class="number">10</span>; <span class="comment">// U+09FC, Bengali Letter Vedic Anusvara</span>
+
+<span class="comment">// Unicode 11.0</span>
+<span class="keyword">int</span> ՠ = <span class="number">11</span>; <span class="comment">// U+0560, Armenian Small Letter Turned Ayb</span>
+
+<span class="comment">// Unicode 12.0</span>
+<span class="keyword">int</span> Ꞻ = <span class="number">12</span>; <span class="comment">// U+A7BA, Latin Capital Letter Glottal A</span>
+
+<span class="comment">// Unicode 13.0</span>
+<span class="keyword">int</span> ഄ = <span class="number">13</span>; <span class="comment">// U+0D04, Malayalam Letter Vedic Anusvara</span>
+
+<span class="comment">// Unicode 14.0</span>
+<span class="keyword">int</span> ౝ = <span class="number">14</span>; <span class="comment">// U+0C5D, Telugu Letter Nakaara Pollu</span>
+
+Console.WriteLine(ᏸ + Ɪ + ৼ + ՠ + Ꞻ + ഄ + ౝ);</code></pre>
+<p>(ちなみに C# コンパイラーっていまだに<a href="https://ja.wikipedia.org/wiki/Unicode#%E3%82%B5%E3%83%AD%E3%82%B2%E3%83%BC%E3%83%88%E3%83%9A%E3%82%A2">サロゲートペア</a>に対応していないので、<a href="https://ja.wikipedia.org/wiki/%E5%9F%BA%E6%9C%AC%E5%A4%9A%E8%A8%80%E8%AA%9E%E9%9D%A2">BMP</a> 内で当該文字を探さないといけないんですが。
+見ての通り、最近でも BMP への文字追加が意外とたくさんあります。)</p>
+<p>これをエディターで開いてみましょう。</p>
+<p><img src="/assets/media/1213/uc9ident.png" alt="Visual Studio for Windows (左)と VS Code (右)" /></p>
+<p>左が Visual Studio for Windows、右が VS Code。
+.NET Framework が Unicode 8.0 で止まっている証拠の1つとなります。</p>
+<p>ちなみに、 .NET SDK のバージョンによってもどこまでコンパイルできるか変わるはずです。
+確か、 .NET 6 は Unicode 13.0 なので、 ౝ (U+0C5D、Unicode 14 での追加)はコンパイルできないと思います。</p>
+<h2 id="visual-studio">おまけ: 対 Visual Studio 専用ホモグラフ攻撃</h2>
+<p>ほんとたまたまで、
+「DerivedAge.txt を眺めてて各バージョン最初に目に入った letter っぽい文字」
+を選んだだけなんですが…</p>
+<p><em>Ɪ と ՠ の2文字、ASCII 文字と似てて<a href="https://ja.wikipedia.org/wiki/%E3%83%9B%E3%83%A2%E3%82%B0%E3%83%A9%E3%83%95%E6%94%BB%E6%92%83">ホモグラフ攻撃</a>できそうじゃない…</em></p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Ɪՠage { }</code></pre>
+<p>この <code>Ɪՠage</code> クラス、最初の2文字が先ほどの Ɪ (U+A7AE)と ՠ (U+0560)です。</p>
+<p>これ、たぶん、CI とかも通っちゃうんですよね。
+これがコンパイルできないのは本当に Visual Studio for Windows だけ…</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2022/11/">11&#x6708;</a></li><li><a href="/blog/2022/11/covariantarrayincident/">&#x5171;&#x5909;&#x914D;&#x5217;&#x4E8B;&#x6545;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x7DDA;&#x7A4D;&#x5206; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/math/vector_analysis/lineint/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">線積分</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="lineint"></a>線積分とは</h2>
+<figure>
+<p><a href="/assets/media/ufcpp2000/math/lineint1.png"><img src="/assets/media/ufcpp2000/math/lineint1.png" alt="線積分" /></a></p>
+<figcaption>線積分</figcaption>
+</figure>
+<p>ある経路<span class="math">C</span>上で定義されるスカラー場<span class="math">F</span>に対し、</p>
+<div class="math">
+        <em>
+          <span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">C</td></tr></table>F <span class="normal">d</span>l
+        </em>
+      </div>
+を<span class="math">F</span>の<span class="math">C</span>上での<strong id="lineint" class="keyword">線積分</strong>といいます。
+ここで、<span class="math">
+        <span class="normal">d</span>l
+      </span>は<span class="math">C</span>上の微小線素です(線素を<span class="math">
+        <span class="normal">d</span>s
+      </span>と書く人も多いです(stringのs？))。
+経路<span class="math">C</span>が閉路の場合、
+<div class="math">
+      <span class="ointegral">∮</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">C</td></tr></table>F <span class="normal">d</span>l
+    </div>
+と書きます。
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="vector"></a>ベクトル場の線積分</h2>
+<p>ベクトル場<span class="math">
+<span class="vector">F</span>
+</span>を考えます。
+経路<span class="math">C</span>の単位接線ベクトルを<span class="math">
+<span class="vector">t</span>
+</span>とすると
+<span class="math">
+<span class="vector">F</span>・<span class="vector">t</span>
+</span>はスカラー場となります。
+これを<span class="math">F</span>とおいて線積分すると、</p>
+<div class="math">
+      <span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">C</td></tr></table>F <span class="normal">d</span>l = <span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">C</td></tr></table><span class="vector">F</span>・<span class="vector">t</span><span class="normal">d</span>l
+    </div>
+となります。
+ここで、<span class="math">
+        <span class="normal">d</span><span class="vector">l</span> = <span class="vector">t</span><span class="normal">d</span>l
+      </span>とおくと上の式は
+<div class="math">
+      <em>
+        <span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">C</td></tr></table>
+        <span class="vector">F</span>・<span class="normal">d</span><span class="vector">l</span>
+      </em>
+    </div>
+となります。
+この<span class="math">
+        <span class="normal">d</span><span class="vector">l</span>
+      </span>を線素ベクトルといいます。
+<p>物理学ではこのようにベクトル場の接線方向成分のみが問題となる場合が多いので、
+<span class="math">
+<span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">C</td></tr></table><span class="vector">F</span>・<span class="normal">d</span><span class="vector">l</span>
+</span>という形の式を、
+単にベクトル場<span class="math">
+<span class="vector">F</span>
+</span>の曲線<span class="math">C</span>上での線積分ということもあります。</p>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="cartesian"></a>線積分の直交座標系での表現</h2>
+<span class="math">
+        <span class="normal">d</span><span class="vector">l</span>
+      </span>は接線方向を向き、微小線分の長さと同じ絶対値を持つベクトルですから、
+直行座標を用いてあらわすと
+<div class="math">
+      <span class="normal">d</span><span class="vector">l</span> = <span class="paren" style="font-size:em;">(</span>
+        <span class="normal">d</span>x,<span class="normal">d</span>y,<span class="normal">d</span>z
+      <span class="paren" style="font-size:em;">)</span>
+    </div>
+となります。
+よって、<span class="math">
+        <span class="vector">F</span>=<span class="paren" style="font-size:em;">(</span>
+          F<sub>x</sub>,F<sub>y</sub>,F<sub>z</sub>
+        <span class="paren" style="font-size:em;">)</span>
+      </span>とおくと、
+線積分は
+<div class="math">
+      <em>
+        <span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">C</td></tr></table>
+        <span class="vector">F</span>・<span class="normal">d</span><span class="vector">l</span> = <span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">C</td></tr></table><span class="paren" style="font-size:em;">(</span>
+          F<sub>x</sub><span class="normal">d</span>x+F<sub>y</sub><span class="normal">d</span>y+F<sub>z</sub><span class="normal">d</span>z
+        <span class="paren" style="font-size:em;">)</span>
+      </em>
+    </div>
+となります。
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="root"></a>積分経路</h2>
+<p>線積分は一般には始点<span class="math">P</span>と終点<span class="math">Q</span>が同じでも経路が異なればまったく異なる値となります。
+しかし、詳しくは「<a href="/study/math/vector_analysis/rotation/#rot">回転とは</a>」で説明しますが、<em>
+<span class="math">
+<span class="vector">F</span>
+</span>が<span class="math">
+<span class="vector">∇</span>×<span class="vector">F</span> = 0
+</span>を満たすときには線積分の値は始点と終点が同じならば経路によらず常に一定の値を持ちます。
+</em>
+このとき、</p>
+<div class="math">
+      φ(Q) − φ(P) = <span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">C</td></tr></table><span class="vector">F</span>・<span class="normal">d</span><span class="vector">l</span>
+    </div>
+という関係を満たすスカラー場<span class="math">φ</span>が存在します。
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/math/vector_analysis/">&#x30D9;&#x30AF;&#x30C8;&#x30EB;&#x89E3;&#x6790;</a></li><li><a href="/study/math/vector_analysis/v_field/">&#x5834;</a></li><li><a href="/study/math/vector_analysis/surfaceint/">&#x9762;&#x7A4D;&#x5206;</a></li><li><a href="/study/math/vector_analysis/volumeint/">&#x4F53;&#x7A4D;&#x7A4D;&#x5206;</a></li><li><a href="/study/math/vector_analysis/gradient/">&#x52FE;&#x914D;</a></li><li><a href="/study/math/vector_analysis/divergence/">&#x767A;&#x6563;</a></li><li><a href="/study/math/vector_analysis/rotation/">&#x56DE;&#x8EE2;</a></li><li><a href="/study/math/vector_analysis/conservation/">&#x4FDD;&#x5B58;&#x5834;&#x3068;&#x30BD;&#x30EC;&#x30CE;&#x30A4;&#x30C0;&#x30EB;&#x5834;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

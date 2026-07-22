@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/27: What&#x2019;s New in C# 7.0 | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/8/rickuproslyn0827/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-08-27T08:16:06">2016-08-27</time></span><span>更新: <time datetime="2016-08-27T08:31:14">2016-08-27</time></span></div><h1 id="roslyn-827-whats-new-in-c-7.0">ピックアップRoslyn 8/27: What’s New in C# 7.0</h1>
+<h2 id="whats-new-in-c-7.0">ブログ: What’s New in C# 7.0</h2>
+<p>Roslynリポジトリ内の話じゃないんですけど、Preview 4でのC# 7の動きについて、Madsがブログ書いてました。</p>
+<ul>
+<li><a href="https://blogs.msdn.microsoft.com/dotnet/2016/08/24/whats-new-in-csharp-7-0/">What’s New in C# 7.0</a></li>
+</ul>
+<h3 id="section">7.0</h3>
+<p>そういや、この文章だと「C# 7.0」。
+<a href="/blog/2016/6/versionnumber/">昔ちょっとブログ</a>書きましたけど、最近って小数点以下のバージョン付けないんですけど。
+C# 7はずっと「7」ばっかりみてたけど、久々に「7.0」表記。
+この辺り、最近、C#チーム内でも統一してないなぁ…</p>
+<h3 id="c-7.0">C# 7.0の内容</h3>
+<p><a href="https://blogs.msdn.microsoft.com/dotnet/2016/08/24/whats-new-in-csharp-7-0/">このブログの内容</a>的には、
+先日僕もブログで書いたのとそんなに差がないんで詳細は省略。</p>
+<ul>
+<li><a href="/blog/2016/8/vs15p4/">Visual Studio &quot;15&quot; Preview 4</a></li>
+</ul>
+<p>差分というか、僕が書いた方で漏れてるのは、以下の内容:</p>
+<h4 id="out-varwildcard">out varのwildcard</h4>
+<p>out varと一緒に、<code>*</code>、要するに、受け取る必要のない out 引数を無視するための「wildcard」も入れるかもという話もあるみたい。</p>
+<p><code>*</code>は、 元々、パターン マッチング構文の1機能(パターンの1種)です。
+で、out varもパターン マッチングと同列で検討されてた機能です。</p>
+<p>今、C# 7で、out varだけは先に入れる方向で実装が進んでいるわけですが、どこまで一緒に前倒すかという問題。
+out varに対する<code>*</code>はC# 7で入れるかどうかまだ迷ってるっぽいです(C# 7時点で入らないとしても、たぶんパターン マッチングとは同時に入る)。</p>
+<h4 id="more-expression-bodied-members">More expression bodied members</h4>
+<p>今、メソッドとget-onlyなプロパティに限り、式が1つだけの実装に <code>=&gt;</code> を使えるわけですが。
+それを、コンストラクター、デストラクター、getとset両方あるプロパティに対しても使えるようにするやつ、C# 7で入りそうらしい。</p>
+<p>この機能、完全にコミュニティ主体の実装なんですよね。
+<a href="/blog/2016/3/pickuproslyn0318/">3月にブログ</a>書いてますけど、この機能はずっと「需要がある程度あるのはわかるけど、メリット小さめだし後回しになってる」みたいな状態でおいておかれてたものなんですけど、それに対して、「実装したよ」ってプルリクエスト送ってきた人がいて。
+C#チームが「そのプルリクを取り込むことにした」って書き込みはしてたんですが、その後音沙汰なしでした。
+久々に見たと思ったら、C# 7のタイミングで取り込むことにしたんですねぇ。</p>
+<h4 id="throw-expressions">Throw expressions</h4>
+<p>これ、結局どうなるんだろ…</p>
+<p>「<a href="https://github.com/dotnet/roslyn/blob/master/docs/Language%20Feature%20Status.md">Language Feature Status</a>」からは、むしろ、つい最近「7じゃなくて7の次で」降格したところなんですけど。
+どっちが正しいんだか…</p>
+<h2 id="msdn">MSDNブログ</h2>
+<p>そういや、気が付いたら、MSDNブログから「C#チーム ブログ」「VBチーム ブログ」は消えてるんですよね。
+<a href="https://github.com/dotnet/roslyn">Roslynのgithubリポジトリ</a>に一本化して、もうブログは書かないのかと思ってたら。</p>
+<p><a href="https://blogs.msdn.microsoft.com/dotnet/">.NET</a>配下でブログ書きますか。</p>
+<h2 id="section-1">コメント欄</h2>
+<p>で、なんだかんだ言って、ブログはコメントたくさんつきますね…</p>
+<p>いくつか、気になったの拾っておきます。</p>
+<h3 id="contract">contract</h3>
+<p>「design by contract」については何もないの？とのコメントが。</p>
+<p>返信ついてて、「今のタイミングでは何もしない。contractはいまいち煩雑で複雑になりがちだし、そんなに大々的な検討もしてない。contractの用途的に、9割がたはnullチェックに関するものだけど、それは型システム指向で『非null参照型』を次のメジャー リリース向けに検討してる。」</p>
+<h3 id="vb">VB</h3>
+<p>VBは？沈みゆく船だからC#に移った方がいい？</p>
+<p>に対して、他の人から「頼む、ほんとお願いだからVBの質問しないで。死なせてあげて」とかついてる。</p>
+<p>さらにそれに対して、VBのPMの人が「頼む、ほんとお願いだからVBの質問し続けて。フィードバックもらえることがほんとものすごい重要だから」とか返信してるという。</p>
+<p>どこの国でも似たような状態ですよねぇ。
+VBが死ぬときは、今のVBユーザーが絶滅したときであって、VB使ってない外野がとやかく言うなよっていつも思うんですが。</p>
+<h3 id="wildcard-null">wildcard? <code>*</code>なの？nullとかでいいんじゃない？</h3>
+<p><code>*</code>とかきもくない？↓みたいな、<code>null</code>使う文法の方がよくない？とか言ってる人が。</p>
+<pre><code class="language-csharp">p.GetCoordinates(<span class="keyword">out</span> <span class="keyword">int</span> x, <span class="keyword">null</span>); <span class="comment">// Ignore return</span>
+p.GetCoordinates(<span class="keyword">out</span> <span class="keyword">int</span> x, <span class="keyword">out</span> <span class="keyword">null</span>); <span class="comment">// Alternative ignore return</span></code></pre>
+<p>何この、見た印象ぬるぽ起こしそうな構文…
+値を受け取るべき場所に<code>null</code>書くとかちょっと…</p>
+<p>そして飛び火して、本題からそれて「<code>null</code>はこの世から消えるべき」主張をこのコメント内でし始める人まで現れる始末。</p>
+<h3 id="out-var">タプルとout var両方やるの？</h3>
+<p>タプルもout varも、多値戻り値を返すために使う(ことが多い)構文なわけですが、
+なので当然「どっち使えばいいの？なんで両方やってるの？」という質問も。</p>
+<p>それに対する答え:</p>
+<ul>
+<li>だいたいの場合においてはタプルを使うといいよ</li>
+<li>ただし、以下の場合においてout引数が残る余地がある
+<ul>
+<li>複数のオーバーロードを用意したい場合(タプルというか、戻り値だとオーバーロードできない)</li>
+<li>Tryパターンなんかだと、単一のboolを返す意味がある。ifステートメントの条件式とかで使えるように</li>
+</ul>
+</li>
+</ul>
+<p>ちなみに、別のコメントに対する返答で、今このタイミングでout引数に対する拡張を入れる意味について「パターン マッチングとout varには相乗効果がある」との回答あり(要するに、パターン マッチングのついで。パターン マッチングをやるならこちらも)。</p>
+<h3 id="c">C#がどんどん汚染されてない？</h3>
+<p>だいたいの人は「便利！待ち遠しい！」って言ってる中、まあ、毎度必ずいるわけですが「ちょっとトリッキーすぎない？泥沼にはまりそうで嫌だわ」って言い出す人が。
+C# 7に限らずこれまでも、C#に限らずありとあらゆる言語でこういう意見絶対出てくるわけですが。</p>
+<p>それに対する Mads の回答:</p>
+<p>あなたは言語の進化のある種の核心をついてる。我々は機能を足せるけど、絶対に消せない。C#の進化においてもこのことが重くのしかかってる。
+Anders (元祖、C#/.NETの父)の発言は有名だけど、「あらゆる機能はマイナス100ポイントから始めろ」と言ってる。
+全ての機能について、我々は誰が喜ぶか、今現在だけでなく、今から10年後のことも考えるようにしている。
+今現在有用かどうかだけでなく、永久に言語の一部分を占め続けるということを考えるようにしている。</p>
+<p>我々はだいたいは正しいが、常に正しいわけではない。わかるだろうが、未来というのは予測が最も難しいものの1つだ。
+このことは、言語設計のアプローチに対する異なる側面をもたらす。
+我々は大胆でなければならない。
+我々は遠い未来への責任に追い詰められてはいけない。
+なぜなら、さもなくばその未来も得られないから。
+C#は今この時「最高のプログラミング言語」の1つでなければならない。
+さもなくば、明日にはそうではなくなってしまう。</p>
+<p>なので、我々は少々アグレッシブに機能を追加する。
+開発者にとって最も価値ある機能を追加しようと試みる。
+さらに、その機能を追加するにあたって、言語の複雑性が増すという観点から不利益が最小になるよう試みる。
+たとえばそう、パターン マッチングは新しい機能になるわけだが、しかし、既存の言語要素、例えば<code>is</code>や<code>switch</code>、既存の型の中で動くものだ。
+それは(うまくいけば)我々の過去とよく統合されている。
+同時に、いくつかのパターンを、将来の発展の余地を残しつつ、今現在の「税負担」にならないように導入している。
+それは、我々のもっともらしくあり得そうな未来とよく統合されている。</p>
+<p>信じられないかもしれないが、我々が何パターンかあり得そうな未来について、取り組む余地を確実に残せるよう、投機的な設計にどれだけ時間をついやしていることか。
+これは、我々が、新機能を追加するにあたって、この言語を長期的にわたって健康で生存力がある状態に保てるよう試みていることの一部分だ。</p>
+<p>以上で、我々がC#の長期的な進化についてどのくらい考えているか、その姿を伝える助けになれば幸いだ。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/8/">2016&#x5E74;8&#x6708;</a></li><li><a href="/blog/2016/8/pickuproslyn0805/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/5</a></li><li><a href="/blog/2016/8/pickuproslyn0806/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/6</a></li><li><a href="/blog/2016/8/pickuproslyn0810/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/10</a></li><li><a href="/blog/2016/8/pickuproslyn0816/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/16 Close&#x796D;&#x308A;</a></li><li><a href="/blog/2016/8/vs15p4/">Visual Studio &quot;15&quot; Preview 4</a></li><li><a href="/blog/2016/8/tuples/">&#x30BF;&#x30D7;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -10,67 +10,54 @@ namespace Ufcpp.SiteGenerator.Tests;
 public sealed class SiteBuilderIntegrationTests
 {
     [Fact]
-    public async Task BuildAsync_EligiblePages_WritesDeterministicSearchIndex()
+    public async Task BuildAsync_SearchPage_WritesAccessibleGoogleSiteSearchForm()
     {
         using var site = new SiteFixture();
         site.AddPage(new(
-            "01-zulu.md",
-            "Zulu Study",
-            "/study/zulu/",
-            "Article",
+            "search.md",
+            "サイト内検索",
+            "/search/",
+            "Search",
             101,
             -1,
             0,
-            "# Zulu Study"));
-        site.AddPage(new(
-            "99-alpha.md",
-            "Alpha Blog",
-            "/blog/alpha/",
-            "BlogEntry",
-            102,
-            -1,
-            0,
-            "# Alpha Blog"));
-        var firstOutput = site.GetOutputDirectory("first");
-        var secondOutput = site.GetOutputDirectory("second");
+            """
+            # サイト内検索
 
-        await site.BuildAsync(firstOutput);
-        await site.BuildAsync(secondOutput);
+            <form class="site-search-form" action="https://www.google.com/search" method="get">
+              <label for="site-search-query">検索キーワード</label>
+              <input id="site-search-query" name="q" type="search" required="required">
+              <input name="as_sitesearch" type="hidden" value="ufcpp.net">
+              <button type="submit">Google で検索</button>
+            </form>
+            """));
+        var output = site.GetOutputDirectory("search");
 
-        var firstPath = Path.Combine(firstOutput, "search-index.json");
-        var secondPath = Path.Combine(secondOutput, "search-index.json");
-        Assert.True(
-            File.Exists(firstPath),
-            $"Expected a generated search index at '{firstPath}'.");
-        Assert.True(
-            File.Exists(secondPath),
-            $"Expected a generated search index at '{secondPath}'.");
+        await site.BuildAsync(output);
 
-        var firstBytes = await File.ReadAllBytesAsync(firstPath);
-        var secondBytes = await File.ReadAllBytesAsync(secondPath);
-        Assert.Equal(firstBytes, secondBytes);
+        var document = LoadHtmlDocument(Path.Combine(output, "search", "index.html"));
+        var form = Assert.Single(document.Descendants("form"));
+        Assert.Equal("https://www.google.com/search", (string?)form.Attribute("action"));
+        Assert.Equal("get", (string?)form.Attribute("method"));
 
-        var json = Encoding.UTF8.GetString(firstBytes).TrimStart('\uFEFF');
-        using var document = JsonDocument.Parse(json);
-        var strings = EnumerateJsonStrings(document.RootElement).ToList();
-        var expectedEntries = new[]
-        {
-            (Url: "https://ufcpp.net/blog/alpha/", Title: "Alpha Blog"),
-            (Url: "https://ufcpp.net/study/zulu/", Title: "Zulu Study"),
-        };
+        var label = Assert.Single(form.Elements("label"));
+        Assert.Equal("site-search-query", (string?)label.Attribute("for"));
+        Assert.Equal("検索キーワード", label.Value);
 
-        foreach (var entry in expectedEntries)
-        {
-            Assert.Contains(entry.Url, strings);
-            Assert.Contains(entry.Title, strings);
-        }
+        var query = Assert.Single(
+            form.Descendants("input"),
+            input => (string?)input.Attribute("name") == "q");
+        Assert.Equal("site-search-query", (string?)query.Attribute("id"));
+        Assert.Equal("search", (string?)query.Attribute("type"));
+        Assert.NotNull(query.Attribute("required"));
 
-        var urlPositions = expectedEntries
-            .Select(entry => strings.IndexOf(entry.Url))
-            .ToArray();
-        Assert.Equal(
-            urlPositions.OrderBy(position => position).ToArray(),
-            urlPositions);
+        var siteRestriction = Assert.Single(
+            form.Descendants("input"),
+            input => (string?)input.Attribute("name") == "as_sitesearch");
+        Assert.Equal("hidden", (string?)siteRestriction.Attribute("type"));
+        Assert.Equal("ufcpp.net", (string?)siteRestriction.Attribute("value"));
+        Assert.Equal("Google で検索", Assert.Single(form.Elements("button")).Value);
+        Assert.False(File.Exists(Path.Combine(output, "search-index.json")));
     }
 
     [Fact]

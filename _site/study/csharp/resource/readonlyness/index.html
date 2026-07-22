@@ -1,0 +1,413 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>readonly &#x306E;&#x6CE8;&#x610F;&#x70B9; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/resource/readonlyness/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="readonly">readonly の注意点</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>「<a href="/study/csharp/start/sp_const/#readonly">定数</a>」で、読み取り専用のフィールドが作れるという話をしました。
+この時点ではまだ<a href="/study/csharp/oop/oo_class/">クラス</a>や<a href="/study/csharp/resource/rm_struct/">構造体</a>、<a href="/study/csharp/resource/oo_reference/">値型と参照型の違い</a>などについて触れていなかったので<code>readonly</code>修飾子の簡単な紹介だけに留めましたが、
+本項で改めて<code>readonly</code>について説明します。</p>
+<p>整数などの基本的な型に対して使う分には特に問題は起きないんですが、構造体やクラスなど、複合型に対して使うときには注意が必要です。</p>
+<h2 id="readonly-1"><a id="sec-generated-title-2"></a> <a id="class-readonly"></a>参照型のフィールドに対して readonly</h2>
+<p><code>readonly</code>に関して最も注意が必要な点は、<code>readonly</code>は再帰的には働かないという点です。
+<code>readonly</code>を付けたその場所だけが読み取り専用になり、参照先などについては書き換えが可能です。</p>
+<p>例えば以下のコードを見てください。<code>Program</code>クラスのフィールド<code>c</code>には<code>readonly</code>が付いていますが、
+<code>c</code>が普通に書き換え可能なクラスのフィールドなので、クラスの中身は自由に書き換えられます。</p>
+<pre><code class="language-csharp"><span class="comment">// 書き換え可能なクラス</span>
+<span class="keyword">class</span> MutableClass
+{
+    <span class="comment">// フィールドを直接公開</span>
+    <span class="keyword">public</span> <span class="keyword">int</span> X;
+
+    <span class="comment">// 書き換え可能なプロパティ</span>
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+    <span class="comment">// フィールドの値を書き換えるメソッド</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> M(<span class="keyword">int</span> value) =&gt; X = value;
+}
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">readonly</span> MutableClass c = <span class="keyword">new</span> MutableClass();
+
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// これは許されない。c は readonly なので、c 自体の書き換えはできない</span>
+        c = <span class="keyword">new</span> MutableClass();
+
+        <span class="comment">// けども、c の中身までは保証してない</span>
+        <span class="comment">// 書き換え放題</span>
+        c.X = <span class="number">1</span>;
+        c.Y = <span class="number">2</span>;
+        c.M(<span class="number">3</span>);
+    }
+}</code></pre>
+<p><img src="/assets/media/1145/mutableclass.png" alt="参照型のフィールドに対してreadonlyを付ける例" /></p>
+<p>クラスを書き換えできないように作る場合、クラス自体を書き換え不能に作りましょう。
+(クラスの方で、フィールドを<code>readonly</code>にしたり、プロパティを<a href="/study/csharp/oop/oo_property/#get-only">get-only</a>にします。)</p>
+<h2 id="readonly-2"><a id="sec-generated-title-3"></a> <a id="struct-readonly"></a>値型のフィールドに対して readonly</h2>
+<p>クラス(参照型)とは対照的に、構造体(値型)の場合はデータを直接持ちます。
+そのため、構造体のフィールドに対して<code>readonly</code>を付けると、構造体の中身も読み取り専用になります。
+ただし、メソッドの呼び出しなどを行う際、コピーが発生するという別の注意が必要です。</p>
+<p>例えば以下のように、<code>readonly</code>が付いたフィールド<code>c</code>自体に加えて、<code>c</code>のフィールドも書き換えできません。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="comment">// 書き換え可能な構造体</span>
+<span class="keyword">struct</span> MutableStruct
+{
+    <span class="comment">// フィールドを直接公開</span>
+    <span class="keyword">public</span> <span class="keyword">int</span> X;
+
+    <span class="comment">// フィールドの値を書き換えるメソッド</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> M(<span class="keyword">int</span> value) =&gt; X = value;
+}
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">readonly</span>  MutableStruct c = <span class="keyword">new</span>  MutableStruct();
+
+    <span class="keyword">static</span> <span class="keyword">void</span> Main() =&gt; Allowed();
+
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> NotAllowed()
+    {
+        <span class="comment">// これはもちろん許されない。c は readonly なので、c 自体の書き換えはできない</span>
+        c = <span class="keyword">new</span>  MutableStruct();
+
+        <span class="comment">// 構造体の場合、フィールドに関しては readonly な性質を引き継ぐ</span>
+        c.X = <span class="number">1</span>;
+    }
+
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> Allowed()
+    {
+        <span class="comment">// でも、メソッドは呼べてしまう</span>
+        c.M(<span class="number">3</span>); <span class="comment">// X を 3 で上書きしているはず？</span>
+
+        Console.WriteLine(c.X); <span class="comment">// でも、X は 0 のまま</span>
+
+        <span class="comment">//↑のコードは、実はコピーが発生している</span>
+        <span class="comment">// 以下のコードと同じ意味になる</span>
+
+        <span class="keyword">var</span> local = c;
+        local.M(<span class="number">3</span>);
+
+        Console.WriteLine(c.X); <span class="comment">// 書き換わってるのは local (コピー)の方なので、c は書き換わらない(0)</span>
+
+        Console.WriteLine(local.X); <span class="comment">// もちろんこっちは書き換わってる(3)</span>
+    }
+}</code></pre>
+<p><img src="/assets/media/1146/mutablestruct.png" alt="値型のフィールドに対してreadonlyを付ける例" /></p>
+<p>この例の後半を見ての通り、メソッドは呼べてしまいます。
+フィールド<code>X</code>は書き換えれないはずなのに、その<code>X</code>を書き換えているメソッド<code>M</code>を呼んでもエラーになりません。
+C# では、こういう場合に、<code>readonly</code>であることを保証しつつメソッドを呼び出せるように、フィールドを一度コピーしてから、そのコピーに対してメソッドを呼ぶということをしています。</p>
+<p>このコピーは、万が一に備えて防衛的にコピー(defensive copy)するものです。
+実際にコピーが必要かどうか(実際にメソッド内で書き換えをしているかどうか)に関わらず、常にコピーが発生します。
+ソースコード上は目に見えないコピーなので、<strong id="hidden-copy" class="keyword">隠れたコピー</strong>(hidden copy)と呼ばれたりもします。</p>
+<p>すなわち、コピーが発生してまずいような場合(例えば構造体のサイズが大きくてコピーにコストが掛かるとか)には、<code>readonly</code>なフィールドを使うことで問題が発生することがあります。
+この問題は、<a href="/study/csharp/resource/sp_ref/#in"><code>in</code>引数</a>などでも発生しまえます。
+後述する<a href="#readonly-struct"><code>readonly struct</code></a>や<a href="#readonly-member">readonly 関数メンバー</a>を使えばこの問題は少し緩和するので、そちらも参照してください。</p>
+<h2 id="this"><a id="sec-generated-title-4"></a> <a id="this-rewrite"></a>構造体の this 書き換え</h2>
+<p>C# の<code>readonly</code>フィールドには少し片手落ちなところがあって、実は、構造体の場合にちょっとした問題を起こせたりします。</p>
+<p>構造体のメソッドの中では<code>this</code>が「自分自身の参照」の意味なんですが、この<code>this</code>参照は書き換えできてしまいます。
+そのため、以下のように、<code>readonly</code>で一見書き換えができなさそうなフィールドを書き換えてしまうことができます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">struct</span> Point
+{
+    <span class="comment">// フィールドに readonly を付けているものの…</span>
+    <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">int</span> X;
+    <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">int</span> Y;
+
+    <span class="keyword">public</span> Point(<span class="keyword">int</span> x, <span class="keyword">int</span> y) =&gt; (X, Y) = (x, y);
+
+    <span class="comment">// this の書き換えができてしまうので、実は X, Y の書き換えが可能</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> Set(<span class="keyword">int</span> x, <span class="keyword">int</span> y)
+    {
+        <span class="comment">// X = x; Y = y; とは書けない</span>
+        <span class="comment">// でも、this 自体は書き換えられる</span>
+        <span class="keyword">this</span> = <span class="keyword">new</span> Point(x, y);
+    }
+}
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> p = <span class="keyword">new</span> Point(<span class="number">1</span>, <span class="number">2</span>);
+
+        <span class="comment">// p.X = 0; とは書けない。これはちゃんとコンパイル エラーになる</span>
+
+        <span class="comment">// でも、このメソッドは呼べるし、X, Y が書き換わる</span>
+        p.Set(<span class="number">3</span>, <span class="number">4</span>);
+
+        Console.WriteLine(p.X); <span class="comment">// 3</span>
+        Console.WriteLine(p.Y); <span class="comment">// 4</span>
+    }
+}</code></pre>
+<p>わざわざこんな紛らわしいことをしようとは思わないのでめったに問題になることはないんですが、一応は注意が必要です。
+また、この問題は、次節で説明する通り、C# 7.2で少し緩和されます。</p>
+<h2 id="readonly-struct"><a id="sec-generated-title-5"></a> <a id="readonly-struct"></a>readonly struct</h2>
+<h5 class="version version7">Ver. 7.2</h5>
+<p>C# 7.2で、構造体自体に<code>readonly</code>修飾を付けられるようになりました。
+<code>readonly</code>を付けた構造体は以下のような状態になります。</p>
+<ul>
+<li>全てのフィールドに対して <code>readonly</code> を付けなければならなくなる
+<ul>
+<li><a href="/study/csharp/oop/oo_property/#get-only">get-onlyプロパティ</a>は使えます(自動生成されるフィールドが<code>readonly</code>なので問題ない)</li>
+</ul>
+</li>
+<li><code>this</code>参照も<code>readonly</code>扱いされる</li>
+</ul>
+<p><code>this</code>が<code>readonly</code>扱いになるので、前節のような<code>this</code>書き換えの問題は起きません。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="comment">// 構造体自体に readonly を付ける</span>
+<span class="keyword">readonly</span> <span class="keyword">struct</span> Point
+{
+    <span class="comment">// フィールドには readonly が必須</span>
+    <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">int</span> X;
+    <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">int</span> Y;
+
+    <span class="keyword">public</span> Point(<span class="keyword">int</span> x, <span class="keyword">int</span> y) =&gt; (X, Y) = (x, y);
+
+    <span class="comment">// readonly を付けない場合と違って、以下のような this 書き換えも不可</span>
+    <span class="comment">//public void Set(int x, int y) =&gt; this = new Point(x, y);</span>
+}
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> p = <span class="keyword">new</span> Point(<span class="number">1</span>, <span class="number">2</span>);
+
+        <span class="comment">// p.X = 0; とは書けない。これはちゃんとコンパイル エラーになる</span>
+        <span class="comment">// p.Set(3, 4); みたいなのもダメ</span>
+
+        Console.WriteLine(p.X); <span class="comment">// 1 しかありえない</span>
+        Console.WriteLine(p.Y); <span class="comment">// 2 しかありえない</span>
+    }
+}</code></pre>
+<h3 id="readonly-struct-1"><a id="sec-generated-title-6"></a> <a id="avoid-copy"></a>readonly struct によるコピー回避</h3>
+<p><a href="#struct-readonly">前述</a>の通り、(無印の)構造体の<code>readonly</code>フィールドに対してメソッドを呼ぶと防衛的コピーが発生するという問題があります。
+これに対して、<code>readonly struct</code>であれば、このコピーを回避できます。</p>
+<p>例えば以下のように、ほぼ同じ構造・どちらも書き換え不能な構造体を作ったとして、<code>readonly struct</code>になっているかどうかでコピー発生の有無が変わります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="comment">// 作りとしては readonly を意図しているので、何も書き換えしない</span>
+<span class="comment">// でも、struct 自体には readonly が付いていない</span>
+<span class="keyword">struct</span> NoReadOnly
+{
+    <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">int</span> X;
+    <span class="keyword">public</span> <span class="keyword">void</span> M() { }
+}
+
+<span class="comment">// NoReadOnly と作りは同じ</span>
+<span class="comment">// ちゃんと readonly struct</span>
+<span class="keyword">readonly</span> <span class="keyword">struct</span> ReadOnly
+{
+    <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">int</span> X;
+    <span class="keyword">public</span> <span class="keyword">void</span> M() { }
+}
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">readonly</span> NoReadOnly nro;
+    <span class="keyword">static</span> <span class="keyword">readonly</span> ReadOnly ro;
+
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// readonly を付けなかった場合</span>
+        <span class="comment">// フィールド参照(読み取り)は問題ない</span>
+        Console.WriteLine(nro.X);
+
+        <span class="comment">// メソッド呼び出しが問題。ここでコピー発生</span>
+        <span class="comment">// (呼び出し側では、「M の中で特に何も書き換えていない」というのを知るすべがないので、防衛的にコピーが発生)</span>
+        nro.M();
+
+        <span class="comment">// readonly を付けた場合</span>
+        <span class="comment">// これなら、M をそのまま呼んでも何も書き換わらない保証があるので、コピーは起きない</span>
+        ro.M();
+    }
+
+    <span class="comment">// これも問題あり(コピー発生)</span>
+    <span class="comment">// in を付けたので readonly 扱い → M を呼ぶ際にコピー発生</span>
+    <span class="keyword">static</span> <span class="keyword">void</span> F(<span class="keyword">in</span> NoReadOnly x) =&gt; x.M();
+
+    <span class="comment">// こちらも、readonly struct であれば問題なし(コピー回避)</span>
+    <span class="keyword">static</span> <span class="keyword">void</span> F(<span class="keyword">in</span> ReadOnly x) =&gt; x.M();
+}</code></pre>
+<p>C# 7.2 以降では、書き換えを意図していない構造体に対しては<code>readonly</code>修飾を付けるのが無難でしょう。</p>
+<p>また、「フィールド直接参照なら大丈夫だけど、メソッドを(プロパティも)呼ぶとコピー発生」という性質上、
+書き換えを最初から意図している構造体の場合は、プロパティよりも、フィールドを直接<code>public</code>にしてしまう方が都合がいいことがあります。</p>
+<h2 id="readonly-3"><a id="sec-generated-title-7"></a> <a id="ref-readonly"></a>readonly参照と不変性</h2>
+<p><a href="/study/csharp/resource/sp_ref/#in"><code>in</code>引数</a>や<a href="/study/csharp/resource/sp_ref/#ref-readonly"><code>ref readonly</code></a>で、読み取り専用の参照を作れます。
+この読み取り専用参照は、「そのメソッド内で書き換えない」、「その引数・変数を通した書き換えをしない」という意思表明としては非常に有用です。
+その一方で、「外で書き換わる」、「参照元の値が書き換わる」という意味で、不変性(immutability)の保証はありません。</p>
+<p>例えば以下の例を見てください。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        _value = <span class="number">0</span>;
+        ByVal(_value); <span class="comment">// 0, 0</span>
+
+        _value = <span class="number">0</span>;
+        ByRef(_value); <span class="comment">// 0, 1</span>
+    }
+
+    <span class="comment">// 書き換えできるフィールド</span>
+    <span class="keyword">static</span> <span class="keyword">int</span> _value;
+
+    <span class="comment">// 値渡し = コピー なので、 _value 書き換えの影響は受けない</span>
+    <span class="keyword">static</span> <span class="keyword">void</span> ByVal(<span class="keyword">int</span> value)
+    {
+        Console.WriteLine(value);
+        _value++;
+        Console.WriteLine(value);
+    }
+
+    <span class="comment">// 参照渡しなので、 _value 書き換えの影響を受ける</span>
+    <span class="comment">// in (ref readonly) であっても、immutable ではない</span>
+    <span class="comment">// value を通して書き換えない保証があるだけで、別経路で書き換わることに対しては無力</span>
+    <span class="keyword">static</span> <span class="keyword">void</span> ByRef(<span class="keyword">in</span> <span class="keyword">int</span> value)
+    {
+        Console.WriteLine(value);
+        _value++;
+        Console.WriteLine(value);
+    }
+}</code></pre>
+<p>メソッドの中身としては全く同じメソッドが2つありますが、片方(<code>ByVal</code>)は値渡しで、もう片方(<code>ByRef</code>)は <code>in</code> 引数で整数値を受け取っています。
+<code>ByVal</code>では、<code>value</code>は値のコピーを受け取っているので、元の値の出どころとは無縁になっています。
+一方、<code>ByRef</code>の方では<code>value</code>自身は<code>in</code>が付いていて書き換えられませんが、その参照元になっている<code>_value</code> の方が書き換わると、<code>value</code>の値も一緒に変化します。
+書き換え不能(readonly)だからと言って、値の不変性(immutable)の保証はなく、こうして値が変化する場合があります。</p>
+<h2 id="readonly-4"><a id="sec-generated-title-8"></a> <a id="readonly-member"></a>readonly 関数メンバー</h2>
+<h5 class="version version8">Ver. 8.0</h5>
+<p>C# 8.0 で、<a href="/study/csharp/structured/st_function/#sec-function-member">関数メンバー</a>単位で「フィールドを書き換えてない」ということを保証できるようになりました。
+構造体全体を <code>readonly struct</code> にしなくても、<a href="#hidden-copy">隠れたコピー</a>問題を避けられる機会が増えます。</p>
+<p>以下のように、関数メンバーに <code>readonly</code> 修飾を付けます。</p>
+<pre><code class="language-csharp"><span class="comment">// 構造体自体は readonly にしない。</span>
+<span class="comment">// フィールドは書き換えたい</span>
+<span class="keyword">struct</span> NonReadOnly
+{
+    <span class="keyword">public</span> <span class="keyword">float</span> X;
+    <span class="keyword">public</span> <span class="keyword">float</span> Y;
+ 
+    <span class="comment">// でも、このプロパティ内ではフィールドを書き換えない</span>
+    <span class="keyword">public</span> <span class="keyword">float</span> LengthSquared =&gt; X * X + Y * Y;
+}
+ 
+<span class="comment">// NonReadOnly との差は LengthSquared の readonly の有無だけ</span>
+<span class="keyword">struct</span> ReadOnly
+{
+    <span class="keyword">public</span> <span class="keyword">float</span> X;
+    <span class="keyword">public</span> <span class="keyword">float</span> Y;
+ 
+    <span class="comment">// readonly 修飾でフィールドを書き換えないことを明示</span>
+    <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">float</span> LengthSquared =&gt; X * X + Y * Y;
+}
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="comment">// こっちは、LengthSquared 内での X, Y の書き換えを恐れて隠れたコピーが発生する。</span>
+    <span class="keyword">static</span> <span class="keyword">float</span> M(<span class="keyword">in</span> NonReadOnly x) =&gt; x.LengthSquared;
+ 
+    <span class="comment">// こっちは、LengthSquared に readonly が付いているのでコピー発生しない。</span>
+    <span class="keyword">static</span> <span class="keyword">float</span> M(<span class="keyword">in</span> ReadOnly x) =&gt; x.LengthSquared;
+ 
+    <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+    {
+        M(<span class="keyword">new</span> NonReadOnly { X = <span class="number">1</span>, Y = <span class="number">2</span> });
+        M(<span class="keyword">new</span> ReadOnly { X = <span class="number">1</span>, Y = <span class="number">2</span> });
+    }
+}</code></pre>
+<p>隠れたコピー問題はソースコードの見た目に現れず、気づきにくい問題なので、
+関数内でフィールドを書き換えていないなら積極的に <code>readonly</code> 修飾を付けておくべきでしょう。</p>
+<p>ちなみに、逆に、<code>readonly</code> 関数メンバー内から、<code>readonly</code> ではないものを触ろうとしても隠れたコピーが発生します。
+例えば以下のコードでは、<code>A</code>のフィールドを書き換える<code>Increment</code>メソッドを、
+<code>readonly</code> なメソッドとそうでないメソッドから呼び出してみています。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">struct</span> A
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> Value;
+    <span class="keyword">public</span> <span class="keyword">void</span> Increment() =&gt; Value++;
+}
+ 
+<span class="keyword">struct</span> B
+{
+    <span class="keyword">public</span> A A;
+ 
+    <span class="comment">// A の非 readonly メンバーを呼ぶ。</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> Mutable() =&gt; A.Increment();
+ 
+    <span class="comment">// Mutable との差は readonly 修飾が付いてるだけ。</span>
+    <span class="comment">// this が書き換わらないように、A のコピーが作られる。A 自体には変化が起きない。</span>
+    <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">void</span> Immutable() =&gt; A.Increment();
+}
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> b = <span class="keyword">new</span> B();
+        Console.WriteLine(b.A.Value); <span class="comment">// 初期状態: 0</span>
+ 
+        b.Mutable();
+        Console.WriteLine(b.A.Value); <span class="comment">// 意図通りの書き換え: 1</span>
+ 
+        b.Immutable();
+        Console.WriteLine(b.A.Value); <span class="comment">// 書き換わらない: 1 (Immutable の中で A のコピーが発生)</span>
+    }
+}</code></pre>
+<h3 id="ref-readonly"><a id="sec-generated-title-9"></a> <a id="similar-but-different"></a>注意: 似て非なるもの(ref readonly)</h3>
+<p>この <code>readonly</code> 関数メンバーは、構文上、<a href="/study/csharp/resource/sp_ref/#ref-readonly"><code>ref readonly</code></a>と似ているのでちょっと注意が必要かもしれません。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> S
+{
+    <span class="keyword">public</span> <span class="keyword">int</span>[] _value;
+ 
+    <span class="comment">// これは、読み取り専用参照を返すという意味。</span>
+    <span class="comment">// _value 配列の中身が書き換わってもらっては困る。</span>
+    <span class="keyword">public</span> <span class="keyword">ref</span> <span class="keyword">readonly</span> <span class="keyword">int</span> X =&gt; <span class="keyword">ref</span> _value[<span class="number">0</span>];
+ 
+    <span class="comment">// これは、S 内のフィールド(この場合 _value) を書き換えないという意味。</span>
+    <span class="comment">// _value 配列の中身が書き換わろうと知ったことではない。</span>
+    <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">ref</span> <span class="keyword">int</span> Y =&gt; <span class="keyword">ref</span> _value[<span class="number">0</span>];
+ 
+    <span class="comment">// これは、上記2つの両方の意味。</span>
+    <span class="comment">// _value 自体も書き換わらないし、_value の中身を書き換えてもらっても困るとき用。</span>
+    <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">ref</span> <span class="keyword">readonly</span> <span class="keyword">int</span> Z =&gt; <span class="keyword">ref</span> _value[<span class="number">0</span>];
+}</code></pre>
+<p>ちなみに、プロパティの場合は <code>get</code>/<code>set</code> それぞれ別に <code>readonly</code> 指定ができます。
+当然ですが、ほとんどの場合は「<code>get</code> だけが <code>readonly</code>」になると思われます。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> X
+{
+    <span class="keyword">int</span> _value;
+ 
+    <span class="keyword">public</span> <span class="keyword">int</span> Value
+    {
+        <span class="keyword">readonly</span> <span class="keyword">get</span> =&gt; _value;
+        <span class="keyword">set</span> =&gt; _value = value;
+    }
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/resource/">&#x30E1;&#x30E2;&#x30EA;&#x3068;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x7BA1;&#x7406;</a></li><li><a href="/study/csharp/resource/rm_gc/">C# &#x306E;&#x30E1;&#x30E2;&#x30EA;&#x7BA1;&#x7406;</a></li><li><a href="/study/csharp/resource/rm_struct/">&#x69CB;&#x9020;&#x4F53;</a></li><li><a href="/study/csharp/resource/oo_reference/">&#x5024;&#x578B;&#x3068;&#x53C2;&#x7167;&#x578B;</a></li><li><a href="/study/csharp/resource/rm_default/">&#x65E2;&#x5B9A;&#x5024;</a></li><li><a href="/study/csharp/resource/sp_ref/">&#x53C2;&#x7167;&#x6E21;&#x3057;</a></li><li><a href="/study/csharp/resource/span/">Span&lt;T&gt;&#x69CB;&#x9020;&#x4F53;</a></li><li><a href="/study/csharp/resource/refstruct/">ref&#x69CB;&#x9020;&#x4F53;</a></li><li><a href="/study/csharp/resource/misc_heap/">[&#x96D1;&#x8A18;] &#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x3068;&#x30D2;&#x30FC;&#x30D7;</a></li><li><a href="/study/csharp/resource/rmboxing/">&#x30DC;&#x30C3;&#x30AF;&#x30B9;&#x5316;</a></li><li><a href="/study/csharp/resource/sp2_nullable/">null&#x8A31;&#x5BB9;&#x5024;&#x578B;(Nullable&amp;lt;T&amp;gt; &#x578B;)</a></li><li><a href="/study/csharp/resource/nullablereferencetype/">null &#x8A31;&#x5BB9;&#x53C2;&#x7167;&#x578B;</a></li><li><a href="/study/csharp/resource/rm_nullusage/">null &#x306E;&#x53D6;&#x308A;&#x6271;&#x3044;</a></li><li><a href="/study/csharp/resource/oo_dispose/">&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x7834;&#x68C4;</a></li><li><a href="/study/csharp/resource/rm_destructor/">&#x30D5;&#x30A1;&#x30A4;&#x30CA;&#x30E9;&#x30A4;&#x30B6;&#x30FC;</a></li><li><a href="/study/csharp/resource/rm_disposable/">[&#x96D1;&#x8A18;] Dispose &#x306B;&#x307E;&#x3064;&#x308F;&#x308B;&#x4F59;&#x8AC7;</a></li><li><a href="/study/csharp/resource/rmweakreference/">&#x3010;&#x96D1;&#x8A18;&#x3011;&#x5F31;&#x53C2;&#x7167;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

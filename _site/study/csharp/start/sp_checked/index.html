@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30D5;&#x30ED;&#x30FC;&#x306E;&#x30C1;&#x30A7;&#x30C3;&#x30AF; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/start/sp_checked/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">オーバーフローのチェック</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>C#では<code>checked, unchecked</code>というキーワードを用いることで、
+数値演算のオーバーフローをチェックするかどうかを明示的に選択することが出来ます。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>checked (式)： 式中でオーバーフローが発生したら例外を投げます。</p>
+</li>
+<li><p>unchecked (式)： 式中で起きたオーバーフローはすべて無視します。</p>
+</li>
+<li><p>C# のデフォルトでは unchecked と同じ状態。 コンパイラオプションで checked な状態に変更できます。</p>
+</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="overflow"></a>オーバーフロー</h2>
+<p>「<a href="/study/csharp/start/st_embeddedtype/">組込み型</a>」で説明したとおり、
+コンピュータの内部で扱える値の範囲は限られています。
+そのため、計算を行っている途中で計算結果がこの範囲を超えてしまうことがあり、
+このような状況を<strong id="overflow" class="keyword">オーバーフロー</strong>（overflow）と言います。</p>
+<p>計算の途中でオーバーフローが起こると、計算結果が大幅に狂うことになります。
+例えば、以下のようなプログラムを実行すると、
+「正の数同士を足し合わせているのに結果が負の数になる」という症状を引き起こします。</p>
+<pre><code class="language-csharp"><span class="keyword">sbyte</span> a = <span class="number">64</span>;           <span class="comment">// 2進表現では 0100 0000。</span>
+<span class="keyword">sbyte</span> b = <span class="number">65</span>;           <span class="comment">// 2進表現では 0100 0001。</span>
+<span class="keyword">sbyte</span> c = (<span class="keyword">sbyte</span>)(a + b); <span class="comment">// 2進表現では 1000 0001 ←これは sbyte では -127 を表す。</span>
+Console.Write(<span class="string">&quot;{0} + {1} = {2}&quot;</span>, a, b, c); <span class="comment">// 64 + 65 = -127 と表示される。</span></code></pre>
+<h2 id="checked"><a id="sec-generated-title-4"></a> <a id="checked"></a>checked キーワード</h2>
+<p>オーバーフローを起こされるとまずい場合、
+何らかの方法でオーバーフローを検出する必要があります。
+C#では、コンパイル時に <code>/checked+</code> というオプションを付けることで、
+オーバーフローを起こしたときに例外をスローするようになります。
+しかし、この方法では、特定の箇所でのみオーバーフローのチェックを行うということが出来ません。</p>
+<p>そこで、コードの特定の箇所でのみオーバーフローのチェックを行うために、<code>checked</code> というキーワードが用意されています。
+<code>checked</code> キーワードは以下のようにして使用します。</p>
+<pre><code class="language-csharp"><span class="keyword">checked</span>
+  ブロック</code></pre>
+<p>または、</p>
+<pre><code class="language-csharp"><span class="keyword">checked</span>(式)</code></pre>
+<p>前者の書き方をchecked文、後者の書き方をchecked演算子と呼びます。
+checked文中の式や、
+checked演算子の後の式の中でオーバーフローが起きた場合、
+<code>System.OverflowException</code> 例外が発生します。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> CheckedSample
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="keyword">try</span>
+    {
+      <span class="keyword">checked</span>
+      {
+        <span class="keyword">sbyte</span> a = <span class="number">64</span>;
+        <span class="keyword">sbyte</span> b = <span class="number">65</span>;
+        <span class="keyword">sbyte</span> c = (<span class="keyword">sbyte</span>)(a + b);
+      }
+    }
+    <span class="keyword">catch</span>(OverflowException ex)
+    {
+      Console.Write(ex.Message);
+    }
+  }
+}</code></pre>
+<pre><code class="language-console">演算操作の結果オーバーフローが発生しました。</code></pre>
+<h2 id="unchecked"><a id="sec-generated-title-5"></a> <a id="unchecked"></a>unchecked キーワード</h2>
+<p>checked のときとは逆に、オーバーフローをあえて無視したい場合もあります。
+そのため、<code>unchecked</code> というキーワードも用意されています。
+<code>unchecked</code> キーワードは以下のようにして使用します。</p>
+<pre><code class="language-csharp"><span class="keyword">unchecked</span>
+  ブロック</code></pre>
+<p>または、</p>
+<pre><code class="language-csharp"><span class="keyword">unchecked</span>(式)</code></pre>
+<p>使い方はcheckedと同様で、
+unchecked文とunchecked演算子があります。</p>
+<p>unchecked文中の式や、
+unchecked演算子の後の式の中ではオーバーフローは無視され、
+例外はスローされません。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 線形合同法っていう古典的な擬似乱数生成手法を使った乱数生成クラス。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">class</span> Random
+{
+  <span class="keyword">uint</span> seed;
+
+  <span class="keyword">public</span> Random(<span class="keyword">uint</span> seed)
+  {
+    <span class="keyword">this</span>.seed = seed;
+  }
+
+  <span class="keyword">public</span> <span class="keyword">long</span> Next()
+  {
+    seed = <span class="keyword">unchecked</span>(seed * <span class="number">1664525</span>  + <span class="number">1013904223</span>);
+    <span class="comment">// ↑ここであえてオーバーフローは無視する。</span>
+    <span class="comment">// 計算結果は (seed * 1664525  + 1013904223) を2の32乗で割ったあまりになる。</span>
+    <span class="keyword">return</span> seed;
+  }
+}</code></pre>
+<h2 id="section-4"><a id="sec-generated-title-6"></a> <a id="float"></a>浮動小数点数型の場合のオーバーフロー</h2>
+<p>浮動小数点数型の場合、オーバーフローを起こした場合、値は無限大(infinity)になります。
+また、絶対値が浮動小数点数で表せる値の範囲を下回った場合(このような状況を<em>アンダーフロー</em>と呼ぶ)、
+値は0になります。</p>
+<pre><code class="language-csharp"><span class="keyword">float</span> x = 1e30f;
+<span class="keyword">float</span> y = 1e-30f;
+Console.Write(<span class="string">&quot;{0}, {1}&quot;</span>, x*x, y*y); <span class="comment">// +∞, 0 と表示される。</span></code></pre>
+<p>浮動小数点数の場合、例えchecked文中であっても、
+オーバーフローによる例外は発生しません。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/start/">&#x57FA;&#x790E;</a></li><li><a href="/study/csharp/start/st_basis/">C#&#x306E;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x57FA;&#x672C;&#x69CB;&#x9020;</a></li><li><a href="/study/csharp/start/st_compile/">&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x4F5C;&#x6210;&#x30FB;&#x5B9F;&#x884C;</a></li><li><a href="/study/csharp/start/st_comment/">&#x30B3;&#x30E1;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/start/st_consoleio/">&#x5024;&#x306E;&#x5165;&#x51FA;&#x529B;</a></li><li><a href="/study/csharp/start/st_variable/">&#x5909;&#x6570;&#x3068;&#x5F0F;</a></li><li><a href="/study/csharp/start/misc_identifier/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x540D;&#x306B;&#x4F7F;&#x3048;&#x308B;&#x6587;&#x5B57;</a></li><li><a href="/study/csharp/start/misc_unicode/">[&#x96D1;&#x8A18;] C# &#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x3068; Unicode</a></li><li><a href="/study/csharp/start/st_embeddedtype/">&#x7D44;&#x8FBC;&#x307F;&#x578B;</a></li><li><a href="/study/csharp/start/stnumber/">&#x6570;&#x5024;</a></li><li><a href="/study/csharp/start/st_string/">&#x7279;&#x6B8A;&#x306A;&#x6587;&#x5B57;&#x5217;&#x30EA;&#x30C6;&#x30E9;&#x30EB;</a></li><li><a href="/study/csharp/start/improvedinterpolatedstring/">C# 10.0 &#x306E;&#x88DC;&#x9593;&#x6587;&#x5B57;&#x5217;&#x306E;&#x6539;&#x5584;</a></li><li><a href="/study/csharp/start/st_operator/">&#x7D44;&#x8FBC;&#x307F;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/study/csharp/start/st_cast/">&#x7D44;&#x8FBC;&#x307F;&#x578B;&#x5909;&#x63DB;</a></li><li><a href="/study/csharp/start/sp_const/">&#x5B9A;&#x6570;</a></li><li><a href="/study/csharp/start/sp3_inference/">&#x578B;&#x63A8;&#x8AD6;(&#x6697;&#x9ED9;&#x7684;&#x578B;&#x4ED8;&#x3051;)&#x3068;&#x533F;&#x540D;&#x578B;</a></li><li><a href="/study/csharp/start/sp3_var/">[&#x96D1;&#x8A18;] &#x578B;&#x63A8;&#x8AD6;&#x306E;&#x662F;&#x975E;</a></li><li><a href="/study/csharp/start/st_scope/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x306E;&#x30B9;&#x30B3;&#x30FC;&#x30D7;&#x3068;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x5BFF;&#x547D;</a></li><li><a href="/study/csharp/start/misctyperesolution/">[&#x96D1;&#x8A18;] &#x578B;&#x306E;&#x6C7A;&#x5B9A;</a></li><li><a href="/study/csharp/start/miscreservedattribute/">[&#x96D1;&#x8A18;] &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x306B;&#x5F71;&#x97FF;&#x3092;&#x53CA;&#x307C;&#x3059;&#x5C5E;&#x6027;</a></li><li><a href="/study/csharp/start/definiteassignment/">[&#x96D1;&#x8A18;] &#x660E;&#x78BA;&#x306A;&#x4EE3;&#x5165;&#x30EB;&#x30FC;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

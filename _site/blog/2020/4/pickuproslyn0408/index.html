@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 4/8 | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2020/4/pickuproslyn0408/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2020-04-09T09:45:42">2020-04-09</time></span><span>更新: <time datetime="2020-04-09T09:45:42">2020-04-09</time></span></div><h1 id="roslyn-48">ピックアップRoslyn 4/8</h1>
+<p><a href="/blog/2020/4/begginingcs9/">前回話したことの続き</a>。
+<a href="https://youtu.be/JXa0JbfiYpw">ライブ配信で話したことの後半</a>。</p>
+<p>C# Language Design Meetingの議事録がいくつか上がっています。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2020/LDM-2020-03-23.md">March 23rd, 2020</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2020/LDM-2020-03-25.md">March 25, 2020</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2020/LDM-2020-03-30.md">March 30, 2020</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2020/LDM-2020-04-01.md">April 1, 2020</a></li>
+</ul>
+<p>この前後に2月頃の議事録も一気に上がっていて、
+C# 9.0 がらみのデザイン決定も大詰めなんだなぁという感じがしています。
+(実装期間を考えると、デザイン決定は今の時期が最も活発。)</p>
+<p>ちなみに、<a href="https://github.com/dotnet/csharplang/issues/2850">パターン マッチングの改善</a>の話とかは全然出てきませんが、
+この辺りはデザインがすでに割と固まってるという話であって、立ち消えたとかではありません。</p>
+<h2 id="section">トリアージ</h2>
+<p>いくつか、そもそも採用するかどうかの検討。</p>
+<h3 id="ref-struct">ref struct 制約</h3>
+<p>今、<a href="/study/csharp/resource/refstruct/">ref 構造体</a>にはインターフェイスを実装できないわけですが、
+これは、ref 構造体は <a href="/study/csharp/resource/rmboxing/">box 化</a>してはいけないという制約を守るためです。</p>
+<p>一方で、ジェネリック型引数に <code>ref struct</code> 制約を付けれるなら、ref 構造体がインターフェイスを実装していても box 化を避けれるんじゃないかという話が上がっています。</p>
+<p>ただ、検討の結果、<code>ref struct</code> 制約は必要として、それだけでも不十分だろうとのこと。
+.NET ランタイムの方にも手を入れないと安全性を確保できないし、
+<a href="https://github.com/dotnet/csharplang/issues/164">Shapes</a>っていう C# 10.0 (次の次)で検討している機能とも領域が被るので、
+<code>ref struct</code> 制約は 10.0 のタイミングで改めて検討しようという流れ。</p>
+<h3 id="section-1">デリゲートのオーバーロード解決の改善</h3>
+<p><a href="/study/csharp/cheatsheet/ap_ver7_3/#overload-resolution">C# 7.3 でメソッドのオーバーロード解決の改善</a>をやってるんですが、
+デリゲートの場合にはこの手の解決をしてないみたいです。</p>
+<p>とりあえず C# 9.0 でデリゲートに対しても同様の改善を入れたいとのこと。
+あと、同じく C# 9.0 目標で作業が進んでいる<a href="https://github.com/dotnet/csharplang/blob/master/proposals/function-pointers.md">関数ポインター</a> (この後、今日のブログでも少し話題あり)でも同様のオーバーロード解決をしたいとのこと。</p>
+<h3 id="getenumerator">拡張メソッドの GetEnumerator</h3>
+<p>C# の <a href="/study/csharp/data/sp_foreach/"><code>foreach</code></a>は <code>GetEnumerator</code> メソッドの呼び出しに展開されるわけですが、
+現状だと、インスタンス メソッドしか認めていなかったりします。
+<a href="/study/csharp/misc/miscpatternbased/#index">この手の構文一覧</a>を見てもらえるとわかるんですが、新しめの構文との一貫性が取れなくなっていたりします。
+(新しいほど、拡張メソッドでも OK になってる。)</p>
+<p>ただ、検討に上がってなかったわけではなくて、
+終始「破壊的変更になりかねないからうかつに触りたくない」という雰囲気。</p>
+<p>今回もそういう姿勢です。
+「破壊的変更を起こさない限りにおいて歓迎」。
+(ちなみに、<a href="https://github.com/dotnet/roslyn/pull/43050">外部からの Pull Request</a> が来ているので、これに関する検討だと思います。
+で、今、破壊的変更を起こしてないかの確認中。)</p>
+<h2 id="native-int">native int</h2>
+<p>前々から、いわゆる「native int」(32ビットCPU上では３２ビット、64ビットCPU上では64ビットになるような整数型)が欲しいという話があります。</p>
+<p>実のところ、今でも<a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.intptr"><code>IntPtr</code></a>型がそういう挙動をしているんですが、
+こいつは名前通りポインター扱いなので、算術・論理演算とかを全面的には認めていなかったりします。
+そこで、算術・論理演算をちゃんと認めた native int 型として <code>nint</code> と <code>nuint</code> を足す流れになっています。</p>
+<p>ただ、内部的には <code>nint</code> は <code>IntPtr</code> 構造体で、<code>nuint</code> は <code>UIntPtr</code> 構造体に展開する
+(似て非なる型を追加することはしない)という方向で決定済み。
+破壊的変更を起こさないように、
+<code>nint</code> とかのキーワードを使って宣言しているときは算術・論理演算を認めて、
+そうでないときはこれまで通り認めないという、セマンティクスを見た挙動変化をします。</p>
+<p>今回は、じゃあ、<code>nint</code> を LangVersion 8 以前で動かす(<code>IntPtr</code> に見える)ときにどういう挙動をすべきかという話。
+まあ、普通にコンパイル エラーにすべきだろうという感じ。</p>
+<p>あと、<code>nint</code> の<a href="/study/csharp/start/sp_const/">定数</a>はどう扱うべきかという話も。
+32ビットCPUでもちゃんと動くようにするために、以下のようにするみたいです。</p>
+<ul>
+<li>32ビットに収まる値は const 扱い</li>
+<li>それを超える場合は readonly static 的なものに展開</li>
+</ul>
+<h2 id="target-typed-new">target-typed new</h2>
+<p>target-typed new、要するに、<code>List&lt;T&gt; x = new ();</code> みたいな書き方でコンストクター呼び出しできるようにしようという話です。</p>
+<p>この構文、「ライブラリ側で新たにコンストラクターが足された時に、利用側に破壊的変更が起きる可能性がある」っていう意味ではちょっと怖いんですが。
+それを言うと、今でも <code>null</code> とか <code>default</code> が似たような状態なのでしょうがないだろうと。</p>
+<p><code>new ()</code> 自体は型を持っていないものの、<code>default</code> とかと同じで、ターゲットの型を見て具体的な型を決定して、その型のコンストラクターを呼びたいとのこと。
+機械的にこの作業をすると、<code>enum</code> に対して <code>new ()</code> も書けてしまうことになるけども、
+それは認めようという感じ。</p>
+<p>あと、<a href="/study/csharp/resource/sp2_nullable/">null 許容値型</a>に対して <code>T? x = new ();</code> と書いたときには
+<code>null</code> 扱いじゃなくて <code>new T()</code> 扱い(<code>T?</code> の元になる型(underlying type) <code>T</code> の既定値)扱いすべきだろうという話も。</p>
+<p>あと、<a href="/study/csharp/dynamic/sp4_dynamic/"><code>dynamic</code></a>に関しては、
+今も <code>new dynamic()</code> を認めていないんだし、<code>dynamic x = new ();</code> は認めないようです。</p>
+<h2 id="record">Record</h2>
+<p>Record 型周りは、<a href="/blog/2020/2/pickuproslyn0203/">以前書いたんですが</a>、
+init-only プロパティというのを足す方向で議論が進んでいます。
+これに対して、init-only よりも、ビルダーパターンを使った実装にしてほしいという話が出ていたのでそれを検討。
+結局は、init-only で行くみたいです。</p>
+<p>あと、Record 型の仕様には <code>Equals</code>や<code>GetHashCode</code>メソッドの自動実装も含まれるわけですが、どういうコードを生成すべきかというのも議題になっています。
+等値比較は複雑なカスタマイズをしたい要件が結構あります。
+(例えば、配列だったら <code>SequenceEquals</code> すべきかとか、
+文字列だったらカルチャー配慮した比較をすべきかとか。)
+まあ、Record 的には、「手書きの <code>Equals</code> があればそっちを使う」という仕様なので、
+カスタマイズが必要なら手書きしてほしい。
+コンパイラーが自動生成する比較はシンプルな shallow 比較にしたいとのこと。</p>
+<h2 id="section-2">関数ポインター</h2>
+<p>元々は <a href="https://github.com/dotnet/csharplang/blob/master/proposals/static-delegates.md">static delegate</a> とか言われていたやつなんですが、
+今はもう、完全に「関数ポインター」扱いになっています。
+ポインターという名があらわす通り、<a href="/study/csharp/interop/sp_pinvoke/">native 相互運用</a>向けで、<a href="/study/csharp/interop/sp_unsafe/">unsafe</a> な機能になります。</p>
+<p>相互運用の際には呼び出し規約(引数とか戻り値を、どういう順番でどこに置くかみたいなルール)の指定が必要になるんですが、<code>cdecl</code> とか <code>stdcall</code> とか <code>fastcall</code> みたいな、今現在明確に決まっていて名前があるものだけじゃなく、
+将来の規約追加にも耐えれる作りにしたいので、属性での指定もできるようにしたいとのこと。</p>
+<p>あと、関数ポインター自体に属性を付けたい場合、<code>delegate* cdecl[属性]&lt;void&gt; ptr;</code> みたいな文法にするようです。</p>
+<h2 id="field">プロパティ内の field キーワード</h2>
+<p>以下のようなやつ。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">int</span> P
+{
+    <span class="keyword">get</span> =&gt; field ;
+    <span class="keyword">set</span>
+    {
+        PropertyChanged();
+        field  = value;
+    }
+}</code></pre>
+<p>プロパティに対する<a href="/study/csharp/oop/oo_property/#auto_prop">バック フィールド</a>にアクセスするためのキーワードが欲しいと。</p>
+<p>これ、<a href="https://github.com/dotnet/roslyn/blob/master/docs/features/source-generators.md">Source Generator</a>が入れば需要が激減するだろうし、
+キーワード追加する割にはそこまで利便性が上がるわけでもないしで、
+提案が出ては「今のところ取り組むつもりはない」みたいな返答を繰り返してた機能なんですが。</p>
+<p>「重複提案があまりにも多い」と言って、今回ついに Design Meeting の議題に乗ったという。
+ちなみに、僕が把握してる範囲でも重複 issue は20個くらいあります。
+(その中の一番古い issue: <a href="https://github.com/dotnet/csharplang/issues/133">#133</a>。
+「これと重複してるよ」リンクがあまりに多いので、「被リンク」通知だらけです。)</p>
+<p>とはいえ、「取り組みます」と言っているわけではなくて、
+「誰も取り組んでない機能の中で最も頻繁に要求が来るものであることを認めた」みたいなノリ。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2020/4/">4&#x6708;</a></li><li><a href="/blog/2020/4/begginingcs9/">.NET 5 Preview 2 &#x3068; C# Next</a></li><li><a href="/blog/2020/4/pickuproslyn0419/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 4/19: C# 9.0 &#x6A5F;&#x80FD;&#x306E;&#x4ED5;&#x69D8;&#x30C9;&#x30AD;&#x30E5;&#x30E1;&#x30F3;&#x30C8;&#x3044;&#x304F;&#x3064;&#x304B;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

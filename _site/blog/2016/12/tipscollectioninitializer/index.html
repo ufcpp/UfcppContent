@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x521D;&#x671F;&#x5316;&#x5B50; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/12/tipscollectioninitializer/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-12-06T00:00:49">2016-12-06</time></span><span>更新: <time datetime="2016-12-05T15:01:13">2016-12-05</time></span></div><h1 id="section">小ネタ コレクション初期化子</h1>
+<p>昨日のオブジェクト初期化子に続き、今日はコレクション初期化子の話。</p>
+<p>コレクション初期化子ってのは、例えば以下のようなやつのことです。</p>
+<pre><code class="language-csharp"><span class="comment">// この、{} の部分がコレクション初期化子。</span>
+<span class="keyword">var</span> x = <span class="keyword">new</span> List&lt;<span class="keyword">int</span>&gt; { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> };</code></pre>
+<p>このコレクション初期化を使える条件は、<code>Add</code> メソッドを持っていて、かつ、 <code>IEnumerable</code> を実装していることです。</p>
+<p>最低限の実装をしてみると、以下のような感じ。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> MyList : IEnumerable
+{
+    List&lt;<span class="keyword">int</span>&gt; _list = <span class="keyword">new</span> List&lt;<span class="keyword">int</span>&gt;();
+    <span class="keyword">public</span> <span class="keyword">void</span> Add(<span class="keyword">int</span> value) =&gt; _list.Add(value);
+    <span class="keyword">public</span> IEnumerator GetEnumerator() =&gt; _list.GetEnumerator();
+}
+
+<span class="keyword">static</span> <span class="keyword">void</span> ListSample()
+{
+    <span class="keyword">var</span> x = <span class="keyword">new</span> MyList { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> };
+
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> item <span class="keyword">in</span> x)
+        Console.WriteLine(item);
+}</code></pre>
+<p>この、コレクション初期化子は以下のように展開されます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = <span class="keyword">new</span> MyList();
+x.Add(<span class="number">1</span>);
+x.Add(<span class="number">2</span>);
+x.Add(<span class="number">3</span>);
+x.Add(<span class="number">4</span>);
+x.Add(<span class="number">5</span>);</code></pre>
+<p>ここで生じる疑問があります: <code>IEnumerable</code> の実装、要るの？</p>
+<h2 id="section-1">依存は避けれるなら避けるべきもの</h2>
+<p>だって、<code>Add</code>メソッドしか使ってなくない？<code>IEnumerable</code>は何にも使ってないよね？</p>
+<p>だいたい、C#の文法が<code>IEnumerable</code>に依存しちゃうの？
+例えば、<code>foreach</code>であれば<code>GetEnumeartor</code>メソッドさえ持っていれば、別に<code>IEnumerable</code>インターフェイスを実装していない型であっても使えます。
+LINQもそうで、<code>Select</code>や<code>Where</code>など、所定のメソッドさえ持っていれば、クエリ式を使えます。</p>
+<p>最近、Build Insiderで<a href="http://www.buildinsider.net/column/iwanaga-nobuyuki/009">Task-likeの話</a>とかも書きましたけど、
+言語の文法が何かの型に依存するというのはリスクを持ちます。
+可能なら避けるべきものです。</p>
+<p>で、コレクション初期化子、<code>IEnumerable</code> 要るの？</p>
+<h2 id="section-2">たぶん、誤用の防止</h2>
+<p>まあ、問題になるとすると以下のような例ですかね。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> Adder
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> Add(<span class="keyword">int</span> x, <span class="keyword">int</span> y) =&gt; x + y;
+}
+
+<span class="keyword">static</span> <span class="keyword">void</span> AdderSample()
+{
+    <span class="comment">// こういう誤用を防ぎたかったのかなという気はする</span>
+    <span class="keyword">var</span> x = <span class="keyword">new</span> Adder
+    {
+        { <span class="number">2</span>, <span class="number">1</span> },
+        { <span class="number">3</span>, <span class="number">4</span> },
+        { <span class="number">5</span>, <span class="number">9</span> },
+    };
+}</code></pre>
+<p><code>Add</code>メソッドだけを条件にしてしまうと、こういうコードが書けてしまう。
+で、この<code>Add</code>の呼ばれ方だと、何の役にも立たないわけです。
+<code>Adder</code>の内部状態を変えたいわけじゃなてく、単なるオペレーターなわけでして。</p>
+<p>もちろん、<code>IEnumerable</code>の実装を義務付けたところで、あえて濫用することはできます。
+例えば、以下のような書き方なら現在の仕様でもできます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Accumulator : IEnumerable
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> Sum { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Add(<span class="keyword">int</span> value) =&gt; Sum += value;
+
+    <span class="comment">// 空実装してしまえば、コレクション初期化子の乱用可能</span>
+    <span class="keyword">public</span> IEnumerator GetEnumerator() =&gt; <span class="keyword">throw</span> <span class="keyword">new</span> NotSupportedException();
+}
+
+<span class="keyword">static</span> <span class="keyword">void</span> AccumulatorSample()
+{
+    <span class="comment">// コレクションでもないんでもないけど、コレクション初期化子を使える</span>
+    <span class="keyword">var</span> x = <span class="keyword">new</span> Accumulator { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> };
+    Console.WriteLine(x.Sum); <span class="comment">// 15</span>
+}</code></pre>
+<p>とりあえず空実装。</p>
+<p>まあ、意図的にやってるので大して問題にはならないんですが。
+<code>Adder</code>みたいなのが意図せずコレクション初期化子で使われるのだけは防止したかったんですかね…
+そのために<code>GetEnumerator</code>の空実装しろと…</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/12/">2016/12</a></li><li><a href="/blog/2016/12/tipstryroslyn/">C#&#x5C0F;&#x30CD;&#x30BF;&#x96C6;: C#&#x3092;Web&#x4E0A;&#x3067;&#x8A66;&#x3059;</a></li><li><a href="/blog/2016/12/tipsildasm/">&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x3092;&#x8997;&#x3044;&#x3066;&#x307F;&#x3088;&#x3046;</a></li><li><a href="/blog/2016/12/tipscorefxlab/">&#x5C0F;&#x30CD;&#x30BF; corefxlab&#x3068;System.Memory</a></li><li><a href="/blog/2016/12/tipsevalorder/">&#x5C0F;&#x30CD;&#x30BF; &#x5F0F;&#x306E;&#x8A55;&#x4FA1;&#x9806;&#x5E8F;</a></li><li><a href="/blog/2016/12/tipsobjectinitializer/">&#x5C0F;&#x30CD;&#x30BF; &#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2016/12/tipsindexedforeach/">&#x5C0F;&#x30CD;&#x30BF; &#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;&#x4ED8;&#x304D; foreach</a></li><li><a href="/blog/2016/12/tipsuniontypes/">&#x5C0F;&#x30CD;&#x30BF; &#x30C1;&#x30A7;&#x30C3;&#x30AF;&#x4F8B;&#x5916;&#x3068;Union&#x578B;</a></li><li><a href="/blog/2016/12/tipscontextfreetask/">&#x5C0F;&#x30CD;&#x30BF; &#x540C;&#x671F;&#x30B3;&#x30F3;&#x30C6;&#x30AD;&#x30B9;&#x30C8;&#x3092;&#x62FE;&#x308F;&#x306A;&#x3044;Task&#x578B;</a></li><li><a href="/blog/2016/12/tipsformattingcharacter/">&#x5C0F;&#x30CD;&#x30BF; &#x30D5;&#x30A9;&#x30FC;&#x30DE;&#x30C3;&#x30C8;&#x6587;&#x5B57;&#x8B58;&#x5225;&#x5B50;</a></li><li><a href="/blog/2016/12/tipsimplicitmembers/">&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/blog/2016/12/tipstadpoleoperator/">&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x6F14;&#x7B97;&#x5B50;(&#xFF1F;)</a></li><li><a href="/blog/2016/12/tipsnulloperation/">&#x5C0F;&#x30CD;&#x30BF; null&#x95A2;&#x4FC2;&#x306E;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/blog/2016/12/vs2017rc2/">Updating Visual Studio 2017 Release Candidate</a></li><li><a href="/blog/2016/12/patternmatching/">&#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30DE;&#x30C3;&#x30C1;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/pickuproslyn1214/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/14</a></li><li><a href="/blog/2016/12/tipsdeconstruct/">&#x5C0F;&#x30CD;&#x30BF; &#x300C;deconstruct&#x300D;&#x3068;&#x3044;&#x3046;&#x5358;&#x8A9E;</a></li><li><a href="/blog/2016/12/tipsgeneratedil/">&#x5C0F;&#x30CD;&#x30BF; &#x69CB;&#x6587;&#x7CD6;&#x8863;&#x3068;&#x3001;&#x305D;&#x3046;&#x3067;&#x306F;&#x306A;&#x3044;&#x69CB;&#x6587;&#x3068;</a></li><li><a href="/blog/2016/12/tipsprimitives/">&#x5C0F;&#x30CD;&#x30BF; &#x30D7;&#x30EA;&#x30DF;&#x30C6;&#x30A3;&#x30D6;&#x578B;</a></li><li><a href="/blog/2016/12/tipsapisurface/">&#x5C0F;&#x30CD;&#x30BF; private&#x30E1;&#x30F3;&#x30D0;&#x30FC;&#x306F;API&#x306E;&#x4E00;&#x90E8;&#x304B;</a></li><li><a href="/blog/2016/12/tipsstringmarshal/">&#x5C0F;&#x30CD;&#x30BF; string&#x578B;&#x306E;&#x30DE;&#x30FC;&#x30B7;&#x30E3;&#x30EA;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/tipsnumargs/">&#x5C0F;&#x30CD;&#x30BF; &#x5F15;&#x6570;&#x306E;&#x500B;&#x6570;&#x306E;&#x4E0A;&#x9650;</a></li><li><a href="/blog/2016/12/tipsotherlangs/">&#x5C0F;&#x30CD;&#x30BF; C# &#x3068;&#x4ED6;&#x306E;&#x8A00;&#x8A9E;&#x3068;&#x306E;&#x5DEE;&#x3068;&#x3044;&#x3046;&#x3068;</a></li><li><a href="/blog/2016/12/tipsconcurrentcollections/">&#x5C0F;&#x30CD;&#x30BF; Concurrent &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/blog/2016/12/discards/">discards</a></li><li><a href="/blog/2016/12/tipssmallheapallocation/">&#x5C0F;&#x30CD;&#x30BF; &#x5C0F;&#x3055;&#x306A;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x5272;&#x308A;&#x5F53;&#x3066;</a></li><li><a href="/blog/2016/12/tipsparallelism/">&#x5C0F;&#x30CD;&#x30BF; &#x4E26;&#x5217;&#x5316;</a></li><li><a href="/blog/2016/12/tipsdowhile/">&#x5C0F;&#x30CD;&#x30BF; do-while</a></li><li><a href="/blog/2016/12/tipsatan2/">&#x5C0F;&#x30CD;&#x30BF; atan2</a></li><li><a href="/blog/2016/12/tipsnormaldistribution/">&#x5C0F;&#x30CD;&#x30BF; &#x6B63;&#x898F;&#x5206;&#x5E03;&#x306E;&#x4E38;&#x307F;</a></li><li><a href="/blog/2016/12/lookbackattheyear/">&#x4ECA;&#x5E74;&#x306E;&#x632F;&#x308A;&#x8FD4;&#x308A;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

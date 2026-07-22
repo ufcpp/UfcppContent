@@ -1,0 +1,368 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x8907;&#x5408;&#x578B;&#x306E;&#x30EC;&#x30A4;&#x30A2;&#x30A6;&#x30C8; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/interop/memorylayout/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">複合型のレイアウト</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>複合型(クラスや構造体)では、フィールドをメモリ上にどうレイアウト(layout: 配置)するかという問題があります。</p>
+<p>通常、メモリ上のレイアウトがどうなっているのかをプログラマーが気にする必要はありません。
+大体はコンパイラーが最適な仕事をしてくれます。</p>
+<p>それでも、時々、レイアウト方法を明示的に指定したい場合があります
+(おそらく、そのほとんどはC++などで書かれたネイティブ コードとの相互運用です)。
+そこで、プログラミング言語によってはレイアウトをカスタマイズするための機能を提供しているものもあります。</p>
+<p>C#では、クラスと構造体に対してレイアウトのカスタマイズ機能を提供しています。
+<code>StructLayout</code>属性を付けることでカスタマイズ可能です。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="alignment"></a>アラインメント</h2>
+<p>「最適なレイアウト」について説明するためには、まず、メモリの<strong id="key-alignment" class="keyword">アラインメント</strong>(alignment: 整列、調整)について知る必要があります。</p>
+<p>一般に、メモリの読み書きは、<a href="/study/computer/general/memory/#address">アドレス</a>が4の倍数や8の倍数になっている方が高速です。
+(1命令で読み出せるのは倍数ピッタリの場所だけなCPUもあります。
+最悪、2命令で隣り合った場所を読み込んで、繋ぎなおすような処理が必要になります。)</p>
+<p>そこで、多くのプログラミング言語で、アドレスがきれいな倍数になるように、フィールドとフィールドの間に隙間を空けたり、フィールドを並べ替えたりしています。この、所定の倍数の位置にフィールドを並べる処理をアラインメントと呼びます。</p>
+<p>例えば、以下のような構造体を書いたとします。A, C (<code>byte</code>型)が1バイト、B (<code>long</code>型)が8バイトのデータです。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> Sample
+{
+    <span class="keyword">public</span> <span class="keyword">byte</span> A;
+    <span class="keyword">public</span> <span class="keyword">long</span> B;
+    <span class="keyword">public</span> <span class="keyword">byte</span> C;
+}</code></pre>
+<p>アラインメントの間隔はコンパイラーやCPUによって変わりますが、一例として、この構造体のメモリ レイアウトは以下のようになります。</p>
+<p><img src="/assets/media/1082/sequentiallayout.png" alt="Sample構造体のレイアウト" /></p>
+<p>フィールドすべてが8の倍数アドレスに並ぶように、8バイト間隔でフィールドが並びます。
+また、末尾にも、全体が8の倍数になるように未使用領域が追加されます。</p>
+<h2 id="c"><a id="sec-generated-title-3"></a> <a id="inspection"></a>C#でレイアウトを調べてみる</h2>
+<p>C#でも、<a href="/study/csharp/interop/sp_unsafe/#unsafe">unsafe</a>コードを使えば、構造体のレイアウトを調べることができます。
+以下のように、ポインターを使って、構造体の先頭と、各フィールドのアドレスの差を見れば、レイアウトがわかります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">struct</span> Sample
+{
+    <span class="keyword">public</span> <span class="keyword">byte</span> A;
+    <span class="keyword">public</span> <span class="keyword">long</span> B;
+    <span class="keyword">public</span> <span class="keyword">byte</span> C;
+}
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">unsafe</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> a = <span class="keyword">default</span>(Sample);
+        <span class="keyword">var</span> p = &amp;a;
+        <span class="keyword">var</span> pa = &amp;a.A;
+        <span class="keyword">var</span> pb = &amp;a.B;
+        <span class="keyword">var</span> pc = &amp;a.C;
+
+        Console.WriteLine($<span class="stringCSharpVerbatim">@&quot;サイズ: {sizeof(Sample)}
+A: {(long)pa - (long)p}
+B: {(long)pb - (long)p}
+C: {(long)pc - (long)p}
+&quot;</span>);
+    }
+}</code></pre>
+<p>ただし、1つ注意があります。C#では、たとえunsafeコード内であっても、参照型のアドレスは取れないようになっています。
+そのため、参照型や、参照型を含んだ構造体の場合はレイアウトを調べられません。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">struct</span> Sample
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> I;
+    <span class="keyword">public</span> <span class="keyword">string</span> S;
+}
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">unsafe</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> a = <span class="keyword">default</span>(Sample);
+        <span class="keyword">var</span> p = &amp;a;    <span class="comment">// コンパイル エラー: 参照型を含んだ構造体はアドレス取れない</span>
+        <span class="keyword">var</span> pi = &amp;a.I;
+        <span class="keyword">var</span> ps = &amp;a.S; <span class="comment">// コンパイル エラー: 参照型メンバーのアドレスは取れない</span>
+
+        Console.WriteLine((<span class="keyword">long</span>)pi - (<span class="keyword">long</span>)p);
+        Console.WriteLine((<span class="keyword">long</span>)ps - (<span class="keyword">long</span>)p);
+    }
+}</code></pre>
+<h2 id="section-3"><a id="sec-generated-title-4"></a> <a id="layout-kind"></a>レイアウトの指定</h2>
+<p>C#では、<code>StructLayout</code>属性(<code>System.Runtime.InteropServices</code>名前空間)を付けることで、レイアウト方式をカスタマイズ可能です。</p>
+<p>以下の3種類のレイアウト方式を選択できます。</p>
+<ul>
+<li>Sequential: フィールドを宣言した順番通りに並べる</li>
+<li>Auto: コンパイラー裁量で並び替えを認める</li>
+<li>Explicit: 複合型の作者が明示的に位置を指定する</li>
+</ul>
+<p>ちなみに、何も指定しない場合、構造体はSequentialレイアウト、クラスはAutoレイアウトになります。</p>
+<p>また、フィールドとフィールドに何バイトの間隔を空けるか(Pack)を指定することもできます。</p>
+<h3 id="sequential"><a id="sec-generated-title-5"></a> <a id="sequential-layout"></a>Sequentialレイアウト</h3>
+<p>Sequentialレイアウトでは、複合型のフィールドは宣言した順序通りにレイアウトされます。
+<code>StructLayout</code>属性の引数に、<code>LayoutKind.Sequential</code>を渡します。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.InteropServices;
+
+[StructLayout(LayoutKind.Sequential)]
+<span class="keyword">struct</span> Sample
+{
+    <span class="keyword">public</span> <span class="keyword">byte</span> A;
+    <span class="keyword">public</span> <span class="keyword">long</span> B;
+    <span class="keyword">public</span> <span class="keyword">byte</span> C;
+}</code></pre>
+<p>アラインメントの説明で挙げたのと同じ絵になりますが、このコードは以下のようなレイアウトになります。</p>
+<p><img src="/assets/media/1082/sequentiallayout.png" alt="Sequentialレイアウトの例" /></p>
+<p>構造体では、特に何も指定しないとSequentialレイアウトになります。
+順序通りに並べるとコンパイラーごとの差異が生まれにくく、相互運用がしやすいからでしょう
+(構造体はネイティブコードとの相互運用に使うことが結構多い)。</p>
+<h3 id="pack"><a id="sec-generated-title-6"></a> <a id="pack"></a>Pack指定</h3>
+<p>間隔の開け方(Pack)は、通常は、32ビットCPUであれば4 (4バイト = 32ビット)、64ビットCPUであれば8 (8バイト = 64ビット)です
+(それが一番高速になる可能性が高い)。</p>
+<p>Packを明示的に指定したい場合には、以下のように、<code>StructLayout</code>属性の<code>Pack</code>プロパティに数値を与えます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.InteropServices;
+
+[StructLayout(LayoutKind.Sequential, Pack = <span class="number">8</span>)]
+<span class="keyword">struct</span> Pack8
+{
+    <span class="keyword">public</span> <span class="keyword">byte</span> A;
+    <span class="keyword">public</span> <span class="keyword">long</span> B;
+    <span class="keyword">public</span> <span class="keyword">byte</span> C;
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = <span class="number">4</span>)]
+<span class="keyword">struct</span> Pack4
+{
+    <span class="keyword">public</span> <span class="keyword">byte</span> A;
+    <span class="keyword">public</span> <span class="keyword">long</span> B;
+    <span class="keyword">public</span> <span class="keyword">byte</span> C;
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = <span class="number">2</span>)]
+<span class="keyword">struct</span> Pack2
+{
+    <span class="keyword">public</span> <span class="keyword">byte</span> A;
+    <span class="keyword">public</span> <span class="keyword">long</span> B;
+    <span class="keyword">public</span> <span class="keyword">byte</span> C;
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = <span class="number">1</span>)]
+<span class="keyword">struct</span> Pack1
+{
+    <span class="keyword">public</span> <span class="keyword">byte</span> A;
+    <span class="keyword">public</span> <span class="keyword">long</span> B;
+    <span class="keyword">public</span> <span class="keyword">byte</span> C;
+}</code></pre>
+<p>これで、以下のようなレイアウトになります。</p>
+<p><img src="/assets/media/1083/structpack.png" alt="Pack指定した結果のレイアウト" /></p>
+<h3 id="auto"><a id="sec-generated-title-7"></a> <a id="auto-layout"></a>Autoレイアウト</h3>
+<p>Autoレイアウトでは、コンパイラー裁量でフィールドの順序変更を許します。
+<code>StructLayout</code>属性の引数に、<code>LayoutKind.Auto</code>を渡します。</p>
+<p>通常、<code>int</code>型(4バイト)は4の倍数に、<code>long</code>型(8バイト)は8の倍数位置に並ぶようにしつつ、
+隙間をより小さい型で埋めたりして、型のサイズが最小になるように並び替えが行われます。</p>
+<p>例えば、以下のような構造体を書いた場合を考えます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.InteropServices;
+
+[StructLayout(LayoutKind.Auto, Pack = <span class="number">8</span>)]
+<span class="keyword">struct</span> Sample
+{
+    <span class="keyword">public</span> <span class="keyword">byte</span> A;
+    <span class="keyword">public</span> <span class="keyword">long</span> B;
+    <span class="keyword">public</span> <span class="keyword">byte</span> C;
+}</code></pre>
+<p>この場合、
+<code>byte</code>型のフィールド2つを固めて後ろに持っていくことで、<code>long</code>型のBのアラインメントは揃えつつ、構造体のサイズを小さくします。
+結果、以下のような12バイトのレイアウトになります。</p>
+<p><img src="/assets/media/1084/autolayout.png" alt="Autoレイアウトの例" /></p>
+<p>(ただし、32ビット CPU の場合。これが64ビットCPUの場合はアラインメントが8バイト単位になって、 <code>Sample</code> 構造体は16バイトになります。)</p>
+<p>ちなみに、クラスでは、特に何も指定しないとAutoレイアウトになります。</p>
+<h3 id="explicit"><a id="sec-generated-title-8"></a> <a id="explicit-layout"></a>Explicitレイアウト</h3>
+<p><code>StructLayout</code>属性の引数に、<code>LayoutKind.Explicit</code>を指定して、
+フィールドに<code>FieldOffset</code>属性を付けることで、
+フィールドの位置を明示的に指定することができます。</p>
+<p>例えば、以下のような構造体を書いた場合を考えます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.InteropServices;
+
+[StructLayout(LayoutKind.Explicit)]
+<span class="keyword">struct</span> Sample
+{
+    [FieldOffset(<span class="number">1</span>)]
+    <span class="keyword">public</span> <span class="keyword">byte</span> A;
+    [FieldOffset(<span class="number">4</span>)]
+    <span class="keyword">public</span> <span class="keyword">long</span> B;
+    [FieldOffset(<span class="number">15</span>)]
+    <span class="keyword">public</span> <span class="keyword">byte</span> C;
+}</code></pre>
+<p>以下のような変な隙間が空いたレイアウトになります。</p>
+<p><img src="/assets/media/1085/explicitlayout.png" alt="Explicitレイアウトの例" /></p>
+<h4 id="section-4"><a id="sec-generated-title-9"></a> <a id="union"></a>フィールドの位置を重ねる</h4>
+<p>Explicitレイアウトを使うと、複数のフィールドの位置を重ねることもできます。
+すなわち、C言語のunionのようなことができます。</p>
+<p>例えば、以下のようなことができます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Runtime.InteropServices;
+
+[StructLayout(LayoutKind.Explicit)]
+<span class="keyword">struct</span> Union
+{
+    [FieldOffset(<span class="number">0</span>)]
+    <span class="keyword">public</span> <span class="keyword">byte</span> A;
+
+    [FieldOffset(<span class="number">1</span>)]
+    <span class="keyword">public</span> <span class="keyword">byte</span> B;
+
+    [FieldOffset(<span class="number">2</span>)]
+    <span class="keyword">public</span> <span class="keyword">byte</span> C;
+
+    [FieldOffset(<span class="number">3</span>)]
+    <span class="keyword">public</span> <span class="keyword">byte</span> D;
+
+    [FieldOffset(<span class="number">0</span>)] <span class="comment">// A と一緒</span>
+    <span class="keyword">public</span> <span class="keyword">int</span> N;
+}
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> x = <span class="keyword">new</span> Union { N = 0x12345678 };
+        Console.WriteLine(x.A.ToString(<span class="string">&quot;x&quot;</span>)); <span class="comment">// 78</span>
+        Console.WriteLine(x.B.ToString(<span class="string">&quot;x&quot;</span>)); <span class="comment">// 56</span>
+        Console.WriteLine(x.C.ToString(<span class="string">&quot;x&quot;</span>)); <span class="comment">// 34</span>
+        Console.WriteLine(x.D.ToString(<span class="string">&quot;x&quot;</span>)); <span class="comment">// 12</span>
+    }
+}</code></pre>
+<pre><code class="language-console">78
+56
+34
+12</code></pre>
+<p><code>int</code>型のフィールド<code>N</code>に書き込んだ結果を、1バイト1バイト、個別に取り出しています。</p>
+<p>ちなみに、下位バイト(この例では78)が先頭(フィールド<code>A</code>)に来るか末尾(フィールド<code>D</code>)に来るかはCPUによります(「エンディアン(endian)」と言います)。
+Intel CPUの場合は先頭に来ます(little endianと言います。この逆はbig endian)。</p>
+<h4 id="explicit-1"><a id="sec-generated-title-10"></a> <a id="abuse-union"></a>余談: Explicitレイアウトの悪用例</h4>
+<p>C# 8.0 で挙動が変わったんですが、昔の C# では、「true でも false でもない bool 型」を作ることができました。
+(詳しくは「<a href="/study/csharp/datatype/typeswitch/#bool-exhaustiveness">余談: bool の網羅性</a>」で説明しています。)</p>
+<p>以前の C# では、Explicit レイアウトを悪用して、(<a href="/study/csharp/interop/sp_unsafe/">unsafe</a> すら要らずに)この「true でも false でもない bool 型」を作れて、switch ステートメントで変な挙動を起こしていました。</p>
+<p><span class="expand-button" title="展開/折畳">（古い C# での挙動）</span></p>
+<div class="expand-panel" title="（古い C# での挙動）"><p>Explicitレイアウトでフィールドの位置を重ねられることで、
+結構たちが悪い悪用ができたりします。
+例えば、本来あり得ない値を作ったりできます。</p>
+<p>通常、C#の<code>bool</code>型が<code>true</code>か<code>false</code>の2つの値しかとりません。
+しかし、別の型のフィールドと重ねて、無理やり上書きすることで、他の値にできます。
+例えば以下のようなコードが書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Runtime.InteropServices;
+<p>[StructLayout(LayoutKind.Explicit)]
+<span class="keyword">struct</span> Union
+{
+[FieldOffset(<span class="number">0</span>)]
+<span class="keyword">public</span> <span class="keyword">bool</span> Bool;</p>
+<pre><code>[FieldOffset(&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;)] &lt;span class=&quot;comment&quot;&gt;// Bool と同じ場所&lt;/span&gt;
+&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;byte&lt;/span&gt; Byte;
+</code></pre>
+<p>}</p>
+<p><span class="keyword">class</span> Program
+{
+<span class="keyword">static</span> <span class="keyword">void</span> Main()
+{
+Write(<span class="keyword">false</span>);   <span class="comment">// False</span>
+Write(<span class="keyword">true</span>);    <span class="comment">// True</span></p>
+<pre><code>    Write(Bool(&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;)); &lt;span class=&quot;comment&quot;&gt;// False … false と一緒&lt;/span&gt;
+    Write(Bool(&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;)); &lt;span class=&quot;comment&quot;&gt;// True … true と一緒&lt;/span&gt;
+    Write(Bool(&lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;)); &lt;span class=&quot;comment&quot;&gt;// Other!&lt;/span&gt;
+}
+
+&lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;bool&lt;/span&gt; Bool(&lt;span class=&quot;keyword&quot;&gt;byte&lt;/span&gt; value)
+{
+    &lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; union = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; Union();
+    union.Byte = value;
+    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; union.Bool;
+}
+
+&lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; Write(&lt;span class=&quot;keyword&quot;&gt;bool&lt;/span&gt; x)
+{
+    &lt;span class=&quot;keyword&quot;&gt;switch&lt;/span&gt; (x)
+    {
+        &lt;span class=&quot;keyword&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;true&lt;/span&gt;:
+            Console.WriteLine(&lt;span class=&quot;string&quot;&gt;&amp;quot;True&amp;quot;&lt;/span&gt;);
+            &lt;span class=&quot;keyword&quot;&gt;break&lt;/span&gt;;
+        &lt;span class=&quot;keyword&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;false&lt;/span&gt;:
+            Console.WriteLine(&lt;span class=&quot;string&quot;&gt;&amp;quot;False&amp;quot;&lt;/span&gt;);
+            &lt;span class=&quot;keyword&quot;&gt;break&lt;/span&gt;;
+        &lt;span class=&quot;keyword&quot;&gt;default&lt;/span&gt;:
+            Console.WriteLine(&lt;span class=&quot;string&quot;&gt;&amp;quot;Other!&amp;quot;&lt;/span&gt;);
+            &lt;span class=&quot;keyword&quot;&gt;break&lt;/span&gt;;
+    }
+}
+</code></pre>
+<p>}</code></pre></p>
+<pre><code class="language-console">False
+True
+False
+True
+Other!</code></pre>
+<p>C#の<code>true</code>、<code>false</code>は、内部的にはそれぞれ1, 0の数値になっていることが分かります。
+そして、それ以外の数値を指定すると、<code>switch</code>の飛び先が変わります。</p>
+<p>ちなみに、0以外の数値は、真偽判定(<code>if</code>ステートメントの条件式内とか)で使うと<code>true</code>扱いになります。
+<code>ToString</code>の結果も<code>True</code>です。
+<code>switch</code>ステートメントでだけ変な結果を起こせます。</p></div>
+<h4 id="section-5"><a id="sec-generated-title-11"></a> <a id="illegal-layout"></a>余談: 値と参照を重ねる</h4>
+<p>Explicitレイアウトには1つ制限があります。
+値型のフィールドと参照型のフィールドを同じ位置に重ねてレイアウトすることはできません。</p>
+<p>ただし、コンパイル エラーにはならず、実行時エラーです。
+(C#の制限ではなくて、.NETランタイムの制限なので、実行時にしかエラーを拾えない。)
+例えば、以下のようなコードを書くと、<code>TypeLoadException</code>が発生します。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.InteropServices;
+
+[StructLayout(LayoutKind.Explicit)]
+<span class="keyword">struct</span> Sample
+{
+    [FieldOffset(<span class="number">0</span>)]
+    <span class="keyword">public</span> <span class="keyword">int</span> A;
+
+    <span class="comment">// 値と参照を同じ場所にレイアウト</span>
+    <span class="comment">// コンパイル エラーにはならない</span>
+    [FieldOffset(<span class="number">0</span>)]
+    <span class="keyword">public</span> <span class="keyword">object</span> B;
+}
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">unsafe</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// Sample 型に触れた瞬間、実行時エラーになる</span>
+        <span class="keyword">var</span> s = <span class="keyword">new</span> Sample();
+    }
+}</code></pre>
+<p>この制限は、<a href="/study/computer/essential-software/memorymanagement/#garbage-collection">ガベージ コレクション</a>の都合です。
+ガベージ コレクションは、参照をたどって誰からも参照されていないオブジェクトを探索するわけですが、
+ここで、本当に参照なのかどうかがわからないものがあると探索に支障をきたします。
+値と参照が重なっていると、この状態が生まれます。</p>
+<p>ちなみに、プログラミング言語によっては、同じメモリ領域に値と参照をどちらでも格納できるものもあります。
+そういう言語の場合は、以下のいずれかの処理を行っています。</p>
+<ul>
+<li>ガベージ コレクションを持たない</li>
+<li>すべて参照扱いにしてガベージ コレクションを走らせる
+<ul>
+<li>もちろん、本来参照じゃない場所まで参照扱いするので、回収漏れがあり得ます</li>
+</ul>
+</li>
+<li>値か参照かを弁別のために、メモリ領域の最上位ビットとかをフラグとして使う
+<ul>
+<li>こういう言語では、整数が31ビットしか使えなかったりします(C#みたいな言語の半分の大きさ)</li>
+</ul>
+</li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/interop/">&#x76F8;&#x4E92;&#x904B;&#x7528;</a></li><li><a href="/study/csharp/interop/sp_unsafe/">unsafe</a></li><li><a href="/study/csharp/interop/sp_makeref/">&#x578B;&#x4ED8;&#x304D;&#x53C2;&#x7167;</a></li><li><a href="/study/csharp/interop/sp_pinvoke/">&#x30D7;&#x30E9;&#x30C3;&#x30C8;&#x30D5;&#x30A9;&#x30FC;&#x30E0;&#x547C;&#x3073;&#x51FA;&#x3057;</a></li><li><a href="/study/csharp/interop/sp4_cominterop/">COM &#x76F8;&#x4E92;&#x904B;&#x7528;&#x6642;&#x306E;&#x7279;&#x5225;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/interop/functionpointer/">&#x95A2;&#x6570;&#x30DD;&#x30A4;&#x30F3;&#x30BF;&#x30FC;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

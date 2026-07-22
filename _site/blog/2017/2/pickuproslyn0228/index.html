@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 2/28: Milestones 7.X | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2017/2/pickuproslyn0228/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2017-02-28T01:35:47">2017-02-28</time></span><span>更新: <time datetime="2017-02-28T01:35:47">2017-02-28</time></span></div><h1 id="roslyn-228-milestones-7.x">ピックアップRoslyn 2/28: Milestones 7.X</h1>
+<p>なんか、<a href="https://github.com/dotnet/csharplang/milestones">csharplang にマイルストーンが切られてた</a>。</p>
+<p>ちなみに、リリース時期を邪推されないように、期日は2070年とかのむちゃくちゃな日付になっています。
+7.0が2070年、7.1が2071年、…みたいな。</p>
+<h2 id="section">7.0</h2>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/milestone/4">7.0</a></li>
+</ul>
+<p>3/7のリリースを考えるととっくに実装終わってるはずのもの。</p>
+<p><a href="https://github.com/dotnet/roslyn">Roslynリポジトリ</a>側からの移植と、あと、ドキュメントがまだないのでそれが残タスクっぽいです。(最近、ほんとにドキュメントが後…)</p>
+<h2 id="section-1">7.1</h2>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/milestone/5">7.1</a></li>
+</ul>
+<p>C#的には初の「小数点リリース」計画なわけですが、これは、Visual Studio とか .NET ランタイムのリリース スケジュールとは合わせないって意味で使いたさそうな雰囲気。
+ライブラリ、ランタイムやIDE支援が要らない機能を主に入れていく感じ。</p>
+<p>7.1は、みるからに7.0の積み残し。時間的な都合で入れなかっただけで、いつでも実装可能なやつ。</p>
+<p><a href="https://github.com/dotnet/csharplang/issues/37">private protected</a>なんて、7.0どころか6.0の積み残しだった李。これの話とか見事なもんで、「<a href="http://www.buildinsider.net/column/iwanaga-nobuyuki/001">機能的には大したことがなくていつでも実装可能。あとはキーワードを決めるだけ。キーワードが決まらなくて延期</a>」って状態だったのに、この期に及んで「それでも私は別キーワードがいい」ってコメントを付けてる人がいたり。
+「もう多数決では決まらないからC#チームがprivate protectedに決めた。このキーワードでやるか、さもなくばまったくやらないからの二択」と説明されてなお、あれやこれやコメントを付けてる人がいたり…</p>
+<h2 id="section-2">7.2</h2>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/milestone/6">7.2</a></li>
+</ul>
+<p>なんか、パフォーマンス改善系の世代っぽい。
+もしかしたら、この辺りで<a href="/blog/2016/12/tipscorefxlab/">System.Memory</a>とか、<a href="http://www.buildinsider.net/language/csharpunicode/02">Utf8String</a>とかのライブラリを実用段階に持っていきたいのかも。
+それと関連しそうなものがちらほら並んでいます。</p>
+<h2 id="x">7.X</h2>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/milestone/7">7.X</a></li>
+</ul>
+<p>その他、7.0の延長、ライブラリやIDEの機能追加が要らない感じのもの。</p>
+<p><a href="https://github.com/dotnet/csharplang/issues/45">フル機能版のパターン マッチング</a>はここに入ったっぽいんですよねぇ。
+確かにまあ、<a href="/study/csharp/datatype/typeswitch/">型パターン</a>が入るだけでそこそこ満足度高いですし。
+再帰パターンの類は実装大変な割には用途が狭く。</p>
+<h2 id="section-3">8.0</h2>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/milestone/8">8.0</a></li>
+</ul>
+<p>メジャーリリースなので、でかい機能。時間も掛かりそうかなぁ…</p>
+<p><a href="/study/csharp/misc/misclanguageevolution/#record-type">レコード型</a>とか、
+<a href="http://www.buildinsider.net/column/iwanaga-nobuyuki/012">null許容参照型</a>とか、
+<a href="http://www.buildinsider.net/column/iwanaga-nobuyuki/010">非同期シーケンス</a>とかはここに。</p>
+<h2 id="x-1">X</h2>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/milestone/9">X.X</a></li>
+<li><a href="https://github.com/dotnet/csharplang/milestone/10">X.0</a></li>
+</ul>
+<p>ほんとに未定。
+「何かいいアイディアがあれば」とか、
+「.NET ランタイム自体に機能追加が必要で、そっち次第」とか、そんな感じのもの。
+逆にいうと、ふといいアイディアが降りてきて急に実装されたり、
+.NETチームとかVisual Studio IDEチームとかのスケジュール次第では早くも遅くもなりそうな。</p>
+<p><a href="https://github.com/dotnet/csharplang/issues/107">コード生成拡張</a>(replace/original)とかはほんと、IDE側の対応次第って感じのものなんですよね…
+これ、ほんと一刻も早くほしかったりするんですけど。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2017/2/">2&#x6708;</a></li><li><a href="/blog/2017/2/compileroutofmemory/">&#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30E9;&#x30FC;&#x306E;&#x8CC7;&#x6E90;&#x67AF;&#x6E07;&#x7CFB;&#x30A8;&#x30E9;&#x30FC;&#x3068;&#x306E;&#x4ED8;&#x304D;&#x5408;&#x3044;&#x65B9;</a></li><li><a href="/blog/2017/2/pickuproslyn0203/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 2/3: csharplang &#x30EA;&#x30DD;&#x30B8;&#x30C8;&#x30EA;</a></li><li><a href="/blog/2017/2/pickuproslyn0110/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7; Roslyn 2/10</a></li><li><a href="/blog/2017/2/pickuproslyn0213/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 2/13</a></li><li><a href="/blog/2017/2/pickuproslyn0223/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 2/23: Shapes and Extensions</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

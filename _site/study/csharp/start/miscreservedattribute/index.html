@@ -1,0 +1,294 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>[&#x96D1;&#x8A18;] &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x306B;&#x5F71;&#x97FF;&#x3092;&#x53CA;&#x307C;&#x3059;&#x5C5E;&#x6027; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/start/miscreservedattribute/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">[雑記] コンパイル結果に影響を及ぼす属性</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract">概要</a></h2>
+<p>「<a href="/study/csharp/dynamic/sp_attribute/">属性</a>」の説明を「<a href="/study/csharp/#dynamic">動的な処理</a>」に並べているように、
+多くの場合(特に属性を自作する場合)、
+属性は<a href="/study/csharp/dynamic/sp_reflection/#reflection">リフレクション</a>を使って実行時に型情報から読みだして使うものです。
+(動的な処理自体、うちのサイト内では結構後半での説明なので、属性自体についての説明も後々になります。)</p>
+<p>ところが、いくつかの属性は C# コンパイラー自体が解釈して、
+コンパイル結果に影響を及ぼします。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="reserved-attribute">予約属性</a></h2>
+<p>この手の、(動的・実行時ではなく) 静的・コンパイル時に影響を及ぼす属性として、以下のようなものがあります。</p>
+<ul>
+<li><code>AttributeUsage</code> (<code>System</code>名前空間) : 属性の用途を指定します</li>
+<li><code>Obsolete</code> (<code>System</code>名前空間) : 時代遅れでもう使ってほしくない(別のクラスやメソッドに移行してほしい)ものに付けて、警告を発します</li>
+<li><code>Conditional</code> (<code>System.Diagnostics</code> 名前空間) : 特定の条件下でのみ実行されるメソッドを定義できるようにします</li>
+<li>呼び出し元情報(CallerInfo)属性: メソッドの呼び出し元に関する情報を得るために使います</li>
+</ul>
+<p><a href="#new-syntax">後述するように</a>、裏でこっそりとコンパイル結果に影響を及ぼす属性は他にももっとたくさんあるんですが、
+明示的な属性指定でコンパイル結果が変わるものは以上です。
+これらの属性の事を <strong id="key-reserved-attribute" class="keyword">予約属性</strong> (reserved attribute)と呼びます。</p>
+<p><code>AttributeUsage</code>, <code>Obsolete</code>, <code>Conditional</code> は C# 1.0 の頃からあるもので、当時はこの3つだけが予約属性でした。
+その後、C# 5.0 で<a href="/study/csharp/cheatsheet/ap_ver5/#CallerInfo">呼び出し元情報属性</a>の <code>CallerFilePath</code>, <code>CallerLineNumber</code>, <code>CallerMemberName</code> 属性(いずれも <code>System.Runtime.CompilerServices</code> 名前空間)が追加されました。
+また、C# 10.0 で、呼び出し元情報属性に <code>CallerArgumentExpression</code> が追加されました。</p>
+<h3 id="attributeusage"><a id="sec-generated-title-3"></a> <a id="AttributeUsage">AttributeUsage</a></h3>
+<p><code>AttributeUsage</code> 属性(<code>System</code>名前空間)では、
+<a href="/study/csharp/dynamic/sp_attribute/#userdefine">属性を自作</a>する際に、属性の使い方(名前通り、attribute usage)を指定します。</p>
+<p>以下のように、指定した以外の属性の使い方をするとコンパイル エラーを起こします。</p>
+<pre><code class="language-csharp">[AttributeUsage(AttributeTargets.Class)]
+<span class="keyword">class</span> ForClass : Attribute { }
+
+[ForClass] <span class="comment">// これは OK。</span>
+<span class="keyword">class</span> A
+{
+    [ForClass] <span class="comment">// これは「ターゲットが合わない」というエラーになる。</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> M() { }
+}</code></pre>
+<h3 id="obsolete"><a id="sec-generated-title-4"></a> <a id="Obsolete">Obsolete</a></h3>
+<p><code>Obsolete</code> 属性(<code>System</code>名前空間)は、もう廃止(obsolete)したいクラスやメソッドに付けて、そのクラスやメソッドの利用者側コードに警告やエラーを出します。
+通常、廃止理由や移行先に関する情報を書いておきます。</p>
+<pre><code class="language-csharp">HighPerformance.AlgorithmA(); <span class="comment">// 警告が出る</span>
+Cryptograph.AlgorithmA();     <span class="comment">// エラーになる</span>
+
+<span class="keyword">class</span> HighPerformance
+{
+    [Obsolete(<span class="string">&quot;遅いので AlgorithmB に移行してほしい&quot;</span>)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> AlgorithmA() { }
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> AlgorithmB() { }
+}
+
+<span class="keyword">class</span> Cryptograph
+{
+    [Obsolete(<span class="string">&quot;セキュリティ強度が低いので AlgorithmB に移行してほしい&quot;</span>, error: <span class="keyword">true</span>)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> AlgorithmA() { }
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> AlgorithmB() { }
+}</code></pre>
+<h3 id="conditional"><a id="sec-generated-title-5"></a> <a id="Conditional">Conditional</a></h3>
+<p><code>Conditional</code> 属性 (<code>System.Diagnostics</code> 名前空間)を付けると、特定の条件下でのみ実行されるメソッド(conditional method: 条件付きメソッド)、特定の条件下でのみ認識される属性(conditional attribute: 条件付き属性)を定義できるようにします。</p>
+<p>(<a href="/study/csharp/cheatsheet/ap_ver2/#conditional">条件付き属性</a>は C# 2.0 からの機能です。)</p>
+<p>条件付きメソッドは、
+<a href="/study/csharp/misc/sp_preprocess/#conditional"><code>#if</code> ディレクティブなどを使った条件付きコンパイル</a>を使ったコードと一緒で、
+<a href="/study/csharp/misc/sp_preprocess/#symbol"><code>#define</code> ディレクティブ</a>などでシンボル定義があるときだけ実行されるメソッドになります。</p>
+<p>一番多い用途は「デバッグ時にのみ実行」で、例えば標準ライブラリ中の <a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.diagnostics.debug.assert"><code>Debug.Assert</code> メソッド</a>には <code>Conditional</code> 属性が付いています。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Diagnostics;
+<span class="keyword">using</span> System.Diagnostics.CodeAnalysis;
+
+<span class="keyword">namespace</span> System.Diagnostics
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> Debug
+    {
+        [Conditional(<span class="string">&quot;DEBUG&quot;</span>)]
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Assert([DoesNotReturnIf(<span class="keyword">false</span>)] <span class="keyword">bool</span> condition);
+    }
+}</code></pre>
+<p>これを呼びだすコードはデバッグビルド時にのみ実行されます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Diagnostics;
+
+<span class="keyword">void</span> M(<span class="keyword">int</span> x)
+{
+    <span class="comment">// デバッグ実行時にだけ x &gt; 0 判定が残る。</span>
+    <span class="comment">// 「リリースまでにはこの条件に当てはまらない呼び出し元は絶対に残さない」、</span>
+    <span class="comment">// 「だったらリリース時にこの条件判定が残るのはパフォーマンス的にもったいない」</span>
+    <span class="comment">// みたいなときに使う。</span>
+    Debug.Assert(x &gt; <span class="number">0</span>);
+}</code></pre>
+<h3 id="caller-info"><a id="sec-generated-title-6"></a> <a id="CallerInfo">呼び出し元情報(caller info)</a></h3>
+<h5 class="version version5">Ver. 5</h5>
+<h5 class="version version10">Ver. 10</h5>
+<p>以下の4つの属性を使って、メソッドの呼び出し元に関する情報を得ることができます
+(いずれも <code>System.Runtime.CompilerServices</code> 名前空間)。
+通称、CallerInfo (呼び出し元の情報)属性と言います。</p>
+<ul>
+<li><code>CallerFilePath</code>: 呼び出し元のファイル名</li>
+<li><code>CallerLineNumber</code>: 呼び出し元の行番号</li>
+<li><code>CallerMemberName</code>: 呼び出し元のメンバー名（メソッド名、プロパティ名、イベント名等々）</li>
+<li><code>CallerArgumentExpression</code>: 呼び出し元で、特定の引数に渡した式</li>
+</ul>
+<p>このうち、前3つは C# 5.0 から、最後の <code>CallerArgumentExpression</code> は C# 10.0 から使える属性です。
+(それ以前のコンパイラーは単にこの属性を無視します。)</p>
+<p>これらは、以下のように、<a href="/study/csharp/structured/st_function/#default-parameter">オプション引数</a>になっている引数に属性を付ける形で使います。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> M(
+    <span class="keyword">int</span> x,
+    [CallerLineNumber] <span class="keyword">int</span> line = <span class="number">0</span>,
+    [CallerFilePath] <span class="keyword">string</span>? file = <span class="keyword">null</span>,
+    [CallerMemberName] <span class="keyword">string</span>? member = <span class="keyword">null</span>,
+    [CallerArgumentExpression(<span class="string">&quot;x&quot;</span>)] <span class="keyword">string</span>? arg = <span class="keyword">null</span>)
+{
+    Console.WriteLine($<span class="stringCSharpVerbatim">@&quot;{file} の {line} 行目
+{member} から呼ばれていて
+{arg} という式を引数に渡している
+(実際の値は {x})
+&quot;</span>);
+}</code></pre>
+<p>これを、例えば以下のようなコードから呼び出したとします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        M(<span class="number">2</span> * <span class="number">3</span> * <span class="number">5</span>);
+    }
+}</code></pre>
+<p>すると、省略したオプション引数の部分に、行番号、ファイルのフルパス、呼び出し元のメンバー名(この場合 <code>Main</code> メソッド)、引数に渡した式などの整数/文字列が挿入されます。
+この例の場合、(ファイル名は環境によって変わりますが)以下のような出力が得られます。</p>
+<pre><code class="language-console">C:\Users\ufcpp\source\repos\ConsoleApp1\ConsoleApp1\Program.cs の 7 行目
+Main から呼ばれていて
+2 * 3 * 5 という式を引数に渡している
+(実際の値は 30)</code></pre>
+<p>主な用途はデバッグ、ログ用です。</p>
+<p>他に面白い使い方としては、「null 判定で、何の変数が null だったかを知らせるために使う」と言うようなこともできます。
+.NET 6 (C# 10.0) で導入された <a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.argumentnullexception.throwifnull"><code>ThrowIfNull</code> メソッド</a>がまさにこの機能を使っています。
+この <code>ThrowIfNull</code> は以下のような宣言になっています。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Diagnostics.CodeAnalysis;
+<span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">namespace</span> System
+{
+    <span class="keyword">public</span> <span class="keyword">class</span> ArgumentNullException
+    {
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> ThrowIfNull(
+            [NotNull] <span class="keyword">object</span>? argument,
+            [CallerArgumentExpression(<span class="string">&quot;argument&quot;</span>)] <span class="keyword">string</span>? paramName = <span class="keyword">null</span>);
+    }
+}</code></pre>
+<p>このメソッドは以下のような使い方をします。</p>
+<pre><code class="language-csharp">M(<span class="keyword">null</span>);
+
+<span class="keyword">void</span> M(<span class="keyword">string</span>? myArgument)
+{
+    ArgumentNullException.ThrowIfNull(myArgument);
+}</code></pre>
+<p>この場合、「null だったら例外」なメソッドにわざと null を渡しているので例外が発生します。
+投げられる例外にはちゃんと「何が null だったか」の情報が渡っていて、
+以下のようなメッセージが表示されるはずです。</p>
+<pre><code class="language-console">Unhandled exception. System.ArgumentNullException: Value cannot be null. (Parameter 'myArgument')</code></pre>
+<p>ちなみに、これらの数値/文字列はコンパイル時<a href="/study/csharp/start/sp_const/#constant">定数</a>になります。
+直接数値/文字列を書く場合と比べて追加のコストは掛かりません。</p>
+<p>また、これらの属性は拡張メソッドとかでもちゃんと動きます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+(<span class="keyword">from</span> x <span class="keyword">in</span> <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span> } <span class="keyword">select</span> x * x).Sum().M();
+
+<span class="keyword">static</span> <span class="keyword">class</span> Extensions
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">this</span> <span class="keyword">int</span> x, [CallerArgumentExpression(<span class="string">&quot;x&quot;</span>)] <span class="keyword">string</span>? ex = <span class="keyword">null</span>)
+    {
+        Console.WriteLine($<span class="string">&quot;{ex} = {x}&quot;</span>);
+    }
+}</code></pre>
+<pre><code class="language-console">(from x in new[] { 1, 2, 3 } select x * x).Sum() = 14</code></pre>
+<h2 id="section-3"><a id="sec-generated-title-7"></a> <a id="new-syntax">属性を使った新機能</a></h2>
+<p>C# の新機能のうち結構な割合のものが、</p>
+<ul>
+<li>既存の構文で書けるコードに属性を付けたものが生成される</li>
+<li>その属性が付いている場合、コンパイラーが特殊対応する</li>
+</ul>
+<p>というような実装方法になっています。</p>
+<p>比較的新しいものでいうと、例えば C# 8.0 で導入された <a href="/study/csharp/cheatsheet/ap_ver8/#nullable-reference-type">null 許容参照型</a>は <code>Nullable</code> 属性、<code>NullableContext</code> 属性を使ったコードに展開されます。</p>
+<p>例えば nullable enable な場所で以下のようなコードを書いた場合、</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> C
+{
+    <span class="keyword">public</span> <span class="keyword">void</span> M1(<span class="keyword">string</span>? x) { }
+    <span class="keyword">public</span> <span class="keyword">void</span> M2(<span class="keyword">string</span>? x, <span class="keyword">string</span> y, <span class="keyword">string</span> z) { }
+}</code></pre>
+<p>旧来の(nullable disable な場所での)コードでいうところの以下のようなコードが得られます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">public</span> <span class="keyword">class</span> C
+{
+    [NullableContext(<span class="number">2</span>)]
+    <span class="keyword">public</span> <span class="keyword">void</span> M1(<span class="keyword">string</span> x)
+    {
+    }
+
+    [NullableContext(<span class="number">1</span>)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M2([Nullable(<span class="number">2</span>)] <span class="keyword">string</span> x, <span class="keyword">string</span> y, <span class="keyword">string</span> z)
+    {
+    }
+}</code></pre>
+<p>逆に古くからあるものだと拡張メソッドがそうで、以下の2つのコードが同じ意味になります。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> C
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">this</span> <span class="keyword">string</span> x) { }
+}</code></pre>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> C
+{
+    [Extension]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">string</span> x) { }
+}</code></pre>
+<p>ただし、対応するバージョン以降
+(今あげた例でいうと、null 許容参照型は C# 8.0、拡張メソッドは C# 3.0)では、
+これらの属性を手書きで使うことはできません。
+「直接使うな、拡張メソッド構文を使え」と言うようなコンパイル エラーになります。</p>
+<h2 id="internal"><a id="sec-generated-title-8"></a> <a id="can-be-internal"></a>internal 属性</h2>
+<p>昔は、この手の属性は public である必要がありました。
+C# 3.0 の頃はまさにそうで、<code>Extension</code> 属性は public です。</p>
+<p>ところが最近は「internal でもいい」と言うことになっています。
+例えば以下のような状況を想定しています。
+(public であることを義務付けてしまうと最後の「被り」が解消できなくて困る。)</p>
+<ul>
+<li><code>CallerArgumentExpressionAttribute</code> という名前の属性さえあれば、古いバージョンの .NET ランタイム上でも使える</li>
+<li><code>CallerArgumentExpressionAttribute</code> が標準ライブラリ入りするのは .NET 6 (C# 10.0 と同世代)から</li>
+<li>.NET 5 (C# 9.0 と同世代)でも C# 10.0 にしてこの属性を使いたいので自前で同じ名前の属性を用意</li>
+<li>その .NET 5 なコードを、.NET 6 な別のライブラリやアプリから参照したい</li>
+<li>自前定義の属性と標準ライブラリ中の属性が被って困る</li>
+</ul>
+<h2 id="section-4"><a id="sec-generated-title-9"></a> <a id="compiler-generated"></a>コンパイラー生成属性</h2>
+<p>さらに言うと、最近は標準ライブラリ中に定義された属性を参照するのではなく、
+コンパイラーが属性自体をコンパイル時生成していることが多いです。</p>
+<p>例えば[前述の null 許容参照型]の <code>Nullable</code>, <code>NullableContext</code> 属性はコンパイラー生成です。
+標準ライブラリにこれらの属性が定義されているわけではなく、
+コンパイル結果に以下のような属性が追加されて、それが使われます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">namespace</span> Microsoft.CodeAnalysis
+{
+    [CompilerGenerated]
+    [Embedded]
+    <span class="keyword">internal</span> <span class="keyword">sealed</span> <span class="keyword">class</span> EmbeddedAttribute : Attribute { }
+}
+
+<span class="keyword">namespace</span> System.Runtime.CompilerServices
+{
+    [CompilerGenerated]
+    [Microsoft.CodeAnalysis.Embedded]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Event | AttributeTargets.Parameter | AttributeTargets.ReturnValue | AttributeTargets.GenericParameter, AllowMultiple = <span class="keyword">false</span>, Inherited = <span class="keyword">false</span>)]
+    <span class="keyword">internal</span> <span class="keyword">sealed</span> <span class="keyword">class</span> NullableAttribute : Attribute
+    {
+        <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">byte</span>[] NullableFlags;
+        <span class="keyword">public</span> NullableAttribute(<span class="keyword">byte</span> P_0) =&gt; NullableFlags = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1</span>] { P_0 };
+        <span class="keyword">public</span> NullableAttribute(<span class="keyword">byte</span>[] P_0) =&gt; NullableFlags = P_0;
+    }
+    [CompilerGenerated]
+    [Microsoft.CodeAnalysis.Embedded]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Method | AttributeTargets.Interface | AttributeTargets.Delegate, AllowMultiple = <span class="keyword">false</span>, Inherited = <span class="keyword">false</span>)]
+    <span class="keyword">internal</span> <span class="keyword">sealed</span> <span class="keyword">class</span> NullableContextAttribute : Attribute
+    {
+        <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">byte</span> Flag;
+        <span class="keyword">public</span> NullableContextAttribute(<span class="keyword">byte</span> P_0) =&gt; Flag = P_0;
+    }
+}</code></pre>
+<p>他にも例えば、C# 7.3 の <a href="/study/csharp/interop/sp_unsafe/#unmanaged-constraints"><code>unmanaged</code> 制約</a>も <code>IsUnmanaged</code> 属性がコンパイラー生成されています。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> System.Runtime.CompilerServices
+{
+    [CompilerGenerated]
+    [Microsoft.CodeAnalysis.Embedded]
+    <span class="keyword">internal</span> <span class="keyword">sealed</span> <span class="keyword">class</span> IsUnmanagedAttribute : Attribute { }
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/start/">&#x57FA;&#x790E;</a></li><li><a href="/study/csharp/start/st_basis/">C#&#x306E;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x57FA;&#x672C;&#x69CB;&#x9020;</a></li><li><a href="/study/csharp/start/st_compile/">&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x4F5C;&#x6210;&#x30FB;&#x5B9F;&#x884C;</a></li><li><a href="/study/csharp/start/st_comment/">&#x30B3;&#x30E1;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/start/st_consoleio/">&#x5024;&#x306E;&#x5165;&#x51FA;&#x529B;</a></li><li><a href="/study/csharp/start/st_variable/">&#x5909;&#x6570;&#x3068;&#x5F0F;</a></li><li><a href="/study/csharp/start/misc_identifier/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x540D;&#x306B;&#x4F7F;&#x3048;&#x308B;&#x6587;&#x5B57;</a></li><li><a href="/study/csharp/start/misc_unicode/">[&#x96D1;&#x8A18;] C# &#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x3068; Unicode</a></li><li><a href="/study/csharp/start/st_embeddedtype/">&#x7D44;&#x8FBC;&#x307F;&#x578B;</a></li><li><a href="/study/csharp/start/stnumber/">&#x6570;&#x5024;</a></li><li><a href="/study/csharp/start/st_string/">&#x7279;&#x6B8A;&#x306A;&#x6587;&#x5B57;&#x5217;&#x30EA;&#x30C6;&#x30E9;&#x30EB;</a></li><li><a href="/study/csharp/start/improvedinterpolatedstring/">C# 10.0 &#x306E;&#x88DC;&#x9593;&#x6587;&#x5B57;&#x5217;&#x306E;&#x6539;&#x5584;</a></li><li><a href="/study/csharp/start/st_operator/">&#x7D44;&#x8FBC;&#x307F;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/study/csharp/start/st_cast/">&#x7D44;&#x8FBC;&#x307F;&#x578B;&#x5909;&#x63DB;</a></li><li><a href="/study/csharp/start/sp_checked/">&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30D5;&#x30ED;&#x30FC;&#x306E;&#x30C1;&#x30A7;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/start/sp_const/">&#x5B9A;&#x6570;</a></li><li><a href="/study/csharp/start/sp3_inference/">&#x578B;&#x63A8;&#x8AD6;(&#x6697;&#x9ED9;&#x7684;&#x578B;&#x4ED8;&#x3051;)&#x3068;&#x533F;&#x540D;&#x578B;</a></li><li><a href="/study/csharp/start/sp3_var/">[&#x96D1;&#x8A18;] &#x578B;&#x63A8;&#x8AD6;&#x306E;&#x662F;&#x975E;</a></li><li><a href="/study/csharp/start/st_scope/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x306E;&#x30B9;&#x30B3;&#x30FC;&#x30D7;&#x3068;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x5BFF;&#x547D;</a></li><li><a href="/study/csharp/start/misctyperesolution/">[&#x96D1;&#x8A18;] &#x578B;&#x306E;&#x6C7A;&#x5B9A;</a></li><li><a href="/study/csharp/start/definiteassignment/">[&#x96D1;&#x8A18;] &#x660E;&#x78BA;&#x306A;&#x4EE3;&#x5165;&#x30EB;&#x30FC;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

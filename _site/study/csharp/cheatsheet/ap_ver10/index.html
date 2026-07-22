@@ -1,0 +1,185 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>C# 10.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/cheatsheet/ap_ver10/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="c-10.0">C# 10.0 の新機能</h1>
+<div class="version version10">Ver. 10.0</div>
+<table>
+<tr>
+<th>リリース時期</th>
+<td>2021/11</td>
+</tr>
+<tr>
+<th>同世代技術</th>
+<td>
+<ul>
+<li>.NET 6.0</li>
+<li>Visual Studio 2022</li>
+</td>
+</tr>
+<tr>
+<th>要約・目玉機能</ht>
+<td>
+<ul>
+<li></li>
+</ul>
+</td>
+</tr>
+</table>
+<p>※一部、まだ記事化(めったに使わない機能や細かい修正の紹介)が完了していません:</p>
+<ul>
+<li><a id="async-builder">Async method builder override</a></li>
+<li>Enhanced <code>#line</code> directive</li>
+</ul>
+<p>執筆予定: <a href="https://github.com/ufcpp/UfcppSample/issues/342">C# 10.0 トラッキング issue</a></p>
+<h2 id="record-struct"><a id="sec-generated-title-1"></a> <a id="record-struct">record struct</a></h2>
+<p>C# 9.0 (レコード型の最初のバージョン)では、レコード型は常に<a href="/study/csharp/resource/oo_reference/#reftype">参照型</a>(クラスと同系統の型)になります。
+これに対して C# 10.0 では<a href="/study/csharp/resource/oo_reference/#valtype">値型</a>も選べるようにしました。
+そのため、以下のように、<code>record class</code> と <code>record struct</code> というキーワードで書き分けができるようになりました。</p>
+<pre><code class="language-csharp">record <span class="keyword">class</span> Reference(<span class="keyword">int</span> X, <span class="keyword">int</span> Y); <span class="comment">// record だけ書いた場合こちらと同じ意味</span>
+record <span class="keyword">struct</span> Value(<span class="keyword">int</span> X, <span class="keyword">int</span> Y);</code></pre>
+<p>詳しくは 「<a href="/study/csharp/datatype/record/">レコード型</a>」のページ内に色々と追記しました。</p>
+<h2 id="section"><a id="sec-generated-title-2"></a> <a id="struct-parameterless-ctor"></a>構造体の引数なしコンストラクター</h2>
+<p>構造体に引数なしコンストラクターとかフィールド初期化子を書けるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> A
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X;
+    <span class="keyword">public</span> A() =&gt; X = <span class="number">1</span>;
+}</code></pre>
+<p>これで、<code>new A()</code> で <code>X</code> が1になります。
+詳しくは「<a href="/study/csharp/resource/rm_struct/#parameterless-ctor">引数なしコンストラクター</a>」で説明します。</p>
+<h2 id="section-1"><a id="sec-generated-title-3"></a> <a id="string-interpolation"></a>文字列補間</h2>
+<p><a href="/study/csharp/start/st_string/#string-interpolation">文字列補間</a>に2点ほど改善が入りました。</p>
+<h3 id="section-2"><a id="sec-generated-title-4"></a> <a id="improved-string-interpolation"></a>パフォーマンス改善</h3>
+<p><code>string.Format</code> を使った実装ではどうしてもパフォーマンス上の改善が難しく、
+別の型を使って結構複雑なコードに変換する最適化が入りました。
+条件を満たす場合、</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> formatted = $<span class="string">&quot;({x}, {y})&quot;</span>;</code></pre>
+<p>このコードは <code>string.Format</code> ではなく、以下のようなコードに展開されます。</p>
+<pre><code class="language-csharp">DefaultInterpolatedStringHandler handler = <span class="keyword">new</span> DefaultInterpolatedStringHandler(<span class="number">4</span>, <span class="number">2</span>);
+handler.AppendLiteral(<span class="string">&quot;(&quot;</span>);
+handler.AppendFormatted(x);
+handler.AppendLiteral(<span class="string">&quot;, &quot;</span>);
+handler.AppendFormatted(y);
+handler.AppendLiteral(<span class="string">&quot;)&quot;</span>);
+<span class="keyword">string</span> s = handler.ToStringAndClear();</code></pre>
+<p>詳しくは「<a href="/study/csharp/start/improvedinterpolatedstring/">C# 10.0 の補間文字列の改善</a>」で説明します。</p>
+<h3 id="const"><a id="sec-generated-title-5"></a> <a id="improved-string-interpolation"></a>const 文字列補間</h3>
+<p><a href="/study/csharp/start/st_string/#string-interpolation">文字列補間</a>でも、<code>{}</code> の中身が <code>const</code> 文字列な場合に限り、補完結果も <code>const</code> にできます。
+例えば以下のような <code>const</code> 文字列を作れます。</p>
+<pre><code class="language-csharp"><span class="keyword">const</span> <span class="keyword">string</span> A = <span class="string">&quot;Abc&quot;</span>;
+<span class="keyword">const</span> <span class="keyword">string</span> B = <span class="string">&quot;Xyz&quot;</span>;
+<span class="keyword">const</span> <span class="keyword">string</span> C = $<span class="string">&quot;{nameof(A)}: {A}, {nameof(B)}: {B}&quot;</span>; <span class="comment">// &quot;A: Abc, B: Xyz&quot;</span></code></pre>
+<p>詳しくは「<a href="/study/csharp/start/sp_const/#constant-string-interpolation">const 文字列補間</a>」で説明します。</p>
+<h2 id="callerargumentexpression"><a id="sec-generated-title-6"></a> <a id="CallerArgumentExpression"></a>CallerArgumentExpression 属性</h2>
+<p><code>CallerArgumentExpression</code> 属性を使って、メソッド呼び出し元でどの引数にどういう式を渡したかを文字列として取れるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+m(<span class="number">2</span> * <span class="number">3</span> * <span class="number">5</span>);
+
+<span class="keyword">static</span> <span class="keyword">void</span> m(
+    <span class="keyword">int</span> x,
+    [CallerArgumentExpression(<span class="string">&quot;x&quot;</span>)] <span class="keyword">string</span>? expression = <span class="keyword">null</span>)
+{
+    Console.WriteLine($<span class="string">&quot;{expression} = {x}&quot;</span>);
+}</code></pre>
+<pre><code class="language-console">2 * 3 * 5 = 30</code></pre>
+<p>詳しくは「<a href="/study/csharp/start/miscreservedattribute/#CallerInfo">呼び出し元情報(caller info)</a>」で説明します。</p>
+<h2 id="section-3"><a id="sec-generated-title-7"></a> <a id="simple-program"></a>シンプル プログラム</h2>
+<p>C# 9.0 の<a href="/study/csharp/cheatsheet/ap_ver9/#top-level-statements">トップ レベル ステートメント</a>に続いて、シンプルなプログラムであればシンプルなソースコードで書けるようになる機能が増えています。</p>
+<p>これらの機能によって、いわゆる <a href="https://ja.wikipedia.org/wiki/Hello_world">Hello World プログラム</a>を以下の1行で書けるようになりました。</p>
+<pre><code class="language-csharp">Console.WriteLine(<span class="string">&quot;Hello, World!&quot;</span>);</code></pre>
+<p>実際、 .NET 6 からはコンソール アプリのプロジェクト テンプレートがこの1ファイル、1行だけのものになっています。</p>
+<p>また、Web アプリ用のテンプレートも以下のような1ファイルのコードになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> builder = WebApplication.CreateBuilder(args);
+<span class="keyword">var</span> app = builder.Build();
+
+app.MapGet(<span class="string">&quot;/&quot;</span>, () =&gt; <span class="string">&quot;Hello World!&quot;</span>);
+
+app.Run();</code></pre>
+<p>参考: 「<a href="/blog/2021/8/newprojecttemplate/">最初の C# プログラム</a>」</p>
+<p>これらを実現するために、C# の文法にもいくつかの新機能が追加されました。</p>
+<h3 id="section-4"><a id="sec-generated-title-8"></a> <a id="file-scoped-namespace"></a>ファイル スコープ名前空間</h3>
+<p>C# 10.0 から <code>{}</code> なしの以下のような書き方で名前空間を指定できるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> Namespace;
+
+<span class="keyword">class</span> A { }</code></pre>
+<p>これで以下のコードと同じ意味になります。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> Namespace
+{
+    <span class="keyword">class</span> A { }
+}</code></pre>
+<p>詳しくは「<a href="/study/csharp/structured/sp_namespace/#file-scoped-namespace">ファイル スコープ namespace</a>」で説明します。</p>
+<h3 id="global-using"><a id="sec-generated-title-9"></a> <a id="global-using"></a>global using</h3>
+<p><code>using</code> ディレクティブの前に <code>global</code> という修飾を付けることで、
+<a href="/study/csharp/package/project/#project">プロジェクト</a>内全域に対して影響を及ぼす <code>using</code> (名前空間の参照)ができるようになりました。</p>
+<p>例えば、プロジェクト内のどこか1つのファイルに以下のようなコードを書いたとします。</p>
+<pre><code class="language-csharp">global <span class="keyword">using</span> System;</code></pre>
+<p>これで、このプロジェクト内のすべてのファイルで、ファイルの先頭に <code>using System;</code> を書いたのと同じ状態になります。</p>
+<p>詳しくは「<a href="/study/csharp/structured/sp_namespace/#global-using">global using</a>」で説明します。</p>
+<h3 id="section-5"><a id="sec-generated-title-10"></a> <a id="lambda-improvement"></a>ラムダ式の改善(自然な型決定、戻り値明示、属性指定)</h3>
+<p>Web アプリ用テンプレートの <code>MapGet</code> を実現するために、
+ラムダ式とデリゲートに以下の3つの機能が追加されました。</p>
+<ul>
+<li>自然な型決定</li>
+<li>ラムダ式の戻り値の明示</li>
+<li>ラムダ式への属性</li>
+</ul>
+<p>これらにより、ラムダ式やデリゲートを以下のように書けるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> f =
+    [A]
+    [<span class="keyword">return</span>: B]
+    <span class="keyword">static</span> <span class="keyword">int</span> ([C] <span class="keyword">int</span> x)
+    =&gt; x;</code></pre>
+<p>詳しくは「<a href="/study/csharp/functional/sp_delegate/#natural-type">デリゲートの自然な型</a>」と「<a href="/study/csharp/functional/fun_localfunctions/#lambda-csharp10">ラムダ式の戻り値の明示と属性</a>」で説明します。</p>
+<h2 id="section-6"><a id="sec-generated-title-11"></a> <a id="others"></a>その他</h2>
+<h3 id="section-7"><a id="sec-generated-title-12"></a> <a id="sub-pattern-name"></a>プロパティ パターンの拡張(入れ子のメンバー参照)</h3>
+<p>入れ子のプロパティ・フィールド参照でプロパティ パターンを書けるようになりました。</p>
+<pre><code class="language-csharp">    <span class="keyword">if</span> (x <span class="keyword">is</span> { Name.Length: <span class="number">1</span> })
+    {
+        Console.WriteLine(<span class="string">&quot;single-char Name&quot;</span>);
+    }</code></pre>
+<p>詳しくは「<a href="/study/csharp/datatype/patterns/#sub-pattern-name">プロパティ パターン</a>」で説明します。</p>
+<h3 id="section-8"><a id="sec-generated-title-13"></a> <a id="mixed-deconstruction"></a>分解宣言と分解代入の混在</h3>
+<p>分解代入と分解宣言の混在もできるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> x;
+(x, <span class="keyword">var</span> u) = (<span class="number">1</span>, <span class="number">2</span>);</code></pre>
+<p>ただし、式の途中に分解宣言 (var 付きの宣言) が来るようなコードは C# 10.0 でも書けません。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> x, y;
+(x, <span class="keyword">var</span> u) = (<span class="keyword">var</span> v, y) = (<span class="number">1</span>, <span class="number">2</span>);</code></pre>
+<h3 id="section-9"><a id="sec-generated-title-14"></a> <a id="definite-assignment"></a>明確な初期化ルールの改善</h3>
+<p>明確な初期化ルール(未初期化のまま変数から値を読めないようにするフロー解析)に関する改善がありました。
+これまでは <code>?.</code> や <code>??</code> が絡んだ時の判定があまり賢くなかったんですが、C# 10 で改善しました。</p>
+<p>例えば以下のコードは C# 10 以降でだけコンパイルできます。</p>
+<pre><code class="language-csharp"><span class="comment">// C# 10 から大丈夫な例: ?. == true。</span>
+<span class="keyword">void</span> m(Dictionary&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;? d)
+{
+    <span class="keyword">if</span> (d?.TryGetValue(<span class="number">123</span>, <span class="keyword">out</span> <span class="keyword">var</span> x) == <span class="keyword">true</span>)
+    {
+        <span class="comment">// C# 10 から大丈夫になった。</span>
+        <span class="comment">// (前までは ?. からの == true は判定漏れでエラー。)</span>
+        Console.WriteLine(x);
+    }
+}</code></pre>
+<p>「<a href="/study/csharp/start/definiteassignment/">[雑記] 明確な代入ルール</a>」で説明しています。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/cheatsheet/">C# &#x306E;&#x6A5F;&#x80FD;&#x4E00;&#x89A7;&#xFF08;&#x7D22;&#x5F15;&#x7684;&#x306A;&#x3082;&#x306E;&#xFF09;</a></li><li><a href="/study/csharp/cheatsheet/list_expression/">C# &#x306E;&#x5F0F;&#x3068;&#x6587;&#x306E;&#x4E00;&#x89A7;</a></li><li><a href="/study/csharp/cheatsheet/list_type/">C# &#x306E;&#x578B;&#x3068;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/study/csharp/cheatsheet/list_versions/">&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver1/">C# 1.0</a></li><li><a href="/study/csharp/cheatsheet/ap_ver2/">C# 2.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver3/">C# 3.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver4/">C# 4.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver5/">C# 5.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver6/">C# 6 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7/">C# 7 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_1/">C# 7.1 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_2/">C# 7.2 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_3/">C# 7.3 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver8/">C# 8.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver9/">C# 9.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver11/">C# 11.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver12/">C# 12.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver13/">C# 13.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver14/">C# 14.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/langversionoption/">&#x8A00;&#x8A9E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x306E;&#x6307;&#x5B9A;</a></li><li><a href="/study/csharp/cheatsheet/listfxlangversion/">C#&#x306E;&#x8A00;&#x8A9E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x3068;.NET&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/cheatsheet/ap_modern/">&#x4F7F;&#x308F;&#x306A;&#x304F;&#x306A;&#x3063;&#x305F;&#x6A5F;&#x80FD;&#x30FB;&#x65B0;&#x3057;&#x3044;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/apscripting/">C#&#x30B9;&#x30AF;&#x30EA;&#x30D7;&#x30C8;&#x5B9F;&#x884C;</a></li><li><a href="/study/csharp/cheatsheet/file-based-app/">&#x30D5;&#x30A1;&#x30A4;&#x30EB; &#x30D9;&#x30FC;&#x30B9;&#x5B9F;&#x884C;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

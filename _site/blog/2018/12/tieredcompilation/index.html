@@ -1,0 +1,103 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x6BB5;&#x968E;&#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB; (Tiered Compilation) | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2018/12/tieredcompilation/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2018-12-30T00:43:31">2018-12-30</time></span><span>更新: <time datetime="2018-12-30T01:01:08">2018-12-30</time></span></div><h1 id="tiered-compilation">段階コンパイル (Tiered Compilation)</h1>
+<p>今日は .NET Core 2.1 の頃に実装されて(有効にするには設定が必要)、
+<strike>.NET Core 2.2 からは既定で有効になる</strike>ランタイムの最適化の話。</p>
+<p>(※ Preview の頃にいったん規定で有効になったものの、結局、リリースでは opt-in に戻した模様。後述する gen0 最適化問題とかがあるせいかも。)</p>
+<p>.NET Core 2.1 の頃に以下のようなブログが出ていました。</p>
+<ul>
+<li><a href="https://blogs.msdn.microsoft.com/dotnet/2018/08/02/tiered-compilation-preview-in-net-core-2-1/">Tiered Compilation Preview in .NET Core 2.1</a></li>
+</ul>
+<p>これも今までそんなにここで取り上げていないので、
+.NET Core 2.2 が出た今、「在庫処分」的に取り上げようかと思います。</p>
+<h2 id="jit">JIT コンパイルの段階化</h2>
+<p>Java とか C# みたいな Just-In-Time コンパイル方式の言語では、常に以下のようなジレンマを持っています。</p>
+<ul>
+<li>中間コードからネイティブ コードに実行時にコンパイルするので、あんまりコンパイルに時間をかけるとかえって遅くなる</li>
+<li>かといってコンパイル時の最適化がしょぼいと、出てくるネイティブ コードが遅い</li>
+</ul>
+<p>長期的に動かすのであれば、最適化に時間をかけてでも良いネイティブ コードを生成する方が得になったりはします。
+ただし、それは最終的にトータルでは速くなるという話で、起動にかかる時間は最適化を頑張ろうとするほど遅くなります。
+また、そんなに頑張って最適化した結果が報われるような「よく通る経路」は、全体の一部分でしかありません。</p>
+<p>そこで、以下のように、段階的な最適化を考えます。</p>
+<ul>
+<li>初めて呼ばれるメソッドは一律「最適化なし」でJITコンパイルする</li>
+<li>呼ばれた回数をカウントして、一定数を越えたら「最適化あり」でJITコンパイルしなおして差し替える</li>
+</ul>
+<p>こういう手法を段階コンパイル(tiered compilaition)と言います。</p>
+<h2 id="coreclr">coreclr の段階コンパイル</h2>
+<p>段階コンパイルは、例えば Java は Java 7 の時に導入したそうで、そんなに目新しい手法でもありません。
+.NET Core でも、2016 にはプロトタイプ実装があったそうです。
+ただ、.NET はもともと NGEN (事前ネイティブ化)や MulticoreJit (並列コンパイル)などで起動時間の短縮に取り組んできていました。
+それに、<a href="/study/csharp/resource/span/"><code>Span&lt;T&gt;</code>構造体</a>による最適化とか、違う角度でのパフォーマンス改善などもいろいろあって、
+なかなか段階コンパイルの優先度が上がらなかったみたいです。</p>
+<p>それでも、.NET Core 2.1 には組み込まれて、.NET Core 2.2 ではついに既定動作として段階コンパイルが有効になりました。</p>
+<p>技術的には以下のような実装になっているそうです。</p>
+<ul>
+<li>肝となるのは、実行時に、すでにJITコンパイル済みのコードを改めてJITコンパイルしなおして差し替える機能
+<ul>
+<li>それ単体で <a href="https://github.com/dotnet/coreclr/blob/master/Documentation/design-docs/code-versioning.md">CodeVersionManager</a> という名前がついていてドキュメントがある</li>
+<li>段階コンパイル以外にも、あまり使われていないコードを破棄することで省メモリ化したり、診断ログを採るためのコードを動的に差し込むのに使えます</li>
+</ul>
+</li>
+<li>初期状態を Tier0、頻繁に呼ばれていて最適化したいコードを Tier1 という名前で分類
+<ul>
+<li>ただ、現状では、元々デバッグ用にある最適化のオン・オフをそのまま使って、Tier0 なら最適化なし、Tier1 なら最適化ありでコンパイルしているだけ</li>
+</ul>
+</li>
+<li>差し替えは並列動作可能
+<ul>
+<li>メソッド A から別のメソッド B を呼んでいる最中に、A が Tier1 に昇格・再 JIT した場合、B からの戻り先アドレスに補正をかけるような処理がちゃんと働く</li>
+</ul>
+</li>
+</ul>
+<h2 id="section">今後</h2>
+<p><a href="https://blogs.msdn.microsoft.com/dotnet/2018/08/02/tiered-compilation-preview-in-net-core-2-1/">上記のブログ</a>が書かれた頃から、
+さらに改善も始まっているみたいです。</p>
+<p>計画としては例えば、メソッドが呼ばれた回数のカウントは今の実装はあまり効率的なものじゃないことがわかっているそうなので、そこは直したいとのこと。
+あと、Tier1 コンパイルはシングル スレッドで行われているそうなので、ここを並列化したいという話もあります。</p>
+<h3 id="tier0">Tier0 最適化</h3>
+<p>単純な「Tier0 なら最適化なし」という実装に問題があることも分かっていて、修正が必要です。</p>
+<p>例えば、ジェネリックなメソッド <code>M&lt;T&gt;</code> で、以下のように、<code>T</code> が値型かどうかを判別するハックがあったりします。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> M&lt;T&gt;()
+{
+    <span class="keyword">if</span> (<span class="keyword">default</span>(T) == <span class="keyword">null</span>) Console.WriteLine(<span class="string">&quot;T は参照型&quot;</span>);
+    <span class="keyword">else</span> Console.WriteLine(<span class="string">&quot;T は値型&quot;</span>);
+}</code></pre>
+<p>この C# コードで、<code>T</code> が値型のとき、IL 上は、<code>default(T) == null</code> のところでボックス化が起きるコードになっています。
+<code>default(T)</code> を一度 <code>object</code> 型にした上で null と比較するような IL が生成されます。
+しかし、最適化ありでJITコンパイルすると、このボックス化はちゃんと消える(それどころかJIT時定数扱いで条件分岐自体が消える)ので、
+<code>default(T) == null</code> は <code>T</code> が値型かどうかを判別する最速の手段だったりします。</p>
+<p>その一方で、今、Tier0 JIT ではこの最適化が働かないそうです。
+その結果、Tier0 の時にはボックス化が発生して、かえって遅くなることがわかっています。
+(それで、<a href="https://github.com/dotnet/coreclr/pull/19904">せっかく入れた最適化を戻されかけたこともあったりします</a>。)
+なので、<a href="https://github.com/dotnet/coreclr/issues/14474">Tier0 でも、手間のかからない範囲の最低限の最適化はかけるべき</a>だろうという話になっています。</p>
+<h3 id="aggressiveoptimization">AggressiveOptimization</h3>
+<p>ちなみに、NET Core 3.0 では、段階コンパイルを制御するためのオプションが追加されます。</p>
+<p>今でも、<code>MethodImpl</code>属性(<code>System.Runtime.CompilerServices</code>名前空間)を使ってメソッドの最適化を制御できます。
+例えばこれに、<code>MethodImplOptions.AggressiveInlining</code>オプションを指定すると、通常よりもインライン化されやすくなります。
+.NET Core 3.0 では、この<code>MethodImplOptions</code>列挙型に<code>AggressiveOptimization</code>が追加されていて、
+このオプションを指定すると最初から Tier1 扱いでJITコンパイルするようになるみたいです。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2018/12/">12&#x6708;</a></li><li><a href="/blog/2018/12/pickuproslyn1201/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/1</a></li><li><a href="/blog/2018/12/tupleelementcase/">&#x30BF;&#x30D7;&#x30EB;&#x8981;&#x7D20;&#x540D;&#x306E;&#x5927;&#x6587;&#x5B57;&#x30FB;&#x5C0F;&#x6587;&#x5B57;</a></li><li><a href="/blog/2018/12/directorybuild/">Directory.Build.*</a></li><li><a href="/blog/2018/12/runtimefeature/">RuntimeFeature &#x30AF;&#x30E9;&#x30B9;</a></li><li><a href="/blog/2018/12/vs2019p1/">Visual Studio 2019 Preview 1</a></li><li><a href="/blog/2018/12/cs8misc/">C# 8.0 &#x5C0F;&#x3055;&#x306A;&#x4FEE;&#x6B63;</a></li><li><a href="/blog/2018/12/cs8ranges/">C# 8.0 Ranges</a></li><li><a href="/blog/2018/12/cs8nrt/">C# 8.0 null&#x8A31;&#x5BB9;&#x53C2;&#x7167;&#x578B;</a></li><li><a href="/blog/2018/12/cs8switchexpr/">C# 8.0 switch &#x5F0F;</a></li><li><a href="/blog/2018/12/cs8patterns/">C# 8.0 &#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30DE;&#x30C3;&#x30C1;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2018/12/cs8asyncstreams/">C# 8.0 Async streams</a></li><li><a href="/blog/2018/12/cs8notyet/">C# 8.0 &#x305D;&#x306E;&#x4ED6; (Preview 1&#x3067;&#x306E;&#x672A;&#x5B9F;&#x88C5;&#x6A5F;&#x80FD;)</a></li><li><a href="/blog/2018/12/arrayindexer/">&#x914D;&#x5217;&#x306E;&#x30A4;&#x30F3;&#x30C7;&#x30AF;&#x30B5;&#x30FC;</a></li><li><a href="/blog/2018/12/unsafe/">System.Runtime.CompilerServices.Unsafe</a></li><li><a href="/blog/2018/12/arraydowncast/">&#x914D;&#x5217;&#x306E;&#x30C0;&#x30A6;&#x30F3;&#x30AD;&#x30E3;&#x30B9;&#x30C8;</a></li><li><a href="/blog/2018/12/staticdatareadonlyspan/">&#x9759;&#x7684;&#x306A;&#x30C7;&#x30FC;&#x30BF;&#x306E; ReadOnlySpan &#x6700;&#x9069;&#x5316;</a></li><li><a href="/blog/2018/12/devirtualization/">Devirtualization (&#x8131;&#x4EEE;&#x60F3;&#x5316;)</a></li><li><a href="/blog/2018/12/guardeddevirtualization/">Guarded Devirtualization</a></li><li><a href="/blog/2018/12/fastenumerator/">IEnumerator &#x306E;&#x5225;&#x5B9F;&#x88C5;</a></li><li><a href="/blog/2018/12/howtoenumerate/">foreach &#x306E;&#x639B;&#x3051;&#x65B9;&#x3044;&#x308D;&#x3044;&#x308D;</a></li><li><a href="/blog/2018/12/pickuproslyn1221/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/21 &amp; Connect() Japan &#x30D5;&#x30A9;&#x30ED;&#x30FC;&#x30A2;&#x30C3;&#x30D7;</a></li><li><a href="/blog/2018/12/arrayindex/">&#x914D;&#x5217;&#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;&#x306F;0&#x4EE5;&#x4E0A;</a></li><li><a href="/blog/2018/12/jitintrinsics/">JIT Intrinsics</a></li><li><a href="/blog/2018/12/statictypeof/">&#x9759;&#x7684;&#x306A; typeof/sizeof</a></li><li><a href="/blog/2018/12/unicodecategory/">&#x66F8;&#x8A18;&#x7D20;&#x5206;&#x5272;/Unicode &#x30AB;&#x30C6;&#x30B4;&#x30EA;&#x30FC;&#x5224;&#x5B9A;</a></li><li><a href="/blog/2018/12/spanify/">Span&lt;T&gt; &#x5229;&#x7528;&#x306B;&#x3088;&#x308B;&#x6700;&#x9069;&#x5316;</a></li><li><a href="/blog/2018/12/futurememorymanagement/">&#x5C06;&#x6765;&#x306E;&#x30E1;&#x30E2;&#x30EA;&#x7BA1;&#x7406;</a></li><li><a href="/blog/2018/12/unsafenogarantee/">Unsafe &#x30AF;&#x30E9;&#x30B9;(&#x4FDD;&#x8A3C;&#x5916;)</a></li><li><a href="/blog/2018/12/unsafegarantee/">Unsafe &#x30AF;&#x30E9;&#x30B9;(&#x4FDD;&#x8A3C;&#x306E;&#x3042;&#x308B;&#x5229;&#x7528;&#x4F8B;)</a></li><li><a href="/blog/2018/12/unsaferuntime/">&#x4EEE;&#x60F3;&#x30C6;&#x30FC;&#x30D6;&#x30EB;&#x306E;&#x4E2D;&#x8EAB;&#x3092;&#x306E;&#x305E;&#x304D;&#x898B;</a></li><li><a href="/blog/2018/12/hdintrinsic/">Hardware Intrinsics</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,283 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x30E1;&#x30F3;&#x30D0;&#x30FC; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/12/tipsimplicitmembers/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-12-11T00:03:15">2016-12-11</time></span><span>更新: <time datetime="2016-12-27T14:33:15">2016-12-27</time></span></div><h1 id="section">小ネタ 隠しメンバー</h1>
+<p>今日は、C# 上からは見えない隠しメンバーが作られるという話。
+「覚えがないのになぜか『すでに定義があります』っていう名前被りのコンパイル エラーが出た」なんてこともあり得ます。</p>
+<p>C# は .NET 向け言語の代表的な位置づけの言語ではありますが、だからと言って、C# の機能と .NET IL (中間言語)の機能は同じではありません。
+C# コンパイラーによって、ILのレベルでは結構身に覚えのないメンバーが追加されます。</p>
+<p>例えば以下のようなコードを書くだけで、自動的に追加されたメンバーがたくさん出てきます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> <span class="keyword">static</span> System.Console;
+<span class="keyword">using</span> <span class="keyword">static</span> System.Reflection.BindingFlags;
+
+<span class="keyword">class</span> C
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> <span class="keyword">this</span>[<span class="keyword">int</span> index] { <span class="keyword">get</span> { <span class="keyword">return</span> index; } <span class="keyword">set</span> { } }
+    <span class="keyword">public</span> <span class="keyword">event</span> Action E;
+}
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> <span class="keyword">typeof</span>(C).GetMembers(Public | NonPublic | Instance | DeclaredOnly))
+        {
+            WriteLine(x.Name);
+        }
+    }
+}</code></pre>
+<p>実行結果は以下の通り。</p>
+<pre><code class="language-console">get_X
+set_X
+add_E
+remove_E
+get_Item
+set_Item
+.ctor
+X
+Item
+E
+&lt;X&gt;k__BackingField
+E</code></pre>
+<p>今日はこれらについて説明して行きます。</p>
+<h2 id="section-1">コンストラクター</h2>
+<p>これはまあ、わかりやすいですね。C# のクラスは、明示的にコンストラクターを書かなくても<code>new Class()</code>と書けるわけで、暗黙的にコンストラクターが1つ作られています(クラスで、コンストラクターを1つも書かなかった場合だけ)。</p>
+<p>リフレクション的には、コンストラクターは<code>.ctor</code>という名前で見えます。
+ちなみに、生成されるILを覗いてみると以下のような感じ。</p>
+<pre><code class="language-cil">.class private auto ansi beforefieldinit C
+       extends [mscorlib]System.Object
+{
+  .method public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  {
+    .maxstack  8
+    IL_0000:  ldarg.0
+    IL_0001:  call       instance void [mscorlib]System.Object::.ctor()
+    IL_0006:  nop
+    IL_0007:  ret
+  }
+}</code></pre>
+<p><code>rtspecialname</code>とかいう特別そうなフラグが付いているのと、
+名前が変という以外はただのメソッドです。
+中身も親クラスのコンストラクターを呼んでいるだけ。</p>
+<h2 id="section-2">プロパティ</h2>
+<p>プロパティは、<code>get</code>、<code>set</code>に応じたメソッドと、
+自動実装プロパティであればフィールドが1つ作られます。
+今回の例では、<code>X</code>は自動実装プロパティで、<code>get</code>、<code>set</code>共に持っているので以下のようなILが生成されます。</p>
+<pre><code class="language-cil">  .field private int32 '&lt;X&gt;k__BackingField'
+  .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 ) 
+
+  .property instance int32 X()
+  {
+    .get instance int32 C::get_X()
+    .set instance void C::set_X(int32)
+  }
+
+  .method public hidebysig specialname instance int32 
+          get_X() cil managed
+  {
+    .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 ) 
+    .maxstack  8
+    IL_0000:  ldarg.0
+    IL_0001:  ldfld      int32 C::'&lt;X&gt;k__BackingField'
+    IL_0006:  ret
+  }
+
+  .method public hidebysig specialname instance void 
+          set_X(int32 'value') cil managed
+  {
+    .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 ) 
+    .maxstack  8
+    IL_0000:  ldarg.0
+    IL_0001:  ldarg.1
+    IL_0002:  stfld      int32 C::'&lt;X&gt;k__BackingField'
+    IL_0007:  ret
+  }</code></pre>
+<p>意味的には以下のような感じ。</p>
+<ul>
+<li><code>&lt;&gt;</code>が含まれる読めた代物じゃないフィールドができる</li>
+<li><code>get_</code>、<code>set_</code>から始まるメソッドができる</li>
+<li>フィールドとメソッドには<code>CompilerGenerated</code>属性が付いてる</li>
+<li>プロパティの定義自体は、メソッドを参照しているだけ</li>
+</ul>
+<p>フィールドは、通常のC#では書けないような記号入りの名前なので特に問題を起こさないんですが、
+メソッドの方は被りがあり得ます。つまり、以下のコードはコンパイル エラーを起こします。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> C
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; }
+    <span class="keyword">int</span> get_X() =&gt; <span class="number">0</span>;
+}</code></pre>
+<p>しかもエラーを起こすのは <code>get</code> のところ。</p>
+<h2 id="section-3">インデクサー</h2>
+<p>インデクサーなどというものは存在しない。いいね？</p>
+<p>C#のインデクサーは、ILのレベルでは<code>Item</code>という名前のプロパティになっています。</p>
+<pre><code class="language-cil">  .custom instance void [mscorlib]System.Reflection.DefaultMemberAttribute::.ctor(string) = ( 01 00 04 49 74 65 6D 00 00 ) // ...Item..
+
+    .property instance int32 Item(int32)
+  {
+    .get instance int32 C::get_Item(int32)
+    .set instance void C::set_Item(int32,
+                                   int32)
+  }
+
+  .method public hidebysig specialname instance int32 
+          get_Item(int32 index) cil managed
+  {
+    .maxstack  1
+    .locals init ([0] int32 V_0)
+    IL_0000:  nop
+    IL_0001:  ldarg.1
+    IL_0002:  stloc.0
+    IL_0003:  br.s       IL_0005
+
+    IL_0005:  ldloc.0
+    IL_0006:  ret
+  }
+
+  .method public hidebysig specialname instance void 
+          set_Item(int32 index,
+                   int32 'value') cil managed
+  {
+    .maxstack  8
+    IL_0000:  nop
+    IL_0001:  ret
+  }</code></pre>
+<p>意味的には以下のような感じ。</p>
+<ul>
+<li><code>Item</code>という名前のプロパティが作られる</li>
+<li>プロパティは実は引数を取れる
+<ul>
+<li>(C#では無理だけど、VBなら引数付きプロパティも書ける)</li>
+</ul>
+</li>
+<li><code>DefaultMember</code>属性で<code>Item</code>プロパティを指定している</li>
+</ul>
+<p>つまるところ、インデクサー = 「名前を省略していい引数付きプロパティ」です。</p>
+<p><code>Item</code>に展開されるので、もちろん、以下のコードは<code>this</code>のところでコンパイル エラー。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> C
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> <span class="keyword">this</span>[<span class="keyword">int</span> index] { <span class="keyword">get</span> { <span class="keyword">return</span> index; } }
+    <span class="keyword">int</span> Item { <span class="keyword">get</span>; }
+}</code></pre>
+<p><code>get_Item</code>メソッドもダメです。<code>get</code>のところでエラー。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> C
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> <span class="keyword">this</span>[<span class="keyword">int</span> index] { <span class="keyword">get</span> { <span class="keyword">return</span> index; } }
+    <span class="keyword">int</span> get_Item(<span class="keyword">int</span> index) =&gt; <span class="number">0</span>;
+}</code></pre>
+<p><code>Item</code>プロパティは普通に使いそうな名前なので、罠を踏むとしたらこれが一番頻出しそうなやつです。</p>
+<p>ちなみに、回避方法も、まあ、あって、インデクサーから生成されるプロパティの名前は変更できます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> C
+{
+    [System.Runtime.CompilerServices.IndexerName(<span class="string">&quot;Indexer&quot;</span>)]
+    <span class="keyword">public</span> <span class="keyword">int</span> <span class="keyword">this</span>[<span class="keyword">int</span> index] { <span class="keyword">get</span> { <span class="keyword">return</span> index; } }
+
+    <span class="comment">// ↑これで Item は生成されなくなるので、自前のもの↓と被らなくなる</span>
+
+    <span class="keyword">int</span> Item { <span class="keyword">get</span>; }
+    <span class="keyword">int</span> get_Item(<span class="keyword">int</span> index) =&gt; <span class="number">0</span>;
+}</code></pre>
+<p>ちなみに、C#コード上はインデクサーに<code>IndexerName</code>属性が付いていますが、
+コンパイル結果的にはクラスに対する<code>DefaultMember</code>属性に変換されます。</p>
+<h2 id="section-4">イベント</h2>
+<p>最後は、他の言語から来た人が困惑する機能ナンバー1、イベントです。
+もっと難しい機能もたくさんありますけど、利用頻度の割に複雑という意味では断トツではないかと。
+(使う頻度は多少あるけど、作る頻度はかなり低いんじゃないでしょうか。)</p>
+<p>プロパティに近いんですが、<code>get</code>、<code>set</code>の代わりに<code>add</code>、<code>remove</code>です。
+自動実装でフィールドが作れる部分は同じです。</p>
+<pre><code class="language-cil">  .event [mscorlib]System.Action E
+  {
+    .addon instance void C::add_E(class [mscorlib]System.Action)
+    .removeon instance void C::remove_E(class [mscorlib]System.Action)
+  } // end of event C::E
+
+  .field private class [mscorlib]System.Action E
+  .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 ) 
+
+    .method public hidebysig specialname instance void 
+          add_E(class [mscorlib]System.Action 'value') cil managed
+  {
+    .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 ) 
+    // 結構長いのでさすがに省略
+  }
+
+  .method public hidebysig specialname instance void 
+          remove_E(class [mscorlib]System.Action 'value') cil managed
+  {
+    .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 ) 
+    // 結構長いのでさすがに省略
+  }</code></pre>
+<p>プロパティと似た感じで、</p>
+<ul>
+<li>フィールドができる</li>
+<li><code>add_</code>、<code>remove_</code>から始まるメソッドができる</li>
+<li>フィールドとメソッドには<code>CompilerGenerated</code>属性が付いてる</li>
+<li>イベントの定義自体は、メソッドを参照しているだけ</li>
+</ul>
+<p>という状態なんですが、ちょっと違うのは、以下の部分。</p>
+<ul>
+<li>フィールドの名前がイベントの名前とまったく同じ(この例の場合<code>E</code>)</li>
+<li>自動生成されるメソッドの中身はほんと長い(参考: <a href="/study/csharp/functional/sp_event/#auto-event">補足: 自動イベント</a>)</li>
+</ul>
+<p>C#では許されていませんが、ILレベルだと、メンバーの種類が違えば同じ名前を使えます。</p>
+<p>そして、実は、イベントを触っているように見えて、実は裏で作られたフィールドを触っているという事態に。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> C
+{
+    <span class="keyword">public</span> <span class="keyword">event</span> Action E;
+
+    <span class="comment">// 登録の側は add_E が呼ばれてるんだけど</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> Register() =&gt; E += Handler;
+    <span class="keyword">void</span> Handler() { }
+
+    <span class="comment">// 呼び出し側では、実はイベントの E じゃなくて、フィールドの E</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> Invoke() =&gt; E();
+}</code></pre>
+<p>この<code>Invoke</code>メソッドの中を見てみると以下のような感じ。<code>ldfld</code>命令はフィールド読み込みのための命令です。</p>
+<pre><code class="language-cil">.method public hidebysig instance void  Call() cil managed
+{
+  .maxstack  8
+  IL_0000:  ldarg.0
+  IL_0001:  ldfld      class [mscorlib]System.Action C::E
+  IL_0006:  callvirt   instance void [mscorlib]System.Action::Invoke()
+  IL_000b:  nop
+  IL_000c:  ret
+}</code></pre>
+<p>つまり、イベントを明示的に実装すると、<code>E()</code>みたいな呼び出しはできなくなります。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> C
+{
+    <span class="keyword">private</span> Action _e;
+    <span class="keyword">public</span> <span class="keyword">event</span> Action E
+    {
+        add { _e += value; }
+        remove { _e -= value; }
+    }
+
+    <span class="comment">// 明示的に add/remove を実装すると、自動実装なフィールドの E が消える</span>
+    <span class="comment">// ↓このコードが書けなくなる</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> Invoke() =&gt; E();
+}</code></pre>
+<p>イベントの明示的な実装とかめったにするものじゃないのでそんなに踏まないと思いますが、一応注意が必要です。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/12/">2016/12</a></li><li><a href="/blog/2016/12/tipstryroslyn/">C#&#x5C0F;&#x30CD;&#x30BF;&#x96C6;: C#&#x3092;Web&#x4E0A;&#x3067;&#x8A66;&#x3059;</a></li><li><a href="/blog/2016/12/tipsildasm/">&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x3092;&#x8997;&#x3044;&#x3066;&#x307F;&#x3088;&#x3046;</a></li><li><a href="/blog/2016/12/tipscorefxlab/">&#x5C0F;&#x30CD;&#x30BF; corefxlab&#x3068;System.Memory</a></li><li><a href="/blog/2016/12/tipsevalorder/">&#x5C0F;&#x30CD;&#x30BF; &#x5F0F;&#x306E;&#x8A55;&#x4FA1;&#x9806;&#x5E8F;</a></li><li><a href="/blog/2016/12/tipsobjectinitializer/">&#x5C0F;&#x30CD;&#x30BF; &#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2016/12/tipscollectioninitializer/">&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2016/12/tipsindexedforeach/">&#x5C0F;&#x30CD;&#x30BF; &#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;&#x4ED8;&#x304D; foreach</a></li><li><a href="/blog/2016/12/tipsuniontypes/">&#x5C0F;&#x30CD;&#x30BF; &#x30C1;&#x30A7;&#x30C3;&#x30AF;&#x4F8B;&#x5916;&#x3068;Union&#x578B;</a></li><li><a href="/blog/2016/12/tipscontextfreetask/">&#x5C0F;&#x30CD;&#x30BF; &#x540C;&#x671F;&#x30B3;&#x30F3;&#x30C6;&#x30AD;&#x30B9;&#x30C8;&#x3092;&#x62FE;&#x308F;&#x306A;&#x3044;Task&#x578B;</a></li><li><a href="/blog/2016/12/tipsformattingcharacter/">&#x5C0F;&#x30CD;&#x30BF; &#x30D5;&#x30A9;&#x30FC;&#x30DE;&#x30C3;&#x30C8;&#x6587;&#x5B57;&#x8B58;&#x5225;&#x5B50;</a></li><li><a href="/blog/2016/12/tipstadpoleoperator/">&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x6F14;&#x7B97;&#x5B50;(&#xFF1F;)</a></li><li><a href="/blog/2016/12/tipsnulloperation/">&#x5C0F;&#x30CD;&#x30BF; null&#x95A2;&#x4FC2;&#x306E;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/blog/2016/12/vs2017rc2/">Updating Visual Studio 2017 Release Candidate</a></li><li><a href="/blog/2016/12/patternmatching/">&#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30DE;&#x30C3;&#x30C1;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/pickuproslyn1214/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/14</a></li><li><a href="/blog/2016/12/tipsdeconstruct/">&#x5C0F;&#x30CD;&#x30BF; &#x300C;deconstruct&#x300D;&#x3068;&#x3044;&#x3046;&#x5358;&#x8A9E;</a></li><li><a href="/blog/2016/12/tipsgeneratedil/">&#x5C0F;&#x30CD;&#x30BF; &#x69CB;&#x6587;&#x7CD6;&#x8863;&#x3068;&#x3001;&#x305D;&#x3046;&#x3067;&#x306F;&#x306A;&#x3044;&#x69CB;&#x6587;&#x3068;</a></li><li><a href="/blog/2016/12/tipsprimitives/">&#x5C0F;&#x30CD;&#x30BF; &#x30D7;&#x30EA;&#x30DF;&#x30C6;&#x30A3;&#x30D6;&#x578B;</a></li><li><a href="/blog/2016/12/tipsapisurface/">&#x5C0F;&#x30CD;&#x30BF; private&#x30E1;&#x30F3;&#x30D0;&#x30FC;&#x306F;API&#x306E;&#x4E00;&#x90E8;&#x304B;</a></li><li><a href="/blog/2016/12/tipsstringmarshal/">&#x5C0F;&#x30CD;&#x30BF; string&#x578B;&#x306E;&#x30DE;&#x30FC;&#x30B7;&#x30E3;&#x30EA;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/tipsnumargs/">&#x5C0F;&#x30CD;&#x30BF; &#x5F15;&#x6570;&#x306E;&#x500B;&#x6570;&#x306E;&#x4E0A;&#x9650;</a></li><li><a href="/blog/2016/12/tipsotherlangs/">&#x5C0F;&#x30CD;&#x30BF; C# &#x3068;&#x4ED6;&#x306E;&#x8A00;&#x8A9E;&#x3068;&#x306E;&#x5DEE;&#x3068;&#x3044;&#x3046;&#x3068;</a></li><li><a href="/blog/2016/12/tipsconcurrentcollections/">&#x5C0F;&#x30CD;&#x30BF; Concurrent &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/blog/2016/12/discards/">discards</a></li><li><a href="/blog/2016/12/tipssmallheapallocation/">&#x5C0F;&#x30CD;&#x30BF; &#x5C0F;&#x3055;&#x306A;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x5272;&#x308A;&#x5F53;&#x3066;</a></li><li><a href="/blog/2016/12/tipsparallelism/">&#x5C0F;&#x30CD;&#x30BF; &#x4E26;&#x5217;&#x5316;</a></li><li><a href="/blog/2016/12/tipsdowhile/">&#x5C0F;&#x30CD;&#x30BF; do-while</a></li><li><a href="/blog/2016/12/tipsatan2/">&#x5C0F;&#x30CD;&#x30BF; atan2</a></li><li><a href="/blog/2016/12/tipsnormaldistribution/">&#x5C0F;&#x30CD;&#x30BF; &#x6B63;&#x898F;&#x5206;&#x5E03;&#x306E;&#x4E38;&#x307F;</a></li><li><a href="/blog/2016/12/lookbackattheyear/">&#x4ECA;&#x5E74;&#x306E;&#x632F;&#x308A;&#x8FD4;&#x308A;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

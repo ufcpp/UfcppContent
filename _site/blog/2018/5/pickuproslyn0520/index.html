@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 5/20: 5&#x6708;&#x306E; Design Notes | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2018/5/pickuproslyn0520/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2018-05-20T16:11:02">2018-05-20</time></span><span>更新: <time datetime="2018-05-20T16:11:02">2018-05-20</time></span></div><h1 id="roslyn-520-5-design-notes">ピックアップRoslyn 5/20: 5月の Design Notes</h1>
+<p>5月の Language Design Notes が2件ほど追加されました。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2018/LDM-2018-05-02.md">C# Language Design Notes for May 2, 2018</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2018/LDM-2018-05-14.md">C# Language Design Notes for May 14, 2018</a></li>
+</ul>
+<p>さらっと抜粋。</p>
+<h2 id="switch">switch 式</h2>
+<p><a href="/blog/2018/5/cs80preview/">先週書いた</a>通り、現状のプレビュー版では、以下のような文法で「式」としてswitchを書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> s = x <span class="keyword">switch</span>
+{
+    <span class="number">1</span> =&gt; <span class="string">&quot;one&quot;</span>,
+    <span class="number">2</span> =&gt; <span class="string">&quot;two&quot;</span>,
+    <span class="number">3</span> =&gt; <span class="string">&quot;three&quot;</span>,
+    _ =&gt; <span class="keyword">throw</span> <span class="keyword">new</span> IndexOutOfRangeException()
+};</code></pre>
+<p>今のところ、<code>=&gt;</code> で実装されているんですが、これに関して:</p>
+<ul>
+<li><code>:</code>、<code>-&gt;</code>、<code>~&gt;</code> なんかも考えはした</li>
+<li>まだ決めかねてる。今の実装はとりあえず <code>=&gt;</code> になってるけども</li>
+<li><code>=&gt;</code> はこれはこれで、ラムダ式と混ざったりデメリットもありそう</li>
+</ul>
+<p>など。</p>
+<h2 id="ranges">ranges</h2>
+<p>これも<a href="/blog/2018/5/cs80preview/">先週書いた</a>通り。<code>1..^1</code>みたいな書き方で「<code>1</code> ～ <code>Length - 1</code> の直前まで」(= 最初と最後、1要素ずつ削ったもの)を表す。</p>
+<p>アプローチとしては大筋はよさそう。完全に認められたわけでもないけども、「害悪」とまでは思われてない。<code>^</code>って文字を使うのはC#にとってはちょっと馴れないけども、しょせん「馴れてない」程度の話。</p>
+<h2 id="nullable-reference-types">nullable reference types</h2>
+<p>参照型に対して <code>T</code> なら null が来ない、<code>T?</code> なら null があり得る、だけだと不十分で、
+いくつか、属性を使ったアノテーションを実装し始めたみたい。</p>
+<p><code>string.IsNullOrEmpty</code>みたいなメソッドでは、「戻り値が false だったらそれ以降、引数は null ではない」とかいう挙動なわけですが、それ用に<code>NotNullWhenFalse</code>属性を導入。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">bool</span> IsNullOrEmpty([NotNullWhenFalse] <span class="keyword">string</span>? s) { }</code></pre>
+<p>また、以下のように <code>EnsuresNotNull</code> 属性で、「このメソッドを呼んだら、引数は null ではないことを確認済み」</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> AssertNotNull&lt;T&gt;([EnsuresNotNull] T? t) <span class="keyword">where</span> T : <span class="keyword">class</span> { }</code></pre>
+<p><code>AssertNotNull</code> だと「null だったらそこで例外」みたいな挙動だけども、別に例外でなくても、
+「メソッド内部で null でない値に上書き」とかもあり得る。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> EnsureNotNull([EnsuresNotNull] <span class="keyword">ref</span> <span class="keyword">string</span>? s) { <span class="keyword">if</span> (s <span class="keyword">is</span> <span class="keyword">null</span>) s = <span class="string">&quot;&quot;</span>; }</code></pre>
+<p><code>==</code> 以外での null チェックもできるように、「<code>Equals</code> の類のメソッドです。null 解析に使ってください」を表す <code>NullableEquals</code> 属性も。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Object
+{
+    [NullableEquals] <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> ReferenceEquals(<span class="keyword">object</span>? x, <span class="keyword">object</span>? y) { }
+    [NullableEquals] <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> Equals(<span class="keyword">object</span>? x, <span class="keyword">object</span>? y) { }
+    [NullableEquals] <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="keyword">bool</span> Equals(<span class="keyword">object</span>? other) { }
+    [NullableEquals] <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> <span class="keyword">operator</span>==(<span class="keyword">object</span>? x, <span class="keyword">object</span>? y) { }
+}</code></pre>
+<p>既存のコードでこの属性が付いてない場合に備えて、
+「外からアノテーションを足す」みたいな機能も欲しい。
+(属性だと、そのメソッドを書いた人にしか付けれない。)</p>
+<h2 id="section">インターフェイスのデフォルト メソッド</h2>
+<p>インターフェイスの中に実装を置くことに対して、やっぱりいくらかの人が反対してる。
+多くの人は、インターフェイスを自分で書いて自分で使ってる。
+この状況だと、「インターフェイスにメンバーを追加したら破壊的変更」と言うのが問題になりにくい。</p>
+<p>でも、public な API を作っている人にとってはデフォルト メソッド(= インターフェイスに後からメソッドを追加しても破壊的変更にならなくできる)は非常に重要。
+また、Swift や Java との相互運用(主に Xamarin 用)には必要。</p>
+<p>なので重要な機能だと考える。</p>
+<h2 id="discriminated-unions">discriminated unions</h2>
+<h3 id="switch-1">switch の網羅性</h3>
+<p>以下のような感じで、「Animal の派生クラスは Dog と Cat しか認めない」みたいな状態を作ったとして</p>
+<pre><code class="language-csharp"><span class="keyword">abstract</span> <span class="keyword">class</span> Animal
+{
+    <span class="keyword">private</span> Animal() { }
+    <span class="keyword">sealed</span> <span class="keyword">class</span> Dog : Animal { }
+    <span class="keyword">sealed</span> <span class="keyword">class</span> Cat : Animal { }
+}</code></pre>
+<p>switch の網羅性(考えうるケースを網羅してたら <code>_</code> や <code>default</code> を警告なしで省略できるようにしたい)はどう考えるべきか。
+以下のコードだとダメ。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> M(Animal a)
+{
+    <span class="keyword">return</span> a <span class="keyword">switch</span>
+    {
+        Cat c =&gt; <span class="number">1</span>,
+        Dog d =&gt; <span class="number">2</span>
+    }
+}
+<span class="keyword">int</span> M(Box&lt;Animal&gt; b)
+{
+    <span class="keyword">return</span> b <span class="keyword">switch</span>
+    {
+        Box (Cat c) =&gt; <span class="number">1</span>,
+        Box (Dog d) =&gt; <span class="number">2</span>
+    }
+}</code></pre>
+<p>実際には以下のように書かないと網羅的じゃない。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> M(Animal a)
+{
+    <span class="keyword">return</span> a <span class="keyword">switch</span>
+    {
+        Cat c =&gt; <span class="number">1</span>,
+        Dog d =&gt; <span class="number">2</span>,
+        <span class="keyword">null</span> =&gt; <span class="number">3</span>
+    }
+}
+<span class="keyword">int</span> M(Box&lt;Animal&gt; b)
+{
+    <span class="keyword">return</span> b <span class="keyword">switch</span>
+    {
+        Box (Cat c) =&gt; <span class="number">1</span>,
+        Box (Dog d) =&gt; <span class="number">2</span>,
+        Box (<span class="keyword">null</span>) =&gt; <span class="number">3</span>
+        <span class="keyword">null</span> =&gt; <span class="number">3</span>
+    }
+}</code></pre>
+<h3 id="struct-unions">struct unions</h3>
+<p>上記のようなクラスを使った discriminated unions の実装(F# の discriminated unions はこんな感じのクラスに展開されてる)の他に、構造体を使った実装もありえる。
+<code>int</code> と <code>(short, short)</code> みたいな、小さい型のどちらかだけを使いたいみたいな場合はある(特にパフォーマンスを求める場面で)。
+ただ、これを実現するには .NET ランタイムのレベルでの対応が必要。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2018/5/">5&#x6708;</a></li><li><a href="/blog/2018/5/metricspace/">C# &#x306B;&#x3082;&#x578B;&#x30AF;&#x30E9;&#x30B9;(Shapes)&#x304C;&#x6B32;&#x3057;&#x3044;&#x2026; &#x8DDD;&#x96E2;&#x7A7A;&#x9593;&#x4E0A;&#x306E;&#x30A2;&#x30EB;&#x30B4;&#x30EA;&#x30BA;&#x30E0;&#x5B9F;&#x88C5;</a></li><li><a href="/blog/2018/5/vs157/">Visual Studio 15.7 &#x30EA;&#x30EA;&#x30FC;&#x30B9; &#x306A;&#x3069;</a></li><li><a href="/blog/2018/5/cs80preview/">C# vNext Preview</a></li><li><a href="/blog/2018/5/pickuproslyn0524/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 5/24</a></li><li><a href="/blog/2018/5/netcore21/">.NET Core 2.1 &#x6B63;&#x5F0F;&#x30EA;&#x30EA;&#x30FC;&#x30B9;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

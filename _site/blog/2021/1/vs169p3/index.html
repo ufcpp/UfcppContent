@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Visual Studio 16.9 Preview 3 (C# Next &#x30C1;&#x30E7;&#x30C3;&#x30C8;&#x3042;&#x308B;) | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2021/1/vs169p3/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2021-01-23T14:25:22">2021-01-23</time></span><span>更新: <time datetime="2021-01-23T14:45:19">2021-01-23</time></span></div><h1 id="visual-studio-16.9-preview-3-c-next">Visual Studio 16.9 Preview 3 (C# Next チョットある)</h1>
+<p>Visual Studio 16.9 Preview 3 が出たということでライブ配信をしていました。</p>
+<div>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/xS_AlnXMFwo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+<p>冒頭で話しているんですが、Preview 1 は 16.8 正式リリースと同時だったので 16.8 の方を紹介、
+Preview 2 はそんなに大きな変化もなかったので、Preview 3 で初めて 16.9 の話です。</p>
+<h2 id="section">ポロリ</h2>
+<p>YouTube 配信前に作ってある<a href="https://github.com/ufcpp-live/UfcppLiveAgenda/issues/24">お品書き issue</a>のタイトルには「C# Next ポロリもあるよ」とか書いているんですが。
+まあ変なタイトルを付けたかっただけで、ポロリといっても「出ちゃいけないものが出ちゃった」みたいなことはないです。</p>
+<ul>
+<li>C# にもちょっとした新 preview 機能追加あったよ</li>
+<li>9.0 には間に合わなかったものがさらっと merge されたよ</li>
+</ul>
+<p>くらいの意味でポロリと言っています。</p>
+<p>昨年、C# 9.0 のときは最初に Preview 機能追加があったのは4月のことだったので、小さな機能追加といってもずいぶんフットワークが軽くなったなぁと思います。
+ほんとにもうできたものから Preview リリースしていくんだ、と。</p>
+<h3 id="langversion-preview">LangVersion Preview</h3>
+<p><a href="https://www.youtube.com/watch?t=568&amp;v=xS_AlnXMFwo&amp;feature=youtu.be">9:28～</a></p>
+<p>復活の <a href="/study/csharp/cheatsheet/langversionoption/#langversion">LangVersion</a> Preview。</p>
+<p>今年はほんとに <code>&lt;LangVersion&gt;latest&lt;/LangVersion&gt;</code> (とか <code>default</code>) とは短いおつきあい(2か月ほど)でした。</p>
+<h3 id="constant-interpolated-strings">Constant Interpolated Strings</h3>
+<p><a href="https://www.youtube.com/watch?t=618&amp;v=xS_AlnXMFwo&amp;feature=youtu.be">10:18～</a></p>
+<p>入ったのは <a href="https://github.com/dotnet/csharplang/issues/2951">Constant  Interpolated Strings</a>(<a href="/study/csharp/start/st_string/#string-interpolation">文字列補間</a>の const 扱い)です。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Sample
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> A { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> B { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="keyword">const</span> <span class="keyword">string</span> S = $<span class="string">&quot;{nameof(A)} {nameof(B)}&quot;</span>;
+}</code></pre>
+<p>文字列補間の <code>$&quot;{}&quot;</code> の <code>{}</code> の中が全部定数の時、<code>$&quot;{}&quot;</code> も定数扱いされるという仕様になりました。</p>
+<p><a href="https://www.youtube.com/watch?t=1119&amp;v=xS_AlnXMFwo&amp;feature=youtu.be">10:39～</a></p>
+<p>ちなみに、<code>{}</code> の中には、たとえ <a href="/study/csharp/start/sp_const/#const">const</a> であっても数値とかは受け付けず、const string の入れ子だけを受け付けます。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">const</span> <span class="keyword">string</span> S = $<span class="string">&quot;{123}&quot;</span>;</code></pre>
+<p><a href="https://www.youtube.com/watch?t=1380&amp;v=xS_AlnXMFwo&amp;feature=youtu.be">23:00～</a></p>
+<p>なんでかというと、文字列以外の文字列補間は <code>ToString</code> を経由していて、その <code>ToString</code> はカルチャー依存だから…
+コンパイル時に定数化できません。</p>
+<p>カルチャー依存の例:</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Globalization;
+ 
+<span class="keyword">var</span> ja = CultureInfo.GetCultureInfo(<span class="string">&quot;ja-jp&quot;</span>);
+<span class="keyword">var</span> fr = CultureInfo.GetCultureInfo(<span class="string">&quot;fr-fr&quot;</span>);
+<span class="comment">//Console.WriteLine(double.Parse(1.234.ToString(ja), fr)); // 例外</span>
+Console.WriteLine(<span class="keyword">double</span>.Parse(<span class="number">1</span>.<span class="number">234</span>.ToString(fr), ja)); <span class="comment">// 1234 扱い…</span>
+ 
+Console.WriteLine(<span class="keyword">double</span>.Parse(<span class="number">1</span>.<span class="number">234</span>.ToString(fr))); <span class="comment">// CurrentCulture...</span>
+ 
+System.Threading.Thread.CurrentThread.CurrentCulture = fr;
+Console.WriteLine(<span class="keyword">double</span>.Parse(<span class="number">1</span>.<span class="number">234</span>.ToString(fr))); <span class="comment">// CurrentCulture...</span></code></pre>
+<pre><code class="language-console">1234
+1234
+1,234</code></pre>
+<h2 id="ide-productivity">IDE Productivity</h2>
+<p><a href="https://www.youtube.com/watch?t=2036&amp;v=xS_AlnXMFwo&amp;feature=youtu.be">33:56～</a></p>
+<p><code>#if</code> にコード補完がかかるように。</p>
+<p><a href="https://www.youtube.com/watch?t=4426&amp;v=xS_AlnXMFwo&amp;feature=youtu.be">1:13:46～</a></p>
+<p>警告等のツールチップヒントからヘルプページに飛べるように。</p>
+<p><a href="https://www.youtube.com/watch?t=5813&amp;v=xS_AlnXMFwo&amp;feature=youtu.be">1:36:53～</a></p>
+<p>Source Generator の生成物のファイルが Solution Explorer 上に表示されるように。</p>
+<p><a href="https://www.youtube.com/watch?t=5942&amp;v=xS_AlnXMFwo&amp;feature=youtu.be">1:39:2～</a></p>
+<p>同じく Source Generator の生成物のファイル、Ctrl + , とかの検索結果に現れるように。</p>
+<p><a href="https://www.youtube.com/watch?t=10020&amp;v=xS_AlnXMFwo&amp;feature=youtu.be">2:47:00～</a></p>
+<p>XAML からの ViewModel C# コード生成ができるように。</p>
+<h2 id="or_greater">OR_GREATER</h2>
+<p><a href="https://www.youtube.com/watch?t=2663&amp;v=xS_AlnXMFwo&amp;feature=youtu.be">44:23～</a></p>
+<p>OR_GREATER シンボル…</p>
+<p>OR_GREATER に関するアナウンスは特に大々的に行われておらず、
+<a href="https://devblogs.microsoft.com/visualstudio/visual-studio-2019-v16-9-preview-3/#net-productivity"><code>#if</code> のコード補完の話のスクショ</a>でしれっとお披露目…</p>
+<p>「あるバージョンより新しいものだけで」みたいな条件コンパイルをしたいという話は昔からありまして。
+それがついに入りました。</p>
+<p>当初予定では「<code>NET5_0</code> だけで .NET 5 以降」という扱いで行くつもりだったものの、
+.NET 5 リリース直前でダメだしを受けて急遽取りやめ。
+その代案として出て来た話がこの「<code>_OR_GREATER</code> を付ける」でした。</p>
+<p><a href="https://www.youtube.com/watch?t=3152&amp;v=xS_AlnXMFwo&amp;feature=youtu.be">52:32～</a></p>
+<p><code>NETSTANDARD</code> には <code>OR_GREATER</code> シンボルはないとか…</p>
+<p><a href="https://www.youtube.com/watch?t=3398&amp;v=xS_AlnXMFwo&amp;feature=youtu.be">56:38～</a></p>
+<p><code>NET4</code> 系(要するに .NET Framework) と <code>NET5</code> 系(&quot;.NET&quot; に統合後)は不連続なので注意とか…</p>
+<p><a href="https://www.youtube.com/watch?t=3540&amp;v=xS_AlnXMFwo&amp;feature=youtu.be">59:00～</a></p>
+<p>大人は嘘つきではないのです。間違いをするだけなのです。</p>
+<h2 id="cswin32">CsWin32</h2>
+<p><a href="https://www.youtube.com/watch?t=6190&amp;v=xS_AlnXMFwo&amp;feature=youtu.be">1:43:10～</a></p>
+<p>ちょっと本題(VS 16.9 Preview 3、C# 10.0)から離れましたが、Win32 P/Invoke の話題でも盛り上がったり…</p>
+<p>ちょうどこの配信の日に <a href="https://github.com/microsoft/win32metadata">win32metadata</a> とか <a href="https://github.com/microsoft/CsWin32/">CsWin32</a> とかの告知が出ていて、「Twitter とかでみんな盛り上がってるなぁ」とか思っていたら、自分のライブ配信でも盛り上がるなど。</p>
+<p>Win32 API の P/Invoke 用のコードを Source Generator で生成してくれるものです。</p>
+<p><a href="https://www.youtube.com/watch?t=9281&amp;v=xS_AlnXMFwo&amp;feature=youtu.be">2:34:41</a></p>
+<p>Linux マシン上とかでもちゃんとソースコード生成からビルドまでできてちょっと盛り上がりました。
+(さすがに実行はできなくて、DllNotFound。)</p>
+<p><a href="https://www.youtube.com/watch?t=7362&amp;v=xS_AlnXMFwo&amp;feature=youtu.be">2:02:42～</a></p>
+<p>C# の <code>string</code> とかからネイティブの <code>char*</code> とかへの変換などのいわゆるマーシャリング処理は今まで .NET Runtime 内で動的にやっていたみたいなんですが、この度 Source Generator 化されたことでパフォーマンス的にもちょっとうれしいはずです。
+これまでも .NET Native とかではビルド時にやっていたそうなので、それが .NET Native (UWP 向けの AOT)という特定環境向けのビルド ツールに限らない汎用的なものになりました。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2021/1/">1&#x6708;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x6700;&#x521D;&#x306E; C# &#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;(.NET 6 &#x65B0;&#x30C6;&#x30F3;&#x30D7;&#x30EC;&#x30FC;&#x30C8;) | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2021/8/newprojecttemplate/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2021-08-16T23:49:40">2021-08-16</time></span><span>更新: <time datetime="2021-08-16T23:52:12">2021-08-16</time></span></div><h1 id="c.net-6">最初の C# プログラム(.NET 6 新テンプレート)</h1>
+<p>.NET 6 ではプロジェクト テンプレートが更新されて、かなりシンプルになります。
+例えば、コンソール アプリの場合(<code>dotnet new console</code> コマンドで生成)は(コメント行を除けば実質)以下の1行だけの C# ファイルが生成されます。</p>
+<pre><code class="language-csharp">Console.WriteLine(<span class="string">&quot;Hello, World!&quot;</span>);</code></pre>
+<p><a href="/blog/2021/8/net6p7/">先日の .NET 6 Preview 7</a> から、コンソール アプリと Web アプリがこの新テンプレートになっています。
+<a href="https://github.com/dotnet/templating/issues/3359">トラッキング issue</a> を見るに、他のタイプのプロジェクトも同じ方針で書き換え中みたいです。</p>
+<p>今日はこの新テンプレートがらみで、背景とか、内部挙動的な話とか、Preview 7 から正式リリースまでの間に掛かる予定の変更の話とか。</p>
+<h2 id="section">旧テンプレート</h2>
+<p>まあ、これまでのテンプレートが以下のようなものでしたから、ずいぶんとすっきりしました。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">namespace</span> ConsoleApp1
+{
+    <span class="keyword">class</span> Program
+    {
+        <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+        {
+            Console.WriteLine(<span class="string">&quot;Hello, World!&quot;</span>);
+        }
+    }
+}</code></pre>
+<p>C# の勉強を続けているとそのうちどこかで出会うことになるコンセプトとはいえ、完全な初心者にとってはノイズにしかならない「おまじない」が結構あります。</p>
+<ul>
+<li><a href="/study/csharp/structured/sp_namespace/#using">using</a></li>
+<li><a href="/study/csharp/structured/sp_namespace/#namespace">namespace</a></li>
+<li><a href="/study/csharp/oop/oo_class/">class</a></li>
+<li><a href="/study/csharp/oop/oo_static/">static</a></li>
+<li><a href="/study/csharp/structured/st_command/">コマンドライン引数</a></li>
+<li><a href="/study/csharp/misc/miscentrypoint/">エントリーポイント</a></li>
+</ul>
+<p>ということで、「初心者向けにもっとシンプルに書ける言語になりたい」というのが結構前から C# の課題でした。</p>
+<p><a href="/study/csharp/cheatsheet/apscripting/">C# 6.0 の時にスクリプト実行用の構文</a>ができたりもしましたし、
+<a href="/study/csharp/cheatsheet/ap_ver9/#top-level-statements">C# 9.0 ではトップ レベル ステートメント</a>が導入されました。
+その流れで、C# 10.0 では <a href="https://github.com/ufcpp/UfcppSample/issues/345">global using</a> や <a href="https://github.com/ufcpp/UfcppSample/issues/352">file-scoped namespace</a> などが入りましたし、 .NET 6 以降、標準のプロジェクト テンプレートも積極的にこれら「シンプル化のための機能」を使ったものになります。</p>
+<h2 id="c">「最初の C# プログラム」構想</h2>
+<p>今時のプログラミング言語は大体公式サイトで「ブラウザー内で試してみる」機能が付いています。</p>
+<p>というか「プログラミングを始めるにはまず Visual Studio をインストールします」なんて言うと、今時そこで9割の人が離脱します…</p>
+<p>ということで、C# も現在では公式サイトで、</p>
+<ul>
+<li><a href="https://docs.microsoft.com/ja-jp/dotnet/csharp/">C# 関連のドキュメント</a></li>
+<li><a href="https://docs.microsoft.com/ja-jp/dotnet/csharp/tour-of-csharp/tutorials/hello-world">オンライン、対話的な Hello World</a></li>
+<li><a href="https://docs.microsoft.com/ja-jp/dotnet/csharp/tour-of-csharp/tutorials/hello-world?tutorial-step=1">最初の C# プログラムの実行</a></li>
+</ul>
+<p>とたどって、ブラウザー内で C# コードを試してみることができます。
+そこで表示されているのが「新テンプレート」にもある以下の1行。</p>
+<pre><code class="language-csharp">Console.WriteLine(<span class="string">&quot;Hello, World!&quot;</span>);</code></pre>
+<p>今まで、この1行、実は正規の C# だと動かなかったんですよね。
+「適切な場所にこの C# をコピペすれば動く」と言う意味ではちゃんと動く C# コードなんですが、
+「この1行だけをコピペしても動かない」という意味で「動かないコード」でした。</p>
+<p>ところが、この公式サイト内では以下のように「動いてます」。</p>
+<p><img src="/assets/media/1188/tutorialstep1.png" alt="最初の C# プログラムをブラウザー内で実行" /></p>
+<p>(そして、「公式サイトで動くことになっているコードが手元では動かない」と言うようなクレーム、結構あると思うんですよね。
+僕も Twitter 上でこの手の文句を言っている人を数度見たことがあり。)</p>
+<p>これ、最初は「C# スクリプト(通常の C# とちょっと別文法)なのかな？」とも思ったんですが、
+<a href="https://github.com/ufcpp-live/UfcppLiveAgenda/issues/21#issuecomment-739150490">以前ちょっと試した感じ</a>、
+どうも<a href="/study/csharp/cheatsheet/apscripting/">スクリプト用の構文</a>ではなさそうと言う結論に。</p>
+<p>少なくとも今日(2021年8月16日)の時点では、おそらく、前後に以下のコードを文字列結合してからコンパイルしているのだろうという推測をしています。</p>
+<p>前:</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Collections.Generic;
+<span class="keyword">using</span> System.IO;
+<span class="keyword">using</span> System.Linq;
+<span class="keyword">using</span> System.Net.Http;
+<span class="keyword">using</span> System.Threading;
+<span class="keyword">using</span> System.Threading.Tasks;
+
+<span class="keyword">namespace</span> Program
+{
+    <span class="keyword">class</span> Program
+    {
+        <span class="keyword">static</span> <span class="keyword">void</span> Main()
+        {</code></pre>
+<p>後ろ:</p>
+<pre><code class="language-csharp">        }
+    }
+}</code></pre>
+<p>その結果、以下のようなおかしな真似ができます。</p>
+<p><img src="/assets/media/1189/tutorialstepabuse.png" alt="おかしな対話型 C# コード" /></p>
+<h2 id="c-c">「最初の C# プログラム」を動く C# コードに</h2>
+<p>で、C# 10.0 でようやくこの「最初の C# プログラム」が動くコードになりました。</p>
+<p>C# 9.0 時点でも以下のコードまでは書けていたんですが…</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+Console.WriteLine(<span class="string">&quot;Hello, World!&quot;</span>);</code></pre>
+<p>ここで最後のノイズが <code>using System;</code> だったわけですが、
+これが C# 10.0 の <a href="https://github.com/ufcpp/UfcppSample/issues/345">global using</a> で解消します。</p>
+<p>要は、「暗黙的に using してる名前空間がある」という情報を何らかの方法で C# コンパイラーに伝えられればいいんですが、C# 10.0 では以下のような方式を取ることにしました。</p>
+<ul>
+<li>global using という C# の文法を追加</li>
+<li>.NET SDK 側で、コンパイル開始時に所定の global using コードを生成</li>
+</ul>
+<p>例えば、コンソール アプリの場合、以下のようなソースコードが自動的に作られて、
+手書きコードと一緒にコンパイルされます。</p>
+<pre><code class="language-csharp"><span class="comment">// &lt;autogenerated /&gt;</span>
+global <span class="keyword">using</span> global::System;
+global <span class="keyword">using</span> global::System.Collections.Generic;
+global <span class="keyword">using</span> global::System.IO;
+global <span class="keyword">using</span> global::System.Linq;
+global <span class="keyword">using</span> global::System.Net.Http;
+global <span class="keyword">using</span> global::System.Threading;
+global <span class="keyword">using</span> global::System.Threading.Tasks;</code></pre>
+<h2 id="net-6-preview-7">.NET 6 Preview 7 でのバグ挙動と破壊的変更問題</h2>
+<p>ただし、先日リリースしたての .NET 6 Preview 7 ではこれのせいでいくつか問題を起こしています。
+すでに対処はされていて、次のリリース(おそらく RC 1)までに治るっぽいです。</p>
+<p>とりあえずは Preview 7 時点のバグ挙動の説明。</p>
+<p>上記の global using コードをどういう条件で生成するかと言うのが問題でして、
+Preview 7 時点では「TargetFramework が net6.0 なら生成」となっていました。
+これでどういう問題を起こすかと言うと、</p>
+<ul>
+<li>TargetFramework net6.0 なのにあえて LangVersion を9以下に設定して global using を使えなくする
+<ul>
+<li>「global using を使うなら C# 10.0 以降を使え」というエラーが出る</li>
+</ul>
+</li>
+<li>TargetFrameworks で複数の TargetFrameworks を混在させる
+<ul>
+<li>net6.0 のときだけ global using が掛かっている状態になるので、net6.0 のときにしかコンパイルできないコードが生まれる</li>
+</ul>
+</li>
+</ul>
+<p>そして、TargetFramework を net6.0 に変えるだけで、既存のコードを壊すことがあります。
+まあ、勝手に using している名前空間が足されている状態なので、そこに含まれている型と名前被りがあると「不明瞭な型」扱いを受けてコンパイル エラーを起こします。</p>
+<p>例えば、<a href="https://github.com/dotnet/runtime/pull/56744">.NET チーム自身が地雷を踏んで、暗黙的な global using 生成を止める</a>という一時的な対処をやっています。</p>
+<p>当初はこれを「<a href="https://docs.microsoft.com/ja-jp/dotnet/core/compatibility/sdk/6.0/implicit-namespaces">.NET 6 での破壊的変更</a>」としてユーザーに受け入れてもらおうと思っていたみたいなんですが、さすがに無理だと思ったのか、方式を改めるみたいです。</p>
+<h2 id="section-1">次のリリースまでに掛かる変更</h2>
+<p>ということで、<a href="https://github.com/dotnet/sdk/issues/19521">変更計画</a> (6.0.100-rc.1 に入れる目標とのこと)。</p>
+<p>今(Preview 7 時点):</p>
+<ul>
+<li>net6.0 だと自動的に global using コードが生成されてしまう</li>
+<li>それを抑止するために、DisableImplicitNamespaceImports というオプションがある(本来は Visual Basic 用)</li>
+<li>プロジェクト テンプレートにはこれ関連の項目は何も含めない</li>
+</ul>
+<p>変更後(RC 1 目標):</p>
+<ul>
+<li>ImplicitUsings というオプションを用意して、これが true もしくは enable の時だけ global using コードを生成する
+<ul>
+<li>DisableImplicitNamespaceImports は C# 向けにはなくす(Visual Basic 用オプションの流用をやめる)</li>
+</ul>
+</li>
+<li>プロジェクト テンプレートに <code>&lt;ImplicitUsings&gt;enable&lt;/ImplicitUsings&gt;</code> の行を足す</li>
+</ul>
+<p>明示的なオプション指定を必須にして、標準のテンプレートにこのオプションを足すという方向性。</p>
+<p>なので、既存のプロジェクトを net6.0 に変えただけで破壊的変更ということにはならなくなる予定です。
+その代わり、csproj (プロジェクト設定ファイル)に1行ノイズが増えますが…
+これはさすがにしょうがなさそう。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2021/8/">8&#x6708;</a></li><li><a href="/blog/2021/8/net6p7/">.NET 6 Preview 7 &amp; Visual Studio 2020 Preview 3</a></li><li><a href="/blog/2021/8/invariantculture/">.NET &#x306E;&#x30AB;&#x30EB;&#x30C1;&#x30E3;&#x30FC;&#x4F9D;&#x5B58; API &#x554F;&#x984C;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

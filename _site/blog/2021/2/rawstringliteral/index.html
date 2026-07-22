@@ -1,0 +1,155 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: raw string literal | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2021/2/rawstringliteral/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2021-02-25T22:15:43">2021-02-25</time></span><span>更新: <time datetime="2021-02-25T22:20:55">2021-02-25</time></span></div><h1 id="roslyn-raw-string-literal">ピックアップRoslyn: raw string literal</h1>
+<p>ブログで取り上げたい C# Language Design Meeting 議事録が1か月分くらいたまっているわけですが:</p>
+<p><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2021/LDM-2021-01-27.md">1/27</a>、<a href="https://github.com/dotnet/csharplang/blob/master/meetings/2021/LDM-2021-02-03.md">2/3</a>、<a href="https://github.com/dotnet/csharplang/blob/master/meetings/2021/LDM-2021-02-08.md">2/8</a>、<a href="https://github.com/dotnet/csharplang/blob/master/meetings/2021/LDM-2021-02-10.md">2/10</a>、<a href="https://github.com/dotnet/csharplang/blob/master/meetings/2021/LDM-2021-02-22.md">2/22</a></p>
+<p>しばらく、機能ごとに1個1個取り上げていこうかなという感じになっていまして、今日は raw string literal の話から。</p>
+<h2 id="section">概要</h2>
+<p>以下のような書き方で、複数行、かつ、一切のエスケープなしの文字列リテラルを導入したいという話が出ています。</p>
+<pre><code class="language-csharp"><span class="keyword">string</span> xml = <span class="string">&quot;&quot;</span>&quot;
+    &lt;a&gt;
+        &lt;b c=<span class="string">&quot;abc&quot;</span> /&gt;
+    &lt;/a&gt;
+    <span class="string">&quot;&quot;</span>&quot;;
+ 
+<span class="keyword">string</span> json = <span class="string">&quot;&quot;</span>&quot;
+    {
+        <span class="string">&quot;a&quot;</span> : {
+            <span class="string">&quot;b&quot;</span> : {
+                <span class="string">&quot;c&quot;</span> : <span class="string">&quot;abc&quot;</span>
+            }
+        }
+    }<span class="string">&quot;&quot;</span>&quot;;</code></pre>
+<p>C# の文字列中に XML、Json/JavaScript とか、さらに言うと C# 自身を書きたいことが多々あって、
+結構昔から要望はありました。</p>
+<p>近い機能として、C# には 1.0 の頃から <a href="/study/csharp/start/st_embeddedtype/#verbatim-string"><code>@&quot;&quot;</code></a> という書き方があったりしますし、Visual Studio などの IDE が自動補完で補ってくれたりはしていました。</p>
+<pre><code class="language-csharp"><span class="keyword">string</span> s = <span class="stringCSharpVerbatim">@&quot;
+{
+    &quot;&quot;a&quot;&quot; : &quot;&quot;abc&quot;&quot;
+}&quot;</span>;</code></pre>
+<p><img src="/assets/media/1183/idenewline.png" alt="Visual Studio の自動補完で複数行文字列を書く例" /></p>
+<p>でも、 <code>\&quot;</code> とか <code>{{</code> とか <code>&quot;&quot;</code> とか書くのがめんどくさいのでもっと「生文字列」を書きたいということで出て来た文法案になります。</p>
+<h2 id="section-1">背景: 言語内言語</h2>
+<p>C# 中に XML とか Json とか SQL を直接リテラルに埋め込もうとして、
+外部で編集して来たものをコピペしたら <code>&quot;</code> のエスケープで困るということはよくあると思います。</p>
+<p>C# の文字列中に何らかの言語を埋め込むこと自体どうなんだという話はあるんですが、
+最近の C# は普通に言語内言語を解釈してるんですよね。</p>
+<p><img src="/assets/media/1184/langinlang.png" alt="言語内言語" /></p>
+<p>今のところ<a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.text.regularexpressions.regex?WT.mc_id=DT-MVP-4028921">正規表現</a>と<a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.datetime.tostring?WT.mc_id=DT-MVP-4028921#System_DateTime_ToString_System_String_">時刻・日付のフォーマット</a>だけなんですが、一応、C# コンパイラー内には任意の文字列に対して自作の色付け(highlight)・補完候補(completion)を出すための仕組みを持っていたりします。</p>
+<ul>
+<li>正規表現用: <a href="https://github.com/dotnet/roslyn/tree/master/src/Features/Core/Portable/EmbeddedLanguages/RegularExpressions">RegularExpressions</a></li>
+<li>時刻・日付用: <a href="https://github.com/dotnet/roslyn/tree/master/src/Features/Core/Portable/EmbeddedLanguages/DateAndTime">DateAndTime</a></li>
+</ul>
+<p>C# 9.0 世代では <a href="/study/csharp/misc/analyzer-generator/">Source Generator</a> も入ったわけで、
+言語内言語を書く機会は増えるかもしれません。
+というか、<a href="https://github.com/ufcpp/TextTemplateSourceGenerator/blob/main/samples/StringToUtf8Preprocessor/Generator.cs">自分は割かし定期的にもくろんでいます</a>。</p>
+<p>上記の正規表現・時刻・日付の実装は今のところ internal なんですが、
+Source Generator によって需要が増えれば、言語内言語の色付け・補完用の機能も public にしてもらえるかもしれません。
+(一度 public にすると変更が難しくなるので、結構しっかり作ってあっても需要が上がらないとなかなか public にならない。)</p>
+<p>昔から要望がある raw string literal の具体案が今になって本腰が入ったのは、こういう背景からだと思います。
+(ちなみに、raw string literal 提案のオーナーになっているのは上記の正規表現・時刻・日付の色付け・補完の実装者の方だったりします。)</p>
+<h2 id="section-2">3個以上、任意個の &quot;</h2>
+<p>この手の raw string を実装する上で問題になるのは、「自分自身を含む可能性」だったりします。
+C# Source Generator で C# から C# をコード生成したりするとき、結構困ります。</p>
+<p>C# 1.0 の頃からある <code>@&quot;&quot;</code> の一番の問題点も <code>&quot;</code> 自体を含みにくい(<code>&quot;&quot;</code> と、2文字並べるエスケープ処理が必要)ことです。
+なんせ、XML、Json など含め、たいていのものが文字列の表現に <code>&quot;</code> を使います。
+物によっては <code>'</code> (single quotation) か <code>&quot;</code> (double quotation) かを選べたりしますが、両方を含むことも多いです。
+まして、Java とか JavaScript とか C# とかは C 言語由来の文法が多くて、<code>&quot;</code> とか <code>{</code> とかの使い方がほとんど同じです。
+これらをそのまま書けないというのが <code>@&quot;&quot;</code> の使いづらいところです。</p>
+<p>そこでまあ、<code>&quot;&quot;&quot;</code> とか、「<code>&quot;</code> を3つ並べた場合、そのあと、再び <code>&quot;&quot;&quot;</code> が現れるまで <code>&quot;</code> をエスケープなしの生の <code>&quot;</code> 扱いする」みたいな文法が考えられます。
+ところが、「その文法を採用した自分自身」を含もうとすると、<code>&quot;&quot;&quot;</code> をエスケープできる手段が再び必要になったりします。</p>
+<p>ということで、今提案されている raw string literal では「3個以上、任意個の <code>&quot;</code> から開始して、同数の <code>&quot;</code> で終わる」という仕様にしてあります。<code>&quot;&quot;&quot;</code> (3個)をエスケープなしで含みたければ <code>&quot;&quot;&quot;&quot;</code> (4個)から開始すればいいじゃない。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> cs = <span class="string">&quot;&quot;</span><span class="string">&quot;&quot;</span>
+    <span class="keyword">var</span> s = <span class="string">&quot;&quot;</span>&quot;
+        C# <span class="keyword">in</span> C#
+        <span class="string">&quot;&quot;</span>&quot;;
+    <span class="string">&quot;&quot;</span><span class="string">&quot;&quot;</span>;</code></pre>
+<h2 id="section-3">インデント</h2>
+<p>もう1個、<code>@&quot;&quot;</code> の嫌なところはインデントがそろわなくなるところです。</p>
+<p>以下のような文字列リテラルを書くと、1行目の位置と2行目以降の位置がだいぶ離れるのが結構見づらくなります。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> M()
+    {
+        <span class="keyword">const</span> <span class="keyword">string</span> s = <span class="stringCSharpVerbatim">@&quot;1行目
+    2行目
+3行目
+&quot;</span>;
+    }
+}</code></pre>
+<p>本当は以下のように書けるとだいぶ見やすくなると思います。</p>
+<pre><code class="language-csharp"><span class="keyword">const</span> <span class="keyword">string</span> s = <span class="stringCSharpVerbatim">@&quot;
+    1行目
+        2行目
+    3行目
+    &quot;</span>;</code></pre>
+<p>もちろんこれは有効な C# コードなんですが、1行目の前に改行文字が1つ入っちゃうのと、全部の行の行頭にスペースが入っちゃうわけで、空白文字を含めて一字一句一致しないとまずい場合には使えません。</p>
+<p>ということで、今回の提案の raw string literal は以下のような仕様になります。</p>
+<ul>
+<li>開始の <code>&quot;&quot;&quot;</code> (3個以上の <code>&quot;</code>) の後ろには改行必須</li>
+<li>1行目のインデントを基準にして、それよりも前の空白文字は無視</li>
+</ul>
+<p>例えば先ほどの <code>@&quot;&quot;</code> で書いた文字列リテラルと同じものを新しい raw string literal で書くと以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">const</span> <span class="keyword">string</span> s = <span class="string">&quot;&quot;</span>&quot;
+    1行目
+        2行目
+    3行目
+    <span class="string">&quot;&quot;</span>&quot;;</code></pre>
+<h3 id="section-4">文字列補間はやらない</h3>
+<p>まあ一番の目的が「全くエスケープ処理をしないでいい文字列リテラルが欲しい」という点なので、<a href="/study/csharp/start/st_string/#string-interpolation"><code>$&quot;&quot;</code></a> みたいな特殊なことは一切やらないそうです。</p>
+<p>文字列補間には、<code>$@&quot;&quot;</code> もしくは <code>@$&quot;&quot;</code> という書き方で、「複数行、かつ、文字列補間が掛かるリテラル」が書けます。</p>
+<pre><code class="language-csharp">    <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">string</span> @<span class="keyword">namespace</span>, <span class="keyword">string</span> className)
+    {
+        <span class="keyword">string</span> s = $<span class="stringCSharpVerbatim">@&quot;
+namespace {@namespace}
+{{
+    class {className}
+    {{
+    }}
+}}
+&quot;</span>;
+    }</code></pre>
+<p>はい、もうこの時点で何が嫌かわかるかと思います。<code>{{</code> が嫌。
+実際、「C# 内 C#」みたいなことをやると、上記のコードは以下のように書き直した方がまだマシなんじゃないかと思ったりすることが結構あります。</p>
+<pre><code class="language-csharp">    <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">string</span> @<span class="keyword">namespace</span>, <span class="keyword">string</span> className)
+    {
+        <span class="keyword">string</span> s = <span class="stringCSharpVerbatim">@&quot;
+namespace &quot;</span> + @<span class="keyword">namespace</span> + <span class="stringCSharpVerbatim">@&quot;
+{
+    class &quot;</span> + className + <span class="stringCSharpVerbatim">@&quot;
+    {
+    }
+}
+&quot;</span>;
+    }</code></pre>
+<p>ものすごく本末転倒…</p>
+<p>ということで、とりあえず、raw string literal に関しては <code>$&quot;&quot;&quot;</code> みたいなものは提供しないとのこと。</p>
+<h3 id="section-5">他の言語の類似機能</h3>
+<p>似たような複数行・エスケープなし・インデント調整可能なリテラルを導入した言語もちらほらあります。</p>
+<p>Java は Java 15 で text blocks という名前でこの機能を導入したみたいですが、開始文字は <code>&quot;&quot;&quot;</code> (3個)で固定みたいです。
+自分自身を含むときにやっぱりエスケープが必要。</p>
+<p>Swift は元々あった「<code>&quot;&quot;&quot;</code> (3個固定)で複数行文字列」(multiline string)という仕様に、
+Swift 5 で導入した「任意個の <code>#</code> の後ろに <code>&quot;</code> (単体行) か <code>&quot;&quot;&quot;</code> (複数行)でエスケープなし文字列」(raw string)みたいな文法を組み合わせて同様のことができるみたいです。先に <code>&quot;&quot;&quot;</code> (3個固定)があったから <code>#</code> になっちゃった感じ。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2021/2/">2&#x6708;</a></li><li><a href="/blog/2021/2/uax31/">UAX31: Unicode Identifier &#x306E;&#x8A71;</a></li><li><a href="/blog/2021/2/parameterlessstructctor/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: &#x69CB;&#x9020;&#x4F53;&#x306E;&#x5F15;&#x6570;&#x306A;&#x3057;&#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;</a></li><li><a href="/blog/2021/2/lexicalkeywords/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: &#x6587;&#x8108;&#x30AD;&#x30FC;&#x30EF;&#x30FC;&#x30C9;&#x306E;&#x8907;&#x96D1;&#x3055;&#x4F4E;&#x6E1B;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

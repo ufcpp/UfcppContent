@@ -1,0 +1,393 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x7D4C;&#x904E;&#x65E5;&#x6570;&#x306E;&#x8A08;&#x7B97; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/algorithm/other/o_days/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">経過日数の計算</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>2つの日付（例えば、自分の誕生日と今日）の間の経過日数を求めたくなったとします。
+ぱっとは出てきませんね。
+原因は主に、毎月の日数がばらばらなのと、うるう年のせいなんですが。</p>
+<p>まあ、2つの日付の差というとちょっと面倒なんで、
+とりあえず、グレゴリウス暦1年1月1日を基準にして、経過日数を求めることにします。
+（グレゴリウス暦施行（早い国で1582年）より前の日付も、
+形式的にグレゴリウス暦とみなして計算します。）
+この基準日からの経過日数が分かれば、その差を取ることで、2つの日付の差も分かります。</p>
+<p>まあ、大筋だけ言うと、
+1年1月1日から<span class="math">y</span>年<span class="math">m</span>月<span class="math">d</span>日までの経過日数は、</p>
+<ul>
+<li><p><span class="math">dy</span>:<span class="math">
+<span class="paren" style="font-size:em;">(</span>
+y <span class="normal">−</span><span class="normal">1</span>
+<span class="paren" style="font-size:em;">)</span>
+<span class="normal">×</span>
+<span class="normal">365</span>
+</span></p>
+</li>
+<li><p><span class="math">dl</span>:<span class="math">y</span>年までのうるう年の回数</p>
+</li>
+<li><p><span class="math">dm</span>: 1月1日から<span class="math">m</span>月1日までの日数</p>
+</li>
+<li><p><span class="math">d</span></p>
+</li>
+</ul>
+<p>という4つに分けて考えて、その和
+<span class="math">
+dy
+<span class="normal">+</span>
+dl
+<span class="normal">+</span>
+dm
+<span class="normal">+</span>
+d <span class="normal">−</span><span class="normal">1</span>
+</span>
+で求まります。</p>
+<p>最初と最後の項については説明するまでもないと思うんで、
+<span class="math">dl</span>（うるう年）と
+<span class="math">dm</span>（<span class="math">m</span> 月までの日数）に関してを説明します。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="leap"></a>うるう年</h2>
+<p>うるう年かどうかの判定は、</p>
+<ul>
+<li><p>4の倍数の年はうるう年。</p>
+</li>
+<li><p>ただし、100の倍数の年はうるう年じゃない。</p>
+</li>
+<li><p>でも、やっぱり400の倍数の年はうるう年。</p>
+</li>
+</ul>
+<p>でできるので、
+1年から <span class="math">y</span> 年までのうるう年の回数は、</p>
+<ul>
+<li><p>＋<span class="math">
+<span class="paren" style="font-size:em;">⌊</span>
+y <span class="normal">/</span> 4
+<span class="paren" style="font-size:em;">⌋</span>
+</span>← 4年に1回、うるう年。</p>
+</li>
+<li><p>－<span class="math">
+<span class="paren" style="font-size:em;">⌊</span>
+y <span class="normal">/</span> 100
+<span class="paren" style="font-size:em;">⌋</span>
+</span>← でも、100年に1回、うるう年でない年がある。</p>
+</li>
+<li><p>＋<span class="math">
+<span class="paren" style="font-size:em;">⌊</span>
+y <span class="normal">/</span> 400
+<span class="paren" style="font-size:em;">⌋</span>
+</span>← でも、やっぱり400年に1回はうるう年。</p>
+</li>
+</ul>
+<p>（ただし、記号 <span class="math">
+<span class="paren" style="font-size:em;">⌊</span>x<span class="paren" style="font-size:em;">⌋</span>
+</span> は、
+<span class="math">x</span> を超えない最大の整数）
+を足して、
+<span class="math">
+<span class="paren" style="font-size:em;">⌊</span>
+y <span class="normal">/</span> 4
+<span class="paren" style="font-size:em;">⌋</span>
+<span class="normal">−</span>
+<span class="paren" style="font-size:em;">⌊</span>
+y <span class="normal">/</span> 100
+<span class="paren" style="font-size:em;">⌋</span>
+<span class="normal">+</span>
+<span class="paren" style="font-size:em;">⌊</span>
+y <span class="normal">/</span> 400
+<span class="paren" style="font-size:em;">⌋</span>
+</span>
+で計算可能です。
+で、プログラム的には、整数同士の除算は、普通は余り切り捨てなので、</p>
+<pre><code class="language-csharp">y / <span class="number">4</span> - y / <span class="number">100</span> + y / <span class="number">400</span>;</code></pre>
+<p>となります。
+さらにちょっとプログラミング上の工夫をするなら、
+除算を極力避けるために、
+÷4 をシフト演算で書き換えて、
+以下のように書くことも可能。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> c = y / <span class="number">100</span>;
+<span class="keyword">int</span> dl = (y &gt;&gt; <span class="number">2</span>) - c + (c &gt;&gt; <span class="number">2</span>);</code></pre>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="month"></a>月ごとの日数</h2>
+<p>とりあえず、
+「1月1日から <span class="math">m</span> 月1日までの経過日数」とかいう長い言葉を何度も言いたくないので、
+記号を定義しておきます。</p>
+<ul>
+<li><span class="math">
+        d<span class="paren" style="font-size:em;">(</span>m<span class="paren" style="font-size:em;">)</span>
+      </span>:<span class="math">m</span>月の日数
+</li>
+<li><span class="math">
+        s<span class="paren" style="font-size:em;">(</span>m<span class="paren" style="font-size:em;">)</span>
+      </span>: 1月1日から<span class="math">m</span>月1日までの経過日数 ＝ 先月までの<span class="math">
+        d<span class="paren" style="font-size:em;">(</span>m<span class="paren" style="font-size:em;">)</span>
+      </span>の和
+</li>
+</ul>
+<p>まずは、
+<span class="math">
+d<span class="paren" style="font-size:em;">(</span>m<span class="paren" style="font-size:em;">)</span>
+</span> と
+<span class="math">
+s<span class="paren" style="font-size:em;">(</span>m<span class="paren" style="font-size:em;">)</span>
+</span> の値の一覧を見てみましょう
+（表1）。
+ここでは、うるう年は無視します。
+14月まである理由は後述します。</p>
+<table summary="d(m), s(m)">
+	<caption>
+		d(m), s(m)
+	</caption>
+	<tr>
+		<th>月<span class="math">m</span></th>
+		<td><p>1</p></td>
+		<td><p>2</p></td>
+		<td><p>3</p></td>
+		<td><p>4</p></td>
+		<td><p>5</p></td>
+		<td><p>6</p></td>
+		<td><p>7</p></td>
+		<td><p>8</p></td>
+		<td><p>9</p></td>
+		<td><p>10</p></td>
+		<td><p>11</p></td>
+		<td><p>12</p></td>
+		<td><p>13</p></td>
+		<td><p>14</p></td>
+	</tr>
+	<tr>
+		<th><span class="math">
+            d<span class="paren" style="font-size:em;">(</span>m<span class="paren" style="font-size:em;">)</span>
+          </span></th>
+		<td><p>31</p></td>
+		<td><p>28</p></td>
+		<td><p>31</p></td>
+		<td><p>30</p></td>
+		<td><p>31</p></td>
+		<td><p>30</p></td>
+		<td><p>31</p></td>
+		<td><p>31</p></td>
+		<td><p>30</p></td>
+		<td><p>31</p></td>
+		<td><p>30</p></td>
+		<td><p>31</p></td>
+		<td><p>31</p></td>
+		<td><p>28</p></td>
+	</tr>
+	<tr>
+		<th><span class="math">
+            s<span class="paren" style="font-size:em;">(</span>m<span class="paren" style="font-size:em;">)</span>
+          </span></th>
+		<td><p>0</p></td>
+		<td><p>31</p></td>
+		<td><p>59</p></td>
+		<td><p>90</p></td>
+		<td><p>120</p></td>
+		<td><p>151</p></td>
+		<td><p>181</p></td>
+		<td><p>212</p></td>
+		<td><p>243</p></td>
+		<td><p>273</p></td>
+		<td><p>304</p></td>
+		<td><p>334</p></td>
+		<td><p>365</p></td>
+		<td><p>396</p></td>
+	</tr>
+</table>
+<p>まあ、たった12個の整数ですし、
+この <span class="math">
+s<span class="paren" style="font-size:em;">(</span>m<span class="paren" style="font-size:em;">)</span>
+</span> を定数テーブルで持っておけば解決する話なんですけど、
+それじゃ面白くないんで別の方法を紹介。
+（無駄にテーブルを持ちたくないですし。）</p>
+<p>まず、2月だけうるう年の問題があったり、
+他の月と比べて極端に日数が少ないので、例外として扱いってしまいたいです。
+そこで、1月と2月を「前年の13月と14月」とみなして、
+3～14月にして考えます。</p>
+<p>28日しかない2月を末尾に移したので、
+<span class="math">
+s<span class="paren" style="font-size:em;">(</span>m<span class="paren" style="font-size:em;">)</span>
+</span> の差
+<span class="math">
+s<span class="paren" style="font-size:em;">(</span>m<span class="paren" style="font-size:em;">)</span><span class="normal">−</span>
+s<span class="paren" style="font-size:em;">(</span>
+m <span class="normal">−</span><span class="normal">1</span>
+<span class="paren" style="font-size:em;">)</span>
+</span>
+は全て 30 か 31 のどちらかになります。
+そうすると、
+30 と 31 の出てくる順番は少々不規則ですが、
+近似的になら直線で表せそうです。
+（近似的に、というか、
+格子点の隙間を通して、小数点以下切り捨てることで表すような感じ。）</p>
+<p>すなわち、
+<span class="math">
+s<span class="paren" style="font-size:em;">(</span>m<span class="paren" style="font-size:em;">)</span><span class="normal">=</span><span class="paren" style="font-size:em;">⌊</span>
+a m <span class="normal">+</span> b
+<span class="paren" style="font-size:em;">⌋</span>
+</span>
+となるような直線 <span class="math">
+a m <span class="normal">+</span> b
+</span> を探してみることにします。
+要は、<span class="math">m</span> ＝ 3～14 に対して、</p>
+<div class="math">
+      s<span class="paren" style="font-size:em;">(</span>m<span class="paren" style="font-size:em;">)</span><span class="normal">≦</span>
+      a m <span class="normal">+</span> b
+      <span class="normal">&lt;</span>
+      s<span class="paren" style="font-size:em;">(</span>m<span class="paren" style="font-size:em;">)</span>
+    </div>
+という条件を満たすような実数 <span class="math">a, b</span> を求めることになります。
+<p>まあ、
+傾き <span class="math">a</span> は、
+30 と 31 の間を取って、30.5 前後の値になることは直感的に分かると思います。
+頑張っていろいろ計算すると、
+<span class="math">a</span> の範囲が</p>
+<div class="math">
+      <span class="normal">30.57143</span>
+      <span class="normal">≅</span>
+      <table class="frac" summary="fraction"><tr><td class="num">
+          <span class="normal">214</span>
+        </td></tr><tr><td>
+          <span class="normal">7</span>
+        </td></tr></table>
+      <span class="normal">≦</span>
+      a
+      <span class="normal">&lt;</span><table class="frac" summary="fraction"><tr><td class="num">
+          <span class="normal">245</span>
+        </td></tr><tr><td>
+          <span class="normal">8</span>
+        </td></tr></table><span class="normal">=</span><span class="normal">30.625</span>
+    </div>
+のとき、上述の条件を満たすように出来ることが分かります。
+（
+214/7 という値は、
+2点
+<span class="math">
+        <span class="paren" style="font-size:em;">(</span>
+          m, s<span class="paren" style="font-size:em;">(</span>m<span class="paren" style="font-size:em;">)</span>
+        <span class="paren" style="font-size:em;">)</span>
+        <span class="normal">=</span>
+        <span class="paren" style="font-size:em;">(</span>
+          <span class="normal">5</span>, <span class="normal">120</span>
+        <span class="paren" style="font-size:em;">)</span>
+      </span>
+と
+<span class="math">
+        <span class="paren" style="font-size:em;">(</span>
+          <span class="normal">12</span>, <span class="normal">334</span>
+        <span class="paren" style="font-size:em;">)</span>
+      </span>
+の傾きで、
+245/8 の方は
+<span class="math">
+        <span class="paren" style="font-size:em;">(</span>
+          <span class="normal">6</span>, <span class="normal">151</span>
+        <span class="paren" style="font-size:em;">)</span>
+      </span>
+と
+<span class="math">
+        <span class="paren" style="font-size:em;">(</span>
+          <span class="normal">14</span>, <span class="normal">396</span>
+        <span class="paren" style="font-size:em;">)</span>
+      </span>
+の傾き。
+）
+<p>例えば、きり良く
+<span class="math">
+a <span class="normal">=</span><span class="normal">30.6</span>,
+</span><span class="math">
+b <span class="normal">=</span><span class="normal">−</span><span class="normal">32.4</span>
+</span>
+とかにして、</p>
+<div class="math">
+      dm <span class="normal">=</span><span class="paren" style="font-size:em;">⌊</span>
+        <span class="paren" style="font-size:em;">(</span>
+          <span class="normal">306</span> m <span class="normal">−</span><span class="normal">324</span>
+        <span class="paren" style="font-size:em;">)</span>
+        <span class="normal">/</span>
+        <span class="normal">10</span>
+      <span class="paren" style="font-size:em;">⌋</span>
+    </div>
+で計算したり、
+あるいは、
+除算を避けるために、
+<span class="math">
+        a <span class="normal">=</span><span class="normal">979</span><span class="normal">/</span><span class="normal">32</span> ,
+      </span><span class="math">
+        b <span class="normal">=</span><span class="normal">−</span><span class="normal">1033</span><span class="normal">/</span><span class="normal">32</span>
+      </span>
+にして、
+<div class="math">
+      dm <span class="normal">=</span><span class="paren" style="font-size:em;">⌊</span>
+        <span class="paren" style="font-size:em;">(</span>
+          <span class="normal">979</span> m <span class="normal">−</span><span class="normal">1033</span>
+        <span class="paren" style="font-size:em;">)</span>
+        <span class="normal">/</span>
+        <span class="normal">32</span>
+      <span class="paren" style="font-size:em;">⌋</span>
+    </div>
+で計算します。
+プログラム的に書くなら、÷32 はシフト演算に置き換えられて、以下のようになります。
+<pre><code class="language-csharp"><span class="keyword">int</span> dm = (m * <span class="number">979</span> - <span class="number">1033</span>) &gt;&gt; <span class="number">5</span>;</code></pre>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="sample"></a>完成品</h2>
+<p>結局、これまでに説明した内容をまとめると、
+1年1月1日からの経過日数を求めるプログラムは以下のようになります。</p>
+<pre><code class="language-csharp"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> グレゴリウス暦1年1月1日からの経過日数を求める。</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> （グレゴリウス暦施行前の日付も、</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment">   形式的にグレゴリウス暦と同じルールで計算。）</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;y&quot;&gt;</span><span class="xmlDocComment">年&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;m&quot;&gt;</span><span class="xmlDocComment">月&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;d&quot;&gt;</span><span class="xmlDocComment">日&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">1年1月1日からの経過日数&lt;/returns&gt;</span>
+<span class="keyword">static</span> <span class="keyword">int</span> GetDays(<span class="keyword">int</span> y, <span class="keyword">int</span> m, <span class="keyword">int</span> d)
+{
+  <span class="comment">// 1・2月 → 前年の13・14月</span>
+  <span class="keyword">if</span> (m &lt;= <span class="number">2</span>)
+  {
+    --y;
+    m += <span class="number">12</span>;
+  }
+  <span class="keyword">int</span> dy = <span class="number">365</span> * (y - <span class="number">1</span>); <span class="comment">// 経過年数&#215;365日</span>
+  <span class="keyword">int</span> c = y / <span class="number">100</span>;
+  <span class="keyword">int</span> dl = (y &gt;&gt; <span class="number">2</span>) - c + (c &gt;&gt; <span class="number">2</span>); <span class="comment">// うるう年分</span>
+  <span class="keyword">int</span> dm = (m * <span class="number">979</span> - <span class="number">1033</span>) &gt;&gt; <span class="number">5</span>; <span class="comment">// 1月1日から m 月1日までの日数</span>
+  <span class="keyword">return</span> dy + dl + dm + d - <span class="number">1</span>;
+}</code></pre>
+<p>ちなみに、
+経過日数の計算ができれば、曜日の判定も可能です。
+有名な曜日判定法に、<a href="http://ja.wikipedia.org/wiki/%E3%83%84%E3%82%A7%E3%83%A9%E3%83%BC%E3%81%AE%E5%85%AC%E5%BC%8F">ツェラーの公式</a>ってのがあるんですが、
+この公式は、このページで説明した内容と同様にして導出できます。</p>
+<p>参考までに、ツェラーの公式による曜日判定プログラムを書いておくと、以下の通りです。</p>
+<pre><code class="language-csharp"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 曜日判定</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;y&quot;&gt;</span><span class="xmlDocComment">年&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;m&quot;&gt;</span><span class="xmlDocComment">月&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;d&quot;&gt;</span><span class="xmlDocComment">日&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">0なら日曜、1: 月曜、…、6: 土曜&lt;/returns&gt;</span>
+<span class="keyword">static</span> <span class="keyword">int</span> GetDayOfWeek(<span class="keyword">int</span> y, <span class="keyword">int</span> m, <span class="keyword">int</span> d)
+  <span class="keyword">int</span> c = y / <span class="number">100</span>;
+  y %= <span class="number">100</span>;
+  <span class="keyword">int</span> dow = d + <span class="number">26</span> * (m + <span class="number">1</span>) / <span class="number">10</span> + y + y / <span class="number">4</span>  + c / <span class="number">4</span> - <span class="number">2</span> * c;
+  dow %= <span class="number">7</span>;</code></pre>
+<p>月 <span class="math">m</span> の前に 26 という謎の定数が出てきますが、
+これは、「<a href="#month">月ごとの日数</a>」で出てきた定数 306 を 70 ＝ 7×10 で割った余りです。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/algorithm/other/">&#x305D;&#x306E;&#x4ED6;&#x306E;&#x30A2;&#x30EB;&#x30B4;&#x30EA;&#x30BA;&#x30E0;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

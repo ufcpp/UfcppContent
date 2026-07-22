@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x4EFB;&#x610F;&#x8272;&#x7D75;&#x6587;&#x5B57;&#xFF1F; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2021/12/full-color-emoji/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2021-12-22T20:24:20">2021-12-22</time></span><span>更新: <time datetime="2021-12-22T20:25:34">2021-12-22</time></span></div><h1 id="section">任意色絵文字？</h1>
+<p>🐈‍⬛</p>
+<p>Windows にもついに Unicode 13.0 が来ました(今更)。</p>
+<h2 id="unicode-13.0">Unicode 13.0</h2>
+<p>Unicode 13.0 のリリース、2020年3月なんですよね。
+ずいぶんと前。</p>
+<p>それに対して、Windows 10 の間は Unicode 13.0 には一向に対応せず…
+今思えば新しい絵柄(Windows 11 の新絵文字)を作っていたから、古い絵柄(Windows 10 の絵文字)を更新するリソースを割かなかったんだろうなとは思うんですが。</p>
+<p>Unicode 13.0 の新文字の分かりやすいのが本項冒頭の黒猫でして、
+🐈‍⬛ の文字、Windows 10 だと 🐈⬛ (ネコ + 黒四角)になるはずです。</p>
+<p>というか、Windows 11 でも対応したのはつい最近です。
+こないだ<a href="/blog/2021/12/ninjacatdies/">ニンジャキャット終了のお知らせ</a>のときに書いた新絵文字のタイミングでやっと黒猫が表示できるようになりました。</p>
+<p>iOS とかから遅れること1年半以上…</p>
+<p><a href="https://twitter.com/AXIA_96NE">にじさんじの新人さん(今年7月デビュー)</a>が 🐈‍⬛ を推し絵文字に決定した時には「やべ、Windows で表示できねぇ…」ってなって焦りました。</p>
+<h2 id="section-1">色選択</h2>
+<p>さてこの黒猫、典型的な ZWJ シーケンスです。
+最近書いた<a href="/blog/2021/12/regional-indicator/">UTF-8の敗北話</a>とか、
+<a href="/blog/2021/12/ninjacatdies/">ニンジャキャット終了のお知らせ</a>とかでも触れてるんですが、</p>
+<p>🐈 (U+1F408)、ZWJ (U+200D)、⬛ (U+2B1B)</p>
+<p>という3文字から構成される、🐈 の色違い絵文字です。</p>
+<p>ちなみにこの ⬛ なんですが、「Black Large Square」という名前の文字です。
+そして、実は Large Square シリーズ、現在(Unicode 12.0 以降)、他に7色あります。</p>
+<ul>
+<li>🟥 (U+1F7E5) Large Red Square</li>
+<li>🟦 (U+1F7E6) Large Blue Square</li>
+<li>🟧 (U+1F7E7) Large Orange Square</li>
+<li>🟨 (U+1F7E8) Large Yellow Square</li>
+<li>🟩 (U+1F7E9) Large Green Square</li>
+<li>🟪 (U+1F7EA) Large Purple Square</li>
+<li>🟫 (U+1F7EB) Large Brown Square</li>
+</ul>
+<p>これもしや、もはやゲーミング動物絵文字が作れるのでは…</p>
+<p>※画像はイメージです</p>
+<p><img src="/assets/media/1202/gamingneko.jpg" alt="ゲーミング猫 ※画像はイメージです" /></p>
+<p>どう見ても「文字コード」の仕様の範疇を超えてますけども。</p>
+<p>実際、こういうのは「文字」のレイヤーの1段上の「マークアップ」とかを使ってやってくれ(要するに、Unicode の債務ではなく、HTML の style 属性とか CSS とかを使って色を付けて欲しい)ということになってたはずなんですけども。</p>
+<p>絵文字で Unicode に色の概念を持ち込んじゃったから…
+むしろ今、カラー絵文字には foreground-color が効かないですからねぇ。</p>
+<p>まあ、こんなカラフル動物絵文字が <a href="https://unicode.org/reports/tr51/#def_rgi_set">RGI</a> (どのベンダーも実装すべきという推奨絵文字)に採用されるとは思えませんが。
+むしろ、なんで黒猫を足しちゃったんですかね…</p>
+<h2 id="section-2">某4色窓</h2>
+<p>そしてこのカラフル四角形があるなら…</p>
+<pre><code class="language-text">🟥🟩
+🟦🟨</code></pre>
+<p>あのロゴ行けるんじゃない？
+ZWJ シーケンスで四角を4つ繋げば。</p>
+<p>みたいな話も <a href="https://www.youtube.com/channel/UCY-z_9mau6X-Vr4gk2aWtMQ">C# ライブ配信</a>中ではよくコメントが付いたりします。</p>
+<p>まあ、<a href="/blog/2021/12/ninjacatdies/#apple-log">先日、権利的にまずそうなロゴは Unicode に採用しかねる</a>という話を書いたところなので、こんな絵文字が採用されることはあり得ないんですけども。</p>
+<p>特に<a href="https://www.microsoft.com/ja-jp/mscorp/legal/trademarks-corplogo.aspx">この会社、ロゴ利用のガイドラインがものすごくしっかり規定されてるんで</a>、簡単に色々抵触しそうですし。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2021/12/">12&#x6708;</a></li><li><a href="/blog/2021/12/regional-indicator/">Regional Indicator (&#x56FD;&#x65D7;&#x7D75;&#x6587;&#x5B57;)</a></li><li><a href="/blog/2021/12/activator-net48/">&#x3010;C# 10.0 &#x95A2;&#x9023;&#x3011;&#x5F15;&#x6570;&#x306A;&#x3057;&#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;&#x306E; Activator &#x30D0;&#x30B0;</a></li><li><a href="/blog/2021/12/unicode-benzene/">&#x30D9;&#x30F3;&#x30BC;&#x30F3;&#x74B0;&#x306E;&#x6587;&#x5B57;&#x30B3;&#x30FC;&#x30C9;: &#x232C; (U&#x2B;232C), &#x23E3; (U&#x2B;23E3)</a></li><li><a href="/blog/2021/12/newlines-in-interpolated-string/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011; {} &#x4E2D;&#x306E;&#x6539;&#x884C;</a></li><li><a href="/blog/2021/12/lower-cased-type-names/">&#x3010;&#x8FD1;&#x3005;&#x8B66;&#x544A;&#x8FFD;&#x52A0;&#x3011;&#x5C0F;&#x6587;&#x5B57; a&#xFF5E;z &#x578B;&#x540D;</a></li><li><a href="/blog/2021/12/ninjacatdies/">&#x30CB;&#x30F3;&#x30B8;&#x30E3;&#x30AD;&#x30E3;&#x30C3;&#x30C8;&#x1F431;&#x200D;&#x1F464;</a></li><li><a href="/blog/2021/12/notorious-compat-char/">&#x60AA;&#x3044;&#x610F;&#x5473;&#x3067;&#x304A;&#x6C17;&#x306B;&#x5165;&#x308A;&#x306E;&#x6587;&#x5B57; &#x3020;&#x3004;</a></li><li><a href="/blog/2021/12/semi-auto-property/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011; &#x534A;&#x81EA;&#x52D5;&#x30D7;&#x30ED;&#x30D1;&#x30C6;&#x30A3;</a></li><li><a href="/blog/2021/12/utf8-literal/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011; UTF-8 &#x30EA;&#x30C6;&#x30E9;&#x30EB;</a></li><li><a href="/blog/2021/12/list-pattern/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011;&#x30EA;&#x30B9;&#x30C8; &#x30D1;&#x30BF;&#x30FC;&#x30F3;&#x3010;VS 17.1 p2 &#x3067;&#x8FFD;&#x52A0;&#x4E88;&#x5B9A;&#x3011;</a></li><li><a href="/blog/2021/12/immutable-array-init/">ImmutableArray &#x306B;&#x5BFE;&#x3057;&#x3066;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2021/12/collection-literal/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3; &#x30EA;&#x30C6;&#x30E9;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

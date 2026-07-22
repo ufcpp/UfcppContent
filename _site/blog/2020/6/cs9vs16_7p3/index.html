@@ -1,0 +1,336 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>C# 9.0 in Visual Studio 16.7 preview 3 | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2020/6/cs9vs16_7p3/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2020-06-29T22:14:14">2020-06-29</time></span><span>更新: <time datetime="2021-02-09T21:15:50">2021-02-09</time></span><span class="entry-tags"><span class="entry-tag">C# 9.0</span></span></div><h1 id="c-9.0-in-visual-studio-16.7-preview-3">C# 9.0 in Visual Studio 16.7 preview 3</h1>
+<p>先週の話にはなってしまうんですが、Visual Studio 16.7 が Preview 3.1 になっています。
+.NET 5 も Preview 6 に。</p>
+<ul>
+<li><a href="https://devblogs.microsoft.com/dotnet/announcing-net-5-0-preview-6/">Announcing .NET 5.0 Preview 6</a></li>
+<li><a href="https://docs.microsoft.com/ja-jp/visualstudio/releases/2019/release-notes-preview#16.7.0-pre.3.1">リリース ノート: Visual Studio 2019 バージョン 16.7 Preview 3</a></li>
+</ul>
+<p>で、今回も C# 9.0 の新機能がいくつか入っています。</p>
+<ul>
+<li>Records</li>
+<li>Top-level statements</li>
+<li>Function pointers</li>
+</ul>
+<div>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/cxdZyFBxZws" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+<p>昨日、このネタでライブ配信してたりするんですが、
+今回、ついに配信時間が3時間の大台に…</p>
+<p>配信時間が長くなっているのはチャット欄での応答が盛り上がりすぎたというのが原因です。
+(「新機能が多くて長引いた」みたいなのではなく。)
+特に Function pointers の話とか、そもそも付いてくる人がいると思っていなかったので、
+Function pointers だけで相当な時間しゃべることになったのがだいぶ意外…</p>
+<p>インタラクションが欲しくて始めたライブ配信だし、
+タイム キーピングを気にしなくていいのも楽なので、
+うれしい悲鳴なんですけども、</p>
+<h2 id="is">!is 問題</h2>
+<p>最初に取り上げるのは C# 9.0 でもなんでもないんですけども。</p>
+<p><a href="https://docs.microsoft.com/ja-jp/visualstudio/releases/2019/release-notes-preview#16.7.0-pre.3.1">VS 16.7 p3 のリリース ノート</a>を見ていて、null 抑制演算子の <code>!</code> に対するリファクタリングが入っていてなんとも言えない気持ちになったという話。</p>
+<p>以下のコード、解釈の仕方を間違う人があまりにも多いらしく。</p>
+<pre><code class="language-csharp"><span class="keyword">if</span> (x !<span class="keyword">is</span> <span class="number">0</span>) { }</code></pre>
+<p><code>!x</code> が「x の否定」、not x の意味なせいで、それで勘違いしちゃう人がいたりします。
+上記のコードは正しくは <code>(x!) is 0</code> の意味で、この <code>!</code> は後置きの <code>x!</code>。
+否定の意味の <code>!</code> ではなくて、<a href="/study/csharp/cheatsheet/ap_ver8/#nullable-reference-type">C# 8.0 の null 許容参照型</a> がらみの機能で、効果としては<a href="/study/csharp/resource/nullablereferencetype/#null-forgiving">単なる null 警告の抑止</a>です。</p>
+<p>挙句の果てに、<code>is 0</code> と書いた時点で「null ではないことが確定」なので、null 警告の抑止をする意味すらないという。</p>
+<p>つまるところ、<code>!is</code> を not is と勘違いして使ってしまうと、真逆の挙動になるというひどいバグを生む原因です。
+なのでしょうがないので…</p>
+<p>リファクタリング1: 意味がないので <code>!</code> を消す</p>
+<pre><code class="language-csharp"><span class="keyword">if</span> (x <span class="keyword">is</span> <span class="number">0</span>) { }</code></pre>
+<p>リファクタリング2: “ちゃんと”真逆に直す</p>
+<pre><code class="language-csharp"><span class="keyword">if</span> (x <span class="keyword">is</span> not <span class="number">0</span>) { }</code></pre>
+<h2 id="is-not-t-x">is not T x</h2>
+<p><a href="/blog/2020/5/cs9net5p4/"><code>not</code> パターン自体は先月の時点で入っていたんですが</a>、
+微妙に今回の 16.7 Preview 3 リリースで入った修正もあります。
+以下のようなコードが有効になりました。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">object</span> x)
+{
+    <span class="comment">// not パターンでも変数宣言できる</span>
+    <span class="keyword">if</span> (x <span class="keyword">is</span> not <span class="keyword">string</span> s)
+    {
+        <span class="comment">// ちなみに、ここで s の中身を読もうとすると「未初期化」エラー</span>
+ 
+        s = <span class="string">&quot;&quot;</span>;
+ 
+        <span class="comment">// s を読めるのはこの行以降</span>
+    }
+ 
+    <span class="comment">// ここは絶対 s が初期化されている保証あり</span>
+    Console.WriteLine(s);
+}</code></pre>
+<h2 id="top-level-statements">Top-level statements</h2>
+<p><code>Program.Main</code> が要らなくなります。
+C# スクリプト モードじゃなくても以下のように、Top-level  (クラスとか名前空間の外)にコードが書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+Console.WriteLine(<span class="string">&quot;Hellow World!&quot;</span>);</code></pre>
+<p>ちなみに、「C# スクリプト モード」とはまたちょっと挙動が違ったりします。</p>
+<p>Top-level の場合</p>
+<ul>
+<li>あくまで <code>Main</code> メソッドの自動生成
+<ul>
+<li>変数やメソッドを書くと、ローカル変数、ローカル関数の意味になる</li>
+<li><code>args</code> (暗黙的変数)でコマンドライン引数を受け取れるし、<code>return</code> で終了コードを返せる</li>
+</ul>
+</li>
+<li><a href="/study/csharp/cheatsheet/apscripting/#script-syntax"><code>#r</code> や  <code>#load</code> などのスクリプト専用機能</a>は使えない</li>
+</ul>
+<p>スクリプトの場合</p>
+<ul>
+<li>ラッパー クラスが作られる
+<ul>
+<li>変数はフィールドに、メソッドはインスタンス メソッドになる</li>
+</ul>
+</li>
+<li>逆に、<code>return</code> とか <code>namespace</code> とか「通常モード」専用の構文は使えない</li>
+</ul>
+<p>ちなみに、Top-level に普通に <code>await</code> も書けます。
+<code>await</code> があれば <code>async Task Main</code>、なければ <code>void Main</code> みたいな扱いです。</p>
+<p>Top-level ステートメントを書いた上で、さらにどこかのクラスに <code>Main</code> メソッドを書いてしまった場合、
+Top-level ステートメントの方が優先されます(書いてしまった <code>Main</code> は呼ばれない)。
+警告だけは出ます。</p>
+<p>また、複数のファイルに Top-level ステートメントを書いたり、
+名前空間やクラスよりも後ろに書いた場合はコンパイル エラーになります。
+あくまで、1ファイルの先頭にだけ Top-level ステートメントを書けます。</p>
+<h2 id="function-pointer">Function pointer</h2>
+<p>関数ポインターを C# 上で書けるようになりました。</p>
+<p>まあ、正直、大多数の人にとって直接触れる機能ではないです。
+実質的には P/Invoke 専用機能になると思います(どうひねり出そうと思っても他の用途が思いつかない)。</p>
+<p>以下のように、<code>delegate*</code> で「関数ポインター型」を作って、
+<code>&amp;</code> でメソッドのアドレスを取得できる機能です。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">unsafe</span> <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">delegate</span>*&lt;<span class="keyword">int</span>, <span class="keyword">void</span>&gt; f = &amp;M;
+        f(<span class="number">1</span>);
+    }
+ 
+    <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">int</span> x) =&gt; Console.WriteLine(x);
+}</code></pre>
+<p>.NET の仕様上は上記コードに相当する命令(ldftn, calli)が元々あったりします。
+ただ、C# からこれらの命令を使う手段が全くなくて、
+これまでは IL アセンブラーや <a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.reflection.emit"><code>Reflection.Emit</code></a> を使う必要がありました。</p>
+<p>今、iOS や WebAssembly 対応のために、
+<code>Reflection.Emit</code> による実行時コード生成を、
+<a href="/blog/2020/5/sourcegenerator/">Source Generator</a> によるコンパイル時コード生成に置き換えたいという話もあったりします。
+P/Invoke の類も、 .NET Runtime の中で特殊対応するよりも、事前にソースコード生成したいみたいな話もあって、
+そのために必要になる機能です。</p>
+<p>「ないと困るから入れた」という類であって、
+「便利に使いたい、簡単に使いたい」という動機はないので、
+構文的に結構複雑だったりします。</p>
+<p>ただ、関数ポインターで <code>&lt;void&gt;</code> を認めてくれるんなら、普通のデリゲートでも同じように書きたい…
+(書けないし、今後もたぶんずっと無理)</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        Func&lt;<span class="keyword">int</span>, <span class="keyword">void</span>&gt; f = M; <span class="comment">// こう書きたい(無理)</span>
+        Action&lt;<span class="keyword">int</span>&gt; a = M; <span class="comment">// 戻り値が void かどうかで型が違う</span>
+    }
+ 
+    <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">int</span> x) =&gt; Console.WriteLine(x);
+}</code></pre>
+<h2 id="records">Records</h2>
+<p>待望(？)の Records。
+概ね、<a href="/blog/2020/6/record0609/">6月9日にブログに書いた</a>状態で実装されていそうな感じ。</p>
+<p>一番シンプルな書き方をすると以下のようになります。
+プライマリ コンストラクター構文。
+引数の順序(position, 位置)に意味があるので positional record と言ったりもします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="comment">// 一番シンプルな書き方はこうなる</span>
+record Point(<span class="keyword">int</span> X, <span class="keyword">int</span> Y);
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> p = <span class="keyword">new</span> Point(<span class="number">1</span>, <span class="number">2</span>);
+        Console.WriteLine(p.X);
+    }
+}</code></pre>
+<p><code>class</code> や <code>struct</code> と並んで、<code>record</code> という型定義用のキーワードが増えます。</p>
+<p>ちなみに上記コードは以下のコードとほぼ同じ意味になります。</p>
+<pre><code class="language-csharp"><span class="comment">// プライマリ コンストラクターの展開結果</span>
+record Point
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; init; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; init; }
+ 
+    <span class="keyword">public</span> Point(<span class="keyword">int</span> X, <span class="keyword">int</span> Y)
+    {
+        <span class="keyword">this</span>.X = X;
+        <span class="keyword">this</span>.Y = Y;
+    }
+}</code></pre>
+<p>残念ながら、今のところ(というか、おそらく C# 9.0 リリース時点では)、
+プライマリ コンストラクターを書けるのは <code>record</code> だけになりそうです。</p>
+<p>一方、<code>init</code> は <code>class</code> や <code>struct</code> でも使えます。
+例えば、以下のようなコードは有効な C# 9.0 コードになります。</p>
+<pre><code class="language-csharp"><span class="comment">// init に関しては &#231;lass でも struct でも使える</span>
+<span class="keyword">class</span> Point
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; init; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; init; }
+ 
+    <span class="keyword">public</span> Point(<span class="keyword">int</span> X, <span class="keyword">int</span> Y)
+    {
+        <span class="keyword">this</span>.X = X;
+        <span class="keyword">this</span>.Y = Y;
+    }
+}</code></pre>
+<p>ということで、Records の説明をする上での本質は以下の2点からなります。</p>
+<ul>
+<li>じゃあ、 <code>class</code> と <code>record</code> は何が違うか</li>
+<li>プロパティの <code>init</code> は何か</li>
+</ul>
+<h3 id="isexternalinit">補足: IsExternalInit 属性</h3>
+<p><code>init</code> プロパティを表現するために <code>IsExternalInit</code> という名前の属性を使っているんですが、
+これは、</p>
+<ul>
+<li>現時点では .NET 5 にも入っていない</li>
+<li>リリース時点では .NET 5 には入る予定</li>
+<li>古い .NET ランタイムに対するポーティングとかは提供せず「C# 9.0 をフルにサポートするのは .NET 5 のみ」という扱いにしたい</li>
+</ul>
+<p>ということになっています。
+ただ、以下のコードを自前で用意すれば、現時点の .NET 5 Preview や古い .NET ランタイムでも <code>record</code> や <code>init</code> を使えます。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> System.Runtime.CompilerServices
+{
+    <span class="keyword">internal</span> <span class="keyword">class</span> IsExternalInit { }
+}</code></pre>
+<p>ちなみにこの型、中身空っぽでマーカー的に用意された型ですが、
+実際の使われ方は <a href="https://github.com/ufcpp-live/UfcppLiveAgenda/issues/4">modreq</a> になります。</p>
+<p>後述する <code>init</code> が、古い C# コンパイラーから触られるとまずい機能なので、触れなくするために modreq を使っています。</p>
+<h3 id="record-class">record と class</h3>
+<p>現状だと、プライマリ コンストラクターを書けるのは <code>record</code> だけなんですが、
+<code>class</code> や <code>struct</code> に対しても後々追加される可能性は結構高いです。</p>
+<p>で、前述の通り、<code>init</code> プロパティを使うのであれば、<code>class</code>、<code>struct</code>、<code>record</code> でほぼ同じ書き方ができます。
+じゃあ、<code>class</code>、<code>struct</code> と <code>record</code> の何が違うかと言うと…</p>
+<ul>
+<li><code>struct</code> みたいな、全フィールドの memberwise 比較を元にした <code>Equals</code>、<code>GetHashCode</code>、<code>Clone</code> がコンパイラー生成される</li>
+<li><code>record</code> は参照型</li>
+</ul>
+<p>みたいな感じです。
+要するに、<code>struct</code> 的な「値セマンティクス」を持つ参照型が <code>record</code>。</p>
+<p>これだけ書いてしまうと大したことをしていないように聞こえますけども、
+immutable なデータ構造を簡単に書けるようにするという意義があります。</p>
+<p>参照型の「値比較」(memberwise に <code>Equals</code>、<code>GetHashCode</code> 実装)は <a href="https://gist.github.com/ufcpp/6336a4c1033e431c6732e82e03029bc7">immutable に作らないとまずい</a>です。
+一方で、immutable なクラスを真面目に書くのはすさまじく大変で、その負担を減らしてくれるのが <code>record</code> です。</p>
+<p>あと、派生が絡んだ時の <code>Equals</code> 実装も意外とめんどくさくて、そこも <code>record</code> からのコード生成が頑張ってくれています。</p>
+<h3 id="with">with 式</h3>
+<p>immutable なクラスの部分書き換えをする場合、基本的には Clone してから所望のメンバーだけを上書きと言う処理が必要になります。</p>
+<p>それをやってくれるのが <code>with</code> 式で、<code>record</code> に対して以下のような書き方ができます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+record Point(<span class="keyword">int</span> X, <span class="keyword">int</span> Y);
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> p = <span class="keyword">new</span> Point(<span class="number">1</span>, <span class="number">2</span>);
+ 
+        <span class="comment">// p を部分書き換え(この場合 X だけ書き換え)</span>
+        <span class="keyword">var</span> p1 = p with { X = <span class="number">3</span> };
+ 
+        Console.WriteLine((p.X, p.Y));   <span class="comment">// (1, 2)。元の p は不変</span>
+        Console.WriteLine((p1.X, p1.Y)); <span class="comment">// (3, 2)。p を Clone した上で X だけ書き換えてる</span>
+    }
+}</code></pre>
+<p>これと同じことを <code>class</code> の手書きでやろうとすると、以下のように、Clone 後の書き換えで immutable であることが破たんします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">class</span> Point
+{
+    <span class="comment">// 本当は set できるとまずいけど、Clone 後の書き換えのために必須になってしまう。</span>
+    <span class="comment">// これを回避するために init アクセサー(後述)がある。</span>
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> Point(<span class="keyword">int</span> x, <span class="keyword">int</span> y) =&gt; (X, Y) = (x, y);
+    <span class="keyword">public</span> Point Clone() =&gt; <span class="keyword">new</span> Point(X, Y);
+}
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> p = <span class="keyword">new</span> Point(<span class="number">1</span>, <span class="number">2</span>);
+ 
+        <span class="comment">// p を部分書き換え(この場合 X だけ書き換え)</span>
+        <span class="keyword">var</span> p1 = p.Clone();
+ 
+        <span class="comment">// Clone 後の書き換えのためにやむを得ず public set。</span>
+        <span class="comment">// init とか with とか、新構文が必要になる理由。</span>
+        p1.X = <span class="number">3</span>;
+ 
+        Console.WriteLine((p.X, p.Y));   <span class="comment">// (1, 2)。元の p は不変</span>
+        Console.WriteLine((p1.X, p1.Y)); <span class="comment">// (3, 2)。p を Clone した上で X だけ書き換えてる</span>
+    }
+}</code></pre>
+<p>(もっと複雑で、実行時コストも高い方法でよければもうちょっとやり様はあるんですが。
+後述する <code>init</code> プロパティで一応、実行時コストは掛けずにこの問題を解決できるので、それを採用することになりました。)</p>
+<p>ちなみに、原理的には <code>with</code> 式は <code>init</code> プロパティを持つ <code>class</code> や <code>struct</code> に対しても使えるはずなんですが、
+C# 9.0 時点では <code>record</code> 専用構文になりそうです。
+(スケジュールの問題。あとで <code>class</code> や <code>struct</code> に対する <code>wth</code> 式追加が検討される。)</p>
+<h3 id="init">init アクセサー</h3>
+<p>プロパティのアクセサーに、<code>set</code> の代わりに <code>init</code> を使うことで、
+初期化子や <code>with</code> 式でだけ書き換え可能なプロパティができます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> InitOnly
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; init; }
+}
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> p = <span class="keyword">new</span> InitOnly
+        {
+            X = <span class="number">1</span>, <span class="comment">// 初期化子を使える</span>
+        };
+ 
+        p.X = <span class="number">2</span>; <span class="comment">// これはコンパイル エラー</span>
+ 
+        <span class="comment">// with 式での書き換え(Clone 後の書き換え)もできる</span>
+        <span class="keyword">var</span> p1 = p with { X = <span class="number">3</span> };
+    }
+}</code></pre>
+<p><code>init</code> アクセサーは以下の場所からだけ呼び出せる制限付きの <code>set</code> みたいなものです。</p>
+<ol>
+<li>そのクラスのコンストラクター内</li>
+<li>オブジェクト初期化子</li>
+<li><code>with</code> 式</li>
+<li>他の <code>init</code> アクセサー内</li>
+</ol>
+<p>1だけでよければ <a href="/study/csharp/oop/oo_property/#get-only">get-only プロパティ</a>でも実現できるんですが、残りの3つのために <code>init</code> アクセサーが新設されました。</p>
+<p>ちなみに、<code>set</code> と <code>init</code> を同時に書くことはできません。
+というか、<code>init</code> アクセサーは内部的には「特殊な属性を付けた <code>set</code> アクセサー」として実現されています。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2020/6/">6&#x6708;</a></li><li><a href="/blog/2020/6/extendingpartialmethod/">partial &#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x306E;&#x62E1;&#x5F35; (C# 9.0 &#x5019;&#x88DC;&#x6A5F;&#x80FD;)</a></li><li><a href="/blog/2020/6/record0609/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 6/9: record</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

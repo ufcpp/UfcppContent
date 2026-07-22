@@ -1,0 +1,229 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>C# &#x3067;&#x306E;&#x7834;&#x58CA;&#x7684;&#x5909;&#x66F4;&#x306E;&#x4ECA;&#x5F8C;&#x306E;&#x6271;&#x3044;(&#x6848;) | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2023/3/csharp-breaking-change/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2023-03-11T23:49:16">2023-03-11</time></span><span>更新: <time datetime="2023-03-11T23:49:17">2023-03-11</time></span></div><h1 id="c">C# での破壊的変更の今後の扱い(案)</h1>
+<p>C# は、進化していくにあたって、破壊的変更を極力起こさないようにかなり気を使っているプログラミング言語です。
+細かい話をすると破壊的変更も皆無ではないんですが、
+破壊的変更を認める(認めてでも追加したい新機能を実装する)ハードルは結構高めです。</p>
+<p>そんな C# ですが、ちょっとそのハードルの基準を緩められないかというような話が出ています。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/discussions/7033">Dealing with limited breaking changes in C#</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/main/meetings/2023/LDM-2023-03-08.md#limited-breaking-changes-in-c">その後の Design Meeting 議事録</a></li>
+</ul>
+<h2 id="section">補足: 影響範囲と、影響力の軽減</h2>
+<p>補足として、
+ハードルを緩めるといっても本当にちょっとです。
+C# チームは、「GitHub の public リポジトリを検索して、実際に影響を受けたコードを探す」とかやって既存のコードに対する影響を評価してたりするんですが、</p>
+<ul>
+<li>これまで: 単体テストとかでわざと変なコードを書いているものを除いて、ほぼ影響皆無なら OK</li>
+<li>提案: それほど多くはないものの、無視できると言えるほど皆無ではないものでも OK にしたい</li>
+</ul>
+<p>みたいな感じ。</p>
+<p>代わりといってはなんですが、影響を受ける人への負担を最小限にするために、以下のような仕組みを提供するのはどうか？という提案になっています。</p>
+<ul>
+<li>言語バージョンを最新のものにアップグレードすると影響を受けるコードを識別する</li>
+<li>そういうコードに対して診断メッセージを出して、破壊的変更があることを知らせる</li>
+<li>自動コード修正機能で、破壊的変更を受けないようなコードへの書き換えを提供する</li>
+<li>早い段階でこれらの診断・コード修正を提供する</li>
+</ul>
+<h2 id="section-1">これまでの破壊的変更の例</h2>
+<p><a href="https://github.com/dotnet/csharplang/discussions/7033">件の discussion</a>で触れられているわけではないですが、
+補足的に、
+これまでの「ほぼ影響皆無」な破壊的について紹介しておきましょう。
+細かく言うともっといろいろとあるんですが、結構大きめのもののみ抜粋。</p>
+<h3 id="section-2">ジェネリクスの &lt;&gt;</h3>
+<p>C# のジェネリクスは C# 2.0 からの導入なわけで、それ以前には <code>M&lt;T&gt;()</code> みたいな <code>&lt;&gt;</code> の用法はありませんでした。
+ここで、多少工夫すると、C# 1.0 の頃でも合法そうな <code>&lt;&gt;</code> が書けます。
+例えばこんな感じ:</p>
+<pre><code class="language-csharp">X(A&lt;B, C&gt;(D));</code></pre>
+<ul>
+<li>C# 1.0 の解釈: 2引数のメソッド <code>X</code> があって、式 <code>A&lt;B</code> と <code>C&gt;(D)</code> が引数</li>
+<li>C# 2.0 の解釈: 1引数のメソッド <code>X</code> と、引数1つで型引数2つのメソッド <code>A</code> がある</li>
+</ul>
+<p>色が付くと多少わかりやすいですかね。</p>
+<pre><code class="language-csharp"><span class="comment">// C# 1.0 解釈</span>
+X(A &lt; B, C &gt; (D));
+
+<span class="comment">// C# 2.0 解釈</span>
+X(A&lt;B, C&gt;(D));</code></pre>
+<p>まあ、狙わないと踏めないですね。
+C# 2.0 当時に踏んだ人はいないんじゃないでしょうか。
+実際僕も確か、C# 5.0 辺りの時に「かつてこんなのあったけども誰も気にしなかったよ」的な話題で知りました。</p>
+<h3 id="foreach">foreach 変数のキャプチャ</h3>
+<p>割かしちゃんとアナウンスがあった破壊的変更でいうと、C# 5.0 のときの <a href="/study/csharp/cheatsheet/ap_ver5/#foreach"><code>foreach</code> の仕様変更</a>があります。
+詳細はリンク先を見てもらうとして、
+簡単に言うと以下のコードの実行結果が C# 4.0 以前と 5.0 以降で変わります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> data = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> };
+
+Action a = <span class="keyword">null</span>;
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> data)
+{
+    a += () =&gt; Console.WriteLine(x);
+}
+
+a();</code></pre>
+<p><code>x</code> のスコープが <code>foreach</code> の内側か外側かが変わっていて、
+単一の変数 <code>x</code> が全てのループで共有されるか、ループごとに違う変数扱いになるかが変わります。
+結果的に、(C# 4.0 以前)「5つの5が表示される」か(C# 5.0 以降)「1, 2, 3, 4, 5 が表示される」かという結構大きな差になります。</p>
+<p>まあ、4.0以前の挙動の方をバグだと思う人もいたくらいです。
+このコードを書いてみて5が5つ表示されたら、まあ、コードを書き換えますよね、普通。
+なので、破壊的変更の影響を受ける人はほぼ皆無でした。</p>
+<p>この当時はまだ「GitHub にあるコードをクロールして調べる」みたいな手段がなかったので、
+C# チーム的には恐る恐る破壊的変更をリリースしていました。
+ですが、まあ、結果的には「心配しすぎだった」と言われているくらい、不平不満の声はなかったはずです。
+繰り返しになりますが、バグ修正とすら思われているレベルです。</p>
+<h3 id="record-required-scoped-file">record, required, scoped, file</h3>
+<p>C# 9.0 で<a href="/study/csharp/cheatsheet/ap_ver9/#record"><code>record</code></a>が、
+C# 11.0 で<a href="/study/csharp/cheatsheet/ap_ver11/#required"><code>required</code></a>、<a href="/study/csharp/resource/refstruct/#scoped"><code>scoped</code></a>、<a href="/study/csharp/cheatsheet/ap_ver11/#file-local"><code>file</code></a>が新たにキーワードになりました。</p>
+<p>ただ、幸い、これらは(当然、<a href="/study/csharp/misc/ap_compatibility/#contextual-keyword">文脈キーワード</a>で)「型名として使おうとする時だけまずい」という仕様になっています。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+    <span class="comment">// 全然平気。</span>
+    <span class="keyword">int</span> record;
+    <span class="keyword">void</span> M(<span class="keyword">int</span> record) { }
+    <span class="keyword">int</span> M()
+    {
+        <span class="keyword">int</span> record = <span class="number">0</span>;
+        <span class="keyword">return</span> record;
+    }
+
+    <span class="comment">// これがダメ。</span>
+    <span class="comment">// 以前:  record という名前のクラスのフィールド x</span>
+    <span class="comment">// C# 11: x という名前のレコード型宣言</span>
+    record x;
+}
+
+<span class="keyword">class</span> record { }</code></pre>
+<p>幸い、C# では「型名は大文字始まりにする」という文化が浸透していて、わざわざこの規約に反する型名を使う人もほとんどいません。</p>
+<p>昔ならそれでも破壊的変更はしり込みしたんでしょうが、
+今回は「GitHub にあるコードをクロールして調べる」が有効に機能したようです。
+調べた結果、デモやテストでわざと変な名前をつけている人を除いて、問題を起こしそうなコードは見当たらなかったそうです。</p>
+<p>実際、C# 9.0 リリース後にこれで困ったという人は見かけません。
+それもあってか、C# 11.0 では、<a href="/study/csharp/cheatsheet/ap_ver11/#CS9029">そもそも <code>required</code>、<code>scoped</code>、<code>file</code> という名前の型宣言自体エラーに</a>しました。
+結構な破壊的変更ですが、これで困ったという人は、僕の知る限りは見かけたことはありません。</p>
+<p>(1個だけ、native interop で、native 側に <code>file</code> という構造体がいて、
+それに合わせて「C# でも意図的に小文字始まりの <code>file</code> を使う」みたいな判断をしていたコードは見たことがあります。それは <code>struct @file {}</code> と書けば解決。)</p>
+<h2 id="section-3">今懸念される新機能: 半自動プロパティ</h2>
+<p>今何で困っているかというと、1月にブログに書いた<a href="/blog/2023/1/semi-auto-property/">半自動プロパティ</a>です。
+<code>field</code> キーワードの追加。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+    <span class="comment">// 手動プロパティ (manual property)</span>
+    <span class="comment">// (と、自前で用意したフィールド)。</span>
+    <span class="comment">// こういう、プロパティからほぼ素通しで値を記録しているフィールドを「バッキング フィールド」(backing field)という。</span>
+    <span class="keyword">private</span> <span class="keyword">int</span> _x;
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span> =&gt; _x; <span class="keyword">set</span> =&gt; _x = value; }
+
+    <span class="comment">// 自動プロパティ (auto-property)。</span>
+    <span class="comment">// 前述の X とほぼ一緒。</span>
+    <span class="comment">// バッキング フィールドの自動生成。</span>
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+    <span class="comment">// 【C# 12 候補】 半自動プロパティ (semi-auto-property)。</span>
+    <span class="comment">// バッキング フィールドは自動生成。</span>
+    <span class="comment">// 全自動の方と違って、バッキング フィールドの使い方は自由にできる。</span>
+    <span class="comment">// field キーワードでバッキング フィールドを読み書き。</span>
+    <span class="keyword">public</span> <span class="keyword">int</span> Z { <span class="keyword">get</span> =&gt; field; <span class="keyword">set</span> =&gt; field = value; }
+}</code></pre>
+<p><code>record</code> とかと違ってこれが危ないのは、「<code>field</code> という名前のフィールドがいたらアウト」という、割かしありそうなラインなせいです。
+以下のコード、半自動プロパティが実装される前後で意味が変わる可能性が大きくなっています。
+(回避できなくもないものの、コストが高すぎてできれば破壊的変更を認める方向で進めたい。)</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+    <span class="keyword">private</span> <span class="keyword">int</span> field;
+
+    <span class="keyword">public</span> <span class="keyword">int</span> Property
+    {
+        <span class="keyword">get</span> =&gt; field;
+        <span class="keyword">set</span> =&gt; field = value;
+    }
+}</code></pre>
+<p>これはGitHubで調べたら、いるらしいです。
+まあ、いそうですよね。</p>
+<p>ただ、そんなに多くもない。
+安直な <code>field</code> という名前のフィールドがそこまで多くないというのもありますが、
+C# のコーディング規約上の派閥的な話もあります。
+フィールドの命名規約として「<code>_</code> を付ける派」は影響を受けません。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+    <span class="keyword">private</span> <span class="keyword">int</span> _field; <span class="comment">// _ 派。影響を受けない。</span>
+
+    <span class="keyword">public</span> <span class="keyword">int</span> Property
+    {
+        <span class="keyword">get</span> =&gt; _field;
+        <span class="keyword">set</span> =&gt; _field = value;
+    }
+}</code></pre>
+<p>「インスタンス メンバーには常に <code>this.</code> を付ける派」も影響を受けません。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+    <span class="keyword">private</span> <span class="keyword">int</span> field;
+
+    <span class="keyword">public</span> <span class="keyword">int</span> Property
+    {
+        <span class="comment">// this. 派。影響を受けない。</span>
+        <span class="keyword">get</span> =&gt; <span class="keyword">this</span>.field;
+        <span class="keyword">set</span> =&gt; <span class="keyword">this</span>.field = value;
+    }
+}</code></pre>
+<p>C# は結構「<code>private</code> なところのコーディング規約は口うるさく言わない」みたいなところがあるので、フィールドに関しては <code>_field</code>、<code>this.field</code>、<code>field</code> の3つとも結構います。</p>
+<p>さて、このラインの「大した影響ではないものの、無視できるほどは皆無じゃない」をどう扱いましょうか。
+というのが現在の課題。</p>
+<h2 id="section-4">さかのぼって</h2>
+<p>「<code>field</code> フィールド」程度の破壊的変更を認めたいのであれば、
+過去のさかのぼれば、同程度の以下の影響範囲だけどもちょっと特殊対応して破壊的変更を避けたものがあります。</p>
+<ul>
+<li><code>var</code>: <code>var</code> という名前の型がないときに限りキーワード扱い</li>
+<li><code>dynamic</code>: <code>dynamic</code> という名前の型がないときに限りキーワード扱い</li>
+<li><code>_</code>: 1つも変数参照がないときに限り <a href="/study/csharp/cheatsheet/ap_ver7/#discard">discard</a> 扱い</li>
+</ul>
+<p>特に前2者なんて、<code>required</code> や <code>scopde</code> が型名として使えなくなった今、かなり不自然ですよね。</p>
+<p>かつては「型推論の <code>var</code> を使わせないために、わざと <code>class var {}</code> を定義しておく」という嫌がらせのような規約を定めてしまう人も一部いたそうですが。
+今では「そんなことやるのは推奨されていない」で一蹴していいと思います。</p>
+<h2 id="section-5">改めて、破壊的変更の影響軽減</h2>
+<p>とりあえず差し当たっては「<code>field</code> フィールド」問題、もしかするとさらに踏み込んで「<code>var</code> 型」問題を、今後、破壊的変更を認める方向で進めることになるかもしれません。</p>
+<p>さすがにサイレントに行うには大きすぎる破壊的変更なので、以下のように進めたいとのこと。</p>
+<ul>
+<li>コンパイラーを最新にした場合、言語バージョンを更新しなくても(TargetFramework を最新にしなくても)、「最新の C# で破壊的変更になる」旨を警告する
+<ul>
+<li>言語バージョンを上げるつもりのない人向けに、抑止オプションも提供する</li>
+</ul>
+</li>
+<li>自動コード修正を提供して、早期に修正してもらう
+<ul>
+<li>半自動プロパティの例でいうと <code>field</code> を <code>this.field</code> に自動的に置き換える</li>
+</ul>
+</li>
+<li>このコード修正は IDE 上でも、コマンドラインでの実行もできるようにする</li>
+</ul>
+<p><a href="https://github.com/dotnet/csharplang/discussions/7033">discussion</a> での反応は「賛成多数」(👍100 対 👎4)。
+むしろ、「他の言語はもっと破壊的変更してるだろ。やっちゃえ」発言も目立ちます。
+ただ、この discussion に参加しに来る人はその時点で「積極的な人」のはずなので、
+もう少しいろんな方面の調査は必要かと思われます。</p>
+<p>また、1つ disucussion 内で挙げられた懸念として、
+「StackOverflow とかからコピペしてくるコード問題」があります。
+コード片のコピペの場合、「どのバージョンのコピーを、どのバージョンのコンパイラーにペーストするか」がわからないので、「事前に警告して、事前にコード修正をかけてもらう」戦略がやりにくいです。
+(こういう問題も、<a href="/study/csharp/cheatsheet/ap_ver9/#top-level-statements">top-level statemsnt</a>ですでに経験済み。)</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2023/3/">3&#x6708;</a></li><li><a href="/blog/2023/3/extensions/">&#x3010;C# 12 &#x5019;&#x88DC;&#x3011; Extensions</a></li><li><a href="/blog/2023/3/string-order/">&#x5FD8;&#x308C;&#x304C;&#x3061;&#x306A;&#x30AB;&#x30EB;&#x30C1;&#x30E3;&#x30FC;&#x4F9D;&#x5B58;&#x554F;&#x984C;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

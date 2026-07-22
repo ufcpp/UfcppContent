@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x91CD;&#x8981;&#x8A9E;&#x53E5;&#x30FB;Cmdlet &#x4E00;&#x89A7; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/powershell/misc/keywords/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="cmdlet">重要語句・Cmdlet 一覧</h1>
+<div><table>
+<thead><tr><th>タイトル</th><th>キーワード</th></tr></thead>
+<tbody>
+<tr><td colspan="2"><span id="1573">前置き</span></td></tr>
+<tr><th><a href="/study/powershell/intro/abstract/" id="1574">Windows PowerShell 概要</a></th><td><ul>
+<li><a href="/study/powershell/intro/abstract/#powershell">PowerShell</a></li>
+<li><a href="/study/powershell/intro/abstract/#pipeline">オブジェクトパイプライン</a></li>
+</ul></td></tr>
+<tr><th><a href="/study/powershell/intro/scriptlang/" id="1575">スクリプト言語とは</a></th><td><ul>
+<li><a href="/study/powershell/intro/scriptlang/#script">スクリプト言語</a></li>
+<li><a href="/study/powershell/intro/scriptlang/#system">システムプログラミング言語</a></li>
+</ul></td></tr>
+<tr><td colspan="2"><span id="1577">PowerShel の構文</span></td></tr>
+<tr><th><a href="/study/powershell/syntax/basic/" id="1578">基礎知識</a></th><td><ul>
+<li><a href="/study/powershell/syntax/basic/#cmdlet">Cmdlet</a></li>
+<li><a href="/study/powershell/syntax/basic/#alias">エイリアス</a></li>
+<li><a href="/study/powershell/syntax/basic/#expressionmode">式モード</a></li>
+<li><a href="/study/powershell/syntax/basic/#commandmode">コマンドモード</a></li>
+</ul></td></tr>
+<tr><th><a href="/study/powershell/syntax/variable/" id="1579">変数</a></th><td><ul>
+<li><a href="/study/powershell/syntax/variable/#auto_var">自動変数</a></li>
+<li><a href="/study/powershell/syntax/variable/#user_var">ユーザ設定変数</a></li>
+</ul></td></tr>
+<tr><th><a href="/study/powershell/syntax/string/" id="1582">文字列</a></th><td><ul>
+<li><a href="/study/powershell/syntax/string/#herestring">here string</a></li>
+</ul></td></tr>
+<tr><th><a href="/study/powershell/syntax/flow/" id="1585">制御構文</a></th><td><ul>
+<li><a href="/study/powershell/syntax/flow/#if">if</a></li>
+<li><a href="/study/powershell/syntax/flow/#elseif">elseif</a></li>
+<li><a href="/study/powershell/syntax/flow/#else">else</a></li>
+<li><a href="/study/powershell/syntax/flow/#switch">switch</a></li>
+<li><a href="/study/powershell/syntax/flow/#while">while</a></li>
+<li><a href="/study/powershell/syntax/flow/#for">for</a></li>
+<li><a href="/study/powershell/syntax/flow/#dowhile">do while</a></li>
+<li><a href="/study/powershell/syntax/flow/#dountil">do until</a></li>
+<li><a href="/study/powershell/syntax/flow/#foreach">foreach</a></li>
+<li><a href="/study/powershell/syntax/flow/#in">in</a></li>
+<li><a href="/study/powershell/syntax/flow/#brak">break</a></li>
+<li><a href="/study/powershell/syntax/flow/#continue">continue</a></li>
+</ul></td></tr>
+<tr><th><a href="/study/powershell/syntax/function/" id="1586">関数、フィルタ、スクリプト</a></th><td><ul>
+<li><a href="/study/powershell/syntax/function/#keyfunction">function</a></li>
+<li><a href="/study/powershell/syntax/function/#function">関数</a></li>
+<li><a href="/study/powershell/syntax/function/#filter">フィルタ</a></li>
+<li><a href="/study/powershell/syntax/function/#keyfilter">filter</a></li>
+<li><a href="/study/powershell/syntax/function/#scriptblock">スクリプトブロック</a></li>
+</ul></td></tr>
+<tr><td colspan="2"><span id="1588">Cmdlet</span></td></tr>
+<tr><th><a href="/study/powershell/cmdlet/cmd_variable/" id="1590">変数操作関連の Cmdlet</a></th><td><ul>
+<li><a href="/study/powershell/cmdlet/cmd_variable/#set_variable">Set-Variable</a></li>
+<li><a href="/study/powershell/cmdlet/cmd_variable/#get_variable">Get-Variable</a></li>
+<li><a href="/study/powershell/cmdlet/cmd_variable/#remove_variable">Remove-Variable</a></li>
+</ul></td></tr>
+<tr><th><a href="/study/powershell/cmdlet/cmd_object/" id="1591">オブジェクト操作 Cmdlet</a></th><td><ul>
+<li><a href="/study/powershell/cmdlet/cmd_object/#foreach_object">ForEach-Object</a></li>
+<li><a href="/study/powershell/cmdlet/cmd_object/#where_object">Where-Object</a></li>
+<li><a href="/study/powershell/cmdlet/cmd_object/#select_object">Select-Object</a></li>
+<li><a href="/study/powershell/cmdlet/cmd_object/#group_object">Group-Object</a></li>
+<li><a href="/study/powershell/cmdlet/cmd_object/#sort_object">Sort-Object</a></li>
+</ul></td></tr>
+<tr><td colspan="2"><span id="1592">.NET 言語からの利用</span></td></tr>
+<tr><td colspan="2"><span id="1594">その他</span></td></tr>
+</tbody>
+</table>
+</div>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/powershell/misc/">&#x305D;&#x306E;&#x4ED6;</a></li><li><a href="/study/powershell/misc/psdrive/">&#x30D7;&#x30ED;&#x30D0;&#x30A4;&#x30C0;&#x3068;&#x30C9;&#x30E9;&#x30A4;&#x30D6;</a></li><li><a href="/study/powershell/misc/customize/">&#x74B0;&#x5883;&#x306E;&#x30AB;&#x30B9;&#x30BF;&#x30DE;&#x30A4;&#x30BA;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

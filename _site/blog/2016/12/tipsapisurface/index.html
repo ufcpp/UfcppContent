@@ -1,0 +1,250 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5C0F;&#x30CD;&#x30BF; private&#x30E1;&#x30F3;&#x30D0;&#x30FC;&#x306F;API&#x306E;&#x4E00;&#x90E8;&#x304B; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/12/tipsapisurface/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-12-20T15:07:11">2016-12-20</time></span><span>更新: <time datetime="2016-12-22T13:30:27">2016-12-22</time></span></div><h1 id="privateapi">小ネタ privateメンバーはAPIの一部か</h1>
+<h2 id="section">ことの発端</h2>
+<p>なんかぐらばくさんとこので、<a href="https://twitter.com/Grabacr07/status/808972608309866496">エラーになるはずのコードがPCLなプロジェクトでだけビルド通ってしまって問題になってた</a>らしい。</p>
+<p>要点を抜き出すと以下のような感じ。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">struct</span> DateTimeWrapper
+{
+    DateTimeOffset t;
+
+    <span class="keyword">public</span> DateTimeWrapper(<span class="keyword">int</span> i)
+    {
+        <span class="comment">// t を初期化しないとコンパイル エラーになるはず</span>
+        <span class="comment">// でも、なぜか PCL プロジェクトではエラーにならない</span>
+    }
+}</code></pre>
+<p>本来ダメなはずのコードが、PCL プロジェクトでだけコンパイルできてしまうという問題。
+「ちゃんと初期化しないと怒られるはず」というのが常識のC#でこれをやられると、ほんと見つけられないバグになったりします。</p>
+<p>プロジェクトの種類によって挙動が変わる謎の不具合…</p>
+<p>csprojの中身を見てみても、どうも最終的に同じコンパイラーを使っていそう。
+軽く<a href="http://forest.watch.impress.co.jp/library/software/prcsxplorer/">Process Explorer</a>を眺めてみても、
+ちゃんと同じコンパイラーが動作していそう。
+コンパイラーが同じなのに、なぜ同じコードのコンパイル結果が変わってしまうのか、
+謎は深まるばかり…</p>
+<h2 id="section-1">原因は参照アセンブリ</h2>
+<p>で、調べてみたら、どうも、参照しているアセンブリが違うせいみたい。</p>
+<ul>
+<li><a href="https://github.com/dotnet/corefx/issues/6185">Reference assemblies need to include private struct fields #6185</a></li>
+</ul>
+<p>ちなみに、再現用のサンプル コード: <a href="https://github.com/ufcpp/UfcppSample/tree/master/Demo/2016/PrivateField">PrivateField</a></p>
+<h3 id="section-2">参照アセンブリ</h3>
+<p>問題の話をする前にまず簡単に、アセンブリの種類について補足。
+今、<a href="https://www.nuget.org/">NuGet</a>とかでライブラリを参照すると、開発時と実行時で別のDLLが参照されたりします。</p>
+<ul>
+<li>実装アセンブリ: 実際に動くコードが入っているDLL。実行時に参照されるのはこれ。</li>
+<li>参照アセンブリ: APIサーフェスだけが入っているDLL。開発時にはこっちが参照される。</li>
+</ul>
+<p>これは、開発環境と実行環境が違っても問題なく開発できるようにするための処置です。</p>
+<p>元々は .NET Framework 3.5の頃に、
+クライアント プロファイルっていう、クライアント上では使わない機能を削ったバージョンの .NET Frameworkインストーラーを用意したことが発端で、
+「開発環境ではつかえたクラスが、実行に TypeLoadException を起こした」みたいな自体を回避するために作られた仕組みです。
+その後、<a href="https://msdn.microsoft.com/ja-jp/library/gg597391(v=vs.100).aspx">PCL</a>でも同様の手法が使われるようになりました。</p>
+<p>要するに、</p>
+<ul>
+<li>実行環境の数だけ、開発環境にも別バージョンの .NET のインストールが必要になる</li>
+<li>それをすべてインストーラーに同梱していたらインストーラー サイズが大きくなりすぎる</li>
+<li>コンパイルに必要な情報(APIサーフェス)だけ残して、メソッドの中身とかはごっそり削ったバージョンのDLLを用意して、開発環境ではそのDLLを参照する</li>
+</ul>
+<p>みたいな仕組み。
+ここで言うAPIサーフェスっていうのは「APIとして外に公開されている表層の情報」という意味あいです。
+見えない部分は削ってしまえと。</p>
+<h3 id="api">どこまでが API サーフェスか</h3>
+<p>ここでちゃんと考えないといけないのが、どこまでを API サーフェスとみなすべきか。
+すなわち、「開発時に参照するだけならどこまでの情報を残す必要があって、どこまでを削って大丈夫か」という話です。</p>
+<p>publicやprotectedなメンバーはわかりやすくていいでしょう。外から見えるので、当然APIサーフェスに含まれるべきです。</p>
+<p>ちょっと微妙なラインがinternalで、本来は外から見えないはずですが、
+<a href="https://msdn.microsoft.com/ja-jp/library/bb385840(v=vs.90).aspx"><code>InternalsVisibleTo</code>属性</a>なんてものもあるので、
+外から見える可能性が残ります。
+なので、APIサーフェスになりえます(<code>InternalsVisibleTo</code>属性があるときだけでいいんですが、参照ライブラリに残す必要があります)。</p>
+<p>そして、private。
+privateメンバーは、外から参照する手段がありません。
+(リフレクションを使うと取れたりはしますけども、コンパイル時には関係ない話です。)
+なので、APIサーフェスとはみなされない…
+はず…？</p>
+<p>と思いきや、privateメンバーがコンパイルに影響する場面が1つだけあります。
+それが、構造体のprivateフィールド。</p>
+<h3 id="private">構造体のprivateフィールド</h3>
+<p>いくつか、構造体のprivateフィールドがコンパイル結果に影響を及ぼす例を挙げてみましょう。</p>
+<ul>
+<li><a href="/study/csharp/resource/rm_struct/#definite-assignment">確実な初期化</a>ルール</li>
+<li>ポインター型</li>
+<li>再帰レイアウト</li>
+</ul>
+<h4 id="section-3">確実な初期化</h4>
+<p>C#では、構造体のフィールドは、コンストラクター内で必ず初期化しないといけない、初期化するまでは他のメンバーを呼べないという制約があります。
+初期化忘れによるバグを防ぐ意図があります。</p>
+<p>でも、空っぽの構造体は初期化しなくてもいいらしい。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> EmptyStruct { }
+<span class="keyword">struct</span> Integer { <span class="keyword">private</span> <span class="keyword">int</span> _x; }
+
+<span class="keyword">struct</span> DefiniteAssignement
+{
+    EmptyStruct _e;
+    Integer _i;
+
+    DefiniteAssignement(<span class="keyword">int</span> i)
+    {
+        <span class="comment">// 中身があるものは初期化必須</span>
+        _i = <span class="keyword">new</span> Integer();
+        <span class="comment">// 一方で、EmptyStruct みたいに空っぽのものは初期化不要</span>
+    }
+}</code></pre>
+<p>中身の有無によって挙動が変わります。</p>
+<h4 id="section-4">ポインター型</h4>
+<p>基本的に、<a href="/study/csharp/resource/rm_gc/#garbage-collection">GC</a>管理下のオブジェクトのポインターを作るのは危険です。</p>
+<p>そこで、C#では以下の条件を満たす型(非管理型(unmanaged type)と呼びます)でだけポインターを作ることを認めています</p>
+<ul>
+<li>参照型ではない</li>
+<li>ジェネリックではない</li>
+<li>上記2条件を再帰的に満たす(フィールドに1つ含まない)</li>
+</ul>
+<p>例えば、もし仮にこの条件を満たさない(GC管理下にある)型のポインターを作れたとします。
+そうすると、以下のような問題のあるコードが書けてしまいます。
+(そうならないように、赤線の部分をコンパイル エラーにしている。)</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.InteropServices;
+
+<span class="comment">// 参照型を含む構造体</span>
+<span class="keyword">struct</span> Wrapper { <span class="keyword">object</span> _obj; }
+
+<span class="keyword">class</span> ManagedPointer
+{
+    <span class="keyword">public</span> <span class="keyword">unsafe</span> <span class="keyword">void</span> X()
+    {
+        <span class="comment">// Wrapper みたいに内部的に参照型のフィールドを持っている型は、本来はポインター化できない</span>
+        <span class="comment">// sizeof 取得も本来はできない</span>
+
+        <span class="comment">// unmanaged なメモリを確保</span>
+        <span class="comment">// AllocHGlobal で取得したメモリ領域は初期化されている保証がない</span>
+        <span class="comment">// 実行するたびに違う値が入ってる</span>
+        <span class="keyword">var</span> p = Marshal.AllocHGlobal(<span class="keyword">sizeof</span>(Wrapper));
+        Wrapper a = *(Wrapper*)p;
+
+        <span class="comment">// ここで GC が発生したとすると、</span>
+        <span class="comment">// GC が TaskAwaiter 中の Task のフィールド(未初期化)を参照する</span>
+        <span class="comment">// 未初期化(= 意味のないランダムな値)な参照先を見に行こうとして死ぬ</span>
+
+        Marshal.FreeHGlobal(p);
+    }
+}</code></pre>
+<p>こちらも、メンバーに参照型を含んでいるかどうかを追うのに、構造体の中身を追う必要があります。</p>
+<h4 id="section-5">再帰レイアウト</h4>
+<p>構造体の中にそれ自身の型のフィールドを持とうとすると、当然ですが無限再帰を起こします。
+無限に再帰する構造体のレイアウトなんて決定できない(オーバーフローする)ので、当然禁止事項です。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> Container&lt;T&gt;
+{
+    <span class="keyword">public</span> T Item;
+}
+
+<span class="keyword">struct</span> RecursiveLayout
+{
+    <span class="comment">// 無限再帰するので、この構造体はレイアウトが確定できない</span>
+    Container&lt;RecursiveLayout&gt; _x;
+}</code></pre>
+<p>再帰していないかどうかを調べるために、構造体の中身の情報が必要です。</p>
+<h3 id="private-1">privateフィールドを残していない問題</h3>
+<p>この、「構造体は、中身のprivateフィールドの情報も残さないとまずい」というのに気づいたのは、
+参照アセンブリの仕組みを導入したのよりもちょっと後です。
+リリースまでには気づいてなくて、リリース後に不具合報告を受けて気づいたようで。</p>
+<p>PCLプロジェクトから参照しているいくつかの参照アセンブリが、構造体のprivateフィールドまで削除してしまっていて、問題を起こします。</p>
+<p>ということで、本題に戻りますが、PCLプロジェクトでだけ起こせる問題の数々。
+以下のコード、本来はコンパイル エラーになるべきですが、PCLではコンパイルできてしまします。</p>
+<p>1つ目。確実な初期化に漏れるケース。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">struct</span> DefiniteAssignment
+{
+    <span class="comment">// DateTimeOffset には中身があるはずなのに…</span>
+    DateTimeOffset _x;
+
+    <span class="keyword">public</span> DefiniteAssignment(<span class="keyword">int</span> n) { } <span class="comment">// PCL ではエラーにならない</span>
+}</code></pre>
+<p>2つ目。ポインター化できるかどうかの判定をミスるケース。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+<span class="keyword">using</span> System.Runtime.InteropServices;
+
+<span class="keyword">class</span> ManagedPointer
+{
+    <span class="keyword">public</span> <span class="keyword">unsafe</span> <span class="keyword">void</span> X()
+    {
+        <span class="comment">// TaskAwaiter は内部的に Task クラスのフィールドを1個だけ持っている</span>
+        <span class="comment">// 本来はポインター化できない</span>
+        <span class="keyword">var</span> p = Marshal.AllocHGlobal(<span class="keyword">sizeof</span>(TaskAwaiter));
+
+        <span class="comment">// PCL ではエラーにならない</span>
+        TaskAwaiter a = *(TaskAwaiter*)p;
+
+        <span class="comment">// ここで GC が発生したとするとまずい</span>
+
+        Marshal.FreeHGlobal(p);
+    }
+}</code></pre>
+<p>3つ目。無限再帰なレイアウトを作れてしまうケース。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Collections.Generic;
+
+<span class="keyword">struct</span> RecursiveLayout
+{
+    <span class="comment">// 無限再帰するので、この構造体はレイアウトが確定できない</span>
+    KeyValuePair&lt;RecursiveLayout, RecursiveLayout&gt; _x; <span class="comment">// PCL ではエラーにならない</span>
+}</code></pre>
+<p>どれも結構まずいんですが、今のところ、これがPCLではコンパイルできてしまっています。
+<code>DateTimeOffset</code>、<code>KeyValuePair</code>、<code>TaskAwaiter</code>などの構造体で、PCLが参照している参照アセンブリでは中身がごっそり削られているのが原因。</p>
+<h3 id="section-6">この問題を踏む可能性</h3>
+<p>この問題ですが、根本的には「参照アセンブリを作るときに消しちゃいけないところまで消しすぎた」というのが原因なわけで、
+参照しているもの次第で起こるかどうかが決まります。</p>
+<p>問題が起きるケース:</p>
+<ul>
+<li>PCL を使っていて、上記の<code>DateTimeOffset</code> などを参照する</li>
+<li>同様に、<a href="https://docs.microsoft.com/ja-jp/dotnet/articles/standard/library">.NET Standard 向けのライブラリ</a> プロジェクトでも、該当する型を参照すると問題が起きる</li>
+</ul>
+<p>起きないケース:</p>
+<ul>
+<li>アプリなど、実行アセンブリを直接参照しているもの</li>
+<li>実装アセンブリを直接提供しているライブラリなら問題が起きない
+<ul>
+<li><a href="https://www.nuget.org/packages/System.Threading.Tasks.Extensions/"><code>ValueTask</code></a>や<a href="https://www.nuget.org/packages/System.ValueTuple/"><code>ValueTuple</code></a>は実装アセンブリしか提供していないので、こいつらでは問題は起きない</li>
+</ul>
+</li>
+</ul>
+<h3 id="section-7">問題への対処(検討中)</h3>
+<p>とりあえず、どこの問題かというと参照アセンブリを作るツールになります。</p>
+<p>今は構造体のすべてのprivateフィールドを削ってしまっている挙動を、以下のように変更する必要があります。
+(フィールドをすべて残すのではなく、以下のルールにするのは参照アセンブリのサイズ削減のため。
+C#コンパイラーが誤動作しないようにするにはこのルールで十分。)</p>
+<ul>
+<li>1つでも値型のフィールドを持っていれば、<code>int</code>型など適当な型のフィールドを1個だけ作って含める</li>
+<li>1つでも参照型のフィールドを持っていれば、<code>object</code>型のフィールドを1個だけ作って含める</li>
+<li>ジェネリックな構造体の場合は、ジェネリック型引数で与えられた型のフィールドは消さずに残す</li>
+</ul>
+<p>今は、C# コンパイラー自身が実装アセンブリリと同時に参照アセンブリを作る機能を持っているみたいなので、
+基本的にはC# チームの仕事かも。
+(昔からそうだったわけではなくて、割かし最近、そういう機能を持った。
+それ以前は、オープンになっていないツールで、標準ライブラリの参照アセンブリ作りをしてた。)</p>
+<p>とはいえ、現在問題を起こしている参照アセンブリとかを、ちゃんと治ったバージョンのツールで生成しなおして、
+パッケージをNuGetサーバーに上げなおす作業は、たぶんC# チームの範疇外。</p>
+<p>問題を起こす状況も限られているし、複数のチームが絡んでいるしで、ちょっと修正には時間が掛かりそうな雰囲気…</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/12/">2016/12</a></li><li><a href="/blog/2016/12/tipstryroslyn/">C#&#x5C0F;&#x30CD;&#x30BF;&#x96C6;: C#&#x3092;Web&#x4E0A;&#x3067;&#x8A66;&#x3059;</a></li><li><a href="/blog/2016/12/tipsildasm/">&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x3092;&#x8997;&#x3044;&#x3066;&#x307F;&#x3088;&#x3046;</a></li><li><a href="/blog/2016/12/tipscorefxlab/">&#x5C0F;&#x30CD;&#x30BF; corefxlab&#x3068;System.Memory</a></li><li><a href="/blog/2016/12/tipsevalorder/">&#x5C0F;&#x30CD;&#x30BF; &#x5F0F;&#x306E;&#x8A55;&#x4FA1;&#x9806;&#x5E8F;</a></li><li><a href="/blog/2016/12/tipsobjectinitializer/">&#x5C0F;&#x30CD;&#x30BF; &#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2016/12/tipscollectioninitializer/">&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2016/12/tipsindexedforeach/">&#x5C0F;&#x30CD;&#x30BF; &#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;&#x4ED8;&#x304D; foreach</a></li><li><a href="/blog/2016/12/tipsuniontypes/">&#x5C0F;&#x30CD;&#x30BF; &#x30C1;&#x30A7;&#x30C3;&#x30AF;&#x4F8B;&#x5916;&#x3068;Union&#x578B;</a></li><li><a href="/blog/2016/12/tipscontextfreetask/">&#x5C0F;&#x30CD;&#x30BF; &#x540C;&#x671F;&#x30B3;&#x30F3;&#x30C6;&#x30AD;&#x30B9;&#x30C8;&#x3092;&#x62FE;&#x308F;&#x306A;&#x3044;Task&#x578B;</a></li><li><a href="/blog/2016/12/tipsformattingcharacter/">&#x5C0F;&#x30CD;&#x30BF; &#x30D5;&#x30A9;&#x30FC;&#x30DE;&#x30C3;&#x30C8;&#x6587;&#x5B57;&#x8B58;&#x5225;&#x5B50;</a></li><li><a href="/blog/2016/12/tipsimplicitmembers/">&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/blog/2016/12/tipstadpoleoperator/">&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x6F14;&#x7B97;&#x5B50;(&#xFF1F;)</a></li><li><a href="/blog/2016/12/tipsnulloperation/">&#x5C0F;&#x30CD;&#x30BF; null&#x95A2;&#x4FC2;&#x306E;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/blog/2016/12/vs2017rc2/">Updating Visual Studio 2017 Release Candidate</a></li><li><a href="/blog/2016/12/patternmatching/">&#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30DE;&#x30C3;&#x30C1;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/pickuproslyn1214/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/14</a></li><li><a href="/blog/2016/12/tipsdeconstruct/">&#x5C0F;&#x30CD;&#x30BF; &#x300C;deconstruct&#x300D;&#x3068;&#x3044;&#x3046;&#x5358;&#x8A9E;</a></li><li><a href="/blog/2016/12/tipsgeneratedil/">&#x5C0F;&#x30CD;&#x30BF; &#x69CB;&#x6587;&#x7CD6;&#x8863;&#x3068;&#x3001;&#x305D;&#x3046;&#x3067;&#x306F;&#x306A;&#x3044;&#x69CB;&#x6587;&#x3068;</a></li><li><a href="/blog/2016/12/tipsprimitives/">&#x5C0F;&#x30CD;&#x30BF; &#x30D7;&#x30EA;&#x30DF;&#x30C6;&#x30A3;&#x30D6;&#x578B;</a></li><li><a href="/blog/2016/12/tipsstringmarshal/">&#x5C0F;&#x30CD;&#x30BF; string&#x578B;&#x306E;&#x30DE;&#x30FC;&#x30B7;&#x30E3;&#x30EA;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/tipsnumargs/">&#x5C0F;&#x30CD;&#x30BF; &#x5F15;&#x6570;&#x306E;&#x500B;&#x6570;&#x306E;&#x4E0A;&#x9650;</a></li><li><a href="/blog/2016/12/tipsotherlangs/">&#x5C0F;&#x30CD;&#x30BF; C# &#x3068;&#x4ED6;&#x306E;&#x8A00;&#x8A9E;&#x3068;&#x306E;&#x5DEE;&#x3068;&#x3044;&#x3046;&#x3068;</a></li><li><a href="/blog/2016/12/tipsconcurrentcollections/">&#x5C0F;&#x30CD;&#x30BF; Concurrent &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/blog/2016/12/discards/">discards</a></li><li><a href="/blog/2016/12/tipssmallheapallocation/">&#x5C0F;&#x30CD;&#x30BF; &#x5C0F;&#x3055;&#x306A;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x5272;&#x308A;&#x5F53;&#x3066;</a></li><li><a href="/blog/2016/12/tipsparallelism/">&#x5C0F;&#x30CD;&#x30BF; &#x4E26;&#x5217;&#x5316;</a></li><li><a href="/blog/2016/12/tipsdowhile/">&#x5C0F;&#x30CD;&#x30BF; do-while</a></li><li><a href="/blog/2016/12/tipsatan2/">&#x5C0F;&#x30CD;&#x30BF; atan2</a></li><li><a href="/blog/2016/12/tipsnormaldistribution/">&#x5C0F;&#x30CD;&#x30BF; &#x6B63;&#x898F;&#x5206;&#x5E03;&#x306E;&#x4E38;&#x307F;</a></li><li><a href="/blog/2016/12/lookbackattheyear/">&#x4ECA;&#x5E74;&#x306E;&#x632F;&#x308A;&#x8FD4;&#x308A;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

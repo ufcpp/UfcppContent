@@ -1,0 +1,188 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>C# 14 &#x306E;&#x7834;&#x58CA;&#x7684;&#x5909;&#x66F4;&#x70B9;(First-class Span) | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2025/10/first-class-span-breaking-change/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2025-10-22T21:33:30">2025-10-22</time></span><span>更新: <time datetime="2025-10-22T21:33:30">2025-10-22</time></span></div><h1 id="c-14-first-class-span">C# 14 の破壊的変更点(First-class Span)</h1>
+<p>C# 14 で導入された <a href="/study/csharp/resource/span/#first-class-span">First-class Span</a> は破壊的変更を伴っています。</p>
+<p>例えば標準ライブラリの範囲内の拡張メソッド呼び出しでも以下のような差が生じます。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span>[] array = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>];
+
+<span class="comment">// C# 13 まで: System.Linq.Enumerable.Contains (IEnumerable 引数) が呼ばれる</span>
+<span class="comment">// C# 14 から: System.MemoryExtensions.Contains (ReadOnlySpan 引数) が呼ばれる</span>
+Console.WriteLine(array.Contains(<span class="number">2</span>));</code></pre>
+<p>ほとんどの場合、「パフォーマンスが上がるだけで得られる結果は同じ」な実装ばかりなのでそんなに問題にはならないだろうということで、
+「許容できる範囲内」・「破壊的変更を受け入れるメリットの方が大きい」という判定を受けています。
+公式の<a href="https://learn.microsoft.com/ja-jp/dotnet/core/compatibility/core-libraries/10.0/csharp-overload-resolution">.NET 10 での破壊的変更に関するドキュメント</a>では、
+「式ツリーで使っていた場合に問題が起きうる」くらいしか書かれていません。</p>
+<p>ただ、これのせいで問題を起こしそうだった拡張メソッドとして <code>Reverse</code> があったりします。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span>[] array = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>];
+
+<span class="comment">// C# 13 まで: Enumerable.Reverse だったから問題なし。</span>
+<span class="comment">// C# 14 から: MemoryExtensions.Reverse を呼んじゃいそう…</span>
+<span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> array.Reverse())
+{
+}
+
+<span class="comment">// デモ用に同じシグネチャの拡張メソッドをローカル実装。</span>
+<span class="keyword">static</span> <span class="keyword">class</span> A
+{
+    <span class="comment">// System.Linq.Enumerable にあるのは「新しい IEnumerable インスタンスを作って返す」タイプ。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> IEnumerable&lt;TSource&gt; Reverse&lt;TSource&gt;(<span class="keyword">this</span> IEnumerable&lt;TSource&gt; source) =&gt; <span class="keyword">null</span>!;
+
+    <span class="comment">// MemoryExtensions にあるのは「Span に対する自己書き換え」タイプ。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Reverse&lt;T&gt;(<span class="keyword">this</span> Span&lt;T&gt; span) { }
+}</code></pre>
+<p>ちなみに、この問題は「<a href="https://learn.microsoft.com/ja-jp/dotnet/api/system.linq.enumerable.reverse?view=net-10.0#system-linq-enumerable-reverse-1(-0())"><code>TSource[]</code> 引数の <code>Reverse</code></a> を足す」という方法で解決しています。
+<code>Span&lt;T&gt;</code> (first-class とはいえ型変換を挟む)よりも <code>T[]</code> (無変換)の方が優先度が高いので、
+<code>array.Reverse()</code> は <code>Reverse(T[])</code> が優先的に呼ばれます。</p>
+<p>ここまではあくまで「標準ライブラリの範囲内で」の話。
+「自作の LINQ もどき」とかを持っているともう少しいろいろと問題を踏みます。
+というか、自分が踏んだという話…
+それを2つほど紹介。</p>
+<h2 id="wherespan">Where(Span)</h2>
+<p>1個目は以下のような <code>Where</code> メソッドです。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">class</span> InPlaceLinq
+{
+    <span class="comment">// Reverse の例と同様、「Span 相手は自己書き換えでいいだろ」的なメソッド。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> Span&lt;T&gt; Where&lt;T&gt;(<span class="keyword">this</span> Span&lt;T&gt; span, Func&lt;T, <span class="keyword">bool</span>&gt; predicate)
+    {
+        <span class="keyword">int</span> count = <span class="number">0</span>;
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; span.Length; i++)
+        {
+            <span class="keyword">if</span> (predicate(span[i]))
+            {
+                span[count++] = span[i];
+            }
+        }
+        <span class="keyword">return</span> span[..count];
+    }
+}</code></pre>
+<p>先ほどの <code>Reverse</code> の例同様、自己書き換え。</p>
+<p>自己書き換えな時点で用途はかなり限定的で、
+本来は以下のような利用を想定しています。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> SomeItem
+{
+    <span class="keyword">public</span> <span class="keyword">bool</span> Flag { <span class="keyword">get</span>; }
+}
+
+<span class="keyword">class</span> SomeRepository
+{
+    <span class="keyword">public</span> SomeItem[] Filter(Func&lt;SomeItem, <span class="keyword">bool</span>&gt; predicate)
+    {
+        <span class="comment">// 個数の上限がある程度わかってる &amp; 小さいので stackalloc でバッファー確保。</span>
+        Span&lt;SomeItem&gt; buffer = <span class="keyword">stackalloc</span> SomeItem[<span class="number">32</span>];
+
+        <span class="comment">// 一覧を取る時点では Where 出来ず一度バッファーに書き込みが必要なメソッドを呼ぶ。</span>
+        <span class="keyword">var</span> written = GetItems(buffer);
+
+        <span class="comment">// 最終的には ToArray して返す。</span>
+        <span class="keyword">return</span> [.. buffer[..written].Where(predicate)];
+    }
+
+    <span class="keyword">private</span> <span class="keyword">int</span> GetItems(Span&lt;SomeItem&gt; destination)
+    {
+        <span class="comment">// 本来は以下の類のコード</span>
+        <span class="comment">// destination[count++] = ...</span>
+        <span class="comment">// return count;</span>
+        <span class="keyword">return</span> <span class="number">0</span>;
+    }
+}</code></pre>
+<p>ところが、first-class Span が入ったことで、配列に対して <code>Enumerable.Where</code> よりも優先度が高くなってしまい…
+意図しないところで呼ばれてしまうことに…</p>
+<pre><code class="language-csharp"><span class="keyword">int</span>[] array = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>];
+
+<span class="comment">// C# 13 まで: System.Linq.Enumerable.Where が呼ばれる。</span>
+<span class="comment">// C# 14 から: InPlaceLinq.Where が呼ばれる。自己書き換え…</span>
+<span class="keyword">var</span> result = array.Where(x =&gt; x % <span class="number">2</span> == <span class="number">0</span>);
+
+Console.WriteLine(<span class="string">&quot;result&quot;</span>);
+<span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> result)
+{
+    Console.WriteLine(x);
+}
+
+<span class="comment">// C# 14 だと自己書き換えやっちゃってるんで当然…</span>
+Console.WriteLine(<span class="string">&quot;array&quot;</span>);
+<span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> array)
+{
+    Console.WriteLine(x); <span class="comment">// 2, 4, 3, 4 になっちゃう。</span>
+}</code></pre>
+<p>この例の特に厳しいところは、コンパイル エラーにはならずに実行できてしまうものの、
+実行結果が破滅的に意図しない挙動になるところです…</p>
+<p>一応、<code>Reverse</code> の例同様、<code>Where(TSource[], Func&lt;TSource, bool&gt;)</code> オーバーロードを足して <code>Enumerable.Where</code> に流すようにしてしまえば解決できるはずです。</p>
+<p>また、自己書き換えな拡張メソッドが非破壊なものと同名なのが問題だったという反省もあり、
+メソッド名を変更してしまうべきとう気もします。
+(実際、この路線で修正。<code>WhereInPlace</code> というあえての長ったらしい名前に変更。)</p>
+<h2 id="indexreadonlyspan">Index(ReadOnlySpan)</h2>
+<p>もう1個は以下のような <code>Index</code> メソッド。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">class</span> SpanExtensions
+{
+    <span class="comment">// 要は「Span 相手にも Enumerable.Index みたいなものが欲しい」。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> IndexEnumerable&lt;T&gt; Index&lt;T&gt;(<span class="keyword">this</span> ReadOnlySpan&lt;T&gt; span) =&gt; <span class="keyword">new</span>(span);
+
+    <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">ref</span> <span class="keyword">struct</span> IndexEnumerable&lt;T&gt;(ReadOnlySpan&lt;T&gt; span)
+    {
+        <span class="keyword">private</span> <span class="keyword">readonly</span> ReadOnlySpan&lt;T&gt; _span = span;
+        <span class="keyword">public</span> IndexEnumerator&lt;T&gt; GetEnumerator() =&gt; <span class="keyword">new</span>(_span);
+    }
+
+    <span class="keyword">public</span> <span class="keyword">ref</span> <span class="keyword">struct</span> IndexEnumerator&lt;T&gt;(ReadOnlySpan&lt;T&gt; span)
+    {
+        <span class="keyword">private</span> <span class="keyword">readonly</span> ReadOnlySpan&lt;T&gt; _span = span;
+        <span class="keyword">private</span> <span class="keyword">int</span> _index = -<span class="number">1</span>;
+        <span class="keyword">public</span> <span class="keyword">bool</span> MoveNext() =&gt; ++_index &lt; _span.Length;
+        <span class="keyword">public</span> <span class="keyword">readonly</span> (<span class="keyword">int</span> Index, T Item) Current =&gt; (_index, _span[_index]);
+    }
+}</code></pre>
+<p>こちらは <code>Enumerable.Index(this IEnumerable&lt;T&gt;)</code> と同じ挙動を <code>ReadOnlySpan&lt;T&gt;</code> 引数で実装したものです。</p>
+<p>まあ、<code>Span</code>/<code>ReadOnlySpan</code> を使いたいくらいパフォーマンスを気にする場面なら <code>for (var i = 0; i &lt; span.Length; ++i)</code> を使えという話はありつつも…</p>
+<p>同じ挙動なので、配列に対して呼ばれても問題ないはずでめでたしめでたし(?)</p>
+<pre><code class="language-csharp"><span class="keyword">int</span>[] array = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>];
+
+<span class="comment">// C# 13 まで: System.Linq.Enumerable.Index が呼ばれる。</span>
+<span class="comment">// C# 14 から: 自作の SpanExtensions.Index が呼ばれる。</span>
+<span class="comment">//</span>
+<span class="comment">// 挙動は同じなので特に問題ない。</span>
+<span class="comment">// むしろパフォーマンス上がるのではないかと。</span>
+<span class="keyword">foreach</span> (<span class="keyword">var</span> (index, item) <span class="keyword">in</span> array.Index())
+{
+    Console.WriteLine($<span class="string">&quot;{index}: {item}&quot;</span>);
+}</code></pre>
+<p>問題は <code>IndexEnumerable</code> が <code>ref struct</code> な点で、
+<code>foreach</code> 中に <code>yield</code> や <code>await</code> があるとエラーになります。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span>[] array = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>];
+
+<span class="comment">// C# 14 で 自作の SpanExtensions.Index が呼ばれようになると…</span>
+<span class="keyword">foreach</span> (<span class="keyword">var</span> (index, item) <span class="keyword">in</span> array.Index())
+{
+    <span class="comment">// さっきとの差は await を含んでることだけ。</span>
+    <span class="keyword">await</span> Task.Delay(<span class="number">1</span>);
+    Console.WriteLine($<span class="string">&quot;{index}: {item}&quot;</span>);
+}</code></pre>
+<p>「 'SpanExtensions.IndexEnumerator&lt;int&gt;' 型のインスタンスは、'await' または 'yield' 境界を越えて保持することはできません。」というコンパイル エラーが出るはずです。</p>
+<p>これはまあ、ほとんどの場合は <code>Index(ReadOnlySpan)</code> が呼ばれた方が好ましい中、
+少数の <code>yield</code>/<code>await</code> を含むケースでだけ問題になるので、
+コンパイル エラーが出た場所を <code>Enumerable.Index</code> (拡張メソッドをやめて静的メソッド呼び)に書き換えるなどで対処しました。
+(それか、名前空間の内側に <code>using static System.Linq.Enumerable;</code> を書いて <code>Enumerable.Index</code> の優先度を上げるという手もあります。)</p>
+<p>あとこれも一応、配列用のオーバーロード追加でも問題解消するはずです。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2025/10/">10&#x6708;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

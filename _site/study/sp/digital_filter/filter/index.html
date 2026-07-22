@@ -1,0 +1,103 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30C7;&#x30A3;&#x30B8;&#x30BF;&#x30EB;&#x30D5;&#x30A3;&#x30EB;&#x30BF; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/sp/digital_filter/filter/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">ディジタルフィルタ</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>ここでは、ディジタルフィルタの設計手法などについて説明していきます。
+（筆者の専門の関係で、音声フィルタを前提とした1次元線形フィルタを中心に説明します。）
+ディジタル信号処理の知識が必須ですので、
+先に「<a href="/study/sp/">信号処理</a>」を通読しておいてください。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="introduction"></a>ディジタルフィルタとは</h2>
+<p>ディジタルフィルタとは、
+ディジタル電子計算機などを用いて、
+ディジタル信号の特性を変化させるようなもののことを言います。
+例えば、信号に混入したノイズを低減させたり、
+特定の周波数の信号だけを取り出したりすることが出来ます。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/sp/filter01.png"><img src="/assets/media/ufcpp2000/sp/filter01.png" alt="ディジタルフィルタの概念図" /></a></p>
+<figcaption>ディジタルフィルタの概念図</figcaption>
+</figure>
+<p>より具体的な例を挙げると、入出力となる信号の種類として、
+画像や音声などがあります。
+画像の場合、例えば、
+「ぼかし」「輪郭強調」などのフィルタがあります。
+また、音声の場合には、
+「低音の強調」「エコー・リバーブ」などのフィルタがあります。
+下図に、画像に「ぼかし」「輪郭強調」フィルタを掛けた例を示します。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/sp/filter00.jpg"><img src="/assets/media/ufcpp2000/sp/filter00.jpg" alt="画像のぼかし" /></a></p>
+<figcaption>画像のぼかし</figcaption>
+</figure>
+<figure>
+<p><a href="/assets/media/ufcpp2000/sp/filter01.jpg"><img src="/assets/media/ufcpp2000/sp/filter01.jpg" alt="画像の輪郭強調" /></a></p>
+<figcaption>画像の輪郭強調</figcaption>
+</figure>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="d28e45"></a>ディジタル信号処理おさらい</h2>
+<p>ディジタルフィルタの話に入る前に、
+軽く「<a href="/study/sp/">信号処理</a>」のおさらいをしておきましょう。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/sp/filter02.png"><img src="/assets/media/ufcpp2000/sp/filter02.png" alt="ディジタル信号" /></a></p>
+<figcaption>ディジタル信号</figcaption>
+</figure>
+<pre><code class="language-text">連続信号と離散信号の関係
+周波数特性
+サンプル
+
+ディジタル信号処理では、過去の信号値を記憶しておいて使う
+x[k-1] ＝ D x[k]
+等と書く。
+D … 遅延
+
+現在の時刻を k としたとき、
+x[k-N] ＝ D^n x[k] を「N サンプル前の値」という。</code></pre>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="plan"></a>執筆予定</h2>
+<pre><code class="language-text">電子計算機などを使って信号処理
+↓
+離散信号
+↓
+差分方程式
+
+電子計算機上では、いろんなフィルタを簡単に実現可能。
+フィルタの特性を容易に計算できる線形フィルタがよく使われる。
+線形フィルタ ＝ 線形差分方程式で表すことの出来るフィルタ。
+
+・線形フィルタ ＝ 線形差分方程式
+記憶素子(遅延)と加算器・乗算器があれば実現可能。
+差分方程式→ブロック図の例を挙げて説明。
+
+大きく分けて
+- 線形フィルタ
+  - FIR
+  - IIR
+- 非線形フィルタ
+それぞれの長所と短所を。
+
+
+Z変換の z&lt;sup&gt;－1&lt;/sup&gt; は遅延を表す。
+伝達関数が z&lt;sup&gt;－1&lt;/sup&gt; の整式のとき、ループ（再帰）のないフィルタで実現可能。 → FIR
+伝達関数が z&lt;sup&gt;－1&lt;/sup&gt; の有理式のとき、再帰構造が必要。 → IIR
+
+
+サンプルプログラムも出す？</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/sp/digital_filter/">&#x30C7;&#x30A3;&#x30B8;&#x30BF;&#x30EB;&#x30D5;&#x30A3;&#x30EB;&#x30BF;</a></li><li><a href="/study/sp/digital_filter/program/">&#x30C7;&#x30A3;&#x30B8;&#x30BF;&#x30EB;&#x30D5;&#x30A3;&#x30EB;&#x30BF;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30DF;&#x30F3;&#x30B0;</a></li><li><a href="/study/sp/digital_filter/fir/">FIR&#x30D5;&#x30A3;&#x30EB;&#x30BF;</a></li><li><a href="/study/sp/digital_filter/iir/">IIR&#x30D5;&#x30A3;&#x30EB;&#x30BF;</a></li><li><a href="/study/sp/digital_filter/transform/">&#x5468;&#x6CE2;&#x6570;&#x5909;&#x63DB;</a></li><li><a href="/study/sp/digital_filter/biquad/">&#x53CC;2&#x6B21;&#x30D5;&#x30A3;&#x30EB;&#x30BF;</a></li><li><a href="/study/sp/digital_filter/analoglpf/">&#x30A2;&#x30CA;&#x30ED;&#x30B0;&#x30D5;&#x30A3;&#x30EB;&#x30BF;&#x8A2D;&#x8A08;&#x306B;&#x57FA;&#x3065;&#x304F; IIR LPF &#x8A2D;&#x8A08;</a></li><li><a href="/study/sp/digital_filter/butterworth/">&#x30D0;&#x30BF;&#x30FC;&#x30EF;&#x30FC;&#x30B9;&#x30D5;&#x30A3;&#x30EB;&#x30BF;</a></li><li><a href="/study/sp/digital_filter/chebyshev/">&#x30C1;&#x30A7;&#x30D3;&#x30B7;&#x30A7;&#x30D5;&#x30D5;&#x30A3;&#x30EB;&#x30BF;</a></li><li><a href="/study/sp/digital_filter/chebyshev2/">&#x9006;&#x30C1;&#x30A7;&#x30D3;&#x30B7;&#x30A7;&#x30D5;&#x30D5;&#x30A3;&#x30EB;&#x30BF;</a></li><li><a href="/study/sp/digital_filter/elliptic/">&#x6955;&#x5186;&#x30D5;&#x30A3;&#x30EB;&#x30BF;</a></li><li><a href="/study/sp/digital_filter/ellipticrational/">&#x30C1;&#x30A7;&#x30D3;&#x30B7;&#x30A7;&#x30D5;&#x6709;&#x7406;&#x95A2;&#x6570;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

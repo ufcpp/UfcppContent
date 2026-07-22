@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 9/12: nullable&#x53C2;&#x7167;&#x578B;&#x3001;target-typed new&#x3001;Index &#x6F14;&#x7B97;&#x5B50;&#x306A;&#x3069; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2018/9/pickuproslyn0912/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2018-09-12T18:30:11">2018-09-12</time></span><span>更新: <time datetime="2018-09-12T18:30:11">2018-09-12</time></span></div><h1 id="roslyn-912-nullabletarget-typed-newindex">ピックアップRoslyn 9/12: nullable参照型、target-typed new、Index 演算子など</h1>
+<p>夏休みな時期を抜けたからか、7月末辺りからの Design Notes が何件かアップロードされました。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/1836">Added: LDM notes for August 20, 2018 #1836</a></li>
+<li><a href="https://github.com/dotnet/csharplang/issues/1848">Added: LDM notes for August 22, 2018 #1848</a></li>
+<li><a href="https://github.com/dotnet/csharplang/issues/1849">Added: LDM notes for September 5, 2018 #1849</a></li>
+</ul>
+<p>どれも、C# 8.0に向けて実装している機能の、割と細かい課題とそれに対してどうするかの決定についての話。</p>
+<h2 id="null">! 演算子(nullチェックの抑止演算子)</h2>
+<p>nullable(もしくは C# 7.X 以前のコード由来)な変数だけど、実際には null が来ないはずという時に使うのが<code>!</code>演算子。単に null チェック警告を出さないようにするもの。</p>
+<h3 id="section">入れ子の場合</h3>
+<p><a href="https://github.com/dotnet/roslyn/issues/29642">入れ子の場合</a> (<code>List&lt;string&gt;</code>から<code>List&lt;string?&gt;</code>に代入するときとか)のチェックをどうするかが議題に。</p>
+<p>キャストと <code>!</code> 演算子は似た性質のものだけども、こういう場合、キャストなら警告を出して、<code>!</code>なら出さないべき。</p>
+<h3 id="section-1">意味のない !</h3>
+<p>元々非nullなものに <code>!</code> を付けたり、2重に<code>!!</code>とか付けた場合をどうするか。</p>
+<p>コンパイラーとしては何もしない(警告を出さない)。チェックするとしたらIDEのリファクタリング機能として提供。</p>
+<h2 id="nullable-dereference">nullable 型の dereference</h2>
+<p>ここでいう dereference (脱参照。参照先の値を得る操作)は、<code>x</code> に対して <code>x.Substring(1)</code> とか、メンバー呼び出しすることを指してる。</p>
+<p>以下のように、nullable なものに対して何らかのメソッドを呼んだ場合、
+<code>x</code> が null だったら例外が出るはずで、だったら、呼び出して以降は null チェック済みと考えていいはず。</p>
+<pre><code class="language-csharp"><span class="keyword">string</span>? x = y;
+<span class="keyword">var</span> z = x.Substring(<span class="number">1</span>);
+...</code></pre>
+<p>実際そう扱うみたい。
+正確には、<code>try</code>-<code>catch</code> があった場合、<code>try</code>句内のdereference以降は非 null として、
+<code>catch</code> 句内では nullable として扱う。</p>
+<h2 id="null-1">null コントラクト属性</h2>
+<p><a href="/blog/2018/5/pickuproslyn0520/">5/22 に書いた、属性でnullチェックの有無を指示する方式</a>のこと。</p>
+<p>現在の候補一覧: <a href="https://github.com/dotnet/roslyn/issues/26761">Recognize annotations on methods that affect nullability analysis #26761</a></p>
+<p>とりあえず今上がってる候補でプロトタイプ実装を初めて見ようみたいな空気。</p>
+<h2 id="section-2">実行的チェック コードの挿入</h2>
+<p>nullable 参照型は、現状、コンパイル時にだけ使うアノテーションになってる。
+古いコンパイラーを使ったりでチェックをすり抜けたとしても、特に実行時チェックは働いてない。</p>
+<p>それに対して、実行時チェックするコードを挿入するような機能もあってもいい？
+例えば、<code>void M(string s!) { }</code> みたいに、引数の後ろに <code>!</code> を付けたら、引数の null チェック コードを挿入するとか。</p>
+<p>とりあえず正式な提案ドキュメントを書いてみる。</p>
+<h2 id="nullablet"><code>Nullable&lt;T&gt;</code></h2>
+<p>nullable 参照型に対するフロー解析、一部は <code>Nullable&lt;T&gt;</code> 構造体の <code>.Value</code> にも使えるはず。</p>
+<h2 id="class"><code>class?</code> 制約</h2>
+<p><code>void M&lt;T&gt;(T? t) where T : class?</code> は認める？</p>
+<p><code>T?</code> は、<code>T</code> が非 null の時にだけ付けれるようにしたい。<code>T : class?</code> の時点で<code>T</code> が nullable なので、<code>T?</code> は認めない。</p>
+<h2 id="listt.firstordefault"><code>List&lt;T&gt;.FirstOrDefault()</code></h2>
+<p><code>List&lt;T&gt;</code> の <code>T</code> が制約なしの場合、<code>FirstOrDefault()</code> の戻り値はどうなるべき？</p>
+<p><code>MaybeNull</code>扱いに。</p>
+<h2 id="nullablegeneric">nullable参照型のgeneric制約</h2>
+<pre><code class="language-csharp"><span class="keyword">void</span> M&lt;T, U&gt;()
+    <span class="keyword">where</span> T : <span class="keyword">class</span>
+    <span class="keyword">where</span> U : T
+{ }
+
+<span class="keyword">interface</span> I { }
+<span class="keyword">void</span> M&lt;T&gt;() <span class="keyword">where</span> T : I { }</code></pre>
+<p>みたいなのの、<code>T</code> は非 null？</p>
+<p>非 null 扱いにする予定。</p>
+<h2 id="target-typed-new">target-typed new</h2>
+<p>左辺からの型推論で、<a href="https://github.com/dotnet/csharplang/blob/master/proposals/target-typed-new.md"><code>new ()</code> だけで<code>new</code>できる</a>やつに関して。</p>
+<h3 id="section-3">タプルに関して</h3>
+<p>今、タプルに関しては <code>new (int, int)(0, 0)</code> みたいな書き方を認めてないけども。
+<code>new (0, 0)</code> の場合は認めるべき？
+7要素以上のタプルの場合、実際に作られるのは<code>new ValueTuple&lt;..., ValueTuple&lt;...&gt;&gt;</code> みたいな入れ子の<code>ValueTuple</code>だけども。</p>
+<p><code>new (0, 0)</code> は認める予定。この場合はタプル構文(8要素以上も大丈夫。上記の入れ子の<code>ValueTuple</code>を構築)ではなく、単なる<code>ValueTuple</code>構造体のコンストラクター呼び出しという扱い(なので8要素以上の時には使えない/入れ子が必要)になる。</p>
+<h3 id="throw-new">throw new()</h3>
+<p><code>throw new()</code> って書いた時、暗黙的に <code>new Exception()</code> 扱いすべき？</p>
+<p>しないことに。</p>
+<h3 id="new">ユーザー定義の比較、算術演算で new()</h3>
+<p><code>x == new ()</code> みたいなの、認める。</p>
+<h2 id="index">Index 演算子</h2>
+<p><code>^1</code> って書き方で、「配列の末尾から1要素目」みたいな扱いにするための <code>^</code> 演算子のこと。</p>
+<ul>
+<li>構文的に、単項演算子扱い？ → そう</li>
+<li>ユーザー定義演算子？ → なしで。今のところ int 以外のオーバーロードの需要をあんまり感じない</li>
+<li>優先順位は？ → 単項演算子扱いになったので、他の単項演算子と同列</li>
+<li><code>^^1</code> とかは認める？ → 単なる単項演算子扱い + int 以外認めない + <code>^</code> の結果は <code>Index</code> 型なので、<code>^^1</code> は必然的にエラーに</li>
+<li><code>..</code> についても同様 → <code>..</code> の方は2項演算子ではなく、専用の構文扱いにする</li>
+</ul>
+<h2 id="compiler-intrinsics">Compiler intrinsics</h2>
+<p><a href="/blog/2018/8/pickuproslyn0822/">8/22に書いた、ldftn + calli のやつ</a>。</p>
+<p>この ldftn + calli を出力できる仕組み自体は取り組みたい。ただ、8/22 時点の提案からはちょっと修正が必要そう。例えば:</p>
+<ul>
+<li>インスタンスに対して <code>&amp;instance.M</code> みたいな書き方は認めない</li>
+<li><code>calli</code> は、<code>_calli_stdcall(args, f)</code>みたいな特殊キーワードでやる方がいいかも</li>
+<li>呼び出し規約をどうするかは呼び出し側に書きたい</li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2018/9/">9&#x6708;</a></li><li><a href="/blog/2018/9/pickuproslyn0926/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 9/26</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

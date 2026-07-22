@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Visual Studio 16.2 Preview 3&#x3001;notnull &#x5236;&#x7D04; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2019/6/vs16_2_p3/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2019-06-26T20:09:16">2019-06-26</time></span><span>更新: <time datetime="2019-06-27T23:31:23">2019-06-27</time></span></div><h1 id="visual-studio-16.2-preview-3notnull">Visual Studio 16.2 Preview 3、notnull 制約</h1>
+<p><a href="https://docs.microsoft.com/ja-jp/visualstudio/releases/2019/release-notes#16.1.4">Visual Studio 16.1.4</a> と <a href="https://docs.microsoft.com/en-us/visualstudio/releases/2019/release-notes-preview#16.2.0-pre.3.0">Visual Studio 16.2 Preview 3</a>が出たみたいです。</p>
+<p>見た感じ、大半が不具合の修正っぽい雰囲気。</p>
+<p>C# 的には、<a href="https://github.com/dotnet/roslyn/milestone/48?closed=1">16.2.P3 マイルストーン</a>の履歴的に、そろそろ <a href="/blog/2018/12/cs8nrt/">null 許容参照型</a>の作業が本格化していそうで、「<a href="/study/csharp/">C# によるプログラミング入門</a>」の対応作業もそろそろやらなきゃ… と身構えていたんですが。
+実際に 16.2 Preview 3 を触ってみると、あんまり入ってなさげ。Preview 4 に繰り越されたみたいです。</p>
+<p>唯一、動作確認が取れたのが以下の機能。notnull 制約。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">class</span> C&lt;T&gt;
+    <span class="keyword">where</span> T : notnull
+{
+    <span class="keyword">public</span> T Value { <span class="keyword">get</span>; }
+ 
+    <span class="keyword">public</span> C(T value) =&gt; Value = value;
+}
+ 
+<span class="keyword">public</span> <span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> c = <span class="keyword">new</span> C&lt;<span class="keyword">string</span>&gt;(<span class="string">&quot;&quot;</span>);
+        Console.WriteLine(c.Value.Length);
+ 
+        <span class="keyword">var</span> c1 = <span class="keyword">new</span> C&lt;<span class="keyword">int</span>&gt;(<span class="number">1</span>);
+        <span class="keyword">var</span> c2 = <span class="keyword">new</span> C&lt;<span class="keyword">int</span>?&gt;(<span class="number">1</span>); <span class="comment">// 警告あり</span>
+        <span class="keyword">var</span> c3 = <span class="keyword">new</span> C&lt;<span class="keyword">string</span>?&gt;(<span class="string">&quot;&quot;</span>); <span class="comment">// 警告あり</span>
+        <span class="keyword">var</span> c4 = <span class="keyword">new</span> C&lt;<span class="keyword">string</span>&gt;(<span class="keyword">null</span>); <span class="comment">// 警告あり</span>
+    }
+}</code></pre>
+<p>これも、Preview 3 で対応するつもりがそんなになかったのか、
+コンパイルはできるものの Visual Studio 上は未対応(コード補完もハイライトも効かない)な状態です。
+(一方で、特にコンパイル エラーになったりはしない。)</p>
+<h2 id="notnull">notnull 制約</h2>
+<p>そういえば、この notnull 制約の話はあんまりこのブログで取り上げていなかったはず。
+null 許容参照型周りはちょっと目を離すと結構実装が変わっているんで…</p>
+<p>見たまんま、「この型引数は null を認めない」の意味です。
+<code>int</code> や <code>string</code> は受け付けるけども、<code>int?</code> や <code>string?</code> は受け付けない(警告のみですが)という型制約になります。
+null 許容<em>値型</em>とnull 許容<em>参照型</em>を統一的に扱いたいがための仕様。</p>
+<p>ただ、以下のようなコードは今のところ受け付けません。
+notnull とは… (仕組み上しょうがなさそう。これを受け付けるためには .NET ランタイム側での対応が必要そうで結構な手間。)</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> C&lt;T&gt;
+    <span class="keyword">where</span> T : notnull
+{
+    <span class="comment">// せっかく notnull にしても、T? とは書けない。</span>
+    <span class="comment">// [return: MaybeNull] という属性ベースの回避策を取る予定。</span>
+    <span class="keyword">public</span> T? X() =&gt; <span class="keyword">default</span>;
+}</code></pre>
+<p>元々は、<code>where T : object</code> (<code>object</code> に <code>?</code> がついてないんだから非 null 扱い)でいいんじゃないかって言われてたんですが、「<code>object</code> だと参照型っぽくて値型に使えなさそうな印象がある」という理由で新規キーワード追加になりました。</p>
+<p>さらに言うと<a href="https://github.com/dotnet/csharplang/blob/master/meetings/2019/LDM-2019-05-15.md">当初予定</a> では nonnull だったのが、今回の実装だと notnull (non と not の差)になっていたり。</p>
+<p>C# ってあんまりこういう、2単語(not null)をつないだキーワードを採用することが少ないので、ちょっと最終的にもこのまま進むのかわからなかったりはします。荒れそう…</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2019/6/">6&#x6708;</a></li><li><a href="/blog/2019/6/vs16_2_p2/">Visual Studio 16.2 Preview 2 &amp; .NET Core 3.0 Preview 6</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

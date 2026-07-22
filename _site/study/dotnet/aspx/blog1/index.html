@@ -1,0 +1,284 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D6;&#x30ED;&#x30B0;&#x8868;&#x793A;&#xFF08;&#xFF11;&#xFF09; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/dotnet/aspx/blog1/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">ブログ表示（１）</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>ブログっぽいものを作成。</p>
+<p>一般に“ブログ”と呼ばれてるようなものほどちゃんとしたツールを作るつもりはなくて、
+以下のような仕様のものを。</p>
+<ul>
+<li><p>Web フォーム自体に書き込み機能は持たせない。</p>
+</li>
+<li><p>記事は、ローカル上で（XML 形式で）書いたものを FTP などでサーバにアップする。</p>
+</li>
+<li><p>記事は、20070630.xml というように、日付に応じて yyyyMMdd.xml 形式のファイル名で保存。</p>
+</li>
+<li><p>日付に応じた XML を XSLT して表示するだけ。</p>
+</li>
+<li><p>トラックバック機能はおろか、コメント機能すら作らない。</p>
+</li>
+</ul>
+<p>今どき、ブログのデータは（記事、コメント、トラックバック含め全部）データベースに持つのがいいと思うんですが、
+自分のサイトにそこまでの機能が必要ないのと、
+過去に自分の書きためてるものが XML 形式だったのでこういう仕様に。</p>
+<p>技術的な面でいうと、ここで説明する内容は以下の通り。</p>
+<ol>
+<li><p>Web コントロール</p>
+</li>
+<li><p>XSLT</p>
+</li>
+<li><p>クエリ文字列</p>
+</li>
+<li><p>HTTP リクエストのリライト・リダイレクト</p>
+</li>
+<li><p>RSS の作成</p>
+</li>
+</ol>
+<p>長く成りそうなので、3つに分割。
+このページではまず、最新の日付のブログを表示するところまで。
+技術面で言うと、1 と 2 を説明。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="spec"></a>仕様</h2>
+<p>ブログもどきの仕様ですが、以下のような感じ。</p>
+<ul>
+<li><p>XML 形式で保存しておいたデータを読んで、XSLT を掛けた結果を表示するだけ。</p>
+</li>
+<li><p>コメント機能もトラックバック機能もなし。</p>
+</li>
+<li><p>XML は、2007年7月1日のブログなら 20070701.xml というように、 yyyyMMdd.xml という形式のファイル名を付ける。</p>
+</li>
+</ul>
+<p>以下のような XML データに対して、
+図1のような結果を表示します。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;?</span><span class="xmlName">xml</span> <span class="xmlAttribute">version</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">1.0</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">encoding</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Shift_JIS</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">?&gt;</span>
+<span class="xmlDelimiter">&lt;</span><span class="xmlName">content</span><span class="xmlDelimiter">&gt;</span>
+
+<span class="xmlDelimiter">&lt;</span><span class="xmlName">blog</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;</span><span class="xmlName">p</span><span class="xmlDelimiter">&gt;</span>
+全く会話をしないまま１日が過ぎた。
+見た目がカタい人間にうつるからかもしれないと思い、
+馬車内で今日は兜をかぶらなかった。
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">p</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;</span><span class="xmlName">p</span><span class="xmlDelimiter">&gt;</span>
+誰もそれに気付かないようだった。
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">p</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">blog</span><span class="xmlDelimiter">&gt;</span>
+
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">content</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<figure>
+<p><a href="/assets/media/ufcpp2000/dotnet/resources/blog1.jpg"><img src="/assets/media/ufcpp2000/dotnet/resources/blog1.jpg" alt="表示結果" /></a></p>
+<figcaption>表示結果</figcaption>
+</figure>
+<p>ちなみに、ここで使った XSL スタイルシートはこんな感じ → <a href="/assets/media/ufcpp2000/dotnet/resources/main.xsl">main.xsl</a>。
+XSL “Transformation” と言うほど賢い処理はしていなくて、
+ほとんど HTML タグを素通ししてるだけ。</p>
+<p>で、以下のような3つの Web フォームを作ります。</p>
+<ol>
+<li><p>BlogLatest.aspx … クエリ文字列で「何日前か」を指定してブログを表示。</p>
+</li>
+<li><p>BlogDate.aspx … クエリ文字列で日付を指定してブログを表示。</p>
+</li>
+<li><p>BlogSelect.aspx … ページ中にドロップダウンリストやカレンダーコントロールを配置して、日付を選択してブログを表示。</p>
+</li>
+</ol>
+<p>また、これらの3つのページの共通部品として、
+XML に XSLT を掛けた物を表示するだけの Web コントロールを作ります。</p>
+<h2 id="web"><a id="sec-generated-title-3"></a> <a id="control"></a>Web コントロールの作成</h2>
+<p>Web コントロールというのは、
+asp:Button や asp:Label などのように、
+Web フォームページ中に配置する部品です。
+System.Web.UI.UserControl を継承したクラスを作ることで自作することも可能です。</p>
+<p>ここでは、
+「<a href="#spec">仕様</a>」で説明したような用途向けに、
+XML 形式のデータを読み込んで、XSLT を掛けたものを表示するコントロールを作ってみます。</p>
+<p>Web コントロール（拡張子 .ascx）の作り方は Web フォーム（.aspx）とほとんど同じです。
+違いは、&lt;%@ Page %&gt; の変わりに &lt;%@ Control %&gt; ディレクティブを使うことと、
+コードビハインド中のクラスの継承元が Page クラスから UserControl クラスに変わることです。</p>
+<p>Visual Studio を使う場合、
+ソリューションエクスプローラから、
+[追加]→[新しい項目]→[Web ユーザコントロール] を選ぶことで雛形を作ってもらえます。</p>
+<p>で、XML 表示コントロールですが、
+まず、ascx ファイル中に、XSLT 結果を表示するための &lt;div&gt; タグを配置しておきます。
+（ファイル名は ShowXml.ascx としておきます。）</p>
+<pre><code class="language-html">&lt;%@ Control Language=&quot;C#&quot; AutoEventWireup=&quot;true&quot;
+  CodeBehind=&quot;ShowXml.ascx.cs&quot; Inherits=&quot;WebsiteSample.ShowXml&quot; %&gt;
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">div</span> <span class="htmlAttributeName">runat</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;server&quot;</span> <span class="htmlAttributeName">id</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;content&quot;</span> <span class="htmlTagDelimiter">/&gt;</span></code></pre>
+<p>コードビハインド側は以下のような感じ。
+（例外処理とかはサボっています。）</p>
+<pre><code class="language-html">using System;
+using System.Web;
+using System.Xml;
+using System.Xml.Xsl;
+using System.IO;
+using System.Text;
+
+namespace WebsiteSample
+{
+  public partial class ShowXml : System.Web.UI.UserControl
+  {
+    #region プロパティ
+
+    string xmlFileName = null;
+
+    public string XmlFileName
+    {
+      get { return xmlFileName; }
+      set { xmlFileName = value; }
+    }
+
+    string xslFileName = null;
+
+    public string XslFileName
+    {
+      get { return xslFileName; }
+      set { xslFileName = value; }
+    }
+
+    #endregion
+
+    protected void Page_PreRender(object sender, EventArgs e)
+    {
+      if (this.xmlFileName == null || this.xslFileName == null
+        || !File.Exists(this.xmlFileName)
+        || !File.Exists(this.xslFileName)
+        )
+        return;
+
+      XslCompiledTransform xslt = new XslCompiledTransform();
+      xslt.Load(this.XslFileName);
+      XmlDocument xml = new XmlDocument();
+      xml.Load(this.xmlFileName);
+
+      XmlNodeReader reader = new XmlNodeReader(xml);
+      MemoryStream s = new MemoryStream();
+      XmlTextWriter writer = new XmlTextWriter(s, Encoding.UTF8);
+      xslt.Transform(reader, writer);
+
+      s.Seek(0, SeekOrigin.Begin);
+      StreamReader sr = new StreamReader(s);
+
+      string result = sr.ReadToEnd();
+      this.content.InnerHtml = result;
+
+      s.Dispose();
+    }
+  }
+}</code></pre>
+<p>XML のファイル名と XSL のファイル名を public なプロパティにしておきます。
+ShowXml コントロールを使う側では、これらのプロパティにファイル名を指定して使います。</p>
+<p>XML がらみの処理自体は、System.Xml 名前空間中のクラスを使って XML / XSLT の処理をしているだけなので、
+詳しくは System.Xml や System.Xml.Xsl あたりのヘルプを参照してください。
+XSLT 結果は、単純に &lt;div id=&quot;content&quot; /&gt; の InnerHtml として表示します。</p>
+<p>1つ注意が必要なのは、
+表示処理を行っているイベントが、
+今までよく使っていた Page_Load ではなく、
+Page_PreRender なことです。</p>
+<p>ASP.NET の処理の順番は、
+Page_Load → プロパティの値の設定 → Page_PreRender の順番になっているようで、
+Page_Load に処理を書いても、プロパティの値の設定結果が反映されません。</p>
+<p>ちなみに、ASP.NET にはデータテンプレートという、
+XML やデータベース中から取り出してきたデータを任意の形式で表示するための機構が用意されてたりするんで、
+（使い方次第ではあるけど）そちらを使ってみることも推奨。</p>
+<h2 id="web-1"><a id="sec-generated-title-4"></a> <a id="use_control"></a>Web コントロールの利用</h2>
+<p>前節で作った XML 表示コントロールを使って、
+ブログデータを表示する Web フォームを作ってみます。
+とりあえず、まず最初に、
+最新の日付のブログを表示するだけの物を作って見ます。</p>
+<p>まず、
+ブログデータや XSL ファイルですが、
+App_Data フォルダに格納する事にします。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/dotnet/resources/App_Data.png"><img src="/assets/media/ufcpp2000/dotnet/resources/App_Data.png" alt="App_Data フォルダとその中身の例" /></a></p>
+<figcaption>App_Data フォルダとその中身の例</figcaption>
+</figure>
+<p>自作した Web コントロールの使い方ですが、
+以下のようになります。</p>
+<ul>
+<li><p>&lt;%@ Register %&gt; でコントロールを登録。</p>
+</li>
+<li><p>登録したコントロールをページ中に配置。</p>
+</li>
+</ul>
+<p>自作した XML 表示コントロール（ファイル名 ShowXml.ascx）を使うなら、
+aspx ファイル中に以下のように書きます。</p>
+<pre><code class="language-html">&lt;%@ Page Language=&quot;C#&quot;
+  MasterPageFile=&quot;~/Site.Master&quot; AutoEventWireup=&quot;true&quot;
+  CodeBehind=&quot;BlogLatest.aspx.cs&quot; Inherits=&quot;WebsiteSample.BlogLatest&quot;
+  Title=&quot;日記&quot; %&gt;
+&lt;%@ Register TagPrefix=&quot;local&quot; TagName=&quot;ShowXml&quot; Src=&quot;~/ShowXml.ascx&quot; %&gt;
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">Content</span> <span class="htmlAttributeName">ID</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;Content1&quot;</span>
+  <span class="htmlAttributeName">ContentPlaceHolderID</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;ContentPlaceHolder1&quot;</span> <span class="htmlAttributeName">runat</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;server&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">div</span> <span class="htmlAttributeName">class</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;blogHead&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">Label</span> <span class="htmlAttributeName">runat</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;server&quot;</span> <span class="htmlAttributeName">ID</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;head&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">div</span><span class="htmlTagDelimiter">&gt;</span>
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">local</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">ShowXml</span> <span class="htmlAttributeName">runat</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;server&quot;</span> <span class="htmlAttributeName">ID</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;xmlContent&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">Content</span><span class="htmlTagDelimiter">&gt;</span></code></pre>
+<p>で、最新の記事を表示したいなら、
+コードビハインドファイルは以下のようにします。</p>
+<pre><code class="language-html">using System;
+using System.Web;
+using System.IO;
+using System.Text.RegularExpressions;
+
+namespace WebsiteSample
+{
+  public partial class BlogLatest : System.Web.UI.Page
+  {
+    internal static Regex yyyyMMdd =
+      new Regex(@&quot;(\d{4})(\d{2})(\d{2})\.xml&quot;);
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+      string basePath = Context.Server.MapPath(&quot;~/App_Data&quot;);
+      string[] files = Directory.GetFiles(basePath, &quot;*.xml&quot;);
+      Array.Sort(files);
+
+      string xmlFile = files[files.Length - 1];
+      string xslFile = basePath + @&quot;\main.xsl&quot;;
+
+      this.xmlContent.XmlFileName = xmlFile;
+      this.xmlContent.XslFileName = xslFile;
+
+      Match match = yyyyMMdd.Match(xmlFile);
+      if (match.Success)
+      {
+        this.head.Text = string.Format(&quot;{0}年{1}月{2}日&quot;,
+          match.Groups[1],
+          match.Groups[2].ToString().TrimStart(&#39;0&#39;),
+          match.Groups[3].ToString().TrimStart(&#39;0&#39;));
+      }
+    }
+  }
+}</code></pre>
+<p>やっていることは、
+App_Data フォルダ中から最新の日付の XML ファイルを探してきて、
+それを ShowXml コントロールの XmlFileName プロパティに渡しているだけです。
+（20070701.xml とかいう形式でデータを保存しているので、
+ファイル名でソートすればそれがそのまま日付順でのソートになる。）</p>
+<p>ついでに、日付を &lt;asp:Label ID=&quot;head&quot;&gt; 中に表示。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/dotnet/aspx/">ASP.NET</a></li><li><a href="/study/dotnet/aspx/aspx_abstract/">ASP.NET &#x6982;&#x8981;</a></li><li><a href="/study/dotnet/aspx/webapp/">Web &#x30A2;&#x30D7;&#x30EA;&#x30B1;&#x30FC;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/study/dotnet/aspx/logging/">&#x30A2;&#x30AF;&#x30BB;&#x30B9;&#x30ED;&#x30B0;&#x3092;&#x53D6;&#x308D;&#x3046;</a></li><li><a href="/study/dotnet/aspx/counter/">&#x30A2;&#x30AF;&#x30BB;&#x30B9;&#x30AB;&#x30A6;&#x30F3;&#x30BF;&#x3092;&#x4F5C;&#x308D;&#x3046;</a></li><li><a href="/study/dotnet/aspx/mailform/">&#x30E1;&#x30FC;&#x30EB;&#x30D5;&#x30A9;&#x30FC;&#x30E0;</a></li><li><a href="/study/dotnet/aspx/blog2/">&#x30D6;&#x30ED;&#x30B0;&#x8868;&#x793A;&#xFF08;&#xFF12;&#xFF09;</a></li><li><a href="/study/dotnet/aspx/blog3/">&#x30D6;&#x30ED;&#x30B0;&#x8868;&#x793A;&#xFF08;&#xFF13;&#xFF09;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

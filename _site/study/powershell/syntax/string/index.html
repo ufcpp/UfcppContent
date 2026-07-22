@@ -1,0 +1,278 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x6587;&#x5B57;&#x5217; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/powershell/syntax/string/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">文字列</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="string"></a>文字列</h2>
+<p>&quot;&quot; か '' でくくると文字列になります。</p>
+<p>&quot;&quot; の場合、中に $a などの変数が出てくると中身を展開します。
+'' の方は $ もそのまま文字として扱います。</p>
+<pre><code class="language-console">&gt;  $a = 1
+&gt;  &quot;test $a&quot;
+test 1
+&gt;  'test $a'
+test $a</code></pre>
+<p>ちなみに、&quot;&quot; の中に &quot; を、
+'' の中に ' を書きたければ、
+後述するエスケープ文字 ` （バッククオート）を使います。</p>
+<pre><code class="language-console">&gt; &quot;`&quot;test`&quot;&quot;
+&quot;test&quot;</code></pre>
+<h2 id="here"><a id="sec-generated-title-2"></a> <a id="herestring"></a>here 文字列</h2>
+<p>もう1つ、複数行にわたる文字列を定義できる
+<strong id="herestring" class="keyword">here string</strong> というものがあります。
+@&quot; と &quot;@ ではさむか、
+@' と '@ ではさみます。</p>
+<p>@&quot; &quot;@ と @' '@ の違いは、&quot;&quot;, '' と同様、変数を展開するかどうかです。
+また、@&quot; &quot;@ と @' '@ の中には &quot; や ' を書くこともできます。</p>
+<pre><code class="language-console">&gt;  $a = @&quot;
+&gt;  this is example of here string
+&gt;  $a
+&gt;  &quot;test&quot;
+&gt;  'test'
+&gt;  &quot;@
+&gt;  
+&gt;  $a
+this is example of here string
+1
+&quot;test&quot;
+'test'</code></pre>
+<pre><code class="language-console">&gt;  $a = @'
+&gt;  this is example of here string
+&gt;  $a
+&gt;  &quot;test&quot;
+&gt;  'test'
+&gt;  '@
+&gt;  
+&gt;  $a
+this is example of here string
+$a
+&quot;test&quot;
+'test'</code></pre>
+<h2 id="section-2"><a id="sec-generated-title-3"></a> <a id="escape"></a>エスケープシーケンス</h2>
+<p>PowerShell では、
+タブや改行などの特殊な文字を表すためのエスケープ（後ろに続く文字に特殊な意味を持たせるもの）に
+`（バッククォート、逆アポストロフィ）を使います。</p>
+<p>` は以下の3つの意味で使います。</p>
+<ol>
+<li><p>行末に書くと、その行と次の行を改行なしで繋いだのと同じ意味になる。</p>
+</li>
+<li><p>$, &amp; ` &quot; ' などの特殊な意味を持つ記号の前に書くと、これらの記号をそのまま文字として扱う。</p>
+</li>
+<li><p>` に続けて以下の表にある文字を書くと、特殊な意味を持つエスケープシーケンスになる。</p>
+</li>
+</ol>
+<table summary="エスケープシーケンス">
+	<caption>
+		エスケープシーケンス
+	</caption>
+	<tr>
+		<th>エスケープ文字</th>
+		<th>意味</th>
+	</tr>
+	<tr>
+		<td><p>`0</p></td>
+		<td><p>(null)</p></td>
+	</tr>
+	<tr>
+		<td><p>`a</p></td>
+		<td><p>(alert)</p></td>
+	</tr>
+	<tr>
+		<td><p>`b</p></td>
+		<td><p>(backspace)</p></td>
+	</tr>
+	<tr>
+		<td><p>`f</p></td>
+		<td><p>(form feed)</p></td>
+	</tr>
+	<tr>
+		<td><p>`n</p></td>
+		<td><p>(new line)</p></td>
+	</tr>
+	<tr>
+		<td><p>`r</p></td>
+		<td><p>(carriage return)</p></td>
+	</tr>
+	<tr>
+		<td><p>`t</p></td>
+		<td><p>(tab)</p></td>
+	</tr>
+	<tr>
+		<td><p>`v</p></td>
+		<td><p>(vertical quote)</p></td>
+	</tr>
+</table>
+<p>C 言語とかみたいにエスケープに \ 記号を使わないのは、
+多分、Windows のファイルシステムが \ をパスの区切りに使うからだと思います。</p>
+<h2 id="section-3"><a id="sec-generated-title-4"></a> <a id="string_add"></a>結合・反復</h2>
+<p>文字列は、+ 演算子で結合、* 演算子で反復ができます。</p>
+<pre><code class="language-console">&gt;  $a = &quot;string 1&quot; + &quot;string 2&quot;
+&gt;  $a.length
+16
+&gt;  $a
+string 1string 2</code></pre>
+<pre><code class="language-console">&gt;  $a = &quot;string&quot; * 3
+&gt;  $a.length
+18
+&gt;  $a
+stringstringstring</code></pre>
+<h2 id="section-4"><a id="sec-generated-title-5"></a> <a id="string_comp"></a>比較・置換</h2>
+<p>2つの文字列を比較する演算子として、
+以下のようなものがあります。</p>
+<table summary="文字列の一致比較">
+	<caption>
+		文字列の一致比較
+	</caption>
+	<tr>
+		<th colspan="2">演算子</th>
+		<th rowspan="2">説明</th>
+	</tr>
+	<tr>
+		<th>一致</th>
+		<th>不一致</th>
+	</tr>
+	<tr>
+		<td><p>-eq</p></td>
+		<td><p>-ne</p></td>
+		<td><p>完全一致比較</p></td>
+	</tr>
+	<tr>
+		<td><p>-like</p></td>
+		<td><p>-notlike</p></td>
+		<td><p>ワイルドカード対応の比較</p></td>
+	</tr>
+	<tr>
+		<td><p>-match</p></td>
+		<td><p>-notmatck</p></td>
+		<td><p>正規表現対応の比較</p></td>
+	</tr>
+</table>
+<table summary="文字列の辞書式順序比較">
+	<caption>
+		文字列の辞書式順序比較
+	</caption>
+	<tr>
+		<th>演算子</th>
+		<th>説明</th>
+	</tr>
+	<tr>
+		<td><p>-lt</p></td>
+		<td><p>＜</p></td>
+	</tr>
+	<tr>
+		<td><p>-gt</p></td>
+		<td><p>＞</p></td>
+	</tr>
+	<tr>
+		<td><p>-le</p></td>
+		<td><p>≦</p></td>
+	</tr>
+	<tr>
+		<td><p>-ge</p></td>
+		<td><p>≧</p></td>
+	</tr>
+</table>
+<table summary="文字列の置換">
+	<caption>
+		文字列の置換
+	</caption>
+	<tr>
+		<th>演算子</th>
+		<th>説明</th>
+	</tr>
+	<tr>
+		<td><p>-replace</p></td>
+		<td><p>置換（正規表現対応）</p></td>
+	</tr>
+</table>
+<p>例えば、Get-Location で取得したファイル一覧の中から特定の名前のファイルを探したければ、
+以下のようにします。</p>
+<pre><code class="language-console">&gt;  ls C:\Windows | %{$_.Name} | ?{$_ -eq &quot;web&quot;}
+Web
+&gt;  ls C:\Windows | %{$_.Name} | ?{$_ -like &quot;we*&quot;}
+Web
+&gt;  ls C:\Windows | %{$_.Name} | ?{$_ -match &quot;^we.*&quot;}
+Web</code></pre>
+<p>置換は、
+「対象の文字列 -replace 置換したい部分, 置換後の文字列」
+という書式で行います。
+（3項演算に見えなくもないですが、
+-replace の右オペランドが配列なだけ。）</p>
+<pre><code class="language-console">&gt;  $a = &quot;Windows の新しいコマンドライン シェルです。&quot;
+&gt;  $a -replace &quot;です。&quot;, &quot;なのですよ。&quot;
+Windows の新しいコマンドライン シェルなのですよ。</code></pre>
+<p>正規表現の書き方は、
+.NET Framework の System.Text.RegularExpressions.Regex クラスのものと同じなので、
+詳しくは .NET Framework のヘルプを参照。</p>
+<p>ちなみに、PowerShell では、
+比較も置換もすべてアルファベットの大文字・小文字の違いを無視します（case insensitive）。
+で、実は、無視する（case insensitive）・無視しない（case sensitive）を明示的に指定した演算子も用意されています。
+-eq に対して、insensitive 版の -ieq と sensitive 版の -ceq というものがあります。
+同様に、-lt なら -ilt -clt、
+-like なら -ilike -clike というように、
+頭に i を付ければ case insensitive、
+c を付ければ case sensitive になります。</p>
+<pre><code class="language-console">&gt;  &quot;test&quot; -eq &quot;Test&quot;
+True
+&gt;  &quot;test&quot; -ieq &quot;Test&quot;
+True
+&gt;  &quot;test&quot; -ceq &quot;Test&quot;
+False</code></pre>
+<p>（文字列以外に対しても使えるみたい。
+意味ないけど。）</p>
+<h2 id="section-5"><a id="sec-generated-title-6"></a> <a id="format"></a>フォーマット演算子</h2>
+<p>あともう1つ、フォーマット演算子 -f というものもあります。
+「書式文字列 -f オブジェクト1, オブジェクト2, ...」という書式で使います。
+書式文字列の書き方は、
+System.String.Format メソッドのものと同じです。
+（詳しくは .NET Framework のヘルプを参照。）</p>
+<pre><code class="language-console">&gt;  &quot;{0:00}:{1:00}:{2:00}&quot; -f 1,3,12
+01:03:12
+&gt;  &quot;|{0,8}|&quot; -f 128
+|     128|</code></pre>
+<h2 id="section-6"><a id="sec-generated-title-7"></a> <a id="expression"></a>式評価演算子</h2>
+<p>文字列に対する演算子ではないんですが、
+式評価演算子 $ というものがあります。
+まあ、要するに、変数名の頭についてる $ です。</p>
+<p>$a とか <span class="math">\(x というように、\)</span> に続けてアルファベットを書くと変数になるんですが、
+$(式) と書くと () の中身を式として計算します。</p>
+<p>まあ、たいていの文脈では、$ を付けなくても () だけで中身を式扱いするので、
+そんなに使う必要もありません。</p>
+<pre><code class="language-console">&gt;  echo (1 + 1)
+2
+&gt;  echo $(1 + 1)
+2</code></pre>
+<p>まあ、使えそうな場面は2つ。
+1つは、
+$() というように () の中身を空っぽにすると null 値が得られる。
+() だけだと「括弧の中身がない」って言って怒られますが、
+$() なら OK。</p>
+<pre><code class="language-console">&gt;  $() -eq $null
+True</code></pre>
+<p>で、もう1つは、&quot;&quot; の中でも式を使えること。
+&quot;&quot; でくくった文字列は、
+変数を展開するわけですが、
+変数同様、$() の中身も式の計算結果に展開されます。</p>
+<pre><code class="language-console">&gt;  &quot;1 + 1 = $(1 + 1)&quot;
+1 + 1 = 2</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/powershell/syntax/">PowerShel &#x306E;&#x69CB;&#x6587;</a></li><li><a href="/study/powershell/syntax/basic/">&#x57FA;&#x790E;&#x77E5;&#x8B58;</a></li><li><a href="/study/powershell/syntax/variable/">&#x5909;&#x6570;</a></li><li><a href="/study/powershell/syntax/dotnet/">.NET Framework &#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;</a></li><li><a href="/study/powershell/syntax/valuetype/">&#x5024;&#x578B;</a></li><li><a href="/study/powershell/syntax/array/">&#x914D;&#x5217;</a></li><li><a href="/study/powershell/syntax/xml/">XML</a></li><li><a href="/study/powershell/syntax/flow/">&#x5236;&#x5FA1;&#x69CB;&#x6587;</a></li><li><a href="/study/powershell/syntax/function/">&#x95A2;&#x6570;&#x3001;&#x30D5;&#x30A3;&#x30EB;&#x30BF;&#x3001;&#x30B9;&#x30AF;&#x30EA;&#x30D7;&#x30C8;</a></li><li><a href="/study/powershell/syntax/exception/">&#x4F8B;&#x5916;&#x51E6;&#x7406;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

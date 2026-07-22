@@ -1,0 +1,334 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>dynamic | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/dynamic/sp4_dynamic/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="dynamic">dynamic</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<h5 class="version version4">Ver. 4.0</h5>
+<p>.NET Framework 4.0 では、クラスライブラリに Dynamic Language Runtime （DLR）が追加されました。
+DLR は、.NET Framework 上で Python や Ruby のような動的言語を動かすためのライブラリで、
+これに伴い、C# 4.0 にも、動的言語との連携を強化するための仕組みが追加されました。</p>
+<p>C# 4.0 で導入された、動的言語との連携の仕組みの1つが動的型付け変数（dynamic キーワード）です。
+動的型付け変数を使うことで、動的な（コンパイル時にメンバー情報がわからない型の）メンバーアクセスが可能になります。</p>
+<h2 id="section-1"><a id="sec-generated-title-2"></a> <a id="dynamic"></a>動的型付け変数</h2>
+<p>dynamic キーワードを使うことで、動的型付け変数を定義できます。
+使い方としては、<code>dynamic x;</code> というように、変数宣言の型のところに dynamic キーワードを入れます。
+（「dynamic 型」という型が C# に追加されたと考えて OK。）</p>
+<p>使い方としては var （C# 3.0 で追加された型推論）と似ています。
+しかしながら、あくまで型推論である var と違って、dynamic で宣言した変数の型は「動的型」になります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> sx = <span class="number">1</span>;     <span class="comment">// sx の型は int 型</span>
+<span class="keyword">dynamic</span> dx = <span class="number">1</span>; <span class="comment">// dx の型は dynamic 型</span></code></pre>
+<p>通常、C# （3.0 以前）のような静的型付け言語では、
+オブジェクトがどういう名前のプロパティやメソッドを持っているかをコンパイル時に知っておく必要があります。</p>
+<p>例えば、以下のようなコードを書くと、
+「'object' に 'X' の定義が含まれていません」というようなエラーが生じます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">object</span> GetX(<span class="keyword">object</span> obj)
+{
+  <span class="keyword">return</span> obj.X;
+}</code></pre>
+<p>実際に obj 変数に何の型が入っているかには関係なく、キャストで型を変えない限り、
+obj は object 型のメンバーにしかアクセスできません。</p>
+<p>一方、C# 4.0 では、dynamic 型を使うことで、以下のようなコードが書けるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">dynamic</span> GetX(<span class="keyword">dynamic</span> obj)
+{
+  <span class="keyword">return</span> obj.X;
+}</code></pre>
+<p>obj が本当に X という名前のプロパティを持っているかどうかは、
+コンパイル時ではなく、実行時に調べられます。</p>
+<h2 id="dynamic-1"><a id="sec-generated-title-3"></a> <a id="how"></a>dynamic の仕組み</h2>
+<p>dynamic の機能は、動的コード生成を使って実現されています（プログラム実行時に新たにコード生成される）。
+dynamic 型の変数に格納されたインスタンスの型に応じて、以下のいずれかのコードが生成されます。</p>
+<ul>
+<li><p>IDynamicObject インターフェースを実装した型の場合、TryGetMember などのメソッド呼び出し</p>
+</li>
+<li><p>COM オブジェクトの場合、COM Interop コード</p>
+</li>
+<li><p>その他の場合、「<a href="/study/csharp/dynamic/sp_reflection/#reflection">リフレクション</a>」を使ってメンバーを持っているかどうか調べて、持っているならそのメンバーにアクセスするコードを生成。</p>
+</li>
+</ul>
+<p>このような動的コード生成は、.NET Framework 4.0 から追加された CallSite というクラスを使って行われています。
+詳細については、「<a href="/study/csharp/dynamic/sp4_callsite/">dynamic の内部実装</a>」にて説明します。</p>
+<p>C# の dynamic は、「型が動的」というよりは、「静的な型に対する動的コード生成」と言った方が正確です。
+動的に生成したコードはキャッシュされていて、2度目の呼び出しからはかなり効率よく実行されます。
+このような手法はインラインメソッドキャッシュ（inline method cache）と呼ばれています。</p>
+<h2 id="dynamic-2"><a id="sec-generated-title-4"></a> <a id="what"></a>dynamic で何ができるか</h2>
+<p>さて、じゃあ、この dynamic を使っていったい何ができるんでしょうか。
+先にキーワードだけ挙げると以下のような感じです。</p>
+<ul>
+<li><p>「<a href="#late_binding">遅延バインド</a>」（late binding）</p>
+<ul>
+<li>特に、DLR との連携で有効です →「<a href="#dlr">DLR 連携</a>」</li>
+</ul>
+</li>
+<li><p>「<a href="#ducktype">ダックタイピング</a>」（duck typing）</p>
+<ul>
+<li>特に、XML や JSON などスキーマの緩いデータとの連携で有効です →「<a href="#data">データ連携</a>」</li>
+</ul>
+</li>
+<li><p>「<a href="#static">ジェネリクス利用時の静的メソッド呼び出し</a>」</p>
+</li>
+<li><p>「<a href="#multiple_dispatch">多重ディスパッチ</a>」</p>
+</li>
+</ul>
+<h2 id="section-2"><a id="sec-generated-title-5"></a> <a id="late_binding"></a>遅延バインド</h2>
+<p>DLL や COM 内のクラス・関数を（必要になったときに、必要な分だけ）実行時に読み込むことを遅延バインド（late binding）と呼びます。</p>
+<p>通常、C# では、ライブラリ（DLL）を利用するには、コンパイル時に「アセンブリの参照」というのをします。
+（DLL 中でどういう型が定義されているかを参照する。）
+参照した DLL はプログラム本体の起動時に同時にロードされます。
+（このような動作をアーリーバインド（early binding）と呼びます。）</p>
+<p>例えば、以下のようなライブラリコード（lib.cs）を書いたとします。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> Calculator
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> Add(<span class="keyword">int</span> x, <span class="keyword">int</span> y) { <span class="keyword">return</span> x + y; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Sub(<span class="keyword">int</span> x, <span class="keyword">int</span> y) { <span class="keyword">return</span> x - y; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Mul(<span class="keyword">int</span> x, <span class="keyword">int</span> y) { <span class="keyword">return</span> x * y; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Div(<span class="keyword">int</span> x, <span class="keyword">int</span> y) { <span class="keyword">return</span> x / y; }
+}</code></pre>
+<pre><code class="language-console">&gt; csc /t:library lib.cs</code></pre>
+<p>このライブラリを使って、以下のようなプログラム（sample.cs）を作ったとします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+    {
+        <span class="keyword">var</span> calc = <span class="keyword">new</span> Calculator();
+        Console.WriteLine(calc.Add(<span class="number">1</span>, <span class="number">2</span>));
+    }
+}</code></pre>
+<p>このコードをコンパイルするためには、以下のように、/r オプションで DLL の参照を行う必要があります。</p>
+<pre><code class="language-console">&gt; csc /t:exe /r:lib.dll sample.cs</code></pre>
+<p>これに対して、遅延バインドというのは、必要になるまで DLL をロードしないことを言います。
+3.0 以前の C# では、遅延バインドをしようと思うと、「<a href="/study/csharp/dynamic/sp_reflection/#reflection">リフレクション</a>」を使って、
+以下のようなまどろっこしい書き方が必要でした。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Reflection;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+    {
+        <span class="keyword">var</span> lib = Assembly.LoadWithPartialName(<span class="string">&quot;lib&quot;</span>);
+        <span class="keyword">var</span> type = lib.GetType(<span class="string">&quot;Calculator&quot;</span>);
+        <span class="keyword">var</span> calc = Activator.CreateInstance(type);
+
+        <span class="keyword">var</span> add = type.GetMethod(<span class="string">&quot;Add&quot;</span>);
+        Console.WriteLine(add.Invoke(calc, <span class="keyword">new</span> <span class="keyword">object</span>[] { <span class="number">1</span>, <span class="number">2</span> }));
+    }
+}</code></pre>
+<p>こうすると、コンパイル時に lib.dll を参照する必要がなく、
+以下のようにしてコンパイル可能です。</p>
+<pre><code class="language-console">&gt; csc /t:exe sample.cs</code></pre>
+<p>（ただし、実行時に、プログラム本体と同じフォルダに lib.dll が置いてある必要があります。）</p>
+<p>3.0 までのリフレクションを使った書き方に対して、
+C# 4.0 の dynamic を使うと、add.Invoke の部分を簡素化できて、以下のように書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Reflection;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+    {
+        <span class="keyword">var</span> lib = Assembly.LoadWithPartialName(<span class="string">&quot;lib&quot;</span>);
+        <span class="keyword">var</span> type = lib.GetType(<span class="string">&quot;Calculator&quot;</span>);
+        <span class="keyword">dynamic</span> calc = Activator.CreateInstance(type);
+
+        Console.WriteLine(calc.Add(<span class="number">1</span>, <span class="number">2</span>));
+    }
+}</code></pre>
+<h2 id="dlr"><a id="sec-generated-title-6"></a> <a id="dlr"></a>DLR 連携</h2>
+<p>遅延バインドは、動的言語との連携で特に威力を発揮します。
+.NET Framework 4 では、動的言語との連携の仕組みとして、DLR（Dynamic Language Runtime）というライブラリが追加されました。</p>
+<p>dynamic 型を使うことで、IronPython などの、DLR 上に実装されたスクリプト言語との連携がやりやすくなります。
+以下、Visual Studio 2010 付属のサンプルに含まれる IronPython との連携サンプルから抜粋。</p>
+<p>例えば、以下のような Python コードを書いて、
+helloworld.py という名前で保存したとします。</p>
+<pre><code class="language-python"><span class="keyword">def</span> welcome(name):
+	<span class="keyword">return</span> <span class="string">&quot;Hello &#39;&quot;</span> + name + <span class="string">&quot;&#39; from IronPython&quot;</span>      </code></pre>
+<p>この Python コードを呼び出すための C# コードは以下のようになります。</p>
+<pre><code class="language-csharp">ScriptRuntime py = Python.CreateRuntime();
+<span class="keyword">dynamic</span> helloworld = py.UseFile(<span class="string">&quot;helloworld.py&quot;</span>);
+
+<span class="keyword">var</span> ret = (<span class="keyword">string</span>)helloworld.welcome(<span class="string">&quot;ufcpp&quot;</span>);
+
+Console.WriteLine(ret);</code></pre>
+<pre><code class="language-console">Hello 'ufcpp' from IronPython</code></pre>
+<p>このコードの実行には、IronPython が必要です。
+IronPython をインストールした上で、IronPython.dll などの DLL を参照する必要があります。
+（
+現時点（2009/6/3）では、
+<a href="http://ironpython.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=27320">IronPython for .NET 4.0</a>
+っていうバージョンの IronPython をインストールしないと動きません。
+）</p>
+<p>Python の仕様では、スクリプトファイルが無名のクラスのような扱いになるみたいで、
+UseFile(&quot;helloworld.py&quot;) の実行結果は welcom というメソッドを1個持ったオブジェクトを返します。</p>
+<h2 id="section-3"><a id="sec-generated-title-7"></a> <a id="ducktype"></a>ダックタイピング</h2>
+<p>同じ名前のメンバーを持っている型ならすべて同列に扱うことを「<a href="/study/csharp/appendix/ap_term/#ducktype">ダックタイピング</a>」と呼びます。
+（「<a href="/study/csharp/oop/oo_interface/#interface">インターフェース</a>」等を実装している必要もなく、単純にメンバー名の一致性だけを見ます。）</p>
+<p>通常、C# のような静的型付け言語で、
+「このメソッドの引数はこういう名前のメンバーを持っていて欲しい」というのを指定するにはインターフェースを使います。
+C# 3.0 以前なら、
+「何でもいいから X と Y って名前のプロパティを持ってる型なら全部受け付けたい」って時でも、
+わざわざ IPoint なり IVector なり、インターフェースを定義して、それを継承したクラスを作る必要がありました。</p>
+<p>これに対して、C# 4.0 では、dynamic 型を使うことでダックタイピングが可能になりました。
+すなわち、型やインターフェースを問わず、
+同じ名前のプロパティやメソッドを持っているなら何でも同列に扱えます。</p>
+<p>例えば、以下のような構造体を用意します。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> Point2D
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X, Y;
+
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString()
+    {
+        <span class="keyword">return</span> <span class="keyword">string</span>.Format(<span class="string">&quot;2D: ({0}, {1})&quot;</span>, X, Y);
+    }
+}
+
+<span class="keyword">struct</span> Point3D
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X, Y, Z;
+
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString()
+    {
+        <span class="keyword">return</span> <span class="keyword">string</span>.Format(<span class="string">&quot;3D: ({0}, {1}, {2})&quot;</span>, X, Y, Z);
+    }
+}</code></pre>
+<p X="1," Y="2">プロパティ Z は Point3D しか持っていませんが、
+X と Y なら両方のクラスが持っています。
+また、<code>new </code> というように匿名型を作っても、
+同様に X, Y というプロパティを持つオブジェクトが作れます。</p>
+<p>ということで、これらの型を使って以下のようなことができます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+    {
+        Console.WriteLine(Sum(<span class="keyword">new</span> Point2D { X = <span class="number">1</span>, Y = <span class="number">2</span> }));
+        Console.WriteLine(Sum(<span class="keyword">new</span> Point3D { X = <span class="number">1</span>, Y = <span class="number">2</span>, Z = <span class="number">3</span> }));
+        Console.WriteLine(Sum(<span class="keyword">new</span> { X = <span class="number">1</span>, Y = <span class="number">2</span> }));
+    }
+
+    <span class="keyword">static</span> <span class="keyword">int</span> Sum(<span class="keyword">dynamic</span> obj)
+    {
+        <span class="keyword">return</span> (<span class="keyword">int</span>)(obj.X + obj.Y);
+    }
+}</code></pre>
+<pre><code class="language-console">3
+3
+3</code></pre>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+    {
+        Console.WriteLine(Convert(<span class="keyword">new</span> Point3D { X = <span class="number">1</span>, Y = <span class="number">2</span>, Z = <span class="number">3</span> }));
+        Console.WriteLine(Convert(<span class="keyword">new</span> { X = <span class="number">1</span>, Y = <span class="number">2</span> }));
+        Console.WriteLine(Convert(<span class="keyword">new</span> { X = <span class="number">1</span>, Y = <span class="number">2</span>, Z = <span class="number">3</span> }));
+    }
+
+    <span class="keyword">static</span> Point2D Convert(<span class="keyword">dynamic</span> obj)
+    {
+        <span class="keyword">return</span> <span class="keyword">new</span> Point2D
+        {
+            X = obj.X,
+            Y = obj.Y,
+        };
+    }
+}</code></pre>
+<pre><code class="language-console">2D: (1, 2)
+2D: (1, 2)
+2D: (1, 2)</code></pre>
+<h2 id="section-4"><a id="sec-generated-title-8"></a> <a id="data"></a>データ連携</h2>
+<p>静的型付け言語では、事前に型の決まっていない（スキーマの緩い）データへのアクセスは苦手です。
+この手のデータへのアクセスはダックタイピング的にならざるを得ません。</p>
+<p>例えば、スキーマが特に決まっていない XML や JSON など読み書きが少々面倒だったりします。
+XML にアクセスするのにも、以下のようなコードが必要になります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> doc = XDocument.Parse(<span class="stringCSharpVerbatim">@&quot;
+&lt;Point&gt;
+    &lt;X&gt;1&lt;/X&gt;
+    &lt;Y&gt;2&lt;/Y&gt;
+&lt;/Point&gt;
+&quot;</span>);
+
+Console.WriteLine(doc.Element(<span class="string">&quot;Point&quot;</span>).Element(<span class="string">&quot;X&quot;</span>).Value);
+Console.WriteLine(doc.Element(<span class="string">&quot;Point&quot;</span>).Element(<span class="string">&quot;Y&quot;</span>).Value);</code></pre>
+<p>可能なら <code>doc.Point.X</code> というような形式で要素にアクセスしたいところですが、
+C# 3.0 以前ではできないことでした。</p>
+<p>せいぜい、「<a href="/study/csharp/oop/oo_indexer/#indexer">インデクサー</a>」を使って
+<code>doc[&quot;Point&quot;][&quot;X&quot;]</code> と書けるようにすることはできますが、
+[ とか &quot; とかの入力は意外と手間で嫌になります
+（少なくとも僕は [ とか &quot; をフォームポジション崩さずにタイピングできないです。）</p>
+<p>dynamic を使うと、
+（IDynamicObject インターフェースを継承したクラスを作れば、）
+ダックタイピング的に XML の要素にアクセスすることも可能です。
+例えば、以下のようなクラスを1つ用意すれば、<code>doc.X</code> という書き方が可能になります。</p>
+<p>*
+<a href="https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/DynamicXml.cs">DynamicXml.cs</a></p>
+<p>例えば、上述のコードは以下のような書き直すことができます。</p>
+<pre><code class="language-csharp"><span class="keyword">dynamic</span> doc = <span class="keyword">new</span> DynamicXml(XDocument.Parse(<span class="stringCSharpVerbatim">@&quot;
+&lt;Point&gt;
+    &lt;X&gt;1&lt;/X&gt;
+    &lt;Y&gt;2&lt;/Y&gt;
+&lt;/Point&gt;
+&quot;</span>));
+
+Console.WriteLine(doc.X);
+Console.WriteLine(doc.Y);</code></pre>
+<p>参考：</p>
+<ul>
+<li><p><a href="http://tore.vestues.no/2009/01/05/creating-a-dynamic-xml-reader-with-c-40/">Creating a dynamic xml reader with C# 4.0</a></p>
+</li>
+<li><p><a href="http://blogs.msdn.com/curth/archive/2009/05/23/dynamicdatatable-part-1.aspx">DynamicDataTable</a></p>
+</li>
+</ul>
+<h2 id="section-5"><a id="sec-generated-title-9"></a> <a id="static"></a>ジェネリクス利用時の静的メソッド呼び出し</h2>
+<p>C# の「<a href="/study/csharp/oop/sp2_generics/#generics">ジェネリック</a>」は、メソッドやプロパティの呼び出しをインターフェースによって行います。
+「<a href="/study/csharp/sample/sm_genericop/">[サンプル] ジェネリックな複素数型</a>」でも書いていますが、
+それで何が問題になるかというと、静的メソッド（特に演算子）が呼べないこと。
+例えば、以下のようなコードはどうあがいても実現できません。</p>
+<pre><code class="language-csharp">T Sum T (IEnumerable&lt;T&gt; list)
+{
+    T sum = <span class="keyword">default</span>(T);
+    <span class="keyword">foreach</span>(<span class="keyword">var</span> x <span class="keyword">in</span> list)
+    sum += x; <span class="comment">// ジェネリック型に対して + は使えない。</span>
+    <span class="keyword">return</span> sum;
+}</code></pre>
+<p>で、少しキャストとかが必要になりますが、
+dynamic を使うと一応、静的メソッド呼び出しが可能になります。</p>
+<pre><code class="language-csharp">T Sum T (IEnumerable&lt;T&gt; list)
+{
+    <span class="keyword">dynamic</span> sum = <span class="keyword">default</span>(T);
+    <span class="keyword">foreach</span>(<span class="keyword">var</span> x <span class="keyword">in</span> list)
+    sum += x; <span class="comment">// ジェネリック型に対して + は使えないけど、1回 dynamic 型に代入すればできる。</span>
+    <span class="keyword">return</span> (T)sum;
+}</code></pre>
+<p>ただし、dynamic の仕組み上、普通の + 演算子呼び出しと比べると少しパフォーマンスが悪いので、
+パフォーマンスが要求される場面での利用には注意が必要です。</p>
+<h2 id="section-6"><a id="sec-generated-title-10"></a> <a id="multiple_dispatch"></a>多重ディスパッチ</h2>
+<p>複数のインスタンスの動的な型情報に基づいて実際に呼び出すメソッドを切り替えることを多重ディスパッチ（multiple dispatch）といいます。
+これは要するに、「<a href="/study/csharp/oop/oo_polymorphism/#virtual_method">仮想メソッド</a>」 の複数インスタンス版といえます。</p>
+<p>dynamic を用いると、多重ディスパッチが割と簡単に実現可能です。
+詳しくは「<a href="/study/csharp/dynamic/sp4_multipledispatch/">[雑記] 多重ディスパッチ</a>」で解説しています。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/dynamic/">&#x52D5;&#x7684;&#x306A;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/dynamic/sp_reflection/">&#x5B9F;&#x884C;&#x6642;&#x578B;&#x60C5;&#x5831;</a></li><li><a href="/study/csharp/dynamic/sp_attribute/">&#x5C5E;&#x6027;</a></li><li><a href="/study/csharp/dynamic/sp3_expression/">&#x5F0F;&#x6728;&#xFF08;Expression Trees&#xFF09;</a></li><li><a href="/study/csharp/dynamic/sp4_callsite/">dynamic &#x306E;&#x5185;&#x90E8;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/dynamic/misc_dynamic/">[&#x96D1;&#x8A18;] &#x52D5;&#x7684;&#x30B3;&#x30FC;&#x30C9;&#x751F;&#x6210;&#x306E;&#x30D1;&#x30D5;&#x30A9;&#x30FC;&#x30DE;&#x30F3;&#x30B9;</a></li><li><a href="/study/csharp/dynamic/dyn_usage/">[&#x96D1;&#x8A18;]&#x52D5;&#x7684;&#x306A;&#x51E6;&#x7406;&#x306E;&#x4F7F;&#x3044;&#x65B9;</a></li><li><a href="/study/csharp/dynamic/sp4_multipledispatch/">[&#x96D1;&#x8A18;] &#x591A;&#x91CD;&#x30C7;&#x30A3;&#x30B9;&#x30D1;&#x30C3;&#x30C1;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

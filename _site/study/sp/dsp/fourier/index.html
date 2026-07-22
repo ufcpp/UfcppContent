@@ -1,0 +1,462 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D5;&#x30FC;&#x30EA;&#x30A8;&#x5909;&#x63DB; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/sp/dsp/fourier/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">フーリエ変換</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>「<a href="/study/sp/dsp/fourierseries/#series">フーリエ級数展開</a>」では、
+周期性を持つ関数はフーリエ級数に展開出来るという話をしてきました。
+ここでは、非周期関数を、「関数の周期<span class="math">T</span>を<span class="math">T→∞</span>としたものである」とみなすことで、
+フーリエ級数展開を非周期関数にも適用することを考えてみます。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="transform"></a>フーリエ変換</h2>
+<p>まず、<span class="math">ω＝<table class="frac" summary="fraction"><tr><td class="num">2πn</td></tr><tr><td>T</td></tr></table></span>をいう変数を定義します。
+変数<span class="math">ω</span>は、フーリエ級数中では<span class="math"><span class="normal">sin</span>ωt, <span class="normal">cos</span>ωt, <span class="normal">exp</span>iωt</span>というように、正弦波中で変数<span class="math">t</span>に掛かるため、<strong id="afreq" class="keyword">角周波数</strong>と呼ばれます。
+角周波数<span class="math">ω</span>は、<span class="math">T→∞</span>としたとき、実数になります。</p>
+<p>また、<span class="math">Δω＝ω/n＝<table class="frac" summary="fraction"><tr><td class="num">2π</td></tr><tr><td>T</td></tr></table></span>と置き、
+フーリエ級数展開の式を以下のように書き換えます。</p>
+<div class="math">
+T c<sub>n</sub> ＝ <span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> T/2</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－T/2</td></tr></table> f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>－iωt<span class="paren" style="font-size:1em;">)</span><span class="normal">d</span>t
+</div><div class="math">
+f(t) ＝ 
+<table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>2π</td></tr></table><table class="sigma" summary="sum"><tr><td class="sigmasub">∞</td></tr><tr><td class="sigma">∑</td></tr><tr><td class="sigmasub">n=－∞</td></tr></table>
+T c<sub>n</sub><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span> iωt<span class="paren" style="font-size:1em;">)</span>Δω
+</div>
+ここで、<span class="math">F<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span> ＝ <table class="frac" summary="fraction"><tr><td class="num">T c<sub>n</sub></td></tr><tr><td>2π</td></tr></table></span>と置き、<span class="math">T→∞</span>で極限をとることで、以下の式が得られます。
+<em>
+      <div class="math">
+F<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span> ＝ <table class="sigma" summary="limitation"><tr><td><span class="normal">lim</span></td></tr><tr><td class="sigmasub">T→∞</td></tr></table><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> T/2</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－T/2</td></tr></table> f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>－iωt<span class="paren" style="font-size:1em;">)</span><span class="normal">d</span>t ＝
+<span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table> f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>－iωt<span class="paren" style="font-size:1em;">)</span><span class="normal">d</span>t
+</div>
+      <div class="math">
+f(t) ＝ <table class="sigma" summary="limitation"><tr><td><span class="normal">lim</span></td></tr><tr><td class="sigmasub">Δω→0</td></tr></table><table class="sigma" summary="sum"><tr><td class="sigmasub">∞</td></tr><tr><td class="sigma">∑</td></tr><tr><td class="sigmasub">n=－∞</td></tr></table><table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>2π</td></tr></table>
+F<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span> iωt<span class="paren" style="font-size:1em;">)</span>Δω ＝
+<table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>2π</td></tr></table><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table> F<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>iωt<span class="paren" style="font-size:1em;">)</span><span class="normal">d</span>ω
+</div>
+    </em>
+この式は、
+角周波数<span class="math">ω</span>の変わりに、<strong id="freq" class="keyword">周波数</strong><span class="math">f ＝ <table class="frac" summary="fraction"><tr><td class="num">ω</td></tr><tr><td>2π</td></tr></table> ＝ <table class="frac" summary="fraction"><tr><td class="num">n</td></tr><tr><td>T</td></tr></table></span>　（この変数はフーリエ級数中では<span class="math"><span class="normal">sin</span>2πft</span>という位置に現れる）を用いて以下のように表す場合もあります。
+<div class="math">
+X<span class="paren" style="font-size:em;">(</span>f<span class="paren" style="font-size:em;">)</span> ＝
+<span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table> f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>－i2πft<span class="paren" style="font-size:1em;">)</span><span class="normal">d</span>t
+</div><div class="math">
+x(t) ＝
+<span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table> X<span class="paren" style="font-size:em;">(</span>f<span class="paren" style="font-size:em;">)</span><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>i2πft<span class="paren" style="font-size:1em;">)</span><span class="normal">d</span>f
+</div>
+（周波数の<span class="math">f</span>と混同しないように、関数を<span class="math">x</span>で表しています。）
+<p>このようにして得られた、連続関数→連続関数の変換を<strong id="f-trans" class="keyword">フーリエ変換</strong>と呼びます。
+<span class="math">f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span></span>から<span class="math">F<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></span>を得る変換を<em>順変換</em>（単に“変換”ということも）、
+<span class="math">F<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></span>から<span class="math">f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span></span>に戻す変換を<em>逆変換</em>と呼びます。
+式から見て取れる通り、フーリエ変換は指数関数の中の符号と定数倍を除いて、順変換と逆変換の式がまったく同じになります。</p>
+<p>フーリエ変換の結果得られた関数<span class="math">F<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></span>（または<span class="math">X<span class="paren" style="font-size:em;">(</span>f<span class="paren" style="font-size:em;">)</span></span>）を<strong id="fdomain" class="keyword">周波数領域</strong>表現と呼びます。
+これに対して、元々の関数<span class="math">f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span></span>を<strong id="tdomain" class="keyword">時間領域</strong>表現と呼んだりします。</p>
+<p>表記法としては、
+時間領域表現にはアルファベットの小文字、
+周波数領域表現には大文字を使用することが多いです。
+その他にも、
+周波数領域表現にはアルファベットの上に＾（ハット記号）を付けて表す記法もあります。</p>
+<p>また、関数<span class="math">f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span></span>をフーリエ変換したものであることを明示するために、
+フーリエ変換を<em><span class="math"><span class="normal">ℱ</span><span class="paren" style="font-size:em;">[</span>f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></span></em>というように表す場合もあります（フォントの都合で少しわかりづらいですが、筆記体のFです）。
+同様に、フーリエ逆変換は<em><span class="math"><span class="normal">ℱ</span><sup>�|1</sup><span class="paren" style="font-size:em;">[</span>F<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:em;">]</span><span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span></span></em>と表します。</p>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="property"></a>フーリエ変換の性質</h2>
+<p>フーリエ変換は以下のような性質を持っています。</p>
+<h3 id="section-4"><a id="sec-generated-title-4"></a> <a id="linear"></a>線形性</h3>
+<div class="math">
+        <span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+a f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span>
+＋
+b g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span>
+        <span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span>
+＝
+a
+<span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span>
+＋
+b
+<span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></div>
+<h3 id="section-5"><a id="sec-generated-title-5"></a> <a id="differential"></a>微分</h3>
+<div class="math">
+        <span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+          <table class="frac" summary="differential"><tr><td class="num"><span class="normal">d</span></td></tr><tr><td><span class="normal">d</span>t</td></tr></table>f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span>
+        <span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span>
+      </div><div class="math">　
+＝
+<span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table><table class="frac" summary="differential"><tr><td class="num"><span class="normal">d</span></td></tr><tr><td><span class="normal">d</span>t</td></tr></table>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>－iωt<span class="paren" style="font-size:1em;">)</span><span class="normal">d</span>t
+</div><div class="math">　
+＝
+<span class="paren" style="font-size:1.5em;">[</span>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>－iωt<span class="paren" style="font-size:1em;">)</span><span class="paren" style="font-size:1.5em;">]</span><table class="subsup" summary="sub / sup"><tr><td>∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td>－∞</td></tr></table>
+－
+<span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><table class="frac" summary="differential"><tr><td class="num"><span class="normal">d</span></td></tr><tr><td><span class="normal">d</span>t</td></tr></table><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>－iωt<span class="paren" style="font-size:1em;">)</span><span class="normal">d</span>t
+</div><div class="math">　
+＝
+iω
+<span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>－iωt<span class="paren" style="font-size:1em;">)</span><span class="normal">d</span>t
+</div><div class="math">　
+＝
+iω
+<span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></div>
+ちなみに、3行目から4行目への変換ですが、
+第1項目が消えています。
+これは、
+通常の関数の意味では、フーリエ変換が収束するためには
+<span class="math">f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>－iωt<span class="paren" style="font-size:1em;">)</span></span> が ±∞ で 0 に収束する必要があるので、第1項は 0 になるものとして消しています。
+ただし、これはあくまで、微分のフーリエ変換
+<span class="math"><span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span><table class="frac" summary="differential"><tr><td class="num"><span class="normal">d</span></td></tr><tr><td><span class="normal">d</span>t</td></tr></table>f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></span>
+が収束するときにのみ言えることで、
+収束の可否については別途調べる必要があります。
+<h3 id="section-6"><a id="sec-generated-title-6"></a> <a id="integral"></a>積分</h3>
+<div class="math">
+        <span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+          <span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> t</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
+f<span class="paren" style="font-size:em;">(</span>τ<span class="paren" style="font-size:em;">)</span><span class="normal">d</span>τ
+<span class="paren" style="font-size:2em;">]</span>
+        <span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span>
+      </div><div class="math">　
+＝
+<span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> t</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
+f<span class="paren" style="font-size:em;">(</span>τ<span class="paren" style="font-size:em;">)</span><span class="normal">d</span>τ
+<span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>－iωt<span class="paren" style="font-size:1em;">)</span><span class="normal">d</span>t
+</div><div class="math">　
+＝
+<span class="paren" style="font-size:1.5em;">[</span><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> t</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
+f<span class="paren" style="font-size:em;">(</span>τ<span class="paren" style="font-size:em;">)</span><span class="normal">d</span>τ
+<span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> t</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>－iωτ<span class="paren" style="font-size:1em;">)</span><span class="normal">d</span>τ
+<span class="paren" style="font-size:1.5em;">]</span><table class="subsup" summary="sub / sup"><tr><td>∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td>－∞</td></tr></table>
+－
+<span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> t</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>－iωτ<span class="paren" style="font-size:1em;">)</span><span class="normal">d</span>τ
+<span class="normal">d</span>t
+</div><div class="math">　
+＝
+<table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>iω</td></tr></table><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>－iωt<span class="paren" style="font-size:1em;">)</span><span class="normal">d</span>t
+</div><div class="math">　
+＝
+<table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>iω</td></tr></table><span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></div>
+<h3 id="section-7"><a id="sec-generated-title-7"></a> <a id="timeshift"></a>時間シフト</h3>
+<div class="math">
+        <span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+f<span class="paren" style="font-size:em;">(</span>t±T<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span>
+        <span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span>
+      </div><div class="math">　
+＝
+<span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
+f<span class="paren" style="font-size:em;">(</span>t±T<span class="paren" style="font-size:em;">)</span><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>－iωt<span class="paren" style="font-size:1em;">)</span><span class="normal">d</span>t
+</div><div class="math">　
+＝
+<span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>－iωt±T<span class="paren" style="font-size:1em;">)</span><span class="normal">d</span>t
+</div><div class="math">　
+＝
+<span class="normal">exp</span><span class="paren" style="font-size:em;">(</span>±iTω<span class="paren" style="font-size:em;">)</span><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>－iωt<span class="paren" style="font-size:1em;">)</span><span class="normal">d</span>t
+</div><div class="math">　
+＝
+<span class="normal">exp</span><span class="paren" style="font-size:em;">(</span>±iTω<span class="paren" style="font-size:em;">)</span><span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></div>
+<h3 id="section-8"><a id="sec-generated-title-8"></a> <a id="product"></a>積のフーリエ変換</h3>
+<p>関数の積のフーリエ変換
+<span class="math"><span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span>
+×
+g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></span>
+を直接考えるよりも、
+関数<span class="math">f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span>, g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span></span>に対して、
+<span class="math"><span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+h<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span>
+＝
+<span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span>
+×
+<span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></span>
+となるような関数<span class="math">h<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span></span>を探す方が簡単なので、
+先にこちらについて説明します。</p>
+<span class="math">
+          <span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span>
+          <span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span>
+×
+<span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></span>
+はフーリエ変換の定義から以下のように表すことができます。
+<div class="math">
+        <span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span>
+        <span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span>
+×
+<span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></div><div class="math">　
+＝
+<span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>－iωt<span class="paren" style="font-size:1em;">)</span><span class="normal">d</span>t
+<span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
+g<span class="paren" style="font-size:em;">(</span>u<span class="paren" style="font-size:em;">)</span><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>－iωu<span class="paren" style="font-size:1em;">)</span><span class="normal">d</span>u
+</div><div class="math">　
+＝
+<span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span>
+g<span class="paren" style="font-size:em;">(</span>u<span class="paren" style="font-size:em;">)</span><span class="normal">exp</span><span class="paren" style="font-size:1.2em;">(</span>－iω<span class="paren" style="font-size:em;">(</span>t＋u<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:1.2em;">)</span><span class="normal">d</span>t
+<span class="normal">d</span>u
+</div>
+ここで、<span class="math">τ＝t, υ＝t＋u</span>と置いて変数変換をすると、
+<span class="math">u ＝ υ－τ, <span class="normal">d</span>t<span class="normal">d</span>u ＝ <span class="normal">d</span>τ<span class="normal">d</span>υ</span>なので、
+上式は以下のように書き換えることができます。
+<div class="math">
+        <span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
+        <span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
+f<span class="paren" style="font-size:em;">(</span>τ<span class="paren" style="font-size:em;">)</span>
+g<span class="paren" style="font-size:em;">(</span>υ－τ<span class="paren" style="font-size:em;">)</span><span class="normal">exp</span><span class="paren" style="font-size:1.2em;">(</span>－iω<span class="paren" style="font-size:em;">(</span>υ<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:1.2em;">)</span><span class="normal">d</span>τ
+<span class="normal">d</span>υ
+＝
+<span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table><span class="paren" style="font-size:2em;">(</span><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
+f<span class="paren" style="font-size:em;">(</span>τ<span class="paren" style="font-size:em;">)</span>
+g<span class="paren" style="font-size:em;">(</span>υ－τ<span class="paren" style="font-size:em;">)</span><span class="normal">d</span>τ
+<span class="paren" style="font-size:2em;">)</span><span class="normal">exp</span><span class="paren" style="font-size:1.2em;">(</span>－iωυ<span class="paren" style="font-size:1.2em;">)</span><span class="normal">d</span>υ
+</div>
+<span class="math">
+h<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span> ＝
+<span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
+f<span class="paren" style="font-size:em;">(</span>τ<span class="paren" style="font-size:em;">)</span>
+g<span class="paren" style="font-size:em;">(</span>t－τ<span class="paren" style="font-size:em;">)</span><span class="normal">d</span>τ
+</span>
+と置くと、
+この式は<span class="math"><span class="normal">ℱ</span><span class="paren" style="font-size:em;">[</span>h<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></span>となります。
+この関数<span class="math">h</span>を<span class="math">f</span>と<span class="math">g</span>の「[畳込み積](#covolution)」と呼び、<span class="math">f＊g</span>と表します。
+<div class="math">
+f＊g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span>
+＝
+<span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
+f<span class="paren" style="font-size:em;">(</span>τ<span class="paren" style="font-size:em;">)</span>
+g<span class="paren" style="font-size:em;">(</span>t－τ<span class="paren" style="font-size:em;">)</span><span class="normal">d</span>τ
+</div><div class="math">
+        <span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+f＊g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span>
+        <span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span>
+＝
+<span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span>
+×
+<span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></div>
+また、フーリエ変換と逆変換の対称性から、以下の式も成り立ちます。
+<div class="math">
+        <span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span>
+×
+g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span>
+        <span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span>
+＝
+<span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span>
+＊
+<span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></div>
+<h2 id="section-9"><a id="sec-generated-title-9"></a> <a id="covolution"></a><a id="convolution"></a>畳込み積</h2>
+<p>前節で説明したとおり、
+2つの関数を掛け合わせたものをフーリエ変換すると、<strong id="convolution" class="keyword">畳込み積</strong>（convolution product）という特殊な演算が出てきます。
+畳込み積は単に畳込み（convolution）と呼ぶこともあります。</p>
+<h3 id="section-10"><a id="sec-generated-title-10"></a> <a id="conv-definition"></a>畳込みの定義</h3>
+<p>改めて、<span class="math">f</span>と<span class="math">g</span>の畳込み積<span class="math">f＊g</span>の定義式を書くと以下のようになります。</p>
+<div class="math">
+f＊g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span>
+＝
+<span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
+f<span class="paren" style="font-size:em;">(</span>τ<span class="paren" style="font-size:em;">)</span>
+g<span class="paren" style="font-size:em;">(</span>t－τ<span class="paren" style="font-size:em;">)</span><span class="normal">d</span>τ
+</div>
+<h3 id="section-11"><a id="sec-generated-title-11"></a> <a id="conv-meaning"></a>畳込みの意味</h3>
+<p>畳込み積は積のフーリエ変換結果として出てくる演算として定義しました。
+では、この演算自体にはどういった意味合いがあるのかという疑問に思う方もいるかと思います。
+そこで、畳込み積自体の意味について、具体例を挙げて説明していきます。</p>
+<p>簡単な例として、電荷分布の作る電場について考えてみます。
+（説明を簡単にするため、1次元的な分布を考えます。）
+まず、電気量が<span class="math">1</span>である点電荷が、位置<span class="math">x ＝ 0</span>にある場合に生じる電位を<span class="math">φ<sub>0</sub><span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span></span>とします。
+（例えば、3次元の自由空間上に電荷がある場合には<span class="math">φ<sub>0</sub><span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span> ＝ <table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>4πx</td></tr></table></span>。）</p>
+<p>次に、複数の点電荷が作る電位について考えます。
+電気量<span class="math">q<sub>i</sub></span>を持つ<span class="math">N</span>個の電荷（<span class="math">i ＝ 0, 1, …, N－1</span>）が、
+それぞれ位置<span class="math">x<sub>i</sub></span>にあるとき、
+これらの電荷が作る電位は以下のようになります。</p>
+<div class="math">
+φ<span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span>
+＝
+<table class="sigma" summary="sum"><tr><td class="sigmasub">N－1</td></tr><tr><td class="sigma">∑</td></tr><tr><td class="sigmasub">k ＝ 0</td></tr></table>
+q<sub>i</sub>
+φ<sub>0</sub><span class="paren" style="font-size:em;">(</span>x － x<sub>i</sub><span class="paren" style="font-size:em;">)</span></div>
+これは、下図に示すように、電荷の数だけ<span class="math">φ<sub>0</sub><span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span></span>の位置をずらして、
+重み<span class="math">q<sub>i</sub></span>を掛けた上で重ね合わせたものになっています。
+<figure>
+<p><a href="/assets/media/ufcpp2000/sp/fourier01.png"><img src="/assets/media/ufcpp2000/sp/fourier01.png" alt="関数の重ね合わせ" /></a></p>
+<figcaption>関数の重ね合わせ</figcaption>
+</figure>
+<p>さらに、電荷が連続的に分布する場合について考えて見ましょう。
+電荷密度分布<span class="math">ρ<span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span></span>が存在するとき、
+ある点<span class="math">ξ</span>の近傍にある電荷が作る電位は
+<span class="math"><span class="normal">d</span>φ ＝ ρ<span class="paren" style="font-size:em;">(</span>ξ<span class="paren" style="font-size:em;">)</span>φ<sub>0</sub><span class="paren" style="font-size:em;">(</span>x － ξ<span class="paren" style="font-size:em;">)</span><span class="normal">d</span>ξ</span>
+となります。
+これを積分することで電荷全体の作る電位が得られます。</p>
+<div class="math">
+φ<span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span> ＝ 
+<span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
+ρ<span class="paren" style="font-size:em;">(</span>ξ<span class="paren" style="font-size:em;">)</span>
+φ<sub>0</sub><span class="paren" style="font-size:em;">(</span>x － ξ<span class="paren" style="font-size:em;">)</span><span class="normal">d</span>ξ
+＝
+ρ＊φ<sub>0</sub><span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span></div>
+すなわち、電位<span class="math">φ</span>は、電荷密度分布<span class="math">ρ</span>と点電荷の作る電位<span class="math">φ<sub>0</sub></span>の畳込み積になります。
+ 
+この例で示したように、
+畳込み積<span class="math">f＊g</span>とは、
+ある関数<span class="math">g</span>の位置をずらして、
+重みとして関数<span class="math">f</span>を掛けた上で重ね合わせたものになります。
+「畳込み（convolution）」という言葉は「ずらして重ねあわせる」という意味合いで使われているわけです。
+<h3 id="section-12"><a id="sec-generated-title-12"></a> <a id="conv-property"></a>畳込みの性質</h3>
+<p>畳み込み積には交換法則および結合法則が成り立ちます。</p>
+<div class="math">f＊g ＝ g＊f</div><div class="math">f＊<span class="paren" style="font-size:em;">(</span>g＊h<span class="paren" style="font-size:em;">)</span> ＝ <span class="paren" style="font-size:em;">(</span>g＊f<span class="paren" style="font-size:em;">)</span>＊h</div>
+また、畳込み積の微分・積分は以下のようになります。
+<div class="math">
+        <table class="frac" summary="differential"><tr><td class="num"><span class="normal">d</span></td></tr><tr><td><span class="normal">d</span>t</td></tr></table>
+        <span class="paren" style="font-size:em;">(</span>f＊g<span class="paren" style="font-size:em;">)</span>
+＝
+<span class="paren" style="font-size:2em;">(</span><table class="frac" summary="differential"><tr><td class="num"><span class="normal">d</span></td></tr><tr><td><span class="normal">d</span>t</td></tr></table>f<span class="paren" style="font-size:2em;">)</span>＊g
+＝
+f＊<span class="paren" style="font-size:2em;">(</span><table class="frac" summary="differential"><tr><td class="num"><span class="normal">d</span></td></tr><tr><td><span class="normal">d</span>t</td></tr></table>g<span class="paren" style="font-size:2em;">)</span></div><div class="math">
+        <span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> t</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
+        <span class="paren" style="font-size:em;">(</span>f＊g<span class="paren" style="font-size:em;">)</span>
+        <span class="normal">d</span>t
+＝
+<span class="paren" style="font-size:2em;">(</span><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> t</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>f <span class="normal">d</span>t<span class="paren" style="font-size:2em;">)</span>＊g
+＝
+f＊<span class="paren" style="font-size:2em;">(</span><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> t</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>g <span class="normal">d</span>t<span class="paren" style="font-size:2em;">)</span></div>
+さらに、δ関数に対して以下の式が成り立ちます。
+<div class="math">
+        <span class="paren" style="font-size:em;">{</span>δ<span class="paren" style="font-size:em;">(</span>t ± T<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:em;">}</span>＊<span class="paren" style="font-size:em;">{</span>f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:em;">}</span>
+＝
+f<span class="paren" style="font-size:em;">(</span>t ± T<span class="paren" style="font-size:em;">)</span></div>
+<h2 id="section-13"><a id="sec-generated-title-13"></a> <a id="summay"></a>まとめ</h2>
+<table summary="フーリエ変換の公式">
+	<caption>
+		フーリエ変換の公式
+	</caption>
+	<tr>
+		<td><p>フーリエ変換</p></td>
+		<td><div class="math">
+F<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span> ＝
+<span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table> f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>－iωt<span class="paren" style="font-size:1em;">)</span><span class="normal">d</span>t
+</div><div class="math">
+f(t) ＝
+<table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>2π</td></tr></table><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table> F<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>iωt<span class="paren" style="font-size:1em;">)</span><span class="normal">d</span>ω
+</div></td>
+	</tr>
+</table>
+<table summary="フーリエ変換の性質">
+	<caption>
+		フーリエ変換の性質
+	</caption>
+	<tr>
+		<td><p>微分</p></td>
+		<td><div class="math">
+            <span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+              <table class="frac" summary="differential"><tr><td class="num"><span class="normal">d</span></td></tr><tr><td><span class="normal">d</span>t</td></tr></table>f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span>
+            <span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span>
+＝
+iω
+<span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></div></td>
+	</tr>
+	<tr>
+		<td><p>積分</p></td>
+		<td><div class="math">
+            <span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+              <span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> t</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="normal">d</span>t
+<span class="paren" style="font-size:2em;">]</span>
+            <span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span>
+＝
+<table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>iω</td></tr></table><span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></div></td>
+	</tr>
+	<tr>
+		<td><p>時間シフト</p></td>
+		<td><div class="math">
+            <span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+f<span class="paren" style="font-size:em;">(</span>t±T<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span>
+            <span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span>
+＝
+<span class="normal">exp</span><span class="paren" style="font-size:em;">(</span>±iTω<span class="paren" style="font-size:em;">)</span><span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></div></td>
+	</tr>
+	<tr>
+		<td><p>積、畳込み積</p></td>
+		<td><div class="math">
+f＊g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span>
+＝
+<span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> ∞</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
+f<span class="paren" style="font-size:em;">(</span>τ<span class="paren" style="font-size:em;">)</span>
+g<span class="paren" style="font-size:em;">(</span>t－τ<span class="paren" style="font-size:em;">)</span><span class="normal">d</span>τ
+</div><div class="math">
+            <span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span>
+×
+g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span>
+            <span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span>
+＝
+<span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span>
+＊
+<span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></div><div class="math">
+            <span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+f
+＊
+g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span>
+            <span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span>
+＝
+<span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span>
+×
+<span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
+g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></div></td>
+	</tr>
+</table>
+<h2 id="section-14"><a id="sec-generated-title-14"></a> <a id="plan"></a>加筆予定</h2>
+<pre><code class="language-text">定数の 1/2π、普通は逆変換側に付けるけど、他にいろんな流儀あり。
+順変換側に付けたり、
+両方に1/√2πを付けたりとか。
+
+例が欲しいかも。
+δ関数、sinc関数、e^(-x^2)とか。
+
+窓掛け
+  「非周期関数 ＝ 周期∞の関数」
+  でも、実用上は無限長の区間で信号を測定するのは困難。
+  ↓
+  信号の一部分だけ切り出してフーリエ変換する。
+  (窓掛け)
+  リプル防止のために、切り出す際、窓関数をかける。</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/sp/dsp/">&#x30C7;&#x30A3;&#x30B8;&#x30BF;&#x30EB;&#x4FE1;&#x53F7;&#x51E6;&#x7406;</a></li><li><a href="/study/sp/dsp/fourierseries/">&#x30D5;&#x30FC;&#x30EA;&#x30A8;&#x7D1A;&#x6570;&#x5C55;&#x958B;</a></li><li><a href="/study/sp/dsp/dft/">&#x96E2;&#x6563;&#x30D5;&#x30FC;&#x30EA;&#x30A8;&#x5909;&#x63DB;</a></li><li><a href="/study/sp/dsp/system/">&#x30B7;&#x30B9;&#x30C6;&#x30E0;</a></li><li><a href="/study/sp/dsp/frequency/">&#x5468;&#x6CE2;&#x6570;&#x7279;&#x6027;</a></li><li><a href="/study/sp/dsp/laplace/">&#x30E9;&#x30D7;&#x30E9;&#x30B9;&#x5909;&#x63DB;</a></li><li><a href="/study/sp/dsp/z/">Z&#x5909;&#x63DB;</a></li><li><a href="/study/sp/dsp/phase/">&#x7DDA;&#x5F62;&#x4F4D;&#x76F8;&#x3068;&#x6700;&#x5C0F;&#x4F4D;&#x76F8;</a></li><li><a href="/study/sp/dsp/da/">&#x9023;&#x7D9A;&#x4FE1;&#x53F7;&#x3068;&#x96E2;&#x6563;&#x4FE1;&#x53F7;&#x306E;&#x6BD4;&#x8F03;</a></li><li><a href="/study/sp/dsp/appendix/">&#x4ED8;&#x9332;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

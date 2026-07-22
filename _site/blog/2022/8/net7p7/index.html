@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>.NET 7 Preview 7 &#x3067;&#x3001;C# 11 &#x306E;&#x6A5F;&#x80FD;&#x304C;&#x4E00;&#x901A;&#x308A;&#x305D;&#x308D;&#x3063;&#x305F;&#x307F;&#x305F;&#x3044; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2022/8/net7p7/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2022-08-13T11:56:03">2022-08-13</time></span><span>更新: <time datetime="2022-08-13T11:56:04">2022-08-13</time></span></div><h1 id="net-7-preview-7-c-11">.NET 7 Preview 7 で、C# 11 の機能が一通りそろったみたい</h1>
+<p>久々のブログになります。
+C# 11 の機能追加があるたびに <a href="https://www.youtube.com/c/ufcppdotnet">YouTube 配信</a>ではちょくちょく紹介していましたが、
+こっちではかなりの久々。</p>
+<p>そういえば去年とかは新しい Preview が出るたびに「今回はこの機能が実装されたよ」一覧くらいはブログに書いてたなと思いつつ。
+まあ、今年は早い段階から「<a href="/study/csharp/cheatsheet/ap_ver11/">C# 11.0 の新機能</a>」の方を埋める作業をしているので、何もしてなかったわけでもないんですが。
+ちなみに、「<a href="/study/csharp/cheatsheet/ap_ver11/">C# 11.0 の新機能</a>」の方は現在、
+<a href="https://github.com/ufcpp/UfcppSample/issues/387">進捗 12/19</a> です。</p>
+<h2 id="net-7-preview-7-c">.NET 7 Preview 7 での C#</h2>
+<p>しばらくブログとしては書いてなかった Preview 版の紹介を、今回久々に書いているのは、
+.NET 7 Preview 7 で、</p>
+<ul>
+<li>予定されている C# 11 の機能が一通り全部入った。今ないものは RC/GA でもない</li>
+<li><code>LangVersion</code> に <code>preview</code> を指定しなくても (net7.0 ターゲットならデフォルトで) C# 11 が使えるようになった</li>
+</ul>
+<p>という2点から。</p>
+<p>去年どうでしたっけ。.NET 6 では RC 1 のタイミングで <code>preview</code> が外れてたような…</p>
+<h3 id="c-11">C# 11 最終版</h3>
+<p>とりあえず、<a href="https://github.com/dotnet/roslyn/pull/63010">Language Feature Status では一通り「11」の機能がそろいました</a>。
+まあ、一部、ちょっと修正が入りそうな部分はありますが、大まかな機能としてはもう変更はなさそうな雰囲気です。</p>
+<p>「ちょっとした修正」も、例えば以下のようなバグの修正みたいなレベルの話です。</p>
+<pre><code class="language-csharp"><span class="keyword">unsafe</span>
+{
+    <span class="comment">// ref フィールドを持ってる構造体、 .NET 7 Preview 7 では managed 扱いされないバグがあるみたい。</span>
+    <span class="comment">// (ガベコレ的にまずいコード。)</span>
+    <span class="keyword">var</span> a = <span class="keyword">stackalloc</span> RefInt[<span class="number">4</span>];
+}
+
+<span class="keyword">ref</span> <span class="keyword">struct</span> RefInt
+{
+    <span class="keyword">public</span> <span class="keyword">ref</span> <span class="keyword">int</span> Reference;
+}</code></pre>
+<h3 id="preview">preview 外れた</h3>
+<p>とりあえず、<code>TargetFramework</code> が <code>net7.0</code> なプロジェクトは <code>LangVersion</code> を書かなくても C# 11 になります。
+あと、<code>LangVersion</code> を <code>latest</code> とかにしているプロジェクトでも C# 11 になります。</p>
+<p>注意点として、今回、「<code>net6.0</code> と C# 11」みたいな組み合わせにするとちょっと問題を起こすような破壊的変更があったりします。
+以下のようなやつで、まあ、めったに踏むようなコードでもないとは思いますが、一応。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.InteropServices;
+
+<span class="keyword">public</span> <span class="keyword">struct</span> Buffer
+{
+    <span class="keyword">private</span> <span class="keyword">int</span> _item0;
+
+    <span class="comment">// net7.0 なら問題なくコンパイルできる。</span>
+    <span class="comment">// net6.0 + C# 10 でも問題なくコンパイルできる。</span>
+    <span class="comment">// net6.0 + C# 11 だとコンパイルエラーになるので注意。</span>
+    <span class="keyword">public</span> Span&lt;<span class="keyword">int</span>&gt; AsSpan() =&gt; MemoryMarshal.CreateSpan(<span class="keyword">ref</span> _item0, <span class="number">1</span>);
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2022/8/">8&#x6708;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

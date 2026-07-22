@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Visual Basic&#x306E;&#x5168;&#x89D2;&#x30AD;&#x30FC;&#x30EF;&#x30FC;&#x30C9; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2015/11/fullwidthliteralinvb/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2015-11-07T02:32:53">2015-11-07</time></span><span>更新: <time datetime="2015-11-07T02:57:42">2015-11-07</time></span></div><h1 id="visual-basic">Visual Basicの全角キーワード</h1>
+<h2 id="section">全角キーワード</h2>
+<p>Visual Basicでは、BASIC時代からずっとですが、アルファベットの大文字と小文字を区別しないことは皆さまもご存知かと思われます。</p>
+<p>で、実は、大文字小文字だけじゃなくて、半角全角も区別しないという。以下のコード、コンパイルして実行することもできるし、Visual Studio上ではちゃんと、<code>Ｍｏｄｕｌｅ</code>とかの部分が青色(キーワードの色)で表示されます。</p>
+<pre><code class="language-csharp">Ｍｏｄｕｌｅ Module1
+
+    Ｓｕｂ Main()
+        Ｄｉｍ x = <span class="number">10</span>
+        Console.WriteLine(x)
+    Ｅｎｄ Ｓｕｂ
+
+Ｅｎｄ Ｍｏｄｕｌｅ</code></pre>
+<p><img src="/assets/media/1037/fullwidthvb.png" alt="VBでは全角文字でキーワードを打てる" /></p>
+<p>まあ、今のVisual Studio上では、全角文字でキーワードを打つと、自動補完で打ったそばから半角CamelCaseに変換されていくんで、自動補完に直されるたびに<code>Ctrl+Z</code>で元に戻したりしないとこのソースコードを作れなかったりはするんですが。</p>
+<h2 id="roslyn">もちろんRoslynでもいまだこの仕様</h2>
+<p>これ、おそらくは初期のVBで日本人が出した要望を真に受けて実装しちゃったものだと思うんですが…</p>
+<p>何が恐ろしいって、その時代にはUnicodeがないこと。Shift_JIS、つまり、日本語ロケールでしか扱えない(後々には韓国語や中国語の文字コードにも全角英数入ってるみたいですけど、最初に作った戦犯は日本のはず？たぶん)文字に対する特殊対応入れさせるとか、当時の日本どれだけわがまま言ってるんだと…</p>
+<p>その時代からの名残のコードなのか、現在のRoslynのVBのスキャナー(構文解析で、単語を切り出す部分)には以下のようなコードが含まれています。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/blob/master/src/Compilers/VisualBasic/Portable/Scanner/CharacterInfo.vb#L71">src/Compilers/VisualBasic/Portable/Scanner/CharacterInfo.vb</a></li>
+</ul>
+<pre><code class="language-csharp">    Private Const s_fullwidth = CInt(&amp;HFF00L - &amp;H0020L)
+
+    REM 中略
+
+    Friend Const FULLWIDTH_APOSTROPHE As Char = ChrW(s_fullwidth + AscW(<span class="string">&quot;&#39;&quot;</span>c))             REM ＇
+    Friend Const FULLWIDTH_QUOTATION_MARK As Char = ChrW(s_fullwidth + AscW(<span class="string">&quot;&quot;</span><span class="string">&quot;&quot;</span>c))        REM ＂
+
+    Friend Const FULLWIDTH_DIGIT_ZERO As Char = ChrW(s_fullwidth + AscW(<span class="string">&quot;0&quot;</span>c))             REM ０
+    Friend Const FULLWIDTH_DIGIT_SEVEN As Char = ChrW(s_fullwidth + AscW(<span class="string">&quot;7&quot;</span>c))            REM ７
+    Friend Const FULLWIDTH_DIGIT_NINE As Char = ChrW(s_fullwidth + AscW(<span class="string">&quot;9&quot;</span>c))             REM ９</code></pre>
+<p>Unicodeが普及した今なら普通にIMEで変換した全角文字で<code>&quot;０&quot;c</code>って書けばいいだけの話なのに… IMEを持っていない国に配慮しても、Unicode エスケープシーケンスで<code>\uFF10</code>とか書ける。それを、わざわざ<code>&amp;HFF00L - &amp;H0020L</code> (全角文字の開始番号 - 半角スペース)を足して作ってるという。</p>
+<h2 id="section-1">全角リテラル？！</h2>
+<p>そんなおぞましいコードを見てしまった外国人曰く、</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/6552">[Proposal] Wide Char Literal #6552</a></li>
+</ul>
+<p>「<code>&quot;x&quot;w</code>みたいに、文字リテラルにw語尾つけて全角文字を作れたら便利じゃない？」</p>
+<p>…</p>
+<p>…</p>
+<p>…</p>
+<p>…</p>
+<p>おい、バカ、やめろ。</p>
+<p>ちなみに、これに対するコメントでの大まかな会話の流れをまとめると、</p>
+<ul>
+<li>「Wide Char」って言い方が悪く、他の人「UTF16に収まらない文字のこと？可変長バイトだし難しくない？結合文字のせいで大変よ。U+1F469 U+1F3FB U+200D U+2764 U+200D U+1F468 U+1F3FFで、『色白女性と濃い褐色肌男性が愛し合ってる絵文字』という1文字で表示すべきとされてたり」</li>
+<li>他の人「いや、そうじゃなくて、日中韓で使ってる全角文字のことらしい」</li>
+<li>他の人「えっ、その手の国だとIME使って全角文字打てるし、全角文字なら16ビットの範囲内だし、それで入力できるんじゃないの？wリテラル作る価値ある？」</li>
+<li>提案者「日中韓の人なら便利なんじゃないの？たぶん」</li>
+</ul>
+<p>おい、バカ、マジでやめろ。</p>
+<p>ということで、この流れに気づいた瞬間、「あらゆる意味でそんなものほしくない。全角英数は恐ろしくクソな負の遺産。きっと多くの日本人開発者が憎んでる。」とコメントをつけておきました。</p>
+<h2 id="section-2">負の遺産怖い…</h2>
+<p>VB 6以前、あるいはVBAとかVBScriptとかからの習慣なわけで、たぶん20年越しの呪いですよ、これ。しかも、Unicodeがなかった時代に「大文字小文字を区別しないんだったら、全角半角も区別しないべきじゃないか」とか言い出した人がいての結果(のはず。たぶん)。</p>
+<p>こんな、(キーワードに全角文字使えるとか)今となっては知ってる人すら減ってるご時世に、特殊対応のためにVBのスキャナーに負担をかけて、全世界の皆様にご迷惑かけて大変申し訳ない気分。</p>
+<h2 id="section-3">文字のビット数問題</h2>
+<p>まあ途中の議論で出ていた、.NETの<code>char</code>で扱えない文字、16ビットに収まらないやつに対する操作は確かにほしかったりはしますが…</p>
+<p>.NETで文字列が内部的にUTF16なの、.NETの登場時期(16ビットですべての文字を固定ワード幅表現できるとか夢見ちゃってた時代)を考えると仕方がないんですが、大変不便なので。今や、修飾文字とかあって32ビットですら固定ワードにならず、PowerShellみたいに32ビットで文字列を扱ってもやっぱり解決せず。</p>
+<p>むしろ、本当にほしいのは「UTF8をバイト列のまま扱える」クラスと、そこから「1文字とみなされるべき部分を抜き出す」メソッドなのではないかと。</p>
+<p>ちなみに、「UTF8をバイト列のまま扱える」クラスは、今、CoreFxチームが試験的に実装中らしいです。試験的リポジトリ<a href="https://github.com/dotnet/corefxlab">corefxlab</a> に、以下のようなクラスが最近追加されました。</p>
+<ul>
+<li><a href="https://github.com/dotnet/corefxlab/blob/master/src/System.Slices/src/System/Span.cs">Span</a>: 配列の途中区間やネイティブバッファーに対して、ポインターで(コピーなしで)アクセスするクラス</li>
+<li><a href="https://github.com/dotnet/corefxlab/blob/master/src/System.Text.Utf8/src/System/Text/Utf8/Utf8String.cs">Utf8String</a>: Spanを使ってコピーなしで、UTF8バイト列をそのまま文字列処理するためのクラス</li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2015/11/">2015/11</a></li><li><a href="/blog/2015/11/pickuproslyn1108/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 11/8</a></li><li><a href="/blog/2015/11/pickuproslyn1111/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 11/19</a></li><li><a href="/blog/2015/11/netcoreconnect/">Connect() &#x3067;&#x306E;&#x767A;&#x8868;&#x3001;.NET Core</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

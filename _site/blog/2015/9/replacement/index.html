@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30B5;&#x30A4;&#x30C8;&#x306E;&#x30B7;&#x30B9;&#x30C6;&#x30E0;&#x66F4;&#x65B0; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2015/9/replacement/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2015-09-01T15:08:41">2015-09-01</time></span><span>更新: <time datetime="2015-09-01T15:41:20">2015-09-01</time></span></div><h1 id="section">サイトのシステム更新</h1>
+<p><a href="/">ufcpp.net</a> のシステム入れ替えてから気が付けば3・4か月ほど経過したわけですが。</p>
+<p>いまだ微妙に直したいなと思いつつ時間が取れない部分もちらほら。</p>
+<h2 id="section-1">未</h2>
+<p>ちゃんと治せてるものもあるにはあるんですけども。</p>
+<p><img src="/assets/media/1032/mi.png" alt="未" /></p>
+<p>アイコン設定してなかったら、ロゴの真ん中あたりを自動的にとることで「未」になってたっていうやつ。ただでさえ、たまに「未確認の人」とか言われたりするのが、完全になんか未然な感じに。</p>
+<p>まあ、たぶん、ヒツジです。干支の、ひつじ年の「未」。僕、ひつじ年生まれですし。Excel先生も、済/未 とか入れてこうとしたら自動補完で干支を出しますし。連続データ。</p>
+<p><img src="/assets/media/1033/eto.png" alt="干支" /></p>
+<h2 id="section-2">数式</h2>
+<p>とかの確認で twitter で「ufcpp.net」で検索かけたりしたわけですが。ちらほら、やっぱり数式崩れを気にするコメントがありますよねぇ。</p>
+<p>うちのサイト、現状は9割がたのアクセスがC#/.NET関連でして、その他の部分の移行作業は多少手を抜いたりしていたり。</p>
+<p>数式が結構残念なのも、C#/.NET関連のページにはほとんどないからなんですよねぇ。移行作業が大変な割にPVそんなにないので、コスト パフォーマンス的に見合わないという判断。</p>
+<p>↓こういうのとか(実際こういう表示崩れを起こしてるページが結構)。</p>
+<span class="math">
+<table class="sigma" summary="limitation"><tr><td><span class="normal">lim</span></td></tr><tr><td class="sigmasub">x → 0</td></tr></table>
+g<span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span>
+＝ 0
+</span>
+<p>これは、↓みたいな数式を表示したくて書いてたやつなんですが。</p>
+<p><img src="/assets/media/1034/math.png" alt="word math" /></p>
+<p>まあ、大昔、CSSで必死に調整してそれっぽく見えるように出してたんで、当時と今とでブラウザーのレンダリングが違いすぎて。</p>
+<p>一応、新システムは <a href="http://genkuroki.web.fc2.com/">MathJax</a> 対応を入れてもらってるので、ちまちまとMathJax対応形式への変換をかけていけば表示できるはず。</p>
+<p>例えば、以下のようなMathMLを書けば、</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">math</span> <span class="xmlAttribute">xmlns</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://www.w3.org/1998/Math/MathML</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">mrow</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">mrow</span><span class="xmlDelimiter">&gt;</span>
+            <span class="xmlDelimiter">&lt;</span><span class="xmlName">munder</span><span class="xmlDelimiter">&gt;</span>
+                <span class="xmlDelimiter">&lt;</span><span class="xmlName">mrow</span><span class="xmlDelimiter">&gt;</span><span class="xmlDelimiter">&lt;</span><span class="xmlName">mi</span> <span class="xmlAttribute">mathvariant</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">normal</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>lim<span class="xmlDelimiter">&lt;/</span><span class="xmlName">mi</span><span class="xmlDelimiter">&gt;</span><span class="xmlDelimiter">&lt;/</span><span class="xmlName">mrow</span><span class="xmlDelimiter">&gt;</span>
+                <span class="xmlDelimiter">&lt;</span><span class="xmlName">mrow</span><span class="xmlDelimiter">&gt;</span><span class="xmlDelimiter">&lt;</span><span class="xmlName">mi</span><span class="xmlDelimiter">&gt;</span>x<span class="xmlDelimiter">&lt;/</span><span class="xmlName">mi</span><span class="xmlDelimiter">&gt;</span><span class="xmlDelimiter">&lt;</span><span class="xmlName">mo</span><span class="xmlDelimiter">&gt;</span>→<span class="xmlDelimiter">&lt;/</span><span class="xmlName">mo</span><span class="xmlDelimiter">&gt;</span><span class="xmlDelimiter">&lt;</span><span class="xmlName">mn</span><span class="xmlDelimiter">&gt;</span>0<span class="xmlDelimiter">&lt;/</span><span class="xmlName">mn</span><span class="xmlDelimiter">&gt;</span><span class="xmlDelimiter">&lt;/</span><span class="xmlName">mrow</span><span class="xmlDelimiter">&gt;</span>
+            <span class="xmlDelimiter">&lt;/</span><span class="xmlName">munder</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;/</span><span class="xmlName">mrow</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">mo</span><span class="xmlDelimiter">&gt;</span>⁡<span class="xmlDelimiter">&lt;/</span><span class="xmlName">mo</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">mrow</span><span class="xmlDelimiter">&gt;</span>
+            <span class="xmlDelimiter">&lt;</span><span class="xmlName">mi</span><span class="xmlDelimiter">&gt;</span>g<span class="xmlDelimiter">&lt;/</span><span class="xmlName">mi</span><span class="xmlDelimiter">&gt;</span><span class="xmlDelimiter">&lt;</span><span class="xmlName">mfenced</span> <span class="xmlAttribute">separators</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">|</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span><span class="xmlDelimiter">&lt;</span><span class="xmlName">mrow</span><span class="xmlDelimiter">&gt;</span><span class="xmlDelimiter">&lt;</span><span class="xmlName">mi</span><span class="xmlDelimiter">&gt;</span>x<span class="xmlDelimiter">&lt;/</span><span class="xmlName">mi</span><span class="xmlDelimiter">&gt;</span><span class="xmlDelimiter">&lt;/</span><span class="xmlName">mrow</span><span class="xmlDelimiter">&gt;</span><span class="xmlDelimiter">&lt;/</span><span class="xmlName">mfenced</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;/</span><span class="xmlName">mrow</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">mrow</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">mo</span><span class="xmlDelimiter">&gt;</span>=<span class="xmlDelimiter">&lt;/</span><span class="xmlName">mo</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">mn</span><span class="xmlDelimiter">&gt;</span>0<span class="xmlDelimiter">&lt;/</span><span class="xmlName">mn</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">math</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>以下のような数式が一応表示される。</p>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mrow><munder><mrow><mi mathvariant="normal">lim</mi></mrow><mrow><mi>x</mi><mo>→</mo><mn>0</mn></mrow></munder></mrow><mo>⁡</mo><mrow><mi>g</mi><mfenced separators="|"><mrow><mi>x</mi></mrow></mfenced></mrow></mrow><mo>=</mo><mn>0</mn></math></p>
+<p>ただ、作業量が多すぎて…</p>
+<p>バイトしてくれる人とかいないかな… 全体で何式くらいあるかとか、1式(あるいは1ページ)いくらなら「よい時給のバイト」になるかとか計算してみるかなぁ。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2015/9/">2015&#x5E74;9&#x6708;</a></li><li><a href="/blog/2015/9/pickuproslyn0906/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7; Roslyn 9/6</a></li><li><a href="/blog/2015/9/pickuproslyn0913/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 9/13</a></li><li><a href="/blog/2015/9/pickuproslyn0920/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7; Roslyn 9/20</a></li><li><a href="/blog/2015/9/metrocs1/">Roslyn &#x30E1;&#x30BF;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30DF;&#x30F3;&#x30B0; &amp; Code-Aware &#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

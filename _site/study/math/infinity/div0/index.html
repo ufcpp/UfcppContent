@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5B9F;&#x6570;&#x306E;0&#x9664;&#x7B97; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/math/infinity/div0/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">実数の0除算</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="d67e4"></a>0で割る</h2>
+<p>まず、実数の範囲で0で割るという操作を行ってはいけないということについて説明します。</p>
+<p>「0で割ってはいけない」というのは、数学の知識がある程度ある人にとっては常識かと思います。
+でも、「なぜ0で割ってはいけないのか」という質問への答え方となると常識とはいえないようで、
+答えに詰まる人もちらほら見かけます。</p>
+<p>この質問に答えるためには、そもそも割り算とは何なのかをしっかりと把握する必要があります。
+割り算とは、掛け算の逆演算として定義されるものです。
+すなわち、3つの実数 <span class="math">a, b, c</span> が <span class="math">a × c ＝ b</span> を満たすとき、
+<span class="math">c ＝ b ÷ a</span> として割り算を定義します。</p>
+<p>では、0 で割るということについて考えて見ましょう。
+0 というのはかなり特殊な数で、任意の実数 <span class="math">c</span> に対して、
+<span class="math">0 × c ＝ 0</span> となります。
+したがって、0 で割るという操作を認めてしまうと、</p>
+<div class="math">0 ÷ 0 ＝ <span class="normal">任意の実数</span></div>
+となってしまいます。
+ちなみに、このような結果は「0÷0 は任意」とは言わず、
+「0÷0 は不確定」といいます。
+（当然、不確定なものは数としては認められません。）
+ 
+また、<span class="math">b ≠ 0</span> となる任意の実数に対して、
+<span class="math">a × 0 ≠ b</span> なので、
+<div class="math">
+      <span class="normal">任意の実数（非0）</span> ÷ 0 ≠ <span class="normal">任意の実数</span></div>
+となり、0 で割った結果は実数の範囲では存在し得ないことが分かります。
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="d67e63"></a>0除算を認めると</h2>
+<p>0 で割るという操作を認めてしまうと変なことがおきます。
+例えば、以下のような話を聞いたことがありませんか？</p>
+<blockquote><p>以下の手順で「任意の実数は 0 に等しい」ということが証明できる。</p>
+<ul>
+<li><p><span class="math">a</span>を任意の実数とし、<span class="math">a ＝ b</span>とする。</p>
+</li>
+<li><p>両辺に<span class="math">a</span>をかけ、移項する。</p>
+</li>
+<li><p><span class="math">a<sup>2</sup> － ab ＝ 0</span></p>
+</li>
+<li><p><span class="math">a (a － b) ＝ 0</span></p>
+</li>
+<li><p>両辺を<span class="math">a － b</span>で割る。</p>
+</li>
+<li><p><span class="math">a ＝ 0</span></p>
+</li>
+<li><p>よって、任意の実数は0に等しい。</p>
+</li>
+</ul></blockquote>
+この話は、数学をよく知らない人を騙すのに使われたりもしますが、
+「0で割るという操作はしてはいけない」ということを教えるための例です。
+この証明では、<span class="math">a － b</span> で割ってるのがそもそもの間違いです。
+<span class="math">a ＝ b</span> なので、<span class="math">a － b ＝ 0</span>。
+したがって、0 で割ってはいけないというルールに反しているので、
+最後に得られる <span class="math">a ＝ 0</span> という結論は間違いになります。
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="d67e139"></a>結論</h2>
+<p>0 で割っちゃ駄目。
+∞は実数としては存在しない。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/math/infinity/">&#x221E;</a></li><li><a href="/study/math/infinity/limit/">&#x6975;&#x9650;</a></li><li><a href="/study/math/infinity/epsilon/">&#x3B5;-&#x3B4;</a></li><li><a href="/study/math/infinity/riemann/">&#x30EA;&#x30FC;&#x30DE;&#x30F3;&#x7403;&#x9762;</a></li><li><a href="/study/math/infinity/polynomial/">&#x591A;&#x9805;&#x5F0F;&#x74B0;</a></li><li><a href="/study/math/infinity/power/">&#x96C6;&#x5408;&#x306E;&#x6FC3;&#x5EA6;</a></li><li><a href="/study/math/infinity/distribution-e_distribution/">&#x8D85;&#x95A2;&#x6570;</a></li><li><a href="/study/math/infinity/float/">&#x8A08;&#x7B97;&#x6A5F;&#x4E0A;&#x3067;&#x306F;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

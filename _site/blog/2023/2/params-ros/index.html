@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x3010;C# 12 &#x5019;&#x88DC;&#x3011;params Span&#x3001;&#x6539;&#x3081;&#x3001;params ReadOnlySpan | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2023/2/params-ros/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2023-02-12T15:41:58">2023-02-12</time></span><span>更新: <time datetime="2023-02-12T15:41:58">2023-02-12</time></span></div><h1 id="c-12-params-spanparams-readonlyspan">【C# 12 候補】params Span、改め、params ReadOnlySpan</h1>
+<p>今回は <a href="/study/csharp/structured/sp_params/#params">params</a> の話。</p>
+<ul>
+<li>Working Group 議事録
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/blob/main/meetings/working-groups/params-improvements/PI-2022-10-25.md">2022/10/25</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/main/meetings/working-groups/params-improvements/PI-2022-11-03.md">2022/11/3</a></li>
+</ul>
+</li>
+</ul>
+<p>params の改善話は紆余曲折ありまして。
+<a href="/blog/2022/2/params-span/">去年の時点では <code>params Span&lt;T&gt;</code> で検討されていました</a>。
+ちょこっとだけマイナーチェンジされまして、現在は <code>params ReadOnlySpan&lt;T&gt;</code> です。</p>
+<h2 id="params">いろんな型で params 案(没)</h2>
+<p>現在の C# の params (可変長引数)は、<code>params T[]</code> (引数の型は配列)しか書けません。
+これに対して、任意のコレクション型を使って、<code>params List&lt;T&gt;</code> とか <code>params IEnumerable&lt;T&gt;</code> とか書きたいという要望が長らくありました。</p>
+<pre><code class="language-csharp"><span class="comment">// (あくまでも過去の案)</span>
+M1(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);
+M2(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);
+M3(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);
+
+<span class="keyword">static</span> <span class="keyword">void</span> M1(<span class="keyword">params</span> IEnumerable&lt;<span class="keyword">int</span>&gt; items) { }
+<span class="keyword">static</span> <span class="keyword">void</span> M2(<span class="keyword">params</span> List&lt;<span class="keyword">int</span>&gt; items) { }
+<span class="keyword">static</span> <span class="keyword">void</span> M3(<span class="keyword">params</span> Span&lt;<span class="keyword">int</span>&gt; items) { }</code></pre>
+<p>「この類の何かを書きたい」という要望は今でもあるんですが、
+ただ、ここにきて<a href="/blog/2023/1/collection-literal/">コレクション リテラル</a>という提案が出ています。
+コレクション リテラルがあれば、別に params がなくても以下のように書くことができます。</p>
+<pre><code class="language-csharp"><span class="comment">// 呼び出し側をコレクション リテラルにしてしまう。</span>
+<span class="comment">// 元の params 案との差は [] の2文字だけ。</span>
+M1([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
+M2([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
+M3([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
+
+<span class="comment">// params で任意のコレクションを扱うのはやめちゃう。</span>
+<span class="keyword">static</span> <span class="keyword">void</span> M1(IEnumerable&lt;<span class="keyword">int</span>&gt; items) { }
+<span class="keyword">static</span> <span class="keyword">void</span> M2(List&lt;<span class="keyword">int</span>&gt; items) { }
+<span class="keyword">static</span> <span class="keyword">void</span> M3(Span&lt;<span class="keyword">int</span>&gt; items) { }</code></pre>
+<p><code>[]</code> の2文字程度ならさぼらず書いてもいいんじゃないかという感じがします。
+なので、「params の汎用化」という目的においてはもう別にやらなくてもいいんじゃないかという雰囲気になっています。</p>
+<h2 id="params-readonlyspan">params ReadOnlySpan</h2>
+<p>「params の汎用化」が没り気味な一方で、
+「既存の <code>params T[]</code> 利用個所のパフォーマンスを改善したい」という要件は残っています。
+そこで出てくるのが <code>params ReadOnlySpan&lt;T&gt;</code> になります。</p>
+<p>すなわち、</p>
+<ul>
+<li>params に使えそうな中で一番パフォーマンス的に有利な <code>ReadOnlySpan</code> だけを残す</li>
+<li>既存の <code>params T[]</code> よりも、<code>params ReadOnlySpan&lt;T&gt;</code> の方がオーバーロード解決優先順位を上にする
+<ul>
+<li>既存のメソッドに <code>params ReadOnlySpan&lt;T&gt;</code> なオーバーロードを足せば、利用側は再コンパイルするだけでパフォーマンス改善になる</li>
+</ul>
+</li>
+</ul>
+<p>という方針で進めるようです。</p>
+<p>ちなみに、<code>params ReadOnlySpan&lt;T&gt;</code> で定義した引数は常に <a href="/study/csharp/resource/refstruct/#scoped">scoped</a> みたいです。
+ReadOnly で受け取っているので書き換えできず、scoped なのでメソッドの外には漏らせません。
+その結果、呼び出し側で <code>M(a, b, c)</code> みたいな書き方から「<code>a</code>, <code>b</code>, <code>c</code> を含む <code>ReadOnlySpan</code>」を作るときの最適化がしやすくなっています
+(DLL のデータ領域を直接参照したり、複数回呼び出されるときに同じバッファーを使いまわしたり)。</p>
+<h2 id="section">固定長バッファー</h2>
+<p>以下のようなコードを書いたとき、</p>
+<pre><code class="language-csharp">M(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);
+M(<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>, <span class="string">&quot;c&quot;</span>);
+
+<span class="keyword">static</span> <span class="keyword">void</span> M&lt;T&gt;(<span class="keyword">params</span> ReadOnlySpan&lt;T&gt; items) { }</code></pre>
+<p>概念的には、以下のように「スタック割り当て」をしたいです。</p>
+<pre><code class="language-csharp"><span class="comment">// int の場合はこれで問題ない。</span>
+ReadOnlySpan&lt;<span class="keyword">int</span>&gt; temp1 = <span class="keyword">stackalloc</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span> };
+M(temp1);
+
+<span class="comment">// 現状、参照型の stackalloc はできないので、何らかの対処が必要。</span>
+ReadOnlySpan&lt;<span class="keyword">string</span>&gt; temp2 = <span class="keyword">stackalloc</span>[] { <span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>, <span class="string">&quot;c&quot;</span> };
+M(temp2);
+
+<span class="keyword">static</span> <span class="keyword">void</span> M&lt;T&gt;(<span class="keyword">params</span> ReadOnlySpan&lt;T&gt; items) { }</code></pre>
+<p>そこで、参照型にも使えるスタック割り当て手段を必要とするわけですが。
+<a href="/blog/2022/2/params-span/">去年の時点で</a>、
+「<a href="https://github.com/dotnet/runtime/pull/60428">Experiment with 'Unsafe.StackAlloc<T>'</a>」とか「<a href="https://github.com/dotnet/runtime/pull/60519">[hackathon] ValueArray</a>」みたいなプロトタイプもあったんですが、あんまり筋はよくなかったようで没っています。</p>
+<p>そして現状、「特殊な属性を1個用意して、それをつけると .NET ランタイムが特殊対応して固定長バッファーを生成する」みたいな案で進んでいるようです。</p>
+<ul>
+<li><a href="https://github.com/dotnet/runtime/issues/61135">[API Proposal]: InlineArrayAttribute #61135</a></li>
+</ul>
+<p>ちなみに、<code>params ReadOnlySpan&lt;T&gt;</code> と <code>ReadOnlySpan&lt;T&gt;</code> に対する<a href="/blog/2023/1/collection-literal/">コレクション リテラル</a>は同じ戦略をとるそうで
+(やることは同じなので2重実装は避ける)、
+「params の改善」と「コレクション リテラル」は2つ合わせて同時に進めるということになりました。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2023/2/">2&#x6708;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 5/29 | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/5/pickuproslyn0529/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-05-29T05:01:33">2016-05-29</time></span><span>更新: <time datetime="2016-05-29T05:08:49">2016-05-29</time></span></div><h1 id="roslyn-529">ピックアップRoslyn 5/29</h1>
+<h2 id="section">拡張メンバー</h2>
+<p>Design Meetingで拡張メンバーの検討をしてたみたい。
+(拡張メンバー = 初期検討段階で「extension everything」(なんでも拡張)って言ってたやつ。拡張メソッド以外に、プロパティとかも拡張できるようにする構文)</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/11516">C# Language Design Notes for May 10</a></li>
+</ul>
+<p>現状、以下のような感じ。</p>
+<ul>
+<li><code>extension class</code>ってキーワードで、通常のクラスを継承したような構文で作る
+<ul>
+<li>定義したメンバーは拡張メソッド同様、静的メソッド化される</li>
+<li>プロパティは、「インデックス付きプロパティ」(ILレベルとかVBにはある。C#のレベルで使ってないだけ)に展開するのがよさそうだけど、現状のC#では認めてないものなのでちょっと悩ましい</li>
+</ul>
+</li>
+<li>インスタンス メンバー風の拡張だけじゃなくて、静的メソッドの拡張も足せる</li>
+<li>コンストラクターも足せる</li>
+<li>演算子をどうするかは悩ましい
+<ul>
+<li>四則演算とかはいいと思うんだけど</li>
+<li><code>==</code> とかが怪しい</li>
+</ul>
+</li>
+<li><code>Person</code>クラスの拡張<code>Enrollee</code>があったとして、<code>Person</code>の通常のインスタンス メンバーと、拡張の方のメンバーを呼び分ける構文がほしい
+<ul>
+<li>優先されるのは通常のインスタンス メンバー</li>
+<li>たぶん<code>((Emrollee)person).Supervisor</code>みたいなキャスト構文でやる</li>
+</ul>
+</li>
+</ul>
+<h2 id="section-1">コンパイラー組み込み</h2>
+<p>「時々C#にもインライン アセンブラーがほしい」問題に対して、
+別解法の提案。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/11475">Proposal: Compiler intrinsics #11475</a></li>
+</ul>
+<h3 id="c">C#では書けないもの</h3>
+<p>まず、「ILを使えば書けるけど、C#では書けない」みたいなのの例。</p>
+<ul>
+<li>CLRがやってるみたいなネイティブ コードとの相互運用をビルド時に静的に作ってしまおうと思うと、いくつかC#では書けない命令が必要</li>
+<li><code>infoof</code>(information ofの略。<code>typeof</code>と同じノリで<code>MethodInfo</code>とかを取る)相当の機能をライブラリでやろうと思うと<code>ldtoken</code>命令が必要</li>
+<li><a href="http://www.buildinsider.net/column/iwanaga-nobuyuki/007">スライス</a>を作るのにC#では書けない機能が必要
+<ul>
+<li>実際、<a href="https://github.com/joeduffy/slice.net/blob/master/src/PtrUtils.il">現状、ILを書いてる</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="section-2">インライン アセンブラーはやらない</h3>
+<ul>
+<li>時々しかない要件のためにILインライン アセンブラーを実装するのはコストに見合わない</li>
+<li>というか、混ぜるのよくない。C#コンパイラーとILアセンブラーは別ツールとして、別チームが個別開発すべき</li>
+</ul>
+<h3 id="section-3">別解法の提案</h3>
+<p>で、提案してるのが「コンパイラー組み込み」(compiler intrinsics: コンパイラーが内在して持ってる実装)。</p>
+<p>いくつかのC++コンパイラーは、プログラマーがSSE命令とかAVX命令みたいな特殊な命令を使えるように、<a href="https://msdn.microsoft.com/ja-jp/library/26td21ds.aspx">コンパイラー組み込みの特殊なメソッドを提供</a>してたりします。
+C#でもそういう特殊なメソッドを用意して、上記のような通常のC#では書けない場面に対処すればいいんじゃないかという提案を出してきています。</p>
+<p>文法的には<code>extern</code>メソッドを使うだけ。<code>CompilerIntrinsic</code>属性を付けることで、ネイティブDLL中のネイティブ メソッドを呼ぶ代わりに、コンパイラーが直接その場所にIL命令を出力するというもの。
+これなら今から新文法について考える必要もないし、簡単に目的が達成できそう。</p>
+<h2 id="boolenumswitch">bool型やenum型のswitchの完備性</h2>
+<p><code>bool</code>型には<code>true</code>と<code>false</code>しかないはずなんだから、以下の<code>default</code>句は不要にできないかという話。ご意見求む状態。</p>
+<pre><code class="language-csharp"><span class="keyword">bool</span> b = ...;
+<span class="keyword">switch</span> (b)
+{
+    <span class="keyword">case</span> <span class="keyword">true</span>:
+    <span class="keyword">case</span> <span class="keyword">false</span>:
+        <span class="keyword">break</span>;
+    <span class="keyword">default</span>:
+        <span class="keyword">break</span>; <span class="comment">// warning: unreachable code?</span>
+}</code></pre>
+<p>これ、昔から要望としては頻出なんですが、できない理由もあります。ILは結構低級機能を提供しているので、<code>bool</code>型の変数を無理やり書き換えて、<code>true</code>でも<code>false</code>でもない値を作れて、上記<code>default</code>句に来ちゃう場合があったり。
+というか、C#でも、以下のような書き方でそういう値を作れます。</p>
+<ul>
+<li><a href="https://gist.github.com/ufcpp/fe6788898ca4b91f0067dd7017af6ca4">unsafeで値を書き換え</a></li>
+<li><a href="https://gist.github.com/matarillo/0b6815729dd20fb17c0ee62210dfeb3c">StructLayoutで値を書き換え</a></li>
+</ul>
+<p>それに、後方互換性を考えると、既存の<code>switch</code>には警告も出せないです。</p>
+<p>という背景の中、今後導入予定の<code>match</code>式(<code>switch</code>の式バージョン)ではこういう普通はあり得ない<code>default</code>句に対する警告がほしいですか？という質問。</p>
+<h2 id="obsolete">言語サポート付きのobsolete</h2>
+<p>今、obsolete (廃止したい、もう使ってほしくない)なメンバーには<code>Obsolete</code>属性を付けて対処しています。
+でも、この属性ベースのやり方じゃなくて、C#の言語機能としてobsoleteキーワードが必要かもという話が。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/11583">Proposal: language support for Obsolete #11583</a></li>
+</ul>
+<p>シナリオ的には以下のようなもの。</p>
+<pre><code class="language-csharp"><span class="comment">// シナリオ 1:</span>
+<span class="keyword">int</span> f(<span class="keyword">string</span> s);                 <span class="comment">// ライブラリv1がこいつを持ってる</span>
+<span class="keyword">int</span> f(<span class="keyword">string</span> s, <span class="keyword">bool</span> b = <span class="keyword">false</span>); <span class="comment">// v2でこれに変えたい</span>
+<span class="comment">// バイナリ互換性のためにf(string)は消せない</span>
+<span class="comment">// でも、今後、オーバーロード解決時に、f(&quot;&quot;) で優先的に f(string, bool) の方を見てほしい(今は無理)</span>
+
+<span class="comment">// シナリオ 2:</span>
+<span class="keyword">float</span> g();  <span class="comment">// ライブラリv1がこいつを持ってる</span>
+<span class="keyword">double</span> g(); <span class="comment">// v2でこれに変えたい</span>
+<span class="comment">// バイナリ互換性のためにfloat g()は消せない</span>
+<span class="comment">// でも、今後、double g()を使いたい(呼び分けどころか今はそもそも定義すら不可能)</span></code></pre>
+<p>これに対して、v1側に<code>obsolete</code>修飾子を付けることで、v2側の新メソッドの追加・オーバーロード解決できるようにしたいとのこと。</p>
+<h2 id="tryroslyn">TryRoslyn</h2>
+<p><a href="https://github.com/dotnet/roslyn">Roslynリポジトリ</a>の各ブランチの最新版でのコンパイルを、オンラインで試して見れるサイト作ってる人がいた。</p>
+<ul>
+<li><a href="http://tryroslyn.azurewebsites.net/">http://tryroslyn.azurewebsites.net/</a></li>
+</ul>
+<p>C#チームの公式提供じゃないし、まだまだ作業途中みたいですけども。</p>
+<ul>
+<li>Lucian (C#チームの中の人)が、自分のリポジトリで<a href="https://github.com/dotnet/roslyn/issues/10902">async任意戻り値</a>の試験実装してる</li>
+<li>ashmind (TryRoslyn作ってる人)が、そのLucianの個人リポジトリのブランチをTryRoslynに追加してくれた</li>
+<li>Lucian、<a href="http://tryroslyn.azurewebsites.net/#b:ljw1004-features-async-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=">早速利用</a></li>
+</ul>
+<p>みたいな感じになってた。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/5/">2016&#x5E74;5&#x6708;</a></li><li><a href="/blog/2016/5/pickuproslyn0504/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 5/4</a></li><li><a href="/blog/2016/5/pickuproslyn0512/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 5/12</a></li><li><a href="/blog/2016/5/csugbuild2016/">&#x3010;&#x958B;&#x50AC;&#x5831;&#x544A;&#x3011; //build/ &#x632F;&#x308A;&#x8FD4;&#x308A;&#x52C9;&#x5F37;&#x4F1A;</a></li><li><a href="/blog/2016/5/cs7binaryliterals/">2&#x9032;&#x6570;&#x30EA;&#x30C6;&#x30E9;&#x30EB;&#x3068;&#x6570;&#x5B57;&#x533A;&#x5207;&#x308A;&#x6587;&#x5B57;</a></li><li><a href="/blog/2016/5/dotnet/">dot.net &#x306B;C#&#x30AA;&#x30F3;&#x30E9;&#x30A4;&#x30F3; &#x30A8;&#x30C7;&#x30A3;&#x30BF;&#x30FC;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

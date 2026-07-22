@@ -1,0 +1,269 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>dynamic &#x306E;&#x5185;&#x90E8;&#x5B9F;&#x88C5; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/dynamic/sp4_callsite/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="dynamic">dynamic の内部実装</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<h5 class="version version4">Ver. 4.0</h5>
+<p>dynamic って内部的にはどうなってるの？という話。</p>
+<p>C# の dynamic は、「型が動的」というよりは、「静的な型に対する動的コード生成」と言った方が正確です。
+動的に生成したコードはキャッシュされていて、2度目の呼び出しからはかなり効率よく実行されます。
+このような手法はインラインメソッドキャッシュ（inline method cache）と呼ばれています。</p>
+<p>注意：
+内部的な話なので、C# のバージョンアップで実装方法が変わる可能性もあります（基本的な原理は変わらないと思いますが）。
+（今このページに書かれている内容は、C# 4.0 の時点の実装に基づいています。）</p>
+<h5 id="section-1"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>dynamic 型ってのは実はなくて、内部的には object。</p>
+</li>
+<li><p>CallSite クラスを使って動的コード生成。</p>
+</li>
+</ul>
+<h2 id="callsite"><a id="sec-generated-title-3"></a> <a id="callsite"></a>動的 callsite</h2>
+<p>dynamic を使ったコードは、内部的には CallSite というクラスを使ったコードに展開されます。
+（多分、「動的呼び出し（call）用の動的コードを生成するための用地（site）というような意味合い。）
+例えば、以下のような C# 4.0 コードは、</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> CallX(<span class="keyword">object</span> obj)
+{
+    <span class="keyword">dynamic</span> d = obj;
+    d.X();
+}
+
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">dynamic</span> GetX(<span class="keyword">dynamic</span> obj)
+{
+    <span class="keyword">return</span> obj.X;
+}</code></pre>
+<p>以下のようなコードに展開されます。</p>
+<pre><code class="language-csharp"><span class="comment">// ↓本当は、いかにもコンパイラが自動生成したような変な変数名になってる</span>
+<span class="keyword">static</span> CallSite&lt;Action&lt;CallSite, <span class="keyword">object</span>&gt; site1;
+<span class="keyword">static</span> CallSite&lt;Func&lt;CallSite, <span class="keyword">object</span>, <span class="keyword">object</span>&gt; site2;
+
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> CallX(<span class="keyword">object</span> obj)
+{
+    <span class="keyword">object</span> d = obj; <span class="comment">// (1) dynamic 型の変数は、実のところ単なる object 型になる</span>
+
+    <span class="keyword">if</span> (site1 == <span class="keyword">null</span>)
+    {
+        <span class="comment">// d.X() 相当のコードを動的生成するための CallSite を作る。</span>
+        site1 = CallSite&lt;Action&lt;CallSite, <span class="keyword">object</span>&gt;&gt;.Create(
+            <span class="keyword">new</span> CSharpInvokeMemberBinder(
+                CSharpCallFlags.None, <span class="string">&quot;X&quot;</span>, <span class="keyword">typeof</span>(DynamicSample), <span class="keyword">null</span>,
+                <span class="keyword">new</span> CSharpArgumentInfo[] {
+                   <span class="keyword">new</span> CSharpArgumentInfo(CSharpArgumentInfoFlags.None, <span class="keyword">null</span>)
+                }));
+    }
+
+    <span class="comment">// 動的生成したコードを呼んだり、新たに動的生成するのは、</span>
+    <span class="comment">// 実際には Target デリゲートの中。</span>
+    site1.Target.Invoke(site1, d);
+}
+
+<span class="comment">// 引数や戻り値が dynamic の場合は、Dynamic 属性付きの object 型になる</span>
+[<span class="keyword">return</span>: Dynamic]
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">object</span> GetX([Dynamic] <span class="keyword">object</span> obj)
+{
+    <span class="keyword">if</span> (site2 == <span class="keyword">null</span>)
+    {
+        <span class="comment">// d.X 相当のコードを動的生成するための CallSite を作る。</span>
+        site2 = CallSite&lt;Func&lt;CallSite, <span class="keyword">object</span>, <span class="keyword">object</span>&gt;&gt;.Create(
+            <span class="keyword">new</span> CSharpGetMemberBinder(
+                <span class="string">&quot;X&quot;</span>, <span class="keyword">typeof</span>(DynamicSample), <span class="keyword">new</span> CSharpArgumentInfo[] {
+                    <span class="keyword">new</span> CSharpArgumentInfo(CSharpArgumentInfoFlags.None, <span class="keyword">null</span>)
+                }));
+    }
+
+    <span class="comment">// 動的生成したコードを呼んだり、新たに動的生成するのは、</span>
+    <span class="comment">// 実際には Target デリゲートの中。</span>
+    <span class="keyword">return</span> site2.Target.Invoke(site2, obj);
+}</code></pre>
+<p>要点は3つ。</p>
+<ol>
+<li><p>dynamic 型ってのは本当はなくて、内部的には単なる objetct 型になる。 メソッドの引数が dynamic 型の場合、[Dynamic] 属性が付く。</p>
+</li>
+<li><p>CallSite 初期化時： どうやって動的コード生成するかを指定する。 CallSiteBinder（この例の場合、CSharpInvokeMemberBinder や CSharpGetMemberBinder がこのクラスを継承してる）を使う。</p>
+</li>
+<li><p>CallSite.Target： 動的に生成したコードの入っているデリゲート。 obj の中身がまだコード生成していない型だった場合、動的コード生成して Target デリゲート自身の中身を書きかえる。</p>
+</li>
+</ol>
+<h2 id="dynamic-1"><a id="sec-generated-title-4"></a> <a id="DynamicAttribute"></a>Dynamic 属性</h2>
+<p>前述の通り、コンパイル結果的には dynamic 型ってものはなくて、
+実際のところは単なる object 型の変数になります。
+特に、ローカル変数の型を dynamic にした場合には、完璧に単なる object 型の変数になります。</p>
+<p>メンバー変数やプロパティ、メソッドの引数や戻り値の型を dynamic にした場合には、
+普通の object と区別するために、Dynamic 属性が付きます。</p>
+<pre><code class="language-csharp"><span class="keyword">dynamic</span> x;
+<span class="keyword">public</span> <span class="keyword">dynamic</span> X { <span class="keyword">get</span> { <span class="keyword">return</span> x; } <span class="keyword">set</span> { x = value; } }
+
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">dynamic</span> GetX(<span class="keyword">dynamic</span> obj)
+{
+    <span class="comment">// 中身省略</span>
+}</code></pre>
+<p>というコードは、以下のようなコードに変換されます。</p>
+<pre><code class="language-csharp">[Dynamic]
+<span class="keyword">private</span> <span class="keyword">object</span> x;
+
+[Dynamic]
+<span class="keyword">public</span> <span class="keyword">object</span> X
+{
+    [<span class="keyword">return</span>: Dynamic]
+    <span class="keyword">get</span> { <span class="keyword">return</span> <span class="keyword">this</span>.x; }
+    [<span class="keyword">param</span>: Dynamic]
+    <span class="keyword">set</span> { <span class="keyword">this</span>.x = value; }
+}
+
+[<span class="keyword">return</span>: Dynamic]
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">object</span> GetX([Dynamic] <span class="keyword">object</span> obj)
+{
+    <span class="comment">// 中身省略</span>
+}</code></pre>
+<p>なので、以下のようなコードはコンパイルエラーを起こしたりします。
+（dynamic 型と object 型でメソッドを「<a href="/study/csharp/structured/st_function/#overload">オーバーロード</a>」することはできません。）</p>
+<pre><code class="language-csharp"><span class="comment">// 同じパラメーター型の GetX が2個あるぞって怒られる。</span>
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">dynamic</span> GetX(<span class="keyword">dynamic</span> obj)
+{
+    <span class="keyword">return</span> obj.X;
+}
+
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">object</span> GetX(<span class="keyword">object</span> obj)
+{
+    <span class="keyword">var</span> t = obj.GetType();
+    <span class="keyword">return</span> t.GetMethod(<span class="string">&quot;X&quot;</span>).Invoke(obj, <span class="keyword">new</span> <span class="keyword">object</span>[<span class="number">0</span>]);
+}</code></pre>
+<p>ジェネリック型の型引数を dynamic にした場合はどうなるかというと、</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> GenericDynamic(
+    IDictionary&lt;<span class="keyword">object</span>, <span class="keyword">object</span>&gt; a,
+    IDictionary&lt;<span class="keyword">dynamic</span>, <span class="keyword">object</span>&gt; b,
+    IDictionary&lt;<span class="keyword">object</span>, <span class="keyword">dynamic</span>&gt; c,
+    IDictionary&lt;<span class="keyword">dynamic</span>, <span class="keyword">dynamic</span>&gt; d)
+{
+}</code></pre>
+<p>この例の場合、以下のようなコードに変換されます。</p>
+<pre><code class="language-csharp"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> GenericDynamic(
+    IDictionary&lt;<span class="keyword">object</span>, <span class="keyword">object</span>&gt; a,
+    [Dynamic(<span class="keyword">new</span> <span class="keyword">bool</span>[] { <span class="keyword">false</span>, <span class="keyword">true</span>, <span class="keyword">false</span> })] IDictionary&lt;<span class="keyword">object</span>, <span class="keyword">object</span>&gt; b,
+    [Dynamic(<span class="keyword">new</span> <span class="keyword">bool</span>[] { <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">true</span> })] IDictionary&lt;<span class="keyword">object</span>, <span class="keyword">object</span>&gt; c,
+    [Dynamic(<span class="keyword">new</span> <span class="keyword">bool</span>[] { <span class="keyword">false</span>, <span class="keyword">true</span>, <span class="keyword">true</span> })] IDictionary&lt;<span class="keyword">object</span>, <span class="keyword">object</span>&gt; d)
+{
+}</code></pre>
+<p>要するに、型引数の少なくともどれか1つが dynamic 型だった場合、
+bool[] の引数付きの Dynamic 属性が付きます。</p>
+<h2 id="callsitebinder"><a id="sec-generated-title-5"></a> <a id="CallSiteBinder"></a>CallSiteBinder</h2>
+<p>続いて CallSite の初期化部分。
+上述のコードのうち、以下のようなコードの部分について。</p>
+<pre><code class="language-csharp"><span class="keyword">if</span> (site2 == <span class="keyword">null</span>)
+{
+    <span class="comment">// d.X 相当のコードを動的生成するための CallSite を作る。</span>
+    site2 = CallSite&lt;Func&lt;CallSite, <span class="keyword">object</span>, <span class="keyword">object</span>&gt;&gt;.Create(
+        <span class="keyword">new</span> CSharpGetMemberBinder(
+            <span class="string">&quot;X&quot;</span>, <span class="keyword">typeof</span>(DynamicSample), <span class="keyword">new</span> CSharpArgumentInfo[] {
+                <span class="keyword">new</span> CSharpArgumentInfo(CSharpArgumentInfoFlags.None, <span class="keyword">null</span>)
+            }));
+}</code></pre>
+<p><code>d.X</code> などのメンバーアクセスに対して、どういう動的コード生成を行えばいいかは、CallSite クラス自身は知りません。
+それを実際に担ってるのは、この例で言うと CSharpGetMemberBinder の部分です。
+CSharpGetMemberBinder は System.Runtime.CompilerServices.CallSiteBinder というクラスを継承していて、
+CallSiteBinder の抽象メソッドの Bind 内で式木を作っています。</p>
+<p>CSharpGetMemberBinder というように、名前に CSharp という言葉が付いてることからもわかるように、
+言語ごとに CallSiteBinder の実装を変えることができます。</p>
+<p>（CallSite 自体は、C# 4.0 の dynamic のためだけに作られたクラスではなくて、
+DLR に含まれているクラス。
+IronPython などの動的言語の実装にも使われています。）</p>
+<p>C# 4.0 の場合（要するに、CSharpGetMemberBinder の中の挙動としては）、以下のような動的コード生成を行います。</p>
+<ul>
+<li><p>IDynamicObject インターフェースを実装した型の場合、TryGetMember などのメソッド呼び出し</p>
+</li>
+<li><p>COM オブジェクトの場合、COM Interop コード</p>
+</li>
+<li><p>その他の場合、「<a href="/study/csharp/dynamic/sp_reflection/#reflection">リフレクション</a>」を使ってメンバーを持っているかどうか調べて、持っているならそのメンバーにアクセスするコードを生成。</p>
+</li>
+</ul>
+<h2 id="callsite.target"><a id="sec-generated-title-6"></a> <a id="DynamicCodeGeneration"></a>CallSite.Target 内での動的コード生成</h2>
+<p>最後に、実際に動的コード生成。
+CallSite.Target デリゲートを呼んでいる部分について。</p>
+<pre><code class="language-csharp">    site1.Target.Invoke(site1, d);</code></pre>
+<p>Target デリゲートの中身は、初期状態では以下のようなコードと同じ状態になっています。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span>  <span class="keyword">object</span> _anonymous(CallSite site, <span class="keyword">object</span> x)
+{
+    <span class="keyword">return</span> site.Update(site, x);
+}</code></pre>
+<p X="1," Y="2">この状態で、<code>GetX(new Point );</code> というように、
+Point 型のインスタンスを引数として Target が呼ばれたとします。
+このとき、Target 内には Update の1行しかないので、
+この Update が呼ばれて、動的コード生成が行われます。
+その結果、Target が以下のような状態に更新されます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span>  <span class="keyword">object</span> _anonymous(CallSite site, <span class="keyword">object</span> x)
+{
+    <span class="keyword">if</span> (x <span class="keyword">is</span> Point)
+        <span class="keyword">return</span> ((Point)x).X;
+    <span class="keyword">else</span>
+        <span class="keyword">return</span> site.Update(site, x);
+}</code></pre>
+<p>ここで、<code>((Point)x).X</code> の部分を生成するのが CallSiteBinder の役目です。</p>
+<p>Target 内がこのような状態になったので、
+以後、Point 型のインスタンスで GetX を呼べば、
+そこそこいい実行速度が得られます。</p>
+<p>実行速度に関してもう少し詳しく言うと、</p>
+<ul>
+<li><p>初回（今まで使ったことのない型のインスタンスで GetX を呼んだりしたとき）には動的コード生成（Target 内を更新）する分、かなり重たい処理が入る。</p>
+</li>
+<li><p>2回目以降は、そこそこ高速。</p>
+<ul>
+<li><p>静的に<code>x.X</code>プロパティを呼ぶのと比べると、if 文とキャストの分だけ遅い。</p>
+</li>
+<li><p>呼び出しのたびに毎回「<a href="/study/csharp/dynamic/sp_reflection/#reflection">リフレクション</a>」を使うよりは圧倒的に高速。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>という感じになります。</p>
+<p>（
+ちなみに、こういう、動的コード生成してデリゲート化しておくような手法をインラインメソッドキャッシュ（inline method cache）と言うようです。
+DLR や C# 4.0 以外（例えば JavaScript とか）でも、同様の手法はよく使われます。
+）</p>
+<p>Point 以外の型のインスタンスが来ると、当然また Target の更新がかかります。
+例えば、Vector3D を使って <code>GetX(new Vector3D(1, 2, 3));</code> とかすると、</p>
+<pre><code class="language-csharp"><span class="keyword">static</span>  <span class="keyword">object</span> _anonymous(CallSite site, <span class="keyword">object</span> x)
+{
+    <span class="keyword">if</span> (x <span class="keyword">is</span> Point)
+        <span class="keyword">return</span> ((Point)x).X;
+    <span class="keyword">else</span> <span class="keyword">if</span> (x <span class="keyword">is</span> Vector3D)
+        <span class="keyword">return</span> ((Vector3D)x).X;
+    <span class="keyword">else</span>
+        <span class="keyword">return</span> site.Update(site, x);
+}</code></pre>
+<p>となります。</p>
+<h2 id="section-2"><a id="sec-generated-title-7"></a> <a id="misc"></a>余談</h2>
+<p>その他、いくつか小ネタを。</p>
+<h5 id="typeofdynamic"><a id="sec-generated-title-8"></a>typeof(dynamic)</h5>
+<p><code>typeof(dynamic)</code> はそもそもエラーになります。
+<code>typeof(object)</code> が得られたりはしません。</p>
+<h5 id="dynamic-tostring"><a id="sec-generated-title-9"></a>dynamic の ToString 呼び出し</h5>
+<p>dynamic の実体は object なわけですが、
+じゃあ、ToString() や GetHashCode() 等の object 型のメソッドはどうなるかというと・・・、
+CallSite を介した動的コード生成になります。
+ToString() だけ特別扱いされて静的なコードになったりはしません。</p>
+<h5 id="dynamic-2"><a id="sec-generated-title-10"></a>Dynamic 属性を直接使う</h5>
+<p>dynamic キーワードを使わず、
+Dynamic 属性を直接付けようとするとコンパイルエラーになります。
+「DynamicAttribute は直接は使えない。dynamic キーワードを使ってくれ」というような感じで怒られます。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/dynamic/">&#x52D5;&#x7684;&#x306A;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/dynamic/sp_reflection/">&#x5B9F;&#x884C;&#x6642;&#x578B;&#x60C5;&#x5831;</a></li><li><a href="/study/csharp/dynamic/sp_attribute/">&#x5C5E;&#x6027;</a></li><li><a href="/study/csharp/dynamic/sp3_expression/">&#x5F0F;&#x6728;&#xFF08;Expression Trees&#xFF09;</a></li><li><a href="/study/csharp/dynamic/sp4_dynamic/">dynamic</a></li><li><a href="/study/csharp/dynamic/misc_dynamic/">[&#x96D1;&#x8A18;] &#x52D5;&#x7684;&#x30B3;&#x30FC;&#x30C9;&#x751F;&#x6210;&#x306E;&#x30D1;&#x30D5;&#x30A9;&#x30FC;&#x30DE;&#x30F3;&#x30B9;</a></li><li><a href="/study/csharp/dynamic/dyn_usage/">[&#x96D1;&#x8A18;]&#x52D5;&#x7684;&#x306A;&#x51E6;&#x7406;&#x306E;&#x4F7F;&#x3044;&#x65B9;</a></li><li><a href="/study/csharp/dynamic/sp4_multipledispatch/">[&#x96D1;&#x8A18;] &#x591A;&#x91CD;&#x30C7;&#x30A3;&#x30B9;&#x30D1;&#x30C3;&#x30C1;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

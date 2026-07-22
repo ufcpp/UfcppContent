@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/5 | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/8/pickuproslyn0805/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-08-05T15:24:05">2016-08-05</time></span><span>更新: <time datetime="2016-08-05T15:38:00">2016-08-05</time></span></div><h1 id="roslyn-85">ピックアップRoslyn 8/5</h1>
+<h2 id="feature-status-finishing">Feature Status: Finishing</h2>
+<p>C# 7のステータスがいろいろ更新されたみたいですね。</p>
+<ul>
+<li><a href="http://blog.xin9le.net/entry/2016/08/05/010144">Roslyn の開発進捗が更新されました</a></li>
+</ul>
+<p>C# 7に入るもの、ほぼ確定したのかなぁ。
+C# 7/VB 15には状況が「Finishing(最終作業中)」のものばっかり残して、他は+1(その次)行き。</p>
+<p>この感じは、次に出るであろうVS &quot;15&quot; Preview 4が最後のプレビュー版ですかね。</p>
+<h3 id="section">最終作業</h3>
+<p>最終作業中ってのは、まあ、基本機能は実装済みで、後は実装してみて初めて分かった問題とかバグの修正、みたいな感覚ですかね。
+僕が把握してる範囲だと、以下のような作業はしているはず。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/347">Tuples</a>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/12897">式ツリーの中にタプルを書いた時の挙動が怪しい</a>みたいで、修正作業がたくさん</li>
+<li><code>var p = (x, y) = tuple;</code> みたいな、分解代入(<code>tuple</code>を<code>x</code>, <code>y</code>にばらす)をさらに別の変数<code>p</code>に代入するの、<a href="https://github.com/dotnet/roslyn/issues/12635">認める予定</a>だけど今はエラーになる</li>
+</ul>
+</li>
+<li><a href="https://github.com/dotnet/roslyn/blob/master/docs/features/local-functions.md">Local Functions</a>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/10391">「確実に初期化されているか」検証のルールを変えたいとのこと</a></li>
+<li>ローカル関数でキャプチャしたローカル変数は、ローカル関数を初めて呼び出すまでに初期化して入ればいいことにしたいみたい
+<ul>
+<li>今は、ローカル関数の宣言よりも前で初期化が必要</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="https://github.com/dotnet/roslyn/blob/features/outvar/docs/features/outvar.md">Out Var</a>と<a href="https://github.com/dotnet/roslyn/blob/master/docs/features/patterns.md">Types Switch</a>で宣言する変数のスコープ
+<ul>
+<li>後述。スコープを変えるみたい
+<ul>
+<li>変えるというか、今まで未決定だったから過剰に厳しくしてたのを、ようやくちゃんと決めたっぽい</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>まあほんとにこういう細かい作業をする段階という感じです。</p>
+<h3 id="section-1">見送られた方</h3>
+<p><a href="http://blog.xin9le.net/entry/2016/08/05/010144">じんぐるさんも書いてますけど</a>、元々C# 7/VB 15の欄にいたのに、+1送りになったのもありまして。</p>
+<p>まあ、動きがなかったのでうすうす感づいていたものの。以下の3つ。</p>
+<ul>
+<li>Async Main</li>
+<li>Source Generation</li>
+<li>Throw Expressions</li>
+</ul>
+<h4 id="async-main">Async Main</h4>
+<p>プログラムのエントリー ポイントとして<code>Task MainAsync(string[] args)</code>や<code>Task&lt;int&gt; MainAsync(string[] args)</code>を認めてほしいという話。</p>
+<p>これ、最大の問題は同期コンテキストをどうするかなんですよねぇ。4年近く前にブログに書いたことあるんですけど、GUI (WPFでもUWPでもWinFormsでも)では問題ないのにコンソール アプリで実行すると競合起こす場合がありまして。</p>
+<ul>
+<li>「<a href="https://ufcpp.wordpress.com/2012/11/12/asyncawait%E3%81%A8%E5%90%8C%E6%99%82%E5%AE%9F%E8%A1%8C%E5%88%B6%E5%BE%A1/">async/awaitと同時実行制御</a>」の「コンソール アプリ」の辺り</li>
+</ul>
+<p>これに関する解決案みたいな話が全く見かけなかったんで、今はまだ取り組んでないんだろうなぁと。</p>
+<p>ちなみにもう1つの問題として、今、↓みたいな書き方してるコードが結構たくさんあるはずで、これの互換性を崩しかねないからって話もあります。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        MainAsync().Wait();
+    }
+
+    <span class="keyword">static</span> <span class="keyword">async</span> Task MainAsync()
+    {
+        ...
+    }
+}</code></pre>
+<p>こちらはまあ、<code>void Main</code>の方を優先する、みたいなルールで回避はできるはず。</p>
+<h4 id="source-generation">Source Generation</h4>
+<p>これは、いろんなところが関係するんで、それが先送りの理由かなぁと。要するに、</p>
+<ol>
+<li>C# にコード生成を前提とした新文法を追加する: replace/original キーワードの追加</li>
+<li>CodeAnalysis API に<code>SourceGenerator</code>みたいなクラスを追加して、コンパイラー プラグインとして自作のコード生成処理を挟めるようにする</li>
+<li>Visual StudioやVS Codeに、ソースコード書き換え時や、ビルド時に<code>SourceGenerator</code>を掛ける仕組みを追加する</li>
+</ol>
+<p>という3つが必要。</p>
+<p>1はあったんですよね。一時期はmasterブランチにもマージされてました。問題もいくつか出てはいたですが:</p>
+<ul>
+<li>複数のreplaceを書けない(複数のコード生成プラグインを掛けると競合する可能性がある)</li>
+<li><a href="https://github.com/dotnet/roslyn/issues/12516">ref returns と食い合わせが悪く、現状まだバグってる</a></li>
+</ul>
+<p>それよりは、2、3の作業が全然見えてこないなーという感じで。やっぱりC# 7には入れないんだ…</p>
+<p>VS &quot;15&quot; Previewのリリース ノートでも、「VS &quot;15&quot;で新たに入る機能は<code>IOperation</code>です」としか書かれてなかったし。
+(※<code>IOperation</code>は、C#とVBの両方に対して、単一のプラグインでコード解析・コード修正を掛けれる機能。)</p>
+<p>特に今は、Visual Studio、Xamarin Studio、Visual Studio Codeの全部にこの手の仕組みを対応させたがってる節があって、この3者の間で調整してそうな予感が。C#チームの範疇を超えてますし、多少時間掛かりそう。</p>
+<h4 id="throw-expressions">Throw Expressions</h4>
+<p><code>void Method() =&gt; throw new NotSupportedException();</code>とか、<code>x ?? throw new ArgumentNullException(nameof(x))</code>とか、<code>int.TryParse(s, out var x) ? x : throw new InvalidOperationException();</code>とか書けるようにしたいって話。</p>
+<p>これをやるんだったら、never 型(<a href="/blog/2015/08/pickuproslyn0829/">去年のブログ</a>とか<a href="http://www.buildinsider.net/column/iwanaga-nobuyuki/002">Build Insiderの記事</a>参照)も入れたいとかあるんじゃないかなぁと。</p>
+<p>あと、こいつが本格的に必要になるのはmatch式(<a href="https://github.com/dotnet/roslyn/blob/features/patterns/docs/features/patterns.md">パターン マッチングのドキュメント</a>のMatch Expressionのところを参照)が入ってからなので、これがC# 7から外れた以上、throw式だけを先に入れる動機付けは弱いはず。</p>
+<h2 id="design-notes-715">Design Notes 7/15</h2>
+<p><a href="https://github.com/dotnet/roslyn/issues/12939">C# Design Notes for Jul 15, 2016 #12939</a></p>
+<p>で、ちょうど、7/15のDesign Notesが公開されて、ここにOut Varで導入される変数のスコープについて書かれています。</p>
+<p>これまで、C#の変数宣言は書ける場所を限定していたのもあって、「宣言しているブロック内がスコープ」というシンプルなルールになっていました。</p>
+<p>ところが、C# 7では、</p>
+<ul>
+<li>Out Var: <code>int.TryParse(s, out var x) ? x : default(int?);</code> みたいに、out引数のところで変数宣言できるようになる</li>
+<li>Type Switch: <code>obj is int x ? x.ToString() : &quot;unsupported&quot;;</code> みたいに、is演算子で変数宣言できるようになる</li>
+</ul>
+<p>という2つの機能が入って、こいつらは、式を掛ける文脈ならどこでも変数宣言できてしまいます。
+ここで導入される変数 <code>x</code> のスコープはどの範囲になるべきかという課題がありました。</p>
+<p>現状、とりあえず相当厳しい方に倒して実装しています。すなわち、「<code>x</code>は、その式を含むステートメント内でだけ使える」というものです。要するに、以下のコードはコンパイル エラーに。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> X(<span class="keyword">string</span> s)
+{
+    <span class="keyword">var</span> value = <span class="keyword">int</span>.TryParse(s, <span class="keyword">out</span> <span class="keyword">var</span> x) ? x : <span class="number">0</span>; <span class="comment">// x はこのステートメント内でしか使えない</span>
+    Console.WriteLine(x); <span class="comment">// もうスコープを外れてる。使えない。コンパイル エラーに</span>
+}</code></pre>
+<p>いろいろ検討した結果、これはさすがに実際にありそうな用途をカバーしきれないという結論で、制限緩和を考えてるみたいです。</p>
+<p>パッと見、「この式を含んでいるブロック内で使える」というのが素直に思えるんですが、if とか for とかが絡むと多少めんどくさく。</p>
+<p>例1: if の条件式内で宣言した変数は、else側には伸びてほしくない</p>
+<pre><code class="language-csharp"><span class="keyword">if</span> (o <span class="keyword">is</span> <span class="keyword">bool</span> b) ...b...; <span class="comment">// b はスコープ内</span>
+<span class="keyword">else</span> <span class="keyword">if</span> (o <span class="keyword">is</span> <span class="keyword">byte</span> b) ...b...; <span class="comment">// bool の方の b はもうスコープ外。新しいbを作れる</span>
+...; <span class="comment">// どちらのbもスコープ外</span></code></pre>
+<p>例2: 「含んでいるブロック内」で区切ると、forとかで変になる</p>
+<pre><code class="language-csharp"><span class="keyword">for</span> (<span class="keyword">int</span> i = foo(<span class="keyword">out</span> <span class="keyword">int</span> j); ;) ;
+<span class="comment">// iはスコープ外だけど、jはスコープ内になってしまうのはいい？</span></code></pre>
+<p>例3: ブロックがないifとかどうするの</p>
+<pre><code class="language-csharp"><span class="keyword">if</span> (...)
+    <span class="keyword">if</span> (...)
+        <span class="keyword">if</span> (o <span class="keyword">is</span> <span class="keyword">int</span> i) ...i...
+...; <span class="comment">// ブロックを区切りにすると、i はここもスコープになる</span>
+     <span class="comment">// その手前のifのせいで、iが初期化されている保証できないけどいい？</span></code></pre>
+<p>ってことで、ifとかforとかの場合は「embedded statements内にスコープを限定する」っていうルールにしたいそうです。
+embedded statementsって、要するに、ifとかforとかの直後に書けるステートメントのこと。ifとかforとかの後ろには、ブロック、もしくは、何か1つステートメントを書けるわけですが、その部分のことを指すそうです。</p>
+<h3 id="embedded-statements">余談: embedded statements</h3>
+<p>この話を見て、embedded statementsって何だっけ？って思って久々にC#の仕様書を眺めてみたんですが…</p>
+<pre><code class="language-text">statement:
+    labeled-statement
+    declaration-statement
+    embedded-statement
+
+embedded-statement:
+    block
+    empty-statement
+    expression-statement
+    selection-statement
+    iteration-statement
+    jump-statement
+    try-statement
+    checked-statement
+    unchecked-statement
+    lock-statement
+    using-statement 
+    yield-statement</code></pre>
+<p>つまり、embedded statement = ステートメントのうち、変数宣言とラベル付きステートメント以外。</p>
+<p>ということは、こうなる: <a href="https://twitter.com/ufcpp/status/761514377543462912">https://twitter.com/ufcpp/status/761514377543462912</a></p>
+<p><img src="/assets/media/1089/cpfxcfuvuaebj5t.jpg" alt="変数宣言はブロックなしでは書けない" /></p>
+<p>まあ、要するに、変数宣言とラベルって、それを囲っているブロックが重要な構文なので、ブロックを省略するとか認めないっていう。言われてみればそうですよねという感じ。</p>
+<p>(逆に言うと、そうまでして変数宣言できる位置をちゃんと絞ってたのに、Out VarとType Switchのせいで面倒になったという話。)</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/8/">2016&#x5E74;8&#x6708;</a></li><li><a href="/blog/2016/8/pickuproslyn0806/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/6</a></li><li><a href="/blog/2016/8/pickuproslyn0810/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/10</a></li><li><a href="/blog/2016/8/pickuproslyn0816/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/16 Close&#x796D;&#x308A;</a></li><li><a href="/blog/2016/8/vs15p4/">Visual Studio &quot;15&quot; Preview 4</a></li><li><a href="/blog/2016/8/rickuproslyn0827/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/27: What&#x2019;s New in C# 7.0</a></li><li><a href="/blog/2016/8/tuples/">&#x30BF;&#x30D7;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

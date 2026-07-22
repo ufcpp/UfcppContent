@@ -1,0 +1,441 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x914D;&#x5217; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/structured/st_array/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">配列</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>「複数の数値を入力してその和を求める」とかいうように、複数のデータを一まとめにして扱いたい場合があります。
+C# などのプログラミング言語には、
+複数のデータを一まとめにするための「配列」というものがあります。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/array.png"><img src="/assets/media/ufcpp2000/csharp/fig/array.png" alt="配列" /></a></p>
+<figcaption>配列</figcaption>
+</figure>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>配列: 複数のデータをひとまとめに</p>
+</li>
+<li><p>x[n] で、x の n 番目の要素にアクセス</p>
+</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="unless"></a>配列がなかったら</h2>
+<p>まずは、もし複数のデータを一まとめにせずにばらばらに扱おうとするとどうなるか考えてみましょう。
+例として、5個の整数を入力して、それらの二乗和を求めることを考えます。
+プログラムは以下のようになるでしょう。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> a, b, c, d, e; <span class="comment">// 変数を入力したいデータの数だけ用意。</span>
+
+<span class="comment">// 値の入力</span>
+a = <span class="keyword">int</span>.Parse(Console.ReadLine());
+b = <span class="keyword">int</span>.Parse(Console.ReadLine());
+c = <span class="keyword">int</span>.Parse(Console.ReadLine());
+d = <span class="keyword">int</span>.Parse(Console.ReadLine());
+e = <span class="keyword">int</span>.Parse(Console.ReadLine());
+
+<span class="comment">// 値の計算</span>
+<span class="keyword">int</span> square_sum = a*a + b*b + c*c + d*d + e*e;
+
+<span class="comment">// 値の出力</span>
+Console.Write(<span class="string">&quot;二乗和は {0} です&quot;</span>, square_sum);</code></pre>
+<p>似たような文が何度も繰り返し出てきています。
+これは書くのにも手間がかかりますし、修正が必要になった場合、何箇所も修正する必要が出てきます。
+それに、入力するデータの数を5個から10個とかいうように変更したい場合にも、修正が大変になります。</p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="use"></a>配列を使う</h2>
+<p>C# には複数のデータを一まとめにするために<strong id="array" class="keyword">配列</strong>というものが用意されています。
+先ほどの例では、5個のデータを<code>a, b, c, d, e</code>という5つの変数に格納していましたが、
+配列を使うことで<code>a[0], a[1], a[2], a[3], a[4]</code>というように、番号を振って管理出来ます。</p>
+<p>配列は以下のようにして宣言します。
+すなわち、<em>
+型名に <code>[]</code> を付けることで配列型を作ることができます
+</em>。</p>
+<pre><code class="language-csharp">型名[] 変数名;</code></pre>
+<p>配列は宣言しただけでは利用できず、まずは配列の実体を作成する必要があります。
+実体の作成は <code>new</code> というキーワードを用いて以下のようにします。</p>
+<pre><code class="language-csharp">配列型変数 = <span class="keyword">new</span> 型名[配列の長さ];</code></pre>
+<p>詳しくは「<a href="/study/csharp/oop/oo_class/">クラス</a>」で説明しますが、
+配列型の変数というのは配列を格納するためのただの入れ物で、
+配列の実体を作成して変数に格納してやる必要があります。
+<code>new</code> はこの実体を作成するための演算子です。</p>
+<p>先ほどの例を配列を使って書き直してみましょう。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span>[] a = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">5</span>]; <span class="comment">// 長さが5の整数型配列を用意。</span>
+
+<span class="comment">// 値の入力</span>
+<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;a.Length; ++i) <span class="comment">// a.Length は配列 a の長さ。これの例では5。</span>
+{
+  a[i] = <span class="keyword">int</span>.Parse(Console.ReadLine());
+}
+
+<span class="comment">// 値の計算</span>
+<span class="keyword">int</span> square_sum = <span class="number">0</span>;
+<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;a.Length; ++i)
+{
+  square_sum += a[i]*a[i];
+}
+
+<span class="comment">// 値の出力</span>
+Console.Write(<span class="string">&quot;二乗和は {0} です&quot;</span>, square_sum);</code></pre>
+<p>配列を使うことで、手動で何度も繰り返し書いていた文が1つの for 文にまとまりました。
+書く手間は1度ですみますし、修正も1箇所で済みます。
+また、入力したいデータの数を変更したい場合にも、最初の1行を修正するだけで済みます。</p>
+<h5 id="section-5"><a id="sec-generated-title-5"></a>サンプル</h5>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> ArraySample
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="comment">// フィボナッチ数列の20項目までを求める</span>
+    <span class="keyword">int</span>[] sequence = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">20</span>];
+
+    <span class="comment">// 最初の2項を入力</span>
+    Console.Write(<span class="string">&quot;a1 = &quot;</span>);
+    sequence[<span class="number">0</span>] = <span class="keyword">int</span>.Parse(Console.ReadLine());
+    Console.Write(<span class="string">&quot;a2 = &quot;</span>);
+    sequence[<span class="number">1</span>] = <span class="keyword">int</span>.Parse(Console.ReadLine());
+
+    <span class="comment">// 漸化式を使って20項目までを計算</span>
+    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">2</span>; i&lt;sequence.Length; ++i)
+    {
+      sequence[i] = sequence[i-<span class="number">1</span>] + sequence[i-<span class="number">2</span>];
+    }
+
+    <span class="comment">// 結果の出力</span>
+    Console.Write(<span class="string">&quot;{&quot;</span>);
+    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;sequence.Length-<span class="number">1</span>; ++i)
+    {
+      Console.Write(sequence[i] + <span class="string">&quot;, &quot;</span>);
+    }
+    Console.Write(sequence[sequence.Length-<span class="number">1</span>] + <span class="string">&quot;}&quot;</span>);
+  }
+}</code></pre>
+<pre><code class="language-console">a1 = 2
+a2 = 1
+{2, 1, 3, 4, 7, 11, 18, 29, 47, 76, 123, 199, 322, 521, 843, 1364, 2207,
+ 3571, 5778, 9349}</code></pre>
+<p>また、配列は以下のようにして宣言時に初期化することも出来ます。</p>
+<pre><code class="language-csharp">型名[] 変数名 = <span class="keyword">new</span> 型名[] {値1, 値2, .....};</code></pre>
+<p>例えば、1, 3, 5, 7, 9 という初期値を持った int 型配列を作成するには以下のようにします。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span>[] a = <span class="keyword">new</span> <span class="keyword">int</span>[] {<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">9</span>};</code></pre>
+<p><em>変数宣言と同時に限り</em>、以下のような書き方も可能です。
+（new[] を省略できる。）</p>
+<pre><code class="language-csharp"><span class="keyword">int</span>[] a = {<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">9</span>};</code></pre>
+<p>ちなみに、こういう<code>{}</code>で初期値を与える書き方のことを「<strong id="key-initializer" class="keyword">初期化子</strong>」(initializer)と呼びます。</p>
+<p>また、初期化子内の最後には、コンマを付けてもつけなくても構いません。
+以下の2行は同じ意味になります。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span>[] a = <span class="keyword">new</span> <span class="keyword">int</span>[] { <span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">9</span> };
+<span class="keyword">int</span>[] b = <span class="keyword">new</span> <span class="keyword">int</span>[] { <span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">9</span>, };</code></pre>
+<p>ソースコード生成など機械的な処理で値を並べる場合には「最後だけ <code>,</code> を消さないといけない」みたいな処理の方が難しいので、末尾コンマを認めています。</p>
+<h5 class="version version12">Ver. 12</h5>
+<p>C# 12 からは配列の初期化を以下のように書くことができるようになりました。
+これをコレクション式といいます。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span>[] a = [<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">9</span>];</code></pre>
+<p><code>{}</code> を使った初期化子との差や、コレクション式のメリットなどは「<a href="/study/csharp/datatype/collection-expression/">コレクション式</a>」で説明します。</p>
+<h3 id="section-6"><a id="sec-generated-title-6"></a> <a id="infer"></a>暗黙的型付け配列</h3>
+<h5 class="version version3">Ver. 3.0</h5>
+<p>C# 3.0 では、
+配列の初期化時の、「new 型名[]」の型名を省略することが可能に成りました。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> a = <span class="keyword">new</span>[] {<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">9</span>};</code></pre>
+<p>配列の型は、 の中身から推論されます。
+この例の場合、 の中身が <code>int</code> なので、<code>a</code> は <code>int[]</code> になります。</p>
+<h3 id="section-7"><a id="sec-generated-title-7"></a> <a id="range"></a>範囲アクセス</h3>
+<h5 class="version version8">Ver. 8.0</h5>
+<p>C# 8.0 で、<code>a[i..j]</code> という書き方で「i番目からj番目の要素を取り出す」というような操作ができるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> a = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> };
+ 
+        <span class="comment">// 前後1要素ずつ削ったもの</span>
+        <span class="keyword">var</span> middle = a[<span class="number">1</span>..^<span class="number">1</span>];
+ 
+        <span class="comment">// 2, 3, 4 が表示される</span>
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> middle)
+        {
+            Console.WriteLine(x);
+        }
+    }
+}</code></pre>
+<p>詳しくは「<a href="/study/csharp/data/dataranges/">インデックス/範囲処理</a>」で説明します。</p>
+<h2 id="section-8"><a id="sec-generated-title-8"></a> <a id="multid"></a>多次元配列</h2>
+<p>今までは1次元的に並んだデータを格納するための1次元配列について説明してきました。
+しかし、画像の画素などのように、データが多次元的に並んでいる場合もあります。
+C# ではそのような多次元データを格納するため、<strong id="multid" class="keyword">多次元配列</strong>が用意されています。</p>
+<h3 id="section-9"><a id="sec-generated-title-9"></a> <a id="rectangular"></a>四角い多次元配列</h3>
+<p>C# の多次元配列は以下のようにして宣言します。
+（次節で説明する「配列の配列」と区別するために、「四角い多次元配列」と呼んだりする場合もあります。
+単に多次元配列という場合、こちらの四角い多次元配列を指します。）</p>
+<pre><code class="language-csharp">型名[,] 変数名; <span class="comment">// 2次元配列</span>
+型名[,,] 変数名; <span class="comment">// 3次元配列</span></code></pre>
+<p>1次元配列のときと同じく、new キーワードを用いて配列を作成する必要があります。</p>
+<pre><code class="language-csharp">変数名 = <span class="keyword">new</span> 型名[長さ1, 長さ2]; <span class="comment">// 2次元配列の場合</span>
+変数名 = <span class="keyword">new</span> 型名[長さ1, 長さ2, 長さ3]; <span class="comment">// 3次元配列の場合</span></code></pre>
+<p>また、宣言時に値を初期化する場合には以下のようにします。</p>
+<pre><code class="language-csharp">型名[,] 変数名 = <span class="keyword">new</span> 型名[,] {
+  {値1-<span class="number">1</span>, 値1-<span class="number">2</span>, .....},
+  {値2-<span class="number">1</span>, 値2-<span class="number">2</span>, .....},
+  .....
+};</code></pre>
+<p>例えば、2次元配列を行列に見立てて行列の掛け算を行うプログラムは以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">double</span>[,] a = <span class="keyword">new</span> <span class="keyword">double</span>[,]{{<span class="number">1</span>, <span class="number">2</span>}, {<span class="number">2</span>, <span class="number">1</span>}, {<span class="number">0</span>, <span class="number">1</span>}}; <span class="comment">// 3行2列の行列</span>
+<span class="keyword">double</span>[,] b = <span class="keyword">new</span> <span class="keyword">double</span>[,]{{<span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>}, {<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>}};   <span class="comment">// 2行3列の行列</span>
+<span class="keyword">double</span>[,] c = <span class="keyword">new</span> <span class="keyword">double</span>[<span class="number">3</span>, <span class="number">3</span>];                      <span class="comment">// 3行3列の行列</span>
+
+<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;a.GetLength(<span class="number">0</span>); ++i) <span class="comment">// a.GetLength(0) は a の行数を表す。</span>
+{
+  <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>; j&lt;b.GetLength(<span class="number">1</span>); ++j) <span class="comment">// b.GetLength(1) は b の列数を表す。</span>
+  {
+    c[i, j] = <span class="number">0</span>;
+    <span class="keyword">for</span>(<span class="keyword">int</span> k=<span class="number">0</span>; k&lt;a.GetLength(<span class="number">1</span>); ++k) <span class="comment">// a.GetLength(1) は a の列数を表す。</span>
+    {
+      c[i, j] += a[i, k] * b[k, j];
+    }
+  }
+}</code></pre>
+<h3 id="section-10"><a id="sec-generated-title-10"></a> <a id="jugged"></a>配列の配列</h3>
+<p>多次元のデータを扱うためには <code>array[x, y]</code> という構文で使用する多次元配列の他に、
+「<strong id="jugged" class="keyword">配列の配列</strong>」を使う方法もあります。
+「配列の配列」とはその名の通り、配列(<code>型名[]</code>)をさらに配列にしたもの(<code>型名[][]</code>)です。</p>
+<p>例として、多次元配列のところで挙げた行列の掛け算を配列の配列を使って書き直すと以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">double</span>[][] a = <span class="keyword">new</span> <span class="keyword">double</span>[][]{  <span class="comment">// 3行2列の行列</span>
+  <span class="keyword">new</span> <span class="keyword">double</span>[]{<span class="number">1</span>, <span class="number">2</span>},
+  <span class="keyword">new</span> <span class="keyword">double</span>[]{<span class="number">2</span>, <span class="number">1</span>},
+  <span class="keyword">new</span> <span class="keyword">double</span>[]{<span class="number">0</span>, <span class="number">1</span>}
+};
+<span class="keyword">double</span>[][] b = <span class="keyword">new</span> <span class="keyword">double</span>[][]{  <span class="comment">// 2行3列の行列</span>
+  <span class="keyword">new</span> <span class="keyword">double</span>[]{<span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>},
+  <span class="keyword">new</span> <span class="keyword">double</span>[]{<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>}
+};
+<span class="keyword">double</span>[][] c = <span class="keyword">new</span> <span class="keyword">double</span>[<span class="number">3</span>][]; <span class="comment">// 3行3列の行列</span>
+<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;c.Length; ++i)
+  c[i] = <span class="keyword">new</span> <span class="keyword">double</span>[<span class="number">3</span>];
+
+<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;a.Length; ++i) <span class="comment">// a.Length は a の行数を表す。</span>
+{
+  <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>; j&lt;b[<span class="number">0</span>].Length; ++j) <span class="comment">// b[0].Length は b の列数を表す。</span>
+  {
+    c[i][j] = <span class="number">0</span>;
+    <span class="keyword">for</span>(<span class="keyword">int</span> k=<span class="number">0</span>; k&lt;a[<span class="number">0</span>].Length; ++k) <span class="comment">// a[0].Length は a の列数を表す。</span>
+    {
+      c[i][j] += a[i][k] * b[k][j];
+    }
+  }
+}</code></pre>
+<p>「多次元配列」は全ての行の列数が同じになりますが、
+「配列の配列」は各列毎に列数が異なっていても構いません。
+そのため、「多次元配列」のことを“<em>Rectangular Array</em>”(四角い配列)、
+「配列の配列」のことを“<em>Jagged Array</em>” (ぎざぎざ配列)という言うこともあります。</p>
+<h3 id="section-11"><a id="sec-generated-title-11"></a> <a id="compare"></a>比較</h3>
+<table summary="「多次元配列」と「配列の配列」の比較">
+	<caption>
+		「多次元配列」と「配列の配列」の比較
+	</caption>
+	<tr>
+		<td></td>
+		<th>多次元配列</th>
+		<th>配列の配列</th>
+	</tr>
+	<tr>
+		<th>書き方</th>
+		<td><pre class="source" title="多次元配列の例" lang=""><code class="language-csharp">int[,] rect =
+{
+    { 1, 2 },
+    { 3, 4 },
+};</code></pre></td>
+		<td><pre class="source" title="多次元配列の例" lang=""><code class="language-csharp">int[][] jug =
+{
+    new[] { 1 },
+    new[] { 2, 3, 4 },
+};</code></pre></td>
+	</tr>
+	<tr>
+		<th>イメージ</th>
+		<td><figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/arrayrect.png"><img src="/assets/media/ufcpp2000/csharp/fig/arrayrect.png" alt="" /></a></p>
+</figure></td>
+		<td><figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/arrayjug.png"><img src="/assets/media/ufcpp2000/csharp/fig/arrayjug.png" alt="" /></a></p>
+</figure></td>
+	</tr>
+	<tr>
+		<th>利点</th>
+		<td><ul>
+<li><p>初期化が楽（new[] が不要）</p>
+</li>
+<li><p>無駄にメモリを使わない</p>
+</li>
+<li><p>動作が高速<sup>†</sup></p>
+</li>
+</ul></td>
+		<td><ul>
+<li>行ごとに列数を変えれる</li>
+</ul></td>
+	</tr>
+</table>
+<p>注意<sup>†</sup>： 仕組み上、「多次元配列」の方が「配列の配列」よりも要素の読み書きは速いはずなんですが、
+最適化のかかり方次第では速度が逆になるようです。
+（.NET Framework の 「<a href="/study/csharp/abstract/ab_dotnet/#il">IL</a>」 には1次元配列の要素アクセス用の専用命令があって、
+下手に多次元配列にするよりも、配列の配列の方がいい命令が出ることがあるようで。）</p>
+<h2 id="section-12"><a id="exercise"></a>演習問題</h2>
+<h3 id="section-13"><a id="exercise-array0"></a>問題 1</h3>
+<p>for 文を使って以下の漸化式の一般項 <span class="math">
+a<sub>n</sub>
+</span> を20項目まで求めるプログラムを作成せよ。 (<span class="math">
+a<sub>n</sub>
+</span> を配列で表す。)</p>
+<div class="math">
+          a<sub>n ＋ 2</sub> ＝ 2 a<sub>n ＋ 1</sub> － 2 a<sub>n</sub>
+        </div><div class="math">
+          a<sub>0</sub> ＝ 3
+        </div><div class="math">
+          a<sub>1</sub> ＝ 1
+        </div>
+<h4 id="section-14">解答例 1</h4>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Exercise
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="keyword">int</span>[] a = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">21</span>];
+    a[<span class="number">0</span>] = <span class="number">3</span>;
+    a[<span class="number">1</span>] = <span class="number">1</span>;
+
+    <span class="comment">// 数列を求める。</span>
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>; i &lt; a.Length; ++i)
+    {
+      a[i] = <span class="number">2</span> * a[i - <span class="number">1</span>] - <span class="number">2</span> * a[i - <span class="number">2</span>];
+    }
+
+    <span class="comment">// 求めた数列を表示。</span>
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; a.Length; ++i)
+    {
+      Console.Write(<span class="string">&quot;{0} &quot;</span>, a[i]);
+    }
+    Console.Write(<span class="string">&#39;\n&#39;</span>);
+  }
+}</code></pre>
+<h3 id="section-15"><a id="exercise-array1"></a>問題 2</h3>
+<p>int 型の配列に格納されている値の最大値、最小値および平均値を求めよ。
+できれば、配列の長さ n および n 個の整数値をユーザに入力してもらうようにすること。</p>
+<h4 id="section-16">解答例 1</h4>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Exercise
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="comment">// 配列長の入力</span>
+    Console.Write(<span class="string">&quot;配列の長さ: &quot;</span>);
+    <span class="keyword">int</span> n = <span class="keyword">int</span>.Parse(Console.ReadLine());
+
+    <span class="comment">// 配列の値の入力</span>
+    <span class="keyword">int</span>[] a = <span class="keyword">new</span> <span class="keyword">int</span>[n];
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; ++i)
+    {
+      Console.Write(<span class="string">&quot;{0}: &quot;</span>, i);
+      a[i] = <span class="keyword">int</span>.Parse(Console.ReadLine());
+    }
+
+    <span class="comment">// 最大値、最小値、平均値の計算</span>
+    <span class="keyword">int</span> max = <span class="keyword">int</span>.MinValue;
+    <span class="keyword">int</span> min = <span class="keyword">int</span>.MaxValue;
+    <span class="keyword">double</span> average = <span class="number">0</span>;
+
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; ++i)
+    {
+      <span class="keyword">if</span> (max &lt; a[i]) max = a[i];
+      <span class="keyword">if</span> (min &gt; a[i]) min = a[i];
+      average += a[i];
+    }
+    average /= n;
+
+    Console.Write(
+<span class="stringCSharpVerbatim">@&quot;
+最大値: {0}
+最小値: {1}
+平均値: {2}
+&quot;</span>
+    , max, min, average);
+  }
+}</code></pre>
+<h3 id="section-17"><a id="exercise-array2"></a>問題 3</h3>
+<p>double 型の2次元配列を行列に見立てて、行列の掛け算を行うプログラムを作成せよ。</p>
+<h4 id="section-18">解答例 1</h4>
+<p>行列の次元は任意だけども、例として2×2行列の場合を示す。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Exercise
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="keyword">double</span>[,] a = <span class="keyword">new</span> <span class="keyword">double</span>[,]
+    {
+      {<span class="number">1</span>, <span class="number">1</span>},
+      {<span class="number">1</span>, <span class="number">0</span>},
+    };
+    <span class="keyword">double</span>[,] b = <span class="keyword">new</span> <span class="keyword">double</span>[,]
+    {
+      {<span class="number">1</span>, <span class="number">2</span>},
+      {<span class="number">3</span>, <span class="number">4</span>},
+    };
+
+    <span class="comment">// ここより下は、a, b のサイズが任意の場合でも正しく動作する。</span>
+    <span class="keyword">double</span>[,] c = <span class="keyword">new</span> <span class="keyword">double</span>[a.GetLength(<span class="number">0</span>), b.GetLength(<span class="number">1</span>)];
+
+    <span class="comment">// a&#215;b を計算</span>
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; a.GetLength(<span class="number">0</span>); ++i)
+      <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; b.GetLength(<span class="number">1</span>); ++j)
+        <span class="keyword">for</span> (<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; a.GetLength(<span class="number">1</span>); ++k)
+          c[i, j] += a[i, k] * b[k, j];
+
+    <span class="comment">// a を表示</span>
+    Console.Write(<span class="string">&quot;a =\n&quot;</span>);
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; a.GetLength(<span class="number">0</span>); ++i)
+    {
+      <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; a.GetLength(<span class="number">1</span>); ++j)
+        Console.Write(<span class="string">&quot;{0, 4} &quot;</span>, a[i, j]);
+      Console.Write(<span class="string">&#39;\n&#39;</span>);
+    }
+
+    <span class="comment">// b を表示</span>
+    Console.Write(<span class="string">&quot;b =\n&quot;</span>);
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; b.GetLength(<span class="number">0</span>); ++i)
+    {
+      <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; b.GetLength(<span class="number">1</span>); ++j)
+        Console.Write(<span class="string">&quot;{0, 4} &quot;</span>, b[i, j]);
+      Console.Write(<span class="string">&#39;\n&#39;</span>);
+    }
+
+    <span class="comment">// a&#215;b を表示</span>
+    Console.Write(<span class="string">&quot;a&#215;b =\n&quot;</span>);
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; c.GetLength(<span class="number">0</span>); ++i)
+    {
+      <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; c.GetLength(<span class="number">1</span>); ++j)
+        Console.Write(<span class="string">&quot;{0, 4} &quot;</span>, c[i, j]);
+      Console.Write(<span class="string">&#39;\n&#39;</span>);
+    }
+  }
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/structured/">&#x69CB;&#x9020;&#x5316;</a></li><li><a href="/study/csharp/structured/st_structured/">&#x69CB;&#x9020;&#x5316;</a></li><li><a href="/study/csharp/structured/st_control/">&#x5236;&#x5FA1;&#x30D5;&#x30ED;&#x30FC;</a></li><li><a href="/study/csharp/structured/st_branch/">&#x6761;&#x4EF6;&#x5206;&#x5C90;</a></li><li><a href="/study/csharp/structured/st_loop/">&#x53CD;&#x5FA9;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/structured/st_function/">&#x95A2;&#x6570;</a></li><li><a href="/study/csharp/structured/miscentrypoint/">[&#x96D1;&#x8A18;] &#x30A8;&#x30F3;&#x30C8;&#x30EA;&#x30FC;&#x30DD;&#x30A4;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/structured/miscinlining/">[&#x96D1;&#x8A18;] &#x30A4;&#x30F3;&#x30E9;&#x30A4;&#x30F3;&#x5316;</a></li><li><a href="/study/csharp/structured/miscoverloadresolution/">[&#x96D1;&#x8A18;] &#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30ED;&#x30FC;&#x30C9;&#x89E3;&#x6C7A;</a></li><li><a href="/study/csharp/structured/sp_params/">&#x53EF;&#x5909;&#x9577;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/sp4_optional/">&#x30AA;&#x30D7;&#x30B7;&#x30E7;&#x30F3;&#x5F15;&#x6570;&#x30FB;&#x540D;&#x524D;&#x4ED8;&#x304D;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/st_command/">&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x30E9;&#x30A4;&#x30F3;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/st_library/">&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li><li><a href="/study/csharp/structured/st_enum/">&#x5217;&#x6319;&#x578B;</a></li><li><a href="/study/csharp/structured/st_struct/">&#x30C7;&#x30FC;&#x30BF;&#x306E;&#x69CB;&#x9020;&#x5316;(&#x8907;&#x5408;&#x578B;)</a></li><li><a href="/study/csharp/structured/st_anonymoustype/">&#x540D;&#x524D;&#x306E;&#x306A;&#x3044;&#x8907;&#x5408;&#x578B;</a></li><li><a href="/study/csharp/structured/sp_namespace/">&#x540D;&#x524D;&#x7A7A;&#x9593;</a></li><li><a href="/study/csharp/structured/oo_exception/">&#x4F8B;&#x5916;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/structured/misc_exception/">[&#x96D1;&#x8A18;] &#x4F8B;&#x5916;&#x306E;&#x4F7F;&#x3044;&#x65B9;</a></li><li><a href="/study/csharp/structured/misc_stacktrace/">[&#x96D1;&#x8A18;] &#x4F8B;&#x5916;&#x306E;&#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x30C8;&#x30EC;&#x30FC;&#x30B9;</a></li><li><a href="/study/csharp/structured/miscexpressions/">[&#x96D1;&#x8A18;] &#x5F0F;&#x306B;&#x307E;&#x3064;&#x308F;&#x308B;&#x88DC;&#x8DB3;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

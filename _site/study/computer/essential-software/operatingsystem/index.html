@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30AA;&#x30DA;&#x30EC;&#x30FC;&#x30C6;&#x30A3;&#x30F3;&#x30B0;&#x30FB;&#x30B7;&#x30B9;&#x30C6;&#x30E0; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/computer/essential-software/operatingsystem/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">オペレーティング・システム</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>コンピューターを動作させるために必要になる基礎的な機能を集めたソフトウェアをオペレーティング・システム（operating system: 略してOSと呼ばれます）と呼びます。オペレーティング・システムは以下のような機能を提供します。</p>
+<ul>
+<li><p>低級な処理の隠ぺい: ハードウェア制御のための細かい手順は内部的に隠ぺいして、「記憶装置にファイルを書き込む」というような、意図に即したレベルのAPIを提供します。</p>
+</li>
+<li><p>ハードウェアの差の吸収: 例えば同じ記憶装置であっても、メーカーによって仕様が異なります。 ハードウェア制御用のソフトウェア（ドライバー（driver）と呼びます）の仕様を定めることで、異なるハードウェアを同じAPIで制御できるようにします。</p>
+</li>
+<li><p>安全で効率的な資源管理: 複数のアプリケーションが安全で効率的に動作できるように、CPUやメイン・メモリなどの計算資源を一元管理します。 あるアプリケーションが不具合で止まってしまってもコンピューター自体が止まらないようにしたり、 他のアプリケーションのデータを破壊しないようにしたりします。</p>
+</li>
+</ul>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="hardware-management"></a>ハードウェア管理</h2>
+<p>一般的に、コンピューターは、CPUやメイン・メモリだけでなく、周辺機器などのさまざまなハードウェアを持っています。
+このようなハードウェアは、主として、入力装置、出力装置、および、記憶装置に分類できます（図1）。</p>
+<ul>
+<li><p>入力装置: キーボードやマウスなど、ユーザーからの入力を受け取るハードウェア</p>
+</li>
+<li><p>出力装置: ディスプレイやプリンターなど、ユーザーに見える出力を行うハードウェア</p>
+</li>
+<li><p>記憶装置: ハードディスクやフラッシュ・メモリなど、永続的（電源を切っても消えない）にデータを記憶しておくハードウェア</p>
+</li>
+</ul>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Essential/HardwareManagement.png"><img src="/assets/media/ufcpp2000/computer/fig/Essential/HardwareManagement.png" alt="CPUと周辺機器" /></a></p>
+<figcaption>CPUと周辺機器</figcaption>
+</figure>
+<p>前述の通り、これらのハードウェア制御がオペレーティング・システムの役割の1つです。
+ちなみに、このような周辺機器からの入力、周辺機器への出力のことを、input/outputを略して<strong id="io" class="keyword">I/O処理</strong>と呼びます。</p>
+<h3 id="section-3"><a id="sec-generated-title-3"></a> <a id="interrupt"></a>ハードウェア割り込み</h3>
+<p>CPUからハードウェアを制御するためには、ハードウェアとCPUとの間でデータのやり取りが必要になります。
+ハードウェアとのデータのやり取りの方法には大まかに言うと、以下のような2通りの方法があります。</p>
+<ul>
+<li><p><strong id="polling" class="keyword">ポーリング</strong>（polling: 開票、世論調査）: CPU側から定期的にハードウェアの状態を確認する処理を行います。</p>
+</li>
+<li><p><strong id="interrpt" class="keyword">割り込み</strong>（interrupt）: 一般的なCPUには、割り込み信号（interrupt signal）という特別な信号を受け取る端子があり、 この信号を受け取ると現在実行中の処理を一時中断して割り込みハンドラー（interrupt handler）と呼ばれる特殊な処理を実行する仕組みが備わっています。 図2に示すように、この仕組みを利用して、ハードウェアからのデータを受け取ることができます。</p>
+</li>
+</ul>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Essential/Interrupt.png"><img src="/assets/media/ufcpp2000/computer/fig/Essential/Interrupt.png" alt="ハードウェアによるの割り込み" /></a></p>
+<figcaption>ハードウェアによるの割り込み</figcaption>
+</figure>
+<p>ハードウェアの状態が更新される頻度が低い場合、ポーリングは無駄な処理を定期的に行うことになり、非効率です。
+多くの場合、CPUの動作速度と比べるとハードウェアの状態更新頻度はあまり高くなく、割り込みによる制御の方が高効率で、こちらの方式が多用されます。</p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="multitasking"></a>マルチタスク</h2>
+<p>コンピューターの中でも、パソコンのように多機能なものの場合、1つのコンピューター内で様々なプログラムが同時に動いています。
+「同時に」といっても、複数の処理が必ずしも並列に実行されているのではなく、
+図3に示すように、一定間隔で処理を切り替えることによって、見かけ上の同時実行を実現しています。
+このような動作をマルチタスク（multitasking）と呼びます。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Essential/Multitasking.png"><img src="/assets/media/ufcpp2000/computer/fig/Essential/Multitasking.png" alt="ハードウェアによるの割り込み" /></a></p>
+<figcaption>ハードウェアによるの割り込み</figcaption>
+</figure>
+<p>マルチタスクの実現には以下のような2通りの手法があります。</p>
+<ul>
+<li><p><strong id="cooperative" class="keyword">協調的マルチタスク</strong>（cooperative）: アプリケーション側が一定間隔で処理を中断し、実行権をオペレーティング・システムに返す方式。</p>
+</li>
+<li><p><strong id="preemptive" class="keyword">プリエンプティブ・マルチタスク</strong>（preemptive: 先売権、横取り）: タイマー（一定間隔で割り込み信号を発生させるハードウェア）からの割り込みを使って、 オペレーティング・システムが強制的に実行権を奪う方式。</p>
+</li>
+</ul>
+<p>協調的マルチタスクは、オーバーヘッドが少なくて、実行効率は高いですが、
+もし何らかの不具合でアプリケーションが止まってしまった場合、コンピューター全体が止まることになります。
+一方、プリエンプティブ・マルチタスクは、多少オーバーヘッドがあるものの、このような危険性はありません。
+最近のパソコンのように、高性能なCPUを搭載しているものは、一般的に、プリエンプティブ・マルチタスク方式を取っています。</p>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="仮想メモリ"></a>仮想メモリ</h2>
+<p>ハードディスクなどの記憶装置は、メイン・メモリと比べて数ケタ低速で、数ケタ大容量です。
+このため、「<a href="/study/computer/general/advancedcpu/#cache-memory">キャッシュ・メモリ</a>」では、
+キャッシュ・メモリという高速/小容量のメモリを使って高速な動作を実現する方法を紹介しました。
+これとは逆に、低速/大容量の記憶装置を使って、見かけ上のメモリ容量を増やすことが考えられます。
+このような仕組みを<strong id="virtual-memory" class="keyword">仮想メモリ</strong>（virtual memory）と呼びます。</p>
+<p>このような仕組みはオペレーティング・システムのレベルで提供されていて、
+アプリケーションからは実際のデータがメイン・メモリ上にあるか、記憶装置に書き出されているかは見えません。
+図4に示すように、アプリケーションから見えるメモリを仮想メモリ空間、メイン・メモリや記憶装置上に確保される物理的な領域を物理メモリ空間と呼びます。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Essential/VirtualMemory.png"><img src="/assets/media/ufcpp2000/computer/fig/Essential/VirtualMemory.png" alt="仮想メモリ空間と物理メモリ空間" /></a></p>
+<figcaption>仮想メモリ空間と物理メモリ空間</figcaption>
+</figure>
+<p>この図のように、仮想メモリは、断片的に確保された物理領域を、アプリケーションからは連続的に見えるようにする効果もあります。</p>
+<p>ちなみに、メイン・メモリ上に収まりきらないデータを記憶装置に移すことを<strong id="swap" class="keyword">スワップ</strong>（swap: 交換、取り換え）と呼びます。
+メイン・メモリと記憶装置の速度差は下手をすると数千倍はあり、スワップが起きると体感でわかるくらい動作が遅くなります。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/computer/essential-software/">&#x57FA;&#x790E;&#x7684;&#x306A;&#x30BD;&#x30D5;&#x30C8;&#x30A6;&#x30A7;&#x30A2;</a></li><li><a href="/study/computer/essential-software/essentialsoftware/">&#x57FA;&#x790E;&#x7684;&#x306A;&#x30BD;&#x30D5;&#x30C8;&#x30A6;&#x30A7;&#x30A2;</a></li><li><a href="/study/computer/essential-software/memorymanagement/">&#x30E1;&#x30E2;&#x30EA;&#x7BA1;&#x7406;</a></li><li><a href="/study/computer/essential-software/compiler/">&#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30E9;&#x30FC;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

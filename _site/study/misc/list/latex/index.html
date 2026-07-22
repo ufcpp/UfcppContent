@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x4ECA;&#x66F4;&#x306A;&#x304C;&#x3089; LaTeX | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/misc/list/latex/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="latex">今更ながら LaTeX</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="d22e4"></a>概要</h2>
+<p>今の世の中、文書ファイルの標準的なフォーマットと言えばMicrosoftのWordドキュメントかAdobeのPDFでしょうか。
+ウェブ上に公開するにしてもXMLかHTMLが一般的です。
+そんな中LaTeXが根強く生き残ってるのは、アンチM$な人たちがWordを使わないのと、ただであることと、あと数式を書くならやっぱりLaTeXが一番楽だからでしょうか。
+ちなみに、僕がLaTeX使ってる理由は3つ目の理由、つまり数式を使いたいからです。</p>
+<p>とはいえ、LaTeXっていうとリファレンス本片手に持ちながらでないととてもじゃないけれども使えません。
+たいてい、家でLaTeXを使うときには本を片手にLaTeXを使っているのですが、
+家でも研究室でもLaTeXを使いたいけれでも本は1冊しかなくて困っています。</p>
+<p>そういうわけでネット上でLaTeX小ネタ集を作って家からも研究室からも見れるようにしようというのがこのページの目的です。</p>
+<p>とりあえず、LaTeXの解説ページなら検索エンジンで探せばいくらでも出てくるので、
+そういう入門的な事をいまさら新たにかくのもどうかと思うのでパス。
+このページでは小ネタ集的なノリで行こうかと思っています。</p>
+<h2 id="section-1"><a id="sec-generated-title-2"></a> <a id="vector"></a>太字イタリックのベクトル</h2>
+<p>LaTeXで<code>\vector</code>というと、<ruby><rb>AB</rb><rt>→</rt><rp>(IE5でしか見れないけど許してね)</rp></ruby>というような感じの文字の上に矢印が乗っかったものになります。
+太字イタリック体のベクトルを書くには自分でマクロ定義してやる必要があります。</p>
+<pre><code class="language-csharp">\def\Vec#<span class="number">1</span>{\mbox{\boldmath $#<span class="number">1</span>$}}</code></pre>
+<h2 id="section-2"><a id="sec-generated-title-3"></a> <a id="diff"></a>微分記号</h2>
+<p>微分記号のdなんですけども、ブロック体で書いたほうがいいってことになってます。
+要するに</p>
+<table class="layout" summary="レイアウト用テーブル">
+<tr><td>悪い例</td><td><i>dx</i></td></tr><tr><td>良い例</td><td>d<i>x</i></td></tr></table>
+<p dx="" dt="">LaTeXだとめんどくさいからついつい、
+<code>$\frac</code>
+なんて書いちゃうんですが、こうすると微分のdがイタリック体になってしまいます。
+少々めんどくさいのですが、</p>
+<pre><code class="language-csharp">\def\diff{\mathrm d}</code></pre>
+<p>と言うのを定義して
+<code>$\frac{\diff x}{\diff t}</code>
+としましょう。
+ちなみに、数学定数(指数関数の底eとか虚数単位i)もブロック体で書いたほうがいいことになってます。
+ついでに、dx/dtをいちいち<code>\frac{\diff x}{\diff t}</code>と書くのが面倒なときは</p>
+<pre><code class="language-csharp">\def\ddt#<span class="number">1</span>{\frac{\diff #<span class="number">1</span>}{\diff t}}</code></pre>
+<p x="">というのを定義しておいて<code>\ddt</code>とすれば楽でいいかも。</p>
+<h2 id="section-3"><a id="sec-generated-title-4"></a> <a id="fourier"></a>ラプラス変換・フーリエ変換</h2>
+<p>ラプラス変換とかフーリエ変換の記号を出したいとき、要するに筆記体をかければ言い訳ですが、そのためには<code>\cal</code>という命令を使います。</p>
+<pre><code class="language-csharp">\def\laplace#<span class="number">1</span>#<span class="number">2</span>{{\cal L}\left[#<span class="number">1</span>\right]\left(#<span class="number">2</span>\right)}
+\def\fourier#<span class="number">1</span>#<span class="number">2</span>{{\cal F}\left[#<span class="number">1</span>\right]\left(#<span class="number">2</span>\right)}</code></pre>
+<h2 id="section-4"><a id="sec-generated-title-5"></a> <a id="dint"></a>角度、温度</h2>
+<p>角度(45°とか)や温度(21℃とか)を表示したいとき、まあ、全角文字の°とか℃を使っちゃえばすむんですが、一応LaTeXで書こうってことで</p>
+<pre><code class="language-csharp">\def\degree{\kern-.2em\r{}\kern-.3em}
+\def\degC{\kern-.2em\r{}\kern-.3em C}</code></pre>
+<h2 id="section-5"><a id="sec-generated-title-6"></a> <a id="dint"></a>重積分</h2>
+<p>重積分を書くとき、普通に<code>\int\int_Df(x,y)\diff x\diff y</code>と書くと積分記号の間のスペースが空きすぎてちょっと不恰好です。そこで</p>
+<pre><code class="language-csharp">\def\dint{\<span class="keyword">int</span>\!\!\!\<span class="keyword">int</span>}</code></pre>
+<p>というなマクロを定義して<code>\dint_Df(x,y)\diff x\diff y</code>とします。</p>
+<h2 id="section-6"><a id="sec-generated-title-7"></a> <a id="praphicx"></a>画像を貼り付けたい</h2>
+<p>画像を貼り付けたいってのはよくある要望なんですが、
+TeXは文章を書くのが専門なんでTeX自身は画像ファイルを取り込む機能を持っていません
+(それに画像ってのはWindowsではBMPが標準形式だし、Macだとpictやtiff、UNIXではPBMが標準的というように機種ごとに違うのもTeXが標準で画像を取り込む機能を持っていない原因)。
+LaTeXではグラフィックスを扱うためのマクロが用意されているのですが、
+このマクロのことは解説してない解説書が多いです。</p>
+<p>画像を貼り付けるためにはgraphicxスタイルファイルを使います。
+画像を貼り付けるためのマクロは<code>includegraphics</code>です。</p>
+<pre><code class="language-csharp">\usepackage{graphicx}
+
+\includegraphics{test.bmp}</code></pre>
+<p>画像の表示の仕方はDVIウェアに依存します。
+Windowsでよく使われているDVIウェアのDVIOUTでは、
+susieプラグインを用いて表示しています。
+susieプラグインさえあればPNGやPBMなどさまざまな形式の画像を表示できます。</p>
+<h2 id="section-7"><a id="sec-generated-title-8"></a> <a id="color"></a>文章をカラーにしたい</h2>
+<p>colorスタイルファイルを使えばLaTeX文書をカラー化できます。</p>
+<pre><code class="language-csharp">\usepackage{color}
+% 自分で色を定義することも出来る
+\ifx\color@rgb\@undefined\<span class="keyword">else</span>
+  \definecolor{keyword}{rgb}{<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>}
+  \definecolor{comment}{rgb}{<span class="number">0</span>,<span class="number">0</span>.<span class="number">5</span>,<span class="number">0</span>}
+  \definecolor{<span class="keyword">string</span>}{rgb}{<span class="number">0</span>,<span class="number">0</span>.<span class="number">5</span>,<span class="number">0</span>.<span class="number">5</span>}
+\fi
+
+{\color{red}赤色の文字}
+{\color{keyword}<span class="keyword">class</span>}
+{\color{<span class="keyword">string</span>}<span class="string">&quot;string&quot;</span>}
+{\color{comment}<span class="comment">/* comment */</span>}</code></pre>
+<h2 id="section-8"><a id="sec-generated-title-9"></a> <a id="here"></a>図表をその場に表示したい</h2>
+<p>LaTeXでfigure環境やtable環境を使うと、適切と思われる位置に図表が勝手に移動されてしまいます。
+まあ、そのほうがいいときも多いでしょうが、どうしても指定した位置に図表を表示したいときにはhereスタイルファイルを使いましょう。(here.styが必要)</p>
+<pre><code class="language-csharp">\usepackage{here}
+
+\begin{figure}[H]
+% 図
+\end{figure}
+
+\begin{table}[H]
+% 表
+\end{table}</code></pre>
+<h2 id="latex-1"><a id="sec-generated-title-10"></a> <a id="ppt"></a>パワーポイントで書いた絵をLaTeXで使いたい</h2>
+<p>うちの学科では論文発表時のプレゼンはパワーポイントで作ります。
+でも、論文書き自体はLaTeXで書くことが多いです。
+そういうわけで、必然的にパワーポイントで絵を描いて、
+それをLaTeXで書いた論文に入りつけたいという要望が生まれます。</p>
+<p>でも、パワーポイントで描いた絵をBMPとかGIF, JPEGなどのビットマップ形式で保存すると、
+LaTeXに貼り付けたときに画質が劣化します。
+EPSみたいなベクタ形式で保存できればいいんですが、
+あいにくパワーポイントではEPS出力は出来ません。
+逆にパワーポイントの出力できるwmfとemfというベクタ形式はLaTeXの側が対応していません。</p>
+<p>で、その解決策なんですが、一言で言っちゃうと、
+wmfからEPSに変換するための「wmf2eps」というソフトがありますので、
+パワーポイントで描いた絵をemfかwmf形式で保存して、
+wmf2epsを使ってEPSに変換します。
+この方法を使えばLaTeXに結構綺麗な図を張り込むことが出来ます。</p>
+<h2 id="section-9"><a id="sec-generated-title-11"></a> <a id="omake"></a>おまけ</h2>
+<p>LaTeXのロゴ、HTMLでは「L<sup><small>A</small></sup>T<small>E</small>X」こう書くのが一般的なんでしょうか。
+<code>L&lt;sup&gt;&lt;small&gt;A&lt;/small&gt;&lt;/sup&gt;T&lt;small&gt;E&lt;/small&gt;X</code></p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/misc/list/">&#x672A;&#x5206;&#x985E;</a></li><li><a href="/study/misc/list/symbol/">&#x7279;&#x6B8A;&#x8A18;&#x53F7;&#x306E;&#x5165;&#x529B;</a></li><li><a href="/study/misc/list/lecture/">&#x8F2A;&#x8B1B;&#x767A;&#x8868;&#x8CC7;&#x6599;</a></li><li><a href="/study/misc/list/language/">&#x8A00;&#x8449;</a></li><li><a href="/study/misc/list/conlang/">&#x8A00;&#x8A9E;&#x9020;&#x308A;</a></li><li><a href="/study/misc/list/nikotouch/">&#x30CB;&#x30B3;&#x30BF;&#x30C3;&#x30C1;&#x65B9;&#x5F0F;</a></li><li><a href="/study/misc/list/test/">test</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

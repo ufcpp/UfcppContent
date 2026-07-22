@@ -1,0 +1,488 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Extensions (&#x62E1;&#x5F35;&#x578B;) | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2024/3/extensions/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2024-03-20T19:51:16">2024-03-20</time></span><span>更新: <time datetime="2024-03-20T19:51:16">2024-03-20</time></span></div><h1 id="extensions">Extensions (拡張型)</h1>
+<p>C# 3.0 から<a href="/study/csharp/functional/sp3_extension/">拡張メソッド</a>が使えるわけですが、
+もうちょっといろんな「拡張」をしたいという話が前々からあります。
+例えば以下のような要求。</p>
+<ul>
+<li>既存の型に静的メンバーも足したい</li>
+<li>プロパティや演算子も足したい</li>
+<li>インターフェイスの後付けもしたい</li>
+</ul>
+<p>今では Extensions とか呼ばれていまして、以下の issue でトラッキング中。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/discussions/164">Exploration: Shapes and Extensions #164</a></li>
+</ul>
+<p>ここからさかのぼって、かつては Extension everything とか呼ばれていたり、
+個別に「インターフェイスを実装したい」「演算子を拡張したい」など個別の issue がありました。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/11159">Extension Everything</a>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/3357">Extension classes with Interfaces</a></li>
+<li><a href="https://github.com/dotnet/roslyn/issues/4945">Extension operators</a></li>
+</ul>
+</li>
+</ul>
+<p>2015年(<a href="https://github.com/dotnet/roslyn">Roslyn</a> が GitHub での公開に切り替わった年)にはすでにそんな話が出ています。</p>
+<p>結構大きな機能なのでしり込みしていたみたいですが、
+去年くらいから Working Group (この機能の追加を推進するメンバーを割り当てて、定期的にミーティング)を設けて作業を始めました。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/tree/3cd77d5664281f6df4785a35d4b778c88ec3aa98/meetings/working-groups/roles">Extensions がらみの議事録</a></li>
+</ul>
+<p>うちのブログでも去年、1度取り上げています。</p>
+<ul>
+<li><a href="/blog/2023/3/extensions/">【C# 12 候補】 Extensions</a></li>
+</ul>
+<p>もう9年も経ってしまい、C# 12 でも入らなかったわけですが、
+ついに今年、C# 13 には一部入りそう(インターフェイスの後付けだけは無理そう)な雰囲気になっています。</p>
+<p>最近の話題のうちいくつかを取り上げると、以下のような話が出ています。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/blob/3cd77d5664281f6df4785a35d4b778c88ec3aa98/meetings/working-groups/roles/extensions-2024-01-25.md#scope-and-priorities-for-c13">段階的に実装していく</a>
+<ul>
+<li>静的メンバー → インスタンス メンバー → 継承のサポート (C# 13 でやれそうなのはここまで) → インターフェイスの後付け</li>
+</ul>
+</li>
+<li><a href="https://github.com/dotnet/csharplang/issues/7771">普通の構造体でラッパー型を作って、利用時に Unsafe.As で変換してメンバーを呼ぶ</a>
+<ul>
+<li>型消去な実装</li>
+</ul>
+</li>
+<li><a href="https://github.com/dotnet/csharplang/blob/7a3990a2bec382871de3a0615746d274ae924b6b/proposals/extension-interfaces.md">インターフェイス実装は大変そう</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/main/meetings/2024/LDM-2024-02-28.md">メンバーのルックアップ</a>
+<ul>
+<li>クラスの継承時の挙動に準ずる</li>
+<li>旧拡張メソッドと新 Extensions は優先度をつけない(どちらにも同名メソッドがあった場合、コンパイル エラーにする)案が今のところ優勢</li>
+</ul>
+</li>
+</ul>
+<h2 id="extension">extension 構文</h2>
+<p>ということで、改めて Extensions の話を。
+今、以下のような構文を足そうとしています。</p>
+<pre><code class="language-csharp"><span class="comment">// 拡張の構文例。</span>
+<span class="keyword">implicit</span> extension SomeExtension <span class="keyword">for</span> SomeClass : IEquatable&lt;SomeExtension&gt;
+{
+    <span class="comment">// 追加したいメンバーを書く。</span>
+
+    <span class="comment">// 1. 静的メンバーも書ける。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> Y =&gt; X * X;
+
+    <span class="comment">// 2. メソッド以外も書ける。</span>
+    <span class="keyword">public</span> <span class="keyword">int</span> Property
+    {
+        <span class="keyword">get</span> =&gt; GetValue();
+        <span class="keyword">set</span> =&gt; SetValue(value);
+    }
+
+    <span class="keyword">public</span> <span class="keyword">int</span> <span class="keyword">this</span>[<span class="keyword">int</span> index] =&gt; GetValue(index);
+
+    <span class="comment">// 3. インターフェイスの実装を持てる。</span>
+    <span class="keyword">public</span> <span class="keyword">bool</span> Equals(SomeExtension? other) =&gt; Property == other?.Property;
+}
+
+<span class="comment">// 拡張の対象の例。</span>
+<span class="keyword">class</span> SomeClass
+{
+    <span class="comment">// (中身は適当。)</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> X = <span class="number">123</span>;
+
+    <span class="keyword">private</span> <span class="keyword">int</span> _value;
+
+    <span class="keyword">public</span> <span class="keyword">int</span> GetValue() =&gt; _value;
+    <span class="keyword">public</span> <span class="keyword">void</span> SetValue(<span class="keyword">int</span> value) =&gt; _value = value;
+    <span class="keyword">public</span> <span class="keyword">int</span> GetValue(<span class="keyword">int</span> index) =&gt; _value * index;
+}</code></pre>
+<p>ちなみに、「インターフェイスの実装を持つ」には少し難題があって、
+C# 13 時点では入らない可能性がかなり高いです。</p>
+<h2 id="unsafe.as">普通の構造体 + Unsafe.As</h2>
+<p>拡張はラッパー構造体を使った実装になりそうです。
+一時期は以下のような ref struct を使った実装になりそうだったんですが、
+この案は結局没になりました。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> value = <span class="keyword">new</span> SomeStruct();
+<span class="keyword">var</span> extension = <span class="keyword">new</span> SomeExtension(<span class="keyword">ref</span> value);
+
+<span class="comment">// 拡張プロパティを呼び出す。</span>
+extension.Property = <span class="number">123</span>;
+
+<span class="comment">// ちゃんと元インスタンスに値が反映。</span>
+Console.WriteLine(value.GetValue());
+
+<span class="keyword">ref</span> <span class="keyword">struct</span> SomeExtension(<span class="keyword">ref</span> SomeStruct @<span class="keyword">this</span>)
+{
+    <span class="keyword">ref</span> SomeStruct @<span class="keyword">this</span> = <span class="keyword">ref</span> @<span class="keyword">this</span>;
+
+    <span class="keyword">public</span> <span class="keyword">int</span> Property
+    {
+        <span class="keyword">get</span> =&gt; @<span class="keyword">this</span>.GetValue(); <span class="comment">// ref で持ってるので、引数でもらった構造体に書き換えが反映される。</span>
+        <span class="keyword">set</span> =&gt; @<span class="keyword">this</span>.SetValue(value);
+    }
+}
+
+<span class="comment">// デモ用に構造体に変更。</span>
+<span class="keyword">struct</span> SomeStruct
+{
+    <span class="keyword">private</span> <span class="keyword">int</span> _value;
+
+    <span class="keyword">public</span> <span class="keyword">int</span> GetValue() =&gt; _value;
+    <span class="keyword">public</span> <span class="keyword">void</span> SetValue(<span class="keyword">int</span> value) =&gt; _value = value;
+    <span class="keyword">public</span> <span class="keyword">int</span> GetValue(<span class="keyword">int</span> index) =&gt; _value * index;
+}</code></pre>
+<p>この案に変わって、普通の構造体 + Unsafe.As を使う路線で考えているそうです。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">var</span> value = <span class="keyword">new</span> SomeStruct();
+
+<span class="comment">// Unsafe.As を使って、value 値が入っているの場所を無理やり SomeExtension で解釈。</span>
+<span class="keyword">ref</span> <span class="keyword">var</span> extension = <span class="keyword">ref</span> Unsafe.As&lt;SomeStruct, SomeExtension&gt;(<span class="keyword">ref</span> value);
+
+<span class="comment">// 拡張プロパティを呼び出す。</span>
+extension.Property = <span class="number">123</span>;
+
+<span class="comment">// extension の参照先が value なので、ちゃんと value が書き変わる。</span>
+Console.WriteLine(value.GetValue());
+
+<span class="comment">// 普通の構造体。</span>
+<span class="keyword">struct</span> SomeExtension
+{
+    <span class="keyword">private</span> SomeStruct @<span class="keyword">this</span>;
+
+    <span class="keyword">public</span> <span class="keyword">int</span> Property
+    {
+        <span class="keyword">get</span> =&gt; @<span class="keyword">this</span>.GetValue();
+        <span class="keyword">set</span> =&gt; @<span class="keyword">this</span>.SetValue(value);
+    }
+}
+
+<span class="comment">// SomeStruct は先ほどと同じ。</span></code></pre>
+<h2 id="section">型消去</h2>
+<p>Extensions は普通の型と同じように使えたりします。
+(特に、<code>explicit</code> を付けた Extensions はむしろ「型を明示しないと使えない」状態になります。)
+なのでこれを拡張型(extension types)と呼んだりもします。</p>
+<p>で、前節の通り Extensions のコンパイル結果はラッパー構造体だったりするわけですが、
+このラッパー構造体への変換(Unsafe.As)はあくまでメンバー参照のタイミングで行われます。
+メソッドの引数などに拡張型を書くと、実際には「元の型 + 属性」(いわゆる「型消去」方式)になる予定です。
+例えば、以下のようなメソッドを書いたとして、</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">int</span> Sum(SomeExtension a, List&lt;SomeExtension&gt; b)
+{
+    <span class="keyword">var</span> sum = a.Property;
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> b) sum += x.Property;
+    <span class="keyword">return</span> sum;
+}</code></pre>
+<p>以下のような類のコードに置き換わる予定です。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">int</span> Sum(
+    <span class="comment">// SomeExtension は属性の中にしか残らない。</span>
+    <span class="comment">// 元の、 SomeStruct に置き換わる。</span>
+    [Extension(<span class="keyword">typeof</span>(SomeExtension))] SomeStruct a,
+    [Extension(<span class="keyword">typeof</span>(SomeExtension))] List&lt;SomeStruct&gt; b)
+{
+    <span class="comment">// メンバーアクセスするところで Unsafe.As</span>
+    <span class="keyword">var</span> sum = Unsafe.As&lt;SomeStruct, SomeExtension&gt;(<span class="keyword">ref</span> a).Property;
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> b) sum += Unsafe.As&lt;SomeStruct, SomeExtension&gt;(<span class="keyword">ref</span> Unsafe.AsRef(<span class="keyword">in</span> x)).Property;
+    <span class="keyword">return</span> sum;
+}</code></pre>
+<p><a href="/study/csharp/oop/sp4_variance/">変性</a>を持っていない <code>List&lt;T&gt;</code> で、
+<code>List&lt;SomeStruct&gt;</code> を <code>List&lt;SomeExtension&gt;</code> に変換する手段は通常全くありません。
+型消去で <code>List&lt;SomeExtension&gt;</code> が <code>List&lt;SomeStruct&gt;</code> に置き換わることで、
+<code>List&lt;SomeStruct&gt;</code> 型の変数を <code>List&lt;SomeExtension&gt;</code> 型の引数に渡せるようになっています。</p>
+<h2 id="section-1">メンバーのルックアップ(継承)</h2>
+<p>拡張型は元となる型との間には、クラスの継承関係と似た関係が成り立ちます。
+なので、メンバーのルックアップのルールも「クラスの継承に準ずる」で行きたいそうです。
+例えば、派生クラスから基底クラスのメンバーを何の修飾もなしで(<code>this.</code> とか <code>base.</code> が必須ではなく)参照できるように、
+拡張型から元となる型のメンバーも修飾なしで参照できます。</p>
+<p>おさらい的に、「継承があるときのルックアップ」の例をいくつか紹介しておきます。
+(拡張型中で元となる型と同名のメンバーを書くとこれに準ずることになると思われます。)</p>
+<p>近い側優先:</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Base
+{
+    <span class="keyword">public</span> <span class="keyword">void</span> M(<span class="keyword">int</span> x) { }
+}
+
+<span class="keyword">class</span> Derived : Base
+{
+    <span class="keyword">public</span> <span class="keyword">new</span> <span class="keyword">void</span> M(<span class="keyword">int</span> x) { }
+
+    <span class="keyword">public</span> <span class="keyword">void</span> M()
+    {
+        <span class="comment">// 近い側優先なので、Derived.M が呼ばれる。</span>
+        M(<span class="number">1</span>);
+    }
+}</code></pre>
+<p>もうちょっとわかりにくい例:</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Base
+{
+    <span class="keyword">public</span> <span class="keyword">void</span> M(<span class="keyword">int</span> x) { }
+}
+
+<span class="keyword">class</span> Derived : Base
+{
+    <span class="keyword">public</span> <span class="keyword">new</span> <span class="keyword">void</span> M(<span class="keyword">object</span> x) { }
+
+    <span class="keyword">public</span> <span class="keyword">void</span> M()
+    {
+        <span class="comment">// わかりにくいけども、Derived.M(object) の方が呼ばれる。</span>
+        <span class="comment">// 引数の型を考えると Base.M(int) が呼ばれそうに見えるけども、そうはならない。</span>
+        <span class="comment">// (「元々はなかったけど後から Base の方に M(int) が追加された」みたいな状況で破壊的変更にならないようにするため。)</span>
+        M(<span class="number">1</span>);
+    }
+}</code></pre>
+<h2 id="section-2">メンバーのルックアップ(拡張同士)</h2>
+<p>あと、既存の拡張メソッドには以下のような優先度があります。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> Ex1
+{
+    <span class="keyword">static</span> <span class="keyword">class</span> AExtension
+    {
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">this</span> App1.A _) =&gt; Console.WriteLine(<span class="string">&quot;Extension in Ex1&quot;</span>);
+    }
+}
+
+<span class="keyword">namespace</span> App1
+{
+    <span class="keyword">class</span> A
+    {
+        <span class="keyword">public</span> <span class="keyword">void</span> M() =&gt; Console.WriteLine(<span class="string">&quot;Instance&quot;</span>);
+    }
+
+    <span class="keyword">class</span> Program
+    {
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Main()
+        {
+            <span class="comment">// インスタンス メソッド優先。</span>
+            <span class="keyword">new</span> A().M(); <span class="comment">// Instance</span>
+        }
+    }
+}</code></pre>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> Ex1
+{
+    <span class="keyword">static</span> <span class="keyword">class</span> AExtension
+    {
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">this</span> App1.A _) =&gt; Console.WriteLine(<span class="string">&quot;Extension in Ex1&quot;</span>);
+    }
+}
+
+<span class="keyword">namespace</span> App1
+{
+    <span class="keyword">class</span> A;
+
+    <span class="keyword">static</span> <span class="keyword">class</span> AExtension
+    {
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">this</span> A _) =&gt; Console.WriteLine(<span class="string">&quot;Extension in App1&quot;</span>);
+    }
+
+    <span class="keyword">class</span> Program
+    {
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Main()
+        {
+            <span class="comment">// 同じ名前空間内の拡張メソッド優先。</span>
+            <span class="keyword">new</span> A().M(); <span class="comment">// in App1</span>
+        }
+    }
+}</code></pre>
+<pre><code class="language-csharp"><span class="keyword">using</span> Ex1;
+
+<span class="keyword">namespace</span> Ex1
+{
+    <span class="keyword">static</span> <span class="keyword">class</span> AExtension
+    {
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">this</span> App1.A _) =&gt; Console.WriteLine(<span class="string">&quot;Extension in Ex1&quot;</span>);
+    }
+}
+
+<span class="keyword">namespace</span> Ex2
+{
+    <span class="keyword">static</span> <span class="keyword">class</span> AExtension
+    {
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">this</span> App1.A _) =&gt; Console.WriteLine(<span class="string">&quot;Extension in Ex1&quot;</span>);
+    }
+}
+
+<span class="keyword">namespace</span> App1
+{
+    <span class="keyword">using</span> Ex2;
+
+    <span class="keyword">class</span> A;
+
+    <span class="keyword">class</span> Program
+    {
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Main()
+        {
+            <span class="comment">// 内側で using した方優先。</span>
+            <span class="keyword">new</span> A().M(); <span class="comment">// in Ex2</span>
+        }
+    }
+}</code></pre>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> Ex1
+{
+    <span class="keyword">static</span> <span class="keyword">class</span> AExtension
+    {
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">this</span> App1.A _) =&gt; Console.WriteLine(<span class="string">&quot;Extension in Ex1&quot;</span>);
+    }
+}
+
+<span class="keyword">namespace</span> Ex2
+{
+    <span class="keyword">static</span> <span class="keyword">class</span> AExtension
+    {
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">this</span> App1.A _) =&gt; Console.WriteLine(<span class="string">&quot;Extension in Ex1&quot;</span>);
+    }
+}
+
+<span class="keyword">namespace</span> App1
+{
+    <span class="keyword">using</span> Ex1;
+    <span class="keyword">using</span> Ex2;
+
+    <span class="keyword">class</span> A;
+
+    <span class="keyword">class</span> Program
+    {
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Main()
+        {
+            <span class="comment">// 優劣がない場合はコンパイル エラー。</span>
+            <span class="keyword">new</span> A().M();
+        }
+    }
+}</code></pre>
+<p>新しい拡張型でも同様のルールになると思われます。</p>
+<p>一方で、旧「拡張メソッド」と新「拡張型」に優劣をつけるかという議題もありますが、
+現状は「優劣つけない」という方向で検討されています。
+というか、新旧混在した時点でコンパイル エラーにしようかという話もあるみたいです。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> Ex1
+{
+    <span class="keyword">static</span> <span class="keyword">class</span> AExtension
+    {
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">this</span> App1.A _) =&gt; Console.WriteLine(<span class="string">&quot;old extension method&quot;</span>);
+    }
+}
+
+<span class="keyword">namespace</span> Ex2
+{
+    <span class="keyword">implicit</span> extension AExtension <span class="keyword">for</span> A
+    {
+        <span class="keyword">public</span> <span class="keyword">void</span> M() =&gt; Console.WriteLine(<span class="string">&quot;new extension type&quot;</span>);
+    }
+}
+
+<span class="keyword">namespace</span> App1
+{
+    <span class="keyword">using</span> Ex1; <span class="comment">// これが外にあってもエラーにする案もあり</span>
+    <span class="keyword">using</span> Ex2;
+
+    <span class="keyword">class</span> A;
+
+    <span class="keyword">class</span> Program
+    {
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Main()
+        {
+            <span class="comment">// 優劣を付けない(コンパイル エラーになる)。</span>
+            <span class="comment">// 何なら新旧混在している時点でコンパイル エラーにする可能性濃厚。</span>
+            <span class="keyword">new</span> A().M();
+        }
+    }
+}</code></pre>
+<h2 id="section-3">インターフェイス実装</h2>
+<p>ここまでの話は割かし C# 13 で入りそうな話なんですが、
+最後に1つ、13では入らなさそうなのがインターフェイス実装の後付けです。</p>
+<p>これまでの話どおり、ラッパー構造体を作る方針で少し考えてみましょう。</p>
+<p>インターフェイス実装に関する部分だけ残して、以下のようにしたとします。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> value = <span class="keyword">new</span> SomeClass { Value = <span class="number">1</span> };
+SomeExtension extension = value;
+
+extension.Equals(<span class="keyword">new</span> SomeClass { Value = <span class="number">1</span> });
+
+<span class="keyword">explicit</span> extension SomeExtension <span class="keyword">for</span> SomeClass : IEquatable&lt;SomeExtension&gt;
+{
+    <span class="keyword">public</span> <span class="keyword">bool</span> Equals(SomeExtension? other) =&gt; Value == other?.Value;
+}
+
+<span class="keyword">class</span> SomeClass
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> Value;
+}</code></pre>
+<p>ラッパー構造体で展開するとしたら以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">var</span> value = <span class="keyword">new</span> SomeClass { Value = <span class="number">1</span> };
+<span class="keyword">ref</span> <span class="keyword">var</span> extension = <span class="keyword">ref</span> Unsafe.As&lt;SomeClass, SomeExtension&gt;(<span class="keyword">ref</span> value);
+
+<span class="keyword">var</span> temp = <span class="keyword">new</span> SomeClass { Value = <span class="number">1</span> };
+
+<span class="comment">// こういう風に直接インターフェイス メンバーを呼ぶ分には特に問題なさげ。</span>
+extension.Equals(Unsafe.As&lt;SomeClass, SomeExtension&gt;(<span class="keyword">ref</span> temp));
+
+<span class="keyword">struct</span> SomeExtension : IEquatable&lt;SomeExtension&gt;
+{
+    <span class="keyword">private</span> SomeClass Value;
+    <span class="keyword">public</span> <span class="keyword">bool</span> Equals(SomeExtension other) =&gt; Value.Value == other.Value?.Value;
+}
+
+<span class="keyword">class</span> SomeClass
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> Value;
+}</code></pre>
+<p>この例はインターフェイス実装しているといっても、そもそもメンバーを直接呼んでいるので問題がないだけです。
+問題は以下の状況。</p>
+<ul>
+<li>インターフェイス型や <code>object</code> 型の変数で受けてボックス化する場合</li>
+<li>ジェネリック メソッドに渡す場合</li>
+</ul>
+<p>まず、インターフェイス型の変数で受けてみましょう。
+<code>ReferenceEquals</code> や <code>is</code> 判定であまり期待通りとは言えない挙動を起こします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">var</span> value = <span class="keyword">new</span> SomeClass { Value = <span class="number">1</span> };
+<span class="keyword">ref</span> <span class="keyword">var</span> extension = <span class="keyword">ref</span> Unsafe.As&lt;SomeClass, SomeExtension&gt;(<span class="keyword">ref</span> value);
+
+<span class="comment">// インターフェイスに渡そうとすると、この実装だとボックス化が発生。</span>
+IEquatable&lt;SomeExtension&gt; boxedExtension = extension;
+
+<span class="comment">// インスタンスが一致しなくなる。</span>
+Console.WriteLine(ReferenceEquals(value, boxedExtension)); <span class="comment">// false</span>
+
+<span class="comment">// ダウンキャストが失敗する。</span>
+Console.WriteLine(boxedExtension <span class="keyword">is</span> SomeClass); <span class="comment">// false</span></code></pre>
+<p>ジェネリク メソッドでは、以下のように、元の型と拡張型の両方の型情報を使う必要がでてきます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> value = <span class="keyword">new</span> SomeClass { Value = <span class="number">1</span> };
+List&lt;SomeClass&gt; list = [<span class="keyword">new</span>() { Value = <span class="number">2</span> }, <span class="keyword">new</span>() { Value = <span class="number">1</span> }, <span class="keyword">new</span>() { Value = <span class="number">0</span> }];
+
+<span class="comment">// SomeClass のままだと IEquatable 制約を満たさなくて呼べない。</span>
+<span class="keyword">var</span> i1 = IndexOf&lt;SomeClass&gt;&gt;(list, value);
+
+<span class="comment">// これなら呼べるようになるはず。</span>
+<span class="comment">// ただ、list は List&lt;SomeClass&gt; なので、やっぱり型消去が必要。</span>
+<span class="comment">// 型引数が暗黙的に SomeClass と SomeExtension の2つに増えるような処理が必要。</span>
+<span class="keyword">var</span> i2 = IndexOf&lt;SomeExtension&gt;(list, value);
+
+<span class="keyword">static</span> <span class="keyword">int</span> IndexOf&lt;T&gt;(List&lt;T&gt; list, T value)
+    <span class="keyword">where</span> T : IEquatable&lt;T&gt;
+{
+    <span class="comment">// 今の型システムだと T が通常の型か拡張型かを知るすべはなく、Unsafe.As 展開ができない。</span>
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; list.Count; i++)
+        <span class="keyword">if</span> (list[i].Equals(value))
+            <span class="keyword">return</span> i;
+    <span class="keyword">return</span> -<span class="number">1</span>;
+}</code></pre>
+<p>いずれも、C# コンパイラー上のトリックでは問題を解消できなさそうで、
+.NET ランタイムの型システムに手を入れる必要が出てきそうです。
+型システムに手を入れるとなると結構大ごとなので、C# 13 で実現する見込みは残念ながらほぼありません。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2024/3/">3&#x6708;</a></li><li><a href="/blog/2024/3/params-collections/">params &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/blog/2024/3/ilist-inherites-from-ireadonlylist/">IList &#x3068;&#x304B;&#x3092; IReadOnlyList &#x3068;&#x304B;&#x304B;&#x3089;&#x6D3E;&#x751F;&#x3055;&#x305B;&#x305F;&#x3044;</a></li><li><a href="/blog/2024/3/colexpr13-relax-restriction/">C# 13 &#x3067;&#x306E;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x5F0F; - &#x5236;&#x9650;&#x306E;&#x7DE9;&#x548C;&#x306E;&#x8A71;</a></li><li><a href="/blog/2024/3/dictionary-expressions/">C# 13 &#x3067;&#x306E;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x5F0F; - &#x30C7;&#x30A3;&#x30AF;&#x30B7;&#x30E7;&#x30CA;&#x30EA;&#x5F0F;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

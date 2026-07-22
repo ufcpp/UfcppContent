@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 7/19 | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2015/07/pickuproslyn0719/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2015-07-19T06:49:24">2015-07-19</time></span><span>更新: <time datetime="2015-07-19T06:49:45">2015-07-19</time></span><span class="entry-tags"><span class="entry-tag">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn</span></span></div><h1 id="roslyn-719">ピックアップRoslyn 7/19</h1>
+<p>Visual Studio 2015 関連作業が終わって、その次っぽい動きがちらほら。</p>
+<h2 id="make-features-layer-portable-3998">Make Features Layer Portable #3998</h2>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/3998">Make Features Layer Portable #3998</a></li>
+</ul>
+<p>Feature API = リファクタリングとか、コード解析からのコード修正とか、そのレイヤーのAPIのこと。</p>
+<p>これを、<a href="http://www.omnisharp.net/">OmniSharp</a>、<a href="https://code.visualstudio.com/">Visual Studio Code</a>で使うためにポータブル化作業をしようという Issue ページが立ちました。</p>
+<p>ほぼ、</p>
+<ul>
+<li>今、internal で作ってあるものを public にするだけ(とはいえ、それが大変)</li>
+<li>何年も保守していくものになるものをうかつに全部はpublicにできない</li>
+<li>public にするには耐ええない作りの箇所があるからその修正が必要</li>
+</ul>
+<p>という感じの様子。</p>
+<h2 id="interactive-design-meeting-notes-7815-3927">Interactive Design Meeting Notes - 7/8/15 #3927</h2>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/3927">Interactive Design Meeting Notes - 7/8/15 #3927</a></li>
+</ul>
+<p>スクリプト向けC#方言の仕様レビューしてたみたい。その議事録なので、割かしC#スクリプトがどうなりそうかのまとめになってる。</p>
+<ul>
+<li><code>#r</code>でDLLの参照、<code>#load</code>で他のスクリプトの取り込み。スクリプトの一番上にだけ書ける</li>
+<li><code>#load</code>な、「その場所にそのスクリプトをコピー＆ペーストしてきたかのような挙動」。shとかでいうところの <code>.</code> の方(<code>&amp;</code>の方じゃなく)</li>
+<li>トップ レベルに変数とか関数を書けるわけだけど、
+<ul>
+<li>static スクリプト変数には、<code>await</code> を含む初期化子を書けない</li>
+<li>普通のスクリプト変数(あるいは、トップ レベル変数って呼ぶ)にはそういう制限ない
+<ul>
+<li>interactive window とかで実行してる際には、<code>await</code> した時点でUIをブロックする(バックグラウンド実行にはしない)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>「C#スクリプト」は、普通のC#ソースコードからコピー&amp;ペーストして来たらそれがそのまま動くようにする
+<ul>
+<li>Copy/Paste Prinsible of Scripting (CPPoS: スクリプトのコピー&amp;ペースト原則)って呼んでる</li>
+</ul>
+</li>
+</ul>
+<p>その他、最近、C# 7.0向けに<a href="https://github.com/dotnet/roslyn/issues/2930">ローカル関数</a>の仕様が出始めているものの、それとトップ レベル関数は別物で、C#スクリプトは両方サポートすることになると思う。</p>
+<p>スクリプトは常に <code>async</code> な文脈で実行される。どこにでも <code>await</code> 書ける。1つも<code>await</code>を書いてないときにはステートマシン(非同期メソッド内部実装の、仰々しいコード生成)は作らない最適化は掛ける。</p>
+<p>static スクリプト変数は、スクリプトが何回実行されても1回だけ初期化が走るようにというのもあるけど、その主たる目的は CPPoS のため(どこからコピペしてもスクリプト実行できるようにするためには、staticフィールドもコピペで動く必要がある)。</p>
+<p>トップ レベルのメソッド、プロパティ、型、スクリプト変数のスコープは既定で public (通常のC#は、アクセシビリティ修飾子を省略すると private/internal だけど、スクリプトの場合は public)。スクリプトの外(<code>#load</code>で呼び出す側)からは隠したい場合、「ファイルprivate」って概念を実装したい。現状でも、変数やメソッドを1段階 <code>{}</code> で覆ってしまえば外からアクセスできなくなる実装にはなってる。</p>
+<p><code>#load</code> するとその中のトップレベル要素は全部取り込まれる(トップ レベルの識別子には、特に何の修飾もなくアクセスできる)。<code>#load into</code>を使うと、そのスクリプトに名前を付けれるけども、これはエイリアス的な動作。2回、別名で<code>#load into</code>すると、その指す先は一緒。別インスタンスが作られたりはしない。</p>
+<h2 id="ability-to-classify-fields-locals-and-parameters-differently-3976">Ability to classify fields, locals and parameters differently #3976</h2>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/3976">Ability to classify fields, locals and parameters differently #3976</a></li>
+</ul>
+<p>おまけ。</p>
+<p>今、Visual Studioのコードの色分けでは、識別子にはあまり色が付かない(たぶん、色が付くのは型名だけ？)わけですが、フィールドとか変数の色分けには興味ある？という調査的な issue が立ったみたい。</p>
+<p>これまで、大きく取り扱ってこなかったけども、おそらく実装しても実行性能的に目立った影響はないだろうし。とのこと。</p>
+<p>例えば、以下のようなの。</p>
+<ul>
+<li><code>readonly</code> かどうか(get-only自動プロパティも)での色分け欲しい？</li>
+<li><code>event</code> も？</li>
+<li>(クラス/構造体直下の)定数と、ローカル定数の区別とか要る？</li>
+<li>未初期化変数の警告にも色分けとか使うのどう？</li>
+<li>C#スクリプトができたら、トップ レベル変数とかトップ レベル メンバーもできるけども、それも別扱いしたい？</li>
+<li>組み込み演算子と、オーバーロード(ユーザー定義演算子)の区別とか便利そうじゃない？</li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2015/07/">2015&#x5E74;7&#x6708;</a></li><li><a href="/blog/2015/07/unityasyncbridge/">Unity(&#x30B2;&#x30FC;&#x30E0;&#x30A8;&#x30F3;&#x30B8;&#x30F3;)&#x4E0A;&#x3067; async/await</a></li><li><a href="/blog/2015/07/pickuproslyn0712/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 7/12</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

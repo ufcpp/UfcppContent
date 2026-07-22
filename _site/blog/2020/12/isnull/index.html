@@ -1,0 +1,213 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>C# &#x306E; null &#x5224;&#x5B9A;&#x306E;&#x8A71; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2020/12/isnull/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2020-12-13T20:20:17">2020-12-13</time></span><span>更新: <time datetime="2020-12-13T20:20:17">2020-12-13</time></span></div><h1 id="c-null">C# の null 判定の話</h1>
+<p>null、一般名詞としては「無効なもの」とか「0個」とかの意味の単語です。
+zero も語源をたどるとアラビア語とかサンスクリット語の「空っぽ (nothing)」にあたる単語から来ていて、実のところ一般名詞としては出自が違うだけで null = zero だったり。</p>
+<p>一方、C# (とそれに類するプログラミング言語)では、 <code>null</code> というキーワードを「無効なものを 0 を使って表す」という意味で使っていて、
+一般名詞としての null が持つ2つの意味を同時に指していたりします。</p>
+<p>とはいえ、別に null という英単語の意味を考慮して「無効なものを 0 を使って表す」にしたわけではなくて、
+単に実装上「0 かどうかの判定は非常に高速なのでパフォーマンス的に都合がいい」という現実的な理由で 0 を使っています。</p>
+<p>前置きが長くなりましたが、C# において null 判定をするというのは、内部的には単に 0 比較で、
+大体の CPU 上で最速の部類に入る命令を使って実装できます。</p>
+<h2 id="x-null">x == null</h2>
+<p>null 判定というとまずどういうコードを思い浮かべるでしょうか？
+「昔から書けた」という意味で、まず <code>x == null</code> が真っ先に思い浮かぶ人が多いと思います。</p>
+<pre><code class="language-csharp"><span class="keyword">bool</span> M(A x) =&gt; x == <span class="keyword">null</span>;
+<span class="keyword">class</span> A { }</code></pre>
+<p>これも、この状態であれば単なる 0 比較になります。
+実際、コンパイル結果を覗いてみればわかるんですが、以下のコードと同じコードが生成されます。</p>
+<pre><code class="language-csharp"><span class="keyword">bool</span> M(<span class="keyword">int</span> x) =&gt; x == <span class="number">0</span>;</code></pre>
+<p>ただ、ここで問題になるのが<a href="/study/csharp/oop/oo_operator/">演算子オーバーロード</a>でして、これをやっちゃってると「単なる 0 比較」ではなくなってしまいます。
+特に以下のように、<code>==</code> の中でそこそこ重たい処理をやっちゃっているときが問題になります。</p>
+<pre><code class="language-csharp"><span class="keyword">bool</span> M(A x) =&gt; x == <span class="keyword">null</span>;
+<span class="keyword">class</span> A
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> <span class="keyword">operator</span> ==(A x, A y) =&gt; そこそこ重たい処理;
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> <span class="keyword">operator</span> !=(A x, A y) =&gt; そこそこ重たい処理;
+}</code></pre>
+<p><code>==</code> を使っている側、この例でいうと メソッド <code>M</code> の中身は最初にあげた「速い」コードと同じ見た目なのが罠で、「本当は 0 比較でいいはずなのにわざわざ重たい <code>operator ==</code> が呼ばれてしまう」という状況が往々にして発生します。</p>
+<p>過激派な意見としては「<code>==</code> をオーバーロード(ユーザー裁量で中身を変更)可能にしてしまったことがよくなかった」という話もあるんですが、まあ、できるものは仕方がないとして。
+本来の「無効かどうかの判定は単なる 0 比較で済む」という状態にしたければ、<code>==</code> を避けた方がいいということが多々あります。</p>
+<h2 id="referenceequalsx-null">ReferenceEquals(x, null)</h2>
+<p>この罠にはまっちゃってるコードは案外世の中にあふれているというか、
+.NET の標準ライブラリでも結構あったみたいです。</p>
+<p>この問題は昔の C# でも簡単に解消する方法が1つあって、それが、<code>ReferenceEquals</code> を使うという案。</p>
+<pre><code class="language-csharp"><span class="keyword">bool</span> M(<span class="keyword">object</span> x) =&gt; ReferenceEquals(x, <span class="keyword">null</span>);</code></pre>
+<p>これで、ユーザー定義の <code>==</code> オーバーロードは呼ばれることなく、常に 0 比較で null 判定が走ります。</p>
+<p>めでたしめでたし。</p>
+<p>となるわけはなく、見栄えが悪すぎる…</p>
+<p>ということで、「<code>ReferenceEquals</code> に書き換えて問題ないし、書き換えたら露骨にパフォーマンスがよくなるんだけど、この見栄えの悪さを許容するべき？」みたいな議題になっていました。</p>
+<h2 id="x-is-null">x is null</h2>
+<p>そこに来て、C# 7.0 で<a href="/study/csharp/datatype/patterns/">パターン マッチング</a>という文法が入りました。
+この頃には「<code>== null</code> の罠」が周知の事実だったので、「<code>is null</code> と書いたときにはユーザー定義の <code>==</code> を呼ばない。常に 0 比較にする」という判断が下りました。</p>
+<pre><code class="language-csharp"><span class="keyword">bool</span> M(<span class="keyword">object</span> x) =&gt; x <span class="keyword">is</span> <span class="keyword">null</span>; <span class="comment">// operator == は呼ばない。常に ReferenceEquals(x, null) と同じ。</span>
+<span class="keyword">class</span> A
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> <span class="keyword">operator</span> ==(A x, A y) =&gt; そこそこ重たい処理;
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> <span class="keyword">operator</span> !=(A x, A y) =&gt; そこそこ重たい処理;
+}</code></pre>
+<p>これに「見栄え的に <code>ReferenceEquals</code> は NG」派が飛びつきました。
+<code>== null</code> から <code>is null</code> への書き換えで救われたコードが結構あったみたいです。
+(実際、僕が保守しているコードでもいくつかこの書き換えでパフォーマンス改善しています。)</p>
+<p>めでたしめでたし？</p>
+<h2 id="null">非 null</h2>
+<p>めでたくなかった。</p>
+<p>実際に多いのは以下のようなコードだったりします。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> M(A a)
+{
+    <span class="keyword">var</span> x = a.X; <span class="comment">// プロパティ参照コストを避けるために変数に受ける。</span>
+ 
+    <span class="keyword">if</span> (x <span class="keyword">is</span> <span class="keyword">null</span>) <span class="keyword">return</span>;
+ 
+    <span class="comment">// x を使って何か処理をする。</span>
+}
+
+<span class="keyword">class</span> A
+{
+    <span class="comment">// virtual がついていたり、いくつかの場面では X プロパティの参照に多少コストがかかる。</span>
+    <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="keyword">object</span>? X { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+}</code></pre>
+<p>これはいわゆる early return (先頭で検査して不適切なら即 return)な書き方ですが、
+判定を逆転させて同じ結果になるコードを以下のように書きたいこともあります。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> M(A a)
+{
+    <span class="keyword">var</span> x = a.X;
+ 
+    <span class="keyword">if</span> (!(x <span class="keyword">is</span> <span class="keyword">null</span>))
+    {
+        <span class="comment">// x を使って何か処理をする。</span>
+    }
+}</code></pre>
+<p>何にしてもポイントが2つあって、</p>
+<ul>
+<li>1度変数 <code>x</code> で受けたい</li>
+<li>「null である」判定じゃなく、「null じゃない」判定をしたい</li>
+</ul>
+<p>という要件があって、<code>x is null</code> の導入だけだとまだちょっと面倒が残っている感じになっています。</p>
+<h2 id="x-is-object-null">x is object (非 null)</h2>
+<p>「null じゃない」判定に使える書き方はいくつかあるんですが、前半で話した <code>x == null</code> の話と同様、<code>x != null</code> はユーザー定義の演算子オーバーロードを呼ばれて遅くなることがあります。
+そこで <code>x is null</code> と同様、比較的新しめの文法であるパターン マッチングを使った「null じゃない」判定が欲しくなります。</p>
+<p>C# の場合、「null は型を持っていない」という扱いになるので、すべての型の共通基底クラスである <code>object</code> 型にすらマッチしません。
+なので、以下のように、<code>is object</code> というパターンを書くと「null じゃない」という判定になります。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> M(A a)
+{
+    <span class="keyword">if</span> (a.X <span class="keyword">is</span> <span class="keyword">object</span> x)
+    {
+        <span class="comment">// ここに来るのは a.X が null じゃなかった時だけ。</span>
+        <span class="comment">// x を使って何か処理をする。</span>
+    }
+}</code></pre>
+<h3 id="x-is-var-null">注意: x is var (null 判定しない)</h3>
+<p>ここで注意すべきことが1点。結構な罠なんですが、上記のように <code>is object</code> が「null じゃない」判定になるのに対して、<code>is var</code> だと null / 非 null に関わらず常にマッチします(<code>is var</code> 単体だと常に true)。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> M(A a)
+{
+    <span class="keyword">if</span> (a.X <span class="keyword">is</span> <span class="keyword">var</span> x)
+    {
+        <span class="comment">// ここは常に通る。</span>
+        <span class="comment">// if なしで var x = a.X; と書くのとほぼ同じ意味なので非推奨。</span>
+    }
+}</code></pre>
+<p><code>var</code> パターンは <code>switch</code>-<code>case</code> の <code>default</code> 句みたいなもので、「他のどの条件も満たさないときの最後の受け口」みたいに使うものです。
+なので、今回の主題の null 判定に限らず、<code>if</code> 単体で使うものではありません。</p>
+<h2 id="x-is">x is</h2>
+<p>もう1個、<code>is { }</code> という書き方でも「null じゃない」判定ができます。
+知らないと何が何だかわからない謎な書き方ですが、
+文法的にいうとこれは「<a href="/study/csharp/datatype/patterns/#property">プロパティ パターン</a>」というものになります。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> M(A a)
+{
+    <span class="keyword">if</span> (a.X <span class="keyword">is</span> { } x)
+    {
+        <span class="comment">// ここに来るのは a.X が null じゃなかった時だけ。</span>
+        <span class="comment">// 起こる結果は is object x と同じ。</span>
+        <span class="comment">// x を使って何か処理をする。</span>
+    }
+}</code></pre>
+<p>本来は以下のように、再帰的にプロパティの中身を確認できる「パターン」です。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> M(A a)
+{
+    <span class="keyword">if</span> (a <span class="keyword">is</span> { X: <span class="keyword">object</span> x })
+    {
+        <span class="comment">// a の中身の X プロパティの中身をチェック。</span>
+        <span class="comment">// ちなみにこの場合、a 自体の null チェックもかかるので、a != null &amp;&amp; a.X != null と似た処理。</span>
+    }
+}</code></pre>
+<p>ただ、<code>{}</code> の中に何もなくても「null じゃない」判定だけはかかるので、その用途に流用できます。
+ちょっと濫用・悪用気味ではありますが、「null じゃない」判定をしつつ変数で受ける手段としては一番短い書き方になります。</p>
+<h2 id="is-not-null">is not null</h2>
+<p><code>x is { }</code> は最も短く「null じゃない」判定を書ける手段ではあるんですが、
+なにぶん濫用気味な書き方で、知らない人が見て理解しにくい、知っていても「null じゃない」という意図が伝わりにくいという問題があります。</p>
+<p>そこで結局、<code>!(x is null)</code> という書き方の方がいいんじゃないかという話にもなるんですが…
+これはこれで、<code>!()</code> も十分に見にくい(<code>()</code> が邪魔だし、意味を真逆にする割には <code>!</code> という記号は視認性が悪すぎて見逃す)という問題があります。</p>
+<p>あと、以下のような「書き間違い」をする人が後を絶たないという問題も起こしました。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> M(A a)
+{
+    <span class="keyword">if</span> (a.X !<span class="keyword">is</span> <span class="keyword">null</span>) <span class="comment">// is not のつもりで !is とか書く</span>
+    {
+        <span class="comment">// ちなみにこの ! は not の意味にならず、このコードは is null (意図と真逆)になる。</span>
+    }
+}</code></pre>
+<p>この <code>!</code> は<a href="/study/csharp/resource/nullablereferencetype/#null-forgiving">null 判定の抑止</a>、要するに、コンパイラーが正しくフロー解析できなさそうな微妙なコードで、コンパイラーの警告をもみ消すために使う演算子です。
+フロー解析(あくまでコンパイラー内での処理)に使うだけであって、この <code>!</code> の有無はコンパイル結果には全く影響を及ぼしません。
+なので、<code>x !is null</code> と <code>x is null</code> が全く同じ意味。</p>
+<p>一方、C# 9.0 では <code>not</code> パターンというものが導入されて、今度こそ is not の意味のパターンが書けるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> M(A a)
+{
+    <span class="keyword">if</span> (a.X <span class="keyword">is</span> not <span class="keyword">null</span>)
+    {
+        <span class="comment">// ちゃんと null じゃないときだけここを通る。</span>
+        <span class="comment">// != null と違ってユーザー定義演算子は呼ばれず、単なる 0 比較。</span>
+    }
+}</code></pre>
+<h2 id="is-not">is not</h2>
+<p>ここからは C# 9.0 のバグの話。
+Visual Studio 16.8 (C# 9.0 の初期リリース。2020年11月リリース版)時点の C# には
+<code>is not { } x</code> という書き方にバグがあります(<code>is not object x</code> でも同様にバグあり)。</p>
+<p><code>not { }</code> は「null じゃない」をさらに否定しているので結局「null である」という判定になります。
+単に「null である」判定をしたいだけなら <code>is null</code> と書けばいい話なんですが、
+「変数で受けつつ null である判定」という処理をしたいときに <code>is not { } x</code> という書き方をします。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> M(A a)
+{
+    <span class="keyword">if</span> (a.X <span class="keyword">is</span> not { } x) <span class="keyword">return</span>; <span class="comment">// null だったら early return。</span>
+ 
+    <span class="comment">// x を使って何か処理をする。</span>
+    <span class="comment">// ここでは x に非 null な値が入っているはず。</span>
+}</code></pre>
+<p><code>is not { } x</code> や <code>is not object x</code> とい書き方はまさにこの「null のときに early return」のためにあって、null じゃなければその値が変数 <code>x</code> に入った上で <code>else</code> 側に流れます。</p>
+<p>ですが、バグで、時々その「null じゃない値を変数 <code>x</code> で受ける」という処理が消えてしまうことがあるそうです。
+上記コードはちゃんと動くんですが、例えば以下のコードだと <code>x</code> が null のままになっていて実行時例外を起こします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+M(<span class="string">&quot;abc&quot;</span>);
+ 
+<span class="keyword">void</span> M(<span class="keyword">string</span>? s)
+{
+    <span class="keyword">if</span> (s <span class="keyword">is</span> not { } x) <span class="keyword">return</span>; <span class="comment">// null だったら early return。</span>
+ 
+    <span class="comment">// x には s が代入されていないとおかしいはずなのに…</span>
+    Console.WriteLine(x.Length); <span class="comment">// ここでぬるぽ(バグ)。</span>
+}</code></pre>
+<p>バグです。
+バグ報告済みというか、<a href="https://github.com/dotnet/roslyn/pull/49369">報告されて早々に修正・ merge 済み</a>で、Visual Studio 16.9 では直る見込みです(16.8.1 とかにもこの修正が取り込まれるかは未定)。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2020/12/">12&#x6708;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

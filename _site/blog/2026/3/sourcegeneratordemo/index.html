@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x300C;&#x30DE;&#x30AF;&#x30ED;&#x6B32;&#x3057;&#x3044;&#x300D;&#x2192;&#x300C;Source Generator &#x4F7F;&#x3048;&#x300D;&#x2192;&#x300C;&#x3080;&#x305A;&#x3044;&#x300D;&#x2192;&#x300C;&#x307B;&#x3089;&#x3001;&#x4F5C;&#x3063;&#x305F;&#x3088;&#x300D; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2026/3/sourcegeneratordemo/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2026-03-07T22:46:21">2026-03-07</time></span><span>更新: <time datetime="2026-03-08T15:52:44">2026-03-08</time></span></div><h1 id="source-generator">「マクロ欲しい」→「Source Generator 使え」→「むずい」→「ほら、作ったよ」</h1>
+<p>少し前に C# 言語仕様のディスカッションで、こんな提案が立ちました。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/discussions/10010">Compile-Time Inline Macros</a></li>
+</ul>
+<p>この手の提案は、ほぼ同様のものがたびたび出てきました。
+そして毎回かなり高い確率で、「Source Generator を使ってくれ」が結論になります。</p>
+<p>それでも同様の提案が繰り返し出るのは、つまりそれだけ Source Generator に心理的ハードルがある、というです。</p>
+<h2 id="section">い　つ　も　の</h2>
+<p>毎度おおむね、話の流れはこうです:</p>
+<ol>
+<li>「マクロ欲しい」</li>
+<li>「Source Generator 使えば？」</li>
+<li>「いや、あれ大変。プロジェクト分かれるのがつらい。同じプロジェクトにテンプレートを書きたい」</li>
+<li>「属性ベースの Source Generator を最初に 1 個だけ作れば、あとは使い回せるよ」</li>
+<li>「簡単って言うなら、実物あるんですか？」</li>
+</ol>
+<p>で、だいたいこうなった辺りで横やりを入れたくなります。</p>
+<p>「<strong>じゃあ、今作ったわ</strong>。」</p>
+<p>実際、過去にもそういう流れで作ったものがあります。
+確か以下の2つとかもそういう出自。</p>
+<ul>
+<li><a href="https://github.com/ufcpp/BitFieldGenerator">BitFieldGenerator</a></li>
+<li><a href="https://github.com/ufcpp/StringLiteralGenerator">StringLiteralGenerator</a></li>
+</ul>
+<h2 id="section-1">そして再び。今回は気合入れ気味</h2>
+<p>まあ久しぶりに恒例行事参加いたしまして。
+今回、気が付いたらちょっと気合入り気味。
+その結果がこれです:</p>
+<ul>
+<li><a href="https://github.com/ufcpp/SourceGeneratorDemo">SourceGeneratorDemo</a></li>
+</ul>
+<p>目的が目的なのでこんな名前。特定の目的の Source Generator を作りたいとか広めたいということではなく、また同様の提案が出たときに「あるよ」と即出しするためのリポジトリ。</p>
+<p>当然ながら英語でないと目的を果たせず、これまでだったらソースコードだけ書いてそこから説明文を書くのが面倒で一切何も書かなかったりするんですが。
+最近の Copilot の進化に感謝しつつの readme 付き。</p>
+<p>「雑に書いて雑に使える」を目標にしているのでほんとに最低限実装を目指しまして、
+NuGet パッケージなし(パッケージ化する設定一切入れず、ProjectReference での利用を想定)。
+Visual Studio のプロジェクト テンプレートの「Analyzer with Code Fix (.NET Standard)」が作るようなごてごてとしたコードは一切使わず、<a href="https://github.com/ufcpp/SourceGeneratorDemo/tree/main/Starter">数ファイルのテンプレ</a>をコピペする想定。</p>
+<h2 id="source-generator-1">マクロ的 Source Generator</h2>
+<p>そして今回は特に、
+「属性ベースの Source Generator を最初に 1 個だけ作って、あとは使い回し」を実装しまして。</p>
+<ul>
+<li><a href="https://github.com/ufcpp/SourceGeneratorDemo/blob/main/AttributeTemplate/README.md">AttributeTemplateGenerator</a></li>
+</ul>
+<p>(ちなみに、今回のこの<a href="https://github.com/dotnet/csharplang/discussions/10010#discussioncomment-15924116">ディスカッションに同じく居合わせて</a>、同じくこれをモチベーションにしたっぽい方がいらっしゃったり: 「<a href="https://zenn.dev/sator_imaging/articles/0ac6bf76bafe2a">C# でマクロを使う</a>」)</p>
+<p>こちらのやつは、属性中に<a href="/study/csharp/start/st_string/#string-interpolation">文字列補間</a>を書くことでマクロとして機能する Source Generator です。
+例えばよくある <code>INotifyPropertyChanged</code> 実装用のマクロを書くなら以下のような感じ。</p>
+<p>まず、クラス自体に <code>INotifyPropertyChanged</code> インターフェイス実装を用意するマクロ:</p>
+<pre><code class="language-csharp">[AttributeUsage(AttributeTargets.Class)]
+<span class="keyword">class</span> NotifyClassAttribute() : TemplateAttribute(
+    Global(<span class="string">&quot;using System.ComponentModel;&quot;</span>),
+    Parent($<span class="string">&quot;partial class {Name} : INotifyPropertyChanged;&quot;</span>),
+<span class="string">&quot;&quot;</span>&quot;
+    <span class="keyword">public</span> <span class="keyword">event</span> PropertyChangedEventHandler? PropertyChanged;
+    
+    <span class="keyword">protected</span> <span class="keyword">virtual</span> <span class="keyword">void</span> OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        PropertyChanged?.Invoke(<span class="keyword">this</span>, e);
+    }
+    
+    <span class="keyword">protected</span> <span class="keyword">bool</span> SetProperty&lt;T&gt;(<span class="keyword">ref</span> T storage, T value, PropertyChangedEventArgs e)
+    {
+        <span class="keyword">if</span> (global::System.Collections.Generic.EqualityComparer&lt;T&gt;.Default.Equals(storage, value))
+        {
+            <span class="keyword">return</span> <span class="keyword">false</span>;
+        }
+        storage = value;
+        OnPropertyChanged(e);
+        <span class="keyword">return</span> <span class="keyword">true</span>;
+    }
+<span class="string">&quot;&quot;</span>&quot;
+    );</code></pre>
+<p>次にプロパティ用:</p>
+<pre><code class="language-csharp">[AttributeUsage(AttributeTargets.Property)]
+<span class="keyword">class</span> NotifyPropertyAttribute() : TemplateAttribute(
+$<span class="string">&quot;&quot;</span>&quot;
+    <span class="keyword">get</span> =&gt; field;
+    <span class="keyword">set</span> =&gt; SetProperty(<span class="keyword">ref</span> field, value, {Name}PropertyChangedEventArgs);
+<span class="string">&quot;&quot;</span>&quot;,
+Parent($<span class="string">&quot;&quot;</span>&quot;
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">readonly</span> System.ComponentModel.PropertyChangedEventArgs {Name}PropertyChangedEventArgs = <span class="keyword">new</span>(nameof({Name}));
+<span class="string">&quot;&quot;</span>&quot;)
+    );</code></pre>
+<p>で、これの利用側コード:</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> AttributeTemplateGenerator;
+
+<span class="keyword">namespace</span> Examples;
+
+[NotifyClass]
+<span class="keyword">partial</span> <span class="keyword">class</span> NotifyPropertyChangedExample
+{
+    [NotifyProperty]
+    <span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">int</span> Integer { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+    [NotifyProperty]
+    <span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">string</span>? Str { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+    [NotifyProperty]
+    <span class="keyword">public</span> <span class="keyword">partial</span> TimeOnly Time { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+    [NotifyProperty]
+    <span class="keyword">public</span> <span class="keyword">partial</span> DateOnly? Date { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+    [NotifyProperty]
+    <span class="keyword">public</span> <span class="keyword">partial</span> (<span class="keyword">int</span>, <span class="keyword">string</span>?, DateTimeOffset) Tuple { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+    [NotifyProperty]
+    <span class="keyword">public</span> <span class="keyword">partial</span> List&lt;<span class="keyword">int</span>&gt; List { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+}</code></pre>
+<p>「デモ用だし雑に」とか思いながら作り始めたんですけど、
+その先 Copilot に向かって「これもやろう」とか言ってみたら思った以上にしっかり作ってくれたというのもあり。</p>
+<h2 id="section-2">やった感想</h2>
+<p>Source Generator を雑に書いて雑に使うの、さすがに昔よりもだいぶ楽になってますねぇ。
+昔は Source Generator 側を書き換えたあとの、利用側プロジェクトへの反映性とかかなり悪かったんですけども、
+今はもうビルド1回するだけで即時反映になってたりで。</p>
+<p>AI コーディング大流行の昨今、(Source Generator みたいに) 学習ソースが少なそうなものはきついのかなぁとかうっすら思いながら書き始めたんですが、
+試してみたら全然余裕でちゃんとしたコードが出てきてびっくりしたりも。
+ソリューション内に他の例がある状態からとはいえ、<a href="https://github.com/ufcpp/SourceGeneratorDemo/blob/main/DependencyProperty/Generators/NotifyPropertyChangedGenerator.cs">このコード</a>とか 100% Copilot (Claude Sonnet 4.5)製。
+「DependencyProperty に INotifyPropertyChanged 実装の例も足しましょう」とかです。</p>
+<p>あと、おそらく割かし最近の話なんですが、 Visual Studio (for Windows)の Analyzer 実行プロセス(Source Generator もこれの中で動いてる)が .NET 8 になっていまして、もう .NET Standard 2.0 (.NET Framework 相当)にとらわれる必要もないかも。</p>
+<ul>
+<li><a href="https://github.com/ufcpp/SourceGeneratorDemo/tree/main/Net8.0">.NET 8 Source Generators</a></li>
+</ul>
+<p>まあそれでも .NET 8 なんですけども(ちなみに、 VS Code のやつは普通に .NET 10 で動いてる)。</p>
+<p>AttributeTemplateGenerator だけ高機能、かつ、多少の実用性あるのでこいつだけ独立させた方がいいのかなぁとか NuGet パッケージ公開した方がいいのかなぁとかも思いつつ。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2026/3/">3&#x6708;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

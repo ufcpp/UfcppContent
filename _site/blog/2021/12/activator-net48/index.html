@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x3010;C# 10.0 &#x95A2;&#x9023;&#x3011;&#x5F15;&#x6570;&#x306A;&#x3057;&#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;&#x306E; Activator &#x30D0;&#x30B0; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2021/12/activator-net48/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2021-12-07T22:01:23">2021-12-07</time></span><span>更新: <time datetime="2021-12-07T22:02:32">2021-12-07</time></span></div><h1 id="c-10.0-activator">【C# 10.0 関連】引数なしコンストラクターの Activator バグ</h1>
+<p>そういえば<a href="https://github.com/ufcpp-live/UfcppLiveAgenda/issues/43#issuecomment-903272324">ライブ配信(8月)</a>とか Twitter では話しているものの、ちゃんとこのサイト内には書いていなかったなと言う話。</p>
+<p>C# 10.0 で<a href="/study/csharp/cheatsheet/ap_ver10/#struct-parameterless-ctor">構造体の引数なしコンストラクター</a>が書けるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> A
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X;
+    <span class="keyword">public</span> A() =&gt; X = <span class="number">1</span>; <span class="comment">// ←要はこういうの</span>
+}</code></pre>
+<p><a href="/blog/2021/2/parameterlessstructctor/">今年2月にブログで書いてるんですが</a>、これ、C# 6.0 の時に一度採用しようとしたものの、<a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.activator.createinstance"><code>Activator.CreateInstance</code></a> にバグがあって、いくつかの場面でまっとうに動かないということで延期されたという経緯があります。</p>
+<p>で、それは直したし、直っていない頃の古いランタイムはサポート外にしていいだろうということで、晴れて C# 10.0 で採用されました。</p>
+<p>ところが、「バグを直したと思ったら別のバグが残ってるランタイムが現存している」と言うことが後から発覚…
+実は、 .NET Framework で実行すると引数なしコンストラクターがちゃんと動かいことがあったりします。</p>
+<h2 id="section">旧バグ</h2>
+<p>C# の構造体は <code>new T()</code> と <code>default(T)</code> が同じ「0初期化」を表してた時期が長かったので、<code>Activator.CreateInstance</code> がコンストラクターを呼んでくれず、単に0初期化した値(要するに <code>default(T)</code>)を返してくるというものでした。</p>
+<p><code>Activator.CreateInstance</code> を直接呼ぶことはまああんまりないでしょうが、ジェネリック型の <code>new()</code> 制約は内部的に <code>Activator.CreateInstance</code> を使っていて、間接的に影響を受ける人は結構多いと思います。</p>
+<p>例えば、先ほどの、引数なしコンストラクターで <code>X</code> を 1 に初期化しているはずの構造体 <code>A</code> を使って以下のようなコードを書いたとします。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> a = New&lt;A&gt;();
+
+<span class="comment">// 古いランタイムだとこれで a.X == 0 に</span>
+<span class="comment">// 1 になるはずなのに…</span>
+Console.WriteLine(a.X);
+
+<span class="keyword">static</span> T New&lt;T&gt;()
+    <span class="keyword">where</span> T : <span class="keyword">new</span>()
+    =&gt; <span class="keyword">new</span> T();</code></pre>
+<p>直接 <code>new A()</code> すればちゃんと <code>X</code> が 1 に初期化されるんですが、
+<code>New&lt;T&gt;</code> メソッドを介すると 0 になっていました。</p>
+<p>C# 6.0 当時の話なので確か、
+「.NET Framework 4.5 で問題が発覚して、4.6 では直した(つもり)」
+とかだったと思います。
+当時のポリシーだと古いランタイムのサポートを切れないのでお蔵入り。</p>
+<h2 id="section-1">現バグ</h2>
+<p>直した<strong>つもり</strong>。</p>
+<p>実際、.NET Core では(.NET 5, .NET 6 も)ちゃんと直っています。
+問題は .NET Framework の方でして、現行の最新版である .NET Framework 4.8 で別のバグり方をしています。</p>
+<p><code>CreateInstance</code> を呼ぶのが1回目なら正しく引数なしコンストラクターが呼ばれるんですが、
+2回目以降は <code>default(T)</code> を返してしまうという内容。</p>
+<p>察しは付くと思いますが、キャッシュ関連のバグです。
+何らかのキャッシュを持たせて <code>CreateInstance</code> を高速化する最適化は後から追加されたものなので、「1回直したはずのものが再発」という状態です。</p>
+<p>先ほどと同じ構造体 <code>A</code> と <code>New&lt;T&gt;</code> メソッドを使った場合、
+.NET Framework 4.8 で実行すると「2度目がおかしい」という状態になります。</p>
+<pre><code class="language-csharp">Console.WriteLine(New&lt;A&gt;().X); <span class="comment">// 1回目は大丈夫。ちゃんと 1。</span>
+Console.WriteLine(New&lt;A&gt;().X); <span class="comment">// 2回目以降なぜか 0 に… (.NET Framework 限定のバグ)</span></code></pre>
+<h2 id="targetframework-net4.8">TargetFramework net4.8 じゃなくてもバグる</h2>
+<p>これ、コンパイル時(C# コンパイラー側)の問題ではなくて、
+実行時(.NET Framework ランタイム側)の問題なので、
+例えばの話、</p>
+<ol>
+<li>netstandard2.0 なライブラリで以下のようなコードを書く (LangVersion 指定で明示的に C# のバージョンを 10.0 に上げる)</li>
+</ol>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> ClassLibrary1;
+
+<span class="keyword">public</span> <span class="keyword">struct</span> A
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X;
+    <span class="keyword">public</span> A() =&gt; X = <span class="number">1</span>;
+}</code></pre>
+<ol start="2">
+<li>以下のようなアプリ コードを書く (これは C# 7.3 でも動く)</li>
+</ol>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// ジェネリックな new() は、内部的には CreateInstance&lt;T&gt;() と一緒</span>
+        Console.WriteLine(New&lt;ClassLibrary1.A&gt;().X);
+        Console.WriteLine(New&lt;ClassLibrary1.A&gt;().X);
+        Console.WriteLine(New&lt;ClassLibrary1.A&gt;().X);
+        Console.WriteLine(New&lt;ClassLibrary1.A&gt;().X);
+    }
+
+    <span class="keyword">static</span> T New&lt;T&gt;()
+        <span class="keyword">where</span> T : <span class="keyword">new</span>()
+        =&gt; <span class="keyword">new</span> T();
+}</code></pre>
+<p>とやると、アプリ側、 netcoreapp1.0 とか net5.0 とかで動かす分には問題なく 1, 1, 1, 1 という結果になるんですが、
+これを .NET Framework 4.8 で実行すると、1, 0, 0, 0 という結果になります。</p>
+<h2 id="section-2">影響範囲</h2>
+<p>現在の C# は「<a href="/study/csharp/cheatsheet/langversionoption/#new-options">TargetFramework に応じて言語バージョンを自動選択</a>」という方針になっていて、
+「古いランタイムで最新の C# 構文を使う」というのは「わかってる人だけがやってくれ」と言うことになっています。</p>
+<p>通常 .NET Framework 4.8 で使える C# は C# 7.3 で、
+C# 10.0 の新機能が正しく動かなくても概ね問題は起こさないはず…</p>
+<p>なんですが、そこで問題になるのが、
+先ほどの「ライブラリ側で C# 10.0 にして引数なしコンストラクターを使っている」という場合。</p>
+<ol>
+<li>ライブラリ側が netstandard2.0 で、引数なしコンストラクターを使っている</li>
+<li>アプリ側が net48 で、<code>new()</code> 制約越しにジェネリックなメソッドで <code>new T()</code> している</li>
+<li>それを Windows 上で .NET Framework 4.8 で実行する</li>
+</ol>
+<p>みたいな状況で問題を起こします。</p>
+<p>レアな条件ではあるんですが、
+「わかっている人が書いたライブラリを、わかっていない人が参照する」というものなので、
+「ありえなくもない」くらいには警戒が必要です。</p>
+<h3 id="unity">おまけ: Unity</h3>
+<p>ちなみに、TargetFramework が net48 であっても、
+<a href="https://unity.com/ja">Unity</a> (<a href="https://ja.wikipedia.org/wiki/Mono_(%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2)">Mono</a>)で実行する分には問題を起こしません。
+あくまでランタイムが .NET Framework の時にだけ起こります。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2021/12/">12&#x6708;</a></li><li><a href="/blog/2021/12/regional-indicator/">Regional Indicator (&#x56FD;&#x65D7;&#x7D75;&#x6587;&#x5B57;)</a></li><li><a href="/blog/2021/12/unicode-benzene/">&#x30D9;&#x30F3;&#x30BC;&#x30F3;&#x74B0;&#x306E;&#x6587;&#x5B57;&#x30B3;&#x30FC;&#x30C9;: &#x232C; (U&#x2B;232C), &#x23E3; (U&#x2B;23E3)</a></li><li><a href="/blog/2021/12/newlines-in-interpolated-string/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011; {} &#x4E2D;&#x306E;&#x6539;&#x884C;</a></li><li><a href="/blog/2021/12/lower-cased-type-names/">&#x3010;&#x8FD1;&#x3005;&#x8B66;&#x544A;&#x8FFD;&#x52A0;&#x3011;&#x5C0F;&#x6587;&#x5B57; a&#xFF5E;z &#x578B;&#x540D;</a></li><li><a href="/blog/2021/12/ninjacatdies/">&#x30CB;&#x30F3;&#x30B8;&#x30E3;&#x30AD;&#x30E3;&#x30C3;&#x30C8;&#x1F431;&#x200D;&#x1F464;</a></li><li><a href="/blog/2021/12/full-color-emoji/">&#x4EFB;&#x610F;&#x8272;&#x7D75;&#x6587;&#x5B57;&#xFF1F;</a></li><li><a href="/blog/2021/12/notorious-compat-char/">&#x60AA;&#x3044;&#x610F;&#x5473;&#x3067;&#x304A;&#x6C17;&#x306B;&#x5165;&#x308A;&#x306E;&#x6587;&#x5B57; &#x3020;&#x3004;</a></li><li><a href="/blog/2021/12/semi-auto-property/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011; &#x534A;&#x81EA;&#x52D5;&#x30D7;&#x30ED;&#x30D1;&#x30C6;&#x30A3;</a></li><li><a href="/blog/2021/12/utf8-literal/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011; UTF-8 &#x30EA;&#x30C6;&#x30E9;&#x30EB;</a></li><li><a href="/blog/2021/12/list-pattern/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011;&#x30EA;&#x30B9;&#x30C8; &#x30D1;&#x30BF;&#x30FC;&#x30F3;&#x3010;VS 17.1 p2 &#x3067;&#x8FFD;&#x52A0;&#x4E88;&#x5B9A;&#x3011;</a></li><li><a href="/blog/2021/12/immutable-array-init/">ImmutableArray &#x306B;&#x5BFE;&#x3057;&#x3066;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2021/12/collection-literal/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3; &#x30EA;&#x30C6;&#x30E9;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

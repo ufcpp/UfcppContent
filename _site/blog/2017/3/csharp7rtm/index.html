@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>C# 7.0&#x30EA;&#x30EA;&#x30FC;&#x30B9;(&#x3082;&#x3046;2&#x9031;&#x9593;&#x304F;&#x3089;&#x3044;&#x7D4C;&#x904E;&#x3057;&#x305F;&#x3051;&#x3069;&#x3082;) | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2017/3/csharp7rtm/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2017-03-21T20:53:51">2017-03-21</time></span><span>更新: <time datetime="2017-03-21T20:53:51">2017-03-21</time></span><span class="entry-tags"><span class="entry-tag">C# 7&#x601D;&#x3044;&#x51FA;&#x8A71;</span></span></div><h1 id="c-7.02">C# 7.0リリース(もう2週間くらい経過したけども)</h1>
+<p>気が付けば、Visual Studio 2017がリリースされてから2週間くらい経ってしまっているわけですが…</p>
+<p>マイクロソフト公式の<a href="https://connpass.com/event/50910/">Release Celebration</a>でLT登壇したり、
+自分主催の<a href="https://csugjp.connpass.com/event/50930/">リリース記念勉強会</a>やったりとかで、
+すっかり力尽きていました。</p>
+<p>そんな感じでしたが、2点ほどそれの事後的な話。</p>
+<ul>
+<li><a href="https://csugjp.connpass.com/event/50930/">リリース記念勉強会</a>の動画上げました</li>
+<li><a href="/study/csharp/">C# によるプログラミング入門</a>、リリース版対応しました</li>
+</ul>
+<h2 id="section">動画</h2>
+<p><a href="https://csugjp.connpass.com/event/50930/">Visual Studio 2017 リリース記念勉強会</a>、
+当日にストリーミング配信とかはやらなかったんですが、
+一応動画に撮っていたりはしまして。</p>
+<p>許可が取れたものは、YouTube にアップロードしていってたりします。
+C#ユーザー会でチャネルを作ったので、こちらで公開中です。</p>
+<ul>
+<li><a href="https://www.youtube.com/channel/UCWNxu4tBmihABhzJjPiHMVw">Japan C# User Group</a></li>
+</ul>
+<h2 id="section-1">リリース版対応</h2>
+<p><a href="/study/csharp/">C# によるプログラミング入門</a>内から、C# 7.0がらみは「正式版ではこうなります」、「予定」、「仮」的な文面全部なくしたはず。
+ついに正式リリースですよ。</p>
+<p>ちなみに、RCからRTMの間で、C# 7.0の実装にも微妙に変更もありました。</p>
+<p>1つ目。タプルに対する拡張メソッドの呼び出しで、オーバーロード解決時にメンバーごとの型変換を考慮してくれるようになりました。
+<a href="/blog/2017/1/pickuproslyn0125/">1月25日のブログ</a>の最後の方にちょっと書いたやつです。
+「『今やる』か『今後もうできないか』の2択なので、もう時間も限られているけど頑張って今やってみる」っていう状態になっていた機能が、無事に入りました。</p>
+<div>
+<script src="https://gist.github.com/ufcpp/168dc0519f4f58ffa6c5b146246d9f77.js"></script>
+</div>
+<p>2つ目。<code>while</code> の条件式中で宣言した変数のスコープ変更(while内のみになった)。
+<a href="/blog/2016/12/pickuproslyn1214/">去年の12月</a>にちょっと書いてたやつ。
+これ、直前のRC版でもまだ<code>while</code>の外にスコープ漏れてて、リリース後に確認してみたらちゃんと<code>while</code>内のみに変更掛かっていることを確認。
+うちの記事にも反映させておきました。</p>
+<div>
+<script src="https://gist.github.com/ufcpp/5984fee9bbbc0600c0314baa9a438ba3.js"></script>
+</div>
+<p>そういや、最近、すっかりC#のバージョン番号の書式が「C# 7.0」(.0が付く)なんですよね。
+一時期は、<a href="/blog/2016/6/versionnumber/">C# 6, C# 7</a>だったんですけども。
+しれっと、いろいろとやっぱり .0 が付くように変わっていたり。
+うちのサイト内の表記、どうしようかな…</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2017/3/">3&#x6708;</a></li><li><a href="/blog/2017/3/pickuproslyn0318/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 3/18: &#x30A4;&#x30F3;&#x30BF;&#x30FC;&#x30D5;&#x30A7;&#x30A4;&#x30B9;&#x306E;&#x30C7;&#x30D5;&#x30A9;&#x30EB;&#x30C8;&#x5B9F;&#x88C5;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

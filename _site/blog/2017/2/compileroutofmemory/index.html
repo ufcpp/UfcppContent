@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30E9;&#x30FC;&#x306E;&#x8CC7;&#x6E90;&#x67AF;&#x6E07;&#x7CFB;&#x30A8;&#x30E9;&#x30FC;&#x3068;&#x306E;&#x4ED8;&#x304D;&#x5408;&#x3044;&#x65B9; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2017/2/compileroutofmemory/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2017-02-02T00:07:54">2017-02-02</time></span><span>更新: <time datetime="2017-02-02T00:12:06">2017-02-02</time></span></div><h1 id="section">コンパイラーの資源枯渇系エラーとの付き合い方</h1>
+<p><a href="https://twitter.com/tanaka_733/status/826405563638575105">ちょっとしたきっかけ</a>があって、C# 7のタプル、何要素まで書けるのかというのにチャレンジすることになりまして。
+結果だけ書くと、<a href="https://gist.github.com/ufcpp/066e7e558cb2ca184bba1bc7d0b5dd63">数万要素のタプル</a>を書くとVisual Studioがクラッシュしました。</p>
+<p>これは、別にタプルに限った話ではなくて、巨大なソースコードを食わせてコンパイラーを限界まで酷使したら落ちるのは当然なことでして。
+起こしているエラーはスタック枯渇に類するもの(Insufficient Stack)のようです。
+コンピューターの資源は有限なので、OutOfMemoryやStaskOverflowなどの資源枯渇系のエラーはどうやっても起こりえます。
+数万引数のメソッドを書いたり、数万項の足し算をしたり、数万<code>case</code>の<code>switch</code>を書いたりしても、同様に落とせると思います。</p>
+<p>なので、本当に気にするべきなのは以下のような点かなぁと思われます。</p>
+<ul>
+<li>仕様上の上限: 要素数などに仕様上の上限を設けるべきかどうか</li>
+<li>資源枯渇への対処: 資源枯渇を事前に察して適切にエラー メッセージを出すすべきか、コンパイラー自体をクラッシュさせるべきか</li>
+<li>クラッシュ時の対処: コンパイラー自体がクラッシュした際に、IDE側は同エラー処理すべきか</li>
+</ul>
+<p>まあ、割かし一般的な「異常系に対する対処」に関する話です。</p>
+<h2 id="section-1">仕様上の上限</h2>
+<h3 id="section-2">仕様で決まっている例</h3>
+<p>この手の数の上限、仕様として定めているものもあります。例を挙げると以下のようなものがあります。</p>
+<ul>
+<li>C++ では、constexprという機能で、再帰呼び出しに上限があります
+<ul>
+<li>標準仕様上は「512回以上であることを推奨」という感じで推奨設定が決まっています</li>
+<li>実際の上限はコンパイラー依存、かつ、コンパイル オプションで変更できます</li>
+</ul>
+</li>
+<li>Java では、メソッドの引数の上限が256個までと決まっています
+<ul>
+<li>バイトコード上の制約なので、どうやってもこの数を超えることはできません</li>
+</ul>
+</li>
+</ul>
+<h3 id="section-3">仕様を決めることの善し悪し</h3>
+<p>仕様的に上限を決めることには善し悪しあります。</p>
+<p>仕様化するためには、結構余裕をもって上限を設定せざるを得ません。コンピューターの性能が上がって、ちょっと頑張れるようになったとしても、仕様で決まっている数を超えれなくて不便だったりします。</p>
+<p>その一方で、コンパイラーの限界ぎりぎりまで頑張る場合、あるマシンではコンパイルできたのに、他のマシンではできないということがあり得ます。
+今回のタプルに関しても、実際、手元のマシンだと1万要素くらいはコンパイルできましたが、<a href="https://tryroslyn.azurewebsites.net/">TryRoslyn</a>などのオンライン サービスを使うと1000ちょっとでもうコンパイル エラーを起こす用です(要するに、使っているVMインスタンスがしょぼい)。</p>
+<p>個人的に、1000っていうラインは結構微妙なところです。
+手書きで1000個のタプル要素や引数を書くことはまずないでしょう。
+でも、「コード生成とかしててうっかり」だと、数百～1000は「ありえる」範疇。</p>
+<p>で、開発機ではコンパイルできる。なのに、CIとかを掛けていて、毎朝ナイトリー ビルドには失敗している、みたいなことがあり得るわけです。</p>
+<p>マシン環境に左右されない意味では、明確に上限が決まっている(少なくともC++のconstexprみたいに「推奨」が決まっている)方がありがたいのはありがたいです。</p>
+<h3 id="section-4">仕様を決められるか</h3>
+<p>とはいえ、引数の数や、再帰の段数みたいに具体的な数値を指定しやすいものばかりではありません。</p>
+<p>タプルの場合、「要素数」で区切ればいいじゃないかと思うかもしれませんが、実際にエラーの原因になっているのはスタックの深さであって、要素数は直接の原因ではありません。
+例えばの話、数千項の足し算の中に、数千要素のタプルと、数千引数のメソッド呼び出しが混在していたりすると、項数/要素数/引数の数の合計によって限界が決まるだろうことは大まかに想像がつくかと思います。
+なので、単純にタプル要素数だけに制限を書けるのも変な話でしょう。</p>
+<p>もっと難しい例でいうと、型推論をかなり頑張ってる言語では、「型推論に時間が掛かりすぎているのであきらめてエラーにします」みたいなエラーを出すものもあったりします。
+時間で言われても、どういう場合なら推論できて、どういう場合ならできないのかがまるで分らず…</p>
+<h2 id="section-5">資源枯渇時の対処</h2>
+<p>まあ、割かし仕様としては決めかねるものなので、コンパイラーの限界まで頑張ることにしましょう。
+そうなると、資源枯渇した瞬間がコンパイルの限界になります。</p>
+<p>ところが、OutOfMemoryにしろStackOverflowにしろ、資源枯渇からの復帰はかなり難しいです。
+そりゃまあ、復帰にもメモリを使ったりするわけで、OutOfMemory下でできることとか限られています。</p>
+<p>なので、コンパイラーをクラッシュさせないためには、かなり防衛的に、余裕を持った上限設定が必要だったりします。
+「再帰呼び出しが1000段を超えたのでエラーにしよう」的な。
+結果的に、仕様的に上限を決める場合同様、過剰な制限が掛かって利便性に難ありです。</p>
+<p>そこまでしても、どうせ返せるコンパイル エラーは「資源不足なのでこれ以上のコンパイル作業はできません」程度の、何の解決にもならないメッセージのみ。
+だったら、OutOfMemoryやStackOverflowをそのまま未処理例外にして、コンパイラー自体がクラッシュした方が費用対効果は高いのではないかということになります。</p>
+<p>ただ、その場合、コンパイラーを呼び出している側でクラッシュに対するちゃんとした対処が必要になります。</p>
+<h2 id="section-6">クラッシュ時の対処</h2>
+<p>で、まあ、今回Visual Studioがクラッシュしているのがちょうどそんな感じの状況なわけです。
+無理なソースコードを食わせたからコンパイラーがクラッシュした。
+Visual Studio側がコンパイラーのクラッシュに正しく対応していないみたいで、Visual Studioごとクラッシュする。</p>
+<p>これ、Visual Studio Codeだと大丈夫みたいです。
+Codeの場合は、急にインテリセンスが働かなくなるだけ。
+エディターとしてはフリーズすることなく稼働し続ける。
+Codeでは、<a href="http://qiita.com/atsushieno/items/ce31df9bd88e98eec5c4">Language Server Protocol</a>ってものを介して、エディターの外のプロセスと通信してインテリセンスを動かしているので、言語サーバー側がクラッシュしても、エディターは無事です。</p>
+<p>利用者からすると、エディターごと落ちるとかほんとつらいんで、今のVisual Studioの挙動は結構いやなんですけども。
+Visual Studioの、C#コンパイラーの未処理例外に対する耐性の低さは結構きついものがあります。
+今でこそ、Visual Studio 2017もRC3 (リリース直前)まで来たのでクラッシュも減っていますけど、
+もっと開発初期なら簡単にコンパイラーがクラッシュしますし。
+いまだに、例えば「<code>null is</code>」って打つだけでコンパイラーをクラッシュさせれるバグが残っていたりするんですけども、
+それでも、Visual Studioごとクラッシュします。</p>
+<h2 id="section-7">まとめ</h2>
+<p>数万要素のタプルを書くとVisual Studioが落ちます。</p>
+<p>そんなソースコードを食わせたらコンパイラーが落ちるのは割と想定の範囲内なことかと思われます。
+この手の問題に対して仕様的に上限を定めるのは、過剰な制限になって利便性を損なったり、
+適切な上限の掛け方が見つからなかったり、結構な難しさがあります。</p>
+<p>めったに起きない状況に対して過剰なコストをかけてもしょうがないでしょう。
+限界に挑戦するようなソースコードを与えられたとき、クラッシュするのが現実解であることは多々あります。</p>
+<p>問題は、むしろ、Visual Studio側が、C#コンパイラーのクラッシュに対して脆弱すぎる点かなぁと思います。
+同じようなひどいソースコードを与えても、Visual Studio Codeだったらクラッシュしなかったりもします(インテリセンスだけが効かなくなる)。
+Visual Studioにも、C#コンパイラーのクラッシュにエディターごと巻き込まれないような対処が必要でしょう。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2017/2/">2&#x6708;</a></li><li><a href="/blog/2017/2/pickuproslyn0203/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 2/3: csharplang &#x30EA;&#x30DD;&#x30B8;&#x30C8;&#x30EA;</a></li><li><a href="/blog/2017/2/pickuproslyn0110/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7; Roslyn 2/10</a></li><li><a href="/blog/2017/2/pickuproslyn0213/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 2/13</a></li><li><a href="/blog/2017/2/pickuproslyn0223/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 2/23: Shapes and Extensions</a></li><li><a href="/blog/2017/2/pickuproslyn0228/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 2/28: Milestones 7.X</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

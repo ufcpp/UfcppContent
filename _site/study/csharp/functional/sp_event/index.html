@@ -1,0 +1,489 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30A4;&#x30D9;&#x30F3;&#x30C8; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/functional/sp_event/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">イベント</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>C# には、イベント駆動型のプログラム作成を容易にするため、
+イベント処理用の構文 event が用意されています。
+event は、デリゲートに対する「<a href="/study/csharp/oop/oo_property/#property">プロパティ</a>」のようなもので、
+以下のような特徴を持っています。</p>
+<ul>
+<li><p>デリゲート呼び出しはクラス内部からのみ可能。</p>
+</li>
+<li><p>外部からはデリゲートの追加/削除のみが可能。</p>
+</li>
+</ul>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>サンプル</h5>
+<p><a href="https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Event/EventDriven">https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Event/EventDriven</a></p>
+<h5 id="section-3"><a id="sec-generated-title-3"></a>ポイント</h5>
+<ul>
+<li><p>イベント： プロパティのデリゲート版。イベント駆動処理に使われるのでこの名前になっています。</p>
+</li>
+<li><p>イベント駆動処理には、単なるデリゲート型のプロパティでは機能が不十分で、 「呼び出しはクラス内からのみ、外部からできるのは登録・削除のみ」という制約が必要になります。</p>
+</li>
+<li><p>C# には、この制約を満たすような専用の構文(event 構文)があります。</p>
+</li>
+<li><p>補足: といっても、event 構文には使いにくい面もあるので注意。参考:「<a href="/study/csharp/functional/misceventsubscribe/">【雑記】イベントの購読とその解除</a>」</p>
+</li>
+</ul>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="event-driven"></a>イベント駆動型</h2>
+<p>「キーボードのボタンが押された」とか「マウスが移動した」等の、
+コンピュータ上で発生するなんらかの事象のことを<strong id="event" class="keyword">イベント</strong>（event）といい、
+イベントが発生したときに行う処理のことを<strong id="eventhandler" class="keyword">イベント ハンドラー</strong>（event handler）と呼びます。
+このように、イベントとそれに対する処理により動作するようなプログラムのことを<strong id="edriven" class="keyword">イベント駆動型</strong>（event drive）プログラムと呼びます。</p>
+<p>ポイントは、図1に示すように、イベントを発生させる側と受け取って何か処理をする側がわかれることです。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/ObservableObserver.png"><img src="/assets/media/ufcpp2000/csharp/fig/ObservableObserver.png" alt="イベントの概要" /></a></p>
+<figcaption>イベントの概要</figcaption>
+</figure>
+<p>event source, observable, event sender, ... など、呼び方はいろいろありますが、流儀や文脈の差であって、だいたい同じものです。</p>
+<p>イベント駆動の最たる例は、GUI アプリでしょう。
+GUI アプリでは、ユーザからのマウスやキーボード、タッチなどの入力イベント発生を待ち、
+それらに対して何らかの処理を行っていくことでプログラムが動作しています。</p>
+<p>とはいえ、GUI アプリで例示するのは、他にもいろいろ説明しないといけないことが多いので、
+ここではコンソール アプリで説明していきましょう。
+コンソール アプリでも、「ユーザーからのキー入力を待つ」というのはイベント処理だと考えることができます。
+（GUI アプリに関しては「<a href="/study/csharp/lib/lib_forms/">GUI アプリケーション</a>」や「<a href="/study/dotnet/#wpf">Windows Presentation Foundation</a>」参照。）</p>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="ex"></a>イベント駆動型プログラムの例</h2>
+<p>イベント駆動の例として、
+キーボードからの入力を受け取って処理を行うプログラムを作っていきます。
+初めに、イベント発生側と受取側があまりわかれていないベタな例を示しましょう。
+時節以降で、これを分離していきます。</p>
+<p>簡単なサンプルとして、
+1秒おきに時刻を表示するプログラムを作ります。
+キーボードからの入力に応じて、
+表示の一時停止や、表示形式の変更、プログラムの停止等を行います。</p>
+<p>この最初のサンプルでは、
+Main 関数内のループで時刻の表示を行い、
+別のスレッドでイベント(ユーザからのキー入力)の発生を待ち続け、
+同時にイベントの処理もこのスレッド内で行います。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Threading;
+<span class="keyword">using</span> System.Threading.Tasks;
+
+<span class="keyword">class</span> Program
+{
+    <span class="comment">// 時刻の表示形式</span>
+    <span class="keyword">const</span> <span class="keyword">string</span> FULL = <span class="string">&quot;yyyy/dd/MM hh:mm:ss\n&quot;</span>;
+    <span class="keyword">const</span> <span class="keyword">string</span> DATE = <span class="string">&quot;yyyy/dd/MM\n&quot;</span>;
+    <span class="keyword">const</span> <span class="keyword">string</span> TIME = <span class="string">&quot;hh:mm:ss\n&quot;</span>;
+
+    <span class="keyword">static</span> <span class="keyword">bool</span> isSuspended = <span class="keyword">true</span>;  <span class="comment">// プログラムの一時停止フラグ。</span>
+    <span class="keyword">static</span> <span class="keyword">string</span> timeFormat = TIME; <span class="comment">// 時刻の表示形式。</span>
+
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        WriteHelp();
+
+        <span class="keyword">var</span> cts = <span class="keyword">new</span> CancellationTokenSource();
+
+        Task.WhenAll(
+            Task.Run(() =&gt; EventLoop(cts)),
+            TimerLoop(cts.Token)
+            ).Wait();
+    }
+
+    <span class="comment">// 毎秒時刻表示のループ</span>
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">async</span> Task TimerLoop(CancellationToken ct)
+    {
+        <span class="keyword">while</span> (!ct.IsCancellationRequested)
+        {
+            <span class="keyword">if</span> (!isSuspended)
+            {
+                <span class="comment">// 1秒おきに現在時刻を表示。</span>
+                Console.Write(DateTime.Now.ToString(timeFormat));
+            }
+            <span class="keyword">await</span> Task.Delay(<span class="number">1000</span>);
+        }
+    }
+
+    <span class="comment">// キー受付のループ</span>
+    <span class="keyword">static</span> <span class="keyword">void</span> EventLoop(CancellationTokenSource cts)
+    {
+        <span class="keyword">while</span> (!cts.IsCancellationRequested)
+        {
+            <span class="comment">// 文字を読み込む</span>
+            <span class="comment">// (「キーが押される」というイベントの発生を待つ)</span>
+            <span class="keyword">string</span> line = Console.ReadLine();
+            <span class="keyword">char</span> eventCode = line.Length == <span class="number">0</span> ? <span class="string">&#39;\0&#39;</span> : line[<span class="number">0</span>];
+
+            <span class="comment">// イベント処理</span>
+            <span class="keyword">switch</span> (eventCode)
+            {
+                <span class="keyword">case</span> <span class="string">&#39;r&#39;</span>: <span class="comment">// run</span>
+                    isSuspended = <span class="keyword">false</span>;
+                    <span class="keyword">break</span>;
+                <span class="keyword">case</span> <span class="string">&#39;s&#39;</span>: <span class="comment">// suspend</span>
+                    isSuspended = <span class="keyword">true</span>;
+                    <span class="keyword">break</span>;
+                <span class="keyword">case</span> <span class="string">&#39;f&#39;</span>: <span class="comment">// full</span>
+                    timeFormat = FULL;
+                    <span class="keyword">break</span>;
+                <span class="keyword">case</span> <span class="string">&#39;d&#39;</span>: <span class="comment">// date</span>
+                    timeFormat = DATE;
+                    <span class="keyword">break</span>;
+                <span class="keyword">case</span> <span class="string">&#39;t&#39;</span>: <span class="comment">// time</span>
+                    timeFormat = TIME;
+                    <span class="keyword">break</span>;
+                <span class="keyword">case</span> <span class="string">&#39;q&#39;</span>: <span class="comment">// quit</span>
+                    cts.Cancel();
+                    <span class="keyword">break</span>;
+                <span class="keyword">default</span>: <span class="comment">// ヘルプ</span>
+                    WriteHelp();
+                    <span class="keyword">break</span>;
+            }
+        }
+    }
+
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> WriteHelp()
+    {
+        Console.Write(
+            <span class="string">&quot;使い方\n&quot;</span> +
+            <span class="string">&quot;r (run)    : 時刻表示を開始します。\n&quot;</span> +
+            <span class="string">&quot;s (suspend): 時刻表示を一時停止します。\n&quot;</span> +
+            <span class="string">&quot;f (full)   : 時刻の表示形式を“日付＋時刻”にします。\n&quot;</span> +
+            <span class="string">&quot;d (date)   : 時刻の表示形式を“日付のみ”にします。\n&quot;</span> +
+            <span class="string">&quot;t (time)   : 時刻の表示形式を“時刻のみ”にします。\n&quot;</span> +
+            <span class="string">&quot;q (quit)   : プログラムを終了します。\n&quot;</span>
+            );
+    }
+}</code></pre>
+<p>このプログラムでは、<code>EventLoop</code> というメソッドの中で、
+イベント(ユーザのキー入力)発生を待ち、
+その処理を行っています。
+ここで、イベントの発生を待つ部分は他のプログラムでも利用可能な汎用的な処理です。
+そのため、次のステップとして、
+イベント発生待ちの部分を取り出して、汎用ルーチン化することを考えます。
+すなわち、イベント発生待受け部(イベントループ)とイベント処理部(イベント ハンドラー)を分けて実装することにします。</p>
+<h2 id="section-6"><a id="sec-generated-title-6"></a> <a id="handler"></a>イベント ハンドラー</h2>
+<p>これまでで見てきたように、
+イベント駆動型のプログラムは大きく分けて
+<em>「イベント発生待受け部」（イベントループ）と「イベント処理部」（イベント ハンドラー）の2つの部分からなります</em>。
+イベント処理部はプログラムごとに異なる処理を行うことになりますが、
+イベント発生待受け部は汎用的な処理で、
+どんなプログラムでも共通の処理になります。</p>
+<p>そこで、イベント発生待受け部のみを独立させ、汎用ルーチン化することを考えます。
+といっても、これの実現はそれほど難しい事ではなく、
+単に<a href="/study/csharp/functional/sp_delegate/">デリゲート</a>を用いてイベント処理を他のメソッドに譲り渡してしまえばいいだけのことです。
+したがって、イベント発生待受け用クラスは以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Threading;
+<span class="keyword">using</span> System.Threading.Tasks;
+
+<span class="comment">// イベント処理用のデリゲート</span>
+<span class="keyword">delegate</span> <span class="keyword">void</span> KeyboadEventHandler(<span class="keyword">char</span> eventCode);
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> キーボードからの入力イベント待受けクラス。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">class</span> KeyboardEventLoop
+{
+    KeyboadEventHandler _onKeyDown;
+
+    <span class="keyword">public</span> KeyboardEventLoop(KeyboadEventHandler onKeyDown)
+    {
+        _onKeyDown = onKeyDown;
+    }
+
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> 待受け開始。</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;ct&quot;&gt;</span><span class="xmlDocComment">待ち受けを終了したいときにキャンセルする。&lt;/param&gt;</span>
+    <span class="keyword">public</span> Task Start(CancellationToken ct)
+    {
+        <span class="keyword">return</span> Task.Run(() =&gt; EventLoop(ct));
+    }
+
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> イベント待受けループ。</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+    <span class="keyword">void</span> EventLoop(CancellationToken ct)
+    {
+        <span class="comment">// イベントループ</span>
+        <span class="keyword">while</span> (!ct.IsCancellationRequested)
+        {
+            <span class="comment">// 文字を読み込む</span>
+            <span class="comment">// (「キーが押される」というイベントの発生を待つ)</span>
+            <span class="keyword">string</span> line = Console.ReadLine();
+            <span class="keyword">char</span> eventCode = (line == <span class="keyword">null</span> || line.Length == <span class="number">0</span>) ? <span class="string">&#39;\0&#39;</span> : line[<span class="number">0</span>];
+
+            <span class="comment">// イベント処理はデリゲートを通して他のメソッドに任せる。</span>
+            _onKeyDown(eventCode);
+        }
+    }
+}</code></pre>
+<p>このようにしてイベント待受け部から独立させたイベント処理部(この例においては <code>onKeyDown</code> デリゲート)のことを<em>イベント ハンドラー</em>と呼びます。
+そして、このクラスを用いて先ほどのサンプルプログラムを書き換えると以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Threading;
+<span class="keyword">using</span> System.Threading.Tasks;
+
+<span class="keyword">class</span> Program
+{
+    <span class="comment">// 時刻の表示形式</span>
+    <span class="keyword">const</span> <span class="keyword">string</span> FULL = <span class="string">&quot;yyyy/dd/MM hh:mm:ss\n&quot;</span>;
+    <span class="keyword">const</span> <span class="keyword">string</span> DATE = <span class="string">&quot;yyyy/dd/MM\n&quot;</span>;
+    <span class="keyword">const</span> <span class="keyword">string</span> TIME = <span class="string">&quot;hh:mm:ss\n&quot;</span>;
+
+    <span class="keyword">static</span> KeyboardEventLoop eventLoop;
+    <span class="keyword">static</span> <span class="keyword">bool</span> isSuspended = <span class="keyword">true</span>;  <span class="comment">// プログラムの一時停止フラグ。</span>
+    <span class="keyword">static</span> <span class="keyword">string</span> timeFormat = TIME; <span class="comment">// 時刻の表示形式。</span>
+
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        WriteHelp();
+
+        <span class="keyword">var</span> cts = <span class="keyword">new</span> CancellationTokenSource();
+        eventLoop = <span class="keyword">new</span> KeyboardEventLoop(code =&gt; OnKeyDown(code, cts));
+
+        Task.WhenAll(
+            eventLoop.Start(cts.Token),
+            TimerLoop(cts.Token)
+            ).Wait();
+    }
+
+    <span class="comment">// 毎秒時刻表示のループ</span>
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">async</span> Task TimerLoop(CancellationToken ct)
+    {
+        <span class="keyword">while</span> (!ct.IsCancellationRequested)
+        {
+            <span class="keyword">if</span> (!isSuspended)
+            {
+                <span class="comment">// 1秒おきに現在時刻を表示。</span>
+                Console.Write(DateTime.Now.ToString(timeFormat));
+            }
+            <span class="keyword">await</span> Task.Delay(<span class="number">1000</span>);
+        }
+    }
+
+    <span class="comment">// イベント処理部。</span>
+    <span class="keyword">static</span> <span class="keyword">void</span> OnKeyDown(<span class="keyword">char</span> eventCode, CancellationTokenSource cts)
+    {
+        <span class="keyword">switch</span> (eventCode)
+        {
+            <span class="keyword">case</span> <span class="string">&#39;r&#39;</span>: <span class="comment">// run</span>
+                isSuspended = <span class="keyword">false</span>;
+                <span class="keyword">break</span>;
+            <span class="keyword">case</span> <span class="string">&#39;s&#39;</span>: <span class="comment">// suspend</span>
+                Console.Write(<span class="string">&quot;\n一時停止します\n&quot;</span>);
+                isSuspended = <span class="keyword">true</span>;
+                <span class="keyword">break</span>;
+            <span class="keyword">case</span> <span class="string">&#39;f&#39;</span>: <span class="comment">// full</span>
+                timeFormat = FULL;
+                <span class="keyword">break</span>;
+            <span class="keyword">case</span> <span class="string">&#39;d&#39;</span>: <span class="comment">// date</span>
+                timeFormat = DATE;
+                <span class="keyword">break</span>;
+            <span class="keyword">case</span> <span class="string">&#39;t&#39;</span>: <span class="comment">// time</span>
+                timeFormat = TIME;
+                <span class="keyword">break</span>;
+            <span class="keyword">case</span> <span class="string">&#39;q&#39;</span>: <span class="comment">// quit</span>
+                cts.Cancel();
+                <span class="keyword">break</span>;
+            <span class="keyword">default</span>: <span class="comment">// ヘルプ</span>
+                WriteHelp();
+                <span class="keyword">break</span>;
+        }
+    }
+
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> WriteHelp()
+    {
+        Console.Write(
+            <span class="string">&quot;使い方\n&quot;</span> +
+            <span class="string">&quot;r (run)    : 時刻表示を開始します。\n&quot;</span> +
+            <span class="string">&quot;s (suspend): 時刻表示を一時停止します。\n&quot;</span> +
+            <span class="string">&quot;f (full)   : 時刻の表示形式を“日付＋時刻”にします。\n&quot;</span> +
+            <span class="string">&quot;d (date)   : 時刻の表示形式を“日付のみ”にします。\n&quot;</span> +
+            <span class="string">&quot;t (time)   : 時刻の表示形式を“時刻のみ”にします。\n&quot;</span> +
+            <span class="string">&quot;q (quit)   : プログラムを終了します。\n&quot;</span>
+            );
+    }
+}</code></pre>
+<h2 id="c-event"><a id="sec-generated-title-7"></a> <a id="event-keyword"></a>C# の event 構文</h2>
+<p>ここまでの話をもう1歩推し進めて、
+イベント ハンドラーの追加削除を自由にできるようにしたいと思います。
+これはイベント ハンドラー用のデリゲート変数を public にしてしまえば簡単にできたりもしますが、
+「<a href="/study/csharp/oop/oo_property/">プロパティ</a>」で説明したように、
+メンバー変数を外部から直接取得/書換え可能にすべきではありません。
+デリゲート変数も例外ではなく、取得/書換えはアクセッサを介して行うべきです。</p>
+<p>それならば、デリゲート型のプロパティを用意すればいいのではないかと思われるかもしれませんが、それではまだ不十分です。
+なぜかといいますと、イベント ハンドラー用のデリゲートには以下のような条件が求められるからです。</p>
+<ul>
+<li><p>デリゲート呼び出しはクラス内部からのみ可能。</p>
+</li>
+<li><p>外部からはデリゲートの追加/削除のみが可能。</p>
+</li>
+</ul>
+<p>すなわち、クラス内部からは通常のデリゲート変数と同様に扱え、
+外部からは <code>+=</code>、<code>-=</code> 演算子によるデリゲートの追加/削除のみを行えるような仕組みが欲しいわけです。
+プロパティではこのような仕組みは提供できません。</p>
+<p>そこで、C# にはこの仕組みを実現するために <em>event</em> というキーワードが用意されています。
+利用方法は簡単で、イベント ハンドラーとして使用したいデリゲート型の変数宣言時に <code>event</code> という修飾子を付けるだけです。</p>
+<pre><code class="language-csharp"><span class="keyword">event</span> デリゲート型 イベント ハンドラー名;</code></pre>
+<p>このようにして宣言した変数は“<em>イベント</em>”と呼ばれ、
+前述のように内部からは普通のデリゲートと同じように利用でき、
+外部からは <code>+=</code>、<code>-=</code> のみが利用できるようになります。</p>
+<p>また、イベントはプロパティの <code>get</code>/<code>set</code> と同じように、
+<code>add</code>/<code>remove</code> というキーワードを用いて、
+追加/削除時の処理を明示的に指定することもできます。
+（省略可能。省略すると、デリゲートを格納するフィールドと、add/remove アクセサーをコンパイラーが自動生成してくれる。）</p>
+<pre><code class="language-csharp"><span class="keyword">event</span> デリゲート型 イベント ハンドラー名
+{
+  add
+  {
+    <span class="comment">// addアクセサ</span>
+    <span class="comment">//  ここにイベント ハンドラー追加時の処理を書く。</span>
+  }
+  remove
+  {
+    <span class="comment">// removeアクセサ</span>
+    <span class="comment">//  ここにイベント ハンドラー削除時の処理を書く。</span>
+  }
+  <span class="comment">// add/remove アクセッサ共に、</span>
+  <span class="comment">// 追加/削除したいイベント ハンドラーは value という名前の変数に格納されている。</span>
+}</code></pre>
+<p>このように明示的に追加/削除時の処理を追加したものをイベントプロパティと呼びます。</p>
+<p>それでは、先ほど作成したイベント発生待受けクラスを event を用いて書き換えてみましょう。
+（event キーワードを足して public にしただけ。）</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Threading;
+<span class="keyword">using</span> System.Threading.Tasks;
+
+<span class="comment">// イベント処理用のデリゲート</span>
+<span class="keyword">delegate</span> <span class="keyword">void</span> KeyboadEventHandler(<span class="keyword">char</span> eventCode);
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> キーボードからの入力イベント待受けクラス。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">class</span> KeyboardEventLoop
+{
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> キー入力があった時に呼ばれるイベント。</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+    <span class="keyword">public</span> <span class="keyword">event</span> KeyboadEventHandler OnKeyDown;
+
+    <span class="keyword">public</span> KeyboardEventLoop() { }
+    <span class="keyword">public</span> KeyboardEventLoop(KeyboadEventHandler onKeyDown)
+    {
+        OnKeyDown += onKeyDown;
+    }
+
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> 待受け開始。</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;ct&quot;&gt;</span><span class="xmlDocComment">待ち受けを終了したいときにキャンセルする。&lt;/param&gt;</span>
+    <span class="keyword">public</span> Task Start(CancellationToken ct)
+    {
+        <span class="keyword">return</span> Task.Run(() =&gt; EventLoop(ct));
+    }
+
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> イベント待受けループ。</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+    <span class="keyword">void</span> EventLoop(CancellationToken ct)
+    {
+        <span class="comment">// イベントループ</span>
+        <span class="keyword">while</span> (!ct.IsCancellationRequested)
+        {
+            <span class="comment">// 文字を読み込む</span>
+            <span class="comment">// (「キーが押される」というイベントの発生を待つ)</span>
+            <span class="keyword">string</span> line = Console.ReadLine();
+            <span class="keyword">char</span> eventCode = (line == <span class="keyword">null</span> || line.Length == <span class="number">0</span>) ? <span class="string">&#39;\0&#39;</span> : line[<span class="number">0</span>];
+
+            <span class="comment">// イベント処理は event を通して他のメソッドに任せる。</span>
+            OnKeyDown(eventCode);
+        }
+    }
+}</code></pre>
+<h2 id="section-7"><a id="sec-generated-title-8"></a> <a id="auto-event"></a>補足: 自動イベント</h2>
+<p>前節で構文を説明した通り、event 構文には、add/remove アクセサーを明示的に書く方法と、省略して書く方法があります。
+省略して書く方では、add/remove がコンパイラーによって自動生成されています。
+ちなみに、この、コンパイラーによって自動生成されるもののことを自動イベント(auto-event)と言ったりします。</p>
+<p>補足的にはなりますが、この自動イベントの自動生成結果について少し話しておきます。</p>
+<p>例えば、以下のようなイベントを書いたとします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> EventSample
+{
+    <span class="keyword">public</span> <span class="keyword">event</span> EventHandler X;
+}</code></pre>
+<p>C# 4.0 以降、コンパイラーによる自動生成の結果は以下のような意味合いのものになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Threading;
+
+<span class="keyword">class</span> EventSample
+{
+    <span class="keyword">private</span> EventHandler _X; <span class="comment">// 注意: コンパイラー自動生成結果的には X</span>
+
+    <span class="keyword">public</span> <span class="keyword">event</span> EventHandler X
+    {
+        add
+        {
+            EventHandler x2;
+            <span class="keyword">var</span> x1 = _X;
+            <span class="keyword">do</span>
+            {
+                x2 = x1;
+                <span class="keyword">var</span> x3 = (EventHandler)Delegate.Combine(x2, value);
+                x1 = Interlocked.CompareExchange(<span class="keyword">ref</span> _X, x3, x2);
+            }
+            <span class="keyword">while</span> (x1 != x2);
+        }
+        remove
+        {
+            EventHandler x2;
+            <span class="keyword">var</span> x1 = _X;
+            <span class="keyword">do</span>
+            {
+                x2 = x1;
+                <span class="keyword">var</span> x3 = (EventHandler)Delegate.Remove(x2, value);
+                x1 = Interlocked.CompareExchange(<span class="keyword">ref</span> _X, x3, x2);
+            }
+            <span class="keyword">while</span> (x1 != x2);
+        }
+    }
+}</code></pre>
+<p>結構大げさなコードが生成されていますが、これは、マルチスレッド動作で正しく動くことを保証するためにこうなっています。
+(こういうマルチスレッド動作保証の方法については、別途、非同期処理がらみのページで説明予定。)
+マルチスレッド動作を気にしなくていいなら、意味的には以下のコードと同じです。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> EventSample
+{
+    <span class="keyword">private</span> EventHandler _X; <span class="comment">// 注意: コンパイラー自動生成結果的には X</span>
+
+    <span class="keyword">public</span> <span class="keyword">event</span> EventHandler X
+    {
+        add { _X += value; }
+        remove { _X -= value; }
+    }
+}</code></pre>
+<p>1点、注意があります。
+event とは別に、普通のデリゲート型のフィールドが作られますが、
+実際のコンパイラー生成結果的には、event 名とフィールド名はまったく同じ名前で、どちらも X になります。
+(C# の言語仕様上は、同名のメンバーを2つ持つことはできませんが、
+.NET の中間言語仕様上は、event とフィールドみたいに、異種メンバーであれば同じ名前であっても構いません。)
+クラスの外から <code>+=</code> / <code>-=</code> しているのは event の方の X で、
+クラスの中からデリゲート呼び出ししているのはフィールドの方の X だったりします。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/functional/">&#x95A2;&#x6570;&#x6307;&#x5411;</a></li><li><a href="/study/csharp/functional/fun_functional/">&#x95A2;&#x6570;&#x6307;&#x5411;</a></li><li><a href="/study/csharp/functional/sp_delegate/">&#x30C7;&#x30EA;&#x30B2;&#x30FC;&#x30C8;</a></li><li><a href="/study/csharp/functional/misc_delegate/">[&#x96D1;&#x8A18;] &#x30C7;&#x30EA;&#x30B2;&#x30FC;&#x30C8;&#x306E;&#x5229;&#x7528;&#x4F8B;</a></li><li><a href="/study/csharp/functional/miscdelegateinternal/">[&#x96D1;&#x8A18;] &#x30C7;&#x30EA;&#x30B2;&#x30FC;&#x30C8;&#x306E;&#x5185;&#x90E8;</a></li><li><a href="/study/csharp/functional/fun_localfunctions/">&#x30ED;&#x30FC;&#x30AB;&#x30EB;&#x95A2;&#x6570;&#x3068;&#x533F;&#x540D;&#x95A2;&#x6570;</a></li><li><a href="/study/csharp/functional/sp2_anonymousmethod/">[&#x96D1;&#x8A18;] &#x533F;&#x540D;&#x95A2;&#x6570;&#x306E;&#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;</a></li><li><a href="/study/csharp/functional/sp3_lambda/">&#x30E9;&#x30E0;&#x30C0;&#x5F0F;</a></li><li><a href="/study/csharp/functional/misceventsubscribe/">&#x3010;&#x96D1;&#x8A18;&#x3011;&#x30A4;&#x30D9;&#x30F3;&#x30C8;&#x306E;&#x8CFC;&#x8AAD;&#x3068;&#x305D;&#x306E;&#x89E3;&#x9664;</a></li><li><a href="/study/csharp/functional/sp3_functional/">&#x95A2;&#x6570;&#x578B;&#x8A00;&#x8A9E;&#x30FB;&#x52D5;&#x7684;&#x8A00;&#x8A9E;&#x7684;&#x306A;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/functional/sp3_extension/">&#x62E1;&#x5F35;&#x30E1;&#x30BD;&#x30C3;&#x30C9;</a></li><li><a href="/study/csharp/functional/fun_whyextensions/">&#x30AF;&#x30E9;&#x30B9;&#x306E;&#x6A5F;&#x80FD;&#x62E1;&#x5F35;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

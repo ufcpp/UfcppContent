@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7; Roslyn 9/6 | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2015/9/pickuproslyn0906/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2015-09-06T05:04:28">2015-09-06</time></span><span>更新: <time datetime="2015-09-06T05:14:03">2015-09-06</time></span></div><h1 id="roslyn-96">ピックアップ Roslyn 9/6</h1>
+<h2 id="array.empty">Array.Empty 最適化</h2>
+<p><a href="https://github.com/dotnet/roslyn/issues/4889">.Net 4.6 optimizations breaking on 4.5.2 servers #4889</a></p>
+<p>Roslyn(C# コンパイラー)の問題か、msbuild(ビルド ツール)の問題化、JIT レイヤーに持っていくべき問題かとかいろいろたらいまわしになりそうな話。</p>
+<h3 id="roslyn">Roslyn がやったこと</h3>
+<p>まず、何をやろうとして問題が起きてるのか。</p>
+<p><code>params</code> 引数に対して何も引数を渡さなかったときに、C# コンパイラーが内部的に空の配列を作って引数に渡します。この時、Roslyn を使って .NET 4.6 以降をターゲットにすると、生成されるコードが少し変わります。</p>
+<p><code>new StringBuilder().AppendFormat(&quot;&quot;)</code> みたいなのを書くと、実際に生成されるコードは、</p>
+<ul>
+<li>旧コンパイラー/古い .NET: <code>new StringBuilder().AppendFormat(&quot;&quot;, new object[0])</code></li>
+<li>Roslyn かつ .NET 4.6: <code>new StringBuilder().AppendFormat(&quot;&quot;, Array.Empty&lt;object&gt;())</code></li>
+</ul>
+<p>もちろん、<a href="/study/csharp/resource/rm_gc/#garbage-collection">GC</a>性能改善のために、無駄な配列インスタンスを作らないため。</p>
+<h3 id="section">起きた問題</h3>
+<p><code>Array.Empty</code>は .NET 4.6 で追加されたメソッドなので、当たり前ですが、これを使った最適化は .NET 4.6 以降をターゲットにする場合にしかできません。もちろんRoslyn は .NET 4.6 を参照しているときにしかこの最適化をしません。</p>
+<p>で、ここで問題は、例えば以下のような場合。</p>
+<ul>
+<li>.NET 4.5.2 をターゲットにした C# プロジェクトを作る
+<ul>
+<li>実際に動かすのは .NET 4.5.2 が入ったサーバー上</li>
+</ul>
+</li>
+<li>.NET 4.5.1 と、.NET 4.6 しか入っていないビルド マシンでビルドする</li>
+</ul>
+<p>ここで、ビルド マシン上でmsbuildは、「4.5.2 がないから代わりに 4.6を使う」という判定をするらしく、Roslynの方には .NET 4.6 がわたってしまう模様。その結果、4.5.2をターゲットにしているにも関わらず、<code>Array.Empty</code>最適化がかかってしまう。そうなると、サーバー上では動作しなくなる(「<code>Array.Empty</code>は見つかりません」エラーが出る)という問題。</p>
+<h3 id="section-1">取れる対処</h3>
+<p>ということで、これはRoslynの問題か、msbuildの問題か、みたいな話に。</p>
+<p>根本解決にはmsbuild側を直す必要があるということで、このissueはCloseされて、msbuild側に問題レポートが飛びました。要するに、</p>
+<p>Roslyn 側でできそうな対処は、プロジェクトで指定したターゲットと実際にわたってきた.NETアセンブリのバージョンが違ったら警告なりエラーなり出すというのなんですが、現状、msbuild側から.NETのバージョンを受け取ってないので不可能とのこと。なので、msbuild側からその.NETバージョンを渡してもらうようにしないとダメかもという。</p>
+<h3 id="jit">JIT レベル最適化しないのか</h3>
+<p>こんな最適化、コンパイラーのレベルでやるからビルド マシン上のインストール状況に左右されるんじゃないかなんて話も出ています。</p>
+<p>要するに、<code>new T[0]</code> があったらそれをことごとく <code>Array.Empty&lt;T&gt;()</code> に置き換える最適化をJITレベルでやればこんな問題起きないし、より一層性能的に有利なんじゃない？という。ですが、実際のところ、この JIT レベルでの最適化は結構深刻な互換性問題を引き起こすので無理とのこと。</p>
+<p>世の中、<code>new T[0]</code> で毎回新しいインスタンスが作られる前提でしか動かないコードが結構残っているはずで、これを <code>Array.Empty&lt;T&gt;()</code>(シングルトンな単一インスタンスを常に返す)に置き換えると不具合を起こす。</p>
+<p>「そんなコードどのくらいあるの？」と思うかもしれませんが、CTP の頃に一度 <code>Enumerable.Empty&lt;T&gt;()</code> が返すインスタンスをシングルトンに変えたら不具合が出て互換性問題レポートが来まくったとかいう事実もあったりします。</p>
+<p>ということで、過去のコードを壊さないようにするためには、<code>new T[0]</code> を <code>Array.Empty&lt;T&gt;()</code> に置き換える処理は状況を見て限定的に行わないといけなくて、そういう状況判断はJITレベルでは無理。なので、Roslyn側でやるしかないという話だそうです。</p>
+<h2 id="match">match ステートメント</h2>
+<p><a href="https://github.com/dotnet/roslyn/issues/5016">[Proposal]: match construct for pattern matching #5016</a></p>
+<p>今 C# 7.0に向けて実装が進んでいるパターン マッチングと関連して、<code>switch</code> 的な複数条件分岐をどうしようという話。結構前々からこの議論は進んでるんですが、まとめ的な issue ページが立ってたので紹介。</p>
+<p>とりあえず、背景にある要望としては、以下の2点。</p>
+<ul>
+<li>パターン マッチングに対応した分岐構文が必要</li>
+<li>ステートメントじゃなくて式にしてほしい</li>
+</ul>
+<p>これに対して、提案できる文法は2方針があって、どうしようかという議論が出ています。</p>
+<ul>
+<li><code>switch</code> ステートメントを拡張する</li>
+<li><code>switch</code> ステートメントとは別に、<code>match</code> 式という新構文を導入する</li>
+</ul>
+<p><code>switch</code> を使いまわせば、キーワードを増やす必要はないし、「<code>switch</code>はオワコンだから使うな」みたいな黒歴史ができなくて済むかもしれない。</p>
+<p>一方で、同じ<code>switch</code>なのに全然違う構文がかけたらそれはそれで混乱しそうだし、互換性のために残っている「旧<code>switch</code>構文」は結局のところ黒歴史化しそうだし、既存の構文が足かせになって(例えば<code>break</code>必須とか、<code>case 1: case 2: ...</code>みたいなラベル連続時だけ許されるフォールバック機構とか)いまいちな文法にしかできないかもしれない。</p>
+<h2 id="non-nullable">non-nullable 参照型</h2>
+<p>久々に C# Design Meeting の議事録の投稿がありました。7・8月あたりは non-nullable 参照型に関する話をしてたみたいです。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/5031">C# Design Notes for Jul 7 2015</a></li>
+<li><a href="https://github.com/dotnet/roslyn/issues/5032">Proposal: Nullable reference types and nullability checking #5032</a></li>
+<li><a href="https://github.com/dotnet/roslyn/issues/5033">C# Design Notes for Aug 18, 2015 #5033</a></li>
+</ul>
+<p>特に、7/7 は<a href="https://github.com/dotnet/roslyn/issues/5031">Eric Lippert</a> (元C#チーム、現在は静的解析ツール ベンダーの Coverity 社員)を「honored guest」(名誉あるお客様)に呼んで。</p>
+<p>おおむね方向性固まってきた模様。</p>
+<h3 id="t"><code>T!</code> みたいな型は作らない</h3>
+<p><code>T</code> で non-nullable、<code>T?</code> で nullable にする方向。</p>
+<p>既存コードの意味が変わってしまうという問題に対しては、以下のように対処。</p>
+<ul>
+<li>規定動作ではエラーではなく警告にする</li>
+<li>アセンブリ単位で「<code>T</code> が non-nullable」かどうかの動作を変えるオプションを用意する
+<ul>
+<li>アセンブリ レベルの属性指定で動作を切り替える方式になりそう</li>
+</ul>
+</li>
+</ul>
+<h3 id="section-2">アセンブリ単位の動作変更</h3>
+<p>例えば、A, B という2つのライブラリを利用するコードを書く場合、以下のようなシナリオがあり得る。</p>
+<ul>
+<li>まず、B だけが C# 7.0 に更新して、null チェックが入った</li>
+<li>利用側が「C# 7.0 化はしたいけど、null チェック入れて回るほどの工数とれず、とりあえずバグがあるかもしれないのは承知の上でとりあえずビルド通したい」みたいな状態になる</li>
+<li>余裕ができたので利用側にも null チェックを入れれるようになる</li>
+<li>今度は A にも null チェックが入った</li>
+<li>利用側はやっぱりすぐには更新作業できない</li>
+</ul>
+<p>こういうのを考えると、アセンブリ単位で「null チェックが入ったかどうか」「null チェックが入ったライブラリを使っている際に、自身はどう振る舞うか」を切り替えれないとまずいとのこと。</p>
+<h3 id="section-3">警告</h3>
+<p>「警告なんだしそこまで細かいことしなくても…」と思うかもしれませんが。C# には「警告をエラーとして扱う」オプションがあって、このオプションを利用している人は結構います。なので「警告を足す」というのも、十分に破壊的変更。実際、過去に、警告を足したらユーザーから文句を言われたことがあるそうです。</p>
+<h3 id="non-nullable-1">non-nullable 型の配列</h3>
+<p>配列は、<code>new T[]</code> した時点で中身はすべて null のはずなので、non-nullable な <code>T</code> に対して <code>new T[]</code> を認めるかどうかは結構難しい問題。</p>
+<p>とりあえず現状は認める方向で考えてるみたいです。コンストラクターの中での初期化を必須としたり、要素の get するまでに set を必須にしたりというのはできる範囲でチェックする予定。</p>
+<h3 id="section-4">ジェネリック</h3>
+<p><code>class X&lt;T&gt;</code> があったときに、 <code>new X&lt;string&gt;()</code> とか <code>new X&lt;string?&gt;()</code> とかをどうするか。</p>
+<p>class 定義側で <code>T?</code> を使っているかどうかによって、</p>
+<ul>
+<li>定義側で1つも <code>T?</code> を使っていない → 利用側は non-nullable でも nullable でも OK</li>
+<li>定義側で1つも <code>T?</code> がある → 利用側は non-nullable でないと警告</li>
+<li>定義側で <code>T?</code> しか使っていない → 利用側は non-nullable でも nullable でも OK</li>
+</ul>
+<p>にするとのこと。</p>
+<p>あと、ジェネリック型引数に限り、<code>T!</code> みたいな「non-nullable型」を認めるとのこと。<code>T!</code> は、</p>
+<ul>
+<li><code>T</code> が元々 non-nullable なら、<code>T!</code> は <code>T</code> そのもの</li>
+<li><code>T</code> が nullable なら、<code>T!</code> は <code>T</code> の <code>non-nullable</code> 版</li>
+</ul>
+<p>という意味。<code>FirstOrDefault</code>みたいな、参照型にも値型にも使われて、かつ、non-nullable な戻り値を返したいメソッド用。</p>
+<h3 id="null">null チェック演算子</h3>
+<p>nullable 型から non-nullable 型に変えるには、</p>
+<ul>
+<li><code>??</code> で代替値を与える</li>
+<li>null だったら例外を投げる</li>
+</ul>
+<p>のどちらかをやればいいわけですが、この後者にも専用に演算子を作るかもしれないみたいです。今のところ出ている案は後置きの <code>!</code> 演算子。</p>
+<p>さらに、null を伝搬させる null 条件演算子 <code>?.</code> みたいに、null だったら例外を起こしつつメンバー アクセスする <code>!.</code> 演算子も一緒に作るかもしれないとのこと。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2015/9/">2015&#x5E74;9&#x6708;</a></li><li><a href="/blog/2015/9/replacement/">&#x30B5;&#x30A4;&#x30C8;&#x306E;&#x30B7;&#x30B9;&#x30C6;&#x30E0;&#x66F4;&#x65B0;</a></li><li><a href="/blog/2015/9/pickuproslyn0913/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 9/13</a></li><li><a href="/blog/2015/9/pickuproslyn0920/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7; Roslyn 9/20</a></li><li><a href="/blog/2015/9/metrocs1/">Roslyn &#x30E1;&#x30BF;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30DF;&#x30F3;&#x30B0; &amp; Code-Aware &#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

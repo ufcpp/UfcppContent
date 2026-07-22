@@ -1,0 +1,201 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>2&#x5206;&#x63A2;&#x7D22;&#x6728; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/algorithm/collection/col_tree/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">2分探索木</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>一般に木構造というと、循環のない有向グラフのことなんですが、
+そういう一般論はまた別の機会に話をしましょう。</p>
+<p>ここでは、要素の挿入・削除・検索を高速に行うことの出来るコレクションのデータ構造として、
+<strong id="bintree" class="keyword">2分探索木</strong>（binary search tree）というものを紹介します。
+2分探索木は、以下のような特徴を持つ木構造です（図1）。</p>
+<ul>
+<li><p>2分木（各ノードは最大で2本の子を持つ）。</p>
+</li>
+<li><p>全ての要素が「左の子＜親≦右の子」（あるいは「左の子≦親＜右の子」）という大小関係を満たす。</p>
+</li>
+</ul>
+<figure>
+<p><a href="/assets/media/ufcpp2000/algorithm/fig/col_tree0.png"><img src="/assets/media/ufcpp2000/algorithm/fig/col_tree0.png" alt="2分探索木" /></a></p>
+<figcaption>2分探索木</figcaption>
+</figure>
+<p>要素の挿入・削除・検索は、
+木の根から葉までの経路を1つ探索することになるので、
+木の高さ分に比例する計算量が必要です。
+理想的には、木のバランスが均等に整っていれば、
+要素数を n として計算量は O(log n) になります。
+しかしながら、逆に、
+図2に示すように、木が左右どちらかに偏っている場合、
+計算量は O(n) になります。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/algorithm/fig/col_tree1.png"><img src="/assets/media/ufcpp2000/algorithm/fig/col_tree1.png" alt="偏った2分探索木" /></a></p>
+<figcaption>偏った2分探索木</figcaption>
+</figure>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="character"></a>特徴</h2>
+<p>2分探索木は以下のような利点を持っています。</p>
+<ul>
+<li><p>理想的には、要素の挿入・削除・検索が O(log n) で行える。</p>
+</li>
+<li><p>「<a href="/study/algorithm/collection/col_hash/#hashtable">ハッシュテーブル</a>」のように、メモリを多めに確保しておく必要がない。</p>
+</li>
+<li><p>また、ハッシュ関数の作り方に悩む必要もない。</p>
+</li>
+<li><p>要素を整列された順序で取り出せる。</p>
+</li>
+</ul>
+<p>ただし、以下のような欠点もあります。</p>
+<ul>
+<li>木の高さがバランスを保っていないと検索などが O(n) になる。平衡化機構が必要。</li>
+</ul>
+<p>ちなみに、2分探索木への、平衡化機構の組込み方にはいくつか種類があります。
+実装が簡単なのでよく用いられる物としては、
+赤黒木あるいは2色木（red-black tree）と呼ばれるものがあります。</p>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="btimpl"></a>2分探索木の実装</h2>
+<p>まず、2分探索木も構造的には2分木なので、
+以下のような左右の子を持つノードを定義します。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> Node
+{
+  <span class="preprocessorKeyword">#region</span> フィールド
+
+  <span class="keyword">internal</span> T val;
+  <span class="keyword">internal</span> Node left, right, parent;
+
+  <span class="keyword">internal</span> Node() : <span class="keyword">this</span>(<span class="keyword">default</span>(T), <span class="keyword">null</span>) { }
+
+  <span class="keyword">internal</span> Node(T val, Node parent)
+  {
+    <span class="keyword">this</span>.val = val;
+    <span class="keyword">this</span>.parent = parent;
+    <span class="keyword">this</span>.left = <span class="keyword">this</span>.right = <span class="keyword">null</span>;
+  }
+}</code></pre>
+<p>「<a href="/study/algorithm/collection/col_flist/#linked">連結リスト</a>」と同様に、
+<code>left</code>、 <code>right</code> 等の「<a href="/study/csharp/oop/oo_conceal/#level">アクセスレベル</a>」は internal にしておきます。</p>
+<p>そして、2分探索木には、木の根に当たるノードを持つための変数を用意します。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> BinaryTree&lt;T&gt; : IEnumerable&lt;T&gt;
+  <span class="keyword">where</span> T: IComparable&lt;T&gt;
+{
+  Node root;
+}</code></pre>
+<p>前節で説明したような条件を満たす2分探索木中の要素を検索するには、以下のようにします。
+要するに、値の大小を見て、左の子を見るか右の子を見るか決めて、
+木を根から葉に向かってたどります。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> Node Find(T elem)
+{
+  Node n = <span class="keyword">this</span>.root;
+  <span class="keyword">while</span> (n != <span class="keyword">null</span>)
+  {
+    <span class="keyword">if</span> (n.val.CompareTo(elem) &gt; <span class="number">0</span>) n = n.left;
+    <span class="keyword">else</span> <span class="keyword">if</span> (n.val.CompareTo(elem) &lt; <span class="number">0</span>) n = n.right;
+    <span class="keyword">else</span> <span class="keyword">break</span>;
+  }
+  <span class="keyword">return</span> n;
+}</code></pre>
+<p>次に、要素の挿入ですが、
+とりあえず、平衡化することは考えなければ、
+実装方法は簡単で、検索のときと同じ要領で木の中を探索し、
+新しい葉を作ります。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">void</span> Insert(T elem)
+{
+  <span class="keyword">if</span> (<span class="keyword">this</span>.root == <span class="keyword">null</span>)
+  {
+    <span class="keyword">this</span>.root = <span class="keyword">new</span> Node(elem, <span class="keyword">null</span>);
+    <span class="keyword">return</span>;
+  }
+
+  Node n = <span class="keyword">this</span>.root;
+  Node p = <span class="keyword">null</span>;
+  <span class="keyword">while</span> (n != <span class="keyword">null</span>)
+  {
+    p = n;
+    <span class="keyword">if</span> (n.val.CompareTo(elem) &gt; <span class="number">0</span>) n = n.left;
+    <span class="keyword">else</span> n = n.right;
+  }
+
+  n = <span class="keyword">new</span> Node(elem, p);
+  <span class="keyword">if</span> (p.val.CompareTo(elem) &gt; <span class="number">0</span>) p.left = n;
+  <span class="keyword">else</span> p.right = n;
+}</code></pre>
+<p>ノードの削除も、平衡化のことを考えなければ、
+以下のようにして簡単に行えます。</p>
+<ul>
+<li><p>左の子が null なら、自身の位置に右の子ノードを繋ぎなおす。</p>
+</li>
+<li><p>右の子が null なら、自身の位置に左の子ノードを繋ぎなおす。</p>
+</li>
+<li><p>両方の子が非 null なら、自身の次に大きな値を持つノード（右の部分木の左端）で自身を置き換える。</p>
+</li>
+</ul>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">void</span> Erase(Node n)
+{
+  <span class="keyword">if</span> (n == <span class="keyword">null</span>) <span class="keyword">return</span>;
+
+  <span class="keyword">if</span> (n.left == <span class="keyword">null</span>) <span class="keyword">this</span>.Replace(n, n.right);
+  <span class="keyword">else</span> <span class="keyword">if</span>(n.right == <span class="keyword">null</span>) <span class="keyword">this</span>.Replace(n, n.left);
+  <span class="keyword">else</span>
+  {
+    Node m = n.right.Min;
+    n.Value = m.Value;
+    <span class="keyword">this</span>.Replace(m, m.right);
+  }
+}
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> n の片方の子は null、もう片方の子は m という前提の元で、</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> ノード n の位置を子ノード m で置き換える。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;n&quot;&gt;</span><span class="xmlDocComment">削除するノード&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;m&quot;&gt;</span><span class="xmlDocComment">置き換える子ノード&lt;/param&gt;</span>
+<span class="keyword">void</span> Replace(Node n, Node m)
+{
+  Node p = n.parent;
+  <span class="keyword">if</span> (m != <span class="keyword">null</span>) m.parent = p;
+  <span class="keyword">if</span> (n == <span class="keyword">this</span>.root) <span class="keyword">this</span>.root = m;
+  <span class="keyword">else</span> <span class="keyword">if</span> (p.left == n) p.left = m;
+  <span class="keyword">else</span> p.right = m;
+}
+
+<span class="keyword">public</span> <span class="keyword">class</span> Node
+{
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> このノード以下の部分木中で、最小の要素を持つノード（＝左端ノード）を返す。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="keyword">internal</span> Node Min
+  {
+    <span class="keyword">get</span>
+    {
+      Node n = <span class="keyword">this</span>;
+      <span class="keyword">for</span> (; n.left != <span class="keyword">null</span>; n = n.left) ;
+      <span class="keyword">return</span> n;
+    }
+  }
+}</code></pre>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="sample"></a>サンプルソース</h2>
+<p>C# サンプルソースを示します。
+まずは、平衡化機構のないものです。</p>
+<p><a href="https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Collections/BinaryTree.cs">https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Collections/BinaryTree.cs</a></p>
+<p>（ISet 「<a href="/study/csharp/oop/oo_interface/#interface">インターフェース</a>」 は、
+<a href="/assets/src/Set.cs">Set.cs</a> で定義しています。）</p>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="plan"></a>執筆予定</h2>
+<p>木構造の平衡化、赤黒木。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/algorithm/collection/">&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/study/algorithm/collection/collection/">&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x6982;&#x8981;</a></li><li><a href="/study/algorithm/collection/col_array/">&#x914D;&#x5217;&#x30EA;&#x30B9;&#x30C8;</a></li><li><a href="/study/algorithm/collection/col_circular/">&#x5FAA;&#x74B0;&#x30D0;&#x30C3;&#x30D5;&#x30A1;</a></li><li><a href="/study/algorithm/collection/col_flist/">&#x7247;&#x65B9;&#x5411;&#x9023;&#x7D50;&#x30EA;&#x30B9;&#x30C8;</a></li><li><a href="/study/algorithm/collection/col_blist/">&#x53CC;&#x65B9;&#x5411;&#x9023;&#x7D50;&#x30EA;&#x30B9;&#x30C8;</a></li><li><a href="/study/algorithm/collection/col_sorted/">&#x30BD;&#x30FC;&#x30C8;&#x6E08;&#x307F;&#x914D;&#x5217;</a></li><li><a href="/study/algorithm/collection/col_hash/">&#x30CF;&#x30C3;&#x30B7;&#x30E5;&#x30C6;&#x30FC;&#x30D6;&#x30EB;</a></li><li><a href="/study/algorithm/collection/col_stack/">&#x30B9;&#x30BF;&#x30C3;&#x30AF;</a></li><li><a href="/study/algorithm/collection/col_queue/">&#x5F85;&#x3061;&#x884C;&#x5217;</a></li><li><a href="/study/algorithm/collection/col_heap/">&#x512A;&#x5148;&#x5EA6;&#x4ED8;&#x304D;&#x5F85;&#x3061;&#x884C;&#x5217;</a></li><li><a href="/study/algorithm/collection/col_set/">&#x30BB;&#x30C3;&#x30C8;</a></li><li><a href="/study/algorithm/collection/col_dic/">&#x8F9E;&#x66F8;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

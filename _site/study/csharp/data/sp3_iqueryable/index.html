@@ -1,0 +1,207 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>[&#x96D1;&#x8A18;] IQueryable &#x306E;&#x5B9F;&#x88C5; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/data/sp3_iqueryable/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="iqueryable">[雑記] IQueryable の実装</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>LINQ to SQL で使われる Table クラスなどは IQueryable と IQueryProvider インターフェースを実装しています。
+これら IQueryable および IQueryProvider は、</p>
+<ul>
+<li><p>LINQ クエリ式から「<a href="/study/csharp/dynamic/sp3_expression/#expressiontree">式木</a>」を構築する。</p>
+</li>
+<li><p>構築した式木を解釈して、独自のクエリ処理を行う。</p>
+</li>
+</ul>
+<p>というような機能を提供するインターフェースです。
+一度、式木（実行可能コードではなくて、プログラム中で読めるデータ）になるので、
+IQueryable の実装次第で様々な機能を提供することができます。</p>
+<p>となると当然、IQueryable を実装して、独自の LINQ プロバイダを作成したいとき、</p>
+<ul>
+<li><p>クエリ式 → 式木の構築手順</p>
+</li>
+<li><p>式木を独自に処理</p>
+</li>
+</ul>
+<p>の2つのことを理解しておく必要があります。</p>
+<p>後者は要するに、式木に関する理解があればできることです。
+なので、ここでは、前者の「クエリ式 → 式木構築」を中心に、
+IQueryable の仕組みについて説明します。</p>
+<p>式木に関しては、
+「<a href="/study/csharp/dynamic/sp3_expression/">式木（Expression Trees）</a>」や「<a href="/study/csharp/sample/sm_treeview/">[サンプル] 式木を WPF で GUI 表示</a>」辺りを参考にしてください。</p>
+<h2 id="linq-to-sql-sql"><a id="sec-generated-title-2"></a> <a id="toSQL"></a>LINQ to SQL: クエリ式 → 式木 → SQL 文</h2>
+<p>まず、
+前節で説明した「クエリ式 → 式木の構築手順 → 式木を独自に処理」という流れを見るために、
+LINQ to SQL を例に説明します。</p>
+<p>例えば、C# で以下のようなクエリ式を書いたとします。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> context = <span class="keyword">new</span> CharacterContext(<span class="string">&quot;characters.sdf&quot;</span>);
+
+System.Linq.IQueryable q =
+    <span class="keyword">from</span> c <span class="keyword">in</span> context.Characters
+    <span class="keyword">join</span> cv <span class="keyword">in</span> context.CvList <span class="keyword">on</span> c.CharacterVoiceId <span class="keyword">equals</span> cv.ID
+    <span class="keyword">select</span> <span class="keyword">new</span>
+    {
+        Name = c.姓 + c.名,
+        Info = c.Infomation,
+        Supplement = c.Supplement,
+        CharacterVoice = cv.姓 + cv.名,
+    };</code></pre>
+<p>IQueryable には Expression プロパティがあって、
+これを使って、クエリ式 → 式木の構築結果を取得することができます。</p>
+<pre><code class="language-csharp">System.Linq.Expressions.Expression e = q.Expression;
+Console.Write(e);</code></pre>
+<pre><code class="language-console">Table(Character).Join(Table(CharacterVoice), c =&gt; c.CharacterVoiceId, cv =&gt; cv.I
+D, (c, cv) =&gt; new &lt;&gt;f__AnonymousType0`4(Name = (c.姓 + c.名), Info = c.Infomatio
+n, Supplement = c.Supplement, CharacterVoice = (cv.姓 + cv.名)))</code></pre>
+<p>テキストだといまいちわかりづらいと思うので、
+この結果をツリー表示すると、以下のような感じ。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/iqueryable1.png"><img src="/assets/media/ufcpp2000/csharp/fig/iqueryable1.png" alt="IQueryable.Expression の例" /></a></p>
+<figcaption>IQueryable.Expression の例</figcaption>
+</figure>
+<p>ここまでは LINQ to SQL に限らず、
+IQueryable を実装する LINQ プロバイダでほぼ共通の処理です。</p>
+<p>で、LINQ to SQL では、この式木を解析して、
+以下のような SQL 文に変換します。</p>
+<pre><code class="language-sql"><span class="keyword">SELECT</span>
+    [t0].[姓] + [t0].[名] <span class="keyword">AS</span> [Name],
+    [t0].[学籍番号等] <span class="keyword">AS</span> [Info],
+    [t0].[補足] <span class="keyword">AS</span> [Supplement],
+    [t1].[姓] + [t1].[名] <span class="keyword">AS</span> [CharacterVoice]
+<span class="keyword">FROM</span> [Characters] <span class="keyword">AS</span> [t0], [CvList] <span class="keyword">AS</span> [t1]
+<span class="keyword">WHERE</span> [t0].[cv] = [t1].[ID]</code></pre>
+<h2 id="iqueryable-iqueryprovider"><a id="sec-generated-title-3"></a> <a id="iqueyable"></a>IQueryable, IQueryProvider</h2>
+<p>IQueryable および IQueryProvider は以下のようなインターフェースです。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">interface</span> IQueryable : IEnumerable
+{
+  Type ElementType { <span class="keyword">get</span>; }
+  Expression Expression { <span class="keyword">get</span>; }
+  IQueryProvider Provider { <span class="keyword">get</span>; }
+}
+
+<span class="keyword">public</span> <span class="keyword">interface</span> IQueryable&lt;T&gt; : IEnumerable&lt;T&gt;, IQueryable, IEnumerable
+{
+}</code></pre>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">interface</span> IQueryProvider
+{
+  IQueryable CreateQuery(Expression expression);
+  IQueryable&lt;TElement&gt; CreateQuery&lt;TElement&gt;(Expression expression);
+  <span class="keyword">object</span> Execute(Expression expression);
+  TResult Execute&lt;TResult&gt;(Expression expression);
+} </code></pre>
+<p>IQueryable の方は特別な処理をしているわけではなく、
+実際にクエリ式 → 式木構築などの処理を行っているのは IQueryProvider の方です。
+IQueryProvider の方だけ差し替えて様々な LINQ プロバイダを作れるようになっています。</p>
+<p>大まかに言うと、
+CreateQuery で「クエリ式 → 式木の構築」を、
+Excute で「式木の独自処理」を行います。</p>
+<h2 id="iqueryable-iqueryprovider-1"><a id="sec-generated-title-4"></a> <a id="impl"></a>IQueryable, IQueryProvider の実装</h2>
+<p>たいていの場合、IQueryProvider.Excute 以外の部分の実装で凝る必要はないようです。
+以下の記事（英語）に、IQueryable の典型的な実装方法が書かれています。</p>
+<ul>
+<li><a href="http://blogs.msdn.com/mattwar/archive/2007/07/30/linq-building-an-iqueryable-provider-part-i.aspx">LINQ: Building an IQueryable Provider - Part I</a>
+<ul>
+<li>おまけ： 記事中に散逸しているソースコードを1つのファイルにまとめたもの →
+<a href="/assets/media/ufcpp2000/csharp/source/Query.cs">Query.cs</a></li>
+</ul>
+</li>
+</ul>
+<p>この記事では、IQueryable の実装である Query クラスは（継承とか不要で）このまま使いまわせるように作られています。</p>
+<p>IQueryProvider の実装である QueryProvider の方では、
+Execute メソッド（と、ToString などの際に必要になる GetQueryText メソッド）だけが抽象メソッドとして残されています。
+独自の LINQ プロバイダを実装したい場合、
+QueryProvider を継承して Execute と GetQueryText を実装することになります。</p>
+<p>前節で説明したように、Execute は「式木の独自処理」の部分を担うメソッドで、
+残りの部分はすでに実装されています。
+すなわち、「クエリ式 → 式木の構築」の部分は、
+この記事中の Query、QueryProvider クラスが全部実装してくれています。</p>
+<p>ということで、このソースコードを使って、
+IQueryable の「クエリ式 → 式木の構築」の部分について説明していきたいと思います。</p>
+<h3 id="section-1"><a id="sec-generated-title-5"></a> <a id="system"></a>挙動の確認</h3>
+<p>QueryProvider クラスの時点で「クエリ式 → 式木の構築」の部分は完成しているわけで、
+「式木の独自処理」が必要ないのであれば、
+以下のような適当な実装でも十分に動いたりします。</p>
+<p>（foreach したりには使えないけども、Expression を作るのには使える。）</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> TestProvider : QueryProvider
+{
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> GetQueryText(Expression expression)
+    {
+        <span class="keyword">return</span> <span class="keyword">string</span>.Empty;
+    }
+
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">object</span> Execute(Expression expression)
+    {
+        <span class="keyword">return</span> <span class="keyword">null</span>;
+    }
+
+    <span class="keyword">public</span> <span class="keyword">static</span> IQueryable&lt;T&gt; CreateQueryable&lt;T&gt;()
+    {
+        <span class="keyword">return</span> <span class="keyword">new</span> Query&lt;T&gt;(<span class="keyword">new</span> TestProvider());
+    }
+}</code></pre>
+<p>とりあえず、これを使って QueryProvider クラスの挙動を確認してみましょう。
+以下のようなコードを実行してみます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> q1 = TestProvider.CreateQueryable&lt;<span class="keyword">int</span>&gt;();
+Console.Write(<span class="string">&quot;{0}\n&quot;</span>, q1.Expression);
+
+<span class="keyword">var</span> q2 = q1.Where(x =&gt; x &gt; <span class="number">10</span>);
+Console.Write(<span class="string">&quot;{0}\n&quot;</span>, q2.Expression);
+
+<span class="keyword">var</span> q3 = q2.OrderBy(x =&gt; x);
+Console.Write(<span class="string">&quot;{0}\n&quot;</span>, q3.Expression);
+
+<span class="keyword">var</span> q4 = q3.Select(x =&gt; x * x);
+Console.Write(<span class="string">&quot;{0}\n&quot;</span>, q4.Expression);</code></pre>
+<p>実行結果は以下の通り。</p>
+<pre><code class="language-console">.Where(x =&gt; (x &gt; 10))
+.Where(x =&gt; (x &gt; 10)).OrderBy(x =&gt; x)
+.Where(x =&gt; (x &gt; 10)).OrderBy(x =&gt; x).Select(x =&gt; (x * x))        </code></pre>
+<p>要するに、Where, Select, OrderBy などの拡張メソッドを通るたびに、
+IQueryable.Expression の中身が追記されています。</p>
+<h3 id="system.linq.queryable"><a id="sec-generated-title-6"></a> <a id="system"></a>System.Linq.Queryable</h3>
+<p>実のところ、QueryProvider クラスの CreateQuery メソッドは、
+引数で与えられた式木をそのまま Query クラスに流しているだけだったりします。</p>
+<pre><code class="language-csharp">IQueryable&lt;S&gt; IQueryProvider.CreateQuery&lt;S&gt;(Expression expression)
+{
+    <span class="keyword">return</span> <span class="keyword">new</span> Query&lt;S&gt;(<span class="keyword">this</span>, expression);
+}</code></pre>
+<p>で、実際に「クエリ式 → 式木の構築」を担っているのは、
+System.Linq.Queryable 中で定義された Select や Where 拡張メソッドの方です。</p>
+<p>例えば、System.Linq.Queryable.Where の中身は概ね以下のようになっているようです。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">static</span> IQueryable&lt;T&gt; Where&lt;T&gt;(
+  <span class="keyword">this</span> IQueryable&lt;T&gt; q,
+  Expression&lt;Func&lt;T, <span class="keyword">bool</span>&gt;&gt; pred)
+{
+  MethodInfo generic = (MethodInfo)MethodBase.GetCurrentMethod();
+  MethodInfo method = generic.MakeGenericMethod(<span class="keyword">typeof</span>(T));
+
+  <span class="keyword">return</span> q.Provider.CreateQuery&lt;T&gt;(
+    Expression.Call(
+      method,
+      q.Expression,
+      Expression.Quote(pred)
+      ));
+}</code></pre>
+<p>引数 q の持っている式木に、
+Where メソッド自身の Call をかぶせた式木を作って QueryProvider の　CreateQuery メソッドに渡します。</p>
+<p>Select などの他の標準クエリ演算子でもほぼ同様の処理をしています。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/data/">&#x30C7;&#x30FC;&#x30BF;&#x5217;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/data/sp_foreach/">foreach</a></li><li><a href="/study/csharp/data/sp2_iterator/">&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;&#x30FC;</a></li><li><a href="/study/csharp/data/sp2_itpattern/">[&#x96D1;&#x8A18;] &#x5185;&#x90E8;&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;&#x3068;&#x5916;&#x90E8;&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;</a></li><li><a href="/study/csharp/data/da_about/">&#x30C7;&#x30FC;&#x30BF;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/data/sp3_linq/">LINQ</a></li><li><a href="/study/csharp/data/sp3_stdquery/">&#x6A19;&#x6E96;&#x30AF;&#x30A8;&#x30EA;&#x6F14;&#x7B97;&#x5B50;&#xFF08;&#x30AF;&#x30A8;&#x30EA;&#x5F0F;&#x95A2;&#x4FC2;&#xFF09;</a></li><li><a href="/study/csharp/data/sp3_stdqueryo/">&#x6A19;&#x6E96;&#x30AF;&#x30A8;&#x30EA;&#x6F14;&#x7B97;&#x5B50;&#xFF08;&#x305D;&#x306E;&#x4ED6;&#xFF09;</a></li><li><a href="/study/csharp/data/sp3_lazylist/">[&#x96D1;&#x8A18;] LINQ &#x3068;&#x9045;&#x5EF6;&#x8A55;&#x4FA1;</a></li><li><a href="/study/csharp/data/datamodulararchitecture/">[&#x96D1;&#x8A18;] &#x5C0F;&#x3055;&#x306A;&#x6A5F;&#x80FD;&#x306E;&#x7D44;&#x307F;&#x5408;&#x308F;&#x305B;</a></li><li><a href="/study/csharp/data/sp3_ormismatch/">[&#x96D1;&#x8A18;] O/R &#x30A4;&#x30F3;&#x30D4;&#x30FC;&#x30C0;&#x30F3;&#x30B9;&#x30DF;&#x30B9;&#x30DE;&#x30C3;&#x30C1;</a></li><li><a href="/study/csharp/data/sp3_ormismatch2/">[&#x96D1;&#x8A18;] O/R &#x30A4;&#x30F3;&#x30D4;&#x30FC;&#x30C0;&#x30F3;&#x30B9;&#x30DF;&#x30B9;&#x30DE;&#x30C3;&#x30C1;&#xFF08;&#x30AF;&#x30E9;&#x30B9;&#x306E;&#x7D99;&#x627F;&#xFF09;</a></li><li><a href="/study/csharp/data/sp3_linqtosql/">[&#x96D1;&#x8A18;] LINQ to SQL &#x5B9F;&#x8DF5;&#x7DE8;</a></li><li><a href="/study/csharp/data/misc_immutabledata/">&#x4E0D;&#x5909;(immutable)&#x306A;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/data/dataranges/">&#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;/&#x7BC4;&#x56F2;&#x51E6;&#x7406;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

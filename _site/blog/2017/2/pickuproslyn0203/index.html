@@ -1,0 +1,103 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 2/3: csharplang &#x30EA;&#x30DD;&#x30B8;&#x30C8;&#x30EA; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2017/2/pickuproslyn0203/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2017-02-03T20:58:30">2017-02-03</time></span><span>更新: <time datetime="2017-02-03T20:58:30">2017-02-03</time></span></div><h1 id="roslyn-23-csharplang">ピックアップRoslyn 2/3: csharplang リポジトリ</h1>
+<p>ようやく、言語設計に関するリポジトリを、<a href="https://github.com/dotnet/roslyn">Roslyn</a>から分離する流れに。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang">C# Language Design</a></li>
+<li><a href="https://github.com/dotnet/vblang">Visual Basic .NET Language Design</a></li>
+</ul>
+<p>ここまではOK。</p>
+<p>Roslynリポジトリはコンパイラー実装に関するリポジトリなわけで、issueはバグ報告とかで埋まります。
+今現在、3000件以上のissueがあって、そのうちかなりの割合がバグ報告なので、まあ、そりゃそんな場所で言語設計に関する話はできないですよね、というのは仕方がない話。
+ユーザーからもリポジトリを分けてくれっていう要望は出ていますし、何よりC#チームがかなりGitHub issueの物量に参っているようです。
+ということで、新たにcsharplangリポジトリが出来てみんな幸せに…？！</p>
+<h2 id="section">メーリングリスト…</h2>
+<p>問題はここから。</p>
+<p>曰く、</p>
+<blockquote>
+<p>Design Process</p>
+<p>C# is designed by the C# Language Design Team (LDT).</p>
+<ol>
+<li>To submit, support, and discuss ideas please subscribe to the language design <em>mailing list</em>.</li>
+</ol>
+</blockquote>
+<p>えっ、メーリングリスト！？</p>
+<p>ということで、もちろん炎上中。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/16905">Language Design Process Moving (again) #16905</a></li>
+</ul>
+<p>反応はおおむね、</p>
+<ul>
+<li>リポジトリを分けるのには賛成</li>
+<li>メーリングリストはやめてくれ</li>
+<li>GitHub issueがつらい気持ちもわからなくはないけど、メーリングリスト、てめぇはダメだ</li>
+</ul>
+<p>な感じです。</p>
+<p>あまりの炎上っぷりにさすがにC#チームの中の人も再三の説明は繰り返していて、</p>
+<ul>
+<li>まず最初に、分離先にメーリングリストを使うという判断に関して、チーム内だけで決めたことは謝りたい</li>
+<li>C#チームの運用上GitHub issueはつらいものがある
+<ul>
+<li>「何百もコメントが付くし、後から編集できるから後から事実を追うのもつらいし」などなど</li>
+</ul>
+</li>
+<li>もちろんその代案がメーリングリストというのは、チーム内でも揉めた</li>
+<li>けど、どの案にも善し悪しあって、とりあえず当面、メーリングリストでの運用を容赦してはもらえないだろうか</li>
+</ul>
+<p>という感じのようです。</p>
+<h2 id="section-1">私的な意見として</h2>
+<p>まあ、僕個人の意見としては、やっぱり「いろいろと気持ちはわかる。でも、メーリングリスト、てめぇはダメだ」ですねぇ…</p>
+<p>もう、メールって言うメディアがダメ。
+Windows付属のメールアプリとか、もうとてもじゃないけど使うのつらいじゃないですか。
+メール ベースで何かやられたら、もうそんな場所に参加するだけで苦痛。</p>
+<p>これはもう、「別のもっと良いアプリに移行すべき」とかそういうレベルの話ではなくて。
+もう付属アプリが良くなる当てがない(そこに投資してもMicrosoftもユーザーも大して幸せにならない)という現実があるわけで。
+Eメール自体に将来性がない。</p>
+<p>そして、そういう将来性のないメディアでディスカッションしているプログラミング言語を使いたいかという問題になるんですが、
+僕としては嫌。
+使いたくない。</p>
+<p><a href="/blog/2016/8/rickuproslyn0827/">去年の夏ごろにこのブログでも取り上げました</a>けど、その頃、
+Mads (C#言語設計のPM)が<a href="https://blogs.msdn.microsoft.com/dotnet/2016/08/24/whats-new-in-csharp-7-0/">「What’s New in C# 7.0」っていうブログ記事</a>のコメント欄で、</p>
+<blockquote>
+<p>C# needs to be among the greatest programming languages today, or it won’t be among them tomorrow.</p>
+</blockquote>
+<blockquote>
+<p>C#は今この時「最高のプログラミング言語」の1つでなければならない。 さもなくば、明日にはそうではなくなってしまう。</p>
+</blockquote>
+<p>って言ってるわけですよ。
+それが、もう、メールなんてメディア使ってる時点でだいぶ「今この時最高」からはずれる気分。</p>
+<h2 id="section-2">そして、それを伝えたいけど…</h2>
+<p>今のGitHub issue運用がきついって言うのはかなりわかるし、かといってその代案としても決め手に欠けているってのもわかるので、あんまり非難はしたくないんですけども。
+なので、今の苦労をねぎらいつつも、「メールだけは勘弁してくれ、C#っていう言語のブランディングに関わる」って話をしたいんですが…</p>
+<p>これを、まあ、つたない英語力で英訳すると、</p>
+<blockquote>
+<p>Mailing lists are f***'in</p>
+</blockquote>
+<p>の1行に縮まりかねないわけでして…
+バグ報告とかの類と比べて難易度高い…</p>
+<h3 id="section-3">おまけ</h3>
+<p>そんな感じのことをぼやいてたら、英ペの勇さんがRTしてたので、きっと翻訳してくれるんだと思います。</p>
+<p><a href="https://twitter.com/ufcpp/status/827337737812340736"><img src="/assets/media/1125/eipe.png" alt="英ペの勇さん" /></a></p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2017/2/">2&#x6708;</a></li><li><a href="/blog/2017/2/compileroutofmemory/">&#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30E9;&#x30FC;&#x306E;&#x8CC7;&#x6E90;&#x67AF;&#x6E07;&#x7CFB;&#x30A8;&#x30E9;&#x30FC;&#x3068;&#x306E;&#x4ED8;&#x304D;&#x5408;&#x3044;&#x65B9;</a></li><li><a href="/blog/2017/2/pickuproslyn0110/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7; Roslyn 2/10</a></li><li><a href="/blog/2017/2/pickuproslyn0213/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 2/13</a></li><li><a href="/blog/2017/2/pickuproslyn0223/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 2/23: Shapes and Extensions</a></li><li><a href="/blog/2017/2/pickuproslyn0228/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 2/28: Milestones 7.X</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

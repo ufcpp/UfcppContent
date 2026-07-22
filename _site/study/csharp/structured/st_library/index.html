@@ -1,0 +1,145 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/structured/st_library/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">ライブラリ</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p><strong id="library" class="keyword">ライブラリ</strong>(library)とは、一言で言うと便利な機能をまとめておいて、他のプログラムから呼び出せる形にしたものです。</p>
+<p>.NET framework SDK をインストールすると、コンパイラと一緒にさまざまなライブラリが初めからインストールされます。
+C# に限らず、このようにコンパイラとセットで必ず提供されるライブラリのことを<strong id="stdlib" class="keyword">標準ライブラリ</strong>(standard library)などと呼んだりもします。</p>
+<p>自分でライブラリを作成することも出来るのですが、ライブラリの自作や、自作したライブラリの利用方法は後ほど説明することにして、ここでは標準ライブラリについて少し説明したいと思います。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>ライブラリ: よくつかわれる機能をひとまとめにしたもの</p>
+</li>
+<li><p>C# （というか、.NET Framework）には標準で多種多様なライブラリが付属します</p>
+</li>
+</ul>
+<h2 id="net-framework"><a id="sec-generated-title-3"></a> <a id="lib"></a>.NET framework の標準ライブラリ</h2>
+<p>「<a href="/study/csharp/abstract/ab_dotnet/">.NET Framework とは</a>」で説明したように、
+.NET Framework では、.NET Framework 上に実装された言語すべてから呼び出せるような共通ライブラリが用意されています。</p>
+<p>.NET Frameworkの標準ライブラリの内容をここですべて説明するわけには行きませんので、
+ライブラリの簡単な利用方法と、今後このページのサンプルで利用しそうな機能に焦点を当てて説明していきます。</p>
+<h5 id="section-3"><a id="sec-generated-title-4"></a>標準ライブラリの利用方法</h5>
+<p>C# ではライブラリを利用する際、プログラムのソースには特に何も手を加える必要はありません。
+(C言語のように <code>#include</code> でヘッダーファイルを読み込む必要はないし、Java のように <code>import</code> も行う必要はない。)
+ライブラリは、コンパイラに対して <code>/r</code> オプションでライブラリの入っている DLL ファイルを指定するだけで利用できます。
+（Visual Studio を使う場合には、
+ソリューションエクスプローラーに「参照」という項目が表示されているはずなので、
+それを右クリックして「参照の追加」を行います。）</p>
+<p>また、標準ライブラリの中でも特によく利用されるものに関しては、
+自動的に参照先の DLL ファイルを見つける設定がなされているので <code>/r</code> オプションを指定する必要もありません。</p>
+<h5 id="section-4"><a id="sec-generated-title-5"></a>クラスライブラリ</h5>
+<p>.NET Framework の標準ライブラリはすべてクラス化されています。
+クラスに関しては「<a href="/study/csharp/oop/oo_class/">クラス</a>」で解説します。</p>
+<h5 id="section-5"><a id="sec-generated-title-6"></a>名前空間</h5>
+<p>「<a href="/study/csharp/structured/sp_namespace/">名前空間</a>」で説明しますが、C# の標準ライブラリはすべて名前空間によって分類されています。
+例えば、数学関連の機能を利用するためには <code>Math</code> というクラスを用いますが、
+<code>Math</code> クラスは <code>System</code> という名前空間に属しています。
+そのため、<code>Math</code> クラスを利用するには、以下のように完全修飾名で書くか、</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> LibrarySample
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="keyword">for</span>(<span class="keyword">double</span> x=<span class="number">0</span>; x&lt;<span class="number">1</span>; x+=<span class="number">0</span>.<span class="number">1</span>)
+      System.Console.Write(<span class="string">&quot;sin({0}) = {1}\n&quot;</span>, x, System.Math.Sin(x));
+  }
+}</code></pre>
+<p>以下のように using ディレクティブを利用します。
+(using ディレクティブに関しても「<a href="/study/csharp/structured/sp_namespace/">名前空間</a>」で説明します。)</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> LibrarySample
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="keyword">for</span>(<span class="keyword">double</span> x=<span class="number">0</span>; x&lt;<span class="number">1</span>; x+=<span class="number">0</span>.<span class="number">1</span>)
+      Console.Write(<span class="string">&quot;sin({0}) = {1}\n&quot;</span>, x, Math.Sin(x));
+  }
+}</code></pre>
+<h2 id="section-6"><a id="sec-generated-title-7"></a> <a id="class"></a>このページのサンプルで利用しそうなクラス</h2>
+<p>今後、このページのサンプルで利用しそうなクラスを以下に列挙します。</p>
+<table summary="">
+
+	<tr>
+		<th>属する名前空間</th>
+		<th>クラス名</th>
+		<th>機能</th>
+	</tr>
+	<tr>
+		<td rowspan="2"><p><code>System</code></p></td>
+		<td><p><code>Console</code></p></td>
+		<td><p>コンソール(MS DOSプロンプト)に対する入出力</p></td>
+	</tr>
+	<tr>
+		<td><p><code>Math</code></p></td>
+		<td><p>数学関連の機能(絶対値、三角関数、指数対数、円周率など)</p></td>
+	</tr>
+	<tr>
+		<td rowspan="4"><p><code>System.IO</code></p></td>
+		<td><p><code>Directory</code></p></td>
+		<td><p>ディレクトリ(フォルダ)操作</p></td>
+	</tr>
+	<tr>
+		<td><p><code>File</code></p></td>
+		<td><p>ファイル操作</p></td>
+	</tr>
+	<tr>
+		<td><p><code>StreamReader</code></p></td>
+		<td><p>ファイルなどからテキストを読み込む</p></td>
+	</tr>
+	<tr>
+		<td><p><code>StreamWriter</code></p></td>
+		<td><p>ファイルなどにテキストを書き出す</p></td>
+	</tr>
+	<tr>
+		<td><p><code>System.Text</code></p></td>
+		<td><p><code>Encoding</code></p></td>
+		<td><p>文字コードの指定</p></td>
+	</tr>
+	<tr>
+		<td rowspan="2"><p><code>System.Collections.Generic</code></p></td>
+		<td><p><code>List</code></p></td>
+		<td><p>可変長配列</p></td>
+	</tr>
+	<tr>
+		<td><p><code>Dictionary</code></p></td>
+		<td><p>辞書(連想配列)</p></td>
+	</tr>
+	<tr>
+		<td rowspan="2"><p><code>System.Drawing</code></p></td>
+		<td><p><code>Bitmap</code></p></td>
+		<td><p>ビットマップの読み書き</p></td>
+	</tr>
+	<tr>
+		<td><p><code>Graphics</code></p></td>
+		<td><p>GDI+ 描画サーフェス</p></td>
+	</tr>
+	<tr>
+		<td><p><code>System.Windows.Forms</code></p></td>
+		<td><p><code>Form</code></p></td>
+		<td><p>Windows アプリケーションフォーム</p></td>
+	</tr>
+</table>
+<p>これらの説明は「<a href="/study/csharp/#lib">標準ライブラリ</a>」で行います。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/structured/">&#x69CB;&#x9020;&#x5316;</a></li><li><a href="/study/csharp/structured/st_structured/">&#x69CB;&#x9020;&#x5316;</a></li><li><a href="/study/csharp/structured/st_control/">&#x5236;&#x5FA1;&#x30D5;&#x30ED;&#x30FC;</a></li><li><a href="/study/csharp/structured/st_branch/">&#x6761;&#x4EF6;&#x5206;&#x5C90;</a></li><li><a href="/study/csharp/structured/st_loop/">&#x53CD;&#x5FA9;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/structured/st_array/">&#x914D;&#x5217;</a></li><li><a href="/study/csharp/structured/st_function/">&#x95A2;&#x6570;</a></li><li><a href="/study/csharp/structured/miscentrypoint/">[&#x96D1;&#x8A18;] &#x30A8;&#x30F3;&#x30C8;&#x30EA;&#x30FC;&#x30DD;&#x30A4;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/structured/miscinlining/">[&#x96D1;&#x8A18;] &#x30A4;&#x30F3;&#x30E9;&#x30A4;&#x30F3;&#x5316;</a></li><li><a href="/study/csharp/structured/miscoverloadresolution/">[&#x96D1;&#x8A18;] &#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30ED;&#x30FC;&#x30C9;&#x89E3;&#x6C7A;</a></li><li><a href="/study/csharp/structured/sp_params/">&#x53EF;&#x5909;&#x9577;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/sp4_optional/">&#x30AA;&#x30D7;&#x30B7;&#x30E7;&#x30F3;&#x5F15;&#x6570;&#x30FB;&#x540D;&#x524D;&#x4ED8;&#x304D;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/st_command/">&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x30E9;&#x30A4;&#x30F3;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/st_enum/">&#x5217;&#x6319;&#x578B;</a></li><li><a href="/study/csharp/structured/st_struct/">&#x30C7;&#x30FC;&#x30BF;&#x306E;&#x69CB;&#x9020;&#x5316;(&#x8907;&#x5408;&#x578B;)</a></li><li><a href="/study/csharp/structured/st_anonymoustype/">&#x540D;&#x524D;&#x306E;&#x306A;&#x3044;&#x8907;&#x5408;&#x578B;</a></li><li><a href="/study/csharp/structured/sp_namespace/">&#x540D;&#x524D;&#x7A7A;&#x9593;</a></li><li><a href="/study/csharp/structured/oo_exception/">&#x4F8B;&#x5916;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/structured/misc_exception/">[&#x96D1;&#x8A18;] &#x4F8B;&#x5916;&#x306E;&#x4F7F;&#x3044;&#x65B9;</a></li><li><a href="/study/csharp/structured/misc_stacktrace/">[&#x96D1;&#x8A18;] &#x4F8B;&#x5916;&#x306E;&#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x30C8;&#x30EC;&#x30FC;&#x30B9;</a></li><li><a href="/study/csharp/structured/miscexpressions/">[&#x96D1;&#x8A18;] &#x5F0F;&#x306B;&#x307E;&#x3064;&#x308F;&#x308B;&#x88DC;&#x8DB3;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

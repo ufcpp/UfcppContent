@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>[&#x96D1;&#x8A18;] &#x69CB;&#x6587;&#x306E;&#x9032;&#x5316; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/misc/misclanguageevolution/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">[雑記] 構文の進化</h1>
+<p>この記事はソフトウェアデザインに寄稿した内容が元になっています。</p>
+<blockquote>
+<p>初出： 技術評論社刊『ソフトウェアデザイン 2016 年 4 月 号<br>
+今すぐ実践できる良いプログラムの書き方<br>
+C#編 言語機能の進化から学ぶ「良いコードの書き方」</p>
+</blockquote>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>プログラムの「良い書き方」は時代とともに進歩しています。そして、それが定着するとともに、プログラミング言語にも「良い書き方」をサポートする新しい構文が徐々に追加されていきます。
+ここでは、C#の<a href="/study/csharp/oop/oo_property/">プロパティ</a>構文を例に、「良い書き方」とともに言語構文が進歩していった過程を紹介します。</p>
+<p><a href="/study/csharp/oop/oo_property/">プロパティ</a>は、クラスの実装側にとってはメソッドのような振る舞いを書け、クラスの利用側にとっては<a href="/study/csharp/structured/st_struct/#field">フィールド</a>の読み書きのように書けるメンバーです。</p>
+<p>C#のプロパティ構文は、C#のバージョンアップに伴い何度か機能追加されています。時とともに徐々に、より良い書き方や、典型的な書き方が明らかになった結果です。
+そこでここでは、C#のプロパティ構文の変遷と、それがどういう要件に基づいているのかを説明していきます。</p>
+<ul>
+<li><a href="https://github.com/ufcpp/UfcppSample/tree/master/Demo/2016/GoodCode/src/PropertySample">サンプル コード</a></li>
+</ul>
+<h2 id="gettersetter"><a id="sec-generated-title-2"></a> <a id="accessor"></a>getter/setter</h2>
+<p>C#以前からある良いとされる習慣の1つに、「クラスの持つデータは必ずメソッドを通して返せ、<a href="/study/csharp/structured/st_struct/#field">フィールド</a>を公開するな」というものがあります。メソッドを通すことで以下のような利点があるためです。</p>
+<ul>
+<li>実装方法を選べる</li>
+<li>単純なデータの読み書きだけではなく、追加の処理を挟める</li>
+<li>実装方法を後から変えても、クラス利用側への影響が出ない</li>
+<li>virtualにすることで、派生クラスで挙動を変更できる</li>
+</ul>
+<p>そこで、例えば<code>X</code>というデータを読み書きする際には、<code>GetX</code>, <code>SetX</code>というメソッドを介する習慣ができました。これらのメソッドをそれぞれgetter/setterといい、2つ合わせてアクセサー(accessor)と呼びます。単純なデータの読み書きであっても以下のように<code>Get</code>/<code>Set</code>メソッドを書くべきということです。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Sample
+{
+    <span class="keyword">private</span> <span class="keyword">int</span> _x;
+    <span class="keyword">public</span> <span class="keyword">int</span> GetX() { <span class="keyword">return</span> _x; }
+    <span class="keyword">public</span> <span class="keyword">void</span> SetX(<span class="keyword">int</span> x) { _x = x; }
+}</code></pre>
+<p>このような書き方には前述のようなメリットがある一方で、クラス利用側のコードが煩雑になるという問題があります。例えば、<code>X</code>の値に1加えるだけでも以下のような書き方が必要になります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> s = <span class="keyword">new</span> Sample();
+s.SetX(s.GetX() + <span class="number">1</span>);</code></pre>
+<p>そこで、C#では、プロパティという構文を用意しました。以下のように書きます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Sample
+{
+    <span class="keyword">private</span> <span class="keyword">int</span> _x;
+    <span class="keyword">public</span> <span class="keyword">int</span> X
+    {
+        <span class="keyword">get</span> { <span class="keyword">return</span> _x; }
+        <span class="keyword">set</span> { _x = value; }
+    }
+}</code></pre>
+<p><code>get</code>, <code>set</code>に続けて、メソッド的に振る舞いを書けます。一方で、利用側のコードは以下のように、フィールドの読み書きと同じように書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> s = <span class="keyword">new</span> Sample();
+s.X += <span class="number">1</span>;</code></pre>
+<h2 id="gettersetterc-2.0"><a id="sec-generated-title-3"></a> <a id="set-accessibility"></a>getterとsetterで異なるアクセシビリティ(C# 2.0)</h2>
+<p>データに対して、読む(get)のと書く(set)のとではだいぶ重みが違います。一般に、書き込みの方が慎重に行う必要があります。多くの場合、読み取り(get)だけを公開(public)し、書き込み(set)はクラス内にとどめる(private)ことになるでしょう。</p>
+<p>そこで、C# 2.0で、プロパティのgetとsetの<a href="/study/csharp/oop/oo_conceal/#level">アクセシビリティ</a>を<a href="/study/csharp/oop/oo_property/#level">別々に設定できる</a>ようになりました。例えばgetだけpublicにして、setをprivateにするには以下のような書き方をします。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Sample
+{
+    <span class="keyword">private</span> <span class="keyword">int</span> _x;
+    <span class="keyword">public</span> <span class="keyword">int</span> X
+    {
+        <span class="keyword">get</span> { <span class="keyword">return</span> _x; }
+        <span class="keyword">private</span> <span class="keyword">set</span> { _x = value; }
+    }
+    <span class="keyword">public</span> Sample(<span class="keyword">int</span> x) { _x = x; }
+}</code></pre>
+<h2 id="c-3.0"><a id="sec-generated-title-4"></a> <a id="auto-property"></a>自動プロパティ(C# 3.0)</h2>
+<p>あとから実装方法を変更するかもしれないのでメソッド(のように振る舞えるプロパティ)を使うべきといっても、実際のところ、これまでいくつか挙げたコード例がそうですが、ほとんどのプロパティは単純なフィールドの読み書きです。これらのような書き方は、「あとから変えるかもしれない」という心配のためだけに書くには少し煩雑過ぎます。</p>
+<p>そこで、C# 3.0では、自動的に上記のようなフィールドとそれに対する読み書きを生成する<a href="/study/csharp/oop/oo_property/#auto">自動プロパティ</a>(auto property)という機能が追加されました。以下のように、getやsetの後ろのブロックを省略することで自動プロパティになります。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Sample
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; }
+    <span class="keyword">public</span> Sample(<span class="keyword">int</span> x) { X = x; }
+}</code></pre>
+<p>単純なフィールドの読み書きでいい間はこの書き方をし、追加の処理が必要になった際には自動実装ではない以前通りのプロパティに変更します。</p>
+<h2 id="get-onlyc-6"><a id="sec-generated-title-5"></a> <a id="get-only-property"></a>get-onlyプロパティ(C# 6)</h2>
+<p>繰り返しになりますが、一般に、データの書き込みには慎重になるべきです。極端に言うと、コンストラクターでだけ値を代入して、他の場所では書き換えない方がいいことが多いです。こういう書き換え不能なデータのことをimmutable(変更不能)なデータと呼びます。</p>
+<p>C# 5.0までは、immutableであることを確実に保証するためには以下のような書き方でプロパティを作る必要がありました。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Sample
+{
+    <span class="keyword">private</span> <span class="keyword">readonly</span> <span class="keyword">int</span> _x;
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span> { <span class="keyword">return</span> _x; } }
+    <span class="keyword">public</span> Sample(<span class="keyword">int</span> x) { _x = x; }
+}</code></pre>
+<p>時代とともに、データをimmutableにしておくことの良さが一般に広まってきました。C#でも、プロパティをimmutableに書くことが増えています。</p>
+<p>そこで、C# 6ではimmutableなプロパティを書きやすくするため、<a href="/study/csharp/oop/oo_property/#get-only">get-onlyプロパティ</a>という構文が追加されました。以下のように、getだけを書くことで、前述のようなreadonlyフィールドを自動生成してくれます。書き込みはコンストラクター内でだけ行えます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Sample
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> Sample(<span class="keyword">int</span> x) { X = x; }
+}</code></pre>
+<h2 id="section-2"><a id="sec-generated-title-6"></a> <a id="record-type"></a>レコード型(検討段階)</h2>
+<p>immutableなプロパティは、値の初期化をコンストラクターで行う都合上、プロパティに対応するコンストラクター引数が必ず必要になります。前節の例でいうと、プロパティXに対して引数xがあります。これは、大文字・小文字が違うくらいで、ほぼ同じものを何度も書かされている状態です。</p>
+<p>そこで、以下のような書き方で、コンストラクターとimmutableなプロパティを自動生成する構文の追加が検討がされています(C# 7には入らず、そのさらに先)。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Sample(<span class="keyword">int</span> X);</code></pre>
+<p><code>X</code>以外のメンバーを書きたいときだけ追加でクラス本体を書きます。immutableなプロパティだけでいい場合には、この例のように;だけを書いて、本体を省略します。</p>
+<p>この構文を<em>レコード型</em>(record type)と呼びます。ここでのレコード(record: 記録、1件のデータ)という言葉は、単純なプロパティしか持たず、純粋にデータを表現するための型という意味です。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/misc/">&#x305D;&#x306E;&#x4ED6;</a></li><li><a href="/study/csharp/misc/partial-type/">&#x578B;&#x306E;&#x5206;&#x5272;&#x5B9A;&#x7FA9; (partial)</a></li><li><a href="/study/csharp/misc/sp_preprocess/">&#x30D7;&#x30EA;&#x30D7;&#x30ED;&#x30BB;&#x30B9;</a></li><li><a href="/study/csharp/misc/sp_xmldoc/">XML Document</a></li><li><a href="/study/csharp/misc/ap_safec/">&#x201C;Safe C&#x201D; &#x3068;&#x3057;&#x3066;&#x306E; C#</a></li><li><a href="/study/csharp/misc/ap_compatibility/">&#x4E92;&#x63DB;&#x6027;&#x306E;&#x7DAD;&#x6301;</a></li><li><a href="/study/csharp/misc/misc_roslyn/">[&#x96D1;&#x8A18;] .NET Compiler Platform</a></li><li><a href="/study/csharp/misc/miscpatternbased/">&#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30D9;&#x30FC;&#x30B9;&#x306A;&#x69CB;&#x6587;</a></li><li><a href="/study/csharp/misc/miscentrypoint/">&#x30A8;&#x30F3;&#x30C8;&#x30EA;&#x30FC; &#x30DD;&#x30A4;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/misc/analyzer-generator/">&#x30B3;&#x30FC;&#x30C9;&#x89E3;&#x6790;&#x3068;&#x30B3;&#x30FC;&#x30C9;&#x751F;&#x6210;</a></li><li><a href="/study/csharp/misc/file-local/">file &#x30ED;&#x30FC;&#x30AB;&#x30EB;&#x578B;</a></li><li><a href="/study/csharp/misc/unsafeaccessor/">UnsafeAccessor</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

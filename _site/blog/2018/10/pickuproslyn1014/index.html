@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 10/14: #nonnull&#x30C7;&#x30A3;&#x30EC;&#x30AF;&#x30C6;&#x30A3;&#x30D6;&#x3001;IAsyncEnumerable | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2018/10/pickuproslyn1014/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2018-10-14T11:57:17">2018-10-14</time></span><span>更新: <time datetime="2018-10-14T11:57:17">2018-10-14</time></span></div><h1 id="roslyn-1014-nonnulliasyncenumerable">ピックアップRoslyn 10/14: #nonnullディレクティブ、IAsyncEnumerable</h1>
+<p><a href="https://github.com/dotnet/csharplang/issues/1925">Design Notes 2件追加</a>。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2018/LDM-2018-10-01.md">C# Language Design Notes for Oct 1, 2018</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2018/LDM-2018-10-03.md">C# Language Design Notes for Oct 3, 2018</a></li>
+</ul>
+<p>10/1 のは、nullable 参照型がジェネリクスに絡むときの話。
+例えば以下のような、型推論とかについての検討。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Collections.Generic;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        IEnumerable&lt;<span class="keyword">string</span>&gt; nonNull = <span class="keyword">new</span>[] { <span class="string">&quot;&quot;</span> };
+        IEnumerable&lt;<span class="keyword">string</span>?&gt; nullable = <span class="keyword">new</span>[] { <span class="keyword">default</span>(<span class="keyword">string</span>) };
+
+        <span class="comment">// 配列の要素の型推論。</span>
+        <span class="comment">// これは、IEnumerable&lt;string?&gt;[] になってるみたい。</span>
+        <span class="keyword">var</span> array = <span class="keyword">new</span>[] { nonNull, nullable };
+
+        <span class="comment">// ジェネリック メソッドの型引数の型推論。</span>
+        <span class="comment">// 配列の要素と似たような推論になるはず。</span>
+        <span class="comment">// が、201/9/11 版の実装では IEnumerable&lt;string&gt; で推論されてる。</span>
+        <span class="comment">// この挙動が変だよね、と言うのが議題。</span>
+        <span class="keyword">var</span> ret = M(nonNull, nullable);
+    }
+
+    <span class="keyword">static</span> T M&lt;T&gt;(T x, T y) =&gt; x;
+}</code></pre>
+<p>10/3 の方は、null チェックのコンテキスト切り替えの再検討と、
+<code>IAsyncEnumerable</code>インターフェイスの実装方法の決定について。</p>
+<h2 id="null">null チェックのコンテキスト切り替え</h2>
+<p>改めての説明になりますが、元々 null の存在を前提にしている C# にとって、
+nullable 参照型(<code>T</code> だと非 null、<code>T?</code> で null 許容)の追加は、何も考えずにやると破壊的変更になってしまいます。
+破壊的変更を極力避けている C# にとってそれはまずいので、null チェックの On/Off を切り替える仕組みを用意する予定です。</p>
+<p>これまでのプレビュー版では、とりあえず属性ベースでコンテキスト切り替えが実装されていました。
+<code>NonNullTypes</code>属性を付けたら On、付けていないかもしくは<code>NonNullTypes(Warning = false)</code>で Off。
+が、そのやり方だと苦しそうということで、プリプロセッサ－でやる(<code>#nonnull</code>ディレクティブみたいなものを追加する)ことを改めて検討しているそうです。</p>
+<p>(これまでの C# だと、属性の有無によってコンパイラーの挙動がガラッと変わるというような実装をしたことがなく、
+そういう「モラル的な意味」でもあまり良くないのは元々良くないんですが、技術的にも苦しそうなことがわかってきたとか。)</p>
+<p>ということで、やるとしたら以下の3つのうちのどれかになるだろうということで、これらをそれぞれ検討。</p>
+<ul>
+<li>修飾子を作る
+<ul>
+<li>非同期メソッドの <code>async</code> 修飾子みたいなの</li>
+</ul>
+</li>
+<li>属性でやるなら、かなり特別扱いした「疑似属性」的なものになる
+<ul>
+<li><code>const</code> を受け付けない(<code>true</code>, <code>false</code> の直指定しか受け付けない)とか、名前付き引数を認めないとか</li>
+</ul>
+</li>
+<li>ディレクティブを使う
+<ul>
+<li><code>#pragma warning</code>と同じノリで、<code>#nonnull disable</code>、<code>#nonnull restore</code>で制御</li>
+<li>プロジェクト全体の On/Off 制御のために、コンパイラー オプションも必要</li>
+</ul>
+</li>
+</ul>
+<p>で、とりあえず、ディレクティブを使ったアプローチで行ってみようという感じになっているみたいです。
+(実際もう、pull request も出てて merge 済み。)</p>
+<h2 id="iasyncenumerable">IAsyncEnumerableインターフェイスの実装方法</h2>
+<p>非同期ストリーム(<code>await</code>と<code>yield</code>の混在と、非同期版 <code>foreach</code>)を実装するにあたって、インターフェイスをどうするかというのがずっと課題になっていました。
+同期版だと、<code>IEnumerable&lt;T&gt;</code>(と、同じ名前のメソッドを持ってさえいればOK)を使うわけですが、
+それの非同期版である<code>IAsyncEnumarable&lt;T&gt;</code>はどういうメソッドを持つべきか。</p>
+<p>結局、以下のように、<code>IEnumerable&lt;T&gt;</code>とほぼ同じで単に<code>Async</code>語尾を付け、<code>ValueTask</code>を返す作りにしたいとのこと。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">interface</span> IAsyncEnumerable&lt;<span class="keyword">out</span> T&gt;
+{
+    IAsyncEnumerator&lt;T&gt; GetAsyncEnumerator();
+}
+
+<span class="keyword">public</span> <span class="keyword">interface</span> IAsyncEnumerator&lt;<span class="keyword">out</span> T&gt; : IAsyncDisposable
+{
+    ValueTask&lt;<span class="keyword">bool</span>&gt; MoveNextAsync();
+    T Current { <span class="keyword">get</span>; }
+}
+
+<span class="keyword">public</span> <span class="keyword">interface</span> IAsyncDisposable
+{
+    ValueTask DisposeAsync();
+}</code></pre>
+<p>他の選択肢としては、以下のようなものが検討されていました。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">interface</span> IAsyncEnumerator&lt;<span class="keyword">out</span> T&gt; : IAsyncDisposable
+{
+    ValueTask&lt;<span class="keyword">bool</span>&gt; WaitForNextAsync();
+    T TryGetNext(<span class="keyword">out</span> <span class="keyword">bool</span> success);
+}</code></pre>
+<p>というのも、パフォーマンス的には後者の方がだいぶ良いことがわかっています。
+ただ、これは今回新たに追加する非同期版だけの話ではなくて、
+既存の<code>IEnumerable&lt;T&gt;</code>についても同じ課題を抱えています。</p>
+<p><a href="https://gist.github.com/ufcpp/0b9a8a8d4ea6b8eb6505ec0c624b65f8"><code>IEnumerable&lt;T&gt;</code>の方で軽く試してみた感じ</a>、かかるオーバーヘッドがほんとに倍くらい変わり得ます。
+というのも、仮想メソッド呼び出しのコストはそこそこあるので、<code>MoveNext</code>/<code>Current</code>の2回の呼び出しに分かれているより、<code>TryGetNext</code>の1回で済む方が明らかに速くなります。</p>
+<p>上記の<code>IAsyncEnumerator&lt;T&gt;</code>では、<code>WaitForNextAsync</code>と<code>TryGetNext</code>の2つのメソッドがありますが、<code>WaitForNextAsync</code>の方は呼び出しがかなり少なくなる想定なので、実質的にはこちらでも「<code>TryGetNext</code>の1個だけになるので速い」ということが言えます。</p>
+<p>が、以下のようなデメリットもあります。</p>
+<ul>
+<li>(<code>foreach</code>とかのコンパイラー生成に頼らず手動で)<code>WaitForNextAsync</code>と<code>TryGetNext</code>を使ったコードを書くのはかなり大変になる
+<ul>
+<li>.NET の仕様上、<code>bool TryGetNext(out T)</code> だと<a href="/study/csharp/oop/sp4_variance/#covariance">共変</a>にできなくて、<code>T TryGetNext(out bool)</code>なのがキモい</li>
+<li>特に、<a href="https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.zip"><code>Zip</code></a> みたいに複数のenumerableが絡むとかなり大変</li>
+</ul>
+</li>
+<li>同期版でもどの道同じ問題があるんだから、もしやるなら、同期版の方も含めて <code>foreach</code> の拡張を後から考えるべき
+<ul>
+<li>同期版が <code>MoveNext</code>/<code>Current</code> なのに非同期版だけ <code>TryGetNext</code> にするのは差が大きすぎる</li>
+</ul>
+</li>
+</ul>
+<p>結局、デメリットがきつすぎるということで、同期版と同じ<code>MoveNext</code>/<code>Current</code>型のインターフェイスにこだわりたいということになったようです。</p>
+<h3 id="valuetask">ValueTask 実装</h3>
+<p>この<code>IAsyncEnumerable&lt;T&gt;</code>に関する検討を始めた当初は、<code>Task</code>に掛かるコストが特に懸念されていました。
+が、<code>ValueTask</code>を使った最適化が進んだ結果、案外、<code>ValueTask&lt;bool&gt; MoveNextAsync()</code>にすれば低コストになりそうというのもわかってきた結果、上記の決断に至ったというのもありそうです。</p>
+<p>そちらの検討も、corefx の方に issue が立っています。</p>
+<ul>
+<li><a href="https://github.com/dotnet/corefx/issues/32640">Proposal: Public APIs for C# 8 async streams #32640</a></li>
+<li><a href="https://github.com/dotnet/corefx/issues/32665">Proposal: Implement IAsyncDisposable on various BCL types #32665</a></li>
+<li><a href="https://github.com/dotnet/corefx/issues/32664">Proposal: ManualResetValueTaskSource types #32664</a></li>
+</ul>
+<p><a href="/blog/2018/3/pickuproslyn0323/">前にちょっと書きました</a>が、.NET Core 2.1 世代で、<code>ValueTask</code>が<code>Task</code>だけじゃなくて、<code>IValueTaskSource</code>インターフェイスを受け付けるようになりました。
+このインターフェイスを実装した独自のクラスを作ることで、非同期処理に掛かるコストを下げれる場合があります
+(作ったインスタンスをキャッシュ・再利用したり)。
+非同期ストリーム(<code>await</code>と<code>yield</code>の混在)の実装はまさにその場合に該当していて、
+<code>IValueTaskSource</code>を使ったコード生成をしようという流れになっています。</p>
+<p>あと、<code>IValueTaskSource</code>自体は.NET Core 2.1世代(<a href="https://www.nuget.org/packages/System.Threading.Tasks.Extensions/4.5.1">NuGetパッケージ</a>を参照すればそれ以外でも利用可能)で追加されましたが、このインターフェイスをちゃんと実装するのはそれなりに面倒です
+(いくつか、これを実装したクラスは現在もあるんですが、全部internalだったりします)。
+そこで、汎用に使える<code>ManualResetValueTaskSource</code>という実装クラスも、これを機にpublicにしたいという話もついでに出ています。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2018/10/">10&#x6708;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

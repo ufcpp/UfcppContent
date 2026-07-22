@@ -1,0 +1,175 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 9/29: Utf8String &#x306A;&#x3069;&#x3001;C# 9.0 &#x304C;&#x3089;&#x307F; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2019/9/pickuproslyn0929/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2019-09-29T13:55:28">2019-09-29</time></span><span>更新: <time datetime="2019-09-29T20:00:12">2019-09-29</time></span></div><h1 id="roslyn-929-utf8string-c-9.0">ピックアップRoslyn 9/29: Utf8String など、C# 9.0 がらみ</h1>
+<p>C# 8.0 もリリースされたわけですし、
+(リリース直前に 8.0 に関して修正も聞かないので、今月に入ったくらいから)
+C# 9.0 に向けた Design Meeting が開かれているみたいです。
+<a href="https://www.dotnetconf.net/">.NET Conf 2019</a> も落ち着いたところで、議事録も公開。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/2826">LDM notes for 2019-09-16 and 2019-09-18 #2826</a></li>
+</ul>
+<p>雰囲気的には</p>
+<ul>
+<li>.NET 5 向け</li>
+<li>C# 9.0 を想定</li>
+</ul>
+<p>みたいな感じなので、たぶん来年のリリースですね。
+(.NET 5 は 2020年11月と明言されてる。
+C# を .NET のリリースとどう同期させるかは明言されていないものの、
+議事録の雰囲気からすると .NET 5 時点で C# 9.0。
+.NET Core 3.1 (今年11月)時点で何か更新しそうな気配もなし。)</p>
+<p>議題については</p>
+<ul>
+<li>Utf8String</li>
+<li>すでに 9.0 に向けてやると決まってたことについて再確認
+<ul>
+<li>特に、ローカル関数への属性適用と、target-typed new</li>
+</ul>
+</li>
+<li>いくつかトリアージ
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/commit/0056d765287bdc6717d38be515d3026792771f60?short_path=62d2c4c#diff-62d2c4ce577204aa80f67774438c2beb">Language Feature Status の C# vNext に5つほど項目追加</a></li>
+</ul>
+</li>
+</ul>
+<p>という感じです。</p>
+<p>Design Notes とは別に、以下のドキュメントにも更新 Pull Request あり。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/pull/2833">Native-sized integers proposal #2833</a>
+<ul>
+<li>内部的には <code>IntPtr</code>、<code>UIntPtr</code> をそのまま使って、コンパイラーのレベルでだけ <code>nint</code>、<code>nuint</code> という別の型に見せかける実装にするみたい</li>
+</ul>
+</li>
+</ul>
+<h2 id="utf8string">Utf8String</h2>
+<p>UTF-8 なバイト列を直接読み書きしたいという要望はかねてからあるというか、
+C# で Web なことをするときに一番ネックになっていたのが UTF-8 (Web 上ではもうほぼこのエンコード)から UTF-16 (.NET の string の内部表現)への変換です。
+なので、UTF-8 を直接読み書きするための型として <code>Utf8String</code> を追加したいという話は3・4年前くらいから出ていますし、プロトタイプ実装はすでにあります。
+この型の正式リリースは .NET 5 にしたいということで、それに対する C# 言語上のサポートも C# 9.0 がターゲットになっています。</p>
+<p>この <code>Utf8String</code> に関して、今回の議題は以下のようなもの。</p>
+<ul>
+<li>リテラルを exe/dll にどう埋め込むか
+<ul>
+<li>いったんは既存の <code>string</code> リテラルの仕組みをそのまま使って UTF-16 の状態で記録して、ランタイムが読み込み時に UTF-8 変換する方式をとる</li>
+<li>ただ、どう考えても UTF-8 データを生で埋め込める方が効率的なので、将来的にその方式に変更するときに困らないかだけは要確認
+<ul>
+<li>今のところそういう内部的な変更が C# の破壊的変更になりそうなものは思いつかない(ので大丈夫)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>列挙をどうするか
+<ul>
+<li>UTF-8 な byte 列、Unicode コードポイント(あと、もしかしたら<a href="/blog/2018/12/unicodecategory/">書記素クラスター</a>も)をそれぞれ列挙するためのプロパティはある</li>
+<li>(プロパティを介さず) <code>Utf8String</code> 自体を <code>foreach</code> に渡したいか？渡すなら何が列挙されるべきか？
+<ul>
+<li>プロパティを介さない列挙は認めない方が無難そう</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>C# 言語上の特殊対応は必要か。以下の2点は特殊対応する利点がありそう
+<ul>
+<li><code>Concat</code> の最適化(n 個の文字列の <code>Concat</code> に対して O(n) 処理にする)</li>
+<li>リテラル</li>
+</ul>
+</li>
+<li>(今の <code>string</code> リテラルと同じ) <code>&quot;&quot;</code> リテラルに対して Target-Typed な型判定をすべきか
+<ul>
+<li>「UTF-8 リテラル」用の追加構文を用意しなくていいという利点はあるけども、オーバーロードで困る
+<ul>
+<li><code>M(string s)</code> と <code>(M Utf8String s)</code> があるとき <code>M(&quot;literal&quot;)</code> の解決ができない</li>
+<li>破壊的変更にならないようにするためには、<code>string</code> 優先にせざるを得ない</li>
+</ul>
+</li>
+<li>リテラルを Target-Typed にするのはやめた方がよさそう</li>
+<li><code>u&quot;&quot;</code> みたいな構文を足すことになる</li>
+</ul>
+</li>
+<li>キーワード
+<ul>
+<li><code>System.String</code> が <code>string</code> という C# キーワードになってるのと同様、<code>Utf8String</code> に対して <code>ustring</code> などのキーワードがあった方がいいか？</li>
+<li><code>u</code> だけだと <code>UTF-16</code> だって <code>Unicode</code> だって頭文字 u だから避けたいけど、他にもっと使いたい名前もない</li>
+<li>リテラルとかで言語的な特殊対応をするんだから、キーワードを与えて primitive な地位を与えることはおかしくはない</li>
+<li>まだ迷い気味</li>
+</ul>
+</li>
+</ul>
+<h2 id="section">ローカル関数への属性適用</h2>
+<p><a href="/study/csharp/resource/nullablereferencetype/">null 許容参照型</a>とか<a href="/study/csharp/async/asyncstream/">非同期ストリーム</a>とか、ローカル関数でも使えて、かつ、属性を付けれないと困りそうな機能がすでにいくつかあります。
+なので、ローカル関数への属性適用をできるようにすること自体は確定事項。</p>
+<p>今回の懸念としては、ローカル関数は C# コンパイラーが何らかの通常のメソッドに変換するわけですが、
+その変換結果から属性を取れるという保証をするかどうか。
+現在のコンパイラー実装では、どこかしらには絶対属性が残るようになっているものの、どこからどうすればその属性を取れるか言語仕様で保証まではしない(という提案が今回あって、その方向で行くことに決定)とのこと。</p>
+<h2 id="target-typed">Target-Typed 型推論</h2>
+<p><a href="https://github.com/dotnet/csharplang/issues/100">Target-Typed new</a>は以前にもやる気になっていて、その時にデザインも終えてる。その頃から気がわかってないかだけ改めて確認。
+やる気は変わらず、デザインのレビュー待ち状態に。</p>
+<p>その他、Target-Typed な機能というと</p>
+<ul>
+<li><a href="/study/csharp/datatype/typeswitch/#switch-expression"><code>switch</code> 式</a> (C# 8.0 で実装済み)は最初から Target-Typed な型推論を持ってる</li>
+<li>「<code>switch</code> でやるのなら」ということで <a href="https://github.com/dotnet/csharplang/issues/2473">?? 演算子</a>、[?: 演算子] (<a href="https://github.com/dotnet/csharplang/issues/2460">https://github.com/dotnet/csharplang/issues/2460</a>)でも検討中</li>
+<li>それとは別(ただし同じ課題に対する解決策)に、「<a href="https://github.com/dotnet/csharplang/issues/33">Common Type 推論の改善</a>」がある</li>
+</ul>
+<p>Target-Typed 型推論と Common Type 推論の改善はどちらも、
+<code>flag ? 1 : null</code> みたいな式の型決定(<code>int?</code> になってほしい。今はコンパイル エラーを起こす)に対する解決策ですが、
+優先度を決めないと競合します。
+<code>M(int?)</code> と <code>M(short?)</code> みたいなのがあるときに、<code>M(flag ? 1 : null)</code> みたいなのがどちらのオーバーロードを呼ぶべきかが変わります。</p>
+<p>Target-Typed 型推論の方が「ターゲットさえはっきりしていればいろんな型に対応できる」という利点があるものの、
+「ターゲットがはっきりしない」ということも多いので Common Type 推論の方が使える場面は多くなります。</p>
+<p>破壊的変更になることを避けるために、C# 8.0 の新機能の <code>switch</code> 式にだけ Target-Typed 型推論が入りました。
+一方でこれから Common Type 推論も入れたいわけですが、<code>switch</code> 式とその他で違う挙動にせざるを得ないかもしれません。</p>
+<p>Target-Typed 型推論に対する破壊的変更にならないように Common Type 推論を実現できないかは検討はしたい。
+もし <code>switch</code> 式に対して破壊的変更が起きそうなら、その影響範囲は調査しておきたい(場合によっては破壊的変更を認めるかも)とのこと。</p>
+<h2 id="section-1">その他のトリアージ</h2>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/2145">Null parameter checking</a>
+<ul>
+<li>すぐにでも。9.0 に入れる</li>
+</ul>
+</li>
+<li>修飾子の順序緩和。特に、<a href="https://github.com/dotnet/csharplang/issues/946">ref と partial の順序</a>
+<ul>
+<li>9.0</li>
+</ul>
+</li>
+<li><a href="https://github.com/dotnet/csharplang/issues/883">0要素、1要素のタプル</a>
+<ul>
+<li>決めかねてる。 X.X (いつになるかわからない)行き</li>
+</ul>
+</li>
+<li><a href="/study/csharp/datatype/deconstruction/">分解</a>での<a href="https://github.com/dotnet/csharplang/issues/125">変数と宣言の混在</a>
+<ul>
+<li>あると良いことはわかっているけど急ぎではない</li>
+<li>Any Time (いつでもいい)行き</li>
+</ul>
+</li>
+<li><a href="https://github.com/dotnet/csharplang/issues/111">ラムダ式の引数での discard</a>
+<ul>
+<li>Any Time</li>
+<li>といいつつ、<a href="https://github.com/dotnet/roslyn/pull/38786">実装始まってたりする</a>。おそらく、「やってみて案外低コストだったら 9.0 入りを考えてもいい」みたいな状態かと</li>
+</ul>
+</li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2019/9/">9&#x6708;</a></li><li><a href="/blog/2019/9/vs16_3/">Visual Studio 16.3 &amp; 16.4 Preview 1</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

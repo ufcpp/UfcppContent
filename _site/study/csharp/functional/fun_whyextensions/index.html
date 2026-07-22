@@ -1,0 +1,266 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30AF;&#x30E9;&#x30B9;&#x306E;&#x6A5F;&#x80FD;&#x62E1;&#x5F35; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/functional/fun_whyextensions/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">クラスの機能拡張</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>あるクラスに新しい機能を足したい場合にどうするべきかという話。</p>
+<p>クラス自体にインスタンス メソッドを足すべきか、拡張メソッドを作るべきか。
+どういうときに拡張メソッドを使うべきか。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>拡張メソッドを使うと、クラスとメソッドが分離する。</p>
+</li>
+<li><p>なので、分離する方がよければ拡張メソッド、そうでないなら普通にインスタンス メソッドとして実装すべき。</p>
+</li>
+<li><p>分離する方がよい場面: 実装者の分離、アセンブリの分離</p>
+</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="how-to-extend"></a>新しい機能の追加</h2>
+<p>クラスに新しい機能を追加したいとします。
+単に機能追加といっても、以下のように、いろいろな要件があったりします。</p>
+<ul>
+<li><p>クラス作者自身が機能追加するのか、他人がするのか。</p>
+</li>
+<li><p>クラスと同じアセンブリ内で機能追加するのか。</p>
+</li>
+<li><p>クラスの派生クラスでも新機能を使いたいか。</p>
+</li>
+</ul>
+<p>まず、いろいろ機能追加のやり方を示して、それぞれが上記の要件のうち何を満たせるかについて考えてみましょう。</p>
+<h3 id="section-4"><a id="sec-generated-title-4"></a> <a id="in-class"></a>クラス自身に新メンバーを足す</h3>
+<p>例として、以下のようなクラスに、新メンバー、Norm() （x, y の二乗和を計算）を足してみましょう。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> P
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+}</code></pre>
+<p>単純に、このクラス自身を書き換えます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> P
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+    <span class="keyword">public</span> <span class="keyword">int</span> Norm() { <span class="keyword">return</span> X * X + Y * Y; }
+}</code></pre>
+<p>一番シンプルで、まず第一に考えるべき方法です。
+利点（○）、欠点（×）を以下に挙げます。</p>
+<ul>
+<li><p><span class="pros-mark">○</span>クラスのフル機能が使える（private メンバー等にも触れれる）</p>
+</li>
+<li><p><span class="pros-mark">○</span>クラス内を探せばいいだけなので、定義場所を探すのが楽</p>
+</li>
+<li><p><span class="cons-mark">×</span>クラスを定義しているそのファイルを変更しなければならない</p>
+</li>
+<li><p><span class="cons-mark">×</span>クラス実装者（本人、チームメイトなど、権限ある人）が責任を持って追加しなければならない</p>
+</li>
+</ul>
+<h3 id="partial"><a id="sec-generated-title-5"></a> <a id="partial"></a>クラス自身に新メンバーを足す（partial）</h3>
+<p>前節の X クラスが、例えば自動生成したコードだったとしましょう。
+自動生成は最初の1回きりではなく、定期的にやるものとします。
+この場合、X クラスを定義しているファイルは修正できません（修正しても、自動生成の際に修正内容が消える）。</p>
+<p>そういうときに使うのが「<a href="/study/csharp/oop/oo_class/#partial_class">パーシャルクラス</a>」です。
+まず、自動生成側にも、class キーワードの前に partial 修飾子を付けます。</p>
+<pre><code class="language-csharp"><span class="keyword">partial</span> <span class="keyword">class</span> P
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+}</code></pre>
+<p>そして、別ファイルにて、以下のように、同じクラスに新メンバーを追加します。</p>
+<pre><code class="language-csharp"><span class="keyword">partial</span> <span class="keyword">class</span> P
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> Norm() { <span class="keyword">return</span> X * X + Y * Y; }
+}</code></pre>
+<p>この方法を使うと、（プレーンなオブジェクトして作った）自動生成クラスに対して後からインターフェイスを差し込むというようなこともできます。</p>
+<pre><code class="language-csharp"><span class="keyword">interface</span> IP
+{
+    <span class="keyword">int</span> X { <span class="keyword">get</span>; }
+    <span class="keyword">int</span> Y { <span class="keyword">get</span>; }
+}
+
+<span class="keyword">partial</span> <span class="keyword">class</span> P : IP { } <span class="comment">// 元の側に X, Y がすでにあるので、こちらでの実装は不要。</span></code></pre>
+<p>この方法は、ファイルを分けれるということ以外は、前節の方法を全く同じ扱いを受けます。
+private なものも含めて、全メンバーにアクセスできる代わりに、アセンブリをまたぐことはできません（同一 exe/dll 内になければならない）。</p>
+<ul>
+<li><p><span class="pros-mark">○</span>クラスのフル機能が使える（private メンバー等にも触れれる）</p>
+</li>
+<li><p><span class="cons-mark">×</span>クラス実装者（本人、チームメイトなど、権限ある人）が責任を持って追加しなければならない</p>
+</li>
+<li><p><span class="cons-mark">×</span>インターフェイスに対する操作を与えられない。</p>
+</li>
+</ul>
+<h3 id="section-5"><a id="sec-generated-title-6"></a> <a id="static"></a>静的メソッドでいいよ</h3>
+<p>正直なところ、クラスの public なメンバーを参照して何か値を計算するだけなら、静的メソッドで十分です。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">class</span> PUtil
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> Norm(P x) { <span class="keyword">return</span> x.X * x.X + x.Y * x.Y; }
+}</code></pre>
+<p>オブジェクト指向関係の論争ではよく槍玉に上がる static ですが…。
+よくないのは static に状態を持つ（static フィールド、プロパティを読み書きする）ことなので、
+状態を持たない static なメソッドは大体無害です。</p>
+<ul>
+<li><p><span class="pros-mark">○</span>誰でも（クラス実装者以外も）、どこでも（アセンブリの外でも）機能追加できる</p>
+</li>
+<li><p><span class="pros-mark">○</span>インターフェイスに対しても操作を与えられる。</p>
+</li>
+<li><p><span class="cons-mark">×</span>public な部分にしか触れない</p>
+</li>
+<li><p><span class="cons-mark">×</span>クラスがわかれることで、定義場所を探しにくい</p>
+</li>
+<li><p><span class="cons-mark">×</span>呼び出し方が、<code>PUtil.Norm(x);</code>みたいになって不格好</p>
+</li>
+</ul>
+<h3 id="section-6"><a id="sec-generated-title-7"></a> <a id="extensions"></a>拡張メソッド</h3>
+<p>C# の場合、単なる静的メソッドを、インスタンス メソッドと同じ記法で呼びだせる機能があります。
+すなわち、「<a href="/study/csharp/functional/sp3_extension/#exmethod">拡張メソッド</a>」。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">class</span> PExtensions
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> Norm(<span class="keyword">this</span> X x) { <span class="keyword">return</span> x.X * x.X + x.Y * x.Y; }
+}</code></pre>
+<p>呼びだし方がインスタンス メソッドを同じ記法になる以外は、あくまでも単なる静的メソッドです。</p>
+<ul>
+<li><p><span class="pros-mark">○</span>誰でも（クラス実装者以外も）、どこでも（アセンブリの外でも）機能追加できる</p>
+</li>
+<li><p><span class="pros-mark">○</span>インターフェイスに対しても操作を与えられる。</p>
+</li>
+<li><p><span class="pros-mark">○</span>インスタンス メソッドと同じ記法で呼びだせる</p>
+</li>
+<li><p><span class="cons-mark">×</span>public な部分にしか触れない</p>
+</li>
+<li><p><span class="cons-mark">×</span>クラスがわかれることで、定義場所を探しにくい（呼びだし部分に PExtensions というクラス名が出てこない分、なおのこと探しにくい）</p>
+</li>
+</ul>
+<h3 id="section-7"><a id="sec-generated-title-8"></a> <a id="inheritance"></a>継承</h3>
+<p>さて、ここから先は正直なところ、<em>かなりの下策</em>。</p>
+<p>クラスの拡張というと、クラスの継承ですね。
+つまり、派生クラスを作ってそこにメンバーを足す。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> PEx : P
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> Norm() { <span class="keyword">return</span> X * X + Y * Y; }
+}</code></pre>
+<p>これにはわかりやすい問題があって、別の派生クラスからはこの Norm メソッドを使えません。
+かなり不便です。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> PMarkII : P
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> Z { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+	
+	<span class="comment">// この PMarkII からは Norm メソッドを使えない</span>
+}</code></pre>
+<p>継承は、以下のような場面で使うものであって、既存の完結したクラスに機能を追加するためのものではありません。</p>
+<ul>
+<li><p>インターフェイスや抽象クラスから複数の派生クラスを作って、多態的な動作を行う（ほとんどの場合、インターフェイスの利用を推奨）</p>
+</li>
+<li><p>複数のクラスの共通部分を切りだして、1つの基底クラスを作る（継承ではなくて包含で実現する方がいいことも多い）</p>
+</li>
+</ul>
+<p>「オブジェクト指向言語だから継承」みたいな安易な考え方は危険なので気を付けましょう。</p>
+<h3 id="section-8"><a id="sec-generated-title-9"></a> <a id="cast"></a>型変換</h3>
+<p>もう1つ、「なくはない」方法。
+（C# では普通やらないし、やっても大しておいしくない。
+一方、他の言語ではたまにこれに類する方法を見る。）</p>
+<p>1段階、型変換をはさんでしまうというもの。
+例えば、以下のようなクラスを作ります。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> PEx
+{
+    <span class="keyword">private</span> <span class="keyword">readonly</span> P _x;
+    <span class="keyword">private</span> PEx(P x) { _x = x; }
+    <span class="comment">// P からの型変換を用意</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">implicit</span> <span class="keyword">operator</span> PEx(P x) { <span class="keyword">return</span> <span class="keyword">new</span> PEx(x); }
+
+    <span class="keyword">public</span> <span class="keyword">int</span> Norm() { <span class="keyword">return</span> _x.X * _x.X + _x.Y * _x.Y; }
+}</code></pre>
+<p>そして、以下のように使う。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = <span class="keyword">new</span> P { X = <span class="number">1</span>, Y = <span class="number">2</span> };
+<span class="keyword">var</span> norm = ((PEx)x).Norm();
+Console.WriteLine(norm);</code></pre>
+<p>これをやるくらいなら拡張メソッドでいいじゃないという感じのものです。
+言語によっては、キャスト式を書かなくても型推論で自動的に変換をかけてくれるものもあります。
+が、Visual Studio 上でのコード補完のためにほぼリアルタイムで構文解析している C# では、あんまり変な型推論までするのは得策ではないので、
+ここまでの自動型変換は将来的にも載ることはないと思われます。</p>
+<h2 id="section-9"><a id="sec-generated-title-10"></a> <a id="why-exntensions"></a>拡張メソッドの使いどころ</h2>
+<p>機能拡張のやり方ですが、継承とか型変換でやるのはあまり筋がよくなくて、
+結局、普通にインスタンス メソッドを足すか、拡張メソッドで作るかの2択になります。
+この2つ利点・欠点の比較をまとめてみましょう。</p>
+<table summary="">
+
+	<tr>
+		<th>インスタンス メソッド</th>
+		<th>拡張メソッド</th>
+	</tr>
+	<tr>
+		<td><p>クラスの記法がフルに使える</p></td>
+		<td><p>（結局のところ分離された赤の他人なので）public なメンバーしか触れない</p></td>
+	</tr>
+	<tr>
+		<td><p>分離ができない。クラス実装者が責任を持って機能追加する必要がある</p></td>
+		<td><p>分離できる。第三者が機能を実装できる</p></td>
+	</tr>
+	<tr>
+		<td><p>分離されないがゆえに、どこで定義されているかは探しやすい</p></td>
+		<td><p>分離されているがゆえに、定義場所を探しにくい</p></td>
+	</tr>
+	<tr>
+		<td><p>インターフェイスに対して実装を与えられない</p></td>
+		<td><p>インターフェイスに対しても実装を与えられる</p></td>
+	</tr>
+</table>
+<p>結局のところ、クラスとメソッドが分離されるかどうかという点が差のすべてで、
+この分離を良しとするかどうかポイントです。
+分離する必要がないなら、普通にインスタンス メソッドで実装しましょう。</p>
+<p>従って、クラスとメソッドを分離すべき状況というものについて考える必要があります。</p>
+<h3 id="section-10"><a id="sec-generated-title-11"></a> <a id="who-implement"></a>実装者がわかれる</h3>
+<p>クラスの実装者と違う人がクラスへの操作・アルゴリズムを作りたい時
+規約とアルゴリズムは直交概念
+普通、別の人が作りたくなるもの</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/WhyExtensions1.png"><img src="/assets/media/ufcpp2000/csharp/fig/WhyExtensions1.png" alt="クラスの実装者と関数（メソッド）の実装者がわかれる例" /></a></p>
+<figcaption>クラスの実装者と関数（メソッド）の実装者がわかれる例</figcaption>
+</figure>
+<h3 id="section-11"><a id="sec-generated-title-12"></a> <a id="dependency"></a>アセンブリの依存解消</h3>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+    <span class="keyword">public</span> B ToB() { <span class="comment">/* B への変換処理 */</span> }
+}
+
+<span class="keyword">class</span> B
+{
+    <span class="keyword">public</span> A ToA() { <span class="comment">/* A への変換処理 */</span> }
+}</code></pre>
+<p>循環参照あり（絵にする）</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> A { }
+
+<span class="keyword">static</span> <span class="keyword">class</span> AExtensions
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> B ToB(<span class="keyword">this</span> A a) { <span class="comment">/* B への変換処理 */</span> }
+}
+
+<span class="keyword">class</span> B
+{
+    <span class="keyword">public</span> A ToA() { <span class="comment">/* A への変換処理 */</span> }
+}</code></pre>
+<p>A の B への依存が消えて、循環しなくなる。
+これで、A と B のアセンブリを分けれる。</p>
+<p>実際、今、Type 型と TypeInfo 型がこんな関係。
+GetTypeInfo()
+System.Runtime と System.Reflection</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/functional/">&#x95A2;&#x6570;&#x6307;&#x5411;</a></li><li><a href="/study/csharp/functional/fun_functional/">&#x95A2;&#x6570;&#x6307;&#x5411;</a></li><li><a href="/study/csharp/functional/sp_delegate/">&#x30C7;&#x30EA;&#x30B2;&#x30FC;&#x30C8;</a></li><li><a href="/study/csharp/functional/misc_delegate/">[&#x96D1;&#x8A18;] &#x30C7;&#x30EA;&#x30B2;&#x30FC;&#x30C8;&#x306E;&#x5229;&#x7528;&#x4F8B;</a></li><li><a href="/study/csharp/functional/miscdelegateinternal/">[&#x96D1;&#x8A18;] &#x30C7;&#x30EA;&#x30B2;&#x30FC;&#x30C8;&#x306E;&#x5185;&#x90E8;</a></li><li><a href="/study/csharp/functional/fun_localfunctions/">&#x30ED;&#x30FC;&#x30AB;&#x30EB;&#x95A2;&#x6570;&#x3068;&#x533F;&#x540D;&#x95A2;&#x6570;</a></li><li><a href="/study/csharp/functional/sp2_anonymousmethod/">[&#x96D1;&#x8A18;] &#x533F;&#x540D;&#x95A2;&#x6570;&#x306E;&#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;</a></li><li><a href="/study/csharp/functional/sp3_lambda/">&#x30E9;&#x30E0;&#x30C0;&#x5F0F;</a></li><li><a href="/study/csharp/functional/sp_event/">&#x30A4;&#x30D9;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/functional/misceventsubscribe/">&#x3010;&#x96D1;&#x8A18;&#x3011;&#x30A4;&#x30D9;&#x30F3;&#x30C8;&#x306E;&#x8CFC;&#x8AAD;&#x3068;&#x305D;&#x306E;&#x89E3;&#x9664;</a></li><li><a href="/study/csharp/functional/sp3_functional/">&#x95A2;&#x6570;&#x578B;&#x8A00;&#x8A9E;&#x30FB;&#x52D5;&#x7684;&#x8A00;&#x8A9E;&#x7684;&#x306A;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/functional/sp3_extension/">&#x62E1;&#x5F35;&#x30E1;&#x30BD;&#x30C3;&#x30C9;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

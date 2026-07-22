@@ -1,0 +1,157 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5C0F;&#x30CD;&#x30BF; &#x540C;&#x671F;&#x30B3;&#x30F3;&#x30C6;&#x30AD;&#x30B9;&#x30C8;&#x3092;&#x62FE;&#x308F;&#x306A;&#x3044;Task&#x578B; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/12/tipscontextfreetask/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-12-09T00:16:14">2016-12-09</time></span><span>更新: <time datetime="2016-12-27T14:32:41">2016-12-27</time></span></div><h1 id="task">小ネタ 同期コンテキストを拾わないTask型</h1>
+<p>今日も小ネタというかC# 7ネタというか、C# 7に合わせて1個ライブラリ書いたというか。</p>
+<p>勢いで、こんなライブラリ1個作ってしまいました。
+C# 7向けです(半分くらいはC# 5.0でも使えるものですが)。</p>
+<ul>
+<li><a href="https://github.com/ufcpp/ContextFreeTask">ContextFreeTask</a></li>
+</ul>
+<p>ということで、C# 7の機能の1つについて説明。
+C# 7で以下のような機能が入ります。</p>
+<ul>
+<li><a href="/study/csharp/cheatsheet/ap_ver7/#tasklike">非同期メソッドの戻り値に任意の型を使えるように</a></li>
+</ul>
+<p>ほぼ、<code>ValueTask</code>のために入った機能なんですが、まあ、せっかくなので他でも使ってみようというのが今日の話。</p>
+<h2 id="section">同期コンテキスト</h2>
+<p>C#に限らずいろんなプログラミング言語で、非同期処理の後にメイン スレッドに戻ってこないといけないという制約があったりします。
+特に、GUIプログラムの開発環境だとたいてい、UIがらみのクラスはメイン スレッド(UI末ラッド)からしか触れないとかそういう制約があります。</p>
+<p>こういう、「メイン スレッドに戻らないといけない」とか、その場その場にある文脈を同期コンテキストと言います。
+C#で<code>await</code>を使って非同期処理をする場合、
+<code>await</code>した時点で同期コンテキストを持っていたら、
+それを拾って元のコンテキストに戻ってくるようになっています。</p>
+<p>同期コンテキストに関する説明、参考URLを探そうとしたものの…
+意外とこの時期、真面目に自分のサイトを更新してなくて「書きかけ」ばっかり…
+一番真面目に書いてあるのが@ITで書いたSilverlightの記事という…
+(XamarinとかASP.NET Coreあたりで書き直したい気もしつつ。)</p>
+<ul>
+<li><a href="http://www.atmarkit.co.jp/fdotnet/chushin/introsl_04/introsl_04_02.html">避けて通れない「非同期処理」を克服しよう</a></li>
+<li><a href="/study/csharp/async/misc_uithread/">[雑記] GUI と非同期処理</a></li>
+</ul>
+<p>とにかく、C#には同期コンテキストってものがあって、通常、<code>await</code>するとそのコンテキスト拾って、スレッド プールからメイン スレッドとかに自動的に戻ってきてくれる仕組みが入っています。</p>
+<h3 id="section-1">コンテキスト拾いすぎ</h3>
+<p>とはいえ、これはアプリのレイヤーのためにある機能であって、
+逆に、ライブラリの中でコンテキストを拾っちゃうとまずかったりします。
+意図しないタイミングでメイン スレッドを止めてしまって、デッドロックを起こしたりします。</p>
+<p>ということで、ライブラリ作者は、同期コンテキストを拾わないようにするために、以下のようなコードを書くことを強要されます。</p>
+<pre><code class="language-csharp"><span class="comment">// ConfigureAwait で同期コンテキストを拾うかどうか設定できる</span>
+<span class="comment">// 引数を false にすると拾わない</span>
+<span class="keyword">await</span> FAsync().ConfigureAwait(<span class="keyword">false</span>);</code></pre>
+<p>ライブラリを書く側の人は毎度毎度、これで苦労します。
+正直に言って結構うざい…</p>
+<h2 id="task-1">コンテキストを拾わない Task</h2>
+<p>ってことで作ったのが <code>ContextFreeTask</code>。
+コンテキストを拾わない<code>Task</code>です。</p>
+<p>冒頭の通り、C# 7では非同期メソッドの戻り値の型を任意に変えれるようになったので、自作してみました。</p>
+<pre><code class="language-csharp"><span class="comment">// Task の代わりに ContextFreeTask を非同期メソッドの戻り値にできる</span>
+<span class="comment">// この中にある await は同期コンテキストを一切拾わない</span>
+<span class="keyword">private</span> <span class="keyword">async</span> ContextFreeTask FAsync()
+{
+    <span class="comment">// この時点でどんなコンテキストで動いていようと…</span>
+    <span class="keyword">await</span> Task.Delay(<span class="number">100</span>);
+    <span class="comment">// コンテキストは拾われないので、元のコンテキストには戻らない</span>
+    <span class="keyword">await</span> Task.Delay(<span class="number">100</span>);
+    <span class="comment">// 同上、戻らない</span>
+}
+
+<span class="keyword">private</span> <span class="keyword">async</span> Task GAsync()
+{
+    <span class="comment">// ContextFreeTask に対する await もできる</span>
+    <span class="comment">// この await も同期コンテキストを拾わない</span>
+
+    <span class="keyword">await</span> FAsync();
+    <span class="comment">// コンテキストは拾われない</span>
+}</code></pre>
+<p>概ね、以下のコードと同じ挙動になります。</p>
+<pre><code class="language-csharp"><span class="keyword">private</span> <span class="keyword">async</span> ContextFreeTask FAsync()
+{
+    <span class="keyword">await</span> Task.Delay(<span class="number">100</span>).ConfigureAwait(<span class="keyword">false</span>);
+    <span class="keyword">await</span> Task.Delay(<span class="number">100</span>).ConfigureAwait(<span class="keyword">false</span>);
+}
+
+<span class="keyword">private</span> <span class="keyword">async</span> Task GAsync()
+{
+    <span class="keyword">await</span> FAsync().ConfigureAwait(<span class="keyword">false</span>);
+}</code></pre>
+<p>戻り値があるとき用、すなわち、<code>Task&lt;TResult&gt;</code> の代わりの <code>ContextFreeTask&lt;T&gt;</code> もあります。</p>
+<pre><code class="language-csharp"><span class="keyword">private</span> <span class="keyword">async</span> ContextFreeTask&lt;<span class="keyword">string</span>&gt; HAsync(<span class="keyword">int</span> n)
+{
+    <span class="keyword">await</span> Task.Delay(<span class="number">100</span>);
+    <span class="keyword">return</span> n.ToString();
+}</code></pre>
+<h3 id="section-2">中身</h3>
+<p><code>Task</code> 1個だけ持つ薄いラッパー構造体で、
+ほとんどの処理は<code>Task</code>や、そのawaiter、async method builderへの丸投げです。
+その手前に<code>ConfigureAwait(false)</code>や<code>SetSynchronizationContext(null);</code>を挟んでいるだけ。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">struct</span> ContextFreeTask&lt;T&gt;
+{
+    <span class="keyword">public</span> Task&lt;T&gt; Task { <span class="keyword">get</span>; }
+}
+
+<span class="keyword">public</span> <span class="keyword">struct</span> ContextFreeTaskAwaiter : ICriticalNotifyCompletion
+{
+    <span class="keyword">private</span> <span class="keyword">readonly</span> Task _value;
+    <span class="keyword">public</span> <span class="keyword">void</span> OnCompleted(Action continuation) =&gt; _value.ConfigureAwait(<span class="keyword">false</span>).GetAwaiter().OnCompleted(continuation);
+}
+
+<span class="keyword">public</span> <span class="keyword">struct</span> AsyncContextFreeTaskMethodBuilder
+{
+    <span class="keyword">private</span> AsyncTaskMethodBuilder _methodBuilder;
+
+    <span class="keyword">public</span> <span class="keyword">void</span> AwaitOnCompleted&lt;TAwaiter, TStateMachine&gt;(<span class="keyword">ref</span> TAwaiter awaiter, <span class="keyword">ref</span> TStateMachine stateMachine)
+        <span class="keyword">where</span> TAwaiter : INotifyCompletion
+        <span class="keyword">where</span> TStateMachine : IAsyncStateMachine
+    {
+        SynchronizationContext.SetSynchronizationContext(<span class="keyword">null</span>);
+        _methodBuilder.AwaitOnCompleted(<span class="keyword">ref</span> awaiter, <span class="keyword">ref</span> stateMachine);
+    }
+}</code></pre>
+<h2 id="section-3">やってみて</h2>
+<p>とりあえず小ネタというか、単にライブラリ紹介だったわけですが…</p>
+<p>まあ、この、任意の型を非同期メソッドの戻り値に使える機能、
+「<a href="/study/csharp/cheatsheet/ap_ver7/">C# 7の新機能紹介</a>」でもどう取り扱うかは結構悩みまして。
+何せ、実用例がほんとに少ない。
+なので、どうしても「ほぼ <a href="/study/csharp/async/sp5_async/#valuetask"><code>ValueTask</code></a> 専用です」的な書き口に。
+(<code>ValueTask</code> だけで十分価値は高いんですが。)</p>
+<p>一応小ネタっぽい話もすると、この機能、C#チームからも</p>
+<blockquote>
+<p>We estimate that in the eventual C# ecosystem maybe 5 people will write tasklike types that get mainstream adoption.</p>
+</blockquote>
+<blockquote>
+<p>我々の見積もりでは、最終的に C# エコシステム内において、たぶんせいぜい5人くらいが、メインストリームに採用される tasklike 型を書くことになるだろう。</p>
+</blockquote>
+<p>とか言われています(参考: <a href="https://github.com/dotnet/roslyn/issues/10902#issuecomment-242428870">C# LDM notes from 2016.08.24</a>)。
+せいぜい5人。</p>
+<p>たぶん確実に使われそうなのとしては、</p>
+<ul>
+<li>主目的たる<code>ValueTask</code></li>
+<li><a href="https://msdn.microsoft.com/ja-jp/library/windows/apps/br206598.aspx">WinRTの<code>IAsyncOperation</code></a>との相互運用</li>
+<li><a href="https://www.nuget.org/packages/System.Reactive/">Rx</a></li>
+</ul>
+<p>の3つは確定。
+残りせいぜい2個ですか。</p>
+<p>まあ、<code>ContextFreeTask</code>も、作ったはいいけど、大々的に使うかどうかはちょっと悩ましかったり。
+誤用(逆に使うとまずいアプリのレイヤーで使われたり。ライブラリでも、publicなところで使ってしまうと、アプリ側でコンテキストを拾い損ねる事態になりそう)がちょっと怖そうですし。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/12/">2016/12</a></li><li><a href="/blog/2016/12/tipstryroslyn/">C#&#x5C0F;&#x30CD;&#x30BF;&#x96C6;: C#&#x3092;Web&#x4E0A;&#x3067;&#x8A66;&#x3059;</a></li><li><a href="/blog/2016/12/tipsildasm/">&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x3092;&#x8997;&#x3044;&#x3066;&#x307F;&#x3088;&#x3046;</a></li><li><a href="/blog/2016/12/tipscorefxlab/">&#x5C0F;&#x30CD;&#x30BF; corefxlab&#x3068;System.Memory</a></li><li><a href="/blog/2016/12/tipsevalorder/">&#x5C0F;&#x30CD;&#x30BF; &#x5F0F;&#x306E;&#x8A55;&#x4FA1;&#x9806;&#x5E8F;</a></li><li><a href="/blog/2016/12/tipsobjectinitializer/">&#x5C0F;&#x30CD;&#x30BF; &#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2016/12/tipscollectioninitializer/">&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2016/12/tipsindexedforeach/">&#x5C0F;&#x30CD;&#x30BF; &#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;&#x4ED8;&#x304D; foreach</a></li><li><a href="/blog/2016/12/tipsuniontypes/">&#x5C0F;&#x30CD;&#x30BF; &#x30C1;&#x30A7;&#x30C3;&#x30AF;&#x4F8B;&#x5916;&#x3068;Union&#x578B;</a></li><li><a href="/blog/2016/12/tipsformattingcharacter/">&#x5C0F;&#x30CD;&#x30BF; &#x30D5;&#x30A9;&#x30FC;&#x30DE;&#x30C3;&#x30C8;&#x6587;&#x5B57;&#x8B58;&#x5225;&#x5B50;</a></li><li><a href="/blog/2016/12/tipsimplicitmembers/">&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/blog/2016/12/tipstadpoleoperator/">&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x6F14;&#x7B97;&#x5B50;(&#xFF1F;)</a></li><li><a href="/blog/2016/12/tipsnulloperation/">&#x5C0F;&#x30CD;&#x30BF; null&#x95A2;&#x4FC2;&#x306E;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/blog/2016/12/vs2017rc2/">Updating Visual Studio 2017 Release Candidate</a></li><li><a href="/blog/2016/12/patternmatching/">&#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30DE;&#x30C3;&#x30C1;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/pickuproslyn1214/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/14</a></li><li><a href="/blog/2016/12/tipsdeconstruct/">&#x5C0F;&#x30CD;&#x30BF; &#x300C;deconstruct&#x300D;&#x3068;&#x3044;&#x3046;&#x5358;&#x8A9E;</a></li><li><a href="/blog/2016/12/tipsgeneratedil/">&#x5C0F;&#x30CD;&#x30BF; &#x69CB;&#x6587;&#x7CD6;&#x8863;&#x3068;&#x3001;&#x305D;&#x3046;&#x3067;&#x306F;&#x306A;&#x3044;&#x69CB;&#x6587;&#x3068;</a></li><li><a href="/blog/2016/12/tipsprimitives/">&#x5C0F;&#x30CD;&#x30BF; &#x30D7;&#x30EA;&#x30DF;&#x30C6;&#x30A3;&#x30D6;&#x578B;</a></li><li><a href="/blog/2016/12/tipsapisurface/">&#x5C0F;&#x30CD;&#x30BF; private&#x30E1;&#x30F3;&#x30D0;&#x30FC;&#x306F;API&#x306E;&#x4E00;&#x90E8;&#x304B;</a></li><li><a href="/blog/2016/12/tipsstringmarshal/">&#x5C0F;&#x30CD;&#x30BF; string&#x578B;&#x306E;&#x30DE;&#x30FC;&#x30B7;&#x30E3;&#x30EA;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/tipsnumargs/">&#x5C0F;&#x30CD;&#x30BF; &#x5F15;&#x6570;&#x306E;&#x500B;&#x6570;&#x306E;&#x4E0A;&#x9650;</a></li><li><a href="/blog/2016/12/tipsotherlangs/">&#x5C0F;&#x30CD;&#x30BF; C# &#x3068;&#x4ED6;&#x306E;&#x8A00;&#x8A9E;&#x3068;&#x306E;&#x5DEE;&#x3068;&#x3044;&#x3046;&#x3068;</a></li><li><a href="/blog/2016/12/tipsconcurrentcollections/">&#x5C0F;&#x30CD;&#x30BF; Concurrent &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/blog/2016/12/discards/">discards</a></li><li><a href="/blog/2016/12/tipssmallheapallocation/">&#x5C0F;&#x30CD;&#x30BF; &#x5C0F;&#x3055;&#x306A;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x5272;&#x308A;&#x5F53;&#x3066;</a></li><li><a href="/blog/2016/12/tipsparallelism/">&#x5C0F;&#x30CD;&#x30BF; &#x4E26;&#x5217;&#x5316;</a></li><li><a href="/blog/2016/12/tipsdowhile/">&#x5C0F;&#x30CD;&#x30BF; do-while</a></li><li><a href="/blog/2016/12/tipsatan2/">&#x5C0F;&#x30CD;&#x30BF; atan2</a></li><li><a href="/blog/2016/12/tipsnormaldistribution/">&#x5C0F;&#x30CD;&#x30BF; &#x6B63;&#x898F;&#x5206;&#x5E03;&#x306E;&#x4E38;&#x307F;</a></li><li><a href="/blog/2016/12/lookbackattheyear/">&#x4ECA;&#x5E74;&#x306E;&#x632F;&#x308A;&#x8FD4;&#x308A;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

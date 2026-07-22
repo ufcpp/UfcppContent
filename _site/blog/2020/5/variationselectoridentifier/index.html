@@ -1,0 +1,163 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x898B;&#x305F;&#x76EE;&#x3067;&#x533A;&#x5225;&#x3067;&#x304D;&#x306A;&#x3044;&#x5909;&#x6570; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2020/5/variationselectoridentifier/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2020-05-18T00:02:03">2020-05-18</time></span><span>更新: <time datetime="2020-05-19T19:40:45">2020-05-19</time></span></div><h1 id="section">見た目で区別できない変数</h1>
+<p>ちょっとしたネタ投稿をしてみたわけですが。</p>
+<p><a href="https://paiza.io/projects/WMu7W_PPTqkZRV5iGztJtg">https://paiza.io/projects/WMu7W_PPTqkZRV5iGztJtg</a></p>
+<pre><code class="language-java"><span class="keyword">import</span> java.util.*;
+
+<span class="keyword">public</span> <span class="keyword">class</span> Main {
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(String[] args) <span class="keyword">throws</span> Exception {
+        <span class="keyword">int</span> a = <span class="number">1</span>;
+        <span class="keyword">int</span> a︀ = <span class="number">2</span>;
+        <span class="keyword">int</span> a︁ = <span class="number">4</span>;
+        <span class="keyword">int</span> a︂ = <span class="number">8</span>;
+        <span class="keyword">int</span> a︃ = <span class="number">16</span>;
+        <span class="keyword">int</span> a︄ = <span class="number">32</span>;
+        <span class="keyword">int</span> a︅ = <span class="number">64</span>;
+        <span class="keyword">int</span> a︆ = <span class="number">128</span>;
+        <span class="keyword">int</span> a︇ = <span class="number">256</span>;
+        <span class="keyword">int</span> a︈ = <span class="number">512</span>;
+        <span class="keyword">int</span> a︉ = <span class="number">1024</span>;
+        <span class="keyword">int</span> a︊ = <span class="number">2048</span>;
+        <span class="keyword">int</span> a︋ = <span class="number">4096</span>;
+        <span class="keyword">int</span> a︌ = <span class="number">8192</span>;
+        <span class="keyword">int</span> a︍ = <span class="number">16384</span>;
+        <span class="keyword">int</span> a︎ = <span class="number">32768</span>;
+        <span class="keyword">int</span> a️ = <span class="number">65536</span>;
+
+        System.out.println(a + a︀ + a︁ + a︂ + a︃ + a︄ + a︅ + a︆ + a︇ + a︈ + a︉ + a︊ + a︋ + a︌ + a︍ + a︎ + a️);
+    }
+}</code></pre>
+<p>ぱっと見は同じ「<code>a</code>」という名前の変数が17個並んでいますが、これ、全部別変数です。
+名前被りでコンパイル エラーになったりもしません。</p>
+<p>まあ、種を明かすと<a href="https://ja.wikipedia.org/wiki/%E7%95%B0%E4%BD%93%E5%AD%97%E3%82%BB%E3%83%AC%E3%82%AF%E3%82%BF">異体字セレクター</a>っていう不可視の文字をくっつけてるだけで、この異体字セレクターが16種類あるので(何もつけてない1個と併せて)17個の「<code>a</code>」を作れているという状態。</p>
+<h2 id="section-1">元々同じ見た目で別の文字</h2>
+<p>特に難しいことをしなくても、元々、見た目が同じ別の文字は結構あります。
+分かりやすい例で言うと、</p>
+<ul>
+<li><a href="https://www.fileformat.info/info/unicode/char/0041/index.htm">A (U+0041)</a> : ラテン文字の大文字の a</li>
+<li><a href="https://www.fileformat.info/info/unicode/char/0391/index.htm">Α (U+0391)</a> : ギリシャ文字の大文字の α</li>
+<li><a href="https://www.fileformat.info/info/unicode/char/0410/index.htm">А (U+0410)</a> : キリル文字の大文字の а</li>
+</ul>
+<p>とか。
+全部出自が同じだし、発音も同系統(「あ」系統)なので似てて当然なんですが。
+「出自が同じで字形も近い文字をまとめるかどうか」と言うのは結構根が深い問題になります。
+Unicode ではこれらの文字を別文字扱いしています。</p>
+<p>(別の文字なので当然字形が違ってもいいんですけども、
+たいていのフォントでは同じ字形で表示されて区別がつかないと思います。)</p>
+<p>こいつらを使えば、割と簡単に「ぱっと見で区別がつかない変数」を作れます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> A = <span class="number">1</span>;
+        <span class="keyword">var</span> Α = <span class="number">2</span>;
+        <span class="keyword">var</span> А = <span class="number">4</span>;
+ 
+        Console.WriteLine(A + Α + А); <span class="comment">// 7</span>
+        Console.WriteLine((<span class="keyword">int</span>)nameof(A)[<span class="number">0</span>]); <span class="comment">// U+0041 (10進 65)</span>
+        Console.WriteLine((<span class="keyword">int</span>)nameof(Α)[<span class="number">0</span>]); <span class="comment">// U+0391 (10進 913)</span>
+        Console.WriteLine((<span class="keyword">int</span>)nameof(А)[<span class="number">0</span>]); <span class="comment">// U+0410 (10進 1040)</span>
+    }
+}</code></pre>
+<p>今時、意図的に排除<sup>※</sup>でもしていない限り non-ASCII な文字も変数名に使えるので、たいていの言語で同じことができると思います。
+まあ、わざわざ non-ASCII な文字でソースコードを書く人も少ないので、悪意を持ってやらない限りは起きないと思いますが。</p>
+<p>(<sup>※</sup> 例えば <a href="https://doc.rust-lang.org/reference/identifiers.html">Rust</a> は ASCII 文字しか受け付けない意思を感じる。)</p>
+<h2 id="section-2">アクセント</h2>
+<p>もう少し悪意を高めてみます。</p>
+<p>Unicode はそれ以前の各国個別の文字コードとの互換性のために、
+いくつか、全く同じ文字を別のコードで表現できてしまいます。
+分かりやすいのがアクセント記号の類(<a href="https://ja.wikipedia.org/wiki/%E3%83%80%E3%82%A4%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%86%E3%82%A3%E3%82%AB%E3%83%AB%E3%83%9E%E3%83%BC%E3%82%AF">ダイアクリティカルマーク</a>)で、
+例えば、「á」の文字は以下の2通りの表現方法があります。</p>
+<ul>
+<li>á (<a href="https://www.fileformat.info/info/unicode/char/00E1/index.htm">U+00E1</a>) : 元々西欧向け文字コードに入っていた文字</li>
+<li>á (<a href="https://www.fileformat.info/info/unicode/char/0061/index.htm">U+0061</a> <a href="https://www.fileformat.info/info/unicode/char/0301/index.htm">U+0301</a>) : 無印の a の上に acute アクセントを結合</li>
+</ul>
+<p>Unicode にはこの手の「同じ文字の別表現」を互いに変換するための仕様も入っているんですが、
+その手の変換まで書けるプログラミング言語はまずありません。</p>
+<p>結果的に、この手の文字も「ぱっと見で区別がつかない変数」に使えます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> &#225; = <span class="number">1</span>;
+        <span class="keyword">var</span> á = <span class="number">2</span>;
+ 
+        Console.WriteLine(&#225; + á); <span class="comment">// 3</span>
+        Console.WriteLine((<span class="keyword">int</span>)nameof(&#225;)[<span class="number">0</span>]); <span class="comment">// U+00E1 (10進 225)</span>
+        Console.WriteLine((<span class="keyword">int</span>)nameof(á)[<span class="number">0</span>]); <span class="comment">// [0] は `a` が拾える。U+0061 (10進 97)</span>
+        Console.WriteLine(nameof(á).Length); <span class="comment">// 実は2文字なので Length が 2</span>
+    }
+}</code></pre>
+<p>アクセント記号(この例で言うと U+0301)を変数名に使えるかどうかはプログラミング言語によります。
+例えば <a href="https://golang.org/ref/spec#Identifiers">Go は letter (a とかの可読文字)しか受け付けません</a>。
+<a href="https://docs.oracle.com/javase/jp/7/api/java/lang/Character.html#isJavaIdentifierPart(int)">Java</a> とか <a href="https://docs.microsoft.com/ja-jp/dotnet/csharp/language-reference/language-specification/lexical-structure#identifiers">C#</a> とかは、2文字目以降にはアクセント記号の類を受け付けます。</p>
+<h2 id="section-3">0幅不可視文字</h2>
+<p>Unicode にはいくつか、以下のような、0幅でまったく見えない文字が存在します。</p>
+<ul>
+<li><a href="https://www.fileformat.info/info/unicode/char/200d/index.htm">Zero Width Joiner (U+200D)</a> : 前後の文字をくっつける(改行とかで分割されることが絶対起きないようにするための文字)</li>
+<li><a href="https://www.fileformat.info/info/unicode/char/200f/index.htm">Right-to-Left Mark U+200F</a> : この文字以降、右書きにする</li>
+</ul>
+<p>まあでも、この手の文字はほとんどのプログラミング言語が受け付けません。
+Java と C# はちょっと特殊で、「<a href="https://docs.oracle.com/javase/jp/7/api/java/lang/Character.html#isIdentifierIgnorable(int)">受け付けるけど完全に無視</a>」という挙動をしたりします。</p>
+<p>いずれにしても、0幅不可視な文字がソースコードに紛れていて困ることはほとんどない…
+と思っていたんですけども…</p>
+<h2 id="section-4">異体字セレクター</h2>
+<p>そういえばあったわ、Java と C# が変数名として受け付けて、無視もせず、0幅不可視の文字…
+というのが<a href="https://ja.wikipedia.org/wiki/%E7%95%B0%E4%BD%93%E5%AD%97%E3%82%BB%E3%83%AC%E3%82%AF%E3%82%BF">異体字セレクター</a>。</p>
+<p><a href="https://ja.wikipedia.org/wiki/%E6%96%9C%E7%B7%9A%E4%BB%98%E3%81%8D%E3%82%BC%E3%83%AD">数字の 0 を斜線付きで表示</a>したりするために使う文字なんですけども、カテゴリーが <a href="https://www.compart.com/en/unicode/category/Mn">Nonspacing Mark</a> (アクセント記号とかと同じカテゴリー)だったりします。</p>
+<p>ほとんどの文字が異体字なんて持ってないので、異体字セレクターがくっついていても、テキスト レンダリング上は単に無視されます。
+要するに、実質、0幅不可視文字。
+なのに、カテゴリー的には変数として受け付けられるし、別の文字として扱われます。</p>
+<p>このうち U+FE00〜U+FE0F の16文字を使って書いたコードが冒頭の Java コードになります。</p>
+<p>再掲: <a href="https://paiza.io/projects/WMu7W_PPTqkZRV5iGztJtg">https://paiza.io/projects/WMu7W_PPTqkZRV5iGztJtg</a></p>
+<p>ちなみにこの文字、後ろにいくらでもつなげられるので、16個と言わず、文字列長を増やしていけばいくらでも「<code>a</code>」を増やせます。</p>
+<h2 id="section-5">ちなみに、背景</h2>
+<p>これ、<a href="https://github.com/ufcpp/roslyn/commit/94557f7e5bc0804c308b0af98f734e1d3f99592a#diff-92ef870ff9496ca561e057580a939742R24-R55">単体テストのテストケース</a>を検討しているときに思いついたものの、
+以下の2つの理由で没ったものだったりします。</p>
+<ul>
+<li>簡単に入力できない
+<ul>
+<li>普通の状況で絶対に現れない文字列</li>
+<li>日本語 IME を使って入力できちゃう「葛󠄀」(葛󠄀城市の葛󠄀。葛飾区の葛の異体字。U+845B U+E0100)の方が適任</li>
+</ul>
+</li>
+<li>プログラム的には難しい処理をしていない
+<ul>
+<li>厄介なのは人の目に見えないという点だけ</li>
+<li>プログラム的には  á (<a href="https://www.fileformat.info/info/unicode/char/0061/index.htm">U+0061</a> <a href="https://www.fileformat.info/info/unicode/char/0301/index.htm">U+0301</a>) と同じパターンなので、á だけで十分</li>
+</ul>
+</li>
+</ul>
+<p>というか、「葛󠄀」と「葛」は区別されるのかどうかが気になったのが先で、
+異体字セレクター (U+E0100 とか)のカテゴリーがアクセント記号の類と同じ(Nonspacing Mark)なことに気付いたというのが実際の流れ。
+(しかも、この <a href="https://www.fileformat.info/info/unicode/category/Mn/list.htm">Nonspacing Mark カテゴリー</a>の文字一覧を眺めてみてるに、完全に不可視なのは異体字セレクターだけっぽい。)</p>
+<p>ちなみに、どうやって上記 Java コードを書いたかと言うと…
+<a href="https://paiza.io/projects/MN1P7UTSayHYhpkJ6Reuow"><code>&quot;a\uFE00a\uFE01a\uFE02a\uFE03...&quot;</code> みたいなエスケープ シーケンスを使ってプログラムで出力して</a>、それをコピペして書いています。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2020/5/">5&#x6708;</a></li><li><a href="/blog/2020/5/sourcegenerator/">C# Source Generator (first preview)&#x3092;&#x8A66;&#x3057;&#x3066;&#x307F;&#x308B;</a></li><li><a href="/blog/2020/5/featureswitch/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: .NET 5 &#x3078;&#x306E; Xamarin &#x7D71;&#x5408;&#x306B;&#x5411;&#x3051;&#x3066;</a></li><li><a href="/blog/2020/5/pickuproslyn0503/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: C# 9.0 &#x5411;&#x3051; Design Notes</a></li><li><a href="/blog/2020/5/cs9net5p4/">C# 9.0 in .NET 5 Preview 4 (Build &#x3067;&#x306E;&#x30EA;&#x30EA;&#x30FC;&#x30B9;)</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,649 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x6A19;&#x6E96;&#x30AF;&#x30A8;&#x30EA;&#x6F14;&#x7B97;&#x5B50;&#xFF08;&#x30AF;&#x30A8;&#x30EA;&#x5F0F;&#x95A2;&#x4FC2;&#xFF09; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/data/sp3_stdquery/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">標準クエリ演算子（クエリ式関係）</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<h5 class="version version3">Ver. 3.0</h5>
+<p>「<a href="/study/csharp/data/sp3_linq/">LINQ</a>」で、</p>
+<ul>
+<li><p>構文の追加（クエリ式）： C# 3.0 で、SQL 風の問い合わせ構文が書けるようになった。</p>
+</li>
+<li><p>メソッド群の追加（標準クエリ演算子）： クエリ式は、Where、Select などのメソッド呼び出しに変換される。（これらのメソッドを標準クエリ演算子と呼ぶ。）</p>
+</li>
+</ul>
+<p>という話をしました。</p>
+<p>ここでは、
+どういう C# クエリ式がどういう標準クエリ演算子（メソッド呼び出し）に変換されるかを説明しつつ、
+クエリ式に関係する標準クエリ演算子を紹介します。</p>
+<p>（ちなみに、標準クエリ演算子の中には、クエリ式で表せない
+（メソッド呼び出しの形でしか使えない）ものも多数あります。
+次節の「<a href="/study/csharp/data/sp3_stdqueryo/">標準クエリ演算子（その他）</a>」で説明。）</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="sampledata"></a>サンプルデータ</h2>
+<p>次節以降の説明では、例として以下のようなデータを使います。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> a = <span class="keyword">new</span>[]
+{
+  <span class="keyword">new</span> { X = <span class="number">0</span>, Y = <span class="number">10</span>, Z = <span class="keyword">new</span>[]{ <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>} },
+  <span class="keyword">new</span> { X = <span class="number">1</span>, Y = <span class="number">11</span>, Z = <span class="keyword">new</span>[]{ <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>} },
+  <span class="keyword">new</span> { X = <span class="number">2</span>, Y = <span class="number">12</span>, Z = <span class="keyword">new</span>[]{ <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>} },
+  <span class="keyword">new</span> { X = <span class="number">3</span>, Y = <span class="number">13</span>, Z = <span class="keyword">new</span>[]{ <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>} },
+  <span class="keyword">new</span> { X = <span class="number">4</span>, Y = <span class="number">14</span>, Z = <span class="keyword">new</span>[]{ <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>} },
+};</code></pre>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="queryex"></a>クエリ式の構成要素</h2>
+<p>C# 3.0 で導入されたクエリ式の構成要素は以下のとおりです。</p>
+<table summary="クエリ式の構成要素">
+	<caption>
+		クエリ式の構成要素
+	</caption>
+	<tr>
+		<th>要素</th>
+		<th>概要</th>
+		<th>関連する標準クエリ演算子</th>
+	</tr>
+	<tr>
+		<td><p>「<a href="#from">from 句</a>」</p></td>
+		<td><p>データの取り出し元を指定します。</p></td>
+		<td><p>Select, SelectMany, Cast</p></td>
+	</tr>
+	<tr>
+		<td><p>「<a href="#where">where 句</a>」</p></td>
+		<td><p>データを与えられた条件に沿ってフィルタリングします。</p></td>
+		<td><p>Where</p></td>
+	</tr>
+	<tr>
+		<td><p>「<a href="#select">select 句</a>」</p></td>
+		<td><p>データの出力形式を指定します。（要するに、データを加工する。）</p></td>
+		<td><p>Select</p></td>
+	</tr>
+	<tr>
+		<td><p>「<a href="#groupby">group ... by 句</a>」</p></td>
+		<td><p>キーを指定して、キーの値の等しいものをグループ化します。</p></td>
+		<td><p>GroupBy</p></td>
+	</tr>
+	<tr>
+		<td><p>into</p></td>
+		<td><p>join 句、group 句、select 句の後ろにさらにクエリを続ける場合に使います。</p></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><p>「<a href="#orderby">orderby 句</a>」</p></td>
+		<td><p>データシーケンスを整列します。</p></td>
+		<td><p>OrderBy, OrderByDescending, ThenBy, ThenByDescending</p></td>
+	</tr>
+	<tr>
+		<td><p>「<a href="#join">join 句</a>」</p></td>
+		<td><p>2つのデータシーケンスを1つに結合します。</p></td>
+		<td><p>Join, GroupJoin</p></td>
+	</tr>
+	<tr>
+		<td><p>「<a href="#let">let 句</a>」</p></td>
+		<td><p>クエリ式中で計算した値を変数に格納します。</p></td>
+		<td><p>Select</p></td>
+	</tr>
+</table>
+<h2 id="from"><a id="sec-generated-title-4"></a> <a id="from"></a>クエリ変換と from</h2>
+<p>C# 3.0 のクエリ式は <strong id="from" class="keyword">from 句</strong>から始まります。
+（SQL と違って、from が一番最初に来るのは、上から順番にクエリ式を解釈できるようにするため。
+あと、from が一番上にないと、Visual Studio のインテリセンスとの相性が悪かったらしい。）</p>
+<p>また、クエリ式は select 句または group 句で終わります。
+select, group については次節以降で説明します。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b =
+  <span class="keyword">from</span> p <span class="keyword">in</span> a
+  <span class="keyword">select</span> p.X;</code></pre>
+<p>繰り返しになりますが、C# 3.0 自体がクエリの解釈能力を持っているわけではなく、
+この式は以下のようなメソッド呼び出しに変換されます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b = a.Select(p =&gt; p.X);</code></pre>
+<p>このように、from p in a と書くなら、
+a に対する標準クエリ演算子メソッド呼び出しに変換されます。
+また、p はラムダ式の仮引数になります。</p>
+<h2 id="section-4"><a id="sec-generated-title-5"></a> <a id="basis"></a>基本</h2>
+<p>基本的には、クエリ式は上から順番に、句単位でメソッド呼び出しに変換されます。
+要するに、例えば、</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b =
+  <span class="keyword">from</span> p <span class="keyword">in</span> a
+  <span class="keyword">where</span> p.Y &lt; <span class="number">12</span>
+  <span class="keyword">select</span> p.X;</code></pre>
+<p>というクエリ式の場合、
+上から順に、表1のように変換されます。</p>
+<table summary="変換例">
+	<caption>
+		変換例
+	</caption>
+	<tr>
+		<th>クエリ式</th>
+		<th>変換結果</th>
+	</tr>
+	<tr>
+		<td><code>
+            from p in a
+          </code></td>
+		<td><code>
+            a
+          </code></td>
+	</tr>
+	<tr>
+		<td><code>
+            where p.Y &lt; 12
+          </code></td>
+		<td><code>
+            .Where(p =&gt; p.Y &lt; 12)
+          </code></td>
+	</tr>
+	<tr>
+		<td><code>
+            select p.X
+          </code></td>
+		<td><code>
+            .Select(p =&gt; p.X)
+          </code></td>
+	</tr>
+</table>
+<p>ただし、
+末尾の Select は省略されることがあります。
+例えば、以下のようなクエリ式は、
+<code>a.Where(p =&gt; p.Y &lt; 12);</code> だけになります。
+（要するに、Select の中身が <code>.Select(x =&gt; x)</code> みたいに、素通しになる場合。）</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b =
+  <span class="keyword">from</span> p <span class="keyword">in</span> a
+  <span class="keyword">where</span> p.Y &lt; <span class="number">12</span>
+  <span class="keyword">select</span> p;</code></pre>
+<p>select や group by の後ろにさらにクエリを続けたい場合には、
+select / group by 句の後ろに into をつけます。
+例えば、</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b =
+  <span class="keyword">from</span> p <span class="keyword">in</span> a
+  <span class="keyword">select</span> p.X <span class="keyword">into</span> x
+  <span class="keyword">where</span> x &gt; <span class="number">2</span>
+  <span class="keyword">select</span> x;</code></pre>
+<p>は、以下のように変換されます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b = a
+  .Select(p =&gt; p.X)
+  .Where(x =&gt; x &gt; <span class="number">2</span>);</code></pre>
+<h2 id="cast"><a id="sec-generated-title-6"></a> <a id="cast"></a>Cast</h2>
+<p>from 句では、from の直後に型を指定することができます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> a = <span class="keyword">new</span>[,] { { <span class="number">1</span>, <span class="number">2</span> }, { <span class="number">3</span>, <span class="number">4</span> } };
+
+<span class="keyword">var</span> b =
+  <span class="keyword">from</span> <span class="keyword">int</span> p <span class="keyword">in</span> a
+  <span class="keyword">select</span> p;</code></pre>
+<p>これは、以下のように Cast 演算子に変換されます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b = 
+  <span class="keyword">from</span> p <span class="keyword">in</span> a.Cast&lt;<span class="keyword">int</span>&gt;()
+  <span class="keyword">select</span> p;</code></pre>
+<p>この場合、select 句で何もしていない（素通し）ので、
+最終的には以下のように解釈されます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b = a.Cast&lt;<span class="keyword">int</span>&gt;();</code></pre>
+<p>ちなみに、非ジェネリック版の<code>IEnumerable</code>インターフェイス(<code>System.Collections</code>名前空間)に対して使えるLINQ標準演算子は、
+この<code>Cast&lt;T&gt;</code>メソッドと、あともう1つ、<code>OfType&lt;T&gt;</code>メソッドの2つだけです。<code>Cast&lt;T&gt;</code>が<code>T</code>に変換できない要素があった場合は<code>InvalidCastException</code>を投げるのに対して、<code>OfType&lt;T&gt;</code>は<code>T</code>に変換できたものだけを通します。</p>
+<p><a href="/study/csharp/structured/st_array/#multid">多次元配列</a>はなぜか、非ジェネリック<code>IEnumerable</code>しか実装していません。その他、一部の古くからある型には、ジェネリック導入前との互換性維持のために、非ジェネリック<code>IEnumerable</code>のままのものがあります。例えば、正規表現ライブラリの<code>Regex</code>クラス(<code>System.Text.RegularExpressions</code>名前空間)の<code>Matches</code>メソッドなどは、非ジェネリック<code>IEnumerable</code>を返します。これらに対して、<code>from</code>直後の型指定や、<code>Cast&lt;T&gt;</code>メソッドが有効です。</p>
+<h2 id="select"><a id="sec-generated-title-7"></a> <a id="select"></a>Select</h2>
+<p>Select 演算子（射影演算子、projection）は、どういう形式でデータを出力するかを選択します。</p>
+<p>クエリ式中の <strong id="select" class="keyword">select 句</strong>は Select 演算子に変換されます。
+以下に、select の例、その出力結果、および、Select 演算子への変換結果を示します。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b =
+  <span class="keyword">from</span> p <span class="keyword">in</span> a
+  <span class="keyword">select</span> p.X; <span class="comment">// X だけ取り出す。</span>
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> p <span class="keyword">in</span> b)
+  Console.Write(<span class="string">&quot;{0} &quot;</span>, p);</code></pre>
+<pre><code class="language-console">0 1 2 3 4 </code></pre>
+<pre><code class="language-csharp"><span class="keyword">var</span> b = a.Select(p =&gt; p.X);</code></pre>
+<p>ちなみに、クエリ式では通常、select 句を書くとそこで処理が終了します。
+select の後にさらにクエリを続けたい場合
+（標準クエリ演算子で書くなら、a.Select(...).Where(...); のようなことをしたい場合）、
+以下のように select ... into を利用します。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b =
+  <span class="keyword">from</span> p <span class="keyword">in</span> a
+  <span class="keyword">select</span> <span class="keyword">new</span> { p.X, p.Y } <span class="keyword">into</span> x
+  <span class="keyword">where</span> x.X &gt; <span class="number">2</span>
+  <span class="keyword">select</span> x;
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> p <span class="keyword">in</span> b)
+  Console.Write(<span class="string">&quot;{0}\n&quot;</span>, p);</code></pre>
+<pre><code class="language-csharp"><span class="keyword">var</span> b =
+  a.Select(p =&gt; <span class="keyword">new</span> { p.X, p.Y })
+  .Where(p =&gt; p.X &gt; <span class="number">2</span>);</code></pre>
+<p>ちなみに、この into は、以下のような2段クエリに変換されていると考えてもいいようです。</p>
+<pre><code class="language-csharp">  <span class="keyword">from</span> x <span class="keyword">in</span>
+    <span class="keyword">from</span> p <span class="keyword">in</span> a
+    <span class="keyword">select</span> <span class="keyword">new</span> { p.X, p.Y }
+  <span class="keyword">where</span> x.X &gt; <span class="number">2</span>
+  <span class="keyword">select</span> x;</code></pre>
+<h2 id="let"><a id="sec-generated-title-8"></a> <a id="let"></a>透過識別子と let</h2>
+<p><strong id="let" class="keyword">let 句</strong>を使うことで、
+クエリ式中で計算した値を変数に格納しておくことができます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b =
+  <span class="keyword">from</span> p <span class="keyword">in</span> a
+  <span class="keyword">let</span> sumZ = p.Z.Sum()
+  <span class="keyword">select</span> <span class="keyword">new</span> { p.X, sumZ };
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> p <span class="keyword">in</span> b)
+  Console.Write(<span class="string">&quot;{0}\n&quot;</span>, p);</code></pre>
+<pre><code class="language-console">{ X = 0, sumZ = 6 }
+{ X = 1, sumZ = 15 }
+{ X = 2, sumZ = 24 }
+{ X = 3, sumZ = 3 }
+{ X = 4, sumZ = 12 }</code></pre>
+<p>このクエリ式は、以下のような2重クエリと同じ意味になります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b =
+  <span class="keyword">from</span> p2 <span class="keyword">in</span>
+    <span class="keyword">from</span> p <span class="keyword">in</span> a
+    <span class="keyword">select</span> <span class="keyword">new</span> { p, sumZ = p.Z.Sum() }
+  <span class="keyword">select</span> <span class="keyword">new</span> { p2.p.X, p2.sumZ };</code></pre>
+<p>これはまた、以下のような select into 句と同じ意味です。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b =
+  <span class="keyword">from</span> p <span class="keyword">in</span> a
+  <span class="keyword">select</span> <span class="keyword">new</span> { p, sumZ = p.Z.Sum() } <span class="keyword">into</span> p2
+  <span class="keyword">select</span> <span class="keyword">new</span> { p2.p.X, p2.sumZ };</code></pre>
+<p>さらに、以下のように Select 演算子に変換されます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b = a
+  .Select(p =&gt; <span class="keyword">new</span> { p, SumZ = p.Z.Sum() })
+  .Select(p2 =&gt; <span class="keyword">new</span> { p2.p.X, p2.SumZ });</code></pre>
+<p>この式では、
+元のクエリ式と比べて余計なダミーの変数 p2 が増えています。
+まあ、実際は逆で、元のクエリ式の方で「ダミーの変数を省略して書ける」というというのが正しいです。
+この、元のクエリ式中では見えていない（省略されている）変数を<strong id="transparent" class="keyword">透過識別子</strong>（transparent identifier）といったりするようです。</p>
+<h2 id="where"><a id="sec-generated-title-9"></a> <a id="where"></a>Where</h2>
+<p>Where 演算子（制限演算子、restriction）は、指定した条件を満たすデータのみを取り出します。</p>
+<p>クエリ式中の <strong id="where" class="keyword">where 句</strong>は Where 演算子に変換されます。
+以下に、where の例、その出力結果、および、Where 演算子への変換結果を示します。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b = 
+  <span class="keyword">from</span> p <span class="keyword">in</span> a
+  <span class="keyword">where</span> p.X &gt; <span class="number">2</span> <span class="comment">// この条件を満たすものだけ取り出す</span>
+  <span class="keyword">select</span> p;
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> p <span class="keyword">in</span> b)
+  Console.Write(<span class="string">&quot;{0}\n&quot;</span>, p);</code></pre>
+<pre><code class="language-console">{ X = 3, Y = 13, Z = System.Int32[] }
+{ X = 4, Y = 14, Z = System.Int32[] }</code></pre>
+<pre><code class="language-csharp"><span class="keyword">var</span> b = a.Where(p =&gt; p.Y &gt; <span class="number">0</span>);</code></pre>
+<h2 id="selectmany"><a id="sec-generated-title-10"></a> <a id="selectmany"></a>SelectMany</h2>
+<p>SelectMany 演算子は、1対多の射影を行います。</p>
+<p>例えば、select を使って Z プロパティ（int 型の配列）を射影すると、
+結果は「int 型の配列のリスト（IEnumerable&lt;int[]&gt;）」になります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b =
+  <span class="keyword">from</span> p <span class="keyword">in</span> a
+  <span class="keyword">where</span> p.X &gt; <span class="number">2</span>
+  <span class="keyword">select</span> p.Z;
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> p <span class="keyword">in</span> b)
+  Console.Write(<span class="string">&quot;{0}\n&quot;</span>, p);</code></pre>
+<pre><code class="language-console">System.Int32[]
+System.Int32[]</code></pre>
+<p>一方、SelectMany を使うと、「配列のリスト」が1本のリスト（正確には IEnumerable）に展開されます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b = a.Where(p =&gt; p.X &gt; <span class="number">2</span>).SelectMany(p =&gt; p.Z);
+<span class="keyword">foreach</span> (<span class="keyword">var</span> p <span class="keyword">in</span> b)
+  Console.Write(<span class="string">&quot;{0}\n&quot;</span>, p);</code></pre>
+<pre><code class="language-console">0
+1
+2
+3
+4
+5</code></pre>
+<p>クエリ式では、from 句を2重に使った場合に SelectMany に変換されます。
+以下に、2重の from 句の例、その出力、および、SelectMany への変換結果を示します。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b =
+  <span class="keyword">from</span> p <span class="keyword">in</span> a
+  <span class="keyword">where</span> p.X &gt; <span class="number">2</span>
+  <span class="keyword">from</span> q <span class="keyword">in</span> p.Z
+  <span class="keyword">select</span> <span class="keyword">new</span> { p.X, Z = q };
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> p <span class="keyword">in</span> b)
+  Console.Write(<span class="string">&quot;{0}\n&quot;</span>, p);</code></pre>
+<pre><code class="language-console">{ X = 3, Z = 0 }
+{ X = 3, Z = 1 }
+{ X = 3, Z = 2 }
+{ X = 4, Z = 3 }
+{ X = 4, Z = 4 }
+{ X = 4, Z = 5 }</code></pre>
+<pre><code class="language-csharp"><span class="keyword">var</span> b =
+  a.Where(p =&gt; p.X &gt; <span class="number">2</span>)
+  .SelectMany(p =&gt; p.Z, (p, q) =&gt; <span class="keyword">new</span> {p, q})
+  .Select(pq =&gt; <span class="keyword">new</span> {pq.p.X, Z = pq.q});
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> p <span class="keyword">in</span> b)
+  Console.Write(<span class="string">&quot;{0}\n&quot;</span>, p);</code></pre>
+<p>let に引き続き、
+ここでも「<a href="#transparent">透過識別子</a>」（元のクエリ式中では省略されているダミーの変数）pq が出てきます。
+SelectMany に限らず、クエリ式が2重以上になっているものを標準クエリ演算子呼び出しに変換する場合、
+透過識別子が必要になることが多いです。</p>
+<h2 id="joingroupjoin"><a id="sec-generated-title-11"></a> <a id="join"></a>Join、GroupJoin</h2>
+<p>Join および GroupJoin 演算子（結合演算子）は、2つのデータシーケンスを1つに結合します。</p>
+<p>クエリ式では、
+Join 演算子は <strong id="join" class="keyword">join 句</strong>、
+GroupJoin 演算子は join ... into 句に相当します。</p>
+<p>例えば、この節のはじめに定義したデータ a に加えて、
+以下のようなデータ a2 を用意します。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> a = <span class="keyword">new</span>[] {
+  <span class="keyword">new</span> { X = <span class="number">0</span>, Y = <span class="number">10</span>, Z = <span class="keyword">new</span>[]{ <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>} },
+  <span class="keyword">new</span> { X = <span class="number">1</span>, Y = <span class="number">11</span>, Z = <span class="keyword">new</span>[]{ <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>} },
+  <span class="keyword">new</span> { X = <span class="number">2</span>, Y = <span class="number">12</span>, Z = <span class="keyword">new</span>[]{ <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>} },
+  <span class="keyword">new</span> { X = <span class="number">3</span>, Y = <span class="number">13</span>, Z = <span class="keyword">new</span>[]{ <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>} },
+  <span class="keyword">new</span> { X = <span class="number">4</span>, Y = <span class="number">14</span>, Z = <span class="keyword">new</span>[]{ <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>} },
+};
+<span class="keyword">var</span> a2 = <span class="keyword">new</span>[] {
+  <span class="keyword">new</span> { X = <span class="number">0</span>, W = <span class="number">1</span> },
+  <span class="keyword">new</span> { X = <span class="number">0</span>, W = <span class="number">2</span> },
+  <span class="keyword">new</span> { X = <span class="number">1</span>, W = <span class="number">3</span> },
+  <span class="keyword">new</span> { X = <span class="number">1</span>, W = <span class="number">4</span> },
+};</code></pre>
+<p>それぞれ X をキーとして結合する（それぞれの X の値が等しい行をくっつける）と、
+Join （join 句）の場合には、</p>
+<pre><code class="language-csharp"><span class="keyword">from</span> p <span class="keyword">in</span> a
+<span class="keyword">join</span> q <span class="keyword">in</span> a2 <span class="keyword">on</span> p.X <span class="keyword">equals</span> q.X</code></pre>
+<p>というクエリ式で</p>
+<pre><code class="language-console">{ p = { X = 0, Y = 10, Z = { 1, 2, 3} }, q = { X = 0, W = 1 } }
+{ p = { X = 0, Y = 10, Z = { 1, 2, 3} }, q = { X = 0, W = 2 } }
+{ p = { X = 1, Y = 11, Z = { 4, 5, 6} }, q = { X = 1, W = 3 } }
+{ p = { X = 1, Y = 11, Z = { 4, 5, 6} }, q = { X = 1, W = 4 } }</code></pre>
+<p>というようなデータシーケンスを、
+GroupJoin の場合には、</p>
+<pre><code class="language-csharp"><span class="keyword">from</span> p <span class="keyword">in</span> a
+<span class="keyword">join</span> q <span class="keyword">in</span> a2 <span class="keyword">on</span> p.X <span class="keyword">equals</span> q.X <span class="keyword">into</span> r</code></pre>
+<p>というクエリ式で</p>
+<pre><code class="language-console">{
+  p = { X = 0, Y = 10, Z = { 1, 2, 3} },
+  r = { { X = 0, W = 1 }, { X = 0, W = 2 } }
+}
+{
+  p = { X = 1, Y = 11, Z = { 4, 5, 6} },
+  r = { { X = 1, W = 3 }, { X = 1, W = 4 } }
+{
+  p = { X = 2, Y = 12, Z = { 7, 8, 9} },
+  r = {}
+}
+{
+  p = { X = 3, Y = 13, Z = { 0, 1, 2} },
+  r = {}
+}
+{
+  p = { X = 4, Y = 14, Z = { 3, 4, 5} },
+  r = {}
+}</code></pre>
+<p>というようなデータシーケンスを作ります。</p>
+<p>以下に、join 句の例と、その出力結果、および、Join 演算子への変換結果を示します。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b =
+  <span class="keyword">from</span> p <span class="keyword">in</span> a
+  <span class="keyword">join</span> q <span class="keyword">in</span> a2 <span class="keyword">on</span> p.X <span class="keyword">equals</span> q.X
+  <span class="keyword">select</span> <span class="keyword">new</span> { p.X, p.Y, q.W };
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> p <span class="keyword">in</span> b)
+  Console.Write(<span class="string">&quot;{0}\n&quot;</span>, p);</code></pre>
+<pre><code class="language-console">{ X = 0, Y = 10, W = 1 }
+{ X = 0, Y = 10, W = 2 }
+{ X = 1, Y = 11, W = 3 }
+{ X = 1, Y = 11, W = 4 }</code></pre>
+<pre><code class="language-csharp"><span class="keyword">var</span> b =
+  a.Join(a2, p =&gt; p.X, q =&gt; q.X,
+    (p, q) =&gt; <span class="keyword">new</span> { p.X, p.Y, q.W });</code></pre>
+<p>以下に、join ... into 句の例と、その出力結果、および、GroupJoin 演算子への変換結果を示します。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b =
+  <span class="keyword">from</span> p <span class="keyword">in</span> a
+  <span class="keyword">join</span> q <span class="keyword">in</span> a2 <span class="keyword">on</span> p.X <span class="keyword">equals</span> q.X <span class="keyword">into</span> r
+  <span class="keyword">select</span> <span class="keyword">new</span> { p.X, p.Y, SumW = r.Sum(q =&gt; q.W) };
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> p <span class="keyword">in</span> b)
+  Console.Write(<span class="string">&quot;{0}\n&quot;</span>, p);</code></pre>
+<pre><code class="language-console">{ X = 0, Y = 10, SumW = 3 }
+{ X = 1, Y = 11, SumW = 7 }
+{ X = 2, Y = 12, SumW = 0 }
+{ X = 3, Y = 13, SumW = 0 }
+{ X = 4, Y = 14, SumW = 0 }</code></pre>
+<pre><code class="language-csharp"><span class="keyword">var</span> b =
+  a.GroupJoin(a2, p =&gt; p.X, q =&gt; q.X,
+    (p, r) =&gt; <span class="keyword">new</span> { p.X, p.Y, SumW = r.Sum(q =&gt; q.W) });</code></pre>
+<h2 id="orderbythenby"><a id="sec-generated-title-12"></a> <a id="orderby"></a>OrderBy、ThenBy</h2>
+<p>OrderBy、OrderByDescending、ThenBy、ThenByDescending 演算子（順序付け演算子、ordering）でデータシーケンスを整列させることができます。</p>
+<p>これらはクエリ式の <strong id="orderby" class="keyword">orderby 句</strong>に相当します。
+orderby 句には複数の整列キーを指定できますが、
+1つ目のキーに対する整列は OrderBy / OrderByDescending  に、
+2つ目以降のキーは ThenBy / ThenByDescending に変換されます。</p>
+<p>orderby 句でキーを複数指定した場合、
+前に書いたキーほど優先されます。
+例えば、<code>orderby p.X, p.Y</code> と書いた場合、
+X の値が等しいところでのみ Y の値の大小関係を使って整列されます。</p>
+<p>OrderBy、ThenBy は昇順（小さい値 → 大きい値）に、
+OrderByDescending、ThenByDescending は降順（大きい値 → 小さい値）に整列します。
+orderby 句で何も指定しないか ascending を指定すると昇順（OrderBy / ThenBy）に、
+descending を指定すると降順（OrderByDescending / ThenByDescending）になります。</p>
+<p>以下に、orderby の例、その出力結果、および、コンパイラによる問い合わせ構文の変換結果を示します。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> a = <span class="keyword">new</span>[] {
+  <span class="keyword">new</span> { X = <span class="number">1</span>, Y = <span class="number">0</span>, Z = <span class="number">1</span> },
+  <span class="keyword">new</span> { X = <span class="number">0</span>, Y = <span class="number">1</span>, Z = <span class="number">0</span> },
+  <span class="keyword">new</span> { X = <span class="number">1</span>, Y = <span class="number">2</span>, Z = <span class="number">3</span> },
+  <span class="keyword">new</span> { X = <span class="number">2</span>, Y = <span class="number">0</span>, Z = <span class="number">2</span> },
+  <span class="keyword">new</span> { X = <span class="number">0</span>, Y = <span class="number">0</span>, Z = <span class="number">7</span> },
+  <span class="keyword">new</span> { X = <span class="number">1</span>, Y = <span class="number">1</span>, Z = <span class="number">5</span> },
+  <span class="keyword">new</span> { X = <span class="number">2</span>, Y = <span class="number">0</span>, Z = <span class="number">1</span> },
+};
+
+<span class="keyword">var</span> b =
+  <span class="keyword">from</span> p <span class="keyword">in</span> a
+  <span class="keyword">orderby</span> p.X, p.Y <span class="keyword">descending</span>, p.Z <span class="keyword">ascending</span>
+  <span class="keyword">select</span> p;
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> p <span class="keyword">in</span> b)
+  Console.Write(<span class="string">&quot;{0}\n&quot;</span>, p);</code></pre>
+<pre><code class="language-console">{ X = 0, Y = 1, Z = 0 }
+{ X = 0, Y = 0, Z = 7 }
+{ X = 1, Y = 2, Z = 3 }
+{ X = 1, Y = 1, Z = 5 }
+{ X = 1, Y = 0, Z = 1 }
+{ X = 2, Y = 0, Z = 1 }
+{ X = 2, Y = 0, Z = 2 }</code></pre>
+<pre><code class="language-csharp"><span class="keyword">var</span> b =
+  a.OrderBy(p =&gt; p.X)
+  .ThenByDescending(p =&gt; p.Y)
+  .ThenBy(p =&gt; p.Z);</code></pre>
+<p>ちなみに、OrderBy 演算子は、
+LINQ to Object（IEnumerable 実装クラスに対する LINQ）で使ってもあまり効率はよくないです。
+（どうせ内部的に一度リスト化される。）
+LINQ to Object で、特に安定性が必要ない場合には、
+ToList() などを使って一度 List に変換してから、
+List.Sort メソッドで整列する方が実行速度がはるかによさそうです。</p>
+<p>ただ、List.Sort と違って、
+「<a href="/study/algorithm/sort/sort/#stable">安定</a>」なソートになるようです。
+（挙動的に、おそらくマージソート？
+実行時間が List.Sort（おそらくクイックソート）の4倍程度。）</p>
+<h2 id="groupby"><a id="sec-generated-title-13"></a> <a id="groupby"></a>GroupBy</h2>
+<p>GroupBy 演算子（グループ化演算子、grouping）は、キーを指定して、値の等しい物をグループ化します。</p>
+<p>例えば、</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> a2 = <span class="keyword">new</span>[] {
+  <span class="keyword">new</span> { X = <span class="number">0</span>, W = <span class="number">1</span> },
+  <span class="keyword">new</span> { X = <span class="number">0</span>, W = <span class="number">2</span> },
+  <span class="keyword">new</span> { X = <span class="number">1</span>, W = <span class="number">3</span> },
+  <span class="keyword">new</span> { X = <span class="number">1</span>, W = <span class="number">4</span> },
+};</code></pre>
+<p>というデータシーケンスを X でグループ化するなら、</p>
+<pre><code class="language-console">Key = 0, { 1, 2 }
+Key = 1, { 3, 4 }</code></pre>
+<p>というような（キー付きのシーケンスの）シーケンスが得られます。</p>
+<p>クエリ式中の <strong id="groupby" class="keyword">group ... by 句</strong>は GroupBy 演算子に変換されます。
+以下に、group ... by の例、その出力結果、および、GroupBy 演算子への変換結果を示します。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b =
+  <span class="keyword">from</span> p <span class="keyword">in</span> a2
+  <span class="keyword">group</span> p.W <span class="keyword">by</span> p.X;
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> p <span class="keyword">in</span> b)
+{
+  Console.Write(<span class="string">&quot;{0} -&gt; ( &quot;</span>, p.Key);
+  <span class="keyword">foreach</span> (<span class="keyword">var</span> q <span class="keyword">in</span> p)
+    Console.Write(<span class="string">&quot;{0} &quot;</span>, q);
+  Console.Write(<span class="string">&quot;)\n&quot;</span>);
+}</code></pre>
+<pre><code class="language-console">0 -&gt; ( 1 2 )
+1 -&gt; ( 3 4 )</code></pre>
+<pre><code class="language-csharp"><span class="keyword">var</span> b = a2.GroupBy(p =&gt; p.X, p =&gt; p.W);</code></pre>
+<p>ちなみに、
+select 句と同様に、
+group ... by 句も後ろにクエリを続けることはできません。
+group ... by の後にさらにクエリを続ける場合、
+group ... by ... into 句を使います。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b =
+  <span class="keyword">from</span> p <span class="keyword">in</span> a2
+  <span class="keyword">group</span> p.W <span class="keyword">by</span> p.X <span class="keyword">into</span> g
+  <span class="keyword">where</span> g.Sum(q =&gt; q) &gt; <span class="number">5</span>
+  <span class="keyword">select</span> g;
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> p <span class="keyword">in</span> b)
+{
+  Console.Write(<span class="string">&quot;{0} -&gt; ( &quot;</span>, p.Key);
+  <span class="keyword">foreach</span> (<span class="keyword">var</span> q <span class="keyword">in</span> p)
+    Console.Write(<span class="string">&quot;{0} &quot;</span>, q);
+  Console.Write(<span class="string">&quot;)\n&quot;</span>);
+}</code></pre>
+<pre><code class="language-console">1 -&gt; ( 3 4 )</code></pre>
+<pre><code class="language-csharp"><span class="keyword">var</span> b =
+  a2.GroupBy(p =&gt; p.X, p =&gt; p.W)
+  .Where(g =&gt; g.Sum(q =&gt; q) &gt; <span class="number">5</span>);</code></pre>
+<h2 id="section-5"><a id="sec-generated-title-14"></a> <a id="summary"></a>まとめ</h2>
+<p>C# 3.0 のクエリ式では、以下のようなクエリが可能です。</p>
+<table summary="クエリ式と標準クエリ演算子">
+	<caption>
+		クエリ式と標準クエリ演算子
+	</caption>
+	<tr>
+		<th>説明</th>
+		<th>クエリ式中の句</th>
+		<th>標準クエリ演算子</th>
+	</tr>
+	<tr>
+		<td><p>射影演算</p></td>
+		<td><p>select、select ... into</p></td>
+		<td><p>Select</p></td>
+	</tr>
+	<tr>
+		<td><p>制限演算</p></td>
+		<td><p>where</p></td>
+		<td><p>Where</p></td>
+	</tr>
+	<tr>
+		<td><p>連結演算</p></td>
+		<td><p>join,、join ... into</p></td>
+		<td><p>Join、GroupJoin</p></td>
+	</tr>
+	<tr>
+		<td><p>順序付け演算</p></td>
+		<td><p>orderby</p></td>
+		<td><p>OrderBy、OrderByDescending、ThenBy、ThenByDescending</p></td>
+	</tr>
+	<tr>
+		<td><p>グループ化演算</p></td>
+		<td><p>group ... by、group ... by ... into</p></td>
+		<td><p>GroupBy</p></td>
+	</tr>
+</table>
+<p>また、クエリ式としては利用できない
+（メソッド呼び出しとしてだけ利用できる）
+標準クエリ演算子として、Take、Skip などもあります。</p>
+<p>最後に、これまでに説明してきたクエリ式を使ったサンプルを1つ。</p>
+<h5 id="section-6"><a id="sec-generated-title-15"></a>サンプル</h5>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Collections.Generic;
+<span class="keyword">using</span> System.Linq;
+<span class="keyword">using</span> System.Text;
+
+<span class="keyword">namespace</span> ConsoleApplication1
+{
+  <span class="keyword">class</span> Program
+  {
+    <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+    {
+      <span class="comment">// データテーブルを2つほど定義。</span>
+      <span class="keyword">var</span> studentList = <span class="keyword">new</span>[] {
+        <span class="keyword">new</span> {id =  <span class="number">0</span>, 姓 = <span class="string">&quot;糸色&quot;</span>, 名 = <span class="string">&quot;望&quot;</span>    },
+        <span class="keyword">new</span> {id = <span class="number">13</span>, 姓 = <span class="string">&quot;風浦&quot;</span>, 名 = <span class="string">&quot;可符香&quot;</span>},
+        <span class="keyword">new</span> {id = <span class="number">20</span>, 姓 = <span class="string">&quot;小森&quot;</span>, 名 = <span class="string">&quot;霧&quot;</span>    },
+        <span class="keyword">new</span> {id = <span class="number">22</span>, 姓 = <span class="string">&quot;常月&quot;</span>, 名 = <span class="string">&quot;まとい&quot;</span>},
+        <span class="keyword">new</span> {id = <span class="number">19</span>, 姓 = <span class="string">&quot;小節&quot;</span>, 名 = <span class="string">&quot;あびる&quot;</span>},
+        <span class="keyword">new</span> {id = <span class="number">18</span>, 姓 = <span class="string">&quot;木村&quot;</span>, 名 = <span class="string">&quot;カエレ&quot;</span>},
+        <span class="keyword">new</span> {id = <span class="number">14</span>, 姓 = <span class="string">&quot;音無&quot;</span>, 名 = <span class="string">&quot;芽留&quot;</span>  },
+        <span class="keyword">new</span> {id = <span class="number">17</span>, 姓 = <span class="string">&quot;木津&quot;</span>, 名 = <span class="string">&quot;千里&quot;</span>  },
+        <span class="keyword">new</span> {id =  <span class="number">8</span>, 姓 = <span class="string">&quot;関内&quot;</span>, 名 = <span class="string">&quot;マリア&quot;</span>},
+        <span class="keyword">new</span> {id = <span class="number">28</span>, 姓 = <span class="string">&quot;日塔&quot;</span>, 名 = <span class="string">&quot;奈美&quot;</span>  },
+        <span class="keyword">new</span> {id =  <span class="number">6</span>, 姓 = <span class="string">&quot;久藤&quot;</span>, 名 = <span class="string">&quot;准&quot;</span>    },
+        <span class="keyword">new</span> {id = <span class="number">29</span>, 姓 = <span class="string">&quot;藤吉&quot;</span>, 名 = <span class="string">&quot;晴美&quot;</span>  },
+        <span class="keyword">new</span> {id = <span class="number">30</span>, 姓 = <span class="string">&quot;三珠&quot;</span>, 名 = <span class="string">&quot;真夜&quot;</span>  },
+        <span class="keyword">new</span> {id = <span class="number">16</span>, 姓 = <span class="string">&quot;加賀&quot;</span>, 名 = <span class="string">&quot;愛&quot;</span>    },
+        <span class="keyword">new</span> {id = <span class="number">15</span>, 姓 = <span class="string">&quot;大草&quot;</span>, 名 = <span class="string">&quot;麻菜実&quot;</span>},
+      };
+      <span class="keyword">var</span> remarks = <span class="keyword">new</span>[] {
+        <span class="keyword">new</span> {id =  <span class="number">0</span>, 備考=<span class="string">&quot;超ネガティブ&quot;</span>},
+        <span class="keyword">new</span> {id = <span class="number">13</span>, 備考=<span class="string">&quot;超ポジティブ&quot;</span>},
+        <span class="keyword">new</span> {id = <span class="number">20</span>, 備考=<span class="string">&quot;ひきこもり&quot;</span>},
+        <span class="keyword">new</span> {id = <span class="number">22</span>, 備考=<span class="string">&quot;超恋愛体質&quot;</span>},
+        <span class="keyword">new</span> {id = <span class="number">22</span>, 備考=<span class="string">&quot;ストーカー&quot;</span>},
+        <span class="keyword">new</span> {id = <span class="number">19</span>, 備考=<span class="string">&quot;しっぽ好き&quot;</span>},
+        <span class="keyword">new</span> {id = <span class="number">19</span>, 備考=<span class="string">&quot;被DV疑惑&quot;</span>},
+        <span class="keyword">new</span> {id = <span class="number">18</span>, 備考=<span class="string">&quot;人格バイリンガル&quot;</span>},
+        <span class="keyword">new</span> {id = <span class="number">14</span>, 備考=<span class="string">&quot;毒舌メール&quot;</span>},
+        <span class="keyword">new</span> {id = <span class="number">17</span>, 備考=<span class="string">&quot;几帳面&quot;</span>},
+        <span class="keyword">new</span> {id = <span class="number">17</span>, 備考=<span class="string">&quot;粘着質&quot;</span>},
+        <span class="keyword">new</span> {id =  <span class="number">8</span>, 備考=<span class="string">&quot;不法入国&quot;</span>},
+        <span class="keyword">new</span> {id =  <span class="number">8</span>, 備考=<span class="string">&quot;難民&quot;</span>},
+        <span class="keyword">new</span> {id = <span class="number">28</span>, 備考=<span class="string">&quot;普通&quot;</span>},
+        <span class="keyword">new</span> {id =  <span class="number">6</span>, 備考=<span class="string">&quot;天才ストーリーテラー&quot;</span>},
+        <span class="keyword">new</span> {id = <span class="number">29</span>, 備考=<span class="string">&quot;耳好き&quot;</span>},
+        <span class="keyword">new</span> {id = <span class="number">29</span>, 備考=<span class="string">&quot;カップリング中毒&quot;</span>},
+        <span class="keyword">new</span> {id = <span class="number">30</span>, 備考=<span class="string">&quot;見たまま少女&quot;</span>},
+        <span class="keyword">new</span> {id = <span class="number">16</span>, 備考=<span class="string">&quot;加害妄想少女&quot;</span>},
+        <span class="keyword">new</span> {id = <span class="number">15</span>, 備考=<span class="string">&quot;主婦女子高生&quot;</span>},
+        <span class="keyword">new</span> {id = <span class="number">15</span>, 備考=<span class="string">&quot;多重債務者&quot;</span>},
+      };
+
+      <span class="comment">// 2つのテーブルをくっつけてみる。</span>
+      <span class="keyword">var</span> remarksWithName =
+        <span class="keyword">from</span> s <span class="keyword">in</span> studentList
+        <span class="keyword">join</span> r <span class="keyword">in</span> remarks <span class="keyword">on</span> s.id <span class="keyword">equals</span> r.id
+        <span class="keyword">orderby</span> s.id
+        <span class="keyword">select</span> <span class="keyword">new</span> { 姓名 = s.姓 + s.名, r.備考 } <span class="keyword">into</span> t1
+        <span class="keyword">group</span> t1.備考 <span class="keyword">by</span> t1.姓名 <span class="keyword">into</span> t2
+        <span class="keyword">select</span> <span class="keyword">new</span> { 姓名 = t2.Key, 備考 = t2 };
+
+      <span class="comment">// 結果の表示。</span>
+      <span class="keyword">foreach</span> (<span class="keyword">var</span> s <span class="keyword">in</span> remarksWithName)
+      {
+        Console.Write(<span class="string">&quot;{0} : &quot;</span>, s.姓名);
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> r <span class="keyword">in</span> s.備考)
+          Console.Write(<span class="string">&quot;{0} &quot;</span>, r);
+        Console.Write(<span class="string">&quot;\n&quot;</span>);
+      }
+    }
+  }
+}</code></pre>
+<pre><code class="language-console">糸色望 : 超ネガティブ
+久藤准 : 天才ストーリーテラー
+関内マリア : 不法入国 難民
+風浦可符香 : 超ポジティブ
+音無芽留 : 毒舌メール
+大草麻菜実 : 主婦女子高生 多重債務者
+加賀愛 : 加害妄想少女
+木津千里 : 几帳面 粘着質
+木村カエレ : 人格バイリンガル
+小節あびる : しっぽ好き 被DV疑惑
+小森霧 : ひきこもり
+常月まとい : 超恋愛体質 ストーカー
+日塔奈美 : 普通
+藤吉晴美 : 耳好き カップリング中毒
+三珠真夜 : 見たまま少女</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/data/">&#x30C7;&#x30FC;&#x30BF;&#x5217;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/data/sp_foreach/">foreach</a></li><li><a href="/study/csharp/data/sp2_iterator/">&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;&#x30FC;</a></li><li><a href="/study/csharp/data/sp2_itpattern/">[&#x96D1;&#x8A18;] &#x5185;&#x90E8;&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;&#x3068;&#x5916;&#x90E8;&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;</a></li><li><a href="/study/csharp/data/da_about/">&#x30C7;&#x30FC;&#x30BF;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/data/sp3_linq/">LINQ</a></li><li><a href="/study/csharp/data/sp3_stdqueryo/">&#x6A19;&#x6E96;&#x30AF;&#x30A8;&#x30EA;&#x6F14;&#x7B97;&#x5B50;&#xFF08;&#x305D;&#x306E;&#x4ED6;&#xFF09;</a></li><li><a href="/study/csharp/data/sp3_lazylist/">[&#x96D1;&#x8A18;] LINQ &#x3068;&#x9045;&#x5EF6;&#x8A55;&#x4FA1;</a></li><li><a href="/study/csharp/data/datamodulararchitecture/">[&#x96D1;&#x8A18;] &#x5C0F;&#x3055;&#x306A;&#x6A5F;&#x80FD;&#x306E;&#x7D44;&#x307F;&#x5408;&#x308F;&#x305B;</a></li><li><a href="/study/csharp/data/sp3_ormismatch/">[&#x96D1;&#x8A18;] O/R &#x30A4;&#x30F3;&#x30D4;&#x30FC;&#x30C0;&#x30F3;&#x30B9;&#x30DF;&#x30B9;&#x30DE;&#x30C3;&#x30C1;</a></li><li><a href="/study/csharp/data/sp3_ormismatch2/">[&#x96D1;&#x8A18;] O/R &#x30A4;&#x30F3;&#x30D4;&#x30FC;&#x30C0;&#x30F3;&#x30B9;&#x30DF;&#x30B9;&#x30DE;&#x30C3;&#x30C1;&#xFF08;&#x30AF;&#x30E9;&#x30B9;&#x306E;&#x7D99;&#x627F;&#xFF09;</a></li><li><a href="/study/csharp/data/sp3_linqtosql/">[&#x96D1;&#x8A18;] LINQ to SQL &#x5B9F;&#x8DF5;&#x7DE8;</a></li><li><a href="/study/csharp/data/sp3_iqueryable/">[&#x96D1;&#x8A18;] IQueryable &#x306E;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/data/misc_immutabledata/">&#x4E0D;&#x5909;(immutable)&#x306A;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/data/dataranges/">&#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;/&#x7BC4;&#x56F2;&#x51E6;&#x7406;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

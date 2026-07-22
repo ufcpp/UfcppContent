@@ -1,0 +1,156 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 4/4 C# 8.0&#x8FBA;&#x308A;&#x306E;&#x691C;&#x8A0E;&#x4E8B;&#x9805; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2018/4/pickuproslyn0404/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2018-04-04T23:19:36">2018-04-04</time></span><span>更新: <time datetime="2018-04-04T23:23:06">2018-04-04</time></span></div><h1 id="roslyn-44-c-8.0">ピックアップRoslyn 4/4 C# 8.0辺りの検討事項</h1>
+<p><a href="/blog/2018/3/pickuproslyn0321/">Design Notes の一斉アップロード祭り</a>がらみ、今日でやっと最後。
+<a href="https://github.com/dotnet/csharplang/blob/master/meetings/2018/LDM-2018-03-28.md">先月28日に1つ追加の Note もあります</a>。</p>
+<p>とりあえずこれまでの分:</p>
+<ul>
+<li><a href="/blog/2018/3/pickuproslyn0321/">C# 8.0よりさらに先を見越して、いくつかの機能の採用が決定</a></li>
+<li><a href="/blog/2018/3/ranges/">一番分量が多かった Ranges (C# 8.0 予定)の話</a></li>
+<li><a href="/blog/2018/3/pickuproslyn0331/">C# 7.3 で入りそうな機能の話</a></li>
+</ul>
+<p>で、今日は最後に、C# 8.0 辺りで入りそうな機能の話になります。</p>
+<h2 id="caller-expression-attribute">Caller Expression Attribute</h2>
+<p><a href="/study/csharp/cheatsheet/ap_ver5/#CallerInfo">Caller Info 属性</a>に1種類追加。
+<code>M(2 * x, y * y, Sin(z));</code> みたいなメソッド呼び出しをした時に、<code>2 * x, y * y, Sin(z)</code> の部分をそのまま受け取るというデバッグ用の機能です。
+主な用途は Assert 系の API。</p>
+<p>で、既存の Assert API がこの機能を活用しようと思ったら、
+<code>Equal(T expected, T actual)</code> みたいなメソッドを
+<code>Equal(T expected, T actual, [CallerExpression]string expression = null)</code> みたいなシグネチャに変える必要があります。</p>
+<p>こいつの呼び出し側は、元のまま <code>Assert.Equal(x, y);</code> で呼べばいいんですが…</p>
+<ul>
+<li>既存の <code>Equal(T expected, T actual)</code> を残すと、こっちの方が優先度が高いのでこっちしか呼ばれない</li>
+<li>既存の <code>Equal(T expected, T actual)</code> を消すと、ソースコード互換はあるけどバイナリ互換はない(一応、破壊的変更)
+<ul>
+<li>ソースコードの再コンパイルなしで、Assert ライブラリの DLL だけ更新すると実行できなくなる</li>
+</ul>
+</li>
+</ul>
+<p>という問題が。
+XUnit は昔この手の引数追加での破壊的変更を1度やっているらしく、まあ、許容できると言えばできそう。</p>
+<h2 id="null">null 許容参照型</h2>
+<p>このブログでもたびたび紹介していますが、参照型も <code>T</code> (null なし)と<code>T?</code> (null あり)の区別がつくようになるやつ。</p>
+<p>待望の機能ですし、すでにプロトタイプ実装も始まっていますが、やっぱ細々と検討事項が出てきます。</p>
+<h3 id="section">明示的なキャストの扱い</h3>
+<p><code>(T)x</code> とか <code>(T?)x</code> とか、キャストをどう扱うかというのも案外自明ではないみたい。
+特に、既存コードからの移行の都合と、新たに書き始めるのであれば追求したい「正しさ」との間のバランスで悩むとか。</p>
+<ul>
+<li>既存コードには <code>(string)null</code> とかで「型指定ありの null」とかは結構書くけども
+<ul>
+<li>これは自動的に<code>string?</code>扱いすべきか(既存コード優先)</li>
+<li>警告すべきか(正しさ優先)</li>
+</ul>
+</li>
+</ul>
+<p><code>M((string)x)</code> と <code>M((string?)x)</code> みたいなキャストは、ジェネリック メソッドの呼び分けでははっきりとキャストが意味を持ってる。
+例えば<code>T M&lt;T&gt;(T x)</code> に対して、
+<code>var y = M((string)x)</code> とすると <code>y</code> も <code>string</code> (nullなし)になるし、
+<code>var y = M((string?)x)</code> とすると <code>y</code> が <code>string?</code> (nullあり)になる。</p>
+<p>一方で、<code>M</code>が旧時代のコード(<code>T</code> と <code>T?</code> の区別をしない時代のコードでは、<code>T</code> から null が帰ってくることがあるし、
+コンパイラーもそのつもりで null チェックをする)だった場合、
+<code>M((string)x)</code> はどう解釈すべきか。
+<code>x</code> が新時代(<code>T?</code>あり)コードなら警告でいいけども、
+<code>x</code> も旧時代コードならこの<code>string</code>はどう扱うべきか。</p>
+<h3 id="section-1">警告の種類</h3>
+<p>古いコードをアップグレードするとき、一気にはコードを修正できないので <code>#pragma warning</code> などを使って警告を無視したいことがあり得る。
+この「警告オフ」作業を煩雑にしないために、null チェック絡みの警告の種類はまとめられる限りまとめたい。</p>
+<p>実際、「null リテラルを <code>T</code> に代入」と、「<code>T?</code> 型変数の値を <code>T</code> に代入」は統合したみたいです。</p>
+<h3 id="section-2">型推論</h3>
+<p><code>T?</code> 型の変数であっても、null チェックがあったらそれ以降は「null ではない」という扱いになります
+(コンパイラーがそういう風に判断して警告の有無が決まる)。</p>
+<p>例えば、以下のような判定になったりします。</p>
+<pre><code class="language-csharp"><span class="keyword">string</span>? ns = ...
+<span class="keyword">if</span> (ns <span class="keyword">is</span> <span class="keyword">null</span>) <span class="keyword">return</span>; <span class="comment">// null だったらここから下にはいかない</span>
+<span class="keyword">var</span> s = ns; <span class="comment">// なので、s は「非 null」</span></code></pre>
+<p>ここで問題なのは、じゃあ、この <code>s</code> は「<code>string?</code>だけどnullチェック済み」という判定なのか、
+「<code>string</code>型として推論されてる」という状態なのか。
+ジェネリック メソッドに <code>s</code> を渡した時のオーバーロード解決とかにも絡んでくる。</p>
+<h3 id="var">var?</h3>
+<p><code>var s1 =&quot;Hello&quot;;</code> とか書いたとき(<code>string</code>扱い？)、<code>s1</code> に後から <code>null</code> を代入したい場面ではどうするべきか。</p>
+<p><code>var s2 = (string?)&quot;Hello&quot;;</code> は、「<code>var</code>と書くと非nullとして推論」として認めないようにするか、<code>string?</code>として推論すべきか。</p>
+<p>「<code>var</code>と書くと非null」の対として、<code>var? s3 = &quot;Hello&quot;;</code> みたいな書き方を用意する？</p>
+<h2 id="records">Records</h2>
+<p>C# 6.0の頃から案だけはあるものの、気が付けば C# 7.X でも入らず 8.0 に伸びてる Record 型。
+<code>class Record(int X, int Y);</code> とか書くと、プロパティ <code>X</code>、<code>Y</code> とか <code>==</code>、<code>Deconstruct</code> を自動で実装してくれるというやつです。</p>
+<p>先月の <a href="https://mvp.microsoft.com/ja-jp/Summit">Microsoft MVP Global Summit</a> でやっぱ <a href="https://www.microsoft.com/ja-jp/communities/mvp/">MVP</a> からさんざん突っ込みが入ったそうで。それに対する回答:</p>
+<ul>
+<li>重要性はわかっているけども、現実主義的に行きたい(要するに、課題も多くて完成には及ばず)</li>
+<li><a href="https://github.com/dotnet/csharplang/issues/113">Discriminated Unions</a>と併せて取り組みたい。別機能ではあるものの、Records と一緒に取り組むとより良くなる</li>
+<li>いくつか「用途が狭い」と判定された提案は「<a href="https://github.com/dotnet/csharplang/issues/341">コード生成でやってくれ</a>」と言ってきてるが、Records に関して言うとコード生成の領分ではない。ちゃんと言語機能として取り組むべき</li>
+</ul>
+<h2 id="ranges">Ranges</h2>
+<p><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2018/LDM-2018-03-28.md">28日に追加分</a>でも Ranges に関する記述あり。</p>
+<h3 id="section-3">プロトタイプ提供するにあたって</h3>
+<p><a href="/blog/2018/3/ranges/">Ranges</a> 構文はあくまで <code>Range</code> 型を作るという機能であって、<code>Span&lt;T&gt; span = array[1..3];</code> みたいな書き方をするためには、配列や<code>List</code>が<code>Range</code>型を受け付けるインデクサーを持っていないといけない。</p>
+<p>で、この機能のプロトタイプを提供するにあたって、こういう「<code>Range</code>型を受け付けるインデクサー」も同時にプロトタイプ提供したい。
+特に、配列とか<code>string</code>とかの型でこれを使いたいわけだけど、そのために .NET Core ランタイム側で対応作業をしてもらう必要があるとなると、
+プロジェクト間の依存が大きすぎる。</p>
+<p><code>Span&lt;T&gt; this[Range range]</code> インデクサーを被せるだけのラッパー構造体を作ってそれをプロトタイプ提供すべき？</p>
+<p>それか、一時的に「拡張インデクサー」を提供してしまう？
+(拡張インデクサーは、<a href="https://github.com/dotnet/csharplang/issues/164">Shapes</a>って機能の一部として提供したけども、
+こいつは 8.0 よりもさらに先で検討されてる。Ranges の方が先に実装される。なので、本来 Ranges と同時期には提供しないはずの機能を「一時的に」「仮実装」で提供。)</p>
+<p>今のところ「一時的な拡張インデクサー」の提供を考えてる。</p>
+<h3 id="section-4">どこまで提供するか</h3>
+<p>結局どこまでやるか。</p>
+<ul>
+<li><code>m..n</code> で「m から n まで」みたいな開始・終了インデックス型だけを提供</li>
+<li>「m から len 要素」みたいなやつや、「配列の末尾から n 要素目」みたいなのを考えて、<code>Index</code>型と<code>^</code>演算子みたいなのも提供</li>
+</ul>
+<p>前者なら実装は楽だけどできることの制限が強い。
+まずはこの「実装が楽な部分」だけを実装してみて、ユーザーの反応を見てみるという手もある。
+でも、ちょっとこの制限はきついと思っていて、たぶん高機能な後者の方の需要はある。</p>
+<h2 id="switch">switch 式の網羅性</h2>
+<p>「<code>switch</code> 式」では網羅性(exhaustiveness)のチェックをしたいという話がある。
+例えば <code>bool</code> なら(変なことをしなければ) <code>true</code> と <code>false</code> の2値しか持っていないわけだから、
+<code>x switch { case true: a; case false: b; }</code> みたいな式は「すべての値を網羅している」と言えるはず。</p>
+<p>これをコンパイラーがチェック(網羅されていれば「default 句なし」を認める)すべき？
+チェックするとして、(いくつか、コンパイラーの静的チェックに漏れるケースがあり得るけど、その時のために)実行時チェックもする？</p>
+<p>今のところ、網羅性をチェックして、網羅できていなければ警告にする。
+静的チェックに漏れた場合の実行時チェックも入れて、例外を投げるようにすると思う。</p>
+<h3 id="nested-stackalloc">nested stackalloc</h3>
+<p>現状、<a href="/study/csharp/resource/span/#safe-stackalloc">stackalloc</a>は非同期メソッド内では使えないという制限があります。
+まあ、<code>await</code> をまたいで使うことは原理的にできない機能ではあります。</p>
+<pre><code class="language-csharp"><span class="keyword">async</span> Task M()
+{
+    Span&lt;<span class="keyword">int</span>&gt; span = <span class="keyword">stackalloc</span> <span class="keyword">int</span>[<span class="number">10</span>];
+
+    <span class="keyword">await</span> Task.Delay(<span class="number">1</span>);
+
+    span[<span class="number">0</span>] = <span class="number">1</span>; <span class="comment">// これは本当に不正。原理的に無理</span>
+}</code></pre>
+<p>でも、<code>await</code> さえまたがなければ、例えば以下のような書き方であれば安全に使えるはずです。</p>
+<pre><code class="language-csharp"><span class="keyword">async</span> Task M()
+{
+    {
+        Span&lt;<span class="keyword">int</span>&gt; span = <span class="keyword">stackalloc</span> <span class="keyword">int</span>[<span class="number">10</span>];
+        span[<span class="number">0</span>] = <span class="number">1</span>;
+    }
+
+    <span class="comment">// ブロックでくくったので、span がここに漏れることはない</span>
+    <span class="keyword">await</span> Task.Delay(<span class="number">1</span>);
+    <span class="comment">// ここから下で使えなければ span は安全</span>
+}</code></pre>
+<p>この、「ブロックで囲った(nested) <code>stackalloc</code>」を認めたいという感じになっています。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2018/4/">4&#x6708;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

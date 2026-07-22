@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x6570;&#x5B66;&#x306E;&#x767A;&#x5C55;&#x3001;&#x65B0;&#x7406;&#x8AD6;&#x3068;&#x53B3;&#x5BC6;&#x5316; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/math/miscmath/development/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">数学の発展、新理論と厳密化</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="intro"></a>はじめに</h2>
+<p>数学の発展には2つの形があります。
+すなわち、</p>
+<ol>
+<li><p>厳密性度外視で、新しい理論を作る。</p>
+</li>
+<li><p>理論を厳密化する。</p>
+</li>
+</ol>
+<p>これらはどちらも重要なことで、
+一方を軽視して考えるべきではありません。
+厳密性にこだわりすぎると、新しい理論の発案を妨げることがあります。
+一方で、厳密性を度外視したままでいると、
+時には致命的なミスを犯してしまう場合もあります。
+あるいは、厳密化を探求することによって、新しい理論が生まれる場合もあります。</p>
+<p>ということで、新理論の確立とその厳密化について、
+いくつか与太話でもしてみようと思います。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="limit"></a>極限</h2>
+<p>長い間、厳密性は度外視で使われ続け、
+それでも科学の発展に多大に寄与した理論の代表格というと、
+極限の概念、特に微分法です。</p>
+<p>17世紀の終わりごろ、<a href="http://ja.wikipedia.org/wiki/%E3%82%A2%E3%82%A4%E3%82%B6%E3%83%83%E3%82%AF%E3%83%BB%E3%83%8B%E3%83%A5%E3%83%BC%E3%83%88%E3%83%B3">ニュートン</a>や<a href="http://ja.wikipedia.org/wiki/%E3%82%B4%E3%83%83%E3%83%88%E3%83%95%E3%83%AA%E3%83%BC%E3%83%88%E3%83%BB%E3%83%A9%E3%82%A4%E3%83%97%E3%83%8B%E3%83%83%E3%83%84">ライプニッツ</a>の手によって、
+物理法則を記述するための手法として微分法が考えられました。
+しかしながら、微分法は、数学的な裏づけは何一つなく使われていました。
+「限りなく近づける」とかいうけども、「限りなく」というのを表現する方法が当時の数学にはなかったのです。</p>
+<p>元々、無限というもののに関しては、非常に繊細な取り扱いが必要です。
+有限のときに成り立っていたから、
+そのまま値を限りなく大きく（あるいは限りなく小さく）していっても同じ法則になるだろうとか、
+そういう甘いことを考えているとドツボにはまることも珍しくありません。</p>
+<p>でも、微分法に関しては、厳密なことは何1つ分からないけども、
+とりあえずこれを認めてしまえば、いろいろな物理現象を予言することができた。
+だからまあ、厳密性は度外視して使ってしまえと。</p>
+<p>極限の概念が厳密化されたのはその100年もあと、
+<a href="http://ja.wikipedia.org/wiki/%E3%82%AA%E3%83%BC%E3%82%AE%E3%83%A5%E3%82%B9%E3%82%BF%E3%83%B3%EF%BC%9D%E3%83%AB%E3%82%A4%E3%83%BB%E3%82%B3%E3%83%BC%E3%82%B7%E3%83%BC">コーシー</a>の時代です。
+この頃、
+無限級数の和の取り扱いなどで、
+さまざまな矛盾が生じていました。
+どういうときに矛盾なく収束して、どういうときだと駄目なのか、
+それがもう全然分からない。
+極限の厳密性を度外視してやってきたことのツケがここに来て現れてきたわけです。
+そこで考え出されたのがいわゆる<a href="http://ja.wikipedia.org/wiki/%E3%82%A4%E3%83%97%E3%82%B7%E3%83%AD%E3%83%B3-%E3%83%87%E3%83%AB%E3%82%BF%E8%AB%96%E6%B3%95">ε-δ</a>論法って奴なんですが、
+これでようやく、極限を厳密に取り扱えるようになりました。</p>
+<p>もし、ε-δ論法の登場まで微分法を全く使わなかったとすれば、
+物理学の発展は100年は遅れていたでしょう。
+でも、ε-δ論法が生まれなければ、その後の数学の更なる発展はありえませんでした。</p>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="fourier"></a>フーリエ級数展開</h2>
+<p>フーリエ級数展開も、厳密な理屈は抜きにして長年使われてきた理論です。
+厳密性度外視でいいならば、
+フーリエ級数は非常に簡単な理論ですね。
+三角関数の直交性さえ理解していれば、高校生でもわかります。
+（参考：「<a href="/study/sp/dsp/fourierseries/">フーリエ級数展開</a>」。）</p>
+<p>ですがこれも、フーリエ級数がいつ収束するかとか、
+フーリエ級数の項別微分・積分は可能なのかとか、
+厳密なことは約70年ほったらかしでした。
+それでも、線形微分方程式の解法などにおいて非常に強力な道具として使われていて、
+これがあまりにも絶大なので、
+一時期は非線形の微分方程式の研究が完全停止したほどです。</p>
+<p>で、フーリエ級数展開、ひいては「<a href="/study/sp/dsp/fourier/#f-trans">フーリエ変換</a>」を厳密に取り扱おうと思うと、
+「積分って何だろう？」とか「連続性って何だろう？」とか、
+かなり根本から数学を見つめなおす必要があって、
+その結果、
+<a href="http://ja.wikipedia.org/wiki/%E3%82%B2%E3%82%AA%E3%83%AB%E3%82%AF%E3%83%BB%E3%82%AB%E3%83%B3%E3%83%88%E3%83%BC%E3%83%AB">カントール</a>の公理的集合論（参考：「<a href="/study/math/">数学</a>」）などが生まれました。</p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="delta"></a>δ関数</h2>
+<p>もう1つ、<a href="http://ja.wikipedia.org/wiki/%E3%83%87%E3%82%A3%E3%83%A9%E3%83%83%E3%82%AF">ディラック</a>のδ関数というものについて話します。</p>
+<p>ディラックという物理学者は、厳密性の観点から言うともうむちゃくちゃな人だったみたいです。
+「厳密化は数学者がやってくれる」
+「これで物理法則が確かに表せてるんだからいいじゃないか」といわんばかりに無茶な発想をする。
+（まあ、物理学に関しても、「反粒子」とかいろいろ突拍子もないこと言い出す人だったらしいですが。）
+その1つがδ関数なわけです。</p>
+<p>δ関数というのは、
+元々は体積 0 の質点や電荷を表すために考えられたものです。
+質量や電気量が1点に集中していて、
+ただ1点で無限大の値を持つ。
+（参考：「<a href="/study/math/distribution/distribution-e_distribution/#dirac">ディラックのδ関数</a>」。）
+でも、1点で無限大の値を持つ関数なんてものを認めるのはいろいろと怖いものがあります。
+極限の話でもいいましたが、無限というものはほんと慎重に取り扱わないとすぐにおかしなことが起きる。</p>
+<p>まあ、結局その後は、δ関数のようなものを厳密に取り扱うための理論として、
+<a href="http://ja.wikipedia.org/wiki/%E3%83%AD%E3%83%BC%E3%83%A9%E3%83%B3%E3%83%BB%E3%82%B7%E3%83%A5%E3%83%AF%E3%83%AB%E3%83%84">シュワルツ</a>の distribution というものが生まれて、
+数学はますますの発展をとげるわけですが、
+ディラックのアイディアは当時としては本当に突拍子もないものでした。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/math/miscmath/">&#x6570;&#x5B66;&#x96D1;&#x8A18;</a></li><li><a href="/study/math/miscmath/lopital/">&#x30ED;&#x30D4;&#x30BF;&#x30EB;&#x306E;&#x5B9A;&#x7406;&#x3068;&#x4E09;&#x89D2;&#x95A2;&#x6570;&#x306E;&#x5FAE;&#x5206;</a></li><li><a href="/study/math/miscmath/definition/">1&#xFF0B;1</a></li><li><a href="/study/math/miscmath/dimension/">&#x9AD8;&#x6B21;&#x5143;&#x56F3;&#x5F62;</a></li><li><a href="/study/math/miscmath/gendai/">&#x73FE;&#x4EE3;&#x6570;&#x5B66;&#x3078;&#x306E;&#x5165;&#x9580;</a></li><li><a href="/study/math/miscmath/interpretation/">&#x7269;&#x7406;&#x5B66;&#x306E;2&#x3064;&#x306E;&#x5074;&#x9762;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

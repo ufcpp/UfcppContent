@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: &#x30E9;&#x30E0;&#x30C0;&#x5F0F;&#x306E;&#x6539;&#x5584; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2021/3/lambdaimprovements/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2021-03-28T17:40:12">2021-03-28</time></span><span>更新: <time datetime="2021-03-28T17:40:29">2021-03-28</time></span></div><h1 id="roslyn">ピックアップRoslyn: ラムダ式の改善</h1>
+<p>ラムダ式、これまでのバージョンでもこまごまと小さい改善があったりしたので今「lambda improvements」と言われてもタイトル的にはインパクト薄そうですが… C# 10.0 向けに結構大きな改善を入れようとしているみたいです。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/pull/4451">Add proposal for lambda improvements #4451</a></li>
+</ul>
+<h2 id="section"><a id="background">背景</a></h2>
+<p>C# 2.0 で<a href="/study/csharp/functional/sp_delegate/#definition">メソッドをデリゲート型の変数に代入するときに <code>new</code> が要らなくなった</a>のとか、<a href="/study/csharp/functional/sp_delegate/#anonymous-method">匿名メソッド式</a>が入り、C# 3.0 で<a href="/study/csharp/functional/sp_delegate/#lambda">ラムダ式</a>が入って以来、C# 9.0 に至るまでずっと、デリゲートの型推論の向きはずっと<a href="/study/csharp/start/misctyperesolution/#target-type">ターゲット型からの推論</a>になっています。</p>
+<p>C# の文法にはソース型からの推論の方が多いので、デリゲート(特にラムダ式)のターゲット型推論の挙動を「何か変」と思う人は多いんじゃないかと思います。
+一番多いのは、「以下のコードがコンパイルできないのは変じゃない？」みたいに思うこと。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> f = (<span class="keyword">int</span> x) =&gt; x * x;</code></pre>
+<p>大体は、デリゲートが「同じ引数・戻り値でも別の型を作れるし、それらは互いに区別する」という仕様のせい。
+ターゲットの方の型が決まらないとラムダ式の型を決定できません。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+A a = (<span class="keyword">int</span> x) =&gt; x * x;
+B b = (<span class="keyword">int</span> x) =&gt; x * x;
+Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; f = x =&gt; x * x;
+ 
+<span class="comment">// A, B, Func&lt;int, int&gt; は同じ引数、同じ戻り値だけど別の型。</span>
+<span class="comment">// 互いに代入不可。</span>
+a = b;
+b = f;
+f = a;
+ 
+<span class="keyword">delegate</span> <span class="keyword">int</span> A(<span class="keyword">int</span> x);
+<span class="keyword">delegate</span> <span class="keyword">int</span> B(<span class="keyword">int</span> x);</code></pre>
+<p>今でこそ「ターゲット型がわからないときは <code>Func&lt;T, TResult&gt;</code> にすればいいんじゃない？」みたいなことを言われますが…</p>
+<p>確かに今なら「できる限りは <code>Func&lt;T, TResult&gt;</code> を使う」みたいな習慣ができていますが、
+<code>Func&lt;T, TResult&gt;</code> が標準ライブラリに入ったの自体が C# 3.0 (後付け)だったりするので、
+「デフォルトは <code>Func&lt;T, TResult&gt;</code>」というほど盤石な地位かと言うと微妙に悩んだりします。</p>
+<p>あと、C# の<a href="/study/csharp/oop/sp2_generics/">ジェネリクス</a>の制限のせいで、<code>Func</code> には以下の問題もあったりします。</p>
+<ul>
+<li><code>Func&lt;ref int, readonly ref int&gt;</code> みたいな、<code>ref</code> (参照渡し)な型引数を作れない</li>
+<li><code>Func&lt;T1, ..., T16, TResult&gt;</code> みたいな、引数の個数違いを1個1個書く必要があって、標準ライブラリで提供しているものは最大で16引数しかない</li>
+</ul>
+<p>あと、まあ、ラムダ式の最大の用途である LINQ が「ターゲット型推論だけあれば十分」なのもあります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Linq;
+ 
+<span class="keyword">var</span> q = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span> }
+    .Where(x =&gt; (x % <span class="number">2</span>) == <span class="number">0</span>) <span class="comment">// ターゲット型推論で Func&lt;int, bool&gt; に決定</span>
+    .Select(x =&gt; x * x);      <span class="comment">// ターゲット型推論で Func&lt;int, int&gt; に決定</span></code></pre>
+<p>一方で、最近、 ASP.NET 方面から「<a href="https://github.com/dotnet/aspnetcore/pull/30556">任意のデリゲートを受け付ける <code>Map</code> メソッドを作りたい</a>」という話が上がっています。</p>
+<p>例えば、以下のような短い書き方で所定の URL に対するアクションを登録できるようにしたいそうです。</p>
+<pre><code class="language-csharp">builder.MapGet(<span class="string">&quot;/&quot;</span>, () =&gt; { });
+builder.MapGet(<span class="string">&quot;/category/{c}&quot;</span>, (<span class="keyword">char</span> c) =&gt; <span class="keyword">char</span>.GetUnicodeCategory(c));</code></pre>
+<p>C# としてもこの路線は支持したいそうで、
+そうなると3点ほどラムダ式に変更を入れたいとのこと。</p>
+<ul>
+<li>ラムダ式に属性を付けれるようにする</li>
+<li>ラムダ式の戻り値を(ターゲット型推論じゃなく、ラムダ式側で)明示できるようにする</li>
+<li>(ターゲット型がない時の) ラムダ式の「自然な型」を導入する</li>
+</ul>
+<h2 id="section-1"><a id="attributes">属性</a></h2>
+<p><a href="/study/csharp/cheatsheet/ap_ver9/#local-function-attribute">C# 9.0 でローカル関数に属性を付けれるようにした</a>わけで、ラムダ式にも属性を付けれるようにしてもいいんじゃないかという話があります。
+あと、同じく C# 9.0 で<a href="/study/csharp/cheatsheet/ap_ver9/#static-anonymous-function">ラムダ式に <code>static</code> を付けても大丈夫だった</a>ので、だったらさらに <code>[]</code> が付いても大丈夫っぽい。</p>
+<p>名前通り「式」(どこにでも書ける構文)なのであんまり長いものは書きたくはないですが、
+例えば以下のようなコードは十分に「書ける範囲」かと思います。</p>
+<pre><code class="language-csharp">app.MapAction([HttpGet(<span class="string">&quot;/&quot;</span>)]() =&gt; <span class="keyword">new</span> Todo(Id: <span class="number">0</span>, Name: <span class="string">&quot;Name&quot;</span>));
+app.MapAction([HttpPost(<span class="string">&quot;/&quot;</span>)]([FromBody] Todo todo) =&gt; todo);</code></pre>
+<p>C# 10.0 でこれらを認めたいそうです。</p>
+<h2 id="section-2"><a id="explicit-returns">明示的な戻り値の型</a></h2>
+<p>ラムダ式、C# 3.0 の頃からの構文でも、引数の型は明示できます。
+一方で、戻り値の型は常に推論任せだったわけですが、いい加減明示する方法が欲しいそうです。</p>
+<p>例えば戻り値の型を明示できなくて困る？例は以下の通り。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">var</span> a = m(x =&gt; x * x, <span class="number">1</span>); <span class="comment">// これはターゲット型推論任せで int, int に決定。</span>
+<span class="keyword">var</span> b = m((<span class="keyword">short</span> x) =&gt; x * x, <span class="number">1</span>); <span class="comment">// これが実は型決定できなかったり。</span>
+ 
+T2 m&lt;T1, T2&gt;(Func&lt;T1, T2&gt; f, T1 x) =&gt; f(x);</code></pre>
+<p>この例の場合は以下のように型引数を明示することで一応は解決しますが、これが書き心地いいかと言われると微妙な感じ。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b = m&lt;<span class="keyword">short</span>, <span class="keyword">long</span>&gt;(x =&gt; x * x, <span class="number">1</span>);</code></pre>
+<p>ジェネリクスの場合は型引数の方を明示するという手段を取れますが、
+後述する「自然な型」を導入しようと思うと戻り値の型の明示がないと困る場面が出てきます。
+ということで、以下のような「引数リストの後ろに <code>: T</code> を書く」という文法で戻り値の型を明示できるようにしたいそうです。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b = m((<span class="keyword">short</span> x) : <span class="keyword">long</span> =&gt; x * x, <span class="number">1</span>); <span class="comment">// ラムダ式の戻り値の型を明示的に long にする。</span></code></pre>
+<h2 id="section-3"><a id="natural-type">デリゲートの自然な型</a></h2>
+<p>最後が一番大きな変更になるんですが、ラムダ式を <code>var</code>、<code>object</code>、<code>Delegate</code> に代入できるようにするために、
+「ターゲット型がわからないときはこの型を選択する」みたいなもの(natural delegate type: デリゲートの自然な型)を決めておくことにするそうです。</p>
+<p>候補が搾れる分にはラムダ式やメソッドからデリゲートの型を自動決定。</p>
+<p>ラムダ式の例:</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> f1 = () =&gt; <span class="keyword">default</span>;        <span class="comment">// error: no natural type (決定不能)</span>
+<span class="keyword">var</span> f2 = x =&gt; { };             <span class="comment">// error: no natural type (決定不能)</span>
+<span class="keyword">var</span> f3 = x =&gt; x;               <span class="comment">// error: no natural type (決定不能)</span>
+<span class="keyword">var</span> f4 = () =&gt; <span class="number">1</span>;              <span class="comment">// System.Func&lt;int&gt;</span>
+<span class="keyword">var</span> f5 = () : <span class="keyword">string</span> =&gt; <span class="keyword">null</span>;  <span class="comment">// System.Func&lt;string&gt;</span></code></pre>
+<p>メソッド グループの例:</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> F1() { }
+<span class="keyword">static</span> <span class="keyword">void</span> F1&lt;T&gt;(<span class="keyword">this</span> T t) { }
+<span class="keyword">static</span> <span class="keyword">void</span> F2(<span class="keyword">this</span> <span class="keyword">string</span> s) { }
+ 
+<span class="keyword">var</span> f6 = F1;    <span class="comment">// error: multiple methods (F1() と F1&lt;T&gt;(T) の区別が付かない)</span>
+<span class="keyword">var</span> f7 = <span class="string">&quot;&quot;</span>.F1; <span class="comment">// System.Action</span>
+<span class="keyword">var</span> f8 = F2;    <span class="comment">// System.Action&lt;string&gt;</span></code></pre>
+<p>で、「自然な型」は以下のように作るそうです。</p>
+<ul>
+<li><code>System.Action</code> か <code>System.Func</code> を使えるとき(<code>ref</code> とかが付いていなくて16引数以下のとき)はそれを選ぶ</li>
+<li>非同期メソッドの場合、戻り値の型は <code>Task</code>/<code>Task&lt;T&gt;</code> (<code>System.Threading.Tasks</code> 名前空間)にする</li>
+<li><code>System.Action</code> か <code>System.Func</code> を使えないときは、<a href="/study/csharp/start/sp3_inference/#anonymous">匿名型</a>みたいに、 <code>internal</code> な匿名のデリゲートを作る</li>
+</ul>
+<p>匿名の型を作ってしまうのは、ASP.NET の <code>MapAciton</code> みたいに <code>Delegate</code> に代入して <code>MethodInfo</code> を見て分岐する用途では十分そうです。</p>
+<p>一方で、例えば以下のような <code>is</code> 分岐はできないはずなので、この用途には使えません。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="comment">// これはターゲット型からの型推論で成り立っているので OK。</span>
+a((<span class="keyword">ref</span> <span class="keyword">int</span> x) =&gt; <span class="keyword">ref</span> x);
+ 
+<span class="keyword">void</span> a(RefDelegate d) { }
+ 
+<span class="comment">// C# 10.0 でコンパイルできるようにしたい書き方。</span>
+<span class="comment">// この行はコンパイルできるようになる。</span>
+<span class="comment">// Func&lt;ref int, ref int&gt; とは書けないので、匿名型が作られる。</span>
+b((<span class="keyword">ref</span> <span class="keyword">int</span> x) =&gt; <span class="keyword">ref</span> x);
+ 
+<span class="keyword">void</span> b(Delegate d)
+{
+    <span class="comment">// (ref int x) =&gt; ref x は匿名のデリゲート型が作られてその型になる。</span>
+    <span class="comment">// delegate ref int Anonymous1$(ref int x) みたいな「通常の C# コードでは書けない名前の型」になるはず。</span>
+    <span class="comment">// 例え引数・戻り値の型が一致していても、RefDelegate とは違う型なので、is RefDelegate が true になることはない。</span>
+    <span class="keyword">if</span> (d <span class="keyword">is</span> RefDelegate r)
+    {
+    }
+}
+ 
+<span class="keyword">delegate</span> <span class="keyword">ref</span> <span class="keyword">int</span> RefDelegate(<span class="keyword">ref</span> <span class="keyword">int</span> x);</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2021/3/">3&#x6708;</a></li><li><a href="/blog/2021/3/mix-deconstruction/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: &#x5206;&#x89E3;&#x6642;&#x306E;&#x5BA3;&#x8A00;&#x3068;&#x5909;&#x6570;&#x306E;&#x6DF7;&#x5728;</a></li><li><a href="/blog/2021/3/usingimprovements/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: using &#x304C;&#x3089;&#x307F; (using &#x30A8;&#x30A4;&#x30EA;&#x30A2;&#x30B9;&#x306E;&#x6539;&#x5584;&#x3068; global using)</a></li><li><a href="/blog/2021/3/improvedinterpolatedstrings/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: Improved Interpolated Strings</a></li><li><a href="/blog/2021/3/200b/">&#x306A;&#x3093;&#x3068;&#x304B;&#x3057;&#x3066;&#x304F;&#x308C;&#x308B;&#x30BC;&#x30ED;&#x5E45;&#x30B9;&#x30DA;&#x30FC;&#x30B9;</a></li><li><a href="/blog/2021/3/ufcpplive/">YouTube &#x3067; C# &#x304C;&#x3089;&#x307F;&#x306E;&#x30E9;&#x30A4;&#x30D6;&#x914D;&#x4FE1;&#x521D;&#x3081;&#x3066;&#x307E;&#x3057;&#x305F;(1&#x5E74;&#x7D4C;&#x3063;&#x305F;)</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

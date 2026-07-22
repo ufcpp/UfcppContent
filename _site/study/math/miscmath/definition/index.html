@@ -1,0 +1,360 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>1&#xFF0B;1 | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/math/miscmath/definition/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">1＋1</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>小中学生がよく抱くらしい疑問、
+「
+<span class="math"><span class="normal">1</span><span class="normal">+</span><span class="normal">1</span><span class="normal">=</span><span class="normal">2</span></span>
+はなぜ？」
+とか
+「
+<span class="math"><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">×</span><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">=</span><span class="normal">1</span></span>
+はなぜ？」
+とか、
+答えられますか？</p>
+<p>まあ、ぶっちゃけていうと、
+これを定義にしてしまってもいいんですよね。
+でもその一方で、他の定義からの導出も可能です。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="two"></a>1＋1＝2</h2>
+<span class="math">
+        <span class="normal">1</span>
+        <span class="normal">+</span>
+        <span class="normal">1</span>
+        <span class="normal">=</span>
+        <span class="normal">2</span>
+      </span>
+は定義だから証明できないとか言う人もいますが、
+本当にそう思います？
+ 
+まず、以下の3つの条件を見てみてください。
+<ol>
+<li><p>自然数 1 の次に小さい自然数を 2 とする</p>
+</li>
+<li><p><span class="math">a</span>を自然数とすると、<span class="math">a <span class="normal">+</span><span class="normal">1</span></span>は<span class="math">a</span>の次に小さい自然数である</p>
+</li>
+<li><span class="math">
+       <span class="normal">1</span>
+       <span class="normal">+</span>
+       <span class="normal">1</span>
+       <span class="normal">=</span>
+       <span class="normal">2</span>
+     </span>
+</li>
+</ol>
+<p>条件 1 と 2 があれば、
+「1の次に小さいのを2と呼ぶ」かつ
+「
+<span class="math"><span class="normal">1</span><span class="normal">+</span><span class="normal">1</span></span>
+は1の次に小さい自然数」
+なので、
+結果として条件 3 が得られます。</p>
+<p>一方で、
+条件 2 と 3 を仮定すれば条件 1 がいえますし、
+条件 1 と 3 を仮定すれば条件 2 がいえます。
+要するに、3つの条件のうち、2つだけが仮定としなければならないもので、
+残り1つは定理として導けます。</p>
+<p>実を言うなら、
+<span class="math"><span class="normal">1</span><span class="normal">+</span><span class="normal">1</span><span class="normal">=</span><span class="normal">2</span></span>
+を定義とする公理系があってもいいし、
+定理として導ける公理系があってもいい。
+前者の公理系を採用するなら、
+当然、
+<span class="math"><span class="normal">1</span><span class="normal">+</span><span class="normal">1</span><span class="normal">=</span><span class="normal">2</span></span>
+は定義であって証明はできない。
+後者の公理系を採用するなら、もちろん証明可能な命題になる。</p>
+<p>結局、
+<span class="math"><span class="normal">1</span><span class="normal">+</span><span class="normal">1</span><span class="normal">=</span><span class="normal">2</span></span>
+を定義とするかどうか、選択権が残っているんですよね。
+どれを選択するかは、
+通常、
+「もっとも条件数が少ない定義の仕方を選ぶ」か、
+「一番直感的なものを選ぶ」のいずれかの方針で決定します。</p>
+<p>この3つの条件だと、どれとどれを選んでも2つは必要なので、
+直感的に分かりやすいのがどれかという問題になりますね。
+個人的には1と2だと思うんですけど、人によるかも。</p>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="two2"></a>1＋1＝2（直感的な説明）</h2>
+<p>前節で、
+1 とか 2 とか ＋ とかがどういう条件を満たすべきなのか、
+以下のような3つの条件を出しました。</p>
+<ol>
+<li><p>自然数 1 の次に小さい自然数を 2 とする</p>
+</li>
+<li><p><span class="math">a</span>を自然数とすると、<span class="math">a <span class="normal">+</span><span class="normal">1</span></span>は<span class="math">a</span>の次に小さい自然数である</p>
+</li>
+<li><span class="math">
+       <span class="normal">1</span>
+       <span class="normal">+</span>
+       <span class="normal">1</span>
+       <span class="normal">=</span>
+       <span class="normal">2</span>
+     </span>
+</li>
+</ol>
+<p>このうち、2つの条件があれば、残りの1個は導出可能なんですが、
+じゃあ、どの2個を定義としてどの1個を定理にするのが一番直感的に分かりやすいでしょう。</p>
+<p>そのあたりのことを考えるために、
+一度、自然数という発想にいたる経緯を追いなおしてみましょう。
+自然数という概念は、物の個数を数えることから始まったわけで、
+1 とか 2 とかいう数字は以下の例のような感じで決められています。</p>
+<blockquote><p>部屋に自分だけがいるときの人数を1と数える。
+部屋にもう1人入ってきたら2人、
+さらにもう1人入ってきたら3人、・・・、
+と数える。</p></blockquote>
+さて、これを論理的に言い表そうと思ったらどうすればいいんでしょう。
+やっぱり、
+「
+<span class="math"><span class="normal">1</span><span class="normal">+</span><span class="normal">1</span><span class="normal">=</span><span class="normal">2</span></span>
+ですよ」としか言い表せないんでしょうか。
+ 
+まあ、上述の文章もいくつかに分解して考えられますね。
+<ul>
+<li><p>物の数の増減には基本単位がある。その単位を 1 と表す。</p>
+</li>
+<li><p>数には「1個増える」という操作が可能である。</p>
+</li>
+<li><p>ある数に「1個増える」という操作を施した物をその数の「次」と呼ぶものとして、 「1の次」を 2 で表す。</p>
+</li>
+</ul>
+<p>まあ、こんな所です。
+これとあと、いちいち言葉で「次」とか言うと面倒なので、
+記号を定義しておきましょう。</p>
+<ul>
+<li><span class="math">a</span>の次を<span class="math">a <span class="normal">+</span><span class="normal">1</span></span>と書く。</li>
+</ul>
+<p>このあたりのことを述べているのが、
+前節の条件 1, 2 なわけですね。
+ここまで決めれば、必然的に
+<span class="math"><span class="normal">1</span><span class="normal">+</span><span class="normal">1</span><span class="normal">=</span><span class="normal">1の次</span><span class="normal">=</span><span class="normal">2</span></span>
+となります。</p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="minus"></a>(-1)×(-1)＝1</h2>
+<span class="math">
+        <span class="paren" style="font-size:em;">(</span>
+          <span class="normal">−</span>
+          <span class="normal">1</span>
+        <span class="paren" style="font-size:em;">)</span>
+        <span class="normal">×</span>
+        <span class="paren" style="font-size:em;">(</span>
+          <span class="normal">−</span>
+          <span class="normal">1</span>
+        <span class="paren" style="font-size:em;">)</span>
+        <span class="normal">=</span>
+        <span class="normal">1</span>
+      </span>
+も同様に、定義にもできるし、他の定義から導くこともできる。
+ 
+ここでは、以下のようにして負の数を定義してみましょう。
+<ol>
+<li><p>任意の自然数<span class="math">a</span>に対して、<span class="math">a <span class="normal">+</span><span class="normal">0</span><span class="normal">=</span> a</span>となるような元 0 の存在を認める。</p>
+</li>
+<li><p>自然数<span class="math">a</span>に対して、<span class="math">a <span class="normal">+</span> b <span class="normal">=</span><span class="normal">0</span></span>を満たす数<span class="math">b</span>を<span class="math">a</span>の加法に関する逆元と呼び、<span class="math"><span class="normal">−</span>a</span>と書く。</p>
+</li>
+<li><p>自然数<span class="math">a</span>と、ここで定義した 0、<span class="math"><span class="normal">−</span>a</span>をあわせて、整数と呼ぶ。</p>
+</li>
+<li><p>整数は（すなわち、<span class="math"><span class="normal">−</span>a</span>も）自然数と同じ和・差・積の公式に従う。</p>
+</li>
+</ol>
+<p>このとき、以下のような定理が逐次示されます。</p>
+<ol>
+<li><p>任意の整数<span class="math">m</span>に対して、<span class="math">m <span class="normal">×</span><span class="normal">0</span><span class="normal">=</span><span class="normal">0</span></span>。</p>
+</li>
+<li><span class="math">
+</li>
+</ol>
+<p>a <span class="normal">+</span><span class="paren" style="font-size:em;">(</span><span class="normal">−</span>a<span class="paren" style="font-size:em;">)</span><span class="normal">=</span><span class="paren" style="font-size:em;">(</span><span class="normal">−</span>a<span class="paren" style="font-size:em;">)</span><span class="normal">+</span> a
+<span class="normal">=</span><span class="normal">0</span></span>なので、 定義から、<span class="math"><span class="normal">−</span>a</span>の逆元は<span class="math">a</span>。 すなわち、<span class="math"><span class="normal">−</span><span class="paren" style="font-size:em;">(</span><span class="normal">−</span>a<span class="paren" style="font-size:em;">)</span><span class="normal">=</span>
+a
+</span>。</p>
+<ol start="3">
+<li><p>自然数と同じ法則が成り立つという仮定から、 整数にも分配法則が成り立ち、<span class="math">
+a <span class="normal">+</span><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">×</span>a
+<span class="normal">=</span>
+a<span class="normal">×</span><span class="normal">1</span><span class="normal">+</span> a<span class="normal">×</span><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">=</span>
+a <span class="normal">×</span><span class="paren" style="font-size:1.2em;">(</span><span class="normal">1</span><span class="normal">+</span><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:1.2em;">)</span><span class="normal">=</span>
+a<span class="normal">×</span><span class="normal">0</span><span class="normal">=</span><span class="normal">0</span></span>なので、<span class="math"><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">×</span>a
+<span class="normal">=</span><span class="normal">−</span>a
+</span>。</p>
+</li>
+<li><p>定理 3 で、特に<span class="math">a <span class="normal">=</span><span class="normal">−</span><span class="normal">1</span></span>を代入すれば、<span class="math"><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">×</span><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">=</span><span class="normal">−</span><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span></span>となり、 定理 2 から<span class="math"><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">×</span><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">=</span><span class="normal">−</span><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">=</span><span class="normal">1</span></span>。</p>
+</li>
+</ol>
+<p>はい、ちゃんと定理として
+<span class="math"><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">×</span><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">=</span><span class="normal">1</span></span>
+が得られました。
+「整数も自然数と同じ演算法則に従う」というのを定義にしたらこの結果が得られたわけですから、
+結局、整数を自然数の自然な拡張にしたければ、
+<span class="math"><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">×</span><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">=</span><span class="normal">1</span></span>
+にならざるを得ないということです。</p>
+<p>これも、1＋1 の時と同じく、順序を逆にすることも可能で、
+<span class="math"><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">×</span><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">=</span><span class="normal">1</span></span>
+の方（と <span class="math"><span class="normal">−</span><span class="normal">1</span></span> が交換法則と結合法則を満たすこと）を定義としてしまえば、
+整数が自然数と同じ演算法則に従う（分配法則も満たす）ことを示せます。
+まあ、交換法則と結合法則は仮定するくせに、
+分配法則を仮定しないというのも変な話なので、
+これはあんまりいい定義だとは思えないですけど。</p>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="minus2"></a>(-1)×(-1)＝1 （直感的な説明）</h2>
+<span class="math">
+        <span class="paren" style="font-size:em;">(</span>
+          <span class="normal">−</span>
+          <span class="normal">1</span>
+        <span class="paren" style="font-size:em;">)</span>
+        <span class="normal">×</span>
+        <span class="paren" style="font-size:em;">(</span>
+          <span class="normal">−</span>
+          <span class="normal">1</span>
+        <span class="paren" style="font-size:em;">)</span>
+        <span class="normal">=</span>
+        <span class="normal">1</span>
+      </span>
+の方も直感的な数の概念と食い違っていないか検証してみましょう。
+ 
+まず、0 に関しては、「誰もいない部屋の状態を 0 とする」とでもしておけばいいでしょう。
+ただ、これだと、負の数は考え出すことができません。
+これは、誰もいない状態よりも人を減らせないのが問題なので、
+ちょっと捻りを加えてみましょう。
+<blockquote><p>部屋の代わりにちょっと大きめの建物を考えます。
+建物全体に何人いるかはわからないんですが、
+入口付近を見張ることで、
+何人入ってきて何人出ていくかを数えることができます。</p>
+<p>今現在、建物内にいる人間の数を基準にして、増減だけを見てみましょう。
+今の状態が 0 です。
+こうすると、0 よりも人が減る可能性があります。
+そして、人が増えるというのを正の数、
+人が減るというのを負の数で表せそうですね。</p>
+<p><span class="math">a</span> 人増えて、さらに続けて <span class="math">a</span> 人減ると、
+トータルの増減は 0 になります。</p></blockquote>
+最後の一文を持って負の数を定義しようというのが、
+以下の条件になるわけです。
+<ul>
+<li>自然数<span class="math">a</span>に対して、<span class="math">a <span class="normal">+</span> b <span class="normal">=</span><span class="normal">0</span></span>を満たす数<span class="math">b</span>を<span class="math">a</span>の加法に関する逆元と呼び、<span class="math"><span class="normal">−</span>a</span>と書く。</li>
+</ul>
+<p>前節の通り、この定義と、
+「負の数も自然数と同じ演算法則に従って欲しい」という要請だけでも、
+十分に
+<span class="math"><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">×</span><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">=</span><span class="normal">1</span></span>
+が導出できます。</p>
+<p>一方で、
+<span class="math"><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">×</span><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">=</span><span class="normal">1</span></span>
+の方を定義にしてしまってもいいということに正当性を持たせるために、
+以下のようなシチュエーションを考えてみましょう。</p>
+<blockquote><p>「1分あたり <span class="math">a</span> 人の増減がある」
+というような状況を考えます。
+このとき、
+<span class="math">b</span> 分“前”は今より何人多/少なかったでしょう。
+また、
+<span class="math">b</span> 分“後”は今より何人多/少なくなるでしょう。</p>
+<p>人の出入りと同じく、時間にも向きが付きました。
+ここで、
+<span class="math">b</span> 分“後”の方を自然数 <span class="math">b</span> で、
+<span class="math">b</span> 分“前”の方を負の数 <span class="math"><span class="normal">−</span>b</span> で表すことにしましょう。</p>
+<p>「毎分 <span class="math">a</span> 人の増加で <span class="math">b</span> 分後」
+なら、自然数同士の掛け算なので、答えは <span class="math">a<span class="normal">×</span>b</span> ですね。</p>
+<p>「毎分 <span class="math">a</span> 人の減少で <span class="math">b</span> 分後」なら、
+トータルで <span class="math">a<span class="normal">×</span>b</span> の減少なので、
+減少は負で表すというルールから <span class="math"><span class="normal">−</span>a<span class="normal">×</span>b</span> 人と書く。</p>
+<p>同様に、
+「毎分 <span class="math">a</span> 人の増加で <span class="math">b</span> 分前」なら、
+今よりも <span class="math">a<span class="normal">×</span>b</span> 人少なかったはずですから、
+<span class="math"><span class="normal">−</span>a<span class="normal">×</span>b</span> 人。</p>
+<p>「毎分 <span class="math">a</span> 人の減少で <span class="math">b</span> 分前」なら、
+今よりも <span class="math">a<span class="normal">×</span>b</span> 人多かったはずですから、
+<span class="math">a<span class="normal">×</span>b</span> 人。</p></blockquote>
+結果をまとめると以下の通りです。
+<table summary="人の増減">
+	<caption>
+		人の増減
+	</caption>
+	<tr>
+		<td></td>
+		<th><span class="math">b</span>分後</th>
+		<th><span class="math">b</span>分前</th>
+	</tr>
+	<tr>
+		<th>毎分<span class="math">a</span>人の増</th>
+		<td><p><span class="math">a<span class="normal">×</span>b</span>人多い</p></td>
+		<td><p><span class="math">a<span class="normal">×</span>b</span>人少ない</p></td>
+	</tr>
+	<tr>
+		<th>毎分<span class="math">a</span>人の減</th>
+		<td><p><span class="math">a<span class="normal">×</span>b</span>人少ない</p></td>
+		<td><p><span class="math">a<span class="normal">×</span>b</span>人多い</p></td>
+	</tr>
+</table>
+<table summary="増は＋、減は－。後は＋、前は－のルール">
+	<caption>
+		増は＋、減は－。後は＋、前は－のルール
+	</caption>
+	<tr>
+		<td></td>
+		<th><span class="math">b</span></th>
+		<th><span class="math">
+            <span class="normal">−</span>b</span></th>
+	</tr>
+	<tr>
+		<th>毎分<span class="math">a</span></th>
+		<td><p><span class="math">a<span class="normal">×</span>b</span></p></td>
+		<td><span class="math">
+            <span class="normal">−</span>a<span class="normal">×</span>b</span></td>
+	</tr>
+	<tr>
+		<th>毎分<span class="math"><span class="normal">−</span>a</span></th>
+		<td><span class="math">
+            <span class="normal">−</span>a<span class="normal">×</span>b</span></td>
+		<td><p><span class="math">a<span class="normal">×</span>b</span></p></td>
+	</tr>
+</table>
+<p>ちゃんと負の数同士の積が正の数になっていますね。
+これで、
+<span class="math"><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">×</span><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">=</span><span class="normal">1</span></span>
+の方が定義だって言ってしまっても、
+別に直感的に違和感のあるものではなくなりました。</p>
+<p>また、前述の通り、
+「負の数も自然数と同じ演算法則に従って欲しい」
+という要請だけでも
+<span class="math"><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">×</span><span class="paren" style="font-size:em;">(</span><span class="normal">−</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span><span class="normal">=</span><span class="normal">1</span></span>
+が言えてしまうわけですが、
+「この結論は直感に反するものではない」
+ということも言えます。</p>
+<h2 id="section-6"><a id="sec-generated-title-6"></a> <a id="plan"></a>執筆予定</h2>
+<pre><code class="language-text">結局、「定義の仕方次第」
+
+-a という記号を、「かけて 1 になるような元」（要するに乗法に関する逆元）に使っても、
+（有益かどうかを別にするなら）誰も文句はいいません。
+
+1＋1＝0 になるような ＋演算があってもかまいません。
+
+そんなことして意味があるかどうかを考えなければ、
+もっと奇抜な法則を持っていたってかまわない。
+集合 {1, a, △} に対して、
+1＋1＝a, a＋1＝△, △＋1＝1
+1×1＝1, 1×a＝a, 1×△＝△
+a×a＝1, a×△＝△, △×△＝△
+と定義したり。
+（こんな変なのでも矛盾なく加減乗除できるし、分配法則も成り立ってるはず）</code></pre>
+<pre><code class="language-text">あと、
+「証明のできない公理はどこまで減らすことができるだろう？」
+ということも考えていくと面白い。
+その1つの到達点が、現在の公理的集合論</code></pre>
+<p>→ 参考： 「<a href="/study/math/">数学</a>」。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/math/miscmath/">&#x6570;&#x5B66;&#x96D1;&#x8A18;</a></li><li><a href="/study/math/miscmath/lopital/">&#x30ED;&#x30D4;&#x30BF;&#x30EB;&#x306E;&#x5B9A;&#x7406;&#x3068;&#x4E09;&#x89D2;&#x95A2;&#x6570;&#x306E;&#x5FAE;&#x5206;</a></li><li><a href="/study/math/miscmath/dimension/">&#x9AD8;&#x6B21;&#x5143;&#x56F3;&#x5F62;</a></li><li><a href="/study/math/miscmath/gendai/">&#x73FE;&#x4EE3;&#x6570;&#x5B66;&#x3078;&#x306E;&#x5165;&#x9580;</a></li><li><a href="/study/math/miscmath/interpretation/">&#x7269;&#x7406;&#x5B66;&#x306E;2&#x3064;&#x306E;&#x5074;&#x9762;</a></li><li><a href="/study/math/miscmath/development/">&#x6570;&#x5B66;&#x306E;&#x767A;&#x5C55;&#x3001;&#x65B0;&#x7406;&#x8AD6;&#x3068;&#x53B3;&#x5BC6;&#x5316;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

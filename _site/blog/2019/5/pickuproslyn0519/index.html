@@ -1,0 +1,258 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 5/19: dotnet-try, .NET Core 3.0 &#x30D1;&#x30D5;&#x30A9;&#x30FC;&#x30DE;&#x30F3;&#x30B9;&#x3001;null &#x8A31;&#x5BB9;&#x53C2;&#x7167;&#x578B;&#x306E;&#x4ED5;&#x69D8;&#x6539;&#x5584; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2019/5/pickuproslyn0519/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2019-05-19T22:54:19">2019-05-19</time></span><span>更新: <time datetime="2019-05-19T23:12:41">2019-05-19</time></span></div><h1 id="roslyn-519-dotnet-try.net-core-3.0-null">ピックアップRoslyn 5/19: dotnet-try, .NET Core 3.0 パフォーマンス、null 許容参照型の仕様改善</h1>
+<p>この1週間ほど、<a href="https://www.microsoft.com/en-us/build">build</a> で発表したことを改めてブログ化したものが投稿されたりとか、build が終わって落ち着いたところで本業に戻ったと思われる投稿とかがたくさんありました。</p>
+<p>そのうち3つほど紹介</p>
+<ul>
+<li>dotnet-try</li>
+<li>.NET Core 3.0 でのパフォーマンス改善</li>
+<li>C# Design Notes 2件追加(どちらも null 許容参照型がらみ)</li>
+</ul>
+<h2 id="dotnet-try">dotnet-try</h2>
+<ul>
+<li><a href="https://www.hanselman.com/blog/IntroducingTheTryNETGlobalToolInteractiveInbrowserDocumentationAndWorkshopCreator.aspx">Introducing the Try .NET Global Tool - interactive in-browser documentation and workshop creator</a></li>
+<li><a href="https://devblogs.microsoft.com/dotnet/creating-interactive-net-documentation/">Create Interactive .NET Documentation with Try .NET</a></li>
+</ul>
+<p>以下のようなコマンドで簡単にインストールできるツール(<a href="https://docs.microsoft.com/ja-jp/dotnet/core/tools/global-tools">.NET Global Tool</a> という仕組み)として、 dotnet-try というものが公開されました。</p>
+<pre><code class="language-console">dotnet tool install --global dotnet-try</code></pre>
+<p>C# でいわゆる interactive workshop (ドキュメント中に直接コードが埋め込まれてて、実行結果が見れるような講習資料)を簡単に作れるようにしようというもの。
+以下のような仕組み。</p>
+<ul>
+<li>普通に dotnet コマンドでコンパイルできるプロジェクト一式を書く</li>
+<li>Markdown 中の  ```cs 行に、その C# コードを参照するオプションを付ける</li>
+<li>プロジェクトを置いたフォルダー中で dotnet try ツールを起動する</li>
+<li>dotnet try 自体が Web サーバーになっていて、ブラウザーが起動して localhost アクセスで書いたドキュメントが表示される</li>
+<li>ドキュメント中の C# コードは構文ハイライト表示されるし、実行ボタンがあって結果を出力できる
+<ul>
+<li><a href="https://dotnet.microsoft.com/apps/aspnet/web-apps/client">Blazor</a>を使ってるっぽい</li>
+</ul>
+</li>
+</ul>
+<h3 id="try.net-online">Try .NET Online</h3>
+<p>2017年以降、 .NET 関連のドキュメントは<a href="https://docs.microsoft.com/en-us/dotnet/csharp/tutorials/intro-to-csharp/">docs.microsoft.com 上にある</a>わけですが、
+その中ではサンプルの C# コードをブラウザー中で実行して結果を見れる機能があります。
+これを指して「Try .NET Online」と言っています。</p>
+<p>初期はほとんどの処理をサーバー上でやっていて常に通信してコードや実行結果を表示していました。
+それを徐々に Blazor と Web Assembly 化しているそうで、
+今はだいぶクライアント上での処理になっているみたいです。
+(まだ完全にオフラインではなくて、コンパイルはサーバー側でやっていそう。)</p>
+<h3 id="try.net-offline">Try .NET Offline</h3>
+<p>今回リリースされた dotnet-try ツールは、
+「Try .NET Online」と同じドキュメントをローカル環境で書いて試せるという仕組みで、
+「Try .NET Offline」と言っています。</p>
+<p>普通の C# プロジェクトを作ってそれを参照する仕組みなので、
+ちゃんとコンパイルできることが確認を取れているコードの一部分を参照して、
+その部分の実行結果が正しく表示されます。</p>
+<p>全部オープンソースです。</p>
+<ul>
+<li><a href="https://github.com/dotnet/try">dotnet/try</a></li>
+</ul>
+<p>現状、とりあえずアルファ リリースみたいです。フィードバック募集中。</p>
+<p>そういう段階のツールなので、利便性はまだまだあまりよくありません。
+作った interactive workshop の共有みたいなところまでは至っていなくて、
+現状だと作る側も自前で GitHub ででも公開してもらって、
+見る側も自前で以下のようにコマンドラインでツール起動してもらう作り。</p>
+<pre><code class="language-console">git clone 公開先
+dotnet try cloneしてきたリポジトリ</code></pre>
+<h2 id="net-core-3.0">.NET Core 3.0 のパフォーマンス向上</h2>
+<ul>
+<li><a href="https://devblogs.microsoft.com/dotnet/performance-improvements-in-net-core-3-0/">Performance Improvements in .NET Core 3.0</a></li>
+</ul>
+<p><a href="https://blogs.msdn.microsoft.com/dotnet/2017/06/07/performance-improvements-in-net-core/">.NET Core 2.0</a>や<a href="https://devblogs.microsoft.com/dotnet/performance-improvements-in-net-core-2-1">.NET Core 2.1</a>の時にもブログがありましたが、.NET Core 3.0 でも改めて「こんな最適化をやったよ」というまとめブログが上がりました。</p>
+<p>今回はまたものすごい長大な内容…</p>
+<p>長くてまじめに読むのは大変ですが、概ね、以下のような感じ。</p>
+<ul>
+<li><a href="/study/csharp/resource/span/"><code>Span&lt;T&gt;</code></a>とか<code>Memory&lt;T&gt;</code>自体を最適化した</li>
+<li><code>Span&lt;T&gt;</code>、<code>Memory&lt;T&gt;</code> を使うものを引き続き増やした</li>
+<li><a href="/blog/2018/12/hdintrinsic/">Hardware Intrinsics</a>を全面的に適用開始
+<ul>
+<li>バイナリ操作とか文字列操作は本当に2～4倍高速化</li>
+<li>ただし、現状は Intel CPU のみ(<a href="https://ja.wikipedia.org/wiki/%E3%82%B9%E3%83%88%E3%83%AA%E3%83%BC%E3%83%9F%E3%83%B3%E3%82%B0SIMD%E6%8B%A1%E5%BC%B5%E5%91%BD%E4%BB%A4">AVX2</a> が有効な環境でだけ2～4倍高速化)</li>
+<li><a href="https://github.com/dotnet/corefx/issues/37199">ARM 系はまだまだこれから</a></li>
+</ul>
+</li>
+<li>非同期処理の最適化
+<ul>
+<li><a href="/blog/2018/3/pickuproslyn0323/"><code>IValueTaskSource</code></a>の適用範囲を増やしたり</li>
+</ul>
+</li>
+<li>その他、細かい最適化も大量
+<ul>
+<li><code>T?</code> から <code>Value</code> で値を取ってたところを <code>GetValueOrDefault</code> に置き換えて回ったり</li>
+<li><code>new T[0]</code> を <code>Array.Empty&lt;T&gt;()</code> に置き換えて回ったり</li>
+</ul>
+</li>
+</ul>
+<h2 id="design-notes-2null">Design Notes 2件(null 許容参照型がらみ)</h2>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/2527">Added: LDM Notes for May 13, 2019 #2527</a></li>
+<li><a href="https://github.com/dotnet/csharplang/issues/2536">Added: LDM Notes for May 15, 2019 #2536</a></li>
+</ul>
+<p>どちらも <a href="/blog/2018/12/cs8nrt/">null 許容参照型</a>がらみで、
+だいぶ具体的な話。
+先日、「<a href="/blog/2019/5/build2019/">そろそろ C# 8.0 に入れる機能を決めるタイムリミット</a>」という話をしましたが、
+これもその一環だと思います。
+そろそろ null 許容参照型の仕様も固めないとまずい。</p>
+<h3 id="nullable">#nullable の書き方</h3>
+<p>null 許容参照型(破壊的変更にならないように opt-in)を有効化するにあたって、
+以下の2つの視点があります。</p>
+<ul>
+<li>annotations: ライブラリを提供する側として、null の許容・非許容のアノテーションを公開するかどうか</li>
+<li>warnings: ライブラリを使う側として、コード解析をして null 参照に対して警告を出すかどうか</li>
+</ul>
+<p>移行段階としては、どちらか片方だけを有効化したいことがあります。</p>
+<ul>
+<li>差し当たってアノテーションだけは付けたいけど、中身の警告を全部消す作業まで手が回らない</li>
+<li>差し当たって警告は出してほしいけど、自分が公開している API にまでは責任を持てないのでアノテーションは付けたくない</li>
+</ul>
+<p>結果、指定できるオプションは以下のようにまとめたいとのこと。</p>
+<pre><code class="language-csharp">#nullable (enable | <span class="keyword">disable</span> | restore) [ warnings | annotations ]</code></pre>
+<ul>
+<li>enable、disable で有効・無効を切り替え
+<ul>
+<li>restore は1つ前のディレクティブの状態に復元</li>
+<li>その後ろに何も書かなければ annotations も warnings もまとめて切り替え</li>
+</ul>
+</li>
+<li>その後ろに warnings、 annotations を付けることで、どちらか片方だけを切り替え</li>
+</ul>
+<p>ソースコード中の <code>#nullable</code> ディレクティブ(その行移行の局所的に作用)と同じように、
+<code>csproj</code> 中に書くタグ(プロジェクト全体に作用)も、以下のようにしたいみたいです。</p>
+<ul>
+<li>タグ名はシンプルに <code>Nullable</code> にする
+<ul>
+<li>今は <code>NullableContextOptions</code> とかいう長い名前</li>
+</ul>
+</li>
+<li>オプションの値も enable、disable、annotations、warnings にする</li>
+</ul>
+<h3 id="section">アノテーションの付け方</h3>
+<p>前節の <code>#nullable enable</code> を指定した状態では、基本的に以下のようなアノテーションの付け方になります。</p>
+<ul>
+<li>参照型 <code>T</code> に対して単に <code>T</code> と書くと非 null</li>
+<li><code>T?</code> と書くと null 許容</li>
+</ul>
+<p>ただ、これだとどうしてもうまくいかない場合があって、
+そういうとき用に属性でのアノテーションを足したいという話。</p>
+<h4 id="section-1">単純な事前・事後条件</h4>
+<p><code>T</code> と書いていても null 許容に、<code>T?</code> と書いていても非 null に変えたい場合があります。</p>
+<ul>
+<li><a href="/study/csharp/oop/sp2_generics/#where">制約</a>未指定の <code>T</code> がジェネリック型引数の場合、値型と参照型で <code>T?</code> の意味が違うせいで <code>T?</code> と書けないので属性に頼るしかない</li>
+<li>プロパティで、get は非 null だけど set は null 許容とかにしたい</li>
+<li><a href="/study/csharp/resource/sp_ref/#sec-byref-param">参照引数</a>で、in/out 片側だけを null 許容にしたい
+<ul>
+<li>null を渡してもいいけど、メソッドを呼んだあとはその変数が null じゃなくなる保証あり</li>
+<li>null を受け取れないけど、メソッド内で null を書き込む可能性あり</li>
+</ul>
+</li>
+</ul>
+<p>そこで、以下の属性を用意</p>
+<ul>
+<li>事前条件
+<ul>
+<li><code>[AllowNull]</code>: <code>T</code> と書いていても、入力として null を受け付ける</li>
+<li><code>[DisallowNull]</code>: <code>T?</code> と書いていても、入力として null を受け付けない</li>
+</ul>
+</li>
+<li>事後条件
+<ul>
+<li><code>[MaybeNull]</code>: <code>T</code> と書いていても、出力として null を返す可能性がある</li>
+<li><code>[NotNull]</code>: <code>T?</code> と書いていても、出力として null を返さない</li>
+</ul>
+</li>
+</ul>
+<h4 id="section-2">相互依存のある事後条件</h4>
+<p><code>TryParse</code> とか <code>IsNullOrEmpty</code> とか、何かメソッドを呼んだ結果 null かどうかが確定するものがあります。
+こういうとき用に、以下のような属性を用意。</p>
+<ul>
+<li><code>[MaybeNullWhen(bool)]</code>: 戻り値が true/false の時に限り、指定した引数が null になる可能性がある</li>
+<li><code>[NotNullWhen(bool)]</code>: 戻り値が true/false の時に限り、指定した引数が null でない保証がある</li>
+</ul>
+<p>「引数が null のときだけ戻り値も null」みたいなこともあります。
+そのための属性もあり。</p>
+<ul>
+<li><code>[NotNullIfNotNull(string)]</code>: 指定した引数の nullability と戻り値の nullability が一致</li>
+</ul>
+<h4 id="section-3">コンパイラーによる特殊対応</h4>
+<p><code>x == y</code> とか書くと、<code>x</code> の nullability が <code>y</code> に伝搬します。
+<code>x</code> が非 null なことがわかっているなら、<code>y</code> も非 null で確定。</p>
+<p><code>==</code> はいいとして、それと同様の効果があるメソッドがいくつかあります。</p>
+<ul>
+<li><code>Object.ReferenceEquals</code></li>
+<li><code>Object.Equals</code></li>
+<li><code>IEqualityComparer&lt;T&gt;.Equals</code></li>
+<li><code>EqualityComparer&lt;T&gt;.Equals</code></li>
+<li><code>IEquatable&lt;T&gt;.Equals</code></li>
+</ul>
+<p>こいつらは、数が限られているし、これら以外のメソッドで等値判定をすることはほとんどないので、コンパイラーにハードコードで実現したいそうです。
+ちゃんと、<code>x.Equals(y)</code> で nullability が伝搬するものの、それは <code>Object.Equals</code> を特別扱いすることで実装。</p>
+<p>同じく、<code>Interlocked.CompareExchange</code> も特別扱いで nullability 伝搬するそうです。</p>
+<h4 id="section-4">フローがらみの属性</h4>
+<p>今ある「<a href="/study/csharp/resource/rm_struct/#definite-assignment">確実な初期化ルール</a>」でもそうなんですが、到達できない場所のフロー解析はされません。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">int</span> x;
+        <span class="keyword">return</span>;
+
+        <span class="comment">// 本来「x を初期化せずに使っちゃダメ」と怒られるようなコード。</span>
+        <span class="comment">// 別にエラーにならない。その代わり、「return のせいでここには絶対来ないよ」警告が出る。</span>
+        Console.WriteLine(x);
+    }
+}</code></pre>
+<p>nullability のフロー解析もこれと同じ挙動になります。</p>
+<p>そこで困るのが、以下のような状況。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="comment">// 例外を出すのでこのメソッドより後ろは絶対に実行されない。</span>
+    <span class="keyword">static</span> <span class="keyword">void</span> Throw() =&gt; <span class="keyword">throw</span> <span class="keyword">new</span> Exception();
+ 
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">int</span> x;
+ 
+        <span class="comment">// 絶対に戻ってこない。</span>
+        Throw();
+ 
+        <span class="comment">// 以下の2行もアプリケーション クラッシュになるのでここより後ろは実行されない。</span>
+        System.Diagnostics.Debug.Assert(<span class="keyword">false</span>);
+        Environment.FailFast(<span class="string">&quot;fatal error&quot;</span>);
+ 
+        <span class="comment">// でも、現状だとコンパイラーがそれを知るすべがな。</span>
+        <span class="comment">// なので「到達できない」警告じゃなく「未初期化」エラーに。</span>
+        Console.WriteLine(x);
+    }
+}</code></pre>
+<p>ということで、以下のような属性も用意。</p>
+<ul>
+<li><code>[DoesNotReturn]</code>: メソッドを呼んだ時点でそこより後ろは実行されない</li>
+<li><code>[DoesNotReturnIf(bool)]</code>: 指定した引数が true/false の時、そこより後ろは実行されない</li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2019/5/">5&#x6708;</a></li><li><a href="/blog/2019/5/build2019/">.NET 5&#x3001;Visual Studio 16.1 Preview 3</a></li><li><a href="/blog/2019/5/vs16_2_p1/">Visual Studio 16.1.0 &amp; 16.2 Preview 1</a></li><li><a href="/blog/2019/5/deterministicbuilds/">C# &#x3067;&#x3001;&#x540C;&#x3058;&#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x304B;&#x3089;&#x5E38;&#x306B;&#x540C;&#x3058;&#x30D0;&#x30A4;&#x30CA;&#x30EA;&#x3092;&#x751F;&#x6210;&#x3059;&#x308B;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

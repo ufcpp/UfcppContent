@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>async/await &#x305D;&#x306E;&#x5F8C;/&#x8FFD;&#x8A18; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2015/12/asyncawaitpost/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2015-12-02T02:43:12">2015-12-02</time></span><span>更新: <time datetime="2015-12-02T02:46:21">2015-12-02</time></span></div><h1 id="asyncawait">async/await その後/追記</h1>
+<p>昨日、<a href="/blog/2015/12/unityasync0introduction/">Unity 上での async/await の話</a>と、そのついでに<code>Task</code>クラスでかすぎるよとか、async/awaitは<code>Task</code>依存強すぎかなぁとか書いたわけですが。</p>
+<p>ちょうどその関連の話題が2件ほど出てたので追記。</p>
+<p>ほんと、これがもう2年早く出ていれば<a href="https://github.com/OrangeCube/MinimumAsyncBridge">MinimumAsyncBridge</a>の実装もっと楽だったのに。</p>
+<h2 id="unity">Unity カスタム コルーチン</h2>
+<p>Unity 5.3 で<code>CustomYieldInstruction</code>ってクラスが追加されて、これを実装すればコルーチン内で<code>yield return</code>で返して、「待ってもらえる」型を自作できるようになるとのこと。</p>
+<ul>
+<li><a href="http://blogs.unity3d.com/jp/2015/12/01/custom-coroutines/">カスタムコルーチン</a></li>
+</ul>
+<p>今まであった<code>YieldInstruction</code>クラスとか、メンバー何もなくて、お前何のために居るんだよ。C# 的にはそういうマーカー用の基底クラス作る文化ねぇよ。そういうのには属性使えよ。とかいう状態だったわけですが。</p>
+<p><code>YieldInstruction</code>なんて、まだ「待っててほしいかどうか」を<code>bool</code> 1個返すだけでカスタム処理掛けるし、awaitやら<code>Task</code>クラスやらと比べたらだいぶ簡素なんだから最初から<code>CustomYieldInstruction</code>提供してくれればいいのに… とずっと思っていたものがやっと実装されるそうです。</p>
+<h2 id="task">任意の「Task 風の型」</h2>
+<p>一方で、C# のawaitは<code>Task</code>クラスに依存しすぎって話も書いてたわけですが。ちょうど<a href="https://github.com/dotnet/roslyn/">Roslynリポジトリ</a>にそれ関連のissueページが立ちました。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/7169">Proposal: arbitrary task-like types returned from async methods #7169</a></li>
+</ul>
+<p>任意の<code>Task</code>風の型を非同期メソッドの戻り値にできるようにする提案。</p>
+<h3 id="section">要求はずっとある</h3>
+<p>先日も言った通り、C# 5.0の仕様が公開された瞬間からさんざん「<code>Task</code>以外も使いたい」って要望は出てます。</p>
+<p>Microsoft内部都合的にいっても、<a href="http://www.atmarkit.co.jp/ait/articles/1506/23/news012.html">UWP</a>(WinRT)だと非同期処理には<code>IAsyncAction</code>インターフェイスを使わないと行けない(<code>Task</code>に対するラッパーを1段かまさないと行けなくて面倒)とかあったり。</p>
+<p><a href="https://github.com/dotnet/corefxlab/blob/master/src/System.Threading.Tasks.Channels/src/System/Threading/Tasks/ValueTask.cs">ValueTask</a>なんかの話もある様子。非同期処理の結果をキャッシュとして持つにあたって、クラス(= <a href="/study/csharp/resource/oo_reference/#reftype">参照型</a>、ヒープ圧迫)である<code>Task</code>は避けたくて、構造体(= <a href="/study/csharp/resource/oo_reference/#valtype">値型</a>)版がほしいって言う需要があり。C#は最近、パフォーマンス向上に向けて結構攻めてたりします。</p>
+<p>あと、これがあれば例えば、「同期コンテキスト拾わない版<code>Task</code>」みたいなのを作れて、<a href="http://neue.cc/2013/10/10_429.html"><code>ConfigureAwait(false)</code>付けまくらないと死ぬ問題</a>を多少マシにできるかも。</p>
+<h3 id="section-1">問題と対策、提案内容</h3>
+<p>そもそもC# 5.0導入当時の背景として、</p>
+<ul>
+<li>C# 5.0を出すときに、一度は検討したし、実際プロトタイプ実装はした</li>
+<li>ジェネリックな型に対して型推論がきれいにできなかった</li>
+<li>それを問題視してこの実装は正式版には取り入れなかった</li>
+</ul>
+<p>ってのがあります。</p>
+<p>とりあえず、複雑な型推論はやっぱりあきらめる必要がありそう。まあ、戻り値側を見ての推論が必要な型とかはやっぱり無理。そこさえあきらめれば、現状の<code>Task</code>クラス前提のasync/awaitと同程度の型推論はちゃんとできるっぽい。もしかしたら、C# 5.0当時よりも今の方が型推論が賢いので、今だからこそってのもあるのかもしれないですね。</p>
+<p>非同期メソッドの戻り値として使いたい型(<code>Task</code>風の型)を作りたい場合は、以下のような型を書けとのこと。</p>
+<pre><code class="language-csharp">[TaskLike(<span class="keyword">typeof</span>(FooBuilder))] <span class="keyword">struct</span> Foo { … }
+<span class="keyword">struct</span> FooBuilder { … similar to AsyncVoidMethodBuilder … }
+
+[TaskLike(<span class="keyword">typeof</span>(FooBuilder&lt;T&gt;))] <span class="keyword">struct</span> Foo&lt;T&gt; { … }
+<span class="keyword">struct</span> FooBuilder&lt;T&gt; { … similar to AsyncTaskMethodBuilder&lt;T&gt; … }</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2015/12/">12&#x6708;</a></li><li><a href="/blog/2015/12/unityasync0introduction/">Unity&#x4E0A;&#x3067;async/await: &#x306F;&#x3058;&#x3081;&#x306B;</a></li><li><a href="/blog/2015/12/unityasync1background/">Unity&#x4E0A;&#x3067;async/await: &#x80CC;&#x666F;</a></li><li><a href="/blog/2015/12/unityasync2currentstatus/">Unity&#x4E0A;&#x3067;async/await: &#x73FE;&#x72B6;</a></li><li><a href="/blog/2015/12/unityasync3retrospective/">Unity&#x4E0A;&#x3067;async/await: &#x8AB2;&#x984C;&#x3068;&#x611F;&#x60F3;</a></li><li><a href="/blog/2015/12/csprojprojectjson/">.csproj &#x2B; project.json</a></li><li><a href="/blog/2015/12/systemormicrosoft/">System&#x304B;Microsoft&#x304B;&#x3001;&#x516C;&#x5F0F;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;&#x306E;&#x540D;&#x524D;</a></li><li><a href="/blog/2015/12/pickuproslyn1218/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/18</a></li><li><a href="/blog/2015/12/roommetrotokyo10/">&#x3081;&#x3068;&#x3079;&#x3084;&#x6771;&#x4EAC; #10 &#x306B;&#x3066;&#x767B;&#x58C7;</a></li><li><a href="/blog/2015/12/continuum/">Windows 10 Mobile&#x4EBA;&#x67F1;&#x4E2D;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

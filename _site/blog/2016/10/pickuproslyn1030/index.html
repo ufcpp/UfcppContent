@@ -1,0 +1,120 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 10/30: &#x5206;&#x89E3;&#x3001;&#x5BA3;&#x8A00;&#x5F0F;&#x3001;&#x30EF;&#x30A4;&#x30EB;&#x30C9;&#x30AB;&#x30FC;&#x30C9;&#x306E;&#x5185;&#x90E8;&#x4ED5;&#x69D8;&#x5909;&#x66F4; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/10/pickuproslyn1030/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-10-30T03:22:22">2016-10-30</time></span><span>更新: <time datetime="2016-10-30T03:22:22">2016-10-30</time></span></div><h1 id="roslyn-1030">ピックアップRoslyn 10/30: 分解、宣言式、ワイルドカードの内部仕様変更</h1>
+<p><a href="https://github.com/dotnet/roslyn">Roslynリポジトリ</a>のブランチやマイルストーンの動きを見るに、次のVisual Studio 15 PreviewはもうRCなようですが。
+RC (リリース候補)の段階で大きな変更をするわけもなく、<a href="https://github.com/dotnet/roslyn/issues/14804">最近のC#チームの動き</a>は大体「ただひたすらバグ修正」なわけです。</p>
+<p>そんな中、仕様変更の話が。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/14794">Proposed changes for deconstruction, declaration expressions, and wildcards #14794</a></li>
+</ul>
+<p>まあ、内部挙動的な話なので、C# 7の見栄え上はほとんど変わらないはず。<a href="/study/csharp/datatype/deconstruction/">分解</a>や<a href="/study/csharp/resource/sp_ref/#out-var">出力変数宣言</a>で、<code>(A &lt; B, C &gt; D)</code>みたいな解釈の難しい書き方がどう解釈されるか、みたいな細かい挙動が変わるだけです。</p>
+<p>ただ、プログラミング言語としてのC# 7的には大した変化じゃないですが、CodeAnalysis API(いわゆる、Compiler as a Service。C#コンパイラーの中身を誰でも見れるようにするって意味でのC# 7 API)的にはもちろん目立つ変更になります。要は、<code>SyntaxNode</code>の種類が変わります。</p>
+<h2 id="section">ワイルドカード</h2>
+<p>ワイルドカード(wildcard)は、仮引数、分解、出力変数などの値を受け取る側で、別にその値を使わない場合に無視する記法がほしいというやつ。
+以下の、<code>*</code>みたいなやつ。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Diagnostics;
+
+<span class="keyword">class</span> Base
+{
+    <span class="keyword">public</span> <span class="keyword">event</span> EventHandler&lt;<span class="keyword">string</span>&gt; E;
+    <span class="keyword">protected</span> <span class="keyword">virtual</span> <span class="keyword">void</span> M(<span class="keyword">int</span> x, <span class="keyword">int</span> y) { }
+    <span class="keyword">public</span> <span class="keyword">void</span> Deconstruct(<span class="keyword">out</span> <span class="keyword">int</span> x, <span class="keyword">out</span> <span class="keyword">int</span> y)
+    {
+        x = <span class="number">1</span>;
+        y = <span class="number">2</span>;
+    }
+}
+
+<span class="keyword">class</span> X : Base
+{
+    <span class="keyword">public</span> X()
+    {
+        E += (*, *) =&gt; Debug.WriteLine(<span class="string">&quot;log message&quot;</span>);
+
+        Deconstruct(<span class="keyword">out</span> *, <span class="keyword">out</span> <span class="keyword">var</span> y);
+    }
+
+    <span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">void</span> M(<span class="keyword">int</span> *, <span class="keyword">int</span> *)
+    {
+    }
+}</code></pre>
+<p>案としては <code>_</code>、<code>*</code>、<code>?</code> なんかが出ていました。これまで、<code>*</code> が最有力だったんですが、<code>_</code> の方にするかも、とのこと。</p>
+<ul>
+<li><code>_</code>
+<ul>
+<li>今現在、<code>_</code> 1文字はC#の識別子として有効なものなので、<code>_</code> をワイルドカードに使うのは破壊的変更になりかねない</li>
+<li>一応、<code>_</code>を使っている場所があれば識別子として、使ってなければワイルドカードとして扱うみたいな処理を入れれば破壊的変更にはならない</li>
+<li>ただ、それやるとユーザー的には混乱しないかという話はある。まあ、現状すでに、多くのユーザーが<code>_</code>を「使わない引数」として使ってるので大丈夫ではないか</li>
+</ul>
+</li>
+<li><code>*</code>、<code>?</code>
+<ul>
+<li>破壊的変更は起こしにくい</li>
+<li>ただ、<code>int *</code>みたいな書き方が、「<code>int</code>型をワイルドカードで無視」なのか、「ポインター型<code>int*</code>」なのかという不明瞭さがある</li>
+<li><code>?</code>も、null許容型の<code>int?</code>との不明瞭さがある</li>
+<li>この不明瞭さの解決の方が、<code>_</code>の方の問題よりも難しそうという意見に傾いてきた</li>
+</ul>
+</li>
+</ul>
+<h2 id="section-1">宣言式</h2>
+<p>元々の計画としては、式の途中のどこにでも変数宣言を書ける「宣言式」(declaration expressions)という機能が検討されていました。
+現在でも、将来的には宣言式を追加する見込みは非常に高いですが、C# 7では入りません。</p>
+<p>一方、C# 7に入る<a href="/study/csharp/resource/sp_ref/#out-var">出力変数宣言</a>は、この宣言式のサブセットみたいなものです。
+なので、内部的には(CodeAnalysis API的には)、出力変数宣言は最初から「declaration expression」という名前になっています。</p>
+<h2 id="section-2">分解</h2>
+<p>一方、現状では、<a href="/study/csharp/datatype/deconstruction/">分解</a>は、分解専用のステートメントとして実装されています。
+これが、将来的に宣言式を入れたときに邪魔になりそうなわけです。
+分解も、宣言式を使って表現した方がいいだろうということで、C# 8の際に破壊的変更にならないように、今から変えてしまいたいとのこと。</p>
+<p>例えば、現状、C# 7では書けないものの、将来的には認められそうな書き方として、以下のようなものがあります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> tuple = (<span class="number">1</span>, <span class="number">2</span>);
+
+<span class="comment">// タプル構築 + 分解(しかも、新しい変数 x, y を宣言しながら)</span>
+<span class="keyword">var</span> t = (<span class="keyword">int</span> x, <span class="keyword">int</span> y) = tuple;</code></pre>
+<p>この、<code>int x</code>、<code>int y</code>の部分は、まさに、宣言式であるべきだろうという話です。</p>
+<p>付随して、タプル、分解、出力変数宣言などでモデルをそろえておかないと、細かい挙動で差が出て気持ち悪いというのもあります。
+例えば、以下のようなコードはどう評価されるべきか。</p>
+<pre><code class="language-csharp">(A &lt; B, C &gt; D) = F(A &lt; B, C &gt; D = value);</code></pre>
+<p>以下の2つの解釈ができます。</p>
+<ul>
+<li><code>A &lt; B</code>と<code>C &gt; D</code>という2つの式を持つ</li>
+<li><code>A&lt;B, C&gt;</code>というジェネリック型の変数<code>D</code>を宣言式で宣言している</li>
+</ul>
+<p>これが、現状の、宣言式と分解で異なる実装をしてる状態だと、それぞれ逆の解釈になるそうで、まずい。
+今のうちに統一挙動にしてしまいたいということに。</p>
+<h2 id="foreach">foreach の変更</h2>
+<p>C# 7的に、分解が書けるのは以下の3カ所。</p>
+<ul>
+<li>分解ステートメント: <code>var (x, y) = t;</code></li>
+<li><code>for</code>ステートメント: <code>for (var (x, y) = t; cond; iter)</code></li>
+<li><code>foreach</code>ステートメント: <code>foreach (var (x, y) in list)</code></li>
+</ul>
+<p>このうち、<code>for</code>は現在の文法構造で、この「分解も宣言式で定義する」という変更に耐えれるそうです。</p>
+<p>一方、<code>foreach</code>には変更が必要そう。</p>
+<h2 id="section-3">まとめ</h2>
+<p>宣言式とワイルドカードっていう、C# 7では入らない/入らなさそうな機能に関する話ではあるけども、
+C# 7の時点からちゃんと考えて作っておかないと後から困りそう。
+なので今から、宣言式とワイルドカードを前提とした作りにしておきたい、という話。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/10/">2016&#x5E74;10&#x6708;</a></li><li><a href="/blog/2016/10/dotnetfringejp/">.NET Fringe Japan 2016&#x3067;&#x767B;&#x58C7;&#x3057;&#x3066;&#x304D;&#x307E;&#x3057;&#x305F;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

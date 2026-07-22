@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Unity&#x4E0A;&#x3067;async/await: &#x8AB2;&#x984C;&#x3068;&#x611F;&#x60F3; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2015/12/unityasync3retrospective/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2015-11-30T15:02:23">2015-11-30</time></span><span>更新: <time datetime="2015-11-30T15:02:23">2015-11-30</time></span></div><h1 id="unityasyncawait">Unity上でasync/await: 課題と感想</h1>
+<p><a href="https://github.com/OrangeCube/MinimumAsyncBridge">MinimumAsyncBridge</a>化してみてどうかと、
+<a href="https://github.com/OrangeCube/MinimumAsyncBridge">MinimumAsyncBridge</a>を作った感想など。</p>
+<h2 id="section">作業難易度</h2>
+<p><a href="http://referencesource.microsoft.com/">参考にした元</a>があって、書き換えが必要だった部分もごく少量で、
+大した手間もかけずに移植してます。最初から安定しているのも当たり前で。</p>
+<p>まあほんとは、もっと昔から.NETがオープンソースだったら…というのはありますが。</p>
+<p>IL2CPPで動かなくて困ったりした時期はありますが、この辺りは、別に<code>Task</code>クラスのせいじゃなくてそこかしろでバグだらけだったので。
+ただひたすらにIL2CPPの安定を待っていただけ。</p>
+<h2 id="section-1">導入した感想</h2>
+<p>やっぱり普通にC# 5.0のasync/awaitが書けるのはむちゃくちゃ楽です。
+自分だけじゃなく、チーム全体で言っても、かなりの作業量が浮いてるんじゃないかと。</p>
+<p>途中まで<a href="https://github.com/OrangeCube/IteratorTasks">IteratorTasks</a>を使っていて、
+思い立ったかのように<a href="https://github.com/OrangeCube/MinimumAsyncBridge">MinimumAsyncBridge</a>に移行するのに1・2週間ほど使いましたが、
+その作業分は余裕で取り戻せているのではないかと思います。</p>
+<p>何よりも、</p>
+<ul>
+<li>最新のC#を問題なく使える</li>
+<li>「もどき」じゃなく、標準<code>Task</code>の完全下位互換で、単一DLLで完全にコード共通化できる</li>
+</ul>
+<p>という辺りは非常に大きい。</p>
+<h2 id="task">Taskクラスの問題</h2>
+<p>バックポーティング作業をやっていて感じたのは、<code>Task</code>クラスの債務がでかすぎるという問題。</p>
+<p><code>Task</code>クラスは、以下のような処理を全部担います。</p>
+<ul>
+<li>スレッド(<code>Task.Run</code>)</li>
+<li>I/O完了ポート(非同期API)</li>
+<li>ハードウェアタイマー(<code>Task.Delay</code>)</li>
+<li>他とのつなぎ(<code>TaskCompletionSource</code>)、C++でいうfuture/promise</li>
+</ul>
+<p>全部1つのクラス。他の言語だと、「他とのつなぎ」だけ用意して、
+スレッドとかは別途そいつで軽く包んでるだけなことが多いんですけども。
+.NETのTaskは割かし全部入り。</p>
+<p>このうち、async/awaitを使うだけなら<code>TaskCompletionSource</code>だけあれば何とかなるんですよねぇ。
+なのに、そこだけを抜き出して取ってこれない。
+おまけでいろいろ、しかもスレッド関連とかいう難しい処理も持ってこないといけない。</p>
+<p>例えば以下のような問題があったり。</p>
+<ul>
+<li><code>GetAwaiter</code>が、.NET 4.5で<code>Task</code>クラスに追加されてる
+<ul>
+<li>型フォワーディングの仕組みでは、クラスの追加はバック ポーティングできるけど、既存クラスへのメソッド追加は無理</li>
+<li>結果、.NET 3.5と4.5では動くけど、.NET 4では動かないライブラリになってる</li>
+</ul>
+</li>
+<li>非同期メソッドの戻り値が<code>Task</code>固定で、インターフェイスとかになってない
+<ul>
+<li>インターフェイスになっていれば、独自実装がしやすかったはず</li>
+<li><code>Task</code>クラスみたいにでかいものを移植しなくて済む</li>
+</ul>
+</li>
+</ul>
+<p>全部1つでやってるので性能はいいし、利用者視点の利便性はいいとは思います。
+そもそもなぜ非同期処理なんて面倒な事するかというとパフォーマンスを求めてなわけで、
+<code>Task</code>実装ではパフォーマンスを妥協できなかったというのはあるようです。
+あと、async/awaitを変に汎用化しようとすると、
+asyncメソッドのオーバーロード解決とかで苦労するらしい(非同期が絡むと型推論が効かなくなったり)。
+利便性劣化に直結。</p>
+<p>一方で、<code>Task</code>を実装する側、
+例えば.NET Coreで今絶賛クロスプラットフォーム化作業してる方々とか、
+Monoの方々とか、
+今回の僕みたいに独自にバック ポーティングすることにした人にとってはこのでかい実装はほんとに面倒。</p>
+<p>C#のasync/awaitはそういうでっかい一枚岩の上に乗っかっちゃってるって意味では将来リスクは結構負っています。
+この辺りはF#方面の人らは「だからC#はダメだ」とか言ったりするものの。
+ここは方向性の違いというか、C#的には「性能と利用者利便性を考えたらTaskに乗るしかなかった」と言われると妥協せざるを得ず。</p>
+<p>最近他の言語でもasync/await対応し始めてますけど、それらの言語でも「どこまで汎用化するか」は大きな争点になってるはずです。
+まあ、async/awaitに関してはF#もC#も先駆者なので、負の遺産にはなりやすいかもなぁ(F#はパフォーマンス的にペナルティ結構負ってるはずだし、C#は一枚岩の上に載ってるリスクあり)という気はしなくもないです。
+もっとも、それを心配しないといけなくなるのはまだまだ5年10年先の話だと思いますが。</p>
+<h2 id="section-2">まとめ</h2>
+<p>元コードがあるんであっさり動いて当然。
+ただ、もっと最初からオープンだったらわざわざ自分が苦労する必要なかったという気もします。</p>
+<p>C# 5.0登場時(アイディアが出たのは5・6年前。RTMが2012年)にも言われていたことではあるんですが、
+<code>Task</code>クラスはちょっと債務がでかすぎるよなぁというのは改めて思いました。</p>
+<p>まあ、とりあえず安定して動いたし、その結果、かなり開発が楽になったので実装してよかったと思います。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2015/12/">12&#x6708;</a></li><li><a href="/blog/2015/12/unityasync0introduction/">Unity&#x4E0A;&#x3067;async/await: &#x306F;&#x3058;&#x3081;&#x306B;</a></li><li><a href="/blog/2015/12/unityasync1background/">Unity&#x4E0A;&#x3067;async/await: &#x80CC;&#x666F;</a></li><li><a href="/blog/2015/12/unityasync2currentstatus/">Unity&#x4E0A;&#x3067;async/await: &#x73FE;&#x72B6;</a></li><li><a href="/blog/2015/12/asyncawaitpost/">async/await &#x305D;&#x306E;&#x5F8C;/&#x8FFD;&#x8A18;</a></li><li><a href="/blog/2015/12/csprojprojectjson/">.csproj &#x2B; project.json</a></li><li><a href="/blog/2015/12/systemormicrosoft/">System&#x304B;Microsoft&#x304B;&#x3001;&#x516C;&#x5F0F;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;&#x306E;&#x540D;&#x524D;</a></li><li><a href="/blog/2015/12/pickuproslyn1218/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/18</a></li><li><a href="/blog/2015/12/roommetrotokyo10/">&#x3081;&#x3068;&#x3079;&#x3084;&#x6771;&#x4EAC; #10 &#x306B;&#x3066;&#x767B;&#x58C7;</a></li><li><a href="/blog/2015/12/continuum/">Windows 10 Mobile&#x4EBA;&#x67F1;&#x4E2D;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

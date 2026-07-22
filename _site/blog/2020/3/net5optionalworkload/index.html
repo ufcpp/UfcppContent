@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>.NET 5 &#x306E; Target Framework &#x3068; Optional SDK Workload | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2020/3/net5optionalworkload/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2020-03-25T23:03:08">2020-03-25</time></span><span>更新: <time datetime="2020-03-25T23:03:08">2020-03-25</time></span></div><h1 id="net-5-target-framework-optional-sdk-workload">.NET 5 の Target Framework と Optional SDK Workload</h1>
+<p>まだ提案ドキュメントが出たばかりな段階ですが、 .NET 5 の方向性を決めるドキュメントが2件出ています。</p>
+<ul>
+<li><a href="https://github.com/terrajobst/designs/blob/master/accepted/2020/net5/net5.md">Target Framework Names in .NET 5</a> (割かし最近 Merge されたて)</li>
+<li><a href="https://github.com/dotnet/designs/pull/100">.NET Optional SDK Workloads</a> (Pull Request 出たて)</li>
+</ul>
+<p>ちなみに、Target Framework Name と言いつつ略称が TFM なのは最後が Moniker (あだ名)だからです。
+.NET Core に対して <code>netcoreapp</code>、 .NET Standard に対して <code>netstandard</code> みたいな記号的な名前を振っていたわけですが、これが Moniker です。</p>
+<h2 id="section">標準ライブラリ統合</h2>
+<p>まず背景おさらい的な話になりますが、
+紆余曲折経て、 .NET が単一系統に統合されます。</p>
+<p>.NET Framework (Windows 専用)ででしかできないことはほとんどなくなり、こちらは保守モードに入って、 .NET Framework 4.8 が最終バージョンになります。</p>
+<p>ランタイムとしては .NET Core 系と Xamarin (Mono)系がまだ残っていますが、
+少なくとも標準ライブラリのコードは統合する方向で動いています。</p>
+<p>そのため、かつて混とんを極めた Portable Class Library の頃の <code>portable-net40+sl5+win8</code> (サポートしたいターゲットを全列挙)みたいなものも、
+.NET Standard (.NET Core, .NET Framework, Xamarin の最大公約数を取ったもの)みたいなものも必要なくなる予定です。</p>
+<p>そこで、名称も「.NET 5」(Core も Framework も Standard も付かず、バージョン番号は 5)となりますし、
+TargetFramework 名もシンプルに <code>net5.0</code> を使う予定です。</p>
+<p>(提案されたばかりなので今はまだ実装されていません。
+今現在出ている .NET 5 Preview 1 ではまだ <code>netcoreapp5.0</code> という TFM を使っています。)</p>
+<h2 id="targetframework">TargetFramework 名</h2>
+<p>ということで、どのプラットフォームでも使える基礎的な部分を指して <code>net5.0</code> という TargetFramework を使います。
+これまででいう <code>netstandard2.1</code> みたいなものが無印の <code>netX.Y</code> みたいな形式になります。</p>
+<p>(.NET Framework の方では <code>.</code> を入れずに <code>net472</code> とか書いていたので、 .NET 10 が来たら(6年は先の話ですが)ちょっとだけ混乱を生みそうですが、
+おそらく <code>net10</code> だけを 1.0 使いする特殊処理(10にしたければ <code>net10.0</code> と書かないとダメ)が入りそうです。)</p>
+<p>一方で、 .NET Core 3.1 でも WPF や Windows Forms は Windows 限定の機能ですし、
+Xamarin を統合するということは Android 限定機能や iOS 限定機能が入ることになります。</p>
+<p>これら特定プラットフォーム限定機能向けに、<code>net5.0-android</code>, <code>net5.0-ios</code>, <code>net5.0-windows</code> みたいな TargetFramwork 名を与えるみたいです。
+ちゃんと <code>-</code> の前後で分離して解釈するそうで、例えば、<code>net5.0</code> (.NET 5.0 汎用)なライブラリを、<code>net6.0-android</code> (.NET 6.0 + Android 限定機能)から参照できます。
+さすがに。PCL の時のようにはならないように。</p>
+<p>ちなみに、<code>-</code> の後ろのプラットフォーム名の方にもバージョン番号を指定できるそうです。
+例えば、<code>net5.0-ios14.0</code> みたいな書き方で「 .NET 5.0 で、 iOS のバージョン 14.0」という意味になります。
+プラットフォームの方のバージョンがないときは「その .NET がサポートしているもっとも低いバージョン」扱いになるみたいです。</p>
+<h2 id="optional-sdk-workload">Optional SDK Workload</h2>
+<p>.NET SDK も分割したいようです。
+今でも、「コンソール アプリしか使わないのに」、「WPF しか使わないのに」、「ASP.NET しか使わないのに」みたいに思うことは多いと思います。
+ここに Xamarin.Android や Xamarin.iOS も加わるわけで、そろそろ、必要な分だけを追加インストールする仕組みが欲しい段階です。</p>
+<p>ということで、特定プラットフォーム向けの SDK 機能を workload と呼んでいて、
+workload は optional (オプション指定しない限りインストールされない)な状態にしたいそうです。</p>
+<p>さすがに時代的に、最初からゴールとして「できる限り CI/CD フレンドリーにしたい」というものが含まれています。
+「使う分だけインストールすればいい」というサイズ削減の意味でも分けた方が CI/CD 的にやさしいですし、
+インストールをできる限り簡単にしたいという目標もあるみたいです。
+最終的には、<code>dotnet bundle install [bundle name]</code> とか、<code>dotnet bundle restore [project name]</code> みたいな1コマンドで Optional SDK Workload をインストールできるようにしたいそうです。
+(同様の仕組みは workload よりも広い用途に使えるかもしれないので、サブコマンド名はより広い名前、まだ決めかねてるそうですが仮に bundle と呼んでいます。)</p>
+<p>ここで、<code>dotnet bundle restore</code> の方は、前節で説明したような TargetFramework を見て、
+例えば、<code>net5.0-android</code> なら Android 向けの、<code>net5.0-ios</code> なら iOS 向けの workload (bundle)の復元できるようにしたいそうです。</p>
+<p>要は、今現在、ライブラリ参照のために NuGet を使ってやっているのと同程度の手軽さで、SDK workload の参照ができるようにしたいそうです。</p>
+<h3 id="net-5">.NET 5 次点での目標</h3>
+<p>.NET 5 次点では、
+workload のインストールは Visual Studio (for Windows と for Mac)でだけになるかもとのこと。
+<code>dotnet bundle restore</code> みたいなコマンドは一部分だけ。</p>
+<p>また、 .NET 5 から追加されることになる Xamarin 系統(要するに Android、iOS、Web Assembly など)の workload が Optional 提供になる予定です。
+(まだこの時点では ASP.NET や WPF などの分離作業は手付かず。)</p>
+<h3 id="section-1">もっと先の目標</h3>
+<p>最終的には、
+<code>dotnet</code> コマンドラインツールのフル機能を提供したいし、
+apt-get などの Linux 向けインストール ツールの類を使った workload インストールができるようにもしたいみたいです。</p>
+<p>また、 .NET Core 3.1 次点ではモノリシックな SDK 提供になってしまっている ASP.NET や WPF、Windows Forms などの workload も Optional 提供に変更したいそうです。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2020/3/">3&#x6708;</a></li><li><a href="/blog/2020/3/net5p1/">.NET 5 Preview 1 / VS 16.6 Preview 1 &#x516C;&#x958B;&#x8A18;&#x5FF5;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

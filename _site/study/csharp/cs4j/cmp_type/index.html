@@ -1,0 +1,161 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>C&#x2B;&#x2B;&#x3068;Java&#x3068;&#x306E;&#x7D44;&#x8FBC;&#x307F;&#x578B;&#x306E;&#x6BD4;&#x8F03; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/cs4j/cmp_type/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="cjava">C++とJavaとの組込み型の比較</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="comp"></a>組込み型の比較</h2>
+<p>以下にC++とJavaとC#の組込み型の一覧を列挙します。</p>
+<table summary="">
+
+	<tr>
+		<th colspan="2">種類</th>
+		<th>C++</th>
+		<th>Java</th>
+		<th>C#</th>
+	</tr>
+	<tr>
+		<th colspan="2">論理型</th>
+		<td><p>bool</p></td>
+		<td><p>boolean</p></td>
+		<td><p>bool</p></td>
+	</tr>
+	<tr>
+		<th rowspan="4">符号付き<br></br>整数</th>
+		<th>1byte</th>
+		<td><p>signed char<sup>
+<a href="#a">*1</a>
+</sup></p></td>
+		<td><p>byte</p></td>
+		<td><p>sbyte</p></td>
+	</tr>
+	<tr>
+		<th>2byte</th>
+		<td><p>short, int<sup>
+<a href="#b">*2</a>
+</sup></p></td>
+		<td><p>short</p></td>
+		<td><p>short</p></td>
+	</tr>
+	<tr>
+		<th>4byte</th>
+		<td><p>int, long<sup>
+<a href="#b">*2</a>
+</sup></p></td>
+		<td><p>int</p></td>
+		<td><p>int</p></td>
+	</tr>
+	<tr>
+		<th>8byte</th>
+		<td><p>int, long<sup>
+<a href="#b">*2</a>
+</sup></p></td>
+		<td><p>long</p></td>
+		<td><p>long</p></td>
+	</tr>
+	<tr>
+		<th rowspan="4">符号なし<br></br>整数</th>
+		<th>1byte</th>
+		<td><p>unsigned char<sup>
+<a href="#a">*1</a>
+</sup></p></td>
+		<td></td>
+		<td><p>byte</p></td>
+	</tr>
+	<tr>
+		<th>2byte</th>
+		<td><p>unsigned short, unsigned int<sup>
+<a href="#b">*2</a>
+</sup></p></td>
+		<td></td>
+		<td><p>ushort</p></td>
+	</tr>
+	<tr>
+		<th>4byte</th>
+		<td><p>unsigned int, unsigned long<sup>
+<a href="#b">*2</a>
+</sup></p></td>
+		<td></td>
+		<td><p>uint</p></td>
+	</tr>
+	<tr>
+		<th>8byte</th>
+		<td><p>unsigned long<sup>
+<a href="#b">*2</a>
+</sup></p></td>
+		<td></td>
+		<td><p>ulong</p></td>
+	</tr>
+	<tr>
+		<th rowspan="2">浮動小数<br></br>点数</th>
+		<th>4byte</th>
+		<td><p>float</p></td>
+		<td><p>float</p></td>
+		<td><p>float</p></td>
+	</tr>
+	<tr>
+		<th>8byte</th>
+		<td><p>double</p></td>
+		<td><p>double</p></td>
+		<td><p>double</p></td>
+	</tr>
+	<tr>
+		<th colspan="2">デシマル</th>
+		<td><p>なし</p></td>
+		<td><p>なし</p></td>
+		<td><p>decimal</p></td>
+	</tr>
+	<tr>
+		<th colspan="2">文字</th>
+		<td><p>char (1byte)</p></td>
+		<td><p>char (2byte)</p></td>
+		<td><p>char (2byte)</p></td>
+	</tr>
+	<tr>
+		<th colspan="2">文字列</th>
+		<td><p>string<sup>
+<a href="#c">*3</a>
+</sup></p></td>
+		<td><p>String<sup>
+<a href="#c">*3</a>
+</sup></p></td>
+		<td><p>string</p></td>
+	</tr>
+	<tr>
+		<th colspan="2">オブジェクト型</th>
+		<td><p>なし</p></td>
+		<td><p>Object<sup>
+<a href="#c">*3</a>
+</sup></p></td>
+		<td><p>object</p></td>
+	</tr>
+</table>
+<p><a id="a">注1</a> :
+C++ では、<code>signed</code> や <code>unsigned</code> の付かない <code>char</code> 型が符号付きか符合なしかは処理系に依存している。</p>
+<p><a id="b">注2</a> :
+C++では、<code>int, short, long</code> のサイズは処理系に依存している。
+通常、 <code>int</code> はその処理系でもっとも高速に処理を行えるサイズになっている。
+<code>short</code> は <code>int</code> と同じか、それよりも小さいサイズ、
+<code>long</code> は <code>int</code> と同じか、それよりも大きいサイズと決められている。</p>
+<p><a id="c">注3</a> :
+C++ や Java の <code>string</code> や <code>Object</code> は言語に組み込まれた型ではなく、ライブラリで提供されているクラス。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/cs4j/">&#x4ED6;&#x306E;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30DF;&#x30F3;&#x30B0;&#x8A00;&#x8A9E;&#x7D4C;&#x9A13;&#x8005;&#x5411;&#x3051;</a></li><li><a href="/study/csharp/cs4j/java_cheatsheet/">Java &#x958B;&#x767A;&#x8005;&#x5411;&#x3051;&#x30C1;&#x30FC;&#x30C8; &#x30B7;&#x30FC;&#x30C8;</a></li><li><a href="/study/csharp/cs4j/ab_csspec/">C# &#x306E;&#x7279;&#x5FB4;&#xFF08;C&#x2B;&#x2B;&#x3001;Java &#x5229;&#x7528;&#x8005;&#x5411;&#x3051;&#xFF09;</a></li><li><a href="/study/csharp/cs4j/ap_visualbasic/">C# &#x3068; Visual Basic</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

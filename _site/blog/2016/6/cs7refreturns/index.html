@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x53C2;&#x7167;&#x623B;&#x308A;&#x5024;&#x3068;&#x53C2;&#x7167;&#x30ED;&#x30FC;&#x30AB;&#x30EB;&#x5909;&#x6570; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/6/cs7refreturns/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-06-05T12:32:05">2016-06-05</time></span><span>更新: <time datetime="2016-06-06T14:51:06">2016-06-06</time></span><span class="entry-tags"><span class="entry-tag">C# 7&#x601D;&#x3044;&#x51FA;&#x8A71;</span></span></div><h1 id="section">参照戻り値と参照ローカル変数</h1>
+<p>C# 7の説明、1つ足しました。参照戻り値がらみ。</p>
+<h2 id="section-1">参照戻り値と参照ローカル変数</h2>
+<p>追加される構文自体は割とシンプルなんですが、活用できそうな場面まで含めて説明しようとするとなかなか骨が折れる感じの機能。</p>
+<ul>
+<li>機能自体の説明: <a href="/study/csharp/resource/sp_ref/">参照戻り値と参照ローカル変数</a></li>
+<li>前提知識として、値型を使わないとパフォーマンス出しにくい場面があるという話: <a href="/study/csharp/resource/oo_reference/#performance">値型の性能</a></li>
+<li>で、値型を使ってパフォーマンスを出そうと思うと参照渡しが避けられなかったりするという話: <a href="/study/csharp/resource/sp_ref/">値型の参照渡し</a></li>
+</ul>
+<p>まず、メモリ管理の方法について(スタックとかヒープとか)知ってないとピンとこないですしね。</p>
+<p>「別の何かを参照する」って考え方も、そこそこ素養を求める概念ですし。
+C言語とかC++で「ポインターは難しい」とか言われるのも、同種の問題だと思います。</p>
+<p>ということで、<a href="https://github.com/dotnet/roslyn">GitHub</a>上のディスカッションでも、大体は、</p>
+<ul>
+<li>活用場面がよくわからない</li>
+<li>(自分は)使わなさそうなのに、複雑性を増すのには反対</li>
+<li>構造体は immutable に作れってのが常識じゃないのか</li>
+</ul>
+<p>なんて話がまずあって、それに対して、</p>
+<ul>
+<li>メモリ管理の手法とか知らない人はそう言って、パフォーマンスをいとも簡単に落とすんだ</li>
+<li>パフォーマンスを求めると、mutable な構造体を配列で持っとくしかない場面があるんだ</li>
+</ul>
+<p>とかの返事が毎度ついてる感じ。</p>
+<p>文法自体についての反対意見はあんまりなさそう。しいて言うなら、</p>
+<ul>
+<li>非同期メソッドとかイテレーターとかでも使いたいけど、<code>Task&lt;ref T&gt;</code>とか<code>IEnumerable&lt;ref T&gt;</code>は作れないよね？</li>
+<li>ローカル変数の宣言で、<code>var</code> (変数の型推論)を使う場合ですら<code>ref var</code>って書かないといけないのはちょっと面倒</li>
+</ul>
+<p>みたいな話が出てるくらい。</p>
+<p>まあ、なかなか活用しどころが想像しにくい機能ではあるんですが、C# チーム的には優先度結構高いでしょうね。
+<a href="http://www.buildinsider.net/column/iwanaga-nobuyuki/006">Build Insider</a>の方で書きましたけど、
+今、パフォーマンスに対する要求がかなり上がってるので。
+.NET Core関連のチームとか、C#チーム自身とかにとってはかなり有用な機能のはず。
+多くのプログラマーにとって直接使うことがない機能であっても、
+低レイヤーなライブラリとかツールとかの性能向上が見込めるので、間接的な恩恵はそこそこありそうな気がします。</p>
+<h3 id="section-2">6/6 追記:</h3>
+<p>この手のメモリ管理がらみのパフォーマンス改善の話に付いて回るのは、ガベージコレクションもかなり高性能になってて、もうガベコレに任せてても大体大丈夫なんじゃないかという議題。</p>
+<p>確かに、MS製ガベコレって結構高性能なんですよね。それでもガベコレ除けをきっちりするとかなりのパフォーマンス改善したりしますが。
+仮にまあ、ガベコレがもっともっと優秀になったとしても…</p>
+<p><span style="font-size:150%">その優秀なガベコレがどこででも使えると思うなよ！</span></p>
+<p>と思うわけです。
+ガベコレのコードなんて、<a href="https://github.com/dotnet/coreclr/blob/master/src/gc/gc.cpp">.NETのもの</a>なんてファイルサイズが1.2MB(GitHubに&quot;we can't show files&quot;って言われるやつ)、行数3700行を超える長大なC++コードです。どこまで手書きでどこまで機械生成かわからないなんて話もありますが、どちらにしたって、なかなか保守が大変そうな分量。
+特定の1環境で保守するのはまだ成り立つんですが、全然スペックの違う異なる環境向けにそれぞれ提供とかにあると、なかなか大変そう。
+要するに何が言いたいかというと、あんまりこういうレイヤーの改善に期待してると、新しいプラットフォームに移りづらくなるとかのリスクもあったり。</p>
+<p>具体的に、最近自分は<a href="http://japan.unity3d.com/">Unity</a>でiOS/Android両対応のゲームを作ってるわけですけども、
+どうも、ヒープ確保の性能がiOSとAndroidでだいぶ違うみたいで、同じコードを書いててもAndroidでだけパフォーマンスが出なかったりします。
+(他にもパフォーマンス ネックの原因になってそうな場所は多いんですが、ヒープ確保もネックの1つなことは間違いなさそう。)</p>
+<p>一般論としても、「ムーアの法則での発展を期待していたら、モバイルな時代が来ちゃってむしろ時代が巻き戻った」なんて言葉よく聞くわけでして。
+今更ながらC#に参照戻り値みたいな「使う人を選ぶ」機能が入るのも、そういう時代背景があるんじゃないかなと思います。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/6/">2016&#x5E74;6&#x6708;</a></li><li><a href="/blog/2016/6/versionnumber/">C# 6, C# 7</a></li><li><a href="/blog/2016/6/project-json/">&#x300C;project.json&#x8F9E;&#x3081;&#x307E;&#x3059;&#x300D;&#x306E;&#x610F;&#x5473;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

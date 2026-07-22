@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x914D;&#x5217;&#x30EA;&#x30B9;&#x30C8; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/algorithm/collection/col_array/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">配列リスト</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>「<a href="/study/csharp/structured/st_array/#array">配列</a>」も、
+同じ型のデータを複数集めた物ですから、
+コレクションの一種です。
+実際、C# の配列は <code>System.Collections.ICollection</code> という「<a href="/study/csharp/oop/oo_interface/#interface">インターフェース</a>」を実装していて、コレクションとして扱うことができます。</p>
+<p>ですが、単なる配列の場合、
+コレクションとして使うには幾分か機能不足な部分があります。</p>
+<ul>
+<li><p>最初に配列を作ったときに指定した長さ以上の要素を持てない。</p>
+</li>
+<li><p>新しい要素の挿入・削除ができない。</p>
+</li>
+</ul>
+<p>ということで、
+配列に</p>
+<ul>
+<li><p>要素数が足りなくなったら自動的に配列を確保しなおす。</p>
+</li>
+<li><p>新しい要素の挿入・削除。</p>
+</li>
+</ul>
+<p>という機能を追加したコレクションクラスを作ることがあります。</p>
+<p>このような機能を持つクラスは、ライブラリによって名前がまちまちで、
+C++ の STL では 「<a href="/study/stl/seq_container/vector/#vector">vector</a>」、
+C# （.NET Framework）では System.Collections.ArrayList や System.Collections.Generic.List&lt;T&gt; という名前になっています。
+ここでは「<strong id="array" class="keyword">配列リスト</strong>」と呼ぶことにしましょう。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="character"></a>特徴</h2>
+<p>配列リストは以下のような利点を持っています。</p>
+<ul>
+<li><p>実装が単純（作るのが楽というだけではなく、動作が高速）。</p>
+</li>
+<li><p>「<a href="/study/csharp/oop/oo_indexer/#indexer">インデクサー</a>」を使った要素へのランダムアクセスが、配列とほとんど変わらない速度（もちろんオーダーは O(1)）でできる。</p>
+</li>
+</ul>
+<p>しかしながら、所詮中身は配列なので、
+以下のような欠点が残っています。</p>
+<ul>
+<li>末尾以外への要素の挿入・削除が低速（要素数を n として平均 O(n)）。</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="impl"></a>実装方法</h2>
+<p>配列リストは、
+単純に配列をラッピングするだけなので、実装が非常に簡単です。
+まず、配列と、（確保した長さとは別に）実際に入っている要素の数を保持する変数を用意します。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> ArrayList&lt;T&gt; : IEnumerable&lt;T&gt;
+{
+  T[] data;
+  <span class="keyword">int</span> count;
+}</code></pre>
+<p>配列は、図1に示すように、実際に格納されている要素数（Count）よりも大きめに確保しておきます。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> ArrayList(<span class="keyword">int</span> capacity)
+{
+  <span class="keyword">this</span>.data = <span class="keyword">new</span> T[capacity];
+  <span class="keyword">this</span>.count = <span class="number">0</span>;
+}</code></pre>
+<figure>
+<p><a href="/assets/media/ufcpp2000/algorithm/fig/col_array0.png"><img src="/assets/media/ufcpp2000/algorithm/fig/col_array0.png" alt="大きめに配列を確保" /></a></p>
+<figcaption>大きめに配列を確保</figcaption>
+</figure>
+<p>要素を追加していって、
+配列の長さが足りなくなったら、配列を確保しなおします。
+新たに確保しなおす配列の長さをどうするかは自由に決めれますが、
+2倍ずつ長くする場合が多いです。</p>
+<pre><code class="language-csharp"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 配列を確保しなおす。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;remarks&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 配列長は2倍ずつ拡張していきます。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/remarks&gt;</span>
+<span class="keyword">void</span> Extend()
+{
+  T[] data = <span class="keyword">new</span> T[<span class="keyword">this</span>.data.Length * <span class="number">2</span>];
+  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="keyword">this</span>.data.Length; ++i) data[i] = <span class="keyword">this</span>.data[i];
+  <span class="keyword">this</span>.data = data;
+}</code></pre>
+<p>中身は単なる配列なので、
+末尾以外の位置の要素の挿入・削除は、
+要素を1つずつずらして隙間を空ける/埋める作業が必要になります。
+したがって、末尾以外への要素の挿入・削除は非常に低速です。</p>
+<pre><code class="language-csharp"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> i 番目の位置に新しい要素を追加。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;i&quot;&gt;</span><span class="xmlDocComment">追加位置&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;elem&quot;&gt;</span><span class="xmlDocComment">追加する要素&lt;/param&gt;</span>
+<span class="keyword">public</span> <span class="keyword">void</span> Insert(<span class="keyword">int</span> i, T elem)
+{
+  <span class="keyword">if</span> (<span class="keyword">this</span>.count &gt;= <span class="keyword">this</span>.data.Length)
+    <span class="keyword">this</span>.Extend();
+
+  <span class="keyword">for</span> (<span class="keyword">int</span> n = <span class="keyword">this</span>.count; n &gt; i; --n)
+  {
+    <span class="keyword">this</span>.data[n] = <span class="keyword">this</span>.data[n - <span class="number">1</span>];
+  }
+  <span class="keyword">this</span>.data[i] = elem;
+  ++<span class="keyword">this</span>.count;
+}
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> i 番目の要素を削除。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;i&quot;&gt;</span><span class="xmlDocComment">削除位置&lt;/param&gt;</span>
+<span class="keyword">public</span> <span class="keyword">void</span> Erase(<span class="keyword">int</span> i)
+{
+  <span class="keyword">for</span> (<span class="keyword">int</span> n = i; n &lt; <span class="keyword">this</span>.count - <span class="number">1</span>; ++n)
+  {
+    <span class="keyword">this</span>.data[n] = <span class="keyword">this</span>.data[n + <span class="number">1</span>];
+  }
+  --<span class="keyword">this</span>.count;
+}</code></pre>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="sample"></a>サンプルソース</h2>
+<p>C# サンプルソースを示します。</p>
+<p><a href="https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Collections/ArrayList.cs">https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Collections/ArrayList.cs</a></p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/algorithm/collection/">&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/study/algorithm/collection/collection/">&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x6982;&#x8981;</a></li><li><a href="/study/algorithm/collection/col_circular/">&#x5FAA;&#x74B0;&#x30D0;&#x30C3;&#x30D5;&#x30A1;</a></li><li><a href="/study/algorithm/collection/col_flist/">&#x7247;&#x65B9;&#x5411;&#x9023;&#x7D50;&#x30EA;&#x30B9;&#x30C8;</a></li><li><a href="/study/algorithm/collection/col_blist/">&#x53CC;&#x65B9;&#x5411;&#x9023;&#x7D50;&#x30EA;&#x30B9;&#x30C8;</a></li><li><a href="/study/algorithm/collection/col_sorted/">&#x30BD;&#x30FC;&#x30C8;&#x6E08;&#x307F;&#x914D;&#x5217;</a></li><li><a href="/study/algorithm/collection/col_hash/">&#x30CF;&#x30C3;&#x30B7;&#x30E5;&#x30C6;&#x30FC;&#x30D6;&#x30EB;</a></li><li><a href="/study/algorithm/collection/col_tree/">2&#x5206;&#x63A2;&#x7D22;&#x6728;</a></li><li><a href="/study/algorithm/collection/col_stack/">&#x30B9;&#x30BF;&#x30C3;&#x30AF;</a></li><li><a href="/study/algorithm/collection/col_queue/">&#x5F85;&#x3061;&#x884C;&#x5217;</a></li><li><a href="/study/algorithm/collection/col_heap/">&#x512A;&#x5148;&#x5EA6;&#x4ED8;&#x304D;&#x5F85;&#x3061;&#x884C;&#x5217;</a></li><li><a href="/study/algorithm/collection/col_set/">&#x30BB;&#x30C3;&#x30C8;</a></li><li><a href="/study/algorithm/collection/col_dic/">&#x8F9E;&#x66F8;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

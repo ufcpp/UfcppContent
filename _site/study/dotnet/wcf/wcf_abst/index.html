@@ -1,0 +1,165 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Windows Communication Foundation &#x6982;&#x8981;&#xFF08;WCF&#xFF09; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/dotnet/wcf/wcf_abst/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="windows-communication-foundation-wcf">Windows Communication Foundation 概要（WCF）</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p><strong id="wcf" class="keyword">Windows Communication Foundation</strong> は .NET Framework 3.0 で追加された3つの主軸ライブラリの1つで、
+サービス志向の通信基盤ライブラリです。
+<strong id="wcf0" class="keyword">WCF</strong> と略します。</p>
+<p>WCF を使えば、開発者はどうやって通信を行うか（how）を意識せず、何をサービスとして提供するか（what）にだけ集中することができます。
+C# 3.0 の 「<a href="/study/csharp/data/sp3_linq/#linq">LINQ</a>」 にしてもそうなんですが、
+「how から what へ」というのが .NET Framework 3.0 / 3.5 の1つのテーマです。</p>
+<p>具体的には、
+普通のクラスライブラリに所定の属性を付けるだけで実装した機能を WCF サービスとして公開することができます。</p>
+<h2 id="section-1"><a id="sec-generated-title-2"></a> <a id="service"></a>サービス指向アーキテクチャ</h2>
+<p>サービス指向アーキテクチャ（<strong id="soa" class="keyword">SOA</strong>: service oriented architecture）というのが何かは、
+詳しくはネットで検索してもらうとして、要点だけあげると以下のような感じです。</p>
+<ul>
+<li><p>情報システムに求められる機能が複雑化していて、 全ての機能を一枚岩のシステムに実装するのが難しくなってきている。</p>
+</li>
+<li><p>機能をある程度まとまった単位ごとに小分けにして、 小分けになった機能（これを<strong id="service" class="keyword">サービス</strong>と呼ぶ）同士を連携させることで全体のシステムを作る。</p>
+</li>
+<li><p>異なるベンダーのサービス連携も視野に入れて、 標準化された方式を使ってサービス間の通信を行う。</p>
+</li>
+</ul>
+<p>ASP.NET を使った XML ウェブサービスなどは SOA の具体例の1つです。</p>
+<p>サービスが小分けにされていて、サービス間の通信方式を標準化しているので、
+サービス間の依存性が低くて、
+あるサービスの変更が他のサービスに与える影響が小さくなっています。
+このような特徴は、SOA の利点の1つで、loosely-coupled（緩結合）と呼んだりします。</p>
+<h3 id="abc"><a id="sec-generated-title-3"></a> <a id="abc"></a>サービスの ABC</h3>
+<p>サービスを作る際に考えるべき要素として、以下の3つのものがあります。</p>
+<ul>
+<li><p><span style="color:#800000">Address</span></p>
+<ul>
+<li><p>（where）どこで公開するか</p>
+</li>
+<li><p>要はサービスの URI</p>
+</li>
+<li><p><a href="http://ufcpp.net/Services">http://ufcpp.net/Services</a>, net.pipe://localhost/Services など</p>
+</li>
+</ul>
+</li>
+<li><p><span style="color:#000080">Binding</span></p>
+<ul>
+<li><p>（how）どうやって公開するか</p>
+</li>
+<li><p>要するに、どういうプロトコルで通信するか</p>
+</li>
+<li><p>WS-*、basic HTTP、TCP、名前付きパイプなど</p>
+</li>
+</ul>
+</li>
+<li><p><span style="color:#008000">Contract</span>:</p>
+<ul>
+<li><p>（what）何を公開するか</p>
+</li>
+<li><p>提供する機能は何か</p>
+</li>
+<li><p>商取引、金融、ゲーム、チャット、IM など</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>これら3つを合わせて「ABC」と言ったりもします。</p>
+<p>このうち、サービスを実装する際に1番注力したいのは Contract（what）の部分です。
+Address や Binding に関しては、以下のような要望があります。</p>
+<ul>
+<li><p>Address, Binding の部分はできる限りコードは書きたくない。</p>
+</li>
+<li><p>設定をちょこっと変えるだけで Address, Binding が変更できるとうれしい。</p>
+</li>
+<li><p>ときには、同じ Contract をいろんな Address, Binding で公開したいときもある。</p>
+</li>
+</ul>
+<p>ということで、
+WCF は Contract に注力できるように設計されています。</p>
+<h3 id="section-2"><a id="sec-generated-title-4"></a> <a id="endpoint"></a>エンドポイント</h3>
+<p>前節で上げたサービスの ABC の組み合わせを<strong id="endpoint" class="keyword">エンドポイント</strong>（endpoint: 接続の端点）といいます。
+サーバ・クライアント間の通信をケーブルに見立てたとき、ケーブルの差し込み口に相当するのがエンドポイントです。</p>
+<p>1つのサーバが複数のエンドポイントを持てる。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/dotnet/fig/wcf_endpoint1.jpg"><img src="/assets/media/ufcpp2000/dotnet/fig/wcf_endpoint1.jpg" alt="エンドポイントの例1" /></a></p>
+<figcaption>エンドポイントの例1</figcaption>
+</figure>
+<figure>
+<p><a href="/assets/media/ufcpp2000/dotnet/fig/wcf_endpoint2.jpg"><img src="/assets/media/ufcpp2000/dotnet/fig/wcf_endpoint2.jpg" alt="エンドポイントの例2" /></a></p>
+<figcaption>エンドポイントの例2</figcaption>
+</figure>
+<h2 id="wcf"><a id="sec-generated-title-5"></a> <a id="wcf"></a>WCF</h2>
+<p>WCF では</p>
+<ul>
+<li><p>Contract に注力。 Binding, Address はライブラリ側で面倒を見てもらえる。 設定は App.config, Web.config に。</p>
+</li>
+<li><p>インターフェースに属性を付けるだけで Contract になる。</p>
+</li>
+<li><p>そのインターフェースを実装したクラスがサービスの実体になる。</p>
+</li>
+</ul>
+<pre><code class="language-csharp">[ServiceContract(
+    CallbackContract = <span class="keyword">typeof</span>(IGameCharacterCallback),
+    SessionMode = SessionMode.Required)]
+<span class="keyword">public</span> <span class="keyword">interface</span> IGameCharacter
+{
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> キャラを動かします。</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;movement&quot;&gt;</span><span class="xmlDocComment">移動量。&lt;/param&gt;</span>
+    [OperationContract(IsOneWay = <span class="keyword">true</span>)]
+    <span class="keyword">void</span> Move(System.Windows.Vector movement);
+}
+
+[ServiceContract]
+<span class="keyword">public</span> <span class="keyword">interface</span> IGameCharacterCallback
+{
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> キャラの現在位置を設定します。</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;location&quot;&gt;</span><span class="xmlDocComment">キャラの現在位置。&lt;/param&gt;</span>
+    [OperationContract(IsOneWay = <span class="keyword">true</span>)]
+    <span class="keyword">void</span> SetLocation(System.Windows.Point location);
+}</code></pre>
+<p>サンプル：
+<a href="/assets/media/ufcpp2000/csharp/source/WcfGameSample.zip">WcfGameSample.zip</a></p>
+<p>次節以降で、サンプルの中身にそって WCF を解説</p>
+<p>キャラクターの位置をサーバ側で管理。
+複数のクライアントで位置を共有。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/dotnet/fig/wcf_gamesample.png"><img src="/assets/media/ufcpp2000/dotnet/fig/wcf_gamesample.png" alt="サンプル（ゲームひな形）" /></a></p>
+<figcaption>サンプル（ゲームひな形）</figcaption>
+</figure>
+<h2 id="section-3"><a id="sec-generated-title-6"></a> <a id="plan"></a>予定</h2>
+<pre><code class="language-text">クライアント側
+  - Contract は単なるクラスライブラリなので、
+    WCF を通さず、スタンドアローンでも使える
+  - WCF クライアントにしたければ、ChannelFactory クラスなどを使う
+
+サーバ側
+  - デバッグ用のホストプログラム
+  - IIS によるホスト
+  - セルフホスト
+ 
+
+[要約資料（pptx）](/media/ufcpp2000/csharp/slide/WcfDemo.pptx)</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/dotnet/wcf/">Windows Communication Foundation</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

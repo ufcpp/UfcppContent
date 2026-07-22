@@ -1,0 +1,840 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x7279;&#x6B8A;&#x306A;&#x6587;&#x5B57;&#x5217;&#x30EA;&#x30C6;&#x30E9;&#x30EB; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/start/st_string/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">特殊な文字列リテラル</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst">概要</a></h2>
+<h5 class="version version6">Ver. 6</h5>
+<p>C# 6 で、補間文字列と、nameof 演算子(nameof operator)という、2つの文字列関連機能が追加されました。</p>
+<p>また、C# 11 で、生文字列リテラルという構文が追加されました。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="string-interpolation">文字列補間</a></h2>
+<p>クラスのメンバーを整形して文字列化するには、.NETでは<code>string</code>の<code>Format</code>メソッドを使います。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> formatted = <span class="keyword">string</span>.Format(<span class="string">&quot;({0}, {1})&quot;</span>, x, y);</code></pre>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/string-format.png"><img src="/assets/media/ufcpp2000/csharp/fig/string-format.png" alt="string.Format メソッドの利用例" /></a></p>
+<figcaption>string.Format メソッドの利用例</figcaption>
+</figure>
+<p>しかし、Formatメソッドには、以下のような面倒事がありました。</p>
+<ul>
+<li><p>頻出するわりに、string.Format という長めのタイピングが面倒</p>
+</li>
+<li><p>値を埋め込みたい場所と、埋め込む値を渡す場所が離れて読みにくい</p>
+</li>
+<li><p>{0}とかの数と、渡す値の数が違っていても実行して見るまで気付かない</p>
+</li>
+</ul>
+<p>そこで、以下のような、Format用の専用構文が追加されました。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> formatted = $<span class="string">&quot;({x}, {y})&quot;</span>;</code></pre>
+<p>このような書き方を<strong id="key-interpolated-string" class="keyword">補間文字列</strong>(interpolated string)、もしくは、<em>文字列補間</em>(string interpolation)といいます。
+文字列補間の結果は、単純に <code>string.Format</code> メソッドの呼び出しに置き替えられます。
+例えば、最初の例は以下のコードと同じ意味なります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> formatted = <span class="keyword">string</span>.Format(<span class="string">&quot;({0}, {1})&quot;</span>, x, y);</code></pre>
+<h3 id="c-10"><a id="sec-generated-title-3"></a> <a id="csharp10-improvement">C# 10 でのパフォーマンス改善</a></h3>
+<h5 class="version version10">Ver. 10</h5>
+<p><code>string.Format</code> を使った実装ではどうしてもパフォーマンス上の改善が難しく、
+C# 10.0 では別の型を使って結構複雑なコードに変換する最適化が入りました。
+条件を満たす場合、</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> formatted = $<span class="string">&quot;({x}, {y})&quot;</span>;</code></pre>
+<p>このコードは <code>string.Format</code> ではなく、以下のようなコードに展開されます。</p>
+<pre><code class="language-csharp">DefaultInterpolatedStringHandler handler = <span class="keyword">new</span> DefaultInterpolatedStringHandler(<span class="number">4</span>, <span class="number">2</span>);
+handler.AppendLiteral(<span class="string">&quot;(&quot;</span>);
+handler.AppendFormatted(x);
+handler.AppendLiteral(<span class="string">&quot;, &quot;</span>);
+handler.AppendFormatted(y);
+handler.AppendLiteral(<span class="string">&quot;)&quot;</span>);
+<span class="keyword">string</span> s = handler.ToStringAndClear();</code></pre>
+<p>詳細な条件については「<a href="/study/csharp/start/improvedinterpolatedstring/">C# 10.0 の補間文字列の改善</a>」で別途説明します。</p>
+<p>とりあえず、簡単な条件としては、実行環境を .NET 6 以上(TargetFramework を net6.0 以上)にして再コンパイルするだけで文字列補間のパフォーマンスが上がると思ってください。</p>
+<p>また、C# 10.0 ではこれと同時に、<a href="/study/csharp/start/sp_const/#constant-string-interpolation">一定の条件を満たす場合、文字列補間を const にできるようになりました</a>。</p>
+<h3 id="section-3"><a id="sec-generated-title-4"></a> <a id="escape">エスケープ</a></h3>
+<p>エスケープ(<code>$&quot;&quot;</code> の中で本来使えない文字を埋め込む方法)の方法は<a href="/study/csharp/start/st_embeddedtype/#escape-sequence">通常の文字列</a>とほぼ同じです。
+通常の文字列リテラルと同じく、<code>\</code> に続けることで、<code>&quot;</code>記号(<code>\&quot;</code>)や改行文字(<code>\n</code>)などが書けます。</p>
+<p>少しだけ違うのは、<code>$&quot;&quot;</code> の中では <code>{</code> や <code>}</code> も特別な意味を持っているので、これらに対するエスケープが別途必要になります。<code>{</code> や <code>}</code> は2つ重ねて<code>{{</code> や <code>}}</code> 書くことで、補間の意味ではなく、その場所に波括弧を表示する意味になります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> p = <span class="keyword">new</span> { X = <span class="number">10</span>, Y = <span class="number">20</span> };
+Console.WriteLine($<span class="string">&quot;\&quot;{{{p.X}, {p.Y}}}\&quot;&quot;</span>);</code></pre>
+<pre><code class="language-console">&quot;{10, 20}&quot;</code></pre>
+<h3 id="section-4"><a id="sec-generated-title-5"></a> <a id="formatting">書式指定</a></h3>
+<p>書式指定もできます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> formatted = $<span class="string">&quot;({12300:c}, {12300:n}, {12300,4:x})&quot;</span>;</code></pre>
+<p>書式の書き方も<code>string.Format</code>に対して使えるものと同じです。</p>
+<p>ただ、C#の構文化したことで、元々実行してみるまでエラーがわからなかったのが、コンパイル時に検出できるようになったりしています。</p>
+<pre><code class="language-csharp"><span class="comment">// ほぼ同じ意味</span>
+Console.WriteLine(<span class="keyword">string</span>.Format(<span class="string">&quot;{0,4:x}&quot;</span>, x));
+Console.WriteLine($<span class="string">&quot;{x,4:x}&quot;</span>);
+
+<span class="comment">// 書き方を忘れて、 , と : を間違えてしまうと…</span>
+
+<span class="comment">// 実行時エラー</span>
+Console.WriteLine(<span class="keyword">string</span>.Format(<span class="string">&quot;{0,x}&quot;</span>, x));
+
+<span class="comment">// コンパイル エラー</span>
+Console.WriteLine($<span class="string">&quot;{x,x}&quot;</span>);</code></pre>
+<h3 id="section-5"><a id="sec-generated-title-6"></a> <a id="conditional-in-string-interpolation">文字列補間と条件演算子</a></h3>
+<p><code>{}</code>の中には割と任意の式を書けます。
+たとえば、以下のように、メソッドを呼び出したり、<code>{}</code>の中にさらに文字列リテラル<code>&quot;&quot;</code>を含めることもできます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> data = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span> };
+<span class="keyword">var</span> s = $<span class="string">&quot;{string.Join(&quot;</span>, <span class="string">&quot;, data)} =&gt; {string.Join(&quot;</span>, <span class="string">&quot;, data.Select(i =&gt; i * i))}&quot;</span>;</code></pre>
+<p>ただ、1つだけ制限があって、条件演算子 <code>?:</code>は、<code>{}</code>中に直接書くことができません。
+たとえば以下のコードでは、1行目(<code>s1</code>の行)がコンパイルエラーになります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> s1 = $<span class="string">&quot;p = {p == null ? &quot;</span><span class="keyword">null</span><span class="string">&quot; : p.ToString()}&quot;</span>; <span class="comment">// エラー</span>
+<span class="keyword">var</span> s2 = $<span class="string">&quot;p = {(p == null ? &quot;</span><span class="keyword">null</span><span class="string">&quot; : p.ToString())}&quot;</span>; <span class="comment">// 1段 () でくくればOK</span></code></pre>
+<p>前節の書式指定の <code>:</code> と認識されて、「書式エラー」になります。
+(「<code>?</code>がある時だけ<code>:</code>の解釈を変える」というのが高コストすぎるそうで、こういう仕様になっています。)
+一応、<code>s2</code>の行のように、1段階 <code>()</code>でくくればコンパイルできるようになります。</p>
+<h3 id="section-6"><a id="sec-generated-title-7"></a> <a id="multi-line">複数行の文字列補間</a></h3>
+<p>また、<code>$@</code> から始めることで、複数行の文字列補間もできます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> verbatim = $<span class="stringCSharpVerbatim">@&quot;
+verbatim (here) string
+{x}, {y}, {x:c}, {x:n}
+&quot;</span>;</code></pre>
+<p>ちなみに、逆順、つまり、<code>@$</code>は、C# 8.0 以降でだけ使えます(C# 7.3 以前だとコンパイル エラーになります)。</p>
+<pre><code class="language-csharp"><span class="comment">// これは C# 7.3 以前ではコンパイル エラーになる</span>
+<span class="keyword">var</span> verbatim = @$&quot;
+verbatim (here) <span class="keyword">string</span>
+{x}, {y}, {x:c}, {x:n}
+&quot;;</code></pre>
+<p>また、<code>$@</code>を使った場合、エスケープのルールは<a href="/study/csharp/start/st_embeddedtype/#verbatim-string">逐語的文字列リテラル</a>と同じになります。
+すなわち、<code>&quot;</code> と書きたければ <code>&quot;&quot;</code>と、ダブルクォーテーションを2つ重ねます。また、<code>\</code>から始めるエスケープはできません(<code>\</code>記号がそのまま表示される)。</p>
+<pre><code class="language-csharp">Console.WriteLine($<span class="stringCSharpVerbatim">@&quot;
+&quot;&quot;
+{{
+{p.X}\{p.Y}
+}}
+&quot;&quot;
+&quot;</span>);</code></pre>
+<pre><code class="language-console">&quot;
+{
+10\20
+}
+&quot;</code></pre>
+<h3 id="formattablestring"><a id="sec-generated-title-8"></a> <a id="FormatableString"></a><a id="FormattableString">FormattableString</a></h3>
+<p>ちなみに、<code>Format</code>メソッドには、<code>IFormatProvider</code> インターフェイス(<code>System</code>名前空間)を与える(カルチャーなどの指定ができる)オーバーロードがあります(参考: 「<a href="/study/dotnet/bcl/bcl_format/#culture">書式とカルチャー</a>」)。</p>
+<p>C# 6 では、文字列補間機能を使いつつ、<code>IFormatProvider</code> を与える方法もちゃんと提供されます。
+文字列補間でカルチャー指定するには、これから説明する <code>FormattableString</code> という型(<code>System</code>名前空間)を介します。</p>
+<p>文字列補間構文では、以下のように、<code>IFormattable</code> インターフェイス(<code>System</code>名前空間)に代入すると、
+一旦 <code>FormattableString</code> クラス(<code>System</code> 名前空間)のインスタンスが作られます。
+(左辺の型を見て決定。右辺の書き方は直接文字列に整形する場合とまったく同じ。)</p>
+<pre><code class="language-csharp"><span class="comment">// 左辺の型が IFormattable の時、文字列補間の結果は string ではなく、FormattableString になる</span>
+System.IFormattable formatable = $<span class="string">&quot;({x}, {y})&quot;</span>;</code></pre>
+<p><code>IFormattable</code> の <code>ToString</code> メソッドには、<code>IFormatProvider</code> を与えることで、整形の仕方を調整できます。</p>
+<pre><code class="language-csharp">IFormattable f = $<span class="string">&quot;{x :c}, {x :n}&quot;</span>;
+Console.WriteLine(f.ToString(<span class="keyword">null</span>, <span class="keyword">new</span> System.Globalization.CultureInfo(<span class="string">&quot;en-us&quot;</span>)));</code></pre>
+<p>ちなみに、こちらは、<code>FormattableStringFactory</code> クラス(<code>System.Runtime.CompilerServices</code> 名前空間)の <code>Create</code> メソッド呼び出しに変換されます。</p>
+<pre><code class="language-csharp">System.IFormattable formatable = System.Runtime.CompilerServices.FormattableStringFactory.Create(<span class="string">&quot;({0}, {1})&quot;</span>, x, y;</code></pre>
+<h3 id="formattablestring-1"><a id="sec-generated-title-9"></a> <a id="FormattableString-overload">FormattableString のオーバーロード解決</a></h3>
+<p><code>string</code> 引数と <code>FormattableString</code> 引数のオーバーロードがあるとき、
+<code>$&quot;&quot;</code> リテラルを渡すと、常に <code>string</code> の方が優先されます。</p>
+<p>例えば以下のようなメソッドを考えます。</p>
+<pre><code class="language-csharp"><span class="comment">// string が優先されるので、M1($&quot;&quot;) という書き方では呼び分けできない。</span>
+<span class="keyword">static</span> <span class="keyword">void</span> M1(<span class="keyword">string</span> s) =&gt; Console.WriteLine(<span class="string">&quot;string: &quot;</span> + s);
+<span class="keyword">static</span> <span class="keyword">void</span> M1(FormattableString s) =&gt; Console.WriteLine($<span class="string">&quot;format: {s.Format}, args: {string.Join(&quot;</span>, <span class="string">&quot;, s.GetArguments())}&quot;</span>);</code></pre>
+<p>このとき、<code>M1($&quot;&quot;)</code> という書き方では <code>M1(string)</code> の方が呼ばれてしまいます。</p>
+<pre><code class="language-csharp"><span class="comment">// string の方が呼ばれる</span>
+M1(<span class="string">&quot;&quot;</span>);
+ 
+<span class="comment">// これでも、結局 string の方が呼ばれる</span>
+M1($<span class="string">&quot;&quot;</span>);
+ 
+<span class="comment">// FormattableString の方を呼びたければ明示的なキャストが必要</span>
+M1((FormattableString)$<span class="string">&quot;&quot;</span>);</code></pre>
+<p><code>FormattableString</code> の方を優先的に呼んでほしい場合は、
+以下のようなちょっとしたトリックが必要になります。</p>
+<pre><code class="language-csharp"><span class="comment">// M2(&quot;&quot;) と M2($&quot;&quot;) で呼び分けできる。</span>
+<span class="keyword">static</span> <span class="keyword">void</span> M2(RawString s) =&gt; M1(s.Value);
+<span class="keyword">static</span> <span class="keyword">void</span> M2(FormattableString s) =&gt; M1(s);
+ 
+<span class="comment">// オーバーロード解決の優先度をごまかすために、string からの暗黙的型変換を持つ構造体を用意。</span>
+<span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">struct</span> RawString
+{
+    <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">string</span> Value;
+    <span class="keyword">public</span> RawString(<span class="keyword">string</span> value) =&gt; Value = value;
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">implicit</span> <span class="keyword">operator</span> RawString(<span class="keyword">string</span> s) =&gt; <span class="keyword">new</span> RawString(s);
+ 
+    <span class="comment">// これがないとダメみたい</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">implicit</span> <span class="keyword">operator</span> RawString(FormattableString s) =&gt; <span class="keyword">throw</span> <span class="keyword">new</span> InvalidCastException();
+}</code></pre>
+<p>暗黙的型変換と比べれば <code>FormattableString</code> の方が優先度が高いので、
+この <code>M2</code> であれば、ちゃんと <code>M2(&quot;&quot;)</code> で <code>string</code> の方が、
+<code>M2($&quot;&quot;)</code> で <code>FormattableString</code> の方が呼ばれます。</p>
+<pre><code class="language-csharp"><span class="comment">// RawString (string) の方が呼ばれる</span>
+M2(<span class="string">&quot;&quot;</span>);
+ 
+<span class="comment">// これなら FormattableString の方が呼ばれる</span>
+M2($<span class="string">&quot;&quot;</span>);
+ 
+<span class="comment">// ただ、 + とかを加えてしまうと string 扱いになってしまうので注意</span>
+M2($<span class="string">&quot;&quot;</span> + $<span class="string">&quot;&quot;</span>);</code></pre>
+<h2 id="nameof"><a id="sec-generated-title-10"></a> <a id="nameof-operator">nameof 演算子</a></h2>
+<p>C# 6 で、<strong id="key-nameof" class="keyword">nameof 演算子</strong>(nameof operator: &quot;name of X&quot; (Xの名前)を1キーワード化したもの)というものが追加されました。
+変数や、クラス、メソッド、プロパティなどの名前(識別子)を文字列リテラルとして取得できます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> MyClass
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> MyProperty =&gt; myField;
+    <span class="keyword">private</span> <span class="keyword">int</span> myField = <span class="number">10</span>;
+
+    <span class="keyword">public</span> <span class="keyword">void</span> MyMethod()
+    {
+        <span class="keyword">var</span> myLocal = <span class="number">10</span>;
+        Console.WriteLine(nameof(MyClass));
+        Console.WriteLine(nameof(MyProperty) + <span class="string">&quot; = &quot;</span> + MyProperty);
+        Console.WriteLine(nameof(myField) + <span class="string">&quot; = &quot;</span> + myField);
+        Console.WriteLine(nameof(MyMethod));
+        Console.WriteLine(nameof(myLocal) + <span class="string">&quot; = &quot;</span> + myLocal);
+    }
+}</code></pre>
+<pre><code class="language-console">MyClass
+MyProperty = 10
+myField = 10
+MyMethod
+myLocal = 10</code></pre>
+<p>(ちなみに、<a href="/study/csharp/start/sp_const/#constant-expressions">nameof 演算子は const にできます</a>。)</p>
+<p>こういう識別子名を文字列化したくなる場面の例としてC# で頻出するパターンは、
+<code>INotifyPropertyChanged</code> の実装や、<code>ArgumentException</code>の引数などがあります。</p>
+<p>例えば、C# 5.0までであれば、<code>ArgumentoException</code>は以下のようにメッセージを書くことになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">double</span> Sqrt(<span class="keyword">double</span> x)
+{
+    <span class="keyword">if</span> (x &lt; <span class="number">0</span>)
+        <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentException(<span class="string">&quot;x は0以上でなければなりません&quot;</span>);
+    <span class="keyword">return</span> Math.Sqrt(x);
+}</code></pre>
+<p>しかし、この例のように、普通の文字列リテラルとして識別子を書いてしまうと、それが識別子だという情報が失われて、ソースコード解析の対象から外れてしまう問題があります。例えばVisual Studioは、変数、引数、メソッド名など、識別子のリネーム機能を持っていますが、文字列中に埋め込んでしまったものは識別子としては認識されず、リネームできません。</p>
+<p>そこで、C# 6で追加されたnameof 演算子を使います。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">double</span> Sqrt(<span class="keyword">double</span> x)
+{
+    <span class="keyword">if</span> (x &lt; <span class="number">0</span>)
+        <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentException($<span class="string">&quot;{nameof(x)} は0以上でなければなりません&quot;</span>);
+    <span class="keyword">return</span> Math.Sqrt(x);
+}</code></pre>
+<p>このようなリファクタリング機能を使った際、nameof 演算子であれば、その識別子を使っている個所全ての変更も全て行われます。</p>
+<p>(ここから下、文章が古い。図も含めて要修正)</p>
+<p>例えば、メソッド名などに一度適当な名前を付けて実装したあと、Visual Studioのリファクタリング機能を使ってちゃんとした名前にリネームしたいことがあります。
+しかし、文字列にしてしまっている &quot;&quot; 内のメソッド名の部分はリファクタリングできず、元のまま残ります。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/nameof-refactoring.png"><img src="/assets/media/ufcpp2000/csharp/fig/nameof-refactoring.png" alt="nameof 演算子をリファクタリングの対象にする" /></a></p>
+<figcaption>nameof 演算子をリファクタリングの対象にする</figcaption>
+</figure>
+<p>nameof 演算子の目的はここにあります。識別子名を文字列化するだけなんですが、ソースコード解析の対象にできます。</p>
+<p>INotifyPropertyChanged の実装でもnameof 演算子を使う例を以下に挙げておきましょう。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.ComponentModel;
+<span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">class</span> Rect : BindableBase
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> Width
+    {
+        <span class="keyword">get</span> { <span class="keyword">return</span> _width; }
+        <span class="keyword">set</span>
+        {
+            SetProperty(<span class="keyword">ref</span> _width, value);
+            <span class="comment">// Width が変化すると Area も変化するので、それを通知</span>
+            OnPropertyChanged(nameof(Area));
+        }
+    }
+    <span class="keyword">private</span> <span class="keyword">int</span> _width;
+
+    <span class="keyword">public</span> <span class="keyword">int</span> Height
+    {
+        <span class="keyword">get</span> { <span class="keyword">return</span> _height; }
+        <span class="keyword">set</span>
+        {
+            SetProperty(<span class="keyword">ref</span> _height, value);
+            <span class="comment">// Height が変化すると Area も変化するので、それを通知</span>
+            OnPropertyChanged(nameof(Area));
+        }
+    }
+    <span class="keyword">private</span> <span class="keyword">int</span> _height;
+
+    <span class="keyword">public</span> <span class="keyword">int</span> Area =&gt; Width * Height;
+}
+
+<span class="keyword">public</span> <span class="keyword">class</span> BindableBase : INotifyPropertyChanged
+{
+    <span class="keyword">protected</span> <span class="keyword">void</span> SetProperty&lt;T&gt;(<span class="keyword">ref</span> T storage, T value, [CallerMemberName] <span class="keyword">string</span> propertyName = <span class="keyword">null</span>)
+    {
+        <span class="keyword">if</span> (!Equals(storage, value))
+        {
+            storage = value;
+            OnPropertyChanged(propertyName);
+        }
+    }
+
+    <span class="keyword">protected</span> <span class="keyword">void</span> OnPropertyChanged([CallerMemberName] <span class="keyword">string</span> propertyName = <span class="keyword">null</span>)
+        =&gt; PropertyChanged?.Invoke(<span class="keyword">this</span>, <span class="keyword">new</span> PropertyChangedEventArgs(propertyName));
+
+    <span class="keyword">public</span> <span class="keyword">event</span> PropertyChangedEventHandler PropertyChanged;
+}</code></pre>
+<p>。</p>
+<h3 id="nameof-1"><a id="sec-generated-title-11"></a> <a id="nameof-parameter"></a>nameof(引数) のスコープ変更</h3>
+<h5 class="version version11">Ver. 11</h5>
+<p>C# 11 で、<code>nameof</code> にちょっとだけ変更が掛かりました。
+以下のように、メソッドに対する属性の中で、そのメソッドの引数の名前が参照できるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Diagnostics.CodeAnalysis;
+
+<span class="comment">// C# 10 までこの属性、 NotNullIfNotNull(&quot;x&quot;) と書かないといけなくて割かしつらかった。</span>
+[<span class="keyword">return</span>: NotNullIfNotNull(nameof(x))]
+<span class="keyword">static</span> <span class="keyword">string</span>? m(<span class="keyword">string</span>? x) =&gt; x;</code></pre>
+<p>この例で使っているように、きっかけとしては<a href="/study/csharp/resource/nullablereferencetype/#sec-generated-title-6">null 許容参照型</a>で使う <code>NotNullIfNotNull</code> 属性などのために仕様変更されました。
+これ以降にも、<a href="/study/csharp/cheatsheet/ap_ver10/#CallerArgumentExpression"><code>CallerArgumentExpression</code></a> 属性や<a href="/study/csharp/start/improvedinterpolatedstring/#InterpolatedStringHandlerArgument"><code>InterpolatedStringHandlerArgument</code></a>属性など、
+引数名を参照したい属性がじわじわと増えていたりします。</p>
+<h3 id="unbound-nameof"><a id="sec-generated-title-12"></a> <a id="unbount-type-in-nameof">unbound な型に対する nameof</a></h3>
+<h5 class="version version14">Ver. 14</h5>
+<p>C# 14 から、<code>T&lt;&gt;</code> みたいに型引数を埋めていないジェネリック型(これを unbound (未束縛)とか open (開きっぱなし) な型といいます)に対して <code>nameof</code> 演算子を使えるようになりました。</p>
+<pre><code class="language-csharp">Console.WriteLine(nameof(List&lt;&gt;)); <span class="comment">// &quot;List&quot;</span>
+Console.WriteLine(nameof(Dictionary&lt;,&gt;.Keys)); <span class="comment">// &quot;Keys&quot;</span>
+Console.WriteLine(nameof(List&lt;&gt;.Enumerator.MoveNext)); <span class="comment">// &quot;MoveNext&quot;</span></code></pre>
+<p><code>nameof</code> 演算子では元からどのみち型が引数の部分 (<code>&lt;&gt;</code> とその中身)は無視されていたので、
+ここを埋めるかどうかは結果得られる文字列に何の影響もありません。
+これまでできなかったのは「手間に対して需要が少ない」という実装上の都合で、
+C# 14 でようやく着手という流れです。
+(<code>typeof(T&lt;&gt;)</code> は昔から書けたのでそれの流用でできそうに見えますが、
+<code>typeof</code> の場合は <code>typeof(T&lt;&gt;.Member)</code> みたいなメンバー参照がないので、
+今回の <code>nameof</code> 対応はそれなりに新規実装の部分があります。)</p>
+<p>C# 13 以前だと同じことをしたければ、意味もなく何か適当な型引数を埋めて書いていました。</p>
+<pre><code class="language-csharp"><span class="comment">// int の部分には特に意味はないけども、埋めないとコンパイルが通らなかったので適当に int を採用。</span>
+Console.WriteLine(nameof(List&lt;<span class="keyword">int</span>&gt;)); <span class="comment">// &quot;List&quot;</span>
+Console.WriteLine(nameof(Dictionary&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;.Keys)); <span class="comment">// &quot;Keys&quot;</span>
+Console.WriteLine(nameof(List&lt;<span class="keyword">int</span>&gt;.Enumerator.MoveNext)); <span class="comment">// &quot;MoveNext&quot;</span></code></pre>
+<p>ただ、型引数にかかっている制約によっては「適当に <code>int</code> を渡す」みたいなことがかなり難しくなります。
+場合によっては、以下のように「絶対に書けない」という状況も発生します。
+(この場合、メソッド <code>M</code> が public なのがおかしいというのはありますが、原理的にはこういうことがありえます。)</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">interface</span> I
+{
+    <span class="comment">// static abstract があると M&lt;I&gt; と書けなくなる。</span>
+    <span class="comment">// (実装したクラスでないと渡せない。)</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">abstract</span> <span class="keyword">void</span> M();
+}
+
+<span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> B
+{
+    <span class="comment">// アクセス制限がかなり厳しいコンストラクターを用意。</span>
+    <span class="comment">// クラス自体は public であっても、別プロジェクトで派生クラスは作れない。</span>
+    <span class="keyword">private</span> <span class="keyword">protected</span> B() { }
+}
+
+<span class="comment">// 実装しているクラスは internal で、外からは使わせない。</span>
+<span class="keyword">internal</span> <span class="keyword">class</span> D : B, I
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M() { }
+}
+
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> C
+{
+    <span class="comment">// T : I のせいで派生クラスでないとダメ。</span>
+    <span class="comment">// T : B のせいで派生クラスを作れない。</span>
+    <span class="comment">// 唯一の実装クラス D は internal なので、外からは使えない。</span>
+    <span class="comment">// 結果、C# 13 以前は nameof(M&lt;&gt;) が使えなかった。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M&lt;T&gt;() <span class="keyword">where</span> T : B, I
+    {
+    }
+}</code></pre>
+<!-- original-page-break -->
+<h2 id="section-7"><a id="sec-generated-title-13"></a> <a id="raw-string"></a>生文字列リテラル</h2>
+<p>C# 11 で、3つ以上の連続した <code>&quot;</code> を使うことで、「一切エスケープが必要ない文字列リテラル」を書けるようになりました。</p>
+<pre><code class="language-csharp"><span class="comment">// &quot;&quot;&quot; から始まる文字列リテラル(raw string, 生文字列)。</span>
+<span class="keyword">var</span> quote = <span class="string">&quot;&quot;</span>&quot;
+    <span class="string">&quot; はそのまま &quot;</span> として使われて、
+    \ も \ のままの意味。
+    \\ は \ が2個。
+    {} とかも特別な解釈はされない。
+    <span class="string">&quot;&quot;</span>&quot;;</code></pre>
+<p>これを<strong id="key-raw-string" class="keyword">生文字列リテラル</strong>(raw string literal)と言います。</p>
+<p>最近は「<a href="/blog/2022/2/embedded-languages/">言語内言語</a>」みたいなものの需要が微妙に高まっている中、
+こういう「エスケープ不要の文字列」への要望が強くなってきています。
+本来ならば<a href="/study/csharp/start/st_embeddedtype/#verbatim-string">逐語的文字列リテラル</a>(<code>@&quot;&quot;</code>)がその役割に当たるんですが、この <code>@&quot;&quot;</code> の構文が微妙に使いにくいので、それを置き換えるような新しい文法が導入されました。</p>
+<h3 id="section-8"><a id="sec-generated-title-14"></a> <a id="normal-literal">背景: 通常の文字列リテラルや、逐語的リテラル</a></h3>
+<p>多くのプログラミング言語で、通常、<code>&quot;</code> や <code>'</code> などの記号で挟まられた部分が<a href="/study/csharp/start/st_embeddedtype/#stringl">文字列リテラル</a>になります。
+この「通常の文字列リテラル」で困るのは、その文字列中に <code>&quot;</code> や <code>'</code> 自身を含む場合で、
+C# ではそういう場合のために、<code>\</code> を使った<a href="/study/csharp/start/st_embeddedtype/#escape-sequence">エスケープ</a>を行います。</p>
+<pre><code class="language-csharp"><span class="comment">// &quot; を含む文字列リテラル。</span>
+<span class="keyword">var</span> quote = <span class="string">&quot;\&quot;&quot;</span>;</code></pre>
+<p>エスケープが必要な文字が増えてくるとかなり煩雑です。
+そこで C# では、<code>@&quot;&quot;</code> という書き方で、以下のように、エスケープを<em>減らせる</em>ようにしました。
+これを<a href="/study/csharp/start/st_embeddedtype/#verbatim-string">逐語的文字列リテラル</a>(verbatim string literal)と言います。</p>
+<ul>
+<li><code>\</code> は <code>\</code> としてそのまま使われる</li>
+<li>リテラル中に改行を含められる</li>
+</ul>
+<pre><code class="language-csharp"><span class="comment">// @&quot;&quot; と書くと、\ と改行のエスケープが不要に。</span>
+<span class="keyword">var</span> quote = <span class="stringCSharpVerbatim">@&quot;これで3行の文字列になる。
+\ は \ のまま使われる。\\ も \ 2つ。
+ただし、&quot;&quot; を使いたいときは &quot;&quot; を2個並べないとダメ。これでダブルクォーテーションマーク1つ扱い。&quot;</span>;</code></pre>
+<p>「エスケープなしで書ける文字列」というのが逐語的文字列の存在意義なんですが、
+もうこの時点で、「<code>&quot;</code> にはエスケープが必要」となっています。
+その他、<a href="#conditional-in-string-interpolation">文字列補間</a>との組み合わせでは <code>{}</code> のエスケープも必要です。
+また、もう1つの要望として、「複数行の文字列を書くとき、インデントを揃えたいけどできない」という問題もあります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> value = <span class="number">123</span>;
+
+<span class="comment">// $@&quot;&quot; で逐語的 + 文字列補間。</span>
+<span class="comment">// - { を使いたければ {{ というように、そこそこ使いたくなりがちな文字に結局エスケープが必要</span>
+<span class="comment">// - 最初と最後の行の改行も文字列に含まれる</span>
+<span class="comment">// - インデントのスペース4つも文字列に含まれる</span>
+<span class="keyword">var</span> quote = $<span class="stringCSharpVerbatim">@&quot;
+    {{
+      &quot;&quot;key&quot;&quot;: {value}
+    }}
+    &quot;</span>;</code></pre>
+<h3 id="section-9"><a id="sec-generated-title-15"></a> <a id="raw-string-syntax">新文法: 生文字列</a></h3>
+<p><code>&quot;</code> や <code>'</code> を含め、あらゆる文字を一切エスケープなしで書けるようにしたいということで、
+C# 11 で、<code>&quot;&quot;&quot;</code> というように、「3つ以上の <code>&quot;</code> を並べる」という新しい文法を追加しました。</p>
+<p>以下のように、単一行か複数行かと、文字列補間の有無によって4パターンあります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> value = <span class="number">123</span>;
+
+<span class="keyword">var</span> singleLine = <span class="string">&quot;&quot;</span><span class="string">&quot;{ &quot;</span>abc<span class="string">&quot;: 123 }&quot;</span><span class="string">&quot;&quot;</span>;
+
+<span class="keyword">var</span> mutiLine = <span class="string">&quot;&quot;</span>&quot;
+    {
+      <span class="string">&quot;abc&quot;</span>: <span class="number">123</span>
+    }
+    <span class="string">&quot;&quot;</span>&quot;;
+
+<span class="keyword">var</span> singleLineInterpolation = $<span class="string">&quot;&quot;</span><span class="string">&quot;abc: {value}&quot;</span><span class="string">&quot;&quot;</span>;
+
+<span class="keyword">var</span> mutiLineInterpolation = $<span class="string">&quot;&quot;</span>&quot;
+    abc: {value}
+    <span class="string">&quot;&quot;</span>&quot;;</code></pre>
+<h3 id="section-10"><a id="sec-generated-title-16"></a> <a id="arbitrary-number">3つ以上の &quot;</a></h3>
+<p>生文字列の目的は「一切のエスケープが不要」というものです。
+そこで通常問題になるのが、<code>&quot;&quot;&quot;</code> の内側で同じく <code>&quot;&quot;&quot;</code> を使いたい場合。</p>
+<p>例えばの話、「自分自身を文字列リテラル化したい」みたいなことを考えてみましょう。
+まず、以下のような C# 11 コードがあったとします。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> mutiLine = <span class="string">&quot;&quot;</span>&quot;
+    {
+      <span class="string">&quot;abc&quot;</span>: <span class="number">123</span>
+    }
+    <span class="string">&quot;&quot;</span>&quot;;</code></pre>
+<p>一切エスケープ不要というなら、「この C# コードを出力する C# コード」みたいなものもエスケープなしで書けるようにしたいです。
+こういう場合に、以下のようなコードを書いてしまうと、最初の <code>&quot;&quot;&quot;</code> が出て来た時点で文字列リテラルを閉じようとしてしまって、コンパイル エラーになります。</p>
+<pre><code class="language-csharp"><span class="comment">// &quot;&quot;&quot; と &quot;&quot;&quot; の間に &quot;&quot;&quot; は書けない。</span>
+Console.WriteLine(<span class="string">&quot;&quot;</span>&quot;
+    <span class="keyword">var</span> mutiLine = <span class="string">&quot;&quot;</span>&quot;
+        {
+          <span class="string">&quot;abc&quot;</span>: <span class="number">123</span>
+        }
+        <span class="string">&quot;&quot;</span>&quot;;
+    <span class="string">&quot;&quot;</span>&quot;);</code></pre>
+<p>そこでどうするかというと、生文字列リテラルの開始文字を <code>&quot;&quot;&quot;&quot;</code> と4つに増やします。
+(同じ個数の <code>&quot;</code> が出てくるまで文字列リテラルが終わりません。)</p>
+<pre><code class="language-csharp"><span class="comment">// &quot; 4つで開始すれば、リテラルの中で &quot;&quot;&quot; (&quot; 3つ)を書いても問題ない。</span>
+Console.WriteLine(<span class="string">&quot;&quot;</span><span class="string">&quot;&quot;</span>
+    <span class="keyword">var</span> mutiLine = <span class="string">&quot;&quot;</span>&quot;
+        {
+          <span class="string">&quot;abc&quot;</span>: <span class="number">123</span>
+        }
+        <span class="string">&quot;&quot;</span>&quot;;
+    <span class="string">&quot;&quot;</span><span class="string">&quot;&quot;</span>);</code></pre>
+<p>これが、C# の生文字列リテラルの仕様が「3つ<em>以上</em>の <code>&quot;</code> を並べる」になっている理由です。
+もちろんさらに入れ子を増やして、<code>&quot;&quot;&quot;&quot;&quot;</code> (5つ)の内側に <code>&quot;&quot;&quot;&quot;</code> を書くこともできます。</p>
+<pre><code class="language-csharp">Console.WriteLine(<span class="string">&quot;&quot;</span><span class="string">&quot;&quot;</span>&quot;
+    Console.WriteLine(<span class="string">&quot;&quot;</span><span class="string">&quot;&quot;</span>
+        <span class="keyword">var</span> mutiLine = <span class="string">&quot;&quot;</span>&quot;
+            {
+              <span class="string">&quot;abc&quot;</span>: <span class="number">123</span>
+            }
+            <span class="string">&quot;&quot;</span>&quot;;
+        <span class="string">&quot;&quot;</span><span class="string">&quot;&quot;</span>);
+    <span class="string">&quot;&quot;</span><span class="string">&quot;&quot;</span>&quot;);</code></pre>
+<p>逆に <code>&quot;</code> 2つがダメなのは、<code>&quot;&quot;</code> が既存の文法で有効なもの(空文字列になる)なので、
+意味を変えるわけにはいかないからです。</p>
+<pre><code class="language-csharp"><span class="comment">// 生文字列の &quot;+&quot; ではなく、空文字列2つの結合(= 結局は空文字列)。</span>
+Console.WriteLine(<span class="string">&quot;&quot;</span>
+    +
+    <span class="string">&quot;&quot;</span>);</code></pre>
+<h3 id="section-11"><a id="sec-generated-title-17"></a> <a id="single-or-multiple">単一行と複数行</a></h3>
+<p>単一行リテラルか複数行リテラルかは、単純に <code>&quot;&quot;&quot;</code> の後ろに改行があるかどうかで変わります。</p>
+<pre><code class="language-csharp"><span class="comment">// 単一行生文字列。</span>
+<span class="keyword">var</span> singleLine = <span class="string">&quot;&quot;</span><span class="string">&quot;この中身が文字列リテラル&quot;</span><span class="string">&quot;&quot;</span>;
+
+<span class="comment">// 複数行生文字列。</span>
+<span class="keyword">var</span> multiLine = <span class="string">&quot;&quot;</span>&quot;
+    この行が文字列リテラル。この前後には改行文字は残らない。
+    <span class="string">&quot;&quot;</span>&quot;;
+
+<span class="comment">// 以下の3行は全く同じ結果になる。</span>
+Console.WriteLine(<span class="string">&quot;a\&quot;b&quot;</span>);
+Console.WriteLine(<span class="string">&quot;&quot;</span><span class="string">&quot;a&quot;</span>b<span class="string">&quot;&quot;</span>&quot;);
+Console.WriteLine(<span class="string">&quot;&quot;</span>&quot;
+    a&quot;b
+    <span class="string">&quot;&quot;</span>&quot;);
+
+<span class="comment">// 以下の3行も全く同じ結果。</span>
+<span class="comment">// (C# ソースコードの改行コード次第。この例の場合は LF。</span>
+Console.WriteLine(<span class="string">&quot;abc\ndef&quot;</span>);
+Console.WriteLine(<span class="stringCSharpVerbatim">@&quot;abc
+def&quot;</span>);
+Console.WriteLine(<span class="string">&quot;&quot;</span>&quot;
+    abc
+    def
+    <span class="string">&quot;&quot;</span>&quot;);</code></pre>
+<p>ちょっと変わっているのは、複数行リテラルの場合、<code>&quot;&quot;&quot;</code> と改行の間にスペースが挟まっていても複数行生文字列リテラルと認識されます。</p>
+<pre><code class="language-csharp"><span class="comment">// &quot;&quot;&quot; の後ろに実はスペースが4つあるけど、それは無視される。</span>
+<span class="comment">// (ファイルの改行コード次第で 7 か 8。</span>
+<span class="comment">// abcdef の6文字 + \r\n (改行)。</span>
+Console.WriteLine(<span class="string">&quot;&quot;</span>&quot;    
+    abc
+    def
+    <span class="string">&quot;&quot;</span>&quot;.Length);</code></pre>
+<p>今のところは開き <code>&quot;&quot;&quot;</code> の後ろに書いても OK (ただし無視される)なのは空白文字だけですが、
+生文字列の仕様のインスパイア元が Markdown の <code>```</code> なので、
+もしかしたら以下のような「文字列の中身が何かの注釈を付ける」みたいな仕様は将来認められる可能性はあります。</p>
+<pre><code class="language-csharp"><span class="comment">// C# 11 としては不正。</span>
+<span class="comment">// 「将来もしかしたら」程度の構文案。</span>
+Console.WriteLine(<span class="string">&quot;&quot;</span>&quot;json
+    {
+      <span class="string">&quot;id&quot;</span>: <span class="number">123</span>,
+      <span class="string">&quot;name&quot;</span>: <span class="string">&quot;abc&quot;</span>
+    }
+    <span class="string">&quot;&quot;</span>&quot;.Length);</code></pre>
+<p>また、複数行生文字列では、以下のように、「1行たりとも中身がないリテラル」は書けません。</p>
+<pre><code class="language-csharp"><span class="comment">// 先頭・末尾の改行は無視されるので、これが空文字列。</span>
+Console.WriteLine(<span class="string">&quot;&quot;</span>&quot;
+
+    <span class="string">&quot;&quot;</span>&quot;);
+
+<span class="comment">// じゃあ、これは？…</span>
+<span class="comment">// 「空文字列よりも短い文字列リテラル」というのも変で、単にコンパイル エラーに。</span>
+Console.WriteLine(<span class="string">&quot;&quot;</span>&quot;
+    <span class="string">&quot;&quot;</span>&quot;);</code></pre>
+<h3 id="section-12"><a id="sec-generated-title-18"></a> <a id="multiline-indent">複数行生文字列とインデント</a></h3>
+<p>元々インデントが深い場所で逐語的文字列リテラルを書いた場合、
+以下のように、普段の C# コードと同じようなインデントを付けれないという問題があります。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">bool</span> flag, <span class="keyword">int</span> count)
+    {
+        <span class="keyword">if</span> (flag)
+        {
+            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; count; i++)
+            {
+                Console.WriteLine(<span class="stringCSharpVerbatim">@&quot;
+インデントが崩れる。
+左寄せにしないとリテラルにスペースが含まれちゃう。
+&quot;</span>);
+            }
+        }
+    }
+}</code></pre>
+<p>一方、生文字列では自由にインデントを入れられます。
+以下のように、閉じ <code>&quot;&quot;&quot;</code> の行のインデントを基準にして、それよりも左側のスペースはコンパイル結果には残りません。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">bool</span> flag, <span class="keyword">int</span> count)
+    {
+        <span class="keyword">if</span> (flag)
+        {
+            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; count; i++)
+            {
+                Console.WriteLine(<span class="string">&quot;&quot;</span>&quot;
+                    インデントして大丈夫。
+                    ここよりも左側のスペースはコンパイル結果の文字列には含まれない。
+                    <span class="string">&quot;&quot;</span>&quot;); <span class="comment">// この行のインデントが基準で、そこから前のスペースが消える。</span>
+            }
+        }
+    }
+}</code></pre>
+<p>ただ、これはこれで逆に、以下のようなコードには注意が必要です。</p>
+<pre><code class="language-csharp"><span class="comment">// 1</span>
+Console.WriteLine(<span class="string">&quot;&quot;</span>&quot;
+    a
+    <span class="string">&quot;&quot;</span>&quot;.Length);
+
+<span class="comment">// 5</span>
+Console.WriteLine(<span class="string">&quot;&quot;</span>&quot;
+    a
+<span class="string">&quot;&quot;</span>&quot;.Length); <span class="comment">// 犯人はこの行。インデントがずれてる。</span></code></pre>
+<p>ちなみに、以下のように、閉じ <code>&quot;&quot;&quot;</code> の行よりもインデントが少ないコードを書くとコンパイル エラーになります。</p>
+<pre><code class="language-csharp"><span class="comment">// インデントが不正(足りない)なのでエラーに。</span>
+Console.WriteLine(<span class="string">&quot;&quot;</span>&quot;
+a
+    <span class="string">&quot;&quot;</span>&quot;);</code></pre>
+<h4 id="section-13"><a id="sec-generated-title-19"></a> <a id="mixed-whitespace">空白文字の混在</a></h4>
+<p>C# は通常の(ASCII 文字の)スペース(文字コード U+0020)以外にも、以下のような文字を空白文字とみなします(通常スペースと同じ扱いになります)。</p>
+<ul>
+<li>Unicode の文字カテゴリーが Zs (Space Separator)の文字</li>
+<li>水平タブ(U+0009)</li>
+<li>垂直タブ(U+000B)</li>
+<li>フォーム フィード(U+000C)</li>
+</ul>
+<p>これらの空白文字を閉じ <code>&quot;&quot;&quot;</code> の行に使った場合、途中の行にも全く同じ順序で同じ文字を並べなければなりません。
+見えない文字なので少しわかりにくいですが、以下のコードでは1つ目の生文字列はOKで、2つ目(意図的に違う文字を混ぜたもの)はコンパイル エラーになります。</p>
+<pre><code class="language-csharp">Console.WriteLine(<span class="string">&quot;&quot;</span>&quot;
+    この行は OK
+    <span class="string">&quot;&quot;</span>&quot;); <span class="comment">// U+1680 Ogam Space (見える空白文字。古アイルランドで使ってたらしい)</span>
+
+Console.WriteLine(<span class="string">&quot;&quot;</span>&quot;
+    違う空白文字を混ぜてしまうとコンパイル エラー。
+    <span class="string">&quot;&quot;</span>&quot;);</code></pre>
+<p>(幾分かわかりやすくするために、「見える空白文字」である Ogam Space という文字を使っています。
+ちなみに、エラーになっている行はこの Ogam Space と通常スペースの混在です。)</p>
+<h3 id="section-14"><a id="sec-generated-title-20"></a> <a id="priority-verbatim">注意: @&quot;&quot; 優先</a></h3>
+<p>1つ非常に紛らわしい書き方がありまして…
+以下のコード、出力はどうなるでしょう？</p>
+<pre><code class="language-csharp">Console.WriteLine(<span class="stringCSharpVerbatim">@&quot;&quot;&quot;abc&quot;&quot;&quot;</span>);</code></pre>
+<p>答えは <code>&quot;abc&quot;</code> です。両端に <code>&quot;</code> が付いてきます。</p>
+<p>これ、<code>@&quot;</code> から始まっているので逐語的文字列リテラルの方になります。
+で、<code>@&quot;&quot;</code> の中では「<code>&quot;</code> を書きたければ <code>&quot;&quot;</code> と書く」というエスケープをしますので、
+「<code>@&quot;&quot;&quot;abc&quot;&quot;&quot;</code> は <code>&quot;abc&quot;</code> として解釈される逐語的文字列リテラル」ということになります。</p>
+<p><code>@</code> は見落としがちな文字なので多少注意が必要です。</p>
+<h2 id="section-15"><a id="sec-generated-title-21"></a> <a id="raw-string-interpolation">生文字列、かつ、文字列補間</a></h2>
+<p>「生文字列で文字列補間をしたい」という要望もそれなりにあります。
+例えば以下のような感じのコードは、そのものはないにしても似たようなコードは書きたいことがあると思います。</p>
+<pre><code class="language-csharp">Console.WriteLine(format(<span class="number">123</span>, <span class="string">&quot;abc&quot;</span>));
+
+<span class="keyword">static</span> <span class="keyword">string</span> format(<span class="keyword">int</span> id, <span class="keyword">string</span> name) =&gt; $<span class="string">&quot;&quot;</span>&quot;
+    id: {id}
+    name: <span class="string">&quot;{name}&quot;</span>
+    <span class="string">&quot;&quot;</span>&quot;;</code></pre>
+<p>補間をやるなら「<code>{</code> を含めたいときにエスケープが必要になってしまう」という懸念があって、
+当初は前向きに検討されていませんでした。
+ただ、最終的に、「<code>&quot;</code> と同じく <code>$</code> の個数も可変にして解決」という手段を採りました。
+「<code>$</code> の個数と同じ数の <code>{</code> と <code>}</code> を書いたときだけ補間あつかい、それ以下の場合は普通の文字列として <code>{</code> と <code>}</code> を解釈」となります。</p>
+<p>例えば、「文字列補間で JSON を作る」みたいなことをしたい場合、<code>{</code> を多用することになるわけですが、
+この場合は <code>$</code> を2個にすることで、<code>{</code> と <code>}</code> 1個はただの文字になって、<code>{{}}</code> が文字列補間になります。</p>
+<pre><code class="language-csharp">Console.WriteLine(format(<span class="number">123</span>, <span class="string">&quot;abc&quot;</span>));
+
+<span class="keyword">static</span> <span class="keyword">string</span> format(<span class="keyword">int</span> id, <span class="keyword">string</span> name) =&gt; $$<span class="string">&quot;&quot;</span>&quot;
+    {
+      <span class="string">&quot;id&quot;</span>: {{id <span class="comment">/* ここは補間 */</span> }},
+      <span class="string">&quot;name&quot;</span>: <span class="string">&quot;{{name /* ここも補間 */}}&quot;</span>
+    }
+    <span class="string">&quot;&quot;</span>&quot;;</code></pre>
+<pre><code class="language-console">{
+  &quot;id&quot;: 123,
+  &quot;name&quot;: &quot;abc&quot;
+}</code></pre>
+<!-- original-page-break -->
+<h2 id="utf-8"><a id="sec-generated-title-22"></a> <a id="utf8-literal"></a>UTF-8 リテラル</h2>
+<h5 class="version version11">Ver. 11</h5>
+<p>C# 11 で、<code>&quot;abc&quot;u8</code> みたいに、文字列リテラルの後ろに <code>u8</code> 接尾辞を付けることで、UTF-8 な byte 列を文字列リテラルの形で書けるようになりました。</p>
+<pre><code class="language-csharp">ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; hex = <span class="string">&quot;0123456789ABCDEF&quot;</span>u8;</code></pre>
+<p><strong id="key-utf8-literal" class="keyword">UTF-8 リテラル</strong>(UTF-8 literal)、もしくは語尾を取って u8リテラル(u8 literal)と呼びます。
+ちなみに、UTF-8 リテラルの型は <code>ReadOnlySpan&lt;byte&gt;</code> になります。
+(<code>var</code> による型推論も使えます。)</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> hex = <span class="string">&quot;0123456789ABCDEF&quot;</span>u8;
+Console.WriteLine(hex <span class="keyword">is</span> ReadOnlySpan&lt;<span class="keyword">byte</span>&gt;); <span class="comment">// 「常に true」警告が出る</span></code></pre>
+<h3 id="c-utf-8"><a id="sec-generated-title-23"></a> <a id="utf8-in-csharp">補足: C# と UTF-8</a></h3>
+<p>UTF-8 のリテラルの話をもう少し掘り下げる前に、C# における文字コードの話を少し補足しておきます。</p>
+<h4 id="section-16"><a id="sec-generated-title-24"></a> <a id="history">時代背景</a></h4>
+<p>今となっては、文字コードと言えばほぼ Unicode で、
+その他の文字コードは互換性のために残っていると言っても過言ではないと思います。
+Unicode に関する話は昔、Build Insider に寄稿したことがあるのでそちらも参照してください。</p>
+<ul>
+<li><a href="https://www.buildinsider.net/language/csharpunicode/01">Unicodeとは？ その歴史と進化、開発者向け基礎知識</a></li>
+<li><a href="https://www.buildinsider.net/language/csharpunicode/02">Unicodeと、C#での文字列の扱い</a></li>
+</ul>
+<p>また、Unicode でも、符号化方式として、主に UTF-8 と UTF-16 という形式があります。
+2000年代頃から徐々に UTF-8 の方が主流になってきています。</p>
+<p>ただ、C# くらいの世代(2000年発表、2002年正式リリース)のプログラミング言語では、
+結構昔の文字コードを引きずっていますし、
+UTF-16 が主流になると思われていた時代の名残りが大きいです。</p>
+<p>そのため、C# の文字(<code>char</code>)や文字列(<code>string</code>)は UTF-16 前提で、16ビット整数になっています。
+(同じような方針になってしまっているプログラミング言語に Java や JavaScript があります。)</p>
+<pre><code class="language-csharp">Console.WriteLine(<span class="keyword">sizeof</span>(<span class="keyword">char</span>)); <span class="comment">// 16</span></code></pre>
+<p>ところが、時代は UTF-8 一色になりました。
+それにそもそも、プログラムの中で文字列操作する際にはほとんど ASCII コードに収まる文字しか使わない場面も多いです。
+(UTF-8 は ASCII コードと完全互換です。
+一方で、UTF-16 の場合は「1バイトを2バイトに引き延ばす」みたいな変換処理が必要で、この負担が案外大きいです。)</p>
+<p>その結果、ここ数年、C# で「文字が UTF-16」というのが結構な負担になっていました。</p>
+<h4 id="byte"><a id="sec-generated-title-25"></a> <a id="utf8-bytes">byte でやりくり</a></h4>
+<p>この文字コード問題に対して、一時、
+<code>Utf8String</code> みたいな名前で UTF-8 な型を追加しようか何て話もありました。
+しかし、その方向性だと、<code>string</code> と <code>Utf8String</code> の2重管理がしんどい(これだけ <code>string</code> 前提で .NET エコシステムが確立された状況で追加は無理だろう)という雰囲気になっています。</p>
+<p>そうこうしているうちに、「生 <code>byte</code> 列で UTF-8 を扱う」と言うのが .NET エコシステム内でデファクトスタンダード化してしまいました(今ここ)。
+例えば <code>System.Text.Unicode</code> 名前空間中のメソッドは以下のような感じになっています。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Buffers;
+
+<span class="keyword">namespace</span> System.Text.Unicode;
+
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> Utf8
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> OperationStatus FromUtf16(
+        ReadOnlySpan&lt;<span class="keyword">char</span>&gt; source, Span&lt;<span class="keyword">byte</span>&gt; destination, <span class="keyword">out</span> <span class="keyword">int</span> charsRead, <span class="keyword">out</span> <span class="keyword">int</span> bytesWritten,
+        <span class="keyword">bool</span> replaceInvalidSequences = <span class="keyword">true</span>, <span class="keyword">bool</span> isFinalBlock = <span class="keyword">true</span>);
+
+    <span class="keyword">public</span> <span class="keyword">static</span> OperationStatus ToUtf16(
+        ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; source, Span&lt;<span class="keyword">char</span>&gt; destination, <span class="keyword">out</span> <span class="keyword">int</span> bytesRead, <span class="keyword">out</span> <span class="keyword">int</span> charsWritten,
+        <span class="keyword">bool</span> replaceInvalidSequences = <span class="keyword">true</span>, <span class="keyword">bool</span> isFinalBlock = <span class="keyword">true</span>);
+}</code></pre>
+<p><code>Span&lt;byte&gt;</code> と <code>ReadOnlySpan&lt;byte&gt;</code> で UTF-8 文字列を扱っています。</p>
+<h4 id="c-10-byte"><a id="sec-generated-title-26"></a> <a id="literal-bytes">C# 10 までの課題: 文字列リテラルの byte 配列化</a></h4>
+<p>一応、<code>Span&lt;byte&gt;</code> で UTF-8 文字列を扱えるとはいえ、
+問題は文字列リテラルです。
+<code>&quot;true&quot;</code> とか <code>&quot; HTTP/1.0\r\n&quot;</code> とか、 UTF-8 文字列 (ほとんどの場合、ASCII 文字列)を定数でプログラム中に埋め込みたい場面は結構あります。</p>
+<p>今だと以下のように <code>byte</code> 定数を並べた配列を <code>new byte[]</code> するしか方法がありません。</p>
+<pre><code class="language-csharp">ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; _true = <span class="keyword">new</span> <span class="keyword">byte</span>[] { (<span class="keyword">byte</span>)<span class="string">&#39;t&#39;</span>, (<span class="keyword">byte</span>)<span class="string">&#39;r&#39;</span>, (<span class="keyword">byte</span>)<span class="string">&#39;u&#39;</span>, (<span class="keyword">byte</span>)<span class="string">&#39;e&#39;</span> };
+ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; _false = <span class="keyword">new</span> <span class="keyword">byte</span>[] { (<span class="keyword">byte</span>)<span class="string">&#39;f&#39;</span>, (<span class="keyword">byte</span>)<span class="string">&#39;a&#39;</span>, (<span class="keyword">byte</span>)<span class="string">&#39;l&#39;</span>, (<span class="keyword">byte</span>)<span class="string">&#39;s&#39;</span>, (<span class="keyword">byte</span>)<span class="string">&#39;e&#39;</span> };
+ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; _null = <span class="keyword">new</span> <span class="keyword">byte</span>[] { (<span class="keyword">byte</span>)<span class="string">&#39;n&#39;</span>, (<span class="keyword">byte</span>)<span class="string">&#39;u&#39;</span>, (<span class="keyword">byte</span>)<span class="string">&#39;l&#39;</span>, (<span class="keyword">byte</span>)<span class="string">&#39;l&#39;</span> };</code></pre>
+<p>一応、これ、<a href="/blog/2022/2/span-optimization/">最適化はされて <code>new byte[]</code> のヒープ アロケーションは発生せず</a>、
+直接 DLL 中のデータ領域からデータが読まれます。</p>
+<p>とはいえ明らかに煩雑で、<code>true</code> などの文字列から上記のような <code>byte</code> 配列を生成してもらいたくなります。
+その結果、C# 11 で UTF-8 リテラルが入ることになりました。</p>
+<h4 id="utf-8-1"><a id="sec-generated-title-27"></a> <a id="utf8-literal-usage">UTF-8 リテラルの利用例</a></h4>
+<p><a href="https://github.com/dotnet/runtime">.NET の標準ライブラリ中のコード</a>にも、前述のような「本当は文字列リテラルとして埋め込みたいのに仕方がなく <code>new byte[]</code> にしていた」というものが山ほどありました。
+C# 11 化に伴い、大量のコードが UTF-8 リテラル化されています。
+以下のような Pull Request が出ています。</p>
+<ul>
+<li><a href="https://github.com/dotnet/runtime/pull/68334">#68334</a></li>
+<li><a href="https://github.com/dotnet/runtime/pull/69995">#69995</a></li>
+<li><a href="https://github.com/dotnet/runtime/pull/70568">#70568</a></li>
+<li><a href="https://github.com/dotnet/runtime/pull/70894">#70894</a></li>
+<li><a href="https://github.com/dotnet/runtime/pull/71417">#71417</a></li>
+<li><a href="https://github.com/dotnet/runtime/pull/71992">#71992</a></li>
+</ul>
+<p>これらの中には、例えば以下のような文字列が含まれています。</p>
+<pre><code class="language-csharp"><span class="comment">// HTTP のステータス コード</span>
+<span class="keyword">var</span> ok = <span class="string">&quot;200&quot;</span>u8;
+<span class="keyword">var</span> notFound = <span class="string">&quot;404&quot;</span>u8;
+
+<span class="comment">// CR LF</span>
+<span class="keyword">var</span> eol = <span class="string">&quot;\r\n&quot;</span>u8;
+
+<span class="comment">// 既知の型名</span>
+<span class="keyword">var</span> boolName = <span class="string">&quot;Boolean&quot;</span>u8;
+<span class="keyword">var</span> byteName = <span class="string">&quot;Byte&quot;</span>u8;
+<span class="keyword">var</span> in32Name = <span class="string">&quot;Int32&quot;</span>u8;
+
+<span class="comment">// 変換用テーブル</span>
+<span class="keyword">var</span> base64Table = <span class="string">&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/&quot;</span>u8;
+<span class="keyword">var</span> base32Table = <span class="string">&quot;abcdefghijklmnopqrstuvwxyz012345&quot;</span>u8;
+<span class="keyword">var</span> hexTable = <span class="string">&quot;0123456789ABCDEF&quot;</span>u8;
+
+<span class="comment">// Culture 名</span>
+<span class="keyword">var</span> cultureNames = <span class="comment">// 一部抜粋</span>
+    <span class="string">&quot;en-us&quot;</span>u8 +
+    <span class="string">&quot;fr-fr&quot;</span>u8 +
+    <span class="string">&quot;it-it&quot;</span>u8; <span class="comment">// 以下略</span></code></pre>
+<h3 id="utf-8-2"><a id="sec-generated-title-28"></a> <a id="utf8-literal-detail">UTF-8 リテラルの詳細</a></h3>
+<p>とうことで、改めて UTF-8 リテラルの話に戻りましょう。</p>
+<p><a href="#utf8-literal">本節冒頭</a>で書いた通り、文字列リテラルの後ろに <code>u8</code> 接尾辞を付けることで UTF-8 リテラルになり、<code>ReadOnlySpan&lt;byte&gt;</code> を得ることができます。</p>
+<pre><code class="language-csharp">ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; s = <span class="string">&quot;abc&quot;</span>u8;</code></pre>
+<p>ちなみに、初期案としては、<code>u8</code> 接尾辞がなしの通常の文字列リテラルも、
+ターゲット型を見て自動的に UTF-8 リテラルに変換する話も出ていましたが、
+オーバーロード解決がうまくいかず、没になりました。</p>
+<pre><code class="language-csharp"><span class="comment">// 初期案では OK だった(今はエラー)。</span>
+<span class="keyword">byte</span>[] s1 = <span class="string">&quot;abc&quot;</span>;
+ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; s2 = <span class="string">&quot;abc&quot;</span>;
+
+<span class="comment">// u8 接尾辞ありで、byte[] への変換も元々は認めてた(今はエラー)。</span>
+<span class="keyword">byte</span>[] s3 = <span class="string">&quot;abc&quot;</span>u8;</code></pre>
+<h4 id="utf-8-3"><a id="sec-generated-title-29"></a> <a id="utf8-literal-lowaring">UTF-8 リテラルの展開結果</a></h4>
+<p>UTF-8 リテラルは、その文字列を UTF-8 として符号化した byte 列に展開されます。
+例えば、前述の <code>&quot;abc&quot;u8</code> は、以下のようなコードとほぼ同じ意味になります。</p>
+<pre><code class="language-csharp">ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; s = <span class="keyword">new</span> <span class="keyword">byte</span>[] { <span class="number">97</span>, <span class="number">98</span>, <span class="number">99</span> };</code></pre>
+<p>この手のコードは、C# コンパイラーによって、以下のようなコードに最適化されます。</p>
+<pre><code class="language-csharp"><span class="keyword">byte</span>* p = DLL中のデータが格納されている領域へのポインター;
+ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; s = <span class="keyword">new</span> ReadOnlySpan&lt;<span class="keyword">byte</span>&gt;(p, <span class="number">3</span>);</code></pre>
+<p>ちなみに、最近の .NET は <code>Span&lt;T&gt;</code>, <code>ReadOnlySpan&lt;T&gt;</code> に対する最適化が結構よく掛かって、
+例えば、<code>&quot;abc&quot;u8.Length</code> は JIT 時に単なる <code>3</code> に展開されたりします。</p>
+<h4 id="section-17"><a id="sec-generated-title-30"></a> <a id="utf8-literal-concat">+ での結合</a></h4>
+<p>UTF-8 リテラル同士は <code>+</code> 演算子で結合できます。
+例えば、以下の2変数には同じ結果が代入されます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> singleLine = <span class="string">&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/&quot;</span>u8;
+
+<span class="keyword">var</span> concatenated = 
+    <span class="string">&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span>u8 +
+    <span class="string">&quot;abcdefghijklmnopqrstuvwxyz&quot;</span>u8 +
+    <span class="string">&quot;0123456789&quot;</span>u8 +
+    <span class="string">&quot;+/&quot;</span>u8;</code></pre>
+<p>これは、UTF-8 リテラルに対する特殊対応で、
+一般の <code>ReadOnlySpan&lt;byte&gt;</code> に対しては <code>+</code> 結合はできません。</p>
+<pre><code class="language-csharp">ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; abc = <span class="keyword">new</span> <span class="keyword">byte</span>[] { <span class="number">97</span>, <span class="number">98</span>, <span class="number">99</span> };
+ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; def = <span class="keyword">new</span> <span class="keyword">byte</span>[] { <span class="number">100</span>, <span class="number">101</span>, <span class="number">102</span> };
+
+<span class="keyword">var</span> s1 = abc + def; <span class="comment">// エラー。</span>
+<span class="keyword">var</span> s2 = abc + <span class="string">&quot;def&quot;</span>u8; <span class="comment">// 片方が u8 リテラルでもダメ。エラー。</span></code></pre>
+<h4 id="const"><a id="sec-generated-title-31"></a> <a id="utf8-literal-non-const">注意: 非 const</a></h4>
+<p>(少なくとも C# 11 時点では) UTF-8 リテラルは <a href="/study/csharp/start/sp_const/#const">const</a> 扱いにはなりません。
+const しか書けない場所で使うとエラーになります。
+具体的には、例えば、<a href="/study/csharp/datatype/typeswitch/"><code>switch</code> や <code>is</code></a> に使えません。</p>
+<pre><code class="language-csharp"><span class="comment">// これは OK。</span>
+<span class="keyword">bool</span> str(<span class="keyword">string</span> x) =&gt; x <span class="keyword">is</span> <span class="string">&quot;abc&quot;</span>;
+
+<span class="comment">// C# 11 で、これは OK になった。</span>
+<span class="keyword">bool</span> charSpan(ReadOnlySpan&lt;<span class="keyword">char</span>&gt; x) =&gt; x <span class="keyword">is</span> <span class="string">&quot;abc&quot;</span>;
+
+<span class="comment">// これはダメ。</span>
+<span class="keyword">bool</span> u8(ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; x) =&gt; x <span class="keyword">is</span> <span class="string">&quot;abc&quot;</span>u8;
+
+<span class="comment">// ちなみに、同じく C# 11 で入ったリスト パターンで、こんな風には書ける(つらい)。</span>
+<span class="keyword">bool</span> listPattern(ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; x) =&gt; x <span class="keyword">is</span> [ <span class="number">97</span>, <span class="number">98</span>, <span class="number">99</span> ];</code></pre>
+<h4 id="utf-8-4"><a id="sec-generated-title-32"></a> <a id="utf8-raw-string">UTF-8 生文字列</a></h4>
+<p><a href="#raw-string">生文字列リテラル</a>との組み合わせもできます。
+この場合も、<code>&quot;&quot;&quot;</code> の後ろに <code>u8</code> 接尾辞を付けます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> utf8Json = <span class="string">&quot;&quot;</span>&quot;
+    {
+      <span class="string">&quot;id&quot;</span>: <span class="number">123</span>,
+      <span class="string">&quot;name&quot;</span>: <span class="string">&quot;abc&quot;</span>,
+      <span class="string">&quot;flag&quot;</span>: <span class="keyword">true</span>
+    }
+    <span class="string">&quot;&quot;</span>&quot;u8;</code></pre>
+<p>結果が UTF-8 符号化された <code>ReadOnlySpan&lt;byte&gt;</code> になる以外は生文字列リテラルと同じです。</p>
+<p>一方で、(少なくとも C# 11 では) 文字列補間との併用はできません。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = <span class="number">123</span>;
+<span class="keyword">var</span> y = <span class="string">&quot;abc&quot;</span>;
+
+<span class="comment">// これは OK。</span>
+<span class="keyword">var</span> s = $<span class="string">&quot;id: {x}, name: {y}&quot;</span>;
+
+<span class="comment">// これはダメ。</span>
+<span class="keyword">var</span> u8 = $<span class="string">&quot;id: {x}, name: {y}&quot;</span>u8;</code></pre>
+<h4 id="unicode"><a id="sec-generated-title-33"></a> <a id="utf8-literal-invalid-error">注意: 不正な Unicode 文字</a></h4>
+<p>UTF-8 リテラルでは、UTF-8 にしたときに不正になるものはコンパイル エラーになります。</p>
+<p>「UTF-8 リテラルでは」という前置きがあるのは、
+C# の <code>string</code> は UTF-16 として不正なものを受け付けてしまうからです。
+(この辺りも時代の影響で、昔は今よりも Unicode の扱いがかなり緩かったです。)</p>
+<p>具体的には「<a href="https://codezine.jp/article/detail/1592">サロゲート ペア</a>の片割れ」みたいなやつで、
+現代的にはこういう「片割れ」を残すのはよくないと言われていますが、
+C# の <code>char</code> や <code>string</code> は受け付けます。</p>
+<pre><code class="language-csharp"><span class="comment">// サロゲート ペアの片割れだけの文字列。</span>
+<span class="comment">// 現代的にはエラーにしたい。C# ができた頃にはそんなにうるさく言われなかった。</span>
+<span class="keyword">var</span> highSurrogate = <span class="string">&quot;\uD801&quot;</span>;
+
+<span class="comment">// ちなみに、 System.Text.Encoding では不正な Unicode 文字列を ? (U+FFFD) に置き換える処理あり。</span>
+
+<span class="comment">// C# でいうところの Unicode は UTF-16 のこと。</span>
+<span class="keyword">var</span> utf16 = System.Text.Encoding.Unicode;
+
+<span class="comment">// 一度符号化して、複号すると…</span>
+<span class="keyword">var</span> encoded = utf16.GetBytes(highSurrogate);
+<span class="keyword">var</span> decoded = utf16.GetString(encoded);
+
+<span class="comment">// U+FFFD に置き換わってる。</span>
+<span class="comment">// この文字は replacement character と言って、</span>
+<span class="comment">// 不正な文字を残さないために、認識できなかった文字を置き換えるための文字。</span>
+<span class="keyword">foreach</span> (<span class="keyword">var</span> c <span class="keyword">in</span> decoded)
+{
+    Console.WriteLine($<span class="string">&quot;{c}: {(int)c:X}&quot;</span>);
+}</code></pre>
+<p>ですが、C# 11 の時代(2022年)に生まれた UTF-8 リテラルは、
+ちゃんと不正な文字列をはじきます。</p>
+<pre><code class="language-csharp"><span class="comment">// UTF-8 リテラルの場合は「サロゲート ペアの片割れ」を受け付けない。</span>
+<span class="comment">// コンパイル エラーを起こす。</span>
+<span class="keyword">var</span> highSurrogate = <span class="string">&quot;\uD801&quot;</span>u8;</code></pre>
+<p>ちなみに、以下のように、最終的に有効な Unicode 文字列になるものであればちゃんとコンパイルできます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> surrogatePair = <span class="string">&quot;\uD801\uDE00&quot;</span>u8;</code></pre>
+<p>一方で、以下のように「<code>+</code> で結合すれば最終的には有効になるはずの2つの UTF-8 リテラル」みたいなものはコンパイル エラーになります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> surrogatePair =
+    <span class="string">&quot;\uD801&quot;</span>u8 +
+    <span class="string">&quot;\uDE00&quot;</span>u8;</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/start/">&#x57FA;&#x790E;</a></li><li><a href="/study/csharp/start/st_basis/">C#&#x306E;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x57FA;&#x672C;&#x69CB;&#x9020;</a></li><li><a href="/study/csharp/start/st_compile/">&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x4F5C;&#x6210;&#x30FB;&#x5B9F;&#x884C;</a></li><li><a href="/study/csharp/start/st_comment/">&#x30B3;&#x30E1;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/start/st_consoleio/">&#x5024;&#x306E;&#x5165;&#x51FA;&#x529B;</a></li><li><a href="/study/csharp/start/st_variable/">&#x5909;&#x6570;&#x3068;&#x5F0F;</a></li><li><a href="/study/csharp/start/misc_identifier/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x540D;&#x306B;&#x4F7F;&#x3048;&#x308B;&#x6587;&#x5B57;</a></li><li><a href="/study/csharp/start/misc_unicode/">[&#x96D1;&#x8A18;] C# &#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x3068; Unicode</a></li><li><a href="/study/csharp/start/st_embeddedtype/">&#x7D44;&#x8FBC;&#x307F;&#x578B;</a></li><li><a href="/study/csharp/start/stnumber/">&#x6570;&#x5024;</a></li><li><a href="/study/csharp/start/improvedinterpolatedstring/">C# 10.0 &#x306E;&#x88DC;&#x9593;&#x6587;&#x5B57;&#x5217;&#x306E;&#x6539;&#x5584;</a></li><li><a href="/study/csharp/start/st_operator/">&#x7D44;&#x8FBC;&#x307F;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/study/csharp/start/st_cast/">&#x7D44;&#x8FBC;&#x307F;&#x578B;&#x5909;&#x63DB;</a></li><li><a href="/study/csharp/start/sp_checked/">&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30D5;&#x30ED;&#x30FC;&#x306E;&#x30C1;&#x30A7;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/start/sp_const/">&#x5B9A;&#x6570;</a></li><li><a href="/study/csharp/start/sp3_inference/">&#x578B;&#x63A8;&#x8AD6;(&#x6697;&#x9ED9;&#x7684;&#x578B;&#x4ED8;&#x3051;)&#x3068;&#x533F;&#x540D;&#x578B;</a></li><li><a href="/study/csharp/start/sp3_var/">[&#x96D1;&#x8A18;] &#x578B;&#x63A8;&#x8AD6;&#x306E;&#x662F;&#x975E;</a></li><li><a href="/study/csharp/start/st_scope/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x306E;&#x30B9;&#x30B3;&#x30FC;&#x30D7;&#x3068;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x5BFF;&#x547D;</a></li><li><a href="/study/csharp/start/misctyperesolution/">[&#x96D1;&#x8A18;] &#x578B;&#x306E;&#x6C7A;&#x5B9A;</a></li><li><a href="/study/csharp/start/miscreservedattribute/">[&#x96D1;&#x8A18;] &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x306B;&#x5F71;&#x97FF;&#x3092;&#x53CA;&#x307C;&#x3059;&#x5C5E;&#x6027;</a></li><li><a href="/study/csharp/start/definiteassignment/">[&#x96D1;&#x8A18;] &#x660E;&#x78BA;&#x306A;&#x4EE3;&#x5165;&#x30EB;&#x30FC;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

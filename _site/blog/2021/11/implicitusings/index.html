@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x3010;C# 10.0&#x3011; ImplicitUsings (&#x81EA;&#x52D5; global using) | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2021/11/implicitusings/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2021-11-12T21:51:44">2021-11-12</time></span><span>更新: <time datetime="2021-11-12T21:51:44">2021-11-12</time></span></div><h1 id="c-10.0-implicitusings-global-using">【C# 10.0】 ImplicitUsings (自動 global using)</h1>
+<p>今日は<a href="/blog/2021/11/fix-all-file-scoped-namespace/">先日のファイル スコープ名前空間の話</a>に続いて、
+<a href="/study/csharp/cheatsheet/ap_ver10/#global-using">global using</a> に関する話を<a href="/blog/2021/8/newprojecttemplate/">最初にブログに書いたとき</a>にちょこっと「正式リリースまでには変更が掛かる予定」と話していた <code>ImplicitUsings</code> の話をしたいと思います。</p>
+<h2 id="global-using">global using</h2>
+<p>何回か話してはいるんですが、 .NET 6 SDK から、C# プロジェクトのテンプレートの初期状態が以下のような(コメントを除けば)1行だけのソースコードになっています。</p>
+<pre><code class="language-csharp">Console.WriteLine(<span class="string">&quot;Hello, World!&quot;</span>);</code></pre>
+<p>C# コンパイラーとしては <a href="/study/csharp/cheatsheet/ap_ver10/#global-using">global using</a> という文法を追加したわけですが、
+わざわざ C# の文法として追加した(コンパイル オプションにはしなかった)のは <a href="/study/csharp/misc/analyzer-generator/">Source Generator</a> を使って global using を生成するような手法も取れるようにするためです。</p>
+<p>ただし、主な用途は上記のような「テンプレートの初期状態を簡素化する」というもので、
+多くの場合「自動的に裏のどこかで global using が追加されている」みたいな使われ方になります。</p>
+<h2 id="global-using-1">global using の自動生成</h2>
+<p>で、誰が「自動的に global using を追加」しているかというと、.NET 6 SDK です。
+.NET 6 / Visual Studio 2022 で新規プロジェクトを作って、1回 build してみて、
+<code>obj/Debug/net6.0</code> フォルダーを覗いてみると以下のようなファイルが <code>ConsoleApp1.GlobalUsings.g.cs</code> みたいな名前で作られています。</p>
+<p>(<code>Debug</code> のところは build 設定次第では <code>Release</code> になりますし、
+<code>net6.0</code> のところは TargetFramework、
+<code>ConsoleApp1</code> のところはプロジェクト名によって変わります。)</p>
+<p><img src="/assets/media/1193/globalusings.png" alt="global usings" /></p>
+<p>ちなみに、このコードはコンソール アプリの場合の結果で、
+プロジェクトのタイプごとに生成される global using 対象の名前空間が変わります。</p>
+<p>例えば Windows Forms の場合は <code>System.Drawing</code> と <code>System.Windows.Forms</code> が、
+Web アプリの場合は <code>Microsoft.AspNetCore.*</code>、<code>Microsoft.Extensions.*</code>、<code>System.Net.Http.Json</code> などの名前空間も追加されます。
+この辺りは Windows Forms や Web を作っているチームごとのポリシーによるみたいです。</p>
+<h2 id="implicitusings">ImplicitUsings</h2>
+<p><a href="/blog/2021/8/newprojecttemplate/">.NET 6 Preview 7 の頃に書いたブログ</a>で、初期案としては「TargetFramework が <code>net6.0</code> の時は無条件に global using を自動追加」みたいなことをやろうとしていました。</p>
+<p>が、global using は既存コードベースに後から追加するとたまに事故ります。
+分かりやすい例でいうと、自前で LINQ っぽい拡張メソッドを定義した場合。
+例えば .NET 5 の頃に以下のようなコードを書いていたとして、
+これを .NET 6 にアップデートしたら、「<code>Select</code> が <code>System.Linq</code> と <code>MyExtensions</code> の2か所にあって弁別できない」というエラーが起き得ます。
+(実際、Preview 7 の頃はエラーになりました。)</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> MyExtensions;
+
+<span class="keyword">var</span> result = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span> }.Select(x =&gt; x * x);
+
+<span class="keyword">namespace</span> MyExtensions
+{
+    <span class="keyword">static</span> <span class="keyword">class</span> Enumerable
+    {
+        <span class="keyword">public</span> <span class="keyword">static</span> IEnumerable&lt;T2&gt; Select&lt;T1, T2&gt;(<span class="keyword">this</span> IEnumerable&lt;T1&gt; array, Func&lt;T1, T2&gt; selector)
+        {
+            <span class="comment">// 実装は省略。</span>
+            <span class="keyword">return</span> <span class="keyword">null</span>!;
+        }
+    }
+}</code></pre>
+<p>わざわざ <code>Select</code> を自作する人は少ないかもしれませんが、
+例えば、「これまで標準でなかったから <code>MinBy</code>、<code>MaxBy</code> を自作していた。これらが .NET 6 で標準入りした」みたいな衝突は割かし起こるんじゃないかと思います。</p>
+<p>その他、被りやすい名前でいうと <code>Task</code> クラスがそうで、<code>global using System.Threading.Tasks;</code> の自動追加が問題になったりします。</p>
+<p>あと、「TargetFramwork は <code>net6.0</code> だけど、 LangVersion は 9 とか 8 とかで維持したい」みたいな場合に「global using を生成してしまったけど C# 9.0 以前では使えない」というコンパイル エラーを起こしていました。</p>
+<p>ということで、明示的に設定を追加したときだけ「global using の自動追加」が働くように変更されました。
+具体的には、csproj に以下の1行(<code>ImplicitUsings</code> オプションが true もしくは enable)があるときにだけ自動追加が働きます。</p>
+<pre><code class="language-xml">    <span class="xmlDelimiter">&lt;</span><span class="xmlName">ImplicitUsings</span><span class="xmlDelimiter">&gt;</span>enable<span class="xmlDelimiter">&lt;/</span><span class="xmlName">ImplicitUsings</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>で、この行は、.NET 6 SDK を使って新規プロジェクトを作成すると、初期状態で入っています。
+.NET 6 SDK の、例えばコンソール アプリの csproj の初期状態は以下のような感じ。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">Project</span> <span class="xmlAttribute">Sdk</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Microsoft.NET.Sdk</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+ 
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">OutputType</span><span class="xmlDelimiter">&gt;</span>Exe<span class="xmlDelimiter">&lt;/</span><span class="xmlName">OutputType</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">TargetFramework</span><span class="xmlDelimiter">&gt;</span>net6.0<span class="xmlDelimiter">&lt;/</span><span class="xmlName">TargetFramework</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">ImplicitUsings</span><span class="xmlDelimiter">&gt;</span>enable<span class="xmlDelimiter">&lt;/</span><span class="xmlName">ImplicitUsings</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Nullable</span><span class="xmlDelimiter">&gt;</span>enable<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Nullable</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span>
+ 
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Project</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<h2 id="using">Using オプション</h2>
+<p>ちなみに、(C# ソースコードで global using を書くのではなくあくまで csproj 設定で) 自動的に global using される名前空間を追加したり削除したりする手段も用意されています。</p>
+<p><code>ItemGroup</code> 配下に <code>Using</code> というタグを書いて、</p>
+<ul>
+<li><code>Include</code> 属性を書くと名前空間追加</li>
+<li><code>Remove</code> 属性を書くと名前空間削除</li>
+</ul>
+<p>になります。</p>
+<p>例えば以下のように書くと、<code>System.Text.RegularExpressions</code> 名前空間が追加されて(<code>Regex</code> クラスなどが使える)、
+<code>System.Linq</code> 名前空間が削除されます(自前 LINQ との衝突がなくなる)。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">Project</span> <span class="xmlAttribute">Sdk</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Microsoft.NET.Sdk</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+
+  他の設定は省略
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">ItemGroup</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Using</span> <span class="xmlAttribute">Include</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">System.Text.RegularExpressions</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Using</span> <span class="xmlAttribute">Remove</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">System.Linq</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">ItemGroup</span><span class="xmlDelimiter">&gt;</span>
+ 
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Project</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<h2 id="implicitusings-1">全域一括 ImplicitUsings</h2>
+<p>この <code>ImplicitUsings</code> と、あと、 C# 8.0 / の頃からある <code>Nullable</code> オプションですが、まあ、既存コードベースを壊さないために opt-in (明示的に書かないと有効化されない、デフォルトで無効)なわけです。</p>
+<p>とはいえ、今、まっさらな状態から新規コードを書き始めるにはこの2つは「ノイズ」です。
+そこでお薦めするのが <a href="/blog/2018/12/directorybuild/"><code>Directory.Build.props</code></a> に書き足してしまう手法。</p>
+<p>この名前のファイルに csproj に入れたい設定類を書いておくと、
+そのファイルがあるフォルダー配下にある全 csproj に対して設定が有効化されます。
+なので、リポジトリのルート フォルダーに以下の内容で <code>Directory.Build.props</code> ファイルを置いておけば、リポジトリ全域に対して <code>ImplicitUsings</code> と <code>Enullable</code> が有効化されます。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">Project</span><span class="xmlDelimiter">&gt;</span>
+ 
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">ImplicitUsings</span><span class="xmlDelimiter">&gt;</span>enable<span class="xmlDelimiter">&lt;/</span><span class="xmlName">ImplicitUsings</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Nullable</span><span class="xmlDelimiter">&gt;</span>enable<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Nullable</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span>
+ 
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Project</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>新規リポジトリにはこのファイルを置いておいていいんじゃないでしょうか。
+(<code>ImplicitUsings</code> に関しては既存リポジトリに対しても、前述のような名前の衝突は経験上、数千～数万行に1個くらいしか起きない程度なので割かし追加しちゃっていいと思います。)</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2021/11/">11&#x6708;</a></li><li><a href="/blog/2021/11/2022-ga-soon/">RC &#x51FA;&#x3066;&#x305F;&#x8A71;&#x304B;&#x3089;&#x306E;&#x3001;GA &#x8FEB;&#x3063;&#x3066;&#x305F;&#x308A;&#x3059;&#x308B;&#x8A71;</a></li><li><a href="/blog/2021/11/fix-all-file-scoped-namespace/">&#x3010;C# 10.0&#x3011;&#x30D5;&#x30A1;&#x30A4;&#x30EB; &#x30B9;&#x30B3;&#x30FC;&#x30D7;&#x540D;&#x524D;&#x7A7A;&#x9593; (&#x4E00;&#x6589;&#x7F6E;&#x63DB;&#x8A2D;&#x5B9A;)</a></li><li><a href="/blog/2021/11/latestmajor/">TargetFramework net5.0 &#x306A;&#x30B3;&#x30FC;&#x30C9;&#x3092; .NET 6 &#x30E9;&#x30F3;&#x30BF;&#x30A4;&#x30E0;&#x3067;&#x52D5;&#x304B;&#x3059;</a></li><li><a href="/blog/2021/11/appendliteral/">&#x3010;C# 10.0&#x3011; AppendLiteral(&quot; &quot;)</a></li><li><a href="/blog/2021/11/top-level-csharp10/">&#x3010;C# 10.0&#x3011; &#x30C8;&#x30C3;&#x30D7; &#x30EC;&#x30D9;&#x30EB; &#x30B9;&#x30C6;&#x30FC;&#x30C8;&#x30E1;&#x30F3;&#x30C8;&#x306E;&#x5909;&#x66F4;&#x70B9;</a></li><li><a href="/blog/2021/11/unicode-operator/">Unicode &#x6F14;&#x7B97;&#x5B50; (&#x2211;&#x3A3; &#x3068;&#x304B; &#x222B;&#x283; &#x3068;&#x304B;)</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

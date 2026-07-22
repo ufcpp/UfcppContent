@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x3010;C# 10.0&#x3011;&#x30D5;&#x30A1;&#x30A4;&#x30EB; &#x30B9;&#x30B3;&#x30FC;&#x30D7;&#x540D;&#x524D;&#x7A7A;&#x9593; (&#x4E00;&#x6589;&#x7F6E;&#x63DB;&#x8A2D;&#x5B9A;) | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2021/11/fix-all-file-scoped-namespace/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2021-11-10T21:33:46">2021-11-10</time></span><span>更新: <time datetime="2021-11-10T22:01:37">2021-11-10</time></span></div><h1 id="c-10.0">【C# 10.0】ファイル スコープ名前空間 (一斉置換設定)</h1>
+<p>昨日、C# 10.0 が正式リリースされたわけですが、皆様もう C# 10.0 へのアップグレードはお済でしょうか(当日アプグレが当たり前のような口調)。</p>
+<p>まあ、
+C# はそんなに大きな破壊的変更はしない言語ですし、
+TargetFramework や LangVersion を書き換えるだけならそこまで大きな問題は起きないんじゃないかと思います。
+(たぶん。
+僕は <a href="https://docs.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/partial-byte-reads-in-streams">CryptoStream の破壊的変更</a>由来のテスト失敗を1件踏みましたが。)</p>
+<p>あえて踏み込むのであれば、</p>
+<ul>
+<li>名前空間を <code>namespace N {}</code> からファイル スコープな <code>namespace N;</code> に書き換え</li>
+<li><code>ImplicitUsings</code> を true にして未使用 <code>using</code> になる部分をごっそり削除</li>
+</ul>
+<p>とかやると、機械的にできてリスクは低いものの大量の差分行を産むコミットを作れたりします。
+<a href="https://twitter.com/ufcpp/status/1456993276066627591">ASP.NET では95万行の差分が出たそうですよ</a>(もちろん、「Hide whitespace」とかやるとほとんどの行が消える)。</p>
+<p>とりあえず今日はこのうち前者、
+ファイル スコープ名前空間の一斉全置換の話をしようかと思います。</p>
+<h2 id="section">ファイル スコープ名前空間</h2>
+<p>C# 10.0 のテーマの1つは「<a href="/study/csharp/cheatsheet/ap_ver10/#simple-program">シンプル プログラム</a>」になっています。
+その一環で、</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> Namespace
+{
+    <span class="keyword">class</span> A { }
+}</code></pre>
+<p>という従来コードを、</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> Namespace;
+
+<span class="keyword">class</span> A { }</code></pre>
+<p>と書き換えられる機能(<a href="/study/csharp/structured/sp_namespace/#file-scoped-namespace">ファイル スコープ名前空間</a>)が入りました。</p>
+<p>まあ、名前空間とかパッケージ宣言とかで1段インデントを下げない言語の方が多いですしね。</p>
+<p>C# はこの手の「新しい体験が得られるわけではなく、単にシンプルに書けるようになるだけ」みたいな新文法はこれまでそんなに積極的に追加はしてこなかったんですけども、
+最近の流暢に乗ってついに折れた感じはします。</p>
+<h2 id="section-1">ファイル スコープ名前空間を採用する？</h2>
+<p>正直まあ、「新しい体験」は何もなく、単なる書式的な問題になるわけで、
+既存コードに導入するモチベーションはそんなに高くないと思います。
+手動で書き換えろと言われたら絶対に拒否。</p>
+<p>ですが、全自動だと言われたら？</p>
+<p>既存コードベースは1操作で変換可能で、
+新規 C# ソースコードの追加時にもデフォルトでファイル スコープ名前空間な状態のファイルができるとしたら？</p>
+<p>自分は「全自動ならまあ、やってもいいかな」くらいには思っています。</p>
+<h2 id="editorconfig">設定が必要 (.editorconfig)</h2>
+<p>ただまあ、この機能、「絶対にやれ」とも「絶対にやるな」とも言いにくい割かしどっちでもいい機能なわけでして。
+「使えるならファイル スコープ名前空間を率先して使う」というモードにするためには設定が必要です。</p>
+<p>書式・Code Fix 上の問題なので、Visual Studio のオプションで設定するか、
+.editorconfig に設定を書くかする必要があります。
+どちらを好むかはプロジェクトごとに違うでしょうから、Visual Studio オプション(全部のプロジェクトに影響)ではなく、
+.editorconfig で設定する方が好ましいと思います。
+(なのでそちらだけ説明します。)</p>
+<p>ファイル スコープ名前空間を率先して使いたい方は .editorconfig に以下の行を追加してみてください。</p>
+<pre><code class="language-csharp">[*.{cs,vb}]
+csharp_style_namespace_declarations=file_scoped:suggestion</code></pre>
+<p>これで、Visual Studio の一斉置換機能が働くようになります。</p>
+<p><img src="/assets/media/1192/ide0161.png" alt="Convert to file-scoped namespace" /></p>
+<p>この行だけを修正するか、ドキュメント全体、プロジェクト全体、ソリューション全体を一斉置換するかはお好みでどうぞ。
+ソリューション一斉置換とかすると数千～数万行の差分を作れます。
+僕は昨日・今日で合計10万行くらいの差分を作りました。</p>
+<p>末尾の suggestion (Visual Studio の Error List ペインにメッセージが出ちゃう)のところは silent (何もメッセージは出ないものの Code Fix を掛けることはできる)でも warning (修正しないと警告が出る)でも大丈夫です。</p>
+<p>ちなみに、warning にしておけば、<code>dotnet format</code> コマンドでの自動整形も掛かります。
+過激派の方はぜひとも warning に。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2021/11/">11&#x6708;</a></li><li><a href="/blog/2021/11/2022-ga-soon/">RC &#x51FA;&#x3066;&#x305F;&#x8A71;&#x304B;&#x3089;&#x306E;&#x3001;GA &#x8FEB;&#x3063;&#x3066;&#x305F;&#x308A;&#x3059;&#x308B;&#x8A71;</a></li><li><a href="/blog/2021/11/implicitusings/">&#x3010;C# 10.0&#x3011; ImplicitUsings (&#x81EA;&#x52D5; global using)</a></li><li><a href="/blog/2021/11/latestmajor/">TargetFramework net5.0 &#x306A;&#x30B3;&#x30FC;&#x30C9;&#x3092; .NET 6 &#x30E9;&#x30F3;&#x30BF;&#x30A4;&#x30E0;&#x3067;&#x52D5;&#x304B;&#x3059;</a></li><li><a href="/blog/2021/11/appendliteral/">&#x3010;C# 10.0&#x3011; AppendLiteral(&quot; &quot;)</a></li><li><a href="/blog/2021/11/top-level-csharp10/">&#x3010;C# 10.0&#x3011; &#x30C8;&#x30C3;&#x30D7; &#x30EC;&#x30D9;&#x30EB; &#x30B9;&#x30C6;&#x30FC;&#x30C8;&#x30E1;&#x30F3;&#x30C8;&#x306E;&#x5909;&#x66F4;&#x70B9;</a></li><li><a href="/blog/2021/11/unicode-operator/">Unicode &#x6F14;&#x7B97;&#x5B50; (&#x2211;&#x3A3; &#x3068;&#x304B; &#x222B;&#x283; &#x3068;&#x304B;)</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

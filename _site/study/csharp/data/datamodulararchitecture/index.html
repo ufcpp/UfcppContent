@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>[&#x96D1;&#x8A18;] &#x5C0F;&#x3055;&#x306A;&#x6A5F;&#x80FD;&#x306E;&#x7D44;&#x307F;&#x5408;&#x308F;&#x305B; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/data/datamodulararchitecture/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">[雑記] 小さな機能の組み合わせ</h1>
+<p>この記事はソフトウェアデザインに寄稿した内容が元になっています。</p>
+<blockquote>
+<p>初出： 技術評論社刊『ソフトウェアデザイン 2016 年 4 月 号<br>
+今すぐ実践できる良いプログラムの書き方<br>
+C#編 言語機能の進化から学ぶ「良いコードの書き方」</p>
+</blockquote>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>「<a href="/study/csharp/data/sp3_linq/">LINQ</a>」で説明した通り、C#にはLINQ(Language Integrated Queryの略語。リンクと読む)と呼ばれるデータ処理用の機能があります。
+LINQは、正確に言うとデータ処理に関連する複数の構文やライブラリの組み合わせを指す言葉です。</p>
+<p>「LINQとは何か」については<a href="/study/csharp/data/sp3_linq/">他のページで</a>で説明しますが、ここで重要なのは、「組み合わせ」という部分です。小さな機能を組み合わせて大きな目的を実現したり、汎用的な処理を組み合わせて複雑な処理を組み合わせたり、それぞれ別の担当者が書いた小さな部品を組み合わせてシステム全体を構築したり、様々な組み合わせが考えられます。</p>
+<p>ここでは、C#でデータ処理を行う上で、「組み合わせ」がどう活きているかという話をしていきましょう。</p>
+<ul>
+<li><a href="https://github.com/ufcpp/UfcppSample/tree/master/Demo/2016/GoodCode/src/LinqSample">サンプル コード</a></li>
+</ul>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="input-process-output"></a>入力、加工、出力</h2>
+<p>1つ目は、データ列の入力元と出力先の組み合わせです。少し恣意的な例になりますが、「入力した整数列のうち、奇数のものだけ抜き出して、二乗したものを出力する」という処理を考えましょう。入力元・出力先が固定でいいならそう難しい話ではありません。例えば、コンソールからの入出力で考えると、以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">while</span> (<span class="keyword">true</span>)
+{
+    <span class="comment">// コンソールから入力</span>
+    <span class="keyword">var</span> line = Console.ReadLine();
+    <span class="keyword">if</span> (<span class="keyword">string</span>.IsNullOrEmpty(line)) <span class="keyword">break</span>;
+    <span class="keyword">var</span> x = <span class="keyword">int</span>.Parse(line);
+
+    <span class="comment">// 条件選択</span>
+    <span class="keyword">if</span> ((x % <span class="number">2</span>) == <span class="number">1</span>)
+    {
+        <span class="comment">// 値の変換</span>
+        <span class="keyword">var</span> y = x * x;
+
+        <span class="comment">// コンソールに出力</span>
+        Console.WriteLine(y);
+    }
+}</code></pre>
+<p>問題は、入力元/出力先はコンソールとは限らないことです。ファイルの読み書きであったり、ネット越しの受け渡しであったり、様々な入出力が考えられます。そのたびに、この例のような類のコードを書くのは非効率で、「奇数のものだけ抜き出して、二乗」という加工する部分だけを切り出して、様々な入出力と組み合わせて使えるようにすべきです。</p>
+<p>これは、<code>IEnumerable&lt;T&gt;</code>(<code>System.Collections.Generic</code>名前空間)を受け取り、<code>IEnumerable&lt;T&gt;</code>を返すメソッドを作れば実現できます。<a href="/study/csharp/data/sp2_iterator/">イテレーター</a>を使えばそう難しくはありません。以下のような書き方ができます。</p>
+<pre><code class="language-csharp"><span class="comment">// コンソールから入力</span>
+<span class="keyword">static</span> IEnumerable&lt;<span class="keyword">int</span>&gt; Read()
+{
+    <span class="keyword">while</span> (<span class="keyword">true</span>)
+    {
+        <span class="keyword">var</span> line = Console.ReadLine();
+        <span class="keyword">if</span> (<span class="keyword">string</span>.IsNullOrEmpty(line)) <span class="keyword">break</span>;
+        <span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">int</span>.Parse(line);
+    }
+}
+
+<span class="comment">// 加工: 条件選択 + 変換</span>
+<span class="keyword">static</span> IEnumerable&lt;<span class="keyword">int</span>&gt; Filter(IEnumerable&lt;<span class="keyword">int</span>&gt; source)
+{
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> source)
+        <span class="keyword">if</span> ((x % <span class="number">2</span>) == <span class="number">1</span>)
+            <span class="keyword">yield</span> <span class="keyword">return</span> x * x;
+}
+
+<span class="comment">// コンソールに出力</span>
+<span class="keyword">static</span> <span class="keyword">void</span> Write(IEnumerable&lt;<span class="keyword">int</span>&gt; source)
+{
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> source)
+        Console.WriteLine(x);
+}</code></pre>
+<p>これで、下図に示すように、様々な入出力の組み合わせが使えるようになります。</p>
+<p><img src="/assets/media/1074/datapipeline.png" alt="入力、加工、出力の組み合わせ" /></p>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="data-pipeline"></a>汎用処理の組み合わせ</h2>
+<p>続いては小さな汎用処理の組み合わせで所望の処理を実現することについて考えます。前節の加工処理(サンプル コードの<code>Filter</code>メソッド)には、さらに細かく分けると以下の処理が含まれています。</p>
+<ul>
+<li>条件選択: 奇数だけ取り出す</li>
+<li>変換: 二乗を計算する</li>
+</ul>
+<p>そして、一般に、多くのデータ処理がこの類型に当てはまります。すなわち、何らかの条件を与えて選択を行い、何らかの式に従って変換を行います。</p>
+<p>実は、.NETには標準で、条件選択や変換のためのライブラリが含まれています。<code>Where</code>メソッドと<code>Select</code>メソッド(いずれも<code>System.Linq</code>名前空間の<code>Enumerable</code>クラスで定義されている<a href="/study/csharp/oop/oo_static/">静的メソッド</a>)です。</p>
+<ul>
+<li><code>Where</code>: 条件を与えてデータを選択する</li>
+<li><code>Select</code>: 式を与えてデータを変換する</li>
+</ul>
+<p>これらの名前は、SQLのキーワードに由来します。この他にも、<code>Enumerable</code>クラスには、データ加工用の様々なメソッドが用意されています。</p>
+<p>これらを使って前節のコードと同じ処理を書き直すと、(コード中の<code>Read</code>, <code>Write</code>に対して)以下のような書き方ができます。</p>
+<pre><code class="language-csharp">Write(Read()
+    .Where(x =&gt; (x % <span class="number">2</span>) == <span class="number">1</span>)
+    .Select(x =&gt; x * x)
+    );</code></pre>
+<p>ちなみに、<code>Where</code>, <code>Select</code>は、インスタンス メソッドと同じように<code>x.Where(...)</code>というような書き方をしていますが、実際に呼ばれるのは<code>Enumerable</code>クラスの<code>Where</code>静的メソッドです。これは、<a href="/study/csharp/functional/sp3_extension/">拡張メソッド</a>と呼ばれる機能を 使っています。</p>
+<p>これで、下図に示すように、汎用処理の組み合わせで所望の処理を実現できます。</p>
+<p><img src="/assets/media/1075/generaldatapipeline.png" alt="汎用処理の組み合わせ" /></p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="contract-impl-process"></a>契約、実装、処理</h2>
+<p>前節で説明したような<code>IEnumerable&lt;T&gt;</code>を中心とした汎用処理には、下図に示すような3つの立場が絡みます。</p>
+<p><img src="/assets/media/1076/data3aspects.png" alt="規約、実装、処理" /></p>
+<p>規約(contract)は、型が持つべきメンバーが何かを定めます。<code>IEnumerable&lt;T&gt;</code>の例でいうと、「データ列を得るためには<code>Current</code>プロパティや<code>MoveNext</code>メソッドが必要」というようなものです。これを定めるのがインターフェイスです。</p>
+<p>実装(implementation)は、規約が定めるメンバーをどう実現するかです。同様の例でいうと、「配列やリストなどのクラスは<code>IEnumerable&lt;T&gt;</code>を実装しているのでデータ列を列挙できる。列挙の仕方はそれぞれのクラスによって異なる」となります。</p>
+<p>そして最後に、この規約に沿えば実現できる処理(process)があります。今回の例でいうと、「<code>Where</code>や<code>Select</code>など、<code>IEnumerable&lt;T&gt;</code>から得られるデータ列を加工して、別の<code>IEnumerable&lt;T&gt;</code>を返すメソッドを作る」といったものです。</p>
+<p>重要なのは、規約、実装、処理の3つは、それぞれ別の担当者が書く(ということがあるし、そうできるべき)ということです。これに対してありがちなミスは、実装クラス(ここでいう配列やリスト)に処理(ここでいう<code>Where</code>や<code>Select)</code>を含めてしまうというものです。そうやってしまうと、どんな実装にでも使えそうな汎用的な処理が特定の実装にだけ含まれることになって、組み合わせて使うことができなくなります。組み合わせを増やすために、規約、実装、処理の分離を意識しましょう。</p>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="modular-syntax"></a>文法の組み合わせ</h2>
+<p>この章の冒頭で「LINQとはデータ処理に関連する複数の構文の組み合わせ」という話をしました。データ処理はプログラミングにおいて重要なテーマの1つですが、それでも、汎用プログラミング言語にデータ処理専用の構文を導入するのはやりすぎでしょう(「汎用」でなくなる)。しかし、それぞれ汎用に使える小さな構文の組み合わせで実現できるなら話は別で、汎用プログラミング言語に導入する価値が高くなります。</p>
+<p>詳細はそれぞれのリンク先を見てもらうとして、LINQは以下のような構文の組み合わせで実現されています。これらはすべて、C# 3.0で追加され、データ処理以外のことに対しても有用です。</p>
+<ul>
+<li><a href="/study/csharp/oop/oo_construct/#member_initializer">オブジェクト初期化子</a></li>
+<li><a href="/study/csharp/functional/sp3_lambda/">ラムダ式</a></li>
+<li><a href="/study/csharp/functional/sp3_extension/">拡張メソッド</a></li>
+<li><a href="/study/csharp/start/st_variable/#infer">変数の型推論(var)</a></li>
+<li><a href="/study/csharp/oop/oo_class/#anonymous">匿名型</a></li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/data/">&#x30C7;&#x30FC;&#x30BF;&#x5217;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/data/sp_foreach/">foreach</a></li><li><a href="/study/csharp/data/sp2_iterator/">&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;&#x30FC;</a></li><li><a href="/study/csharp/data/sp2_itpattern/">[&#x96D1;&#x8A18;] &#x5185;&#x90E8;&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;&#x3068;&#x5916;&#x90E8;&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;</a></li><li><a href="/study/csharp/data/da_about/">&#x30C7;&#x30FC;&#x30BF;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/data/sp3_linq/">LINQ</a></li><li><a href="/study/csharp/data/sp3_stdquery/">&#x6A19;&#x6E96;&#x30AF;&#x30A8;&#x30EA;&#x6F14;&#x7B97;&#x5B50;&#xFF08;&#x30AF;&#x30A8;&#x30EA;&#x5F0F;&#x95A2;&#x4FC2;&#xFF09;</a></li><li><a href="/study/csharp/data/sp3_stdqueryo/">&#x6A19;&#x6E96;&#x30AF;&#x30A8;&#x30EA;&#x6F14;&#x7B97;&#x5B50;&#xFF08;&#x305D;&#x306E;&#x4ED6;&#xFF09;</a></li><li><a href="/study/csharp/data/sp3_lazylist/">[&#x96D1;&#x8A18;] LINQ &#x3068;&#x9045;&#x5EF6;&#x8A55;&#x4FA1;</a></li><li><a href="/study/csharp/data/sp3_ormismatch/">[&#x96D1;&#x8A18;] O/R &#x30A4;&#x30F3;&#x30D4;&#x30FC;&#x30C0;&#x30F3;&#x30B9;&#x30DF;&#x30B9;&#x30DE;&#x30C3;&#x30C1;</a></li><li><a href="/study/csharp/data/sp3_ormismatch2/">[&#x96D1;&#x8A18;] O/R &#x30A4;&#x30F3;&#x30D4;&#x30FC;&#x30C0;&#x30F3;&#x30B9;&#x30DF;&#x30B9;&#x30DE;&#x30C3;&#x30C1;&#xFF08;&#x30AF;&#x30E9;&#x30B9;&#x306E;&#x7D99;&#x627F;&#xFF09;</a></li><li><a href="/study/csharp/data/sp3_linqtosql/">[&#x96D1;&#x8A18;] LINQ to SQL &#x5B9F;&#x8DF5;&#x7DE8;</a></li><li><a href="/study/csharp/data/sp3_iqueryable/">[&#x96D1;&#x8A18;] IQueryable &#x306E;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/data/misc_immutabledata/">&#x4E0D;&#x5909;(immutable)&#x306A;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/data/dataranges/">&#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;/&#x7BC4;&#x56F2;&#x51E6;&#x7406;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

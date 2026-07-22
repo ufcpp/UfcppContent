@@ -1,0 +1,103 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x3010;C# 10.0&#x3011; &#x30C8;&#x30C3;&#x30D7; &#x30EC;&#x30D9;&#x30EB; &#x30B9;&#x30C6;&#x30FC;&#x30C8;&#x30E1;&#x30F3;&#x30C8;&#x306E;&#x5909;&#x66F4;&#x70B9; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2021/11/top-level-csharp10/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2021-11-23T15:15:33">2021-11-23</time></span><span>更新: <time datetime="2021-11-23T15:16:09">2021-11-23</time></span></div><h1 id="c-10.0">【C# 10.0】 トップ レベル ステートメントの変更点</h1>
+<p>そういえば、文法的な変更ではないのでどこにも告知は出ていないもの(サイレント修正)なんですが、<a href="/study/csharp/cheatsheet/ap_ver9/#top-level-statements">トップ レベル ステートメント</a> (C# 9.0 で追加)に変更点が2つあります。</p>
+<h2 id="section">空ステートメント禁止</h2>
+<p>以下の2つのコードを見比べてください。</p>
+<p>1つ目:</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main() =&gt; Console.WriteLine(<span class="string">&quot;Hello World!&quot;</span>);
+}</code></pre>
+<p>2つ目:</p>
+<pre><code class="language-csharp">;
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main() =&gt; Console.WriteLine(<span class="string">&quot;Hello World!&quot;</span>);
+}</code></pre>
+<p>C# 9.0 当初、2つ目のコードもコンパイルできていました。
+そして、実行結果がどうなるかと言うと…</p>
+<ul>
+<li>1つ目: <code>Program.Main</code> が呼ばれて、Hello World! が表示される</li>
+<li>2つ目: トップ レベル ステートメント扱いされて、何も表示されない</li>
+</ul>
+<p>さすがに <code>;</code> 1個で挙動が変わっちゃうのはためらわれるというか、
+<a href="https://github.com/dotnet/roslyn/issues/53472">「2つ目で何も表示されなくなるのはバグだ」と認識しちゃう人もいた</a>ので<a href="https://github.com/dotnet/roslyn/pull/54385">修正がかかりました</a>…</p>
+<p>今は、2つ目のコードはコンパイル エラーになります。
+空ステートメント1個だけのトップ レベル ステートメントは禁止。</p>
+<p>でも、以下のようなコードは今 (C# 10.0) でも認められてるんですよね…</p>
+<p>空じゃないステートメントもある:</p>
+<pre><code class="language-csharp">;
+Console.WriteLine();</code></pre>
+<p>空ブロック:</p>
+<pre><code class="language-csharp">{}</code></pre>
+<p><code>;</code> だけのものが禁止された経緯を考えると、<code>{}</code> だけのものも禁止されてもおかしくはないんですけど。
+「<code>Main</code> を呼ぶかトップ レベル ステートメントを呼ぶか」の分岐条件が緩すぎるんですよね。
+今後どうなるか…</p>
+<h2 id="section-1">トップ レベル ステートメントを使った時のクラス名</h2>
+<p>トップ レベル ステートメントを使った時、例えば以下のようなコードを書くと、</p>
+<pre><code class="language-csharp">Console.WriteLine();</code></pre>
+<p>扱いとしては以下のようなコードに展開されていました。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">internal</span> <span class="keyword">class</span> &lt;Program&gt;$
+{
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> &lt;Main&gt;$(<span class="keyword">string</span>[] args)
+    {
+        Console.WriteLine(<span class="string">&quot;Hello World!&quot;</span>);
+    }
+}</code></pre>
+<p>クラス名、メソッド名がどうなるかは仕様には明記されておらず、実装依存(変更が掛かっても文句は言えない)です。
+とりあえず、「通常の C# では書けない名前」(unspeakable name というそうです)になっていました。
+実装依存ですが、現在の実装では <code>&lt;Program&gt;$</code> みたいに <code>&lt;&gt;$</code> を入れて unspeakable にしています。</p>
+<p>ところが、クラス名が unspeakable だと、<a href="https://github.com/dotnet/roslyn/issues/54877">ASP.NET の単体テストで困ったそう</a>です。
+ということで、<a href="https://github.com/dotnet/roslyn/pull/55368">クラス名だけは speakable な <code>Program</code> に変更</a>。
+C# 10.0 では上記のコードは以下のような展開結果に変更されています。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">internal</span> <span class="keyword">class</span> Program
+{
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> &lt;Main&gt;$(<span class="keyword">string</span>[] args)
+    {
+        Console.WriteLine(<span class="string">&quot;Hello World!&quot;</span>);
+    }
+}</code></pre>
+<p>トップ レベル ステートメントだけを使っている分には特に影響のない修正のはずなんですが…
+例えば以下のようなコードがコンパイル エラーを起こすようになります。</p>
+<pre><code class="language-csharp">Console.WriteLine(<span class="string">&quot;Hello World!&quot;</span>);
+
+<span class="keyword">internal</span> <span class="keyword">class</span> Program
+{
+}</code></pre>
+<p>コンパイラーが生成する <code>Program</code> クラスと、コード中に手書きした <code>Program</code> クラスが衝突しています。</p>
+<p>一方で、現状のこの実装を逆手に取ると、以下のようなコードはコンパイルできるようになります。</p>
+<pre><code class="language-csharp">A(); <span class="comment">// Program.A が呼ばれる。</span>
+
+<span class="keyword">partial</span> <span class="keyword">class</span> Program
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> A() =&gt; Console.WriteLine(<span class="string">&quot;Hello World!&quot;</span>);
+}</code></pre>
+<p>ただ、<code>Program</code> というクラス名が仕様書上に明記されているわけではないので、将来もこのコードが有効であるという保証はあんまりできません。その点はご注意ください。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2021/11/">11&#x6708;</a></li><li><a href="/blog/2021/11/2022-ga-soon/">RC &#x51FA;&#x3066;&#x305F;&#x8A71;&#x304B;&#x3089;&#x306E;&#x3001;GA &#x8FEB;&#x3063;&#x3066;&#x305F;&#x308A;&#x3059;&#x308B;&#x8A71;</a></li><li><a href="/blog/2021/11/fix-all-file-scoped-namespace/">&#x3010;C# 10.0&#x3011;&#x30D5;&#x30A1;&#x30A4;&#x30EB; &#x30B9;&#x30B3;&#x30FC;&#x30D7;&#x540D;&#x524D;&#x7A7A;&#x9593; (&#x4E00;&#x6589;&#x7F6E;&#x63DB;&#x8A2D;&#x5B9A;)</a></li><li><a href="/blog/2021/11/implicitusings/">&#x3010;C# 10.0&#x3011; ImplicitUsings (&#x81EA;&#x52D5; global using)</a></li><li><a href="/blog/2021/11/latestmajor/">TargetFramework net5.0 &#x306A;&#x30B3;&#x30FC;&#x30C9;&#x3092; .NET 6 &#x30E9;&#x30F3;&#x30BF;&#x30A4;&#x30E0;&#x3067;&#x52D5;&#x304B;&#x3059;</a></li><li><a href="/blog/2021/11/appendliteral/">&#x3010;C# 10.0&#x3011; AppendLiteral(&quot; &quot;)</a></li><li><a href="/blog/2021/11/unicode-operator/">Unicode &#x6F14;&#x7B97;&#x5B50; (&#x2211;&#x3A3; &#x3068;&#x304B; &#x222B;&#x283; &#x3068;&#x304B;)</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

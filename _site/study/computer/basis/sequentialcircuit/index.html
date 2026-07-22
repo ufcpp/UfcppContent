@@ -1,0 +1,303 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x9806;&#x5E8F;&#x56DE;&#x8DEF; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/computer/basis/sequentialcircuit/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">順序回路</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>前節で説明した「<a href="/study/computer/basis/combinationalcircuit/#combinational-circuit">組み合わせ回路</a>」組み合わせ回路は、回路の出力が入力だけに依存して決まります。
+物理的な電気信号の伝播遅延はありますが、信号が安定するのを待ってから出力を見るなら、同じ入力を与えると必ず同じ出力が得られます。
+言いかえると、回路の内部に記憶（過去の入力に依存したり、時間で変化したり）を持っていません。
+このような無記憶の回路で複雑な処理をしようとすると、回路規模が膨大になったり、電気信号の伝播遅延が非常に大きくなったりしてしまい、
+現実的なコスト・演算性能・製造歩留りで回路を作れなくなります。</p>
+<p>そこで、記憶素子を導入し、記憶素子＋組み合わせ回路という構成の回路を考えます。
+1回の信号伝播ですべてを計算するのではなく、少し計算を進めては記憶し、複数回かけて計算を行います。
+このような、記憶を持つ回路を<strong id="sequencial-circuit" class="keyword">順序回路</strong>（sequential logic circuit）と呼びます。</p>
+<p>ちなみに、記憶素子のことをレジスター（register）と呼び、
+記憶素子の間の信号伝搬（transfer）を考えるという意味で、
+順序回路レベルでのディジタル回路設計をレジスター転送レベル（register transfer level、略してRTL）と呼ぶこともあります。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="sequencial-logic"></a>順序回路</h2>
+<p>概要での説明の通り、組み合わせ回路に加えて記憶素子を導入することで、内部状態を持つことができる回路を順序回路と呼びます。
+通常は、次節で説明するDフリップ・フロップのような、クロック信号の立ち上がりでだけ内部状態を更新するような素子を使い、
+図1に示すような構成で回路を作ります。</p>
+<p>（電子回路に対してフィードバックをかけると、電源電圧いっぱいまで、もしくは、電圧0まで振り切れる状態になることがあります。
+フリップ・フロップはこれをうまく制御して、安定的に高電圧のまま、もしくは、低電圧のまま居続ける回路を作っています。）</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/SequenceLogic.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/SequenceLogic.png" alt="順序回路の典型的な構成例" /></a></p>
+<figcaption>順序回路の典型的な構成例</figcaption>
+</figure>
+<p>回路の内部に状態を持っているので、同じ入力を与えても、入力のタイミングが異なれば出力の値が変わります。
+しかし、同じ状態から開始して同じ入力列を同じ順序で与えていけば、結果として得られる出力の列は常に同じになります。
+順序回路という名前は、このような「入力の順序に依存した回路」という意味になります</p>
+<h3 id="section-3"><a id="sec-generated-title-3"></a> <a id="memory-element"></a>記憶素子の構成例</h3>
+<p>CMOS回路を用いた記憶素子の実装として、最もよくつかわれるのは<strong id="flip-flop" class="keyword">フリップ・フロップ</strong>（flip-flop: シーソーのバッタンという音をあらわす擬音語に由来する）と呼ばれる回路です。
+フリップ・フロップは、図2に示すような、NAND回路に対してフィードバック構造を作ることで、値を定常的に保持します。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/SRFlipFlop.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/SRFlipFlop.png" alt="SRフリップ・フロップ" /></a></p>
+<figcaption>SRフリップ・フロップ</figcaption>
+</figure>
+<p>図2 に示すのはSRフリップ・フロップと呼ばれるタイプのもので、2つの入力S, Rによって、出力Qの値を保持もしくは更新する回路です。
+SRフリップ・フロップの入出力の関係を表1に示します。</p>
+<table summary="SRフリップ・フロップの入出力">
+	<caption>
+		SRフリップ・フロップの入出力
+	</caption>
+	<tr>
+		<td><p>S</p></td>
+		<td><p>R</p></td>
+		<td><p>Q</p></td>
+	</tr>
+	<tr>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+		<td><p>直前の値を保持</p></td>
+	</tr>
+	<tr>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+	</tr>
+	<tr>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+	</tr>
+	<tr>
+		<td><p>1</p></td>
+		<td><p>1</p></td>
+		<td><p>値が不定になる</p></td>
+	</tr>
+</table>
+<p>ただ、実際によくつかわれるのはもう少し複雑で図3に示すような回路構造を持つDフリップ・フロップと呼ばれるタイプのものです。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/DFlipFlop.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/DFlipFlop.png" alt="Dフリップ・フロップ" /></a></p>
+<figcaption>Dフリップ・フロップ</figcaption>
+</figure>
+<p>Dフリップ・フロップでは、入力Cの値が0から1に変化したときにだけ、入力Dの値で出力Qを上書きします。
+入出力の変化の例を図4に示します。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/DFlipFlopClock.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/DFlipFlopClock.png" alt="Dフリップ・フロップの入出力の変化の例" /></a></p>
+<figcaption>Dフリップ・フロップの入出力の変化の例</figcaption>
+</figure>
+<p>通常、入力Cには図4中のような矩形の周期信号を入力します。
+このような周期信号を<strong id="clock-signal" class="keyword">クロック信号</strong>（clock signal）と呼びます。
+すなわち、Dフリップ・フロップはクロック信号の立ち上がり（0から1に変化するタイミング）でのみ出力Qの値を変化させる回路です。
+クロック信号の立ち上がり以外のタイミングでは、入力Dの値がどうなっていても出力Qは変化しません。
+この仕組みによって、Dフリップ・フロップは信号の伝播遅延を吸収する効果があります。</p>
+<p>「伝播遅延を吸収」というのをもう少し詳しく説明しましょう。
+通常、電子回路の出力は安定するまでに時間がかかり、一時的に値が0, 1に確定しない不安定な状態になります
+（図4の入力Dのように、電子回路の電位が高低の間を遷移する過渡的な状態があり、0, 1を正しく判定できない）。
+この、0, 1を正しく判定できない時間がしばらく存在することを「信号の伝播が遅延している」といいます。
+遅延している信号をDフリップ・フロップに通すことによって、安定した、電位の高低変化がはっきりとした信号を得ることができます。</p>
+<p>ちなみに、フリップ・フロップは図5に示すような記号で表すことがあります。
+まず四角を書いて、入出力信号の部分にD, Qなどの信号名を、クロック信号を与える部分に三角形を書きます。
+また、CLKと書いてクロック信号を表すことが多いです。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/DFlipFlopSymbol.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/DFlipFlopSymbol.png" alt="Dフリップ・フロップを表す記号" /></a></p>
+<figcaption>Dフリップ・フロップを表す記号</figcaption>
+</figure>
+<h3 id="section-4"><a id="sec-generated-title-4"></a> <a id="clock-frequency"></a>信号の伝播遅延と動作周波数</h3>
+<p>前節で、記憶素子は電子回路の信号の伝播遅延を吸収する役割があるという話をしました。
+その結果、順序回路のクロック信号の周期（clock cycle）は、組み合わせ回路部分の伝播遅延よりも長く設定しなければなりません
+（そうしないと、組み合わせ回路の出力がまだ不安定な時に記憶素子の状態を書き換えようとして、正しい値が得られなくなります）。</p>
+<p>パソコンのカタログによく「CPUの動作周波数」という言葉が出ていますが、
+この動作周波数というのはここで説明したクロック信号の周波数（周期の逆数）のことになります。
+動作周波数を上げる（周期を短くする）ためには、組み合わせ回路部分の伝播遅延を極力小さく設計する必要があります。</p>
+<p>ちなみに、このクロック信号の周期は、ディジタル回路における時間の最小単位となります。
+信号周期を「計算にどのくらいの時間がかかるか」という意味合いで使う場合には、
+横文字のまま「nサイクルかかる」というような呼び方をする場合が多いです。</p>
+<h3 id="section-5"><a id="sec-generated-title-5"></a> <a id="pipeline"></a>パイプライン処理</h3>
+<p>大まかな話でいうと、組み合わせ回路が複雑になればなるほど、回路の伝播遅延が大きくなります。
+そこで、Figure 28に示すように、組み合わせ回路の合間合間に記憶素子を挟んで、数サイクルかけて計算を行う回路構成もよく用いられます。
+このような構成をパイプライン（pipeline）構成と呼びます。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/Pipeline.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/Pipeline.png" alt="順序回路のパイプライン構成" /></a></p>
+<figcaption>順序回路のパイプライン構成</figcaption>
+</figure>
+<p>組み合わせ回路を分けることで、1つ1つの回路の伝播遅延は小さくなり、クロック周波数を上げることができます。</p>
+<p>もちろん、その分、複数サイクルかけて処理することになるわけで、
+1つのデータを処理するのにかかる時間（遅延（delay））はむしろ延びます。
+しかし、複数のデータを同時に処理できるので、単位時間あたりに処理できるデータ量（スループット（throughput））は多くなります。</p>
+<p>また、「ある処理は1サイクルでできるけども、別のある処理は5サイクルかかる」といったように、かかる時間が違う複数の回路を混在させる場合にも、パイプライン処理は有効です。
+すべてを1サイクルで処理しようとすると、最も遅い処理に合わせてクロックを決める必要がありますが、
+パイプライン化によってこれを避けることができます。</p>
+<h2 id="section-6"><a id="sec-generated-title-6"></a> <a id="design"></a>順序回路の設計</h2>
+<p>順序回路の設計は、要するに、記憶素子の間に挟む組み合わせ回路の設計になります。
+したがって、以下のような手順を考えることになります。</p>
+<ul>
+<li><p>入出力と、記憶素子の状態を0, 1で表現する</p>
+</li>
+<li><p>入力と記憶素子の状態を与え、出力と記憶素子の次状態（次の周期での状態）を出力する組み合わせ回路を設計する</p>
+</li>
+<li><p>設計した組み合わせ回路と記憶素子を配線する</p>
+</li>
+</ul>
+<p>例として、カウンター回路というものを考えてみましょう。
+カウンター回路とは、クロック信号の周期ごとに出力の値を0, 1, 2, 3, …と変化させていく回路です。</p>
+<h3 id="section-7"><a id="sec-generated-title-7"></a> <a id="sample-spec"></a>仕様例</h3>
+<p>ここでは、以下のようなカウンター回路仕様を考えてみます。</p>
+<ul>
+<li><p>記憶素子の状態は2ビットの数値とする</p>
+<ul>
+<li>「00→01→10→11→以下00に戻って繰り返し」というように、4つの数字を繰り返す</li>
+</ul>
+</li>
+<li><p>記憶素子の状態をそのまま出力する</p>
+</li>
+<li><p>入力として1ビットのリセット信号を与える</p>
+<ul>
+<li><p>リセット信号が0の時はカウンター動作を続ける</p>
+</li>
+<li><p>リセット信号が1の時、次の周期では記憶素子の状態を00に戻す</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>状態を2ビットで持つので、2ビット・カウンターと呼びます。
+それでは、「<a href="/study/computer/basis/combinationalcircuit/#design">組み合わせ回路の設計</a>」の例と同様に、順を追って設計していきましょう。</p>
+<h2 id="section-8"><a id="sec-generated-title-8"></a> <a id="0-1-in-out"></a>入出力と記憶素子の状態を0, 1で表現</h2>
+<p>仕様の段階でほぼ網羅していますが、再度、2ビット・カウンターの入出力、および、記憶素子の状態をまとめましょう。
+論理式で表すことを考えて、記号もここで決めておきます。</p>
+<ul>
+<li><p>1ビットのリセット信号<span class="math">r</span>を入力とする</p>
+<ul>
+<li><span class="math">r</span>の値が1の時に内部状態をリセットする</li>
+</ul>
+</li>
+<li><p>数値のカウント用に記憶素子の状態を2ビット<span class="math">c<sub><span class="normal">0</span></sub></span>,<span class="math">c<sub><span class="normal">1</span></sub></span>を使う</p>
+<ul>
+<li><p>上位ビットを<span class="math">c<sub><span class="normal">0</span></sub></span>、下位ビットを<span class="math">c<sub><span class="normal">1</span></sub></span>とする</p>
+</li>
+<li><p>次状態を<span class="math">c<sub><span class="normal">0</span></sub>'</span>,<span class="math">c<sub><span class="normal">1</span></sub>'</span>でという記号で表す</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>入力および記憶素子の状態と、次状態の関係を真理値表にすると、表1のようになります。
+出力については、記憶素子の状態をそのまま出力するだけなので省略します
+（<span class="math">c<sub><span class="normal">0</span></sub></span>, <span class="math">c<sub><span class="normal">1</span></sub></span> の値がそのまま出力になります）。</p>
+<table summary="2ビット・カウンターの入出力・記憶素子の状態の関係を表す真理値表">
+	<caption>
+		2ビット・カウンターの入出力・記憶素子の状態の関係を表す真理値表
+	</caption>
+	<tr>
+		<td><p><span class="math">r</span></p></td>
+		<td><p><span class="math">c<sub><span class="normal">0</span></sub></span></p></td>
+		<td><p><span class="math">c<sub><span class="normal">1</span></sub></span></p></td>
+		<td><p><span class="math">c<sub><span class="normal">0</span></sub>'</span></p></td>
+		<td><p><span class="math">c<sub><span class="normal">1</span></sub>'</span></p></td>
+	</tr>
+	<tr>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+	</tr>
+	<tr>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+	</tr>
+	<tr>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>1</p></td>
+	</tr>
+	<tr>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+	</tr>
+	<tr>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+	</tr>
+	<tr>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+	</tr>
+	<tr>
+		<td><p>1</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+	</tr>
+	<tr>
+		<td><p>1</p></td>
+		<td><p>1</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+	</tr>
+</table>
+<h2 id="section-9"><a id="sec-generated-title-9"></a> <a id="to-combinational-circuit"></a>論理式化と組み合わせ回路化</h2>
+<p>表2の真理値表を元に、
+「<a href="/study/computer/basis/combinationalcircuit/#disjunctive-normal">加法標準形の論理式で表す</a>」、
+「<a href="/study/computer/basis/combinationalcircuit/#simplify">論理式の簡単化</a>」
+の要領で組み合わせ回路の出力となる <span class="math">c<sub><span class="normal">0</span></sub>'</span>, <span class="math">c<sub><span class="normal">1</span></sub>'</span> を論理式で表すと以下のようになります。</p>
+<div class="math">
+            c<sub><span class="normal">0</span></sub>'
+            <span class="normal">=</span>
+            <span class="bar">r</span>
+            <span class="paren" style="font-size:em;">(</span>
+                c<sub><span class="normal">0</span></sub> <span class="bar">c<sub><span class="normal">1</span></sub></span>
+                <span class="normal">+</span>
+                <span class="bar">c<sub><span class="normal">0</span></sub></span>c<sub><span class="normal">1</span></sub>
+            <span class="paren" style="font-size:em;">)</span>
+        </div><div class="math">
+            c<sub><span class="normal">1</span></sub>'
+            <span class="normal">=</span>
+            <span class="bar">r</span>
+            <span class="bar">c<sub><span class="normal">1</span></sub></span>
+        </div>
+この論理式を組み合わせ回路に起こすと図7のような回路になります。
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/Counter1.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/Counter1.png" alt="c',c' を求める組み合わせ回路" /></a></p>
+<figcaption>c<sub>0</sub>',c<sub>1</sub>' を求める組み合わせ回路</figcaption>
+</figure>
+<h2 id="section-10"><a id="sec-generated-title-10"></a> <a id="register-transfer"></a>記憶素子との接続</h2>
+<p>最後に、前節で得た組み合わせ回路に記憶素子を接続することで、図8に示すような順序回路を得ます。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/Counter2.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/Counter2.png" alt="2ビット・カウンターの順序回路" /></a></p>
+<figcaption>2ビット・カウンターの順序回路</figcaption>
+</figure>
+<h2 id="section-11"><a id="sec-generated-title-11"></a> <a id="hardware-description"></a>余談: ハードウェア記述言語</h2>
+<p>本稿で説明したようなレジスター転送レベルのディジタル回路設計も、信号線や記憶素子の個数が多くなってくると非常に複雑で、
+論理式の最適化などを手作業で行うことには限界があります。
+実際には、ハードウェア記述言語（hardware description language、略してHDL）と呼ばれる、
+人間の読み書きしやすい形式の言語を使って論理式を記述し、最適化は機械に任せるという設計手法が取られます。
+HDLには、有名なものだと、Verilog HDLやVHDLと呼ばれるものがあります。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/computer/basis/">&#x56DE;&#x8DEF;&#x8A2D;&#x8A08;&#xFF08;&#x30B2;&#x30FC;&#x30C8;&#x3001;&#x7D44;&#x307F;&#x5408;&#x308F;&#x305B;&#x56DE;&#x8DEF;&#x3001;&#x9806;&#x5E8F;&#x56DE;&#x8DEF;&#xFF09;</a></li><li><a href="/study/computer/basis/gatelevel/">&#x30B2;&#x30FC;&#x30C8;</a></li><li><a href="/study/computer/basis/logicaloperation/">&#x8AD6;&#x7406;&#x6F14;&#x7B97;</a></li><li><a href="/study/computer/basis/combinationalcircuit/">&#x7D44;&#x307F;&#x5408;&#x308F;&#x305B;&#x56DE;&#x8DEF;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

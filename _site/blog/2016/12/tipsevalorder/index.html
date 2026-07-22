@@ -1,0 +1,156 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5C0F;&#x30CD;&#x30BF; &#x5F0F;&#x306E;&#x8A55;&#x4FA1;&#x9806;&#x5E8F; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/12/tipsevalorder/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-12-04T01:10:43">2016-12-04</time></span><span>更新: <time datetime="2016-12-04T01:10:43">2016-12-04</time></span></div><h1 id="section">小ネタ 式の評価順序</h1>
+<p>C#小ネタと言いつつ、IL小ネタになりがちだったので、今日はC#小ネタらしく。</p>
+<p>最初にちょっとしたクイズ。
+まず、中身は何でもいいんですが適当な2引数のメソッドを用意します。
+例として、単純な足し算でも用意しておきましょう。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">int</span> F(<span class="keyword">int</span> x, <span class="keyword">int</span> y) =&gt; x + y;</code></pre>
+<p>以下の2つのコードの挙動は同じでしょうか？違うでしょうか？</p>
+<p>1つ目: 一時変数を使用</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> temp = F(<span class="number">2</span>, <span class="number">3</span>);
+<span class="keyword">var</span> result = F(<span class="number">1</span>, temp);</code></pre>
+<p>2つ目: 1つの式で計算</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> result = F(<span class="number">1</span>, F(<span class="number">2</span>, <span class="number">3</span>));</code></pre>
+<p>まあ、同じですね。<em>副作用を残さない限りは。</em></p>
+<h2 id="section-1">オペランドの評価順序</h2>
+<p>ということで、今日はオペランドの評価順の話です。
+上記の2つのコードを、わざと副作用付きに書き換えてみます。</p>
+<p>そのためにとりあえず、副作用を起こすメソッドを追加。
+<code>Console</code>にログ出力した後、引数を素通しするだけのメソッドです。
+値渡し版と参照渡し版を用意。</p>
+<pre><code class="language-csharp"><span class="comment">// WriteLine + 素通し</span>
+<span class="keyword">static</span> T Log&lt;T&gt;(T x) { Console.WriteLine(x); <span class="keyword">return</span> x; }
+<span class="keyword">static</span> <span class="keyword">ref</span> T Log&lt;T&gt;(<span class="keyword">ref</span> T x) { Console.WriteLine(x); <span class="keyword">return</span> <span class="keyword">ref</span> x; }</code></pre>
+<p>1つ目(一時変数を使用)を改めて:</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> temp = F(Log(<span class="number">2</span>), Log(<span class="number">3</span>));
+<span class="keyword">var</span> result = F(Log(<span class="number">1</span>), temp);</code></pre>
+<pre><code class="language-console">2
+3
+1</code></pre>
+<p>2つ目(1つの式で計算)を改めて:</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> result = F(Log(<span class="number">1</span>), F(Log(<span class="number">2</span>), Log(<span class="number">3</span>)));</code></pre>
+<pre><code class="language-console">1
+2
+3</code></pre>
+<p>C#では、式の評価は、上から下へ、左から右へ逐次実行です。
+なので、一時変数を導入すると結果が変わります。</p>
+<p>1つの式の中でも、演算子の優先順位や結合方向とは無関係に、評価は一律左から右です。
+代入(優先度が低い上に右から左に結合)が混ざっていようと、そのオペランドの評価は左から右です。</p>
+<p>例えば以下の通り。</p>
+<pre><code class="language-csharp"><span class="keyword">bool</span> x = <span class="keyword">false</span>, y = <span class="keyword">true</span>;
+Log(<span class="keyword">ref</span> x) = Log(<span class="keyword">ref</span> y) = Log(<span class="number">1</span>) + Log(<span class="number">2</span>) * Log(<span class="number">3</span>) &gt; Log(<span class="number">4</span>) &amp; Log(<span class="number">5</span>) &lt;= Log(<span class="number">6</span>) - Log(<span class="number">7</span>) | Log(<span class="number">8</span>) == Log(<span class="number">9</span>);</code></pre>
+<pre><code class="language-console">False
+True
+1
+2
+3
+4
+5
+6
+7
+8
+9</code></pre>
+<h2 id="section-2">名前付き引数のオペランド評価</h2>
+<p>前節の結果はそんなに不思議なことないでしょう。コードから挙動を予想しやすいって意味では書かれてる順番通りが一番です。それに、パフォーマンス的にも悪い選択ではありません。例えば、</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> result = F(<span class="number">1</span>, F(<span class="number">2</span>, <span class="number">3</span>));</code></pre>
+<p>というようなコードであれば、コンパイル結果は以下のような感じになります(必要なところを抜粋)。</p>
+<pre><code class="language-cil">ldc.i4.1
+ldc.i4.2
+ldc.i4.3
+call       F
+call       F</code></pre>
+<p>元のC#のオペランドと同じ、1, 2, 3の順で<code>ldc</code> (load constant)しています。
+副作用を起こすために<code>Log</code>メソッドを挟む場合、この<code>ldc</code>のところが数命令に置き換わりますが、命令の並ぶ順序はこの場合と同じです。</p>
+<p>ということで、素直に実装すればいいだけ…</p>
+<p>でもなくて、まあ、ほとんどの式は素直に実装していいんですが、一部めんどくさい奴がいます。例えば、名前付き引数。
+以下のようなコードを書いたとします。
+<code>x</code>, <code>y</code>を逆に並べています。</p>
+<pre><code class="language-csharp">F(<span class="number">1</span>, F(y: <span class="number">2</span>, x: <span class="number">3</span>));</code></pre>
+<p>すると、コンパイル結果は以下の通り。C#ソースコード上は1, 2, 3だったものが、IL的には1, 3, 2になります。</p>
+<pre><code class="language-cil">ldc.i4.1
+ldc.i4.3
+ldc.i4.2
+call       F
+call       F</code></pre>
+<p>この結果は副作用がないからこそ、C#コンパイラーの最適化が掛かってこうなっています。
+副作用がないことがわかっている場合、評価順を並べ替えを行います。</p>
+<p>一方で、副作用があるとそうはいきません。あくまで、C#では左から右への評価が必要です。</p>
+<p>例えば以下のようなコードをでは、ちゃんと、1, 2, 3の順での評価が必要です。</p>
+<pre><code class="language-csharp">F(Log(<span class="number">1</span>), F(y: Log(<span class="number">2</span>), x: Log(<span class="number">3</span>)));</code></pre>
+<p>コンパイル結果は以下の通りです。これまでは必要のなかった一時変数(<code>stloc</code>: ローカル変数へのストア)が必要になります。</p>
+<pre><code class="language-cil">ldc.i4.1
+call       Log
+ldc.i4.2
+call       Log
+stloc.0    // 一時変数！
+ldc.i4.3
+call       Log
+ldloc.0
+call       F
+call       F</code></pre>
+<p>ちなみに、これ、C# 4.0の時にはバグってて評価順が狂ってた(逆順になってた)そうです。
+C# 5.0でバグ修正した結果、<a href="https://msdn.microsoft.com/en-us/library/hh678682(v=vs.110).aspx">破壊的変更</a>になっていたり(めったにこんなコード書かない上に、バグの修正なので特に問題にはならず)。</p>
+<h2 id="section-3">タプルの要素の評価順序</h2>
+<p>もう1個変な例を挙げておきましょう。C# 7で導入されるタプルと分解で、以下のように、swapコードを書けるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = <span class="number">1</span>;
+<span class="keyword">var</span> y = <span class="number">2</span>;
+(x, y) = (y, x);
+Console.WriteLine($<span class="string">&quot;{x}, {y}&quot;</span>);</code></pre>
+<p>これ、同じ処理をタプルを使わず書くとすると、まあ、以下のようにしますよね。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> temp = x;
+x = y;
+y = temp;</code></pre>
+<p>こいつらにも副作用を加えてみましょう。</p>
+<p>まず、タプルを使うもの。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = <span class="number">1</span>;
+<span class="keyword">var</span> y = <span class="number">2</span>;
+(Log(<span class="keyword">ref</span> x), Log(<span class="keyword">ref</span> y)) = (Log(y), Log(x));</code></pre>
+<p>ちゃんと、これも左から右に順に評価されます。すなわち、<code>ref x</code>, <code>ref y</code>, <code>y</code>, <code>x</code>の順。なので結果は以下の通り。</p>
+<pre><code class="language-console">1
+2
+2
+1</code></pre>
+<p>で、これをタプルなしで副作用も込みで全く同じ挙動にするためにはどうするか。</p>
+<p>先ほどの類推で以下のように書いてしまうと、副作用の順序が変わります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> temp = Log(x);
+Log(<span class="keyword">ref</span> x) = Log(y);
+Log(<span class="keyword">ref</span> y) = temp;</code></pre>
+<pre><code class="language-console">1
+1
+2
+2</code></pre>
+<p>正しくは、以下のように書かないと同じにはなりません。</p>
+<pre><code class="language-csharp"><span class="keyword">ref</span> <span class="keyword">var</span> rx = <span class="keyword">ref</span> Log(<span class="keyword">ref</span> x);
+<span class="keyword">ref</span> <span class="keyword">var</span> ry = <span class="keyword">ref</span> Log(<span class="keyword">ref</span> y);
+<span class="keyword">var</span> vy = Log(y);
+<span class="keyword">var</span> vx = Log(x);
+rx = vy;
+ry = vx;</code></pre>
+<h2 id="section-4">まとめ</h2>
+<p>副作用があっても常に一定の結果になるように、C#では、オペランドの評価順が常に左から右、書かれている通りの順序で行われます(まあ、割かし最近のプログラミング言語では大体同じで順序保証があります)。</p>
+<p>ただ、順序保証がない場合に比べて、保証のためのコストがちょっとだけかかります(なので、古いプログラミング言語では「コンパイラーの実装ごとに変えていい」となっているものも結構あります)。</p>
+<p>まあ、これだけ書いておいて身もふたもない結論で締めますが、副作用起こすような式を書くやつが悪い。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/12/">2016/12</a></li><li><a href="/blog/2016/12/tipstryroslyn/">C#&#x5C0F;&#x30CD;&#x30BF;&#x96C6;: C#&#x3092;Web&#x4E0A;&#x3067;&#x8A66;&#x3059;</a></li><li><a href="/blog/2016/12/tipsildasm/">&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x3092;&#x8997;&#x3044;&#x3066;&#x307F;&#x3088;&#x3046;</a></li><li><a href="/blog/2016/12/tipscorefxlab/">&#x5C0F;&#x30CD;&#x30BF; corefxlab&#x3068;System.Memory</a></li><li><a href="/blog/2016/12/tipsobjectinitializer/">&#x5C0F;&#x30CD;&#x30BF; &#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2016/12/tipscollectioninitializer/">&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2016/12/tipsindexedforeach/">&#x5C0F;&#x30CD;&#x30BF; &#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;&#x4ED8;&#x304D; foreach</a></li><li><a href="/blog/2016/12/tipsuniontypes/">&#x5C0F;&#x30CD;&#x30BF; &#x30C1;&#x30A7;&#x30C3;&#x30AF;&#x4F8B;&#x5916;&#x3068;Union&#x578B;</a></li><li><a href="/blog/2016/12/tipscontextfreetask/">&#x5C0F;&#x30CD;&#x30BF; &#x540C;&#x671F;&#x30B3;&#x30F3;&#x30C6;&#x30AD;&#x30B9;&#x30C8;&#x3092;&#x62FE;&#x308F;&#x306A;&#x3044;Task&#x578B;</a></li><li><a href="/blog/2016/12/tipsformattingcharacter/">&#x5C0F;&#x30CD;&#x30BF; &#x30D5;&#x30A9;&#x30FC;&#x30DE;&#x30C3;&#x30C8;&#x6587;&#x5B57;&#x8B58;&#x5225;&#x5B50;</a></li><li><a href="/blog/2016/12/tipsimplicitmembers/">&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/blog/2016/12/tipstadpoleoperator/">&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x6F14;&#x7B97;&#x5B50;(&#xFF1F;)</a></li><li><a href="/blog/2016/12/tipsnulloperation/">&#x5C0F;&#x30CD;&#x30BF; null&#x95A2;&#x4FC2;&#x306E;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/blog/2016/12/vs2017rc2/">Updating Visual Studio 2017 Release Candidate</a></li><li><a href="/blog/2016/12/patternmatching/">&#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30DE;&#x30C3;&#x30C1;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/pickuproslyn1214/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/14</a></li><li><a href="/blog/2016/12/tipsdeconstruct/">&#x5C0F;&#x30CD;&#x30BF; &#x300C;deconstruct&#x300D;&#x3068;&#x3044;&#x3046;&#x5358;&#x8A9E;</a></li><li><a href="/blog/2016/12/tipsgeneratedil/">&#x5C0F;&#x30CD;&#x30BF; &#x69CB;&#x6587;&#x7CD6;&#x8863;&#x3068;&#x3001;&#x305D;&#x3046;&#x3067;&#x306F;&#x306A;&#x3044;&#x69CB;&#x6587;&#x3068;</a></li><li><a href="/blog/2016/12/tipsprimitives/">&#x5C0F;&#x30CD;&#x30BF; &#x30D7;&#x30EA;&#x30DF;&#x30C6;&#x30A3;&#x30D6;&#x578B;</a></li><li><a href="/blog/2016/12/tipsapisurface/">&#x5C0F;&#x30CD;&#x30BF; private&#x30E1;&#x30F3;&#x30D0;&#x30FC;&#x306F;API&#x306E;&#x4E00;&#x90E8;&#x304B;</a></li><li><a href="/blog/2016/12/tipsstringmarshal/">&#x5C0F;&#x30CD;&#x30BF; string&#x578B;&#x306E;&#x30DE;&#x30FC;&#x30B7;&#x30E3;&#x30EA;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/tipsnumargs/">&#x5C0F;&#x30CD;&#x30BF; &#x5F15;&#x6570;&#x306E;&#x500B;&#x6570;&#x306E;&#x4E0A;&#x9650;</a></li><li><a href="/blog/2016/12/tipsotherlangs/">&#x5C0F;&#x30CD;&#x30BF; C# &#x3068;&#x4ED6;&#x306E;&#x8A00;&#x8A9E;&#x3068;&#x306E;&#x5DEE;&#x3068;&#x3044;&#x3046;&#x3068;</a></li><li><a href="/blog/2016/12/tipsconcurrentcollections/">&#x5C0F;&#x30CD;&#x30BF; Concurrent &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/blog/2016/12/discards/">discards</a></li><li><a href="/blog/2016/12/tipssmallheapallocation/">&#x5C0F;&#x30CD;&#x30BF; &#x5C0F;&#x3055;&#x306A;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x5272;&#x308A;&#x5F53;&#x3066;</a></li><li><a href="/blog/2016/12/tipsparallelism/">&#x5C0F;&#x30CD;&#x30BF; &#x4E26;&#x5217;&#x5316;</a></li><li><a href="/blog/2016/12/tipsdowhile/">&#x5C0F;&#x30CD;&#x30BF; do-while</a></li><li><a href="/blog/2016/12/tipsatan2/">&#x5C0F;&#x30CD;&#x30BF; atan2</a></li><li><a href="/blog/2016/12/tipsnormaldistribution/">&#x5C0F;&#x30CD;&#x30BF; &#x6B63;&#x898F;&#x5206;&#x5E03;&#x306E;&#x4E38;&#x307F;</a></li><li><a href="/blog/2016/12/lookbackattheyear/">&#x4ECA;&#x5E74;&#x306E;&#x632F;&#x308A;&#x8FD4;&#x308A;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

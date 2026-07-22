@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>First-class &#x306A; Span &#x578B; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2025/1/first-class-span/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2025-01-03T21:01:48">2025-01-03</time></span><span>更新: <time datetime="2025-01-03T21:01:48">2025-01-03</time></span></div><h1 id="first-class-span">First-class な Span 型</h1>
+<p>「Rosly の <a href="https://github.com/dotnet/roslyn/blob/main/docs/Language%20Feature%20Status.md">Language Feature Status</a> に並んでいるもののうち、すでに preview 提供済みのものシリーズ第2段。</p>
+<ul>
+<li>field キーワード</li>
+<li>First-class Span ← 今日はこれ</li>
+<li>nameof(T&lt;&gt;)</li>
+</ul>
+<p>すでに今、<a href="/study/csharp/cheatsheet/langversionoption/#langversion">LangVersion</a> に <code>preview</code> を指定すれば利用可能です。</p>
+<p>今日は First-class Span。
+(<a href="/blog/2024/2/first-class-span/">これも昔1回取り上げてるんですが</a>、案外書くことあり。)</p>
+<h3 id="first-class-span-1"><a id="first-class-span">First-class Span</a></h3>
+<p>C# 7.2 の頃に <code>Span&lt;T&gt;</code> や <code>ReadOnlySpan&lt;T&gt;</code> が導入されて以来、
+これらの型を使った高パフォーマンスな API がたくさん提供されています。
+また、<a href="/study/csharp/datatype/collection-expression/#priority">C# 12 で入ったコレクション式</a>や、
+<a href="/study/csharp/structured/sp_params/#params-collections">C# 13 で入った <code>params</code> コレクション</a>では、
+<code>T[]</code> や <code>IEnumerable&lt;T&gt;</code> よりも <code>Span&lt;T&gt;</code> や <code>ReadOnlySpan&lt;T&gt;</code> を優先的に選ぶように特別な処理が入っています。
+この例からもわかるように、今や <code>Span&lt;T&gt;</code> や <code>ReadOnlySpan&lt;T&gt;</code> が重要な地位を占めています。</p>
+<p>ところが、コレクション式などの一部の文脈を除いて、
+<code>Span&lt;T&gt;</code> や <code>ReadOnlySpan&lt;T&gt;</code> は「ただの構造体」で、
+配列からの型変換も「<code>Span&lt;T&gt;</code> や <code>ReadOnlySpan&lt;T&gt;</code> 構造体に定義されたユーザー定義型変換」です。
+C# 言語組み込みの型変換と比べて、ユーザー定義型変換は1段下扱いで、色々な不便があります。</p>
+<p>そこで、<a href="https://github.com/dotnet/csharplang/blob/main/proposals/first-class-span-types.md"><code>Span&lt;T&gt;</code> や <code>ReadOnlySpan&lt;T&gt;</code> を言語組み込み(= first-class、一級市民)にしたい</a>という提案があって、
+これもすでに実装があり、
+Visual Studio 17.13.0 Preview 1 (.NET 9 の正式リリースと同時)で merge 済みです。</p>
+<p>わかりやすいのは拡張メソッドの呼び出しで、
+ユーザー定義型変換を挟む拡張メソッド呼び出しはできません。
+例えば、以下のコードは C# 13 でコンパイル エラーだったものが、preview ではコンパイルできるようになっています。</p>
+<pre><code class="language-csharp"><span class="comment">// 拡張メソッドの呼び出しはユーザー定義の型変換を見ない。</span>
+<span class="comment">// Span の特別扱いがないと拡張メソッドは呼べない。</span>
+<span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">1</span>].M();
+
+<span class="keyword">static</span> <span class="keyword">class</span> Ex
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M&lt;T&gt;(<span class="keyword">this</span> Span&lt;T&gt; _) { }
+}</code></pre>
+<p>また、
+「<code>Span&lt;T&gt;</code> や <code>ReadOnlySpan&lt;T&gt;</code> 引数を使った方がパフォーマンスがいいのでこちらを呼んでほしい」という要望があるんですが、
+これまでは <code>IEnumerable&lt;T&gt;</code> なオーバーロードがあるとそっちが優先されるという問題もありました。</p>
+<pre><code class="language-csharp"><span class="comment">// ユーザー定義の型変換よりも、「派生・実装クラスだから変換可能」の方が優先度が高い。</span>
+Ex.M(<span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">1</span>]);
+
+<span class="keyword">static</span> <span class="keyword">class</span> Ex
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M&lt;T&gt;(<span class="keyword">this</span> IEnumerable&lt;T&gt; _) { } <span class="comment">// C# 13 ではこっち。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M&lt;T&gt;(<span class="keyword">this</span> ReadOnlySpan&lt;T&gt; _) { } <span class="comment">// preview ではこっち。Span の特別扱いがないとこっちは呼んでもらえない。</span>
+}</code></pre>
+<p>また、ユーザー定義の型変換では「型引数の<a href="/study/csharp/oop/sp4_variance/#variance">共変性</a>」を表現できないという問題があります。
+<code>ReadOnlySpan&lt;string&gt;</code> を <code>ReadOnlySpan&lt;object&gt;</code> に代入できてもいいはずなのに、
+これが C# 13 まではできませんでしたが、preview にすると受け付けます。</p>
+<pre><code class="language-csharp">ReadOnlySpan&lt;<span class="keyword">string</span>&gt; s = [];
+ReadOnlySpan&lt;<span class="keyword">object</span>&gt; span = s; <span class="comment">// C# 13 ではエラー。</span></code></pre>
+<p>ちなみに、<code>Span&lt;T&gt;</code> と <code>ReadOnlySpan&lt;T&gt;</code> の両方のオーバーロードがある場合、
+<code>ReadOnlySpan&lt;T&gt;</code> の方が優先されます。</p>
+<pre><code class="language-csharp"><span class="keyword">string</span>[] s = [];
+
+<span class="comment">// ReadOnlySpan の方が優先。</span>
+s.M();
+
+<span class="keyword">static</span> <span class="keyword">class</span> Ex
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M&lt;T&gt;(<span class="keyword">this</span> Span&lt;T&gt; _) { }
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M&lt;T&gt;(<span class="keyword">this</span> ReadOnlySpan&lt;T&gt; _) { }
+}</code></pre>
+<p>target-typed で生成される型自体が変わるコレクション式と違って、
+一度配列を作っちゃってるので <code>ReadOnlySpan&lt;T&gt;</code> を優先しても別にパフォーマンス的なメリットは少ないんですけども。
+じゃあどうしてこういう仕様にしたかというと…
+こうしておかないとまた「<a href="/blog/2022/11/covariantarrayincident/">配列の共変性の地雷</a>を踏むから」とのこと。</p>
+<pre><code class="language-csharp"><span class="keyword">string</span>[] s = [];
+<span class="keyword">object</span>[] o = s; <span class="comment">// C# の配列は共変。</span>
+
+<span class="comment">// Span を優先するとこれが例外を起こしちゃう。</span>
+<span class="comment">// ReadOnlySpan&lt;object&gt; x = s; は合法。</span>
+<span class="comment">// Span&lt;object&gt; x = s; は実行時例外。</span>
+o.M(); <span class="comment">// ReadOnlySpan&lt;object&gt; を優先しないとここで例外が出る。</span>
+
+<span class="keyword">static</span> <span class="keyword">class</span> Ex
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">this</span> Span&lt;<span class="keyword">object</span>&gt; _) { }
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">this</span> ReadOnlySpan&lt;<span class="keyword">object</span>&gt; _) { }
+}</code></pre>
+<p>以上、とりあえず、C# 14 (現状 <code>LangVersion</code> preview)では <code>Span&lt;T&gt;</code>、<code>ReadOnlySpan&lt;T&gt;</code> が特別扱いされて、オーバーロードの解決順位が変わります。
+おおむね便利な方向に変わるはずですが、もしかすると何らかの問題を起こす可能性もあります。
+もしも「<code>Span&lt;T&gt;</code> オーバーロードを呼ばれるとまずい」みたいなことがあれば、<a href="/study/csharp/cheatsheet/ap_ver13/#overload-resolution-priority"><code>OverloadResolutionPriority</code></a>とかでの対処を考えてみてください。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2025/1/">1&#x6708;</a></li><li><a href="/blog/2025/1/pascalcase/">UTF8 &#x304B; Utf8 &#x304B;</a></li><li><a href="/blog/2025/1/field-keyword/">field &#x30AD;&#x30FC;&#x30EF;&#x30FC;&#x30C9;</a></li><li><a href="/blog/2025/1/nameof-unbound-generic-types/">nameof(T&lt;&gt;)</a></li><li><a href="/blog/2025/1/data-section-string/">&#x6587;&#x5B57;&#x5217;&#x30EA;&#x30C6;&#x30E9;&#x30EB;&#x3092; data &#x30BB;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x306B; UTF-8 &#x3067;&#x66F8;&#x304D;&#x8FBC;&#x3080;&#x6848;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

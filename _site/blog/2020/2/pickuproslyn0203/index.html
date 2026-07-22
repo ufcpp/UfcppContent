@@ -1,0 +1,269 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 2/3: Records&#x7DCF;&#x307E;&#x3068;&#x3081;&#x3001;&#x30C8;&#x30C3;&#x30D7; &#x30EC;&#x30D9;&#x30EB; &#x30B9;&#x30C6;&#x30FC;&#x30C8;&#x30E1;&#x30F3;&#x30C8; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2020/2/pickuproslyn0203/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2020-02-03T21:29:57">2020-02-03</time></span><span>更新: <time datetime="2020-03-09T11:13:02">2020-03-09</time></span></div><h1 id="roslyn-23-records">ピックアップRoslyn 2/3: Records総まとめ、トップ レベル ステートメント</h1>
+<p>2件ほど。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/3117">Top-level statements and functions #3117</a></li>
+<li><a href="https://github.com/dotnet/csharplang/issues/3137">Records as a collection of features #3137</a></li>
+</ul>
+<p>どちらも、散発的にアイディアが出てたもののまとめであるとか、現状報告的なものです。</p>
+<h2 id="top-level-statements-and-functions">Top-level statements and functions</h2>
+<p>まず短い方から。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/3117">Top-level statements and functions #3117</a></li>
+</ul>
+<p>前々から、<a href="https://github.com/dotnet/csharplang/issues/2765">普通の C# の文法と、スクリプト向けの文法を統合したい</a>みたいな話はって、それの再考というか、
+シナリオの整理とどのシナリオを優先するかみたいな話。</p>
+<p>ちなみに、まだマイルストーンも決まっていないので、おそらく C# 9.0 よりは先の話になると思います。</p>
+<p>要は、以下のような「いつものおまじない」なしでいきなり(トップレベル、あるいは、名前空間直下のレベルに)ステートメントとかメソッドを書きたいという話になります。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+    }
+}</code></pre>
+<p>主たる目的として3つのシナリオが上がっています。</p>
+<p>1つ目は単にプログラムをシンプルに書きたいというもの。
+普通に「おまじない」でボイラープレートなコードを減らしたい。
+この意味では、トップレベルに書いたコードは <code>Program.Main</code> メソッドの中に自動的に組み込まれてほしい。</p>
+<p>2つ目はグローバル関数的なものを定義したいという話。
+<code>Math.Sin</code> みたいなものは元々「グローバルでも特に問題はないけど、名前の衝突を避けるために <code>Math</code> クラス配下にまとめらている」みたいなものです。
+単に名前分けなら、名前空間直下に関数を書けても別にいいはず。
+この意味では、何かラッパークラスを1個作って、その中の静的メソッドに変換して、自動的に  <a href="/study/csharp/structured/sp_namespace/"><code>using</code></a> される扱いすればいい。</p>
+<p>3つ目はスクリプト用途。
+今現在、<a href="https://www.nuget.org/packages/Microsoft.CodeAnalysis.CSharp.Scripting/">Microsoft.CodeAnalysis.CSharp.Scripting</a>で提供されているやつで、微妙に<a href="/study/csharp/cheatsheet/apscripting/">通常の C# 文法と違う文法</a>を受け付けます。
+通常の文法と統合したいといいつつ、1つ目のシナリオとは競合します。
+スクリプトの場合、実行するたびに別の状態を持たせたく、静的な <code>Main</code> メソッド内に展開されるような方式よりは、クラスを1個作ってそのメンバー扱い(ローカル変数のように書いたものが、実際にはフィールド扱い)する方が好ましかったりします。</p>
+<p>今回の決定では、1つ目のシナリオ、要するに「トップレベルのステートメントを <code>Main</code> メソッドに自動的に組み込む」という方向で行きたいとのこと。
+トップレベルのメソッドも、<code>Main</code> メソッド内のローカル関数扱いしようという感じみたいです。</p>
+<p>結局、「通常モード」と「スクリプト モード」の統合はあきらめていて、
+「2つのモードの差をあまり開かないようにしたい」くらいの方針。</p>
+<h2 id="records-as-a-collection-of-features">Records as a collection of features</h2>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/3137">Records as a collection of features #3137</a></li>
+</ul>
+<p>ここ数か月くらい散発的には話題に上がっていましたが(<a href="/blog/2019/10/pickuproslyn1025/">10/25</a>、<a href="/blog/2019/11/pickuprolsyn1116/">11/16</a>、<a href="/blog/2019/12/pickuproslyn1221/">12/21</a>)、Records がらみの総まとめ。</p>
+<p>こちらは C# 9.0 向け。なのでそろそろ具体性を帯びてきています。</p>
+<p>まだ全部の提案に Strawman (藁人形。C# リポジトリ内では「いろいろ叩かれることを前提に、まずは C# チーム内で決めた案を公開」くらいの意味)という言葉が入っているので最終決定からはまだ遠い段階ですが、今までの中では一番まとまっていて、一番具体的な文法が出ています。</p>
+<p>タイトルの通り、Records をいくつかの機能の組み合わせに分割したいという話なんですが、
+いくつかは不可分みたいな話もしています。</p>
+<h3 id="value-based-equality">Value-based equality</h3>
+<p>値による比較(value-based equality)を楽に書きたいという要望が常々あります。</p>
+<p><a href="/blog/2019/12/pickuproslyn1221/">12/21</a>のブログでは「<code>key</code> 修飾子」案が出ていましたが、
+今回は <code>value</code> 修飾子になっています。
+意味的には12/21の頃と同じ。この修飾子を付けたフィールドの値比較を持って、その型の <code>Equals</code> メソッドや <code>==</code> 演算子を生成したいというものです。</p>
+<h4 id="value-members">value members</h4>
+<p>差分としては、<code>EqualityContract</code> というプロパティも生成して、以下のような比較をした方がいいだろうという話が増えています。</p>
+<p>例えば以下のような <code>Point</code> クラスがあったとして</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> Point
+{
+    <span class="keyword">public</span> value <span class="keyword">int</span> X { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> value <span class="keyword">int</span> Y { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+}</code></pre>
+<p>以下のようなコード扱いしたいそうです。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> Point
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+    <span class="keyword">protected</span> <span class="keyword">virtual</span> Type EqualityContract =&gt; <span class="keyword">typeof</span>(Point);
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">bool</span> Equals(<span class="keyword">object</span>? other) =&gt;
+        other <span class="keyword">is</span> Point that
+        &amp;&amp; <span class="keyword">this</span>.EqualityContract == that.EqualityContract
+        &amp;&amp; <span class="keyword">this</span>.X == that.X
+        &amp;&amp; <span class="keyword">this</span>.Y == that.Y;
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">int</span> GetHashCode() =&gt; ... X ... Y ... ;
+}</code></pre>
+<p><code>EqualityContract</code> プロパティを用意しているのは、
+対称性の確保のため。
+このプロパティがないと、基底クラスのインスタンス <code>b</code> と派生クラスのインスタンス <code>d</code> があるとき、<code>b.Equals(d)</code> は true だけど <code>d.Equals(b)</code> は false みたいなことがあり得ます。</p>
+<p>単に <code>GetType()</code> メソッドで型判定しないのは、
+以下のような、追加のメンバーを持っていない派生クラスは互いに一致判定できるようにです。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Base
+{
+    <span class="keyword">public</span> value <span class="keyword">int</span> Id { <span class="keyword">get</span>; }
+}
+
+<span class="comment">// 以下の2つの型は特に追加で value 修飾の付いたメンバーを持っていないので、</span>
+<span class="comment">// Id さえ一致していれば互いに Equals 判定できる。</span>
+<span class="comment">// EqualityContract はどちらも typeof(Base) を返す。</span>
+<span class="keyword">class</span> Derived1 : Base { }
+<span class="keyword">class</span> Derived2 : Base { }</code></pre>
+<h4 id="value-types">value types</h4>
+<p>また、<code>value class Point</code> みたいに型自体に value 修飾を付けることで、全メンバーに value 修飾を付けたのと同じ扱いにするという話も。</p>
+<p>上記 <code>Derived1</code> と <code>Derived2</code> を、「<code>Id</code> が同じでも型が違えば <code>Equals</code> は false にしてほしい」(ようするに discriminated union 的な挙動)にしたいときはそれぞれ <code>value class Derived1</code>、<code>value class Derived2</code> と書く(逆に、true にしたいときは value 修飾を付けない)という話もあります。</p>
+<h3 id="removing-construction-boilerplate">Removing construction boilerplate</h3>
+<p>長らく、以下のようなコードの冗長性が嫌だという話がずっと言われ続けています。</p>
+<pre><code class="language-csharp"><span class="comment">// プロパティ、コンストラクター引数、代入の左右の4か所で同じ名前を書くのが冗長</span>
+<span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> Person
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> Name { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> Person(<span class="keyword">string</span> name)
+    {
+        Name = name;
+    }
+}</code></pre>
+<p>これを、最終的には <code>class Person(string Name);</code> くらいまで縮めたいというのが Records の肝なんですが、これも、いくつかの段階に分けて考えようとしているみたいです。</p>
+<h4 id="direct-constructor-parameters">direct constructor parameters</h4>
+<p>まず、direct constructor parameters という案。
+以下のように、コンストラクター引数に対応するプロパティだけを書くという方式。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> Person
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> Name { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> Person(Name) <span class="comment">// 型名なしで、プロパティ名だけ指定</span>
+    {
+        <span class="comment">// this.Name = Name 的なコードが追加される</span>
+ 
+        <span class="comment">// 追加で、値の検証コードとか書くのは自由にできる</span>
+        <span class="keyword">if</span> (Name <span class="keyword">is</span> <span class="keyword">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(Name));
+    }
+}</code></pre>
+<h4 id="primary-constructors">primary constructors</h4>
+<p>次が primary constructors で、以下のように、クラス宣言の行に直接引数を書けるようにするもの。
+検証コードの類は「<code>()</code> なしのコンストラクター」みたいな構文が提案されています。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> Person(<span class="keyword">string</span> name)
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> Name { <span class="keyword">get</span>; } = name;
+ 
+    <span class="keyword">public</span> Person <span class="comment">// () なしのコンストラクター構文</span>
+    {
+        <span class="comment">// primary constructor に対する検証コードはここに書く</span>
+        <span class="keyword">if</span> (name <span class="keyword">is</span> <span class="keyword">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(Name));
+    }
+}</code></pre>
+<p>primary constructors は先ほどの direct constructor parameters と相乗効果あり。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> Person(Name) <span class="comment">// primary constructors + direct constructor parameters</span>
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> Name { <span class="keyword">get</span>; }
+ 
+    <span class="keyword">public</span> Person
+    {
+        <span class="keyword">if</span> (Name <span class="keyword">is</span> <span class="keyword">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(Name));
+    }
+}</code></pre>
+<h4 id="primary-constructor-member-declarations">primary constructor member declarations</h4>
+<p>プロパティと direct constructor parameters の重複も避けたいということで、さらに踏み込んだ文法として primary constructor member declarations があります。
+primary constructor の引数の部分に直接メンバー宣言を書いてしまうもの。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> Person(<span class="keyword">public</span> <span class="keyword">string</span> Name { <span class="keyword">get</span>; });</code></pre>
+<h3 id="improvements-for-object-inititalizers">Improvements for object inititalizers</h3>
+<p><code>new Point { X = 1, Y = 2 }</code> みたいな初期化の方法を<a href="/study/csharp/oop/oo_construct/#member_initializer">オブジェクト初期化子</a>と呼びます。
+ただ、現状だと mutable なフィールド、もしくは、プロパティにしか使えないので、
+immutable が重宝されるこのご時世にはつらいと言われています。
+それに対する改善案がいくつか。</p>
+<h4 id="strawman-init-only-properties">Strawman: Init-only properties</h4>
+<p>オブジェクト初期化子では書き換えられるけど、それ以外の場所では書き換え不能という意味で、set の代わりに init アクセサーを持つプロパティ(init-only properties)を認めようというもの。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> Point
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; init; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; init; }
+}
+ 
+<span class="keyword">var</span> p = <span class="keyword">new</span> Point { X = <span class="number">5</span>, Y = <span class="number">3</span> }; <span class="comment">// OK</span>
+p.Y = <span class="number">7</span>; <span class="comment">// エラー。初期化子以外での Y の書き換えは認めない</span></code></pre>
+<h4 id="validation-accessors-for-auto-properties">validation accessors for auto-properties</h4>
+<p>「get だけ<a href="/study/csharp/oop/oo_property/#auto">自動実装</a>して、set 内の検証コードは普通に書きたい」ということがあるので、それを認めようかという話。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">string</span> Name
+{
+    <span class="comment">// get の実装を省略</span>
+    <span class="keyword">get</span>;
+ 
+    <span class="comment">// set には検証コードだけ書く</span>
+    <span class="keyword">set</span> { <span class="keyword">if</span> (value <span class="keyword">is</span> <span class="keyword">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(Name)); }
+}</code></pre>
+<p>前述の init アクセサーでも同様。</p>
+<h4 id="object-initializers-for-direct-constructor-parameters">object initializers for direct constructor parameters</h4>
+<p>前節の direct constructor parameters を持っている場合には、
+オブジェクト初期化子の構文(<code>new Point { X = 1, Y = 2 }</code> みたいなの)をコンストラクター呼び出し(<code>new Point(1, 2)</code>)に置換しようかという案。</p>
+<p><a href="/study/csharp/start/sp3_inference/#implicit">匿名型</a>に対してはこういう類の変換をすることで immutable を実現しているので、匿名型と名前付きの型の不整合をなくそうという話になります。</p>
+<h3 id="non-destructive-mutation-and-data-classes">Non-destructive mutation and data classes</h3>
+<p>immutable な型のインスタンスに対して、非破壊な書き換え(non-destructive mutation)、すなわち、「コピーを作って一部のメンバーだけ書き換えたインスタンスを作りたい」ということが結構あります。
+これに対して、以下のような with 構文を導入したいという話は前々からありました。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> p2 = p1 with { X = <span class="number">4</span> };</code></pre>
+<p>問題は、この with 構文をどう解釈(どうコード生成)すべきかという点です。</p>
+<h4 id="withers-through-virtual-factories">withers through virtual factories</h4>
+<p>with は、以下のような <code>With</code> メソッドとそれの呼び出しに展開しようという案になっています。
+<code>With</code> メソッドの生成トリガーにするために、クラスには data 修飾を求めようという話も。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> data <span class="keyword">class</span> Point(X, Y)
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; }
+}
+<span class="keyword">var</span> p2 = p1 with { Y = <span class="number">2</span> };</code></pre>
+<p>以下のように展開されます。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> Point(X, Y)
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; }
+ 
+    <span class="keyword">public</span> <span class="keyword">virtual</span> Point With(<span class="keyword">int</span> X, <span class="keyword">int</span> Y) =&gt; <span class="keyword">new</span> Point(X, Y);
+}
+<span class="keyword">var</span> p2 = p1.With(p1.X, <span class="number">2</span>);</code></pre>
+<p>この案では、どのプロパティがどのコンストラクター引数と対応しているのかがわかっていないといけないので、data class には前述の primary constructor が必須みたいです。</p>
+<p>virtual なファクトリ メソッドを必要とするのは、以下のように、派生型のメンバーのコピーがちゃんと働くようにするためです。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> data <span class="keyword">class</span> Person(Name)
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> Name { <span class="keyword">get</span>; }
+}
+<span class="keyword">public</span> data <span class="keyword">class</span> Student(ID) : Person
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> ID { <span class="keyword">get</span>; }
+}</code></pre>
+<p>以下のように展開されます。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> Person(Name)
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> Name { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="keyword">virtual</span> Person With(<span class="keyword">string</span> Name) =&gt; <span class="keyword">new</span> Person()
+}
+<span class="keyword">public</span> <span class="keyword">class</span> Student(ID) : Person
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> ID { <span class="keyword">get</span>; }
+ 
+    <span class="keyword">public</span> <span class="keyword">sealed</span> <span class="keyword">override</span> Person With(<span class="keyword">string</span> Name) =&gt; With(Name, <span class="keyword">this</span>.ID);
+    <span class="keyword">public</span> <span class="keyword">virtual</span> Student With(<span class="keyword">string</span> Name, <span class="keyword">int</span> ID) =&gt; <span class="keyword">new</span> Student(Name, ID);
+}</code></pre>
+<h4 id="auto-generated-deconstructors">Auto-generated deconstructors</h4>
+<p>data class では「どのプロパティがどのコンストラクター引数と対応しているのかがわかっていないといけない」、「primary constructor 必須」なので、
+だったら<a href="/study/csharp/datatype/deconstruction/">分解</a>用の <code>Deconstruct</code> メソッドも(プロパティと引数の結び付け、コンストラクターの逆パターンなので)自動生成できる状況になります。</p>
+<p><code>With</code> メソッドだけ、<code>Deconstruct</code> メソッドだけをそれぞれ別々に生成したいという要件はあまり重い浮かばず、「data 修飾を付ければ <code>With</code> も <code>Deconstruct</code> も生成」でいいだろうというような雰囲気。</p>
+<h4 id="abbreviated-data-members">Abbreviated data members</h4>
+<p>with 構文に data 修飾と primary constructor の引数が必須なのであれば、
+data class はもう常に前述の「primary constructor member declarations」的な挙動をするという扱いでよさそうです。</p>
+<p>要するに、以下のような書き方で、</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> data <span class="keyword">class</span> Point(<span class="keyword">int</span> X, <span class="keyword">int</span> Y);</code></pre>
+<p>プロパティ <code>public int X { get; }</code> と <code>public int Y { get; }</code> を生成したいという話に。</p>
+<h3 id="data-classes-as-value-classes">data classes as value classes</h3>
+<p>value 修飾(値による比較、<code>Equals</code> の生成が目的)と data 修飾(非破壊な書き換え、<code>With</code>/<code>Deconstruct</code> の生成が目的)の2つの案が出たわけですが、割と似て非なる感があります。ただ、必ずしも同じではない。</p>
+<p>とはいえ、data と value の2個の修飾子を常に両方書かないといけないというのが快適化というと微妙な感じ。</p>
+<p>ただ、「value class は常に data class か」と言われるとおそらく違います。
+data class の方が「primary constructor 必須」とかの制約が強くて、
+値による比較だけが欲しくて使いにくいという場面は十分想定されます。
+with 構文が求めている「インスタンスのコピー」自体を禁止したい場合もあると思います。</p>
+<p>逆に、「data class は常に value class か」の方はたぶんその方が都合がよさそうです。</p>
+<h3 id="section">結論</h3>
+<p>Records がらみを小さな機能の集まりに分けたいという話でいろいろと検討していますが、
+結局、いくつかの機能は不可分(data class には primary constructor が必須だったり、<code>With</code> 生成と <code>Deconstruct</code> 生成は常にセットだったり)なところはあります。
+それでも、抜き出せる部分はちゃんと抜き出して個別の機能としたいし、特に、値による比較(value class)は個別に切り出すことが有用そうです。</p>
+<p>まだ詳細を詰めないといけない部分は残っていますが、今回挙げた案で Records として求めらているものは大筋実現できそうな感じにはなっていると思います。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2020/2/">2&#x6708;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

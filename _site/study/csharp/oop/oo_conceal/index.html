@@ -1,0 +1,535 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5B9F;&#x88C5;&#x306E;&#x96A0;&#x853D; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/oop/oo_conceal/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">実装の隠蔽</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>「<a href="/study/csharp/oop/oo_about/">オブジェクト指向とは</a>」で「オブジェクトは内部の実装がどうなっているのかを隠蔽し、可能な操作と属性のみを公開する」と書きました。
+しかし、今までのサンプルではまず、クラスの定義の仕方などを覚えてもらうためにこのような実装の隠蔽については何も説明していませんでした。</p>
+<p>ここでは、
+クラスの内部実装を隠蔽するためにクラスのメンバー変数やメソッドにアクセシビリティを設定する方法を説明し、
+なぜクラスの内部実装を隠蔽する必要があるのかを説明します。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>オブジェクト指向の中核概念その1: 実装の隠蔽（カプセル化）。</p>
+</li>
+<li><p>外（クラス利用側）から見た振る舞いと中身（実装側）はわけて考える。</p>
+</li>
+<li><p>中身は隠す（利用者に見せない）。</p>
+</li>
+<li><p>目的：</p>
+<ul>
+<li><p>不正な書き換えを防止する。</p>
+</li>
+<li><p>実装を変更したときに、利用者側まで変更する必要をなくす。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="level"></a>アクセシビリティ</h2>
+<p>クラスのメンバー変数やメソッドには<strong id="level" class="keyword">アクセシビリティ</strong>（Accessibility: アクセスできる度合い）というものがあります。
+アクセシビリティとは、変数やメソッドに対して、どこからアクセスできるかという制限の度合いのことで、
+以下のようなものがあります。</p>
+<table summary="アクセシビリティに関する修飾子">
+
+	<tr>
+		<th>アクセシビリティ</th>
+		<th>説明</th>
+	</tr>
+	<tr>
+		<td><p>public</p></td>
+		<td><p>どこからでもアクセス可能</p></td>
+	</tr>
+	<tr>
+		<td><p>protected</p></td>
+		<td><p>クラス内部と、派生クラスの内部からのみアクセス可能</p></td>
+	</tr>
+	<tr>
+		<td><p>internal</p></td>
+		<td><p>同一プロジェクト内のクラスからのみアクセス可能</p></td>
+	</tr>
+	<tr>
+		<td><p>protected internal</p></td>
+		<td><p>同一プロジェクト内のクラス内部、または、派生クラスの内部からのみアクセス可能</p></td>
+	</tr>
+	<tr>
+		<td><p>private protected</p></td>
+		<td><p>(C# 7.2 以降)同一プロジェクト内のクラス内部、かつ、派生クラスの内部からのみアクセス可能</p></td>
+	</tr>
+	<tr>
+		<td><p>private</p></td>
+		<td><p>クラス内部からのみアクセス可能</p></td>
+	</tr>
+</table>
+<p><img src="/assets/media/1141/accessibility.png" alt="アクセシビリティに関する修飾子" /></p>
+<p>以下のように変数の前にキーワードを付けることでアクセシビリティを制御することが出来ます。</p>
+<pre><code class="language-csharp">アクセシビリティ 変数宣言やメソッド定義</code></pre>
+<p>派生クラスについては後ほど「<a href="/study/csharp/oop/oo_inherit/#subclass">継承</a>」で説明します。
+また、アセンブリについては「<a href="/study/csharp/package/project/#assembly">プロジェクトの分割</a>」で説明します。</p>
+<p>アクセス権限のない場所からクラスのメンバーにアクセスしようとするとエラーになります。
+例えば、アクセシビリティをprivateにした変数に、クラスの外部からアクセスしようとするとエラーになります。
+とりあえず、今のところは<em>クラスの外部に公開したいものはpublicに、そうでないものはprivateにする</em>とだけ覚えておいてください。</p>
+<p>ちなみに、アクセシビリティを明示的に指定しなかった場合、private (一番厳しい制限)扱いされます。
+後述しますが、むやみに広い範囲からアクセスできると後々の修正が大変になることがあるので、
+可能な限り狭い範囲からだけアクセスできるようにすることをお勧めします。
+迷うようなら、最初はprivateで作って、必要になったときに必要な分だけ制限を緩めるのがいいでしょう。</p>
+<p>また、別項(<a href="/study/csharp/package/toplevelaccessibility/">トップ レベルのアクセシビリティ</a>)で説明しますが、(トップ レベルにある)クラス自身に対するアクセシビリティは public もしくは internal のみになります。</p>
+<h5 id="section-4"><a id="sec-generated-title-4"></a>サンプル</h5>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+  <span class="keyword">public</span>    <span class="keyword">int</span> pub; <span class="comment">// どこからでもアクセス可能</span>
+  <span class="keyword">protected</span> <span class="keyword">int</span> pro; <span class="comment">// クラス内部と派生クラス内部からアクセス可能</span>
+  <span class="keyword">private</span>   <span class="keyword">int</span> pri; <span class="comment">// クラス内部からのみアクセス可能</span>
+
+  <span class="keyword">public</span> <span class="keyword">void</span> function1()
+  {
+    <span class="comment">// クラス内部</span>
+    pub = <span class="number">1</span>; <span class="comment">// OK</span>
+    pro = <span class="number">2</span>; <span class="comment">// OK</span>
+    pri = <span class="number">3</span>; <span class="comment">// OK</span>
+  }
+}
+
+<span class="keyword">class</span> B : A
+{
+  <span class="keyword">public</span> <span class="keyword">void</span> function2()
+  {
+    <span class="comment">// 派生クラス内部</span>
+    pub = <span class="number">1</span>; <span class="comment">// OK</span>
+    pro = <span class="number">2</span>; <span class="comment">// OK</span>
+    pri = <span class="number">3</span>; <span class="comment">// エラー</span>
+  }
+}
+
+<span class="keyword">class</span> AccessibilitySample
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    A a = <span class="keyword">new</span> A();
+    <span class="comment">// クラス A の外部</span>
+    a.pub = <span class="number">1</span>; <span class="comment">// OK</span>
+    a.pro = <span class="number">2</span>; <span class="comment">// エラー</span>
+    a.pri = <span class="number">3</span>; <span class="comment">// エラー</span>
+  }
+}</code></pre>
+<p>このソースをコンパイルしようとすると、以下のようなエラーが出ます。</p>
+<pre><code class="language-console">test.cs(23,3): error CS0122: 'A.pri' is inaccessible due to its protection level
+test.cs(34,3): error CS0122: 'A.pro' is inaccessible due to its protection level
+test.cs(35,3): error CS0122: 'A.pri' is inaccessible due to its protection level</code></pre>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="conceal"></a>実装の隠蔽</h2>
+<p>通常、内部の実装がどうなっているのかを隠蔽（要するに private にする）し、可能な操作のみを公開(public)することが望ましいとされています。
+簡単に言うと、<em>メンバー変数はクラス外部から直接アクセス出来ないようにして、オブジェクトの状態の変更はすべてメソッドを通して行うべきだということです</em>。</p>
+<p>例として、「<a href="/study/csharp/oop/oo_class/">クラス</a>」で作った複素数クラスについて考えてみましょう。
+以前は実装の隠蔽は行っていませんでしたが、
+ちゃんと実装を隠蔽するように作り直して見ましょう。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Complex
+{
+  <span class="comment">// 実装は外部から隠蔽(privateにしておく)</span>
+  <span class="keyword">private</span> <span class="keyword">double</span> re; <span class="comment">// 実部を記憶しておく</span>
+  <span class="keyword">private</span> <span class="keyword">double</span> im; <span class="comment">// 虚部を記憶しておく</span>
+
+  <span class="comment">// 実部を取り出す</span>
+  <span class="keyword">public</span> <span class="keyword">double</span> Re(){<span class="keyword">return</span> <span class="keyword">this</span>.re;}
+
+  <span class="comment">// 実部を書き換え</span>
+  <span class="keyword">public</span> <span class="keyword">void</span> Re(<span class="keyword">double</span> x){<span class="keyword">this</span>.re = x;}
+
+  <span class="comment">// 虚部を取り出す</span>
+  <span class="keyword">public</span> <span class="keyword">double</span> Im(){<span class="keyword">return</span> <span class="keyword">this</span>.im;}
+
+  <span class="comment">// 虚部を書き換え</span>
+  <span class="keyword">public</span> <span class="keyword">void</span> Im(<span class="keyword">double</span> y){<span class="keyword">this</span>.im = y;}
+
+  <span class="comment">// 絶対値を取り出す</span>
+  <span class="keyword">public</span> <span class="keyword">double</span> Abs()
+  {
+    <span class="keyword">return</span> Math.Sqrt(re*re + im*im);<span class="comment">// Math.Sqrt は平方根を求める関数</span>
+  }
+}</code></pre>
+<p>見ての通り、以前のものと比べてかなり回りくどくて面倒くさいものになっています。
+なぜこのようにわざわざ回りくどい書き方をしなければいけないのか疑問に感じるかと思いますが、
+クラスの内部実装を隠蔽する意義は、大きく分けて以下の2つがあります。</p>
+<ul>
+<li><p>オブジェクトの不正な書き換えを防止する。</p>
+</li>
+<li><p>クラスの実装を変更した際、利用側のコードを修正する必要をなくす</p>
+</li>
+</ul>
+<p>ちなみに、パフォーマンスに関しては心配する必要はありません。
+<a href="/study/csharp/structured/miscinlining/">インライン展開</a>という最適化が掛かるので、
+元々のフィールドを直接公開するコードと大差ない速度で実行できます。</p>
+<h5 id="section-6"><a id="sec-generated-title-6"></a>オブジェクトの不正な書き換え防止する</h5>
+<p>「<a href="/assets/oo_construct.html">コンストラクタ</a>」で、 <code>Person</code> というクラスを作りました。
+ここで、年齢が負の数になるのはおかしいので、
+コンストラクタで年齢が負の数にならないようにチェックを行うように改良してみましょう。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Person
+{
+  <span class="keyword">public</span> <span class="keyword">string</span> name; <span class="comment">// 名前</span>
+  <span class="keyword">public</span> <span class="keyword">int</span> age;     <span class="comment">// 年齢</span>
+
+  <span class="keyword">public</span> Person()
+  {
+    <span class="keyword">this</span>.name = <span class="string">&quot;&quot;</span>;
+    <span class="keyword">this</span>.age  = <span class="number">0</span>;
+  }
+
+  <span class="keyword">public</span> Person(<span class="keyword">string</span> name, <span class="keyword">int</span> age)
+  {
+    <span class="keyword">this</span>.name = name;
+    <span class="keyword">this</span>.age  = age &gt; <span class="number">0</span> ? age : <span class="number">0</span>; <span class="comment">// age が負だった場合、0歳にしておく</span>
+  }
+}</code></pre>
+<p>しかし、現時点ではクラスの外部から<code>Person</code>クラスのメンバー<code>age</code>を直接書き換えれてしまうため、
+年齢が負の数にならないように強制することは無理です。
+例えば、以下のサンプルのようにすると無理やり年齢を負の数に設定することができます。</p>
+<pre><code class="language-csharp">Person p = <span class="keyword">new</span> Person(<span class="string">&quot;範馬刃牙&quot;</span>, -<span class="number">5</span>); <span class="comment">// 年齢に負の値を設定しようとしても</span>
+Console.Write(<span class="string">&quot;{0}は{1}歳です。\n&quot;</span>,  <span class="comment">// 0歳に修正されている</span>
+              p.name, p.age);        <span class="comment">// (「範馬刃牙は0歳です」と表示される)</span>
+
+p.age = -<span class="number">5</span>;                          <span class="comment">// でも、ageを直接書き換えてしまえば</span>
+Console.Write(<span class="string">&quot;{0}は{1}歳です。\n&quot;</span>,  <span class="comment">// 負の年齢になってしまう</span>
+              p.name, p.age);        <span class="comment">// (「範馬刃牙は-5歳です」と表示される)</span></code></pre>
+<p>この問題を解決するためには、メンバー変数<code>age</code>は外部からは直接アクセスできないようにして、メソッドを通して<code>age</code>の値を設定、取得する必要があります。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Person
+{
+  <span class="keyword">public</span> <span class="keyword">string</span> name; <span class="comment">// 名前</span>
+  <span class="keyword">private</span> <span class="keyword">int</span> age;    <span class="comment">// 年齢</span>
+
+  <span class="keyword">public</span> Person()
+  {
+    <span class="keyword">this</span>.name = <span class="string">&quot;&quot;</span>;
+    <span class="keyword">this</span>.age  = <span class="number">0</span>;
+  }
+
+  <span class="keyword">public</span> Person(<span class="keyword">string</span> name, <span class="keyword">int</span> age)
+  {
+    <span class="keyword">this</span>.name = name;
+    SetAge(age);
+  }
+
+  <span class="keyword">public</span> <span class="keyword">int</span> GetAge()
+  {
+    <span class="keyword">return</span> <span class="keyword">this</span>.age;
+  }
+
+  <span class="keyword">public</span> <span class="keyword">void</span> SetAge(<span class="keyword">int</span> age)
+  {
+    <span class="keyword">this</span>.age  = age &gt; <span class="number">0</span> ? age : <span class="number">0</span>; <span class="comment">// age が負だった場合、0歳にしておく</span>
+  }
+}</code></pre>
+<h5 id="section-7"><a id="sec-generated-title-7"></a>クラスの実装を変更した際、利用側のコードを修正する必要をなくす</h5>
+<p>クラスの実装を隠蔽しない場合、どのような不具合が生じるかを説明するため、
+まず、以下のコードについて考えてみましょう。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="comment">// クラス定義</span>
+<span class="keyword">class</span> Complex
+{
+  <span class="keyword">public</span> <span class="keyword">double</span> re; <span class="comment">// 実部を記憶しておく(外部からの読み出し・書き換えも可能)</span>
+  <span class="keyword">public</span> <span class="keyword">double</span> im; <span class="comment">// 虚部を記憶しておく(外部からの読み出し・書き換えも可能)</span>
+
+  <span class="comment">// 絶対値を取り出す</span>
+  <span class="keyword">public</span> <span class="keyword">double</span> Abs()
+  {
+    <span class="keyword">return</span> Math.Sqrt(re*re + im*im);<span class="comment">// Math.Sqrt は平方根を求める関数</span>
+  }
+}
+
+<span class="comment">// クラス利用側</span>
+<span class="keyword">class</span> ConcealSample
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    Complex c = <span class="keyword">new</span> Complex();
+    c.re = <span class="number">4</span>; <span class="comment">// メンバー変数に直接アクセス</span>
+    c.im = <span class="number">3</span>; <span class="comment">// メンバー変数に直接アクセス</span>
+    Console.Write(<span class="string">&quot;|c| = {0}\n&quot;</span>, c.Abs());
+  }
+}</code></pre>
+<p>「<a href="/study/csharp/oop/oo_class/">クラス</a>」で説明しましたが、複素数クラスの実装方法には、
+上述のコードのような「実部と虚部をメンバー変数に記憶しておく」方法のほかに、
+「絶対値と偏角をメンバー変数に記憶しておく」方法があります。
+そして、加減算を行う回数よりも乗除算を行う回数のほうがはるかに多い場合、
+後者のほうが計算量が少なくなります。</p>
+<p>例えば、この複素数クラスを利用するプログラムがあったとして、
+そのプログラムでは加減算よりも乗除算の回数のほうがはるかに多いため、
+後者の方式に変更したくなったとします。
+この場合、以下のようにクラスの側だけでなく、クラスの利用側のコードも修正する必要があります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="comment">// クラス定義</span>
+<span class="keyword">class</span> Complex
+{
+  <span class="keyword">public</span> <span class="keyword">double</span> abs; <span class="comment">// 絶対値を記憶しておく(外部からの読み出し・書き換えも可能)</span>
+  <span class="keyword">public</span> <span class="keyword">double</span> arg; <span class="comment">// 偏角を記憶しておく(外部からの読み出し・書き換えも可能)</span>
+
+  <span class="comment">// 実部・虚部を書き換え</span>
+  <span class="keyword">public</span> <span class="keyword">void</span> Set(<span class="keyword">double</span> x, <span class="keyword">double</span> y)
+  {
+    <span class="keyword">this</span>.abs = Math.Sqrt(x*x + y*y);
+    <span class="keyword">this</span>.arg = Math.Atan2(y, x);
+  }
+}
+
+<span class="comment">// クラス利用側</span>
+<span class="keyword">class</span> ConcealSample
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    Complex c = <span class="keyword">new</span> Complex();
+    c.Set(<span class="number">4</span>, <span class="number">3</span>); <span class="comment">// クラス利用側のコードも修正が必要</span>
+    Console.Write(<span class="string">&quot;|c| = {0}\n&quot;</span>, c.abs);
+  }
+}</code></pre>
+<p>このように、
+クラスの実装方法を変更するたびに、利用側のコードまで修正する必要があると、
+プログラムを作るのも保守するのも大変になります。</p>
+<p>このような問題は、以下のように実装を隠蔽することで避けることができます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="comment">// クラス定義</span>
+<span class="keyword">class</span> Complex
+{
+  <span class="comment">// 実装は外部から隠蔽(privateにしておく)</span>
+  <span class="keyword">private</span> <span class="keyword">double</span> re; <span class="comment">// 実部を記憶しておく</span>
+  <span class="keyword">private</span> <span class="keyword">double</span> im; <span class="comment">// 虚部を記憶しておく</span>
+
+  <span class="keyword">public</span> <span class="keyword">double</span> Re(){<span class="keyword">return</span> <span class="keyword">this</span>.re;}    <span class="comment">// 実部を取り出す</span>
+  <span class="keyword">public</span> <span class="keyword">void</span> Re(<span class="keyword">double</span> x){<span class="keyword">this</span>.re = x;} <span class="comment">// 実部を書き換え</span>
+
+  <span class="keyword">public</span> <span class="keyword">double</span> Im(){<span class="keyword">return</span> <span class="keyword">this</span>.im;}    <span class="comment">// 虚部を取り出す</span>
+  <span class="keyword">public</span> <span class="keyword">void</span> Im(<span class="keyword">double</span> y){<span class="keyword">this</span>.im = y;} <span class="comment">// 虚部を書き換え</span>
+
+  <span class="keyword">public</span> <span class="keyword">double</span> Abs(){<span class="keyword">return</span> Math.Sqrt(re*re + im*im);}  <span class="comment">// 絶対値を取り出す</span>
+}
+
+<span class="comment">// クラス利用側</span>
+<span class="keyword">class</span> ConcealSample
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    Complex c = <span class="keyword">new</span> Complex();
+    c.Re(<span class="number">4</span>); <span class="comment">// メソッドを通してオブジェクトの状態を変更</span>
+    c.Im(<span class="number">3</span>);
+    Console.Write(<span class="string">&quot;|c| = {0}\n&quot;</span>, c.Abs());
+  }
+}</code></pre>
+<p>このコードの実装方法を
+「実部と虚部をメンバー変数に記憶しておく」方法から
+「絶対値と偏角をメンバー変数に記憶しておく」方法に変更する場合、
+以下のように、クラス利用側のコードに手を加える必要は一切ありません。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="comment">// クラス定義</span>
+<span class="keyword">class</span> Complex
+{
+  <span class="comment">// 実装は外部から隠蔽(privateにしておく)</span>
+  <span class="keyword">private</span> <span class="keyword">double</span> abs; <span class="comment">// 絶対値を記憶しておく</span>
+  <span class="keyword">private</span> <span class="keyword">double</span> arg; <span class="comment">// 偏角を記憶しておく</span>
+
+  <span class="comment">// 実部を取り出す</span>
+  <span class="keyword">public</span> <span class="keyword">double</span> Re()
+  {
+    <span class="keyword">return</span> <span class="keyword">this</span>.abs * Math.Cos(<span class="keyword">this</span>.arg);
+  }
+
+  <span class="comment">// 実部を書き換え</span>
+  <span class="keyword">public</span> <span class="keyword">void</span> Re(<span class="keyword">double</span> x)
+  {
+    <span class="keyword">double</span> im = <span class="keyword">this</span>.abs * Math.Sin(<span class="keyword">this</span>.arg);
+    <span class="keyword">this</span>.abs = Math.Sqrt(x*x + im*im);
+    <span class="keyword">this</span>.arg = Math.Atan2(im, x);
+  }
+
+  <span class="comment">// 虚部を取り出す</span>
+  <span class="keyword">public</span> <span class="keyword">double</span> Im(){<span class="keyword">return</span> <span class="keyword">this</span>.abs * Math.Sin(<span class="keyword">this</span>.arg);}
+
+  <span class="comment">// 虚部を書き換え</span>
+  <span class="keyword">public</span> <span class="keyword">void</span> Im(<span class="keyword">double</span> y)
+  {
+    <span class="keyword">double</span> re = <span class="keyword">this</span>.abs * Math.Cos(<span class="keyword">this</span>.arg);
+    <span class="keyword">this</span>.abs = Math.Sqrt(y*y + re*re);
+    <span class="keyword">this</span>.arg = Math.Atan2(y, re);
+  }
+
+  <span class="keyword">public</span> <span class="keyword">double</span> Abs(){<span class="keyword">return</span> <span class="keyword">this</span>.abs;}  <span class="comment">// 絶対値を取り出す</span>
+}
+
+<span class="comment">// クラス利用側</span>
+<span class="keyword">class</span> ConcealSample
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    Complex c = <span class="keyword">new</span> Complex();
+    c.Re(<span class="number">4</span>); <span class="comment">// クラス利用側は一切変更せず</span>
+    c.Im(<span class="number">3</span>);
+    Console.Write(<span class="string">&quot;|c| = {0}\n&quot;</span>, c.Abs());
+  }
+}</code></pre>
+<h2 id="protectedinternalprotected-internal-private-protected"><a id="sec-generated-title-8"></a> <a id="protected-internal"></a>protected、internal、protected internal と private protected</h2>
+<p><code>protected</code>や<code>internal</code>が必要になるのは<a href="/study/csharp/oop/oo_inherit/#subclass">派生クラス</a>や<a href="/study/csharp/package/project/#assembly">アセンブリ</a>が必要になってからですが、一応ここである程度説明しておきます。</p>
+<p>まず、1つの<a href="/study/csharp/package/project/#project">プロジェクト</a>内ではアクセシビリティに応じて以下のような制限がかかります。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> Base
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> Public { <span class="keyword">get</span>; <span class="keyword">set</span>; } <span class="comment">// どこからでも</span>
+    <span class="keyword">protected</span> <span class="keyword">int</span> Protected { <span class="keyword">get</span>; <span class="keyword">set</span>; } <span class="comment">// 派生クラスからだけ</span>
+    <span class="keyword">internal</span> <span class="keyword">int</span> Internal { <span class="keyword">get</span>; <span class="keyword">set</span>; } <span class="comment">// 同一アセンブリ(同一 exe/同一 dll)内からだけ</span>
+    <span class="keyword">protected</span> <span class="keyword">internal</span> <span class="keyword">int</span> ProtectedInternal { <span class="keyword">get</span>; <span class="keyword">set</span>; } <span class="comment">// 派生クラス &quot;もしくは&quot; 同一アセンブリ内 から</span>
+    <span class="keyword">private</span> <span class="keyword">protected</span> <span class="keyword">int</span> PrivateProtected { <span class="keyword">get</span>; <span class="keyword">set</span>; } <span class="comment">// 派生クラス &quot;かつ&quot; 同一アセンブリ内 から(C# 7.2 以降)</span>
+    <span class="keyword">private</span> <span class="keyword">int</span> Private { <span class="keyword">get</span>; <span class="keyword">set</span>; } <span class="comment">// クラス内からだけ</span>
+
+    <span class="keyword">public</span> <span class="keyword">void</span> Method()
+    {
+        <span class="comment">// 同一クラス内</span>
+        <span class="comment">// 全部 OK</span>
+        Public = <span class="number">0</span>;
+        Protected = <span class="number">0</span>;
+        Internal = <span class="number">0</span>;
+        ProtectedInternal = <span class="number">0</span>;
+        Private = <span class="number">0</span>;
+        PrivateProtected = <span class="number">0</span>;
+    }
+}
+
+<span class="keyword">internal</span> <span class="keyword">class</span> Derived : Base
+{
+    <span class="keyword">public</span> <span class="keyword">void</span> MethodInDerived()
+    {
+        <span class="comment">// 同一アセンブリ内の派生クラス</span>
+        <span class="comment">// コメントアウトしてないやつだけ OK</span>
+        Public = <span class="number">0</span>;
+        Protected = <span class="number">0</span>;
+        Internal = <span class="number">0</span>;
+        ProtectedInternal = <span class="number">0</span>;
+        <span class="comment">//Private = 0;</span>
+        PrivateProtected = <span class="number">0</span>;
+    }
+}
+
+<span class="keyword">internal</span> <span class="keyword">class</span> OtherClass
+{
+    <span class="keyword">public</span> <span class="keyword">void</span> Method()
+    {
+        <span class="comment">// 同一アセンブリ内の他のクラス</span>
+        <span class="comment">// コメントアウトしてないやつだけ OK</span>
+        <span class="keyword">var</span> x = <span class="keyword">new</span> Base();
+
+        x.Public = <span class="number">0</span>;
+        <span class="comment">//x.Protected = 0;</span>
+        x.Internal = <span class="number">0</span>;
+        x.ProtectedInternal = <span class="number">0</span>;
+        <span class="comment">//x.Private = 0;</span>
+        <span class="comment">//x.PrivateProtected = 0;</span>
+    }
+}</code></pre>
+<p>このコードとは別のプロジェクト内では、以下のような制限がかかります。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> Derived : ClassLibrary1.Base
+{
+    <span class="keyword">public</span> <span class="keyword">void</span> MethodInDerived()
+    {
+        <span class="comment">// 他のアセンブリ内の派生クラス</span>
+        <span class="comment">// コメントアウトしてないやつだけ OK</span>
+
+        Public = <span class="number">0</span>;
+        Protected = <span class="number">0</span>;
+        <span class="comment">//Internal = 0;</span>
+        ProtectedInternal = <span class="number">0</span>;
+        <span class="comment">//Private = 0;</span>
+        <span class="comment">//PrivateProtected = 0; // ここが protected internal との差</span>
+    }
+}
+
+<span class="keyword">internal</span> <span class="keyword">class</span> OtherClass
+{
+    <span class="keyword">public</span> <span class="keyword">void</span> Method()
+    {
+        <span class="comment">// 他のアセンブリ内の他のクラス</span>
+        <span class="comment">// public 以外全滅</span>
+
+        <span class="keyword">var</span> x = <span class="keyword">new</span> ClassLibrary1.Base();
+
+        x.Public = <span class="number">0</span>;
+        <span class="comment">//x.Protected = 0;</span>
+        <span class="comment">//x.Internal = 0;</span>
+        <span class="comment">//x.ProtectedInternal = 0;</span>
+        <span class="comment">//x.Private = 0;</span>
+        <span class="comment">//x.PrivateProtected = 0;</span>
+    }
+}</code></pre>
+<p>ちなみに、<code>protected internal</code> と <code>private protected</code> では、語順は自由です。
+<code>protected internal</code>と<code>internal protected</code>、<code>private protected</code>と<code>protected private</code>はそれぞれ同じ意味になります。</p>
+<pre><code class="language-csharp"><span class="comment">// どちらの順序でも同じ意味</span>
+<span class="keyword">protected</span> <span class="keyword">internal</span> <span class="keyword">int</span> A1;
+<span class="keyword">internal</span> <span class="keyword">protected</span> <span class="keyword">int</span> A2;
+
+<span class="keyword">private</span> <span class="keyword">protected</span> <span class="keyword">int</span> B1;
+<span class="keyword">protected</span> <span class="keyword">private</span> <span class="keyword">int</span> B2;</code></pre>
+<h3 id="private-protected-c"><a id="sec-generated-title-9"></a> <a id="private-protected"></a>余談: private protected は C# コンパイラー上だけの問題</h3>
+<h5 class="version version7_1">Ver. 7.2</h5>
+<p>余談となりますが、<code>private protected</code>相当のアクセシビリティは、<a href="/study/csharp/abstract/ab_dotnet/#il">IL</a>レベルでは 1.0 の頃からずっとあります。</p>
+<table>
+<thead>
+<tr>
+<th>C#</th>
+<th>IL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>public</td>
+<td>public</td>
+</tr>
+<tr>
+<td>protected</td>
+<td>family</td>
+</tr>
+<tr>
+<td>internal</td>
+<td>assembly</td>
+</tr>
+<tr>
+<td>protected internal</td>
+<td>famorassem</td>
+</tr>
+<tr>
+<td>private protected</td>
+<td>famandassem</td>
+</tr>
+<tr>
+<td>private</td>
+<td>private</td>
+</tr>
+</tbody>
+</table>
+<p>protectedを指してfamily、internalを指してassemblyと、別の単語を使っていますが意味は同じです。
+famorassem、famandassemはそれぞれfamily <em>or</em> assembly、family <em>and</em> assemblyの意味です。</p>
+<p>当初、fam<em>and</em>assem相当のアクセシビリティの需要を甘く見ていて、
+<code>protected internal</code>をfam<em>or</em>assemの意味で用い、fam<em>and</em>assemは用意しませんでした。</p>
+<p>元々あるものなので、<code>private protected</code>の追加は大して難しい作業ではありません。
+しかし、キーワードをどうするかでかなり悩みました。
+最初に追加することを考えたのは C# 6.0 の頃ですが、結局、C# 7.2まで延びました。</p>
+<p>確かに、<code>private protected</code>と言われて「<code>protected</code> かつ <code>internal</code>」とは想像しにくいです。
+一応、「<code>private</code>が混ざってるからより厳しい方」 = 「かつ」と覚えてください。</p>
+<p>他のキーワードを導入するとか、<code>protected and internal</code>や<code>protected &amp; internal</code>みたいな書き方も検討されましたが、
+新しいキーワードの追加やこれ専用の文法の追加はコスト的に見合わないということで見送られました。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/oop/">&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x6307;&#x5411;</a></li><li><a href="/study/csharp/oop/oo_about/">&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x6307;&#x5411;&#x3068;&#x306F;</a></li><li><a href="/study/csharp/oop/oo_class/">&#x30AF;&#x30E9;&#x30B9;</a></li><li><a href="/study/csharp/oop/oo_construct/">&#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;</a></li><li><a href="/study/csharp/oop/oo_property/">&#x30D7;&#x30ED;&#x30D1;&#x30C6;&#x30A3;</a></li><li><a href="/study/csharp/oop/oo_static/">&#x9759;&#x7684;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/study/csharp/oop/moduleinitializer/">&#x30E2;&#x30B8;&#x30E5;&#x30FC;&#x30EB;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/study/csharp/oop/oo_operator/">&#x6F14;&#x7B97;&#x5B50;&#x306E;&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30ED;&#x30FC;&#x30C9;</a></li><li><a href="/study/csharp/oop/oo_indexer/">&#x30A4;&#x30F3;&#x30C7;&#x30AF;&#x30B5;&#x30FC;</a></li><li><a href="/study/csharp/oop/oo_inherit/">&#x7D99;&#x627F;</a></li><li><a href="/study/csharp/oop/miscimplictinherit/">[&#x4F59;&#x8AC7;] &#x6697;&#x9ED9;&#x7684;&#x306A;&#x6D3E;&#x751F;</a></li><li><a href="/study/csharp/oop/oo_multipleinheritance/">[&#x96D1;&#x8A18;] &#x591A;&#x91CD;&#x7D99;&#x627F;&#x3067;&#x304D;&#x306A;&#x3044;&#x7406;&#x7531;</a></li><li><a href="/study/csharp/oop/oo_polymorphism/">&#x591A;&#x614B;&#x6027;</a></li><li><a href="/study/csharp/oop/misc_as/">[&#x96D1;&#x8A18;] &#x30AD;&#x30E3;&#x30B9;&#x30C8;&#x3068; as</a></li><li><a href="/study/csharp/oop/misc_construct/">[&#x96D1;&#x8A18;] &#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;&#x5185;&#x306E;&#x4EEE;&#x60F3;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x547C;&#x3073;&#x51FA;&#x3057;</a></li><li><a href="/study/csharp/oop/oo_abstract/">&#x62BD;&#x8C61;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x3001;&#x62BD;&#x8C61;&#x30AF;&#x30E9;&#x30B9;</a></li><li><a href="/study/csharp/oop/oo_interface/">&#x30A4;&#x30F3;&#x30BF;&#x30FC;&#x30D5;&#x30A7;&#x30FC;&#x30B9;</a></li><li><a href="/study/csharp/oop/misc_autoimpl/">[&#x96D1;&#x8A18;] &#x62BD;&#x8C61;&#x5B9A;&#x7FA9;&#x3068;&#x81EA;&#x52D5;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/oop/oo_vftable/">[&#x96D1;&#x8A18;] &#x4EEE;&#x60F3;&#x95A2;&#x6570;&#x30C6;&#x30FC;&#x30D6;&#x30EB;</a></li><li><a href="/study/csharp/oop/sp2_generics/">&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/oop/sp4_variance/">&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30AF;&#x30B9;&#x306E;&#x5171;&#x5909;&#x6027;&#x30FB;&#x53CD;&#x5909;&#x6027;</a></li><li><a href="/study/csharp/oop/generic-math-operators/">&#x3010;Generic Math&#x3011; C# 11 &#x3067;&#x306E;&#x6F14;&#x7B97;&#x5B50;&#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

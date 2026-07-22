@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x6642;&#x9593;&#x7684;&#x306B;&#x5909;&#x5316;&#x3059;&#x308B;&#x96FB;&#x78C1;&#x5834; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/physics/em/emfield/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">時間的に変化する電磁場</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="dynamic"></a>時間的に変化する電磁場</h2>
+<p>電荷も電流もない空間上ではマクスウェルの方程式の微分形は以下のようになります。</p>
+<table summary="">
+
+	<tr>
+		<td><p>(i)</p></td>
+		<td><span class="math">
+            <span class="vector">∇</span>×
+            <a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a> = −<a href="/study/physics/em/variable/#mu" title="物質中の透磁率">μ</a><table class="frac" summary="differential"><tr><td class="num">∂</td></tr><tr><td>∂t</td></tr></table><a href="/study/physics/em/variable/#H" title="磁場ベクトル"><span class="vector">H</span></a>
+          </span></td>
+	</tr>
+	<tr>
+		<td><p>(ii)</p></td>
+		<td><span class="math">
+            <span class="vector">∇</span>×
+            <a href="/study/physics/em/variable/#H" title="磁場ベクトル"><span class="vector">H</span></a> = <a href="/study/physics/em/variable/#conductivity" title="電気伝導率">σ</a><a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a>+<a href="/study/physics/em/variable/#eps" title="物質中の誘電率">ε</a><table class="frac" summary="differential"><tr><td class="num">∂</td></tr><tr><td>∂t</td></tr></table><a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a>
+          </span></td>
+	</tr>
+	<tr>
+		<td><p>(iii)</p></td>
+		<td><span class="math">
+            <span class="vector">∇</span>・
+            <a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a> = 0
+          </span></td>
+	</tr>
+	<tr>
+		<td><p>(iv)</p></td>
+		<td><span class="math">
+            <span class="vector">∇</span>・
+            <a href="/study/physics/em/variable/#B" title="磁束密度ベクトル"><span class="vector">B</span></a> = 0
+          </span></td>
+	</tr>
+</table>
+<p>ここで、この式を<span class="math">
+<a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a>
+</span>だけ、
+もしくは<span class="math">
+<a href="/study/physics/em/variable/#H" title="磁場ベクトル"><span class="vector">H</span></a>
+</span>だけで表すことを考えます。
+そのために、まず(i)式の両辺の回転を取ります。</p>
+<div class="math">
+      <span class="vector">∇</span>×
+      <span class="paren" style="font-size:em;">(</span>
+        <span class="vector">∇</span>×
+        <a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a>
+      <span class="paren" style="font-size:em;">)</span> = −<a href="/study/physics/em/variable/#mu" title="物質中の透磁率">μ</a><table class="frac" summary="differential"><tr><td class="num">∂</td></tr><tr><td>∂t</td></tr></table><span class="vector">∇</span>×<a href="/study/physics/em/variable/#H" title="磁場ベクトル"><span class="vector">H</span></a>
+    </div>
+ここで、
+<span class="math">
+        <span class="vector">∇</span>×<span class="paren" style="font-size:em;">(</span>
+          <span class="vector">∇</span>×
+          <a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a>
+        <span class="paren" style="font-size:em;">)</span> = <span class="vector">∇</span><span class="vector">∇</span>・<a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a> − <a href="/study/physics/em/variable/#Laplace" title="ラプラシアン">Δ</a><a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a>
+      </span>
+であることおよび、(ii)式、(iii)式を代入すると、
+<div class="math">
+      <em>
+        <a href="/study/physics/em/variable/#Laplace" title="ラプラシアン">Δ</a>
+        <a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a> = <a href="/study/physics/em/variable/#conductivity" title="電気伝導率">σ</a><a href="/study/physics/em/variable/#mu" title="物質中の透磁率">μ</a><table class="frac" summary="differential"><tr><td class="num">∂</td></tr><tr><td>∂t</td></tr></table><a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a> + <a href="/study/physics/em/variable/#eps" title="物質中の誘電率">ε</a><a href="/study/physics/em/variable/#mu" title="物質中の透磁率">μ</a><table class="frac" summary="differential"><tr><td class="num">∂<sup>2</sup></td></tr><tr><td>∂t<sup>2</sup></td></tr></table><a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a>
+      </em>
+    </div>
+という関係式が得られます。
+同様に、(ii)の回転を取り、(i)式、(iv)式を代入すると、
+<div class="math">
+      <em>
+        <a href="/study/physics/em/variable/#Laplace" title="ラプラシアン">Δ</a>
+        <a href="/study/physics/em/variable/#H" title="磁場ベクトル"><span class="vector">H</span></a> = <a href="/study/physics/em/variable/#conductivity" title="電気伝導率">σ</a><a href="/study/physics/em/variable/#eps" title="物質中の誘電率">ε</a><table class="frac" summary="differential"><tr><td class="num">∂</td></tr><tr><td>∂t</td></tr></table><a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a> + <a href="/study/physics/em/variable/#eps" title="物質中の誘電率">ε</a><a href="/study/physics/em/variable/#mu" title="物質中の透磁率">μ</a><table class="frac" summary="differential"><tr><td class="num">∂<sup>2</sup></td></tr><tr><td>∂t<sup>2</sup></td></tr></table><a href="/study/physics/em/variable/#H" title="磁場ベクトル"><span class="vector">H</span></a>
+      </em>
+    </div>
+という関係式が得られます。
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="wave"></a>電磁波</h2>
+<p>特に、<span class="math">
+<a href="/study/physics/em/variable/#conductivity" title="電気伝導率">σ</a> = 0
+</span>すなわち、伝導電流が流れないとき、
+上式は</p>
+<div class="math">
+      <em>
+        <a href="/study/physics/em/variable/#Laplace" title="ラプラシアン">Δ</a>
+        <a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a> = <a href="/study/physics/em/variable/#eps" title="物質中の誘電率">ε</a><a href="/study/physics/em/variable/#mu" title="物質中の透磁率">μ</a><table class="frac" summary="differential"><tr><td class="num">∂<sup>2</sup></td></tr><tr><td>∂t<sup>2</sup></td></tr></table><a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a>
+      </em>
+    </div><div class="math">
+      <em>
+        <a href="/study/physics/em/variable/#Laplace" title="ラプラシアン">Δ</a>
+        <a href="/study/physics/em/variable/#H" title="磁場ベクトル"><span class="vector">H</span></a> = <a href="/study/physics/em/variable/#eps" title="物質中の誘電率">ε</a><a href="/study/physics/em/variable/#mu" title="物質中の透磁率">μ</a><table class="frac" summary="differential"><tr><td class="num">∂<sup>2</sup></td></tr><tr><td>∂t<sup>2</sup></td></tr></table><a href="/study/physics/em/variable/#H" title="磁場ベクトル"><span class="vector">H</span></a>
+      </em>
+    </div>
+となります。
+<em>
+        この式は<strong id="waveequ" class="keyword">波動方程式</strong>と呼ばれ、速度<span class="math">
+          v = <span class="paren" style="font-size:em;">(</span>
+            <a href="/study/physics/em/variable/#eps" title="物質中の誘電率">ε</a>
+            <a href="/study/physics/em/variable/#mu" title="物質中の透磁率">μ</a>
+          <span class="paren" style="font-size:em;">)</span><sup>−1/2</sup>
+        </span>で伝播する波動を表す式です
+      </em>。
+すなわち、電磁場は波動として空間中を伝播するということになります。
+この、電磁場の作る波動を<strong id="wave" class="keyword">電磁波</strong>といいます。
+<p>ここで、話を簡単にするために、この微分方程式のもっとも単純な形の解</p>
+<div class="math">
+      <a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a> = <span class="vector">E</span><sub>0</sub><span class="normal">cos</span>(ωt−<span class="vector">k</span><span class="vector">x</span>)
+    </div>
+を考えます。
+ただし、<span class="math">
+        <span class="vector">E</span>
+        <sub>0</sub>
+      </span>は<span class="math">
+        <a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a>
+      </span>の初期値で、
+<span class="math">ω</span>はこの波動の角周波数、<span class="math">
+        <span class="vector">k</span>
+      </span>は波数で、
+<span class="math">
+        <table class="frac" summary="fraction"><tr><td class="num">
+            <span class="normal">|</span>
+              <span class="vector">k</span>
+            <span class="normal">|</span>
+            <sup>2</sup>
+          </td></tr><tr><td>
+            ω<sup>2</sup>
+          </td></tr></table> = <table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>
+          v<sup>2</sup>
+        </td></tr></table> = <a href="/study/physics/em/variable/#eps" title="物質中の誘電率">ε</a><a href="/study/physics/em/variable/#mu" title="物質中の透磁率">μ</a>
+      </span>
+という関係式が成り立ちます。
+<p>この式は、進行波と呼ばれるもので、<span class="math">
+<a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a>
+</span>は常に<span class="math">
+<span class="vector">E</span>
+<sub>0</sub>
+</span>と同じ方向(もしくは、その逆向き)を向き、<span class="math">
+<span class="vector">k</span>
+</span>の方向に速度<span class="math">v</span>で伝播していきます。</p>
+<p>さて、このとき、(i)式から磁場<span class="math">
+<a href="/study/physics/em/variable/#H" title="磁場ベクトル"><span class="vector">H</span></a>
+</span>を求めると、</p>
+<div class="math">
+      <a href="/study/physics/em/variable/#H" title="磁場ベクトル"><span class="vector">H</span></a> = −<table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>
+        <a href="/study/physics/em/variable/#mu" title="物質中の透磁率">μ</a>
+      </td></tr></table><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub"></td></tr></table><span class="vector">∇</span>×<span class="vector">E</span><sub>0</sub><span class="normal">cos</span>(ωt−<span class="vector">k</span><span class="vector">x</span>)<a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a>t = −<table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>
+        <a href="/study/physics/em/variable/#mu" title="物質中の透磁率">μ</a>
+      </td></tr></table><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub"></td></tr></table><span class="vector">k</span>×<span class="vector">E</span><sub>0</sub><span class="normal">sin</span>(ωt−<span class="vector">k</span><span class="vector">x</span>)<a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a>t = <table class="frac" summary="fraction"><tr><td class="num">
+          <span class="vector">k</span>×<span class="vector">E</span><sub>0</sub>
+        </td></tr><tr><td>
+          <a href="/study/physics/em/variable/#mu" title="物質中の透磁率">μ</a>ω
+        </td></tr></table><span class="normal">cos</span>(ωt−<span class="vector">k</span><span class="vector">x</span>)
+    </div>
+ここで、
+<span class="math">
+        <table class="frac" summary="fraction"><tr><td class="num">
+            <span class="normal">|</span>
+              <span class="vector">k</span>
+            <span class="normal">|</span>
+            <sup>2</sup>
+          </td></tr><tr><td>
+            ω<sup>2</sup>
+          </td></tr></table> = <a href="/study/physics/em/variable/#eps" title="物質中の誘電率">ε</a><a href="/study/physics/em/variable/#mu" title="物質中の透磁率">μ</a>
+      </span>
+であることを用いると、
+<div class="math">
+      <em>
+        <a href="/study/physics/em/variable/#H" title="磁場ベクトル"><span class="vector">H</span></a> = <table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>
+          <a href="/study/physics/em/variable/#intrinsic_impedance" title="固有インピーダンス">η</a>
+        </td></tr></table><span class="vector">i</span><sub>k</sub>×<span class="vector">E</span><sub>0</sub><span class="normal">cos</span>(ωt−<span class="vector">k</span><span class="vector">x</span>)
+      </em>
+    </div>
+という関係式が得られます。
+ただし、<span class="math">
+        <span class="vector">i</span>
+        <sub>k</sub>
+      </span>は<span class="math">
+        <span class="vector">k</span>
+      </span>の方向(すなわち波動の進行方向)を向く単位ベクトルで、<span class="math">
+        <a href="/study/physics/em/variable/#intrinsic_impedance" title="固有インピーダンス">η</a>
+      </span>は<span class="math">
+        <a href="/study/physics/em/variable/#intrinsic_impedance" title="固有インピーダンス">η</a> = <span class="paren" style="font-size:1.5em;">(</span>
+          <table class="frac" summary="fraction"><tr><td class="num">
+              <a href="/study/physics/em/variable/#mu" title="物質中の透磁率">μ</a>
+            </td></tr><tr><td>
+              <a href="/study/physics/em/variable/#eps" title="物質中の誘電率">ε</a>
+            </td></tr></table>
+        <span class="paren" style="font-size:1.5em;">)</span><sup>1/2</sup>
+      </span>で、<strong id="impedance" class="keyword">固有インピーダンス</strong>と呼ばれています。
+<p>同様に
+<span class="math">
+<a href="/study/physics/em/variable/#H" title="磁場ベクトル"><span class="vector">H</span></a> = <span class="vector">H</span><sub>0</sub><span class="normal">cos</span><span class="paren" style="font-size:em;">(</span>
+ωt−<span class="vector">k</span><span class="vector">x</span>
+<span class="paren" style="font-size:em;">)</span>
+</span>
+とおいて、(ii)式から電場<span class="math">
+<a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a>
+</span>を求めると、</p>
+<div class="math">
+      <em>
+        <a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a> = −<a href="/study/physics/em/variable/#intrinsic_impedance" title="固有インピーダンス">η</a><span class="vector">i</span><sub>k</sub>×<span class="vector">H</span><sub>0</sub><span class="normal">cos</span>(ωt−<span class="vector">k</span><span class="vector">x</span>)
+      </em>
+    </div>
+という関係式が得られます。
+そして、この2つの式から<em>
+        <span class="math">
+          <a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a>, <a href="/study/physics/em/variable/#H" title="磁場ベクトル"><span class="vector">H</span></a>, <span class="vector">k</span>
+        </span>は互いに直行している
+      </em>ことが分かります。
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/physics/em/">&#x96FB;&#x78C1;&#x7406;&#x8AD6;</a></li><li><a href="/study/physics/em/maxwell/">&#x30DE;&#x30AF;&#x30B9;&#x30A6;&#x30A7;&#x30EB;&#x306E;&#x65B9;&#x7A0B;&#x5F0F;</a></li><li><a href="/study/physics/em/electro/">&#x96FB;&#x5834;&#x3068;&#x96FB;&#x675F;&#x5BC6;&#x5EA6;</a></li><li><a href="/study/physics/em/magnetro/">&#x78C1;&#x5834;&#x3068;&#x78C1;&#x675F;&#x5BC6;&#x5EA6;</a></li><li><a href="/study/physics/em/electrostatic/">&#x9759;&#x96FB;&#x5834;</a></li><li><a href="/study/physics/em/magnetrostatic/">&#x9759;&#x78C1;&#x5834;</a></li><li><a href="/study/physics/em/circuit/">&#x78C1;&#x6C17;&#x56DE;&#x8DEF;</a></li><li><a href="/study/physics/em/energy/">&#x96FB;&#x78C1;&#x5834;&#x306E;&#x6301;&#x3064;&#x30A8;&#x30CD;&#x30EB;&#x30AE;&#x30FC;</a></li><li><a href="/study/physics/em/p_potential/">&#x96FB;&#x78C1;&#x30DD;&#x30C6;&#x30F3;&#x30B7;&#x30E3;&#x30EB;</a></li><li><a href="/study/physics/em/variable/">&#x5909;&#x6570;&#x306E;&#x610F;&#x5473;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

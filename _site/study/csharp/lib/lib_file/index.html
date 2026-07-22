@@ -1,0 +1,177 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x64CD;&#x4F5C; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/lib/lib_file/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">ファイル操作</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>System.IO 名前空間以下に、ディレクトリ（フォルダ）・ファイルの作成・読み書き等を行うためのクラスが用意されています。</p>
+<p>ファイル操作などの処理は、
+オブジェクト指向言語との相性もいいですし、
+C# の 「<a href="/study/csharp/data/sp_foreach/#foreach">foreach 文</a>」 や 「<a href="/study/csharp/data/sp3_linq/#linq">LINQ</a>」 との親和性も高いので、
+C# でのファイル操作の楽さには目を見張るものがあります。</p>
+<h2 id="directory-file"><a id="sec-generated-title-2"></a> <a id="file"></a>Directory, File</h2>
+<p>System.IO.Directory と System.IO.File には、
+ディレクトリやファイルを読み書きするための static メソッドがあります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.IO;
+
+<span class="keyword">class</span> TestIO
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="keyword">if</span>(!Directory.Exists(<span class="string">&quot;test&quot;</span>))
+      Directory.CreateDirectory(<span class="string">&quot;test&quot;</span>);
+    
+    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">5</span>; ++i)
+    {
+      <span class="keyword">string</span> fileName = <span class="keyword">string</span>.Format(<span class="stringCSharpVerbatim">@&quot;test\{0}.txt&quot;</span>, i);
+      <span class="keyword">string</span> contents = <span class="keyword">string</span>.Format(<span class="string">&quot;Test file No. {0}&quot;</span>, i);
+      File.WriteAllText(fileName, contents);
+    }
+  }
+}</code></pre>
+<p>プログラムを実行した後のディレクトリ内の様子です。</p>
+<pre><code class="language-console">&gt; ls
+ConsoleApplication2.exe  ConsoleApplication2.vshost.exe
+ConsoleApplication2.pdb  test
+&gt; cd test
+&gt; ls
+0.txt  1.txt  2.txt  3.txt  4.txt
+&gt; cat 1.txt
+Test file No. 1</code></pre>
+<h2 id="directoryinfo-fileinfo"><a id="sec-generated-title-3"></a> <a id="fileinfo"></a>DirectoryInfo, FileInfo</h2>
+<p>System.IO.DirectoryInfo と System.IO.FileInfo は、
+ディレクトリやファイルの情報を取り出すためのクラスです。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.IO;
+
+<span class="keyword">class</span> TestRexex
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    DirectoryInfo dir = <span class="keyword">new</span> DirectoryInfo(<span class="string">&quot;test&quot;</span>);
+
+    <span class="keyword">foreach</span>(FileInfo f <span class="keyword">in</span> dir.GetFiles())
+    {
+      <span class="keyword">string</span> name = f.Name;
+      <span class="keyword">string</span> ext  = f.Extension;
+      DateTime t = f.CreationTime;
+      Console.Write(<span class="string">&quot;{0}\next: {1}, time: {2}\n&quot;</span>,
+        name, ext, t.ToString(<span class="string">&quot;hh:mm:ss&quot;</span>));
+    }
+  }
+  }
+}</code></pre>
+<pre><code class="language-console">0.txt
+ext: .txt, time: 02:34:36
+1.txt
+ext: .txt, time: 02:34:36
+2.txt
+ext: .txt, time: 02:34:36
+3.txt
+ext: .txt, time: 02:34:36
+4.txt
+ext: .txt, time: 02:34:36</code></pre>
+<h2 id="streamreader-streamwriter"><a id="sec-generated-title-4"></a> <a id="stream"></a>StreamReader, StreamWriter</h2>
+<p>System.IO.StreamReader, System.IO.StreamWriter を用いることで、
+テキストファイルの読み書きができます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.IO;
+
+<span class="keyword">class</span> TestRexex
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="comment">// ファイルにテキストを書き出し。</span>
+    <span class="keyword">using</span>(StreamWriter w = <span class="keyword">new</span> StreamWriter(<span class="stringCSharpVerbatim">@&quot;test\test.txt&quot;</span>))
+    {
+      w.WriteLine(<span class="string">&quot;基本的に、Console クラスの文字列出力メソッドと同じ。&quot;</span>);
+      w.WriteLine(<span class="string">&quot;WriteLine では末尾に改行文字が加えられます。&quot;</span>);
+      <span class="keyword">int</span> n = <span class="number">5</span>;
+      <span class="keyword">double</span> x = <span class="number">3</span>.<span class="number">14</span>;
+      w.Write(<span class="string">&quot;書式指定出力もできます → n = {0}, x = {1}&quot;</span>, n, x);
+    }
+
+    <span class="comment">// ファイルからテキストを読み出し。</span>
+    <span class="keyword">using</span>(StreamReader r = <span class="keyword">new</span> StreamReader(<span class="stringCSharpVerbatim">@&quot;test\test.txt&quot;</span>))
+    {
+      <span class="keyword">string</span> line;
+      <span class="keyword">while</span>( (line = r.ReadLine()) != <span class="keyword">null</span>) <span class="comment">// 1行ずつ読み出し。</span>
+      {
+        Console.WriteLine(line);
+      }
+    }
+  }
+}</code></pre>
+<pre><code class="language-console">基本的に、Console クラスの文字列出力メソッドと同じ。
+WriteLine では末尾に改行文字が加えられます。
+書式指定出力もできます → n = 5, x = 3.14</code></pre>
+<h2 id="binaryreader-binarywriter"><a id="sec-generated-title-5"></a> <a id="binary"></a>BinaryReader, BinaryWriter</h2>
+<p>バイナリ形式での読み書きには、
+System.IO.BinaryReader, System.IO.BinaryWriter クラスを用います。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.IO;
+
+<span class="keyword">class</span> TestRexex
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="comment">// バイナリ形式でファイルに書き出し。</span>
+    <span class="keyword">using</span>(BinaryWriter w = <span class="keyword">new</span> BinaryWriter(File.OpenWrite(<span class="stringCSharpVerbatim">@&quot;test\binary&quot;</span>)))
+    {
+      w.Write(<span class="keyword">new</span> <span class="keyword">byte</span>[]{(<span class="keyword">byte</span>)0x01, (<span class="keyword">byte</span>)0x23, (<span class="keyword">byte</span>)0x45, (<span class="keyword">byte</span>)0x67, });
+      w.Write((<span class="keyword">int</span>)<span class="number">123456789</span>);
+      w.Write((<span class="keyword">float</span>)<span class="number">3</span>.<span class="number">14159</span>);
+    }
+
+    <span class="comment">// 1バイトずつ読み出し。</span>
+    <span class="keyword">using</span>(BinaryReader w = <span class="keyword">new</span> BinaryReader(File.OpenRead(<span class="stringCSharpVerbatim">@&quot;test\binary&quot;</span>)))
+    {
+      <span class="keyword">try</span>
+      {
+        <span class="keyword">for</span>(;;)
+          Console.Write(<span class="string">&quot;{0:x2}&quot;</span>, w.ReadByte());
+      }
+      <span class="keyword">catch</span>(EndOfStreamException)
+      {
+        Console.Write(<span class="string">&quot;\n&quot;</span>);
+      }
+    }
+
+    <span class="comment">// 書き出したときと同じ手順で読み出し。</span>
+    <span class="keyword">using</span>(BinaryReader w = <span class="keyword">new</span> BinaryReader(File.OpenRead(<span class="stringCSharpVerbatim">@&quot;test\binary&quot;</span>)))
+    {
+      Console.Write(<span class="string">&quot;{0:x2}, &quot;</span>, w.ReadByte());
+      Console.Write(<span class="string">&quot;{0:x2}, &quot;</span>, w.ReadByte());
+      Console.Write(<span class="string">&quot;{0:x2}, &quot;</span>, w.ReadByte());
+      Console.Write(<span class="string">&quot;{0:x2}\n&quot;</span>, w.ReadByte());
+      Console.Write(<span class="string">&quot;{0:d}\n&quot;</span>, w.ReadInt32());
+      Console.Write(<span class="string">&quot;{0:g}\n&quot;</span>, w.ReadSingle());
+    }
+  }
+}</code></pre>
+<pre><code class="language-console">0123456715cd5b07d00f4940
+01, 23, 45, 67
+123456789
+3.14159</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/lib/">&#x6A19;&#x6E96;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li><li><a href="/study/csharp/lib/lib_string/">&#x6587;&#x5B57;&#x5217;&#x95A2;&#x4FC2;</a></li><li><a href="/study/csharp/lib/lib_drawing/">&#x30B0;&#x30E9;&#x30D5;&#x30A3;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/lib/lib_forms/">GUI &#x30A2;&#x30D7;&#x30EA;&#x30B1;&#x30FC;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/lib/lib_other/">&#x305D;&#x306E;&#x4ED6;&#x306E;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li><li><a href="/study/csharp/lib/lib_dotnet3/">.NET Framework 3.0 / 3.5</a></li><li><a href="/study/csharp/lib/lib_parallel/">&#x4E26;&#x5217;&#x51E6;&#x7406;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

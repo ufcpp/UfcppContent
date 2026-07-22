@@ -1,0 +1,112 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7; Roslyn 9/6: default&#x306E;&#x578B;&#x63A8;&#x8AD6; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/9/pickuproslyn0906/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-09-06T11:43:27">2016-09-06</time></span><span>更新: <time datetime="2016-09-06T11:43:27">2016-09-06</time></span></div><h1 id="roslyn-96-default">ピックアップ Roslyn 9/6: defaultの型推論</h1>
+<p>なんか1個、気になったプルリクが。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/pull/13603">Prototype: target typed &quot;default&quot; #13603</a></li>
+</ul>
+<p><code>default(T)</code>を、左辺から型が推論できる場合には<code>default</code>だけで書けるようにしようっていう作業。</p>
+<p>ちょっと前に提案があって、前向きっぽい感じではあったんですけど、なんで今実作業やってんだろう。
+今からC# 7リリース辺りまでは、C# 7に入る予定の機能のバグ修正・改善ばっかりになると思ってたんですけども。
+これくらいの修正ならさっと実装してC# 7に入れれそう？</p>
+<p>まあ、これに限らず、今後、左辺から右辺の型推論は今後増えそうな感じです。</p>
+<h2 id="section">左辺と右辺</h2>
+<p>簡単に言葉の説明をしておくと、
+左辺とか右辺ってのは、代入文の <code>=</code> の左右から来てる言葉。
+<code>x = y</code>だったら、<code>x</code>が左辺で<code>y</code>が右辺です。</p>
+<p>転じて、値を受け取る側が左辺で、値を渡す側が右辺。
+変数宣言だと、宣言する変数が左辺で、初期値として渡す値が右辺です。
+見た目は左右に分かれませんが、メソッド呼びだしなんかでも、値を受け取る側(仮引数)が左辺で値を渡す側(実引数)が右辺と考えられます。</p>
+<h2 id="section-1">右辺から左辺の型推論</h2>
+<p>C#の型推論って、右辺から左辺の推論が多いです。<code>var</code>しかり、ジェネリック型引数しかり。</p>
+<p>以下のような感じ。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> x = <span class="number">1</span>; <span class="comment">// 1 からの推論で、int x = 1; 扱い。</span>
+        F(<span class="number">2</span>); <span class="comment">// 2 からの推論で、F&lt;int&gt;(2); 扱い</span>
+    }
+
+    <span class="keyword">static</span> <span class="keyword">void</span> F&lt;T&gt;(T x) =&gt; System.Console.WriteLine(<span class="keyword">typeof</span>(T).Name);
+}</code></pre>
+<h2 id="section-2">左辺から右辺の型推論</h2>
+<p>逆に左辺から右辺の型推論なのは、現状ではラムダ式くらい。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        Func&lt;<span class="keyword">int</span>, <span class="keyword">object</span>&gt; f = x =&gt; x.ToString(); <span class="comment">// f の型が&lt;int, string&gt;なので、(int x) =&gt; (object)x.ToString() 扱い</span>
+        X(x =&gt; x.ToString()); <span class="comment">// Xの引数が&lt;int, string&gt;なので、(int x) =&gt; (object)x.ToString() 扱い</span>
+    }
+
+    <span class="keyword">static</span> <span class="keyword">void</span> X(Func&lt;<span class="keyword">int</span>, <span class="keyword">object</span>&gt; f) { }
+}</code></pre>
+<p>で、今、<code>default</code>と<code>new</code>の型推論を増やしたいという話が出ています。特に、<code>var</code>を使えないフィールドやプロパティに対する初期化子で有効そう。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Sample&lt;T&gt;
+    <span class="keyword">where</span> T : <span class="keyword">new</span>()
+{
+    <span class="keyword">static</span> T newValue = <span class="keyword">new</span>();       <span class="comment">// new T() の T を省略</span>
+    <span class="keyword">static</span> T defaultValue = <span class="keyword">default</span>; <span class="comment">// default(T) の T を省略</span>
+
+    <span class="keyword">static</span> <span class="keyword">void</span> F(T x = <span class="keyword">default</span>) <span class="comment">// default(T) の T を省略</span>
+    {
+    }
+}</code></pre>
+<p>で、なんか、<code>default</code>の方はプロトタイプ実装が始まったと。
+ちなみに、<code>new</code>の方は実装の兆し全然なし。
+C#チーム的に前向きに検討したいとは言ってるんですけども、実装コストはそこそこ高そう。
+引数ありで、<code>new(1, 2)</code>みたいなのもできる予定です。</p>
+<h2 id="newdefault">補足: <code>new()</code>と<code>default</code></h2>
+<p>余談になりますが、「<code>null</code>じゃダメなの？」とか、「<code>new()</code>だけじゃダメなの？」とか言ってる人もまあ、います。
+C#に不慣れな人には結構わかりにくいですよね…</p>
+<p>以下のような差があるので、いずれも必要です。</p>
+<ul>
+<li><code>new T()</code>だとインスタンスが作られる。<code>null</code>にはならない</li>
+<li><code>null</code>は参照型にしか入らない。ジェネリック型引数<code>T</code>とかだと、<code>T</code>が参照型なのか値型なのか確定しないから<code>null</code>を使えない
+<ul>
+<li><code>default(T)</code>だと、参照型なら<code>null</code>、値型なら「全メンバー0/<code>null</code>初期化」</li>
+</ul>
+</li>
+<li>現状、値型であれば<code>new T()</code>と<code>default(T)</code>はどちらも「全メンバー0/<code>null</code>初期化」で、同じものになるけど、将来的に変えたい
+<ul>
+<li>構造体にも引数なしのコンストラクターを定義できるようにしたい</li>
+<li><code>new T()</code>は引数なしのコンストラクター呼び出し</li>
+<li><code>default(T)</code>は「全メンバー0/<code>null</code>初期化」</li>
+</ul>
+</li>
+</ul>
+<p>ちなみに、構造体の引数なしコンストラクターの話は、一度C# 6に入りかかったんですけど、
+<code>Activator.CreateInstance</code>の内部に「構造体の<code>new T()</code>と<code>default(T)</code>は同じ意味」っていう前提で最適化を掛けちゃってるコードがあるらしくて、
+これを修正してもらわないとダメってことでrevertされました。</p>
+<p>参考:</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/13255#issuecomment-241025874"><code>new()</code>と<code>default</code>は相補的</a></li>
+<li><a href="https://github.com/dotnet/roslyn/issues/1029">構造体にも引数なしのコンストラクターを認めようとして当時できなかった話</a></li>
+<li><a href="https://github.com/dotnet/roslyn/issues/35#issuecomment-239876676">'new'の左辺からの型推論認めたいって話</a></li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/9/">2016&#x5E74;9&#x6708;</a></li><li><a href="/blog/2016/9/awaitinunity55/">Unity 5.5&#x3067;async/await&#x4F7F;&#x3048;&#x305F;&#x8A71;</a></li><li><a href="/blog/2016/9/unicode/">&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30DF;&#x30F3;&#x30B0;&#x8A00;&#x8A9E;&#x306B;&#x304A;&#x3051;&#x308B;&#x6587;&#x5B57;&#x30B3;&#x30FC;&#x30C9;&#x306E;&#x8A71;</a></li><li><a href="/blog/2016/9/pickuproslyn0909/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7; Roslyn 9/9</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

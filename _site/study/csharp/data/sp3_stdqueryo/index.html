@@ -1,0 +1,462 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x6A19;&#x6E96;&#x30AF;&#x30A8;&#x30EA;&#x6F14;&#x7B97;&#x5B50;&#xFF08;&#x305D;&#x306E;&#x4ED6;&#xFF09; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/data/sp3_stdqueryo/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">標準クエリ演算子（その他）</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<h5 class="version version3">Ver. 3.0</h5>
+<p>LINQ は、元々はシーケンス（IEnumerable 実装クラス）やデータベーステーブルに対するメソッド群としてのみ提供される予定だったそうです。
+（要するに、<code>from x in list</code> のようなクエリ式を導入する予定はなくて、
+.Select などのメソッドのみを提供するつもりだった。）</p>
+<p>でも、メソッド提供だけでは、
+join や let などがどうしてもきれいに表現できなかったので、
+やむなく SQL 風のクエリ式を導入したそうです。
+（プログラミング言語の中に別の言語を埋め込むというのはデメリットも大きくて、
+言語制作者にとっては結構ためらわれる行為。）
+（join や let をきれいに書くためには、
+どうしても「<a href="/study/csharp/data/sp3_stdquery/#transparent">透過識別子</a>」のような考え方が必要だった。）</p>
+<p>というような背景から、
+標準クエリ演算子と呼ばれるメソッド群は、
+クエリ式の形で書けるもの以外にも多数
+（というか、むしろクエリ式で書けないものの方が多数）あります。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="list"></a>その他の標準クエリ演算子</h2>
+<p>クエリ式で書けるもの以外にも、
+メソッド呼び出しの形でだけ利用できる標準クエリ演算子として、以下のようなものもあります。</p>
+<p>「<a href="#partition">パーティション分割演算子</a>」：
+Take、Skip、TakeWhile、SkipWhile</p>
+<p>「<a href="#concat">連結演算子</a>」：
+Concat</p>
+<p>「<a href="#reverse">順序付け演算子</a>」：
+Reverse</p>
+<p>「<a href="#set">セット演算子</a>」：
+Distinct、Union、Intersect、Except</p>
+<p>「<a href="#cast">変換演算子</a>」：
+AsEnumerable、ToArray、ToList、ToDictionary、ToLookup、OfType、Cast</p>
+<p>「<a href="#equal">等価演算子</a>」：
+SequenceEqual</p>
+<p>「<a href="#element">要素演算子</a>」：
+First、FirstOrDefault、Last、LastOrDefault、Single、SingleOrDefault、ElementAt、ElementAtOrDefault、DefaultIfEmpty</p>
+<p>「<a href="#generate">生成演算子</a>」：
+Range、Repeat、Empty</p>
+<p>「<a href="#quantifier">限定子</a>」：
+Any、All、Contains</p>
+<p>「<a href="#aggregate">集計演算子</a>」：
+Count、LongCount、Sum、Min、Max、Average、Aggregate</p>
+<p>これらの説明は次節以降で行っていきます。
+その際、例として以下のようなデータを使います。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> a = <span class="keyword">new</span>[] { <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">4</span> };
+<span class="keyword">var</span> b = <span class="keyword">new</span>[] { <span class="number">0</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">10</span>, <span class="number">12</span> };</code></pre>
+<p>また、結果の出力用に、以下のような補助関数を使います。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> Show&lt;T&gt;(IEnumerable&lt;T&gt; a)
+{
+  <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> a)
+    Console.Write(<span class="string">&quot;{0} &quot;</span>, x);
+  Console.Write(<span class="string">&quot;\n&quot;</span>);
+}</code></pre>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="partition"></a>パーティション分割演算子</h2>
+<p>シーケンスを部分的に区切るため、
+Take、Skip、TakeWhile、SkipWhile
+の4つのメソッドがあります。</p>
+<table summary="">
+
+	<tr>
+		<td><p>Take</p></td>
+		<td><p>先頭 n 個のみ取り出す</p></td>
+	</tr>
+	<tr>
+		<td><p>Skip</p></td>
+		<td><p>先頭 n 個を読み飛ばす</p></td>
+	</tr>
+	<tr>
+		<td><p>TakeWhile</p></td>
+		<td><p>先頭から、条件を満たす間だけ取り出す</p></td>
+	</tr>
+	<tr>
+		<td><p>SkipWhile</p></td>
+		<td><p>先頭から、条件を満たす間だけ読み飛ばす</p></td>
+	</tr>
+</table>
+<p>使用例を以下に示します。</p>
+<pre><code class="language-csharp">Show(a.Take(<span class="number">5</span>));
+Show(a.Skip(<span class="number">5</span>));
+Show(a.TakeWhile(x =&gt; x != <span class="number">2</span>));
+Show(a.SkipWhile(x =&gt; x != <span class="number">2</span>));</code></pre>
+<pre><code class="language-console">0 0 1 1 2
+2 3 3 4 4
+0 0 1 1
+2 2 3 3 4 4</code></pre>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="concat"></a>連結演算子</h2>
+<p>Concat で、2つのシーケンスを連結できます。</p>
+<pre><code class="language-csharp">Show(a.Concat(b));</code></pre>
+<pre><code class="language-console">0 0 1 1 2 2 3 3 4 4 0 2 4 6 8 10 12</code></pre>
+<p>ちなみに、Concat や、後述する Union などは拡張メソッドなので、
+<code>Concat(a, b)</code> という書き方も可能です。
+<code>a.Concat(b)</code> と書いて a と b の間の2項演算とみなすか、
+後者の書き方をして英語的に concatenate a and b と読むか、
+ちょっと悩みますが、お好きな方をご利用ください。</p>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="reverse"></a>順序付け演算子</h2>
+<p>Reverse で、シーケンスの中身の順序を真逆にできます。</p>
+<pre><code class="language-csharp">Show(a.Reverse());</code></pre>
+<pre><code class="language-console">4 4 3 3 2 2 1 1 0 0</code></pre>
+<h2 id="section-6"><a id="sec-generated-title-6"></a> <a id="set"></a>セット演算子</h2>
+<p>Distinct、Union、Intersect、Except の4つの
+セット（set： 数学の集合論でいうところの集合。Collection と区別するために横文字にしておきます）演算子があります。</p>
+<table summary="">
+
+	<tr>
+		<td><p>Distinct</p></td>
+		<td><p>コレクションから重複を取り除きます。</p></td>
+	</tr>
+	<tr>
+		<td><p>Union</p></td>
+		<td><p>合併（和集合）を求めます。</p></td>
+	</tr>
+	<tr>
+		<td><p>Intersect</p></td>
+		<td><p>共通部分（積集合）を求めます。</p></td>
+	</tr>
+	<tr>
+		<td><p>Except</p></td>
+		<td><p>a から b に含まれる要素を取り除きます（差集合）。</p></td>
+	</tr>
+</table>
+<pre><code class="language-csharp">Show(a.Distinct());
+Show(a.Union(b));
+Show(a.Intersect(b));
+Show(a.Except(b));</code></pre>
+<pre><code class="language-console">0 1 2 3 4
+0 1 2 3 4 6 8 10 12
+0 2 4
+1 3</code></pre>
+<p>注： 数学的な意味での集合は要素の重複を認めません。
+セット演算子の結果は重複が除かれたものになります。</p>
+<h2 id="section-7"><a id="sec-generated-title-7"></a> <a id="cast"></a>変換演算子</h2>
+<p>型の変換のための演算子がいくつかあります。</p>
+<h5 id="section-8"><a id="sec-generated-title-8"></a>シーケンス → シーケンス</h5>
+<p>まず、AsEnumerable、ToArray、ToList は、
+シーケンスをそれぞれ、
+IEnumeragle&lt;T&gt;、配列、List&lt;T&gt; に変換します。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> a = <span class="keyword">new</span>[] { <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">4</span> };
+IEnumerable&lt;<span class="keyword">int</span>&gt; a1 = a.Distinct().AsEnumerable();
+<span class="keyword">int</span>[] a2            = a.Distinct().ToArray();
+List&lt;<span class="keyword">int</span>&gt; a3        = a.Distinct().ToList();</code></pre>
+<p>AsEnumerable は、この例のような場合だとあまり役に立ちませんが、
+IQueryable（LINQ to SQL などで使う）を IEnumerable に変換したりする場合に使います。</p>
+<p>AsEnumerable が as なのに、ToArray や ToList が to を使っているのには理由があって、
+as の方は遅延評価、to の方はその場での評価になります。
+例えば、以下のようなコードを実行したとします。</p>
+<pre><code class="language-csharp">Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; hook = x =&gt;
+{
+  Console.Write(<span class="string">&quot;{0}&quot;</span>, x);
+  <span class="keyword">return</span> x;
+};
+
+Console.Write(<span class="string">&quot;AsEnumerable\n&quot;</span>);
+Console.Write(<span class="string">&quot;before &quot;</span>);
+<span class="keyword">var</span> a1 = a.Select(hook).AsEnumerable();
+Console.Write(<span class="string">&quot; middle &quot;</span>);
+<span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> a1) ;
+Console.Write(<span class="string">&quot; after\n\n&quot;</span>);
+
+Console.Write(<span class="string">&quot;ToList\n&quot;</span>);
+Console.Write(<span class="string">&quot;before &quot;</span>);
+<span class="keyword">var</span> a2 = a.Select(hook).ToList();
+Console.Write(<span class="string">&quot; middle &quot;</span>);
+<span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> a2) ;
+Console.Write(<span class="string">&quot; after\n\n&quot;</span>);</code></pre>
+<p>上半分と下半分は、AsEnumerable と ToList の部分以外はほぼ同じコードですが、
+実行結果は以下のように変わります。
+前者は foreach の行で初めて hook が実行され、
+後者は ToList の時点で実行されます。</p>
+<pre><code class="language-console">AsEnumerable
+before  middle 0011223344 after
+
+ToList
+before 0011223344 middle  after</code></pre>
+<h5 id="section-9"><a id="sec-generated-title-9"></a>シーケンス → 辞書</h5>
+<p>ToDictionary と ToLookup は、シーケンスを辞書（キーと値のペア）化します。
+ToDictionary は Dictionary（1つのキーに対して1つの値を持つ）を、
+ToLookup は Lookup型（1つのキーに対して複数の値（1つの IEnumerable）を持つ辞書）の値を返します。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> list = <span class="keyword">new</span>[] {
+  <span class="keyword">new</span> { Name = <span class="string">&quot;糸色望&quot;</span>, CV = <span class="string">&quot;神谷浩史&quot;</span> },
+  <span class="keyword">new</span> { Name = <span class="string">&quot;風浦可符香&quot;</span>, CV = <span class="string">&quot;野中藍&quot;</span> },
+  <span class="keyword">new</span> { Name = <span class="string">&quot;大草麻菜実&quot;</span>, CV = <span class="string">&quot;井上喜久子&quot;</span> },
+  <span class="keyword">new</span> { Name = <span class="string">&quot;音無芽留&quot;</span>, CV = <span class="string">&quot;？？？？&quot;</span> },
+  <span class="keyword">new</span> { Name = <span class="string">&quot;加賀愛&quot;</span>, CV = <span class="string">&quot;後藤沙緒里&quot;</span> },
+  <span class="keyword">new</span> { Name = <span class="string">&quot;木津千里&quot;</span>, CV = <span class="string">&quot;井上麻里奈&quot;</span> },
+  <span class="keyword">new</span> { Name = <span class="string">&quot;木村カエレ&quot;</span>, CV = <span class="string">&quot;小林ゆう&quot;</span> },
+  <span class="keyword">new</span> { Name = <span class="string">&quot;小節あびる&quot;</span>, CV = <span class="string">&quot;後藤邑子&quot;</span> },
+  <span class="keyword">new</span> { Name = <span class="string">&quot;小森霧&quot;</span>, CV = <span class="string">&quot;谷井あすか&quot;</span> },
+  <span class="keyword">new</span> { Name = <span class="string">&quot;関内・マリア・太郎&quot;</span>, CV = <span class="string">&quot;沢城みゆき&quot;</span> },
+  <span class="keyword">new</span> { Name = <span class="string">&quot;常月まとい&quot;</span>, CV = <span class="string">&quot;真田アサミ&quot;</span> },
+  <span class="keyword">new</span> { Name = <span class="string">&quot;日塔奈美&quot;</span>, CV = <span class="string">&quot;新谷良子&quot;</span> },
+  <span class="keyword">new</span> { Name = <span class="string">&quot;藤吉晴美&quot;</span>, CV = <span class="string">&quot;松来未祐&quot;</span> },
+  <span class="keyword">new</span> { Name = <span class="string">&quot;三珠真夜&quot;</span>, CV = <span class="string">&quot;谷井あすか&quot;</span> },
+  <span class="keyword">new</span> { Name = <span class="string">&quot;久藤准&quot;</span>, CV = <span class="string">&quot;水島大宙&quot;</span> },
+  <span class="keyword">new</span> { Name = <span class="string">&quot;新井智恵&quot;</span>, CV = <span class="string">&quot;矢島晶子&quot;</span> },
+  <span class="keyword">new</span> { Name = <span class="string">&quot;臼井影郎&quot;</span>, CV = <span class="string">&quot;上田陽司&quot;</span> },
+  <span class="keyword">new</span> { Name = <span class="string">&quot;隣の女子大生&quot;</span>, CV = <span class="string">&quot;野中藍&quot;</span> },
+  <span class="keyword">new</span> { Name = <span class="string">&quot;万世橋わたる&quot;</span>, CV = <span class="string">&quot;上田陽司&quot;</span> },
+  <span class="keyword">new</span> { Name = <span class="string">&quot;甚六先生&quot;</span>, CV = <span class="string">&quot;上田陽司&quot;</span> },
+  <span class="keyword">new</span> { Name = <span class="string">&quot;糸色景&quot;</span>, CV = <span class="string">&quot;子安武人&quot;</span> },
+  <span class="keyword">new</span> { Name = <span class="string">&quot;糸色命&quot;</span>, CV = <span class="string">&quot;神谷浩史&quot;</span> },
+  <span class="keyword">new</span> { Name = <span class="string">&quot;糸色倫&quot;</span>, CV = <span class="string">&quot;矢島晶子&quot;</span> },
+  <span class="keyword">new</span> { Name = <span class="string">&quot;糸色交&quot;</span>, CV = <span class="string">&quot;矢島晶子&quot;</span> },
+};
+
+<span class="keyword">var</span> dicByName = list.ToDictionary(x =&gt; x.Name);
+Console.Write(<span class="string">&quot;{0}\n&quot;</span>, dicByName[<span class="string">&quot;日塔奈美&quot;</span>].CV);
+Console.Write(<span class="string">&quot;{0}\n&quot;</span>, dicByName[<span class="string">&quot;小節あびる&quot;</span>].CV);
+
+<span class="keyword">var</span> lookupByCV = list.ToLookup(x =&gt; x.CV);
+Show(lookupByCV[<span class="string">&quot;矢島晶子&quot;</span>].Select(x =&gt; x.Name));
+Show(lookupByCV[<span class="string">&quot;神谷浩史&quot;</span>].Select(x =&gt; x.Name));</code></pre>
+<pre><code class="language-console">新谷良子
+後藤邑子
+新井智恵 糸色倫 糸色交
+糸色望 糸色命</code></pre>
+<p>ToLookup を使えば、例えば、名前の1文字目を使ったインデックスを作ったりといったことも出来ます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> lookupByFirstChar = list.Select(x =&gt; x.Name).ToLookup(x =&gt; x[<span class="number">0</span>]);
+Show(lookupByFirstChar[<span class="string">&#39;糸&#39;</span>]);
+Show(lookupByFirstChar[<span class="string">&#39;小&#39;</span>]);</code></pre>
+<pre><code class="language-console">糸色望 糸色景 糸色命 糸色倫 糸色交
+小節あびる 小森霧</code></pre>
+<h5 id="section-10"><a id="sec-generated-title-10"></a>要素の型変換</h5>
+<p>OfType、Cast で要素の型を変換できます。
+Cast はすべての要素のキャストを試みます。
+キャストに失敗した場合は例外が発生します。
+一方、OfType は、変換可能な要素だけを抽出します。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> numList = <span class="keyword">new</span> <span class="keyword">object</span>[] {
+  <span class="number">1</span>, <span class="number">1</span>.<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>.<span class="number">2</span>, <span class="number">3</span>, <span class="number">3</span>.<span class="number">3</span>
+};
+
+<span class="keyword">var</span> miscList = <span class="keyword">new</span> <span class="keyword">object</span>[] {
+  <span class="number">0</span>, <span class="string">&quot;test 1&quot;</span>, <span class="number">1</span>, <span class="number">3</span>.<span class="number">14</span>, <span class="string">&quot;test 2&quot;</span>, <span class="number">2</span>.<span class="number">72</span>,
+  <span class="keyword">new</span> List&lt;<span class="keyword">int</span>&gt;(),
+  <span class="keyword">new</span> Stack&lt;<span class="keyword">int</span>&gt;(),
+  <span class="keyword">new</span> Queue&lt;<span class="keyword">int</span>&gt;()
+};
+
+Show(numList.Cast&lt;<span class="keyword">int</span>&gt;());
+<span class="comment">// Show(miscList.Cast&lt;int&gt;()); // 例外発生</span>
+
+Show(numList.OfType&lt;<span class="keyword">int</span>&gt;());
+Show(miscList.OfType&lt;IEnumerable&lt;<span class="keyword">int</span>&gt;&gt;().Select(x =&gt; x.GetType().Name));</code></pre>
+<pre><code class="language-console">1 1 2 2 3 3
+1 2 3
+List`1 Stack`1 Queue`1</code></pre>
+<p><code>.OfType&lt;T&gt;()</code> は
+<code>.Where(x =&gt; x is T).Cast&lt;T&gt;()</code> と同じ結果になります。</p>
+<h2 id="section-11"><a id="sec-generated-title-11"></a> <a id="equal"></a>等価演算子</h2>
+<p>SequenceEqual で、2つのシーケンスの中身が（順序も含めて）一致するかどうかを調べられます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = <span class="keyword">new</span>[] { <span class="number">0</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span> };
+<span class="keyword">var</span> y = <span class="keyword">new</span>[] { <span class="number">0</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span> };
+<span class="keyword">var</span> z = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span> };
+
+Console.Write(<span class="string">&quot;{0}\n&quot;</span>, x.SequenceEqual(y));
+Console.Write(<span class="string">&quot;{0}\n&quot;</span>, y.SequenceEqual(z));
+Console.Write(<span class="string">&quot;{0}\n&quot;</span>, z.SequenceEqual(x));</code></pre>
+<pre><code class="language-console">True
+False
+False</code></pre>
+<h2 id="section-12"><a id="sec-generated-title-12"></a> <a id="element"></a>要素演算子</h2>
+<p>シーケンスの中から特定の要素を1つ取り出すため、
+First、FirstOrDefault、Last、LastOrDefault、Single、SingleOrDefault、ElementAt、ElementAtOrDefault、DefaultIfEmpty という演算子が用意されています。</p>
+<table summary="">
+
+	<tr>
+		<td><p>First、FirstOrDefault</p></td>
+		<td><p>条件を満たす最初の要素を返します。</p></td>
+	</tr>
+	<tr>
+		<td><p>Last、LastOrDefault</p></td>
+		<td><p>条件を満たす最後の要素を返します。</p></td>
+	</tr>
+	<tr>
+		<td><p>Single、SingleOrDefault</p></td>
+		<td><p>条件を満たす唯一の要素を返します。もし、条件を満たす要素が複数あった場合、例外を発生させます。</p></td>
+	</tr>
+	<tr>
+		<td><p>ElementAt、ElementAtOrDefault</p></td>
+		<td><p>n 番目の要素を返します。</p></td>
+	</tr>
+	<tr>
+		<td><p>DefaultIfEmpty</p></td>
+		<td><p>もしシーケンスが空の場合、デフォルトの値が1つだけ入ったシーケンスを返します。</p></td>
+	</tr>
+</table>
+<p>OrDefault が付かないもの、
+もし条件を満たす要素が1つもなければ例外を発生させます。
+一方、OrDefault が付くものは、
+もし条件を満たす要素が1つもなければ規定値
+（例えば、数値型なら 0、参照型なら null）を返します。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> list = <span class="keyword">new</span>[] {
+  <span class="keyword">new</span> { X = <span class="number">0</span>, Y = <span class="number">0</span> },
+  <span class="keyword">new</span> { X = <span class="number">0</span>, Y = <span class="number">1</span> },
+  <span class="keyword">new</span> { X = <span class="number">0</span>, Y = <span class="number">2</span> },
+  <span class="keyword">new</span> { X = <span class="number">1</span>, Y = <span class="number">0</span> },
+  <span class="keyword">new</span> { X = <span class="number">1</span>, Y = <span class="number">1</span> },
+  <span class="keyword">new</span> { X = <span class="number">1</span>, Y = <span class="number">2</span> },
+  <span class="keyword">new</span> { X = <span class="number">2</span>, Y = <span class="number">0</span> },
+};
+
+Console.Write(<span class="string">&quot;{0}\n&quot;</span>, list.First(p =&gt; p.X == <span class="number">0</span>));
+<span class="comment">// Console.Write(&quot;{0}\n&quot;, list.First(p =&gt; p.X == 3)); // 例外発生</span>
+Console.Write(<span class="string">&quot;{0}\n&quot;</span>, list.Last(p =&gt; p.X == <span class="number">1</span>));
+Console.Write(<span class="string">&quot;{0}\n&quot;</span>, list.Single(p =&gt; p.X == <span class="number">2</span>));
+<span class="comment">// Console.Write(&quot;{0}\n&quot;, list.Single(p =&gt; p.X == 0)); // 例外発生</span></code></pre>
+<pre><code class="language-console">{ X = 0, Y = 0 }
+{ X = 1, Y = 2 }
+{ X = 2, Y = 0 }</code></pre>
+<p>First、Last、Single には引数を持たないバージョンもあって、
+その場合、First、Last はシーケンス全体の中の最初・最後の要素を返します。
+引数なしの Single は、シーケンスがただ1つの要素からなるときにはその要素の値を返し、
+そうでなければ例外を発生させます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = <span class="keyword">new</span>[] { <span class="number">0</span> }.Single();    <span class="comment">// x == 0</span>
+<span class="keyword">var</span> y = <span class="keyword">new</span>[] { <span class="number">0</span>, <span class="number">1</span> }.Single(); <span class="comment">// 例外発生</span></code></pre>
+<h2 id="section-13"><a id="sec-generated-title-13"></a> <a id="generate"></a>生成演算子</h2>
+<p>シーケンスに対するフィルタリングではなく、
+シーケンスそのものを生成するような演算子が3つあります。</p>
+<table summary="">
+
+	<tr>
+		<td><p>Range</p></td>
+		<td><p>ある範囲の整数列を生成します。</p></td>
+	</tr>
+	<tr>
+		<td><p>Repeat</p></td>
+		<td><p>同じ値を指定回数繰り返すシーケンスを生成します。</p></td>
+	</tr>
+	<tr>
+		<td><p>Empty</p></td>
+		<td><p>空のシーケンスを生成します。</p></td>
+	</tr>
+</table>
+<pre><code class="language-csharp">Show(Enumerable.Range(<span class="number">5</span>, <span class="number">3</span>));
+Show(Enumerable.Repeat(<span class="string">&quot;abc&quot;</span>, <span class="number">3</span>));
+Show(Enumerable.Empty&lt;<span class="keyword">int</span>&gt;());</code></pre>
+<pre><code class="language-console">5 6 7
+abc abc abc</code></pre>
+<p>例えば、Range を使って任意個数の乱数列を生成したりできます。</p>
+<pre><code class="language-csharp">Random rnd = <span class="keyword">new</span> Random();
+<span class="keyword">var</span> randomSeq = Enumerable.Range(<span class="number">0</span>, <span class="number">100</span>).Select(x =&gt; rnd.NextDouble());</code></pre>
+<h2 id="section-14"><a id="sec-generated-title-14"></a> <a id="quantifier"></a>限定子</h2>
+<p>Any、All、Contains は、
+シーケンスがある条件を満たすかどうかを調べるための演算子（限定子（quantifier））です。</p>
+<table summary="">
+
+	<tr>
+		<td><p>Any</p></td>
+		<td><p>条件を満たす要素がシーケンス中に1つでもあれば true を返す。</p></td>
+	</tr>
+	<tr>
+		<td><p>All</p></td>
+		<td><p>シーケンス中の全ての要素が条件を満たせば true を返す。</p></td>
+	</tr>
+	<tr>
+		<td><p>Contains</p></td>
+		<td><p>シーケンス中に要素が含まれるかどうかを調べる。</p></td>
+	</tr>
+</table>
+<pre><code class="language-csharp">Func&lt;<span class="keyword">int</span>, <span class="keyword">bool</span>&gt; isEven = x =&gt; (x &amp; <span class="number">1</span>) == <span class="number">0</span>;
+
+Console.Write(<span class="string">&quot;{0}\n&quot;</span>, a.Any(isEven)); <span class="comment">// a は偶数も含むので true</span>
+Console.Write(<span class="string">&quot;{0}\n&quot;</span>, b.Any(isEven)); <span class="comment">// b は偶数を含むので true</span>
+
+Console.Write(<span class="string">&quot;{0}\n&quot;</span>, a.All(isEven)); <span class="comment">// a は奇数を含むので false</span>
+Console.Write(<span class="string">&quot;{0}\n&quot;</span>, b.All(isEven)); <span class="comment">// b は全て偶数なので true</span>
+
+Console.Write(<span class="string">&quot;{0}\n&quot;</span>, a.Contains(<span class="number">0</span>)); <span class="comment">// a は 0 を含むので true</span></code></pre>
+<h2 id="section-15"><a id="sec-generated-title-15"></a> <a id="aggregate"></a>集計演算子</h2>
+<p>シーケンス中の要素の個数、和、平均値などを集計するための演算子が7つあります。</p>
+<table summary="">
+
+	<tr>
+		<td><p>Count</p></td>
+		<td><p>要素の個数を返します。</p></td>
+	</tr>
+	<tr>
+		<td><p>LongCount</p></td>
+		<td><p>要素の個数を long 型で返します。</p></td>
+	</tr>
+	<tr>
+		<td><p>Sum</p></td>
+		<td><p>要素の和を求めます。</p></td>
+	</tr>
+	<tr>
+		<td><p>Min</p></td>
+		<td><p>要素の最小値を求めます。</p></td>
+	</tr>
+	<tr>
+		<td><p>Max</p></td>
+		<td><p>要素の最大値を求めます。</p></td>
+	</tr>
+	<tr>
+		<td><p>Average</p></td>
+		<td><p>要素の平均値を求めます。</p></td>
+	</tr>
+	<tr>
+		<td><p>Aggregate</p></td>
+		<td><p>より一般的な集計処理を行います。</p></td>
+	</tr>
+</table>
+<p>list.Aggregate(func); は、以下のコードと同じ結果を得ます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> T Aggregate&lt;T&gt;(IEnumerable&lt;T&gt; list, Func&lt;T, T, T&gt; func)
+{
+  <span class="keyword">var</span> acc = list.First();
+  <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> list.Skip(<span class="number">1</span>))
+  {
+    acc = func(acc, x);
+  }
+  <span class="keyword">return</span> acc;
+}</code></pre>
+<p>したがって、
+<code>list.Aggregate((s, x) =&gt; s + x);</code>
+で
+<code>list.Sum();</code>
+と同じ意味になります。</p>
+<p>他の集計演算子もほぼ同様の動作をしています。
+なので、
+例えば、以下のようなコードを書くと、<em>foreach ループを5回まわすことになります</em>。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> num = a.Count();
+<span class="keyword">var</span> min = a.Min();
+<span class="keyword">var</span> max = a.Max();
+<span class="keyword">var</span> ave = a.Average();
+<span class="keyword">var</span> sum = a.Sum();</code></pre>
+<p>そのため、
+以下のようなコードと比べると、圧倒的に動作速度が遅くなります。
+（筆者の環境では約10倍の差。）</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> num = <span class="number">0</span>;
+<span class="keyword">var</span> min = <span class="keyword">int</span>.MaxValue;
+<span class="keyword">var</span> max = <span class="keyword">int</span>.MinValue;
+<span class="keyword">var</span> sum = <span class="number">0</span>;
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> a)
+{
+  ++num;
+  <span class="keyword">if</span> (min &gt; x) min = x;
+  <span class="keyword">if</span> (max &lt; x) max = x;
+  sum += x;
+}
+<span class="keyword">double</span> ave = sum / (<span class="keyword">double</span>)num;</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/data/">&#x30C7;&#x30FC;&#x30BF;&#x5217;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/data/sp_foreach/">foreach</a></li><li><a href="/study/csharp/data/sp2_iterator/">&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;&#x30FC;</a></li><li><a href="/study/csharp/data/sp2_itpattern/">[&#x96D1;&#x8A18;] &#x5185;&#x90E8;&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;&#x3068;&#x5916;&#x90E8;&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;</a></li><li><a href="/study/csharp/data/da_about/">&#x30C7;&#x30FC;&#x30BF;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/data/sp3_linq/">LINQ</a></li><li><a href="/study/csharp/data/sp3_stdquery/">&#x6A19;&#x6E96;&#x30AF;&#x30A8;&#x30EA;&#x6F14;&#x7B97;&#x5B50;&#xFF08;&#x30AF;&#x30A8;&#x30EA;&#x5F0F;&#x95A2;&#x4FC2;&#xFF09;</a></li><li><a href="/study/csharp/data/sp3_lazylist/">[&#x96D1;&#x8A18;] LINQ &#x3068;&#x9045;&#x5EF6;&#x8A55;&#x4FA1;</a></li><li><a href="/study/csharp/data/datamodulararchitecture/">[&#x96D1;&#x8A18;] &#x5C0F;&#x3055;&#x306A;&#x6A5F;&#x80FD;&#x306E;&#x7D44;&#x307F;&#x5408;&#x308F;&#x305B;</a></li><li><a href="/study/csharp/data/sp3_ormismatch/">[&#x96D1;&#x8A18;] O/R &#x30A4;&#x30F3;&#x30D4;&#x30FC;&#x30C0;&#x30F3;&#x30B9;&#x30DF;&#x30B9;&#x30DE;&#x30C3;&#x30C1;</a></li><li><a href="/study/csharp/data/sp3_ormismatch2/">[&#x96D1;&#x8A18;] O/R &#x30A4;&#x30F3;&#x30D4;&#x30FC;&#x30C0;&#x30F3;&#x30B9;&#x30DF;&#x30B9;&#x30DE;&#x30C3;&#x30C1;&#xFF08;&#x30AF;&#x30E9;&#x30B9;&#x306E;&#x7D99;&#x627F;&#xFF09;</a></li><li><a href="/study/csharp/data/sp3_linqtosql/">[&#x96D1;&#x8A18;] LINQ to SQL &#x5B9F;&#x8DF5;&#x7DE8;</a></li><li><a href="/study/csharp/data/sp3_iqueryable/">[&#x96D1;&#x8A18;] IQueryable &#x306E;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/data/misc_immutabledata/">&#x4E0D;&#x5909;(immutable)&#x306A;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/data/dataranges/">&#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;/&#x7BC4;&#x56F2;&#x51E6;&#x7406;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

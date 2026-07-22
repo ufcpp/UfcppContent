@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>priority_queue | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/stl/container_adaptor/priority_queue/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="priority_queue">priority_queue</h1>
+<h2 id="priority_queue-1"><a id="sec-generated-title-1"></a> <a id="d25e4"></a>priority_queue とは</h2>
+<p><strong id="priority" class="keyword">priority_queue</strong>とは優先度つき待ち行列と呼ばれるもので、
+挿入された順序どおりに要素の取り出しを行うのではなく、
+優先度の高い要素から先に取り出す待ち行列。</p>
+<p>例えば、<code>int</code>型を格納するpriority_queueで、整数の値をそのまま優先度として用いると、値の大きな整数から順に取り出される待ち行列になります。</p>
+<p>priority_queueはヒープと呼ばれるデータ構造が使われます。
+このヒープは、完全な2分木の形をしていて、
+木の各ノードは自身より下にの要素よりも大きな値を持ちます。
+そのため、最大の値を持つ要素は常に木の根に含まれていることになります。
+この木の根にある要素を取り出すことで常に最大の値を持つ要素を取り出します。</p>
+<p>ヒープの実装は、ランダムアクセス(<code>[]</code>を使った添字によるアクセス)のできるデータ構造を使って行えます。</p>
+<h2 id="stl-priority_queue"><a id="sec-generated-title-2"></a> <a id="d25e28"></a>STL におけるpriority_queue</h2>
+<p>STLのpriority_queueは何を使って実装するかをvector,queueのいずれかから選べます。<br></br>
+キューの要素の型をTとすると、</p>
+<table summary="">
+
+	<tr>
+		<td><p><code>priority_queue&lt;T, vector&lt;T&gt; &gt;</code></p></td>
+		<td><p>vectorによるpriority_queue</p></td>
+	</tr>
+	<tr>
+		<td><p><code>priority_queue&lt;T, deque&lt;T&gt; &gt;</code></p></td>
+		<td><p>dequeによるpriority_queue</p></td>
+	</tr>
+	<tr>
+		<td><p><code>priority_queue&lt;T, vector&lt;T&gt;, greater&lt;T&gt; &gt;</code></p></td>
+		<td><p>vectorによるpriority_queue (値の小さな要素から取り出す)</p></td>
+	</tr>
+</table>
+<p>他にも、<code>push_back, pop_front, front, back, size</code>などのメソッドを適当に定義したクラスなら
+何でもキューの実装に使えます。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/stl/container_adaptor/">&#x30B3;&#x30F3;&#x30C6;&#x30CA;&#x30A2;&#x30C0;&#x30D7;&#x30BF;</a></li><li><a href="/study/stl/container_adaptor/stack/">stack</a></li><li><a href="/study/stl/container_adaptor/queue/">queue</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

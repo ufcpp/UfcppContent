@@ -1,0 +1,714 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>[&#x96D1;&#x8A18;] O/R &#x30A4;&#x30F3;&#x30D4;&#x30FC;&#x30C0;&#x30F3;&#x30B9;&#x30DF;&#x30B9;&#x30DE;&#x30C3;&#x30C1; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/data/sp3_ormismatch/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="or">[雑記] O/R インピーダンスミスマッチ</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<h5 class="version version3">Ver. 3.0</h5>
+<p>「<a href="/study/csharp/data/sp3_linq/#linq">LINQ</a>」 を用いることで、
+IEnumerable や XML、リレーショナルデータベースなど、
+様々なデータソースに対して、共通の構文で問い合わせなどの操作を行うことができます。</p>
+<p>その中でも、リレーショナルデータベースへの問い合わせを可能とする LINQ to SQL や Entity Framework は、
+オブジェクト指向プログラミングとリレーショナル データベースの間の溝（インピーダンスミスマッチ）を埋める技術として、非常に面白いものになっています。</p>
+<ul>
+<li>サンプル プログラム:<a href="/assets/source/EntityFrameworkSample.zip">EntityFrameworkSample.zip</a></li>
+</ul>
+<h2 id="gui"><a id="sec-generated-title-2"></a> <a id="gui-data"></a>ほとんどのアプリケーション ＝ GUI ＋ データ処理</h2>
+<p>近年、ほとんどのアプリケーションは、何らかのデータに対する操作と表示が主な仕事となっています。
+すなわち、データ処理（読み出しや更新）と表示用の GUI 構築がプログラムの行う処理です。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/data1.png"><img src="/assets/media/ufcpp2000/csharp/fig/data1.png" alt="データに対する操作と表示" /></a></p>
+<figcaption>データに対する操作と表示</figcaption>
+</figure>
+<p>このうち、GUI の構築に関しては、オブジェクト指向とイベント駆動という考え方に基づいてプログラムが作られます。
+C# は 1.0 の頃から、オブジェクト指向とイベント駆動に関する機能は充実していました。
+（参考： 「<a href="/study/csharp/#oop">オブジェクト指向</a>」、「<a href="/study/csharp/functional/sp_event/">イベント</a>」 ）</p>
+<p>一方、データ処理は、リレーショナル データベースなどに格納するわけですが、
+オブジェクト指向プログラミング（OOP）とリレーショナル データベース（RDB）の間にはプログラミング モデルの差があって、
+その差（インピーダンス ミスマッチと呼ばれたりします）が開発のハードルになるので問題とされています。</p>
+<p>（本節以降で説明する 「<a href="/study/csharp/data/sp3_linq/#linq">LINQ</a>」 は、
+C# 3.0 で導入された機能で、のような OOP を基本とするプログラミング言語内で、RDB 的なデータ処理を実現するものです。）</p>
+<h2 id="section-1"><a id="sec-generated-title-3"></a> <a id="impedance_mismatch"></a>インピーダンス ミスマッチ</h2>
+<p>インピーダンス ミスマッチ（impedance mismatch）という言葉は、元々は電気工学の言葉で、
+直訳するなら「抵抗の不一致」ということになります。
+図1に示すように、抵抗の異なる素材の間に電磁波を通そうとすると、
+境界面で反射が起こって、電気的なエネルギーを効率よく伝達できないんですが、
+そういう状況を思い浮かべての比喩表現です。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/ormismatch.png"><img src="/assets/media/ufcpp2000/csharp/fig/ormismatch.png" alt="異なる素材間の抵抗の不一致" /></a></p>
+<figcaption>異なる素材間の抵抗の不一致</figcaption>
+</figure>
+<p>（
+電磁波とか言われてもよく分からないという人向けに蛇足的に説明すると、
+音の反射も、音波が物質中を伝わる際の抵抗（音響インピーダンス）の異なる物質の境界面で起こります。
+とにかく、
+物質間で反射が起きてエネルギーがうまく伝わらない状況というのがインピーダンスミスマッチです。
+）</p>
+<p>インピーダンスのミスマッチが伝達ロスを招くわけですから、
+このミスマッチを解消することで伝達率が上がることが期待されます。
+実際、図2に示すように、物質の境界面をぼかすような処理をかけることで、
+インピーダンス（物質の抵抗）の変化が緩やかになって、
+光（電磁波）や音の反射を軽減できたりもします。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/ormismatch2.png"><img src="/assets/media/ufcpp2000/csharp/fig/ormismatch2.png" alt="インピーダンス ミスマッチの解消による反射の軽減" /></a></p>
+<figcaption>インピーダンス ミスマッチの解消による反射の軽減</figcaption>
+</figure>
+<p>（
+ちなみに、
+表面に微細な凸凹を付けることで境界面をぼかして、
+インピーダンス ミスマッチの解消による反射の低減を行って、
+きわめて透明なガラス/フィルムを作る技術があったりします。
+蛾の目の構造はこういう凸凹になっていて実際に反射が抑えられていることから、
+「モスアイ（moth eye）加工」と呼ばれたりします。
+）</p>
+<h2 id="or-1"><a id="sec-generated-title-4"></a> <a id="or_impedance_mismatch"></a>O/R インピーダンスミスマッチ</h2>
+<p>要するに、<em>コンセプトの異なる2つの分野を繋ごうとする際に起こる困難</em>をさして、
+インピーダンス ミスマッチという言葉を使います。
+そして、インピーダンス ミスマッチがあると「伝達ロス」が発生するので、このミスマッチは極力解消したいものです。</p>
+<p>IT の分野で特に問題となるミスマッチは、
+オブジェクト指向プログラミング（OOP）とリレーショナルデータベース（RDB）の間の不一致で、
+<strong id="or_mismatch" class="keyword">O/R インピーダンス ミスマッチ</strong>（O/R は Object/Relational の略）と呼ばれます。</p>
+<p>ここでは、
+OOP と RDB でそれぞれどういうコンセプトでデータを表すかを説明した上で、
+どういうミスマッチがあるのか、
+LINQ でどう解決されるのかを説明したいと思います。</p>
+<h2 id="oop-rdb"><a id="sec-generated-title-5"></a> <a id="class_vs_table"></a>OOP のクラスと RDB のテーブル</h2>
+<p>ここでは例として、本のシリーズと作家のデータベースを考えます。
+この例では、
+シリーズは名前と出版社と作者を、
+作家は名前・誕生日・ウェブサイト URL を持つものとします。</p>
+<p>作家はいくつかのシリーズを持っていますし、シリーズにはそれぞれ作者がいるわけですが、
+まあまず、最初はその両者の間の関連性はおいておいて別々に考えます。
+（この段階では OOP と RDB の間の差は顕著には現れません。）</p>
+<h5 id="oop"><a id="sec-generated-title-6"></a>OOP（クラス）</h5>
+<p>まず、OOP の例として C# のコードを挙げますが、
+C# の場合、以下のようなクラスを定義して、
+List や Dictionary を使ってデータを格納します。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Author
+{
+  <span class="keyword">public</span> <span class="keyword">string</span> Name;
+  <span class="keyword">public</span> DateTime Birthday;
+  <span class="keyword">public</span> <span class="keyword">string</span> Url;
+}
+
+<span class="keyword">class</span> Series
+{
+  <span class="keyword">public</span> <span class="keyword">string</span> Name;
+  <span class="keyword">public</span> <span class="keyword">string</span> Publisher;
+}</code></pre>
+<pre><code class="language-csharp">List&lt;Author&gt; authors = <span class="keyword">new</span> List&lt;Author&gt; {
+  <span class="keyword">new</span> Author {
+    Name = <span class="string">&quot;赤松健&quot;</span>,
+    Birthday = <span class="keyword">new</span> DateTime(<span class="number">1968</span>, <span class="number">07</span>, <span class="number">05</span>),
+    Url = <span class="string">&quot;http://www.ailove.net/main.html&quot;</span>
+  },
+  <span class="keyword">new</span> Author {
+    Name = <span class="string">&quot;久米田康治&quot;</span>,
+    Birthday = <span class="keyword">new</span> DateTime(<span class="number">1967</span>, <span class="number">09</span>, <span class="number">05</span>),
+    Url = <span class="string">&quot;http://websunday.net/backstage/kumeta.html&quot;</span>
+  },
+  <span class="keyword">new</span> Author {
+    Name = <span class="string">&quot;島本和彦&quot;</span>,
+    Birthday = <span class="keyword">new</span> DateTime(<span class="number">1961</span>, <span class="number">04</span>, <span class="number">26</span>),
+    Url = <span class="string">&quot;http://simamoto.zenryokutei.com/&quot;</span>
+  },
+  <span class="keyword">new</span> Author {
+    Name = <span class="string">&quot;藤田和日郎&quot;</span>,
+    Birthday = <span class="keyword">new</span> DateTime(<span class="number">1964</span>, <span class="number">05</span>, <span class="number">24</span>),
+    Url = <span class="string">&quot;http://websunday.net/backstage/fujita.html&quot;</span>
+  },
+};
+
+List&lt;Series&gt; series = <span class="keyword">new</span> List&lt;Series&gt; {
+  <span class="keyword">new</span> Series { Name = <span class="string">&quot;魔法先生ネギま！&quot;</span>, Publisher = <span class="string">&quot;講談社&quot;</span> },
+  <span class="keyword">new</span> Series { Name = <span class="string">&quot;ラブひな&quot;</span>, Publisher = <span class="string">&quot;講談社&quot;</span> },
+  <span class="keyword">new</span> Series { Name = <span class="string">&quot;さよなら絶望先生&quot;</span>, Publisher = <span class="string">&quot;講談社&quot;</span> },
+  <span class="keyword">new</span> Series { Name = <span class="string">&quot;かってに改蔵&quot;</span>, Publisher = <span class="string">&quot;小学館&quot;</span> },
+  <span class="keyword">new</span> Series { Name = <span class="string">&quot;アニメ店長&quot;</span>, Publisher = <span class="string">&quot;一迅社&quot;</span> },
+  <span class="keyword">new</span> Series { Name = <span class="string">&quot;新吼えろペン&quot;</span>, Publisher = <span class="string">&quot;小学館&quot;</span> },
+  <span class="keyword">new</span> Series { Name = <span class="string">&quot;ゲキトウ&quot;</span>, Publisher = <span class="string">&quot;講談社&quot;</span> },
+  <span class="keyword">new</span> Series { Name = <span class="string">&quot;からくりサーカス&quot;</span>, Publisher = <span class="string">&quot;小学館&quot;</span> },
+  <span class="keyword">new</span> Series { Name = <span class="string">&quot;うしおととら&quot;</span>, Publisher = <span class="string">&quot;小学館&quot;</span> },
+};</code></pre>
+<h5 id="rdb"><a id="sec-generated-title-7"></a>RDB（テーブル）</h5>
+<p>一方、RDB では、
+以下のように、テーブルとしてデータの構造定義・格納します。</p>
+<table summary="Authors テーブル">
+	<caption>
+		Authors テーブル
+	</caption>
+	<tr>
+		<th>Name</th>
+		<th>Birthday</th>
+		<th>Url</th>
+	</tr>
+	<tr>
+		<td><p>赤松健</p></td>
+		<td><p>1968/07/05</p></td>
+		<td><p><a href="http://www.ailove.net/main.html">http://www.ailove.net/main.html</a></p></td>
+	</tr>
+	<tr>
+		<td><p>久米田康治</p></td>
+		<td><p>1967/09/05</p></td>
+		<td><p><a href="http://websunday.net/backstage/kumeta.html">http://websunday.net/backstage/kumeta.html</a></p></td>
+	</tr>
+	<tr>
+		<td><p>島本和彦</p></td>
+		<td><p>1961/04/26</p></td>
+		<td><p><a href="http://simamoto.zenryokutei.com/">http://simamoto.zenryokutei.com/</a></p></td>
+	</tr>
+	<tr>
+		<td><p>藤田和日郎</p></td>
+		<td><p>1964/05/24</p></td>
+		<td><p><a href="http://websunday.net/backstage/fujita.html">http://websunday.net/backstage/fujita.html</a></p></td>
+	</tr>
+</table>
+<table summary="Series テーブル">
+	<caption>
+		Series テーブル
+	</caption>
+	<tr>
+		<th>Name</th>
+		<th>Publisher</th>
+	</tr>
+	<tr>
+		<td><p>魔法先生ネギま！</p></td>
+		<td><p>講談社</p></td>
+	</tr>
+	<tr>
+		<td><p>ラブひな</p></td>
+		<td><p>講談社</p></td>
+	</tr>
+	<tr>
+		<td><p>さよなら絶望先生</p></td>
+		<td><p>講談社</p></td>
+	</tr>
+	<tr>
+		<td><p>かってに改蔵</p></td>
+		<td><p>小学館</p></td>
+	</tr>
+	<tr>
+		<td><p>アニメ店長</p></td>
+		<td><p>一迅社</p></td>
+	</tr>
+	<tr>
+		<td><p>新吼えろペン</p></td>
+		<td><p>小学館</p></td>
+	</tr>
+	<tr>
+		<td><p>ゲキトウ</p></td>
+		<td><p>講談社</p></td>
+	</tr>
+	<tr>
+		<td><p>からくりサーカス</p></td>
+		<td><p>小学館</p></td>
+	</tr>
+	<tr>
+		<td><p>うしおととら</p></td>
+		<td><p>小学館</p></td>
+	</tr>
+</table>
+<p>まあ、本当は、出版社の情報も別テーブルに持ちたいところですが、
+ここでは話を簡単にするために Series テーブル中に含めています。</p>
+<p>最初にも少し触れましたが、
+この時点では OOP と RDB には大きな差は生まれません。
+見た目こそ違いますが、
+いずれも、1行1行データが書かれているだけです。</p>
+<h2 id="oop-rdb-1"><a id="sec-generated-title-8"></a> <a id="hierarchy_vs_join"></a>OOP の階層的データ構造と RDB のテーブル結合</h2>
+<p>まあ、前節のように、データテーブルが独立しているうちは OOP と RDB にはそれほど大きな差は生まれません。
+問題は、2つのテーブルの関係性を表すときに生じます。</p>
+<p>引き続き、作家とシリーズのデータベースの例で説明しましょう。
+作家はいくつかのシリーズを持っていますし、シリーズにはそれぞれ作者がいます。</p>
+<h5 id="oop-1"><a id="sec-generated-title-9"></a>OOP（クラスの階層化）</h5>
+<p>OOP では、通常、階層的なデータ構造を持っています。
+作家が複数のシリーズを持っているなら、作家クラスは以下のように書かれます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Author
+{
+  <span class="keyword">public</span> <span class="keyword">string</span> Name;
+  <span class="keyword">public</span> DateTime Birthday;
+  <span class="keyword">public</span> <span class="keyword">string</span> Url;
+
+  <span class="keyword">public</span> List&lt;Series&gt; Series;
+}</code></pre>
+<p>また、シリーズに作者があるなら、シリーズクラスは以下のようになります。
+（もちろん、本当は1つの本に複数の作者（原作、作画、コンテ構成など）があったりしますが、
+ここでは単純化のために、作家は1人だけとします。）</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Series
+{
+  <span class="keyword">public</span> <span class="keyword">string</span> Name;
+  <span class="keyword">public</span> <span class="keyword">string</span> Publisher;
+
+  <span class="keyword">public</span> Author Author;
+}</code></pre>
+<p>で、例えば、各作家の著作一覧を取得したければ以下のように書きます。
+階層的にデータを取得するために、2重ループなどを書きます。</p>
+<pre><code class="language-csharp"><span class="keyword">foreach</span> (Author a <span class="keyword">in</span> authors)
+{
+  Console.Write(<span class="string">&quot;{0}\n&quot;</span>, a.Name);
+  <span class="keyword">foreach</span> (Series s <span class="keyword">in</span> a.Series)
+  {
+    Console.Write(<span class="string">&quot;  - {0}\n&quot;</span>, s.Name);
+  }
+}</code></pre>
+<p>また、各シリーズの著者を取得するには以下のようにします。</p>
+<pre><code class="language-csharp"><span class="keyword">foreach</span> (Series s <span class="keyword">in</span> series)
+{
+  Console.Write(<span class="string">&quot;{0}, {1}\n&quot;</span>, s.Name, s.Author.Name);
+}</code></pre>
+<h5 id="rdb-1"><a id="sec-generated-title-10"></a>RDB（テーブル間の関係）</h5>
+<p>一方、RDB では、階層的にデータを持つことはできません。
+データ上は、以下のように、ID 情報（Series テーブルの Author_Id 列）だけを持っておきます。</p>
+<table summary="Authors テーブル">
+	<caption>
+		Authors テーブル
+	</caption>
+	<tr>
+		<th>Id</th>
+		<th>Name</th>
+		<th>Birthday</th>
+		<th>Url</th>
+	</tr>
+	<tr>
+		<td><p>1</p></td>
+		<td><p>赤松健</p></td>
+		<td><p>1968/07/05</p></td>
+		<td><p><a href="http://www.ailove.net/main.html">http://www.ailove.net/main.html</a></p></td>
+	</tr>
+	<tr>
+		<td><p>2</p></td>
+		<td><p>久米田康治</p></td>
+		<td><p>1967/09/05</p></td>
+		<td><p><a href="http://websunday.net/backstage/kumeta.html">http://websunday.net/backstage/kumeta.html</a></p></td>
+	</tr>
+	<tr>
+		<td><p>3</p></td>
+		<td><p>島本和彦</p></td>
+		<td><p>1961/04/26</p></td>
+		<td><p><a href="http://simamoto.zenryokutei.com/">http://simamoto.zenryokutei.com/</a></p></td>
+	</tr>
+	<tr>
+		<td><p>4</p></td>
+		<td><p>藤田和日郎</p></td>
+		<td><p>1964/05/24</p></td>
+		<td><p><a href="http://websunday.net/backstage/fujita.html">http://websunday.net/backstage/fujita.html</a></p></td>
+	</tr>
+</table>
+<table summary="Series テーブル">
+	<caption>
+		Series テーブル
+	</caption>
+	<tr>
+		<th>Name</th>
+		<th>Publisher</th>
+		<th>Author_Id</th>
+	</tr>
+	<tr>
+		<td><p>魔法先生ネギま！</p></td>
+		<td><p>講談社</p></td>
+		<td><p>1</p></td>
+	</tr>
+	<tr>
+		<td><p>ラブひな</p></td>
+		<td><p>講談社</p></td>
+		<td><p>1</p></td>
+	</tr>
+	<tr>
+		<td><p>さよなら絶望先生</p></td>
+		<td><p>講談社</p></td>
+		<td><p>2</p></td>
+	</tr>
+	<tr>
+		<td><p>かってに改蔵</p></td>
+		<td><p>小学館</p></td>
+		<td><p>2</p></td>
+	</tr>
+	<tr>
+		<td><p>アニメ店長</p></td>
+		<td><p>一迅社</p></td>
+		<td><p>3</p></td>
+	</tr>
+	<tr>
+		<td><p>新吼えろペン</p></td>
+		<td><p>小学館</p></td>
+		<td><p>3</p></td>
+	</tr>
+	<tr>
+		<td><p>ゲキトウ</p></td>
+		<td><p>講談社</p></td>
+		<td><p>3</p></td>
+	</tr>
+	<tr>
+		<td><p>からくりサーカス</p></td>
+		<td><p>小学館</p></td>
+		<td><p>4</p></td>
+	</tr>
+	<tr>
+		<td><p>うしおととら</p></td>
+		<td><p>小学館</p></td>
+		<td><p>4</p></td>
+	</tr>
+</table>
+<p>そして、問い合わせの際に、
+ID を元に2つのテーブルを結合してから所望のデータを取り出します。</p>
+<p>例えば、OOP の例と同じく、
+各作家のシリーズ一覧を取得したければ、以下のような SQL 文を書きます。</p>
+<pre><code class="language-sql"><span class="keyword">SELECT</span> [a].[Name] <span class="keyword">AS</span> [AuthorName], [s].[Name]
+  <span class="keyword">FROM</span> [Authors] <span class="keyword">AS</span> [a]
+  <span class="keyword">INNER</span> <span class="keyword">JOIN</span> [Series] <span class="keyword">AS</span> [s] <span class="keyword">ON</span> [a].[Id] = [s].[Author_Id]</code></pre>
+<p>このように、OOP と RDB には、階層的データ構造とテーブル結合という方法論の差があります。</p>
+<h2 id="or-2"><a id="sec-generated-title-11"></a> <a id="orm"></a>O/R マッパー</h2>
+<p>前節のおさらいになりますが、
+OOP では階層的データ構造を、</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Author
+{
+  <span class="keyword">public</span> <span class="keyword">string</span> Name;
+  <span class="keyword">public</span> DateTime Birthday;
+  <span class="keyword">public</span> <span class="keyword">string</span> Url;
+
+  <span class="keyword">public</span> List&lt;Series&gt; Series;
+}</code></pre>
+<p>RDB ではテーブル結合という方法を用いて関連性のあるデータにアクセスします。</p>
+<pre><code class="language-sql"><span class="keyword">SELECT</span> [a].[Name] <span class="keyword">AS</span> [AuthorName], [s].[Name]
+  <span class="keyword">FROM</span> [Authors] <span class="keyword">AS</span> [a]
+  <span class="keyword">INNER</span> <span class="keyword">JOIN</span> [Series] <span class="keyword">AS</span> [s] <span class="keyword">ON</span> [a].[Id] = [s].[Author_Id]</code></pre>
+<p>近年、プログラミング言語からリレーショナルデータベースにアクセスする機会が増え、
+この OOP と RDB の方法論の差、
+すなわち、このページの冒頭で話をした O/R インピーダンスミスマッチを解消したいという要望が強くなっています。
+下位のデータベースを意識せず、普通に OOP の作法でプログラミングするだけで RBD とのデータのやり取りがしたいわけです。</p>
+<p>このような、OOP の作法でデータベース アクセスするための仕組みを O/R マッパー（O/R mapper）と呼びます。</p>
+<h5 id="linq-or"><a id="sec-generated-title-12"></a>LINQ で O/R マッピング</h5>
+<p>「<a href="/study/csharp/data/sp3_linq/#linq">LINQ</a>」は、様々な種類のデータに対して、統一的な問い合わせを行うための仕組みです。
+この「さまざまな種類のデータ」にはデータベースも含まれています。
+すなわち、O/R マッピング用の LINQ が存在します。</p>
+<p>歴史的背景から、LINQ O/R マッパーには、.NET Framework 標準搭載のものだけで、2系統あります。</p>
+<ul>
+<li><p>LINQ to SQL: いわば、LINQ（IQueryable）の参考実装（C# コンパイラー チームが作成したもの）で、ある意味「簡易実装」な O/R マッパー。 今後の機能改善はされない予定。</p>
+</li>
+<li><p>ADO.NET Entity Framework: ちゃんとデータベース フレームワーク（ADO.NET）チームが開発している O/R マッパー。 以下、単に Entity Framework と表記します。</p>
+</li>
+</ul>
+<p>LINQ to SQL の方が成熟が早かった（LINQ 自体と同時に開発していたので当然）ため、
+当初は LINQ to SQL の方がよく利用されていました。
+今（※2011年執筆）では Entity Framework もだいぶ成熟しているので、
+こちらを使うべきでしょう。</p>
+<p>ただし、LINQ to SQL の方が仕組みがシンプルな分、移植がしやすく、
+Entity Framework が使えない環境でも LINQ to SQL なら使える（移植できる）ということもあります。
+例えば、Windows Phone 7 向けの O/R マッパーは LINQ to SQL がベースとなっています。</p>
+<h2 id="linq"><a id="sec-generated-title-13"></a> <a id="linq"></a>LINQ の利用</h2>
+<h3 id="section-2"><a id="sec-generated-title-14"></a> <a id="entity"></a>エンティティ</h3>
+<p>まず、データベース上のテーブルに相当するクラス（これをエンティティ（entity: 本質、実体）と呼びます）を定義します。</p>
+<p><em>※以下、ADO.NET Entity Framework 4.1（2011年時点の最新版）を使った説明をします。</em>
+（「過去の履歴」として、LINQ to SQL 版の説明も残してあります。）</p>
+<p>Entity Framework では、何の変哲もないただのクラスを使ってデータベースのテーブルを生成/参照できます。</p>
+<p>前節から引き続き、作家・シリーズ テーブルを例に取って説明しましょう。
+まず、テーブル間の関係を抜きにすると、以下のような感じになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.ComponentModel.DataAnnotations;
+<span class="keyword">using</span> System.Collections.Generic;
+
+<span class="keyword">namespace</span> CodeFirst.Models
+{
+    <span class="keyword">public</span> <span class="keyword">class</span> Author
+    {
+        <span class="keyword">public</span> <span class="keyword">int</span> Id { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+        [Required]
+        [StringLength(<span class="number">100</span>)]
+        <span class="keyword">public</span> <span class="keyword">string</span> Name { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+        <span class="keyword">public</span> DateTime? Birthday { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+        [StringLength(<span class="number">512</span>)]
+        <span class="keyword">public</span> <span class="keyword">string</span> Url { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    }
+
+    <span class="keyword">public</span> <span class="keyword">class</span> Series
+    {
+        <span class="keyword">public</span> <span class="keyword">int</span> Id { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+        [Required]
+        [StringLength(<span class="number">512</span>)]
+        <span class="keyword">public</span> <span class="keyword">string</span> Name { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    }
+}</code></pre>
+<p>次に、
+定義したエンティティ クラスを使ってデータベースを生成/テーブル参照するためのクラスを作ります。
+Entity Framework では、以下のように、DbContext クラスを継承したクラスを作ります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Data.Entity;
+
+<span class="keyword">namespace</span> CodeFirst.Models
+{
+    <span class="keyword">public</span> <span class="keyword">class</span> ComicDatabase : DbContext
+    {
+        <span class="keyword">public</span> DbSet&lt;Author&gt; Authors { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+        <span class="keyword">public</span> DbSet&lt;Series&gt; Series { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    }
+}</code></pre>
+<p><span class="expand-button" title="展開/折畳">（LINQ to SQL 版）</span></p>
+<div class="expand-panel" title="（LINQ to SQL 版）"><p>エンティティクラスには Table 属性を、
+エンティティのメンバー（テーブルの列に相当）には Column 属性を付けます。</p>
+<p>例えば、前節までの説明で使った作家/シリーズ テーブルの場合、
+以下のような感じになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Data.Linq.Mapping;
+<p>[Table(Name = <span class="string">&quot;Authors&quot;</span>)]
+<span class="keyword">public</span> <span class="keyword">class</span> Author
+{
+[Column(AutoSync = AutoSync.OnInsert, IsPrimaryKey = <span class="keyword">true</span>, IsDbGenerated = <span class="keyword">true</span>)]
+<span class="keyword">public</span> <span class="keyword">int</span> Id;
+[Column]
+<span class="keyword">public</span> <span class="keyword">string</span> Name;
+[Column]
+<span class="keyword">public</span> DateTime? Birthday;
+[Column]
+<span class="keyword">public</span> <span class="keyword">string</span> Url;
+}</p>
+<p>[Table(Name = <span class="string">&quot;Series&quot;</span>)]
+<span class="keyword">public</span> <span class="keyword">class</span> Series
+{
+[Column(AutoSync = AutoSync.OnInsert, IsPrimaryKey = <span class="keyword">true</span>, IsDbGenerated = <span class="keyword">true</span>)]
+<span class="keyword">public</span> <span class="keyword">int</span> Id;
+[Column]
+<span class="keyword">public</span> <span class="keyword">string</span> Name;
+[Column]
+<span class="keyword">public</span> <span class="keyword">int</span> AuthorId;
+}</code></pre></p>
+<p>LINQ to SQL では、これらの属性をみて、
+クラスのメンバーアクセスを RDB への SQL 問い合わせに変換します。</p>
+<p>この例では、Author と Series の Id の Column 属性には、AutoSync などのパラメータが付いています。
+これは、「データベース側で自動的に生成されるユニークな ID で、自動的にデータベース側と同期します」という意味になります。
+通常、重複のない一意的な整数値がほしい場合、このような設定をします。</p>
+<h5 id="datacontext"><a id="sec-generated-title-15"></a>DataContext</h5>
+<p>次に、データベースサーバに接続するためのクラス（DataContext）を作ります。</p>
+<p>先ほどの Author と Series テーブルにアクセスするためには、
+以下のようなクラスを作ります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Data.Linq;
+<p><span class="keyword">public</span> <span class="keyword">class</span> ComicDataContext : DataContext
+{
+<span class="keyword">public</span> ComicDataContext(<span class="keyword">string</span> connectionString)
+: <span class="keyword">base</span>(connectionString)</p>
+<p><span class="keyword">public</span> Table&lt;Author&gt; Author;
+<span class="keyword">public</span> Table&lt;Series&gt; Series;
+}</code></pre></p>
+<p>DataContext を継承するクラスに、Table 型のメンバーを書くだけです。
+各 Table の初期化は、親クラスの DataContext のコンストラクタ中で、
+「<a href="/study/csharp/dynamic/sp_reflection/#reflection">リフレクション</a>」機能を使って行われます。
+なので、最低限、コンストラクタと Table メンバーだけ書けば LINQ to SQL で利用可能です。</p></div>
+<h3 id="iqueryable"><a id="sec-generated-title-16"></a> <a id="query"></a>IQueryable とクエリ式</h3>
+<p>例えば、Author テーブルに対するクエリは以下のように書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> (<span class="keyword">var</span> db = <span class="keyword">new</span> ComicDatabase())
+{
+    <span class="keyword">var</span> q =
+        <span class="keyword">from</span> a <span class="keyword">in</span> db.Authors
+        <span class="keyword">where</span> a.Name == <span class="string">&quot;島本和彦&quot;</span> || a.Name == <span class="string">&quot;赤松健&quot;</span>
+        <span class="keyword">select</span> a;
+
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> a <span class="keyword">in</span> q)
+    {
+        Console.Write(<span class="string">&quot;{0}, {1:yyyy/M/d}, {2}\n&quot;</span>, a.Name, a.Birthday, a.Url);
+    }
+}</code></pre>
+<pre><code class="language-console">赤松健, 1968/7/5, http://www.ailove.net/main.html
+島本和彦, 1961/4/26, http://simamoto.zenryokutei.com/</code></pre>
+<p><span class="expand-button" title="展開/折畳">（LINQ to SQL 版）</span></p>
+<div class="expand-panel" title="（LINQ to SQL 版）"><pre><code class="language-csharp"><span class="keyword">var</span> db = <span class="keyword">new</span> ComicDataContext(ConnectionString);
+<p><span class="keyword">var</span> q =
+<span class="keyword">from</span> a <span class="keyword">in</span> db.Author
+<span class="keyword">where</span> a.Name == <span class="string">&quot;島本和彦&quot;</span> || a.Name == <span class="string">&quot;赤松健&quot;</span>
+<span class="keyword">select</span> a;</p>
+<p><span class="keyword">foreach</span> (<span class="keyword">var</span> a <span class="keyword">in</span> q)
+{
+Console.Write(<span class="string">&quot;{0}, {1:yyyy/M/d}, {2}\n&quot;</span>, a.Name, a.Birthday, a.Url);
+}</code></pre></p>
+<p>Table クラスは IQueryable インターフェースを実装していて、
+このクエリ式は IQueryable に対する操作になります。
+「<a href="/study/csharp/data/sp3_linq/#query">クエリ式</a>」で説明したように、
+C# 3.0 のクエリ式は、実際には Select や Where などといった名前のメソッド（あるいは拡張メソッド）呼び出しになります。
+この例の場合、以下のメソッド呼び出しと同じ意味です。</p>
+<pre><code class="language-csharp">IQueryable&lt;Author&gt; q = db.Author.Where(
+  a =&gt; a.Name == <span class="string">&quot;島本和彦&quot;</span> || a.Name == <span class="string">&quot;赤松健&quot;</span>);</code></pre></div>
+<p>この時、クエリ式の結果（この例では変数 q）の型は IQueryable インターフェイスになります。</p>
+<p>IQueryable は、このようなクエリ式から SQL 文を生成し、データベースサーバに問い合わせを行います。
+ちなみに、IQueryable を ToString すると、生成された SQL 文を確認することができます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> q =
+  <span class="keyword">from</span> a <span class="keyword">in</span> db.Author
+  <span class="keyword">where</span> a.Name == <span class="string">&quot;島本和彦&quot;</span> || a.Name == <span class="string">&quot;赤松健&quot;</span>
+  <span class="keyword">select</span> a;
+
+Console.WriteLine(q.ToString());</code></pre>
+<pre><code class="language-console">SELECT
+[Extent1].[Id] AS [Id],
+[Extent1].[Name] AS [Name],
+[Extent1].[Kana] AS [Kana],
+[Extent1].[Birthday] AS [Birthday],
+[Extent1].[Url] AS [Url]
+FROM [dbo].[Authors] AS [Extent1]
+WHERE [Extent1].[Name] IN (N'島本和彦',N'赤松健')</code></pre>
+<h3 id="section-3"><a id="sec-generated-title-17"></a> <a id="association"></a>エンティティ間の関係性</h3>
+<p>それでは次に、
+Author と Series エンティティ間の関係性を記述します。</p>
+<p>Entity Framework を使うと、ただ単に他のエンティティを参照するプロパティを定義するだけで、
+データベース テーブルの関係性を表現できます。
+例えば、先ほどの Author / Series クラスに以下のような修正を加えます。</p>
+<pre><code class="language-csharp">    <span class="keyword">public</span> <span class="keyword">class</span> Author
+    {
+        <span class="keyword">public</span> <span class="keyword">int</span> Id { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+        [Required]
+        [StringLength(<span class="number">100</span>)]
+        <span class="keyword">public</span> <span class="keyword">string</span> Name { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+        <span class="keyword">public</span> DateTime? Birthday { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+        [StringLength(<span class="number">512</span>)]
+        <span class="keyword">public</span> <span class="keyword">string</span> Url { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+        <span class="keyword">public</span> <span class="keyword">virtual</span> IList&lt;Series&gt; Series { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    }
+
+    <span class="keyword">public</span> <span class="keyword">class</span> Series
+    {
+        <span class="keyword">public</span> <span class="keyword">int</span> Id { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+        [Required]
+        [StringLength(<span class="number">512</span>)]
+        <span class="keyword">public</span> <span class="keyword">string</span> Name { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+        <span class="keyword">public</span> Author Author { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    }</code></pre>
+<p>このような、エンティティ間の参照関係を表すプロパティをナビゲーション プロパティ（navigation property）と呼びます。
+ナビゲーション プロパティは、データベース上は ID 情報だけ記録され、
+参照時に適宜、テーブルの JOIN が行われます。</p>
+<p><span class="expand-button" title="展開/折畳">（LINQ to SQL 版）</span></p>
+<div class="expand-panel" title="（LINQ to SQL 版）"><pre><code class="language-csharp"><span class="keyword">using</span> System.Data.Linq.Mapping;
+<p>[Table(Name = <span class="string">&quot;Authors&quot;</span>)]
+<span class="keyword">public</span> <span class="keyword">class</span> Author
+{
+[Column(AutoSync = AutoSync.OnInsert, IsPrimaryKey = <span class="keyword">true</span>, IsDbGenerated = <span class="keyword">true</span>)]
+<span class="keyword">public</span> <span class="keyword">int</span> Id;
+[Column]
+<span class="keyword">public</span> <span class="keyword">string</span> Name;
+[Column]
+<span class="keyword">public</span> DateTime? Birthday;
+[Column]
+<span class="keyword">public</span> <span class="keyword">string</span> Url;</p>
+<p>[Association(OtherKey = <span class="string">&quot;AuthorId&quot;</span>)]
+<span class="keyword">public</span> EntitySet&lt;Series&gt; Series;
+}</p>
+<p>[Table(Name = <span class="string">&quot;Series&quot;</span>)]
+<span class="keyword">public</span> <span class="keyword">class</span> Series
+{
+[Column(AutoSync = AutoSync.OnInsert, IsPrimaryKey = <span class="keyword">true</span>, IsDbGenerated = <span class="keyword">true</span>)]
+<span class="keyword">public</span> <span class="keyword">int</span> Id;
+[Column]
+<span class="keyword">public</span> <span class="keyword">string</span> Name;
+[Column]
+<span class="keyword">public</span> <span class="keyword">int</span> AuthorId;</p>
+<p>[Association(Storage = <span class="string">&quot;_Author&quot;</span>, ThisKey = <span class="string">&quot;AuthorId&quot;</span>)]
+<span class="keyword">public</span> Author Author
+{
+<span class="keyword">get</span> { <span class="keyword">return</span> <span class="keyword">this</span>._Author.Entity; }
+<span class="keyword">set</span> { <span class="keyword">this</span>._Author.Entity = value; }
+}
+<span class="keyword">private</span> EntityRef&lt;Author&gt; _Author;
+}</code></pre></p>
+<p>EntitySet や EntityRef クラスのデータへのアクセスは、
+必要になったときに初めてデータベースサーバに問い合わせを行います。
+すなわち、初回アクセス時にのみサーバからデータをロードし、
+取得済みのデータがすでにあるならその値を返します。</p>
+<p>Author は複数の Series を持っているので EntitySet、
+Series は（今回の例では）ただ1人の Author を持つので EntityRef を使います。</p>
+<p>OOP における階層的データ構造は、
+RDB ではテーブル結合で行うわけですが、
+結合の際のキーを Association 属性のパラメータに与えます。
+この例では、
+Author の主キー（IsPrimaryKey = true）である Id と Series の AuthorId の値によってテーブルを結合するので、
+Author 側には OtherKey = &quot;AuthorId&quot; を、
+Series 側には ThisKey = &quot;AuthorId&quot; を指定します。</p></div>
+<p>これで、Author.Series や Series.Author の値が必要になった際に、
+自動的にテーブル結合を行うような SQL 文が生成されます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> (<span class="keyword">var</span> db = <span class="keyword">new</span> ComicDatabase())
+{
+    <span class="keyword">var</span> q =
+        <span class="keyword">from</span> s <span class="keyword">in</span> db.Series
+        <span class="keyword">where</span> s.Name.Contains(<span class="string">&quot;先生&quot;</span>)
+        <span class="keyword">select</span> <span class="keyword">new</span> { Title = s.Name, Author = s.Author.Name };
+
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> s <span class="keyword">in</span> q)
+    {
+        Console.Write(<span class="string">&quot;{0}, {1}\n&quot;</span>, s.Title, s.Author);
+    }
+
+    Console.Write(<span class="string">&quot;\n{0}\n&quot;</span>, q);
+}</code></pre>
+<pre><code class="language-console">魔法先生ネギま！, 赤松健
+さよなら絶望先生, 久米田康治
+
+SELECT
+1 AS [C1],
+[Extent1].[Name] AS [Name],
+[Extent2].[Name] AS [Name1]
+FROM  [dbo].[Series] AS [Extent1]
+LEFT OUTER JOIN [dbo].[Authors] AS [Extent2] ON [Extent1].[Author_Id] = [Extent2].[Id]
+WHERE [Extent1].[Name] LIKE N'%先生%'</code></pre>
+<h2 id="section-4"><a id="sec-generated-title-18"></a> <a id="summary"></a>まとめ</h2>
+<ul>
+<li>オブジェクト指向プログラミング（OOP）言語とリレーショナルデータベース（RDB）の間には、
+<ul>
+<li><p>OOP： 階層的データ構造</p>
+</li>
+<li><p>RDB： テーブル結合</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>という方法論の差があります（O/R インピーダンスミスマッチ）。</p>
+<ul>
+<li>Entity Framework を利用する際に使う物:
+<ul>
+<li><p>エンティティ: データベースのテーブルに相当するクラスを定義。</p>
+</li>
+<li><p>関連性: 他のエンティティを参照するプロパティ（ナビゲーション プロパティ）を定義することでテーブル間の関係性を定義。</p>
+</li>
+<li><p>データベース コンテキスト: 定義したエンティティを使ってデータベースのテーブル生成/参照するためのクラスを定義。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><span class="expand-button" title="展開/折畳">（LINQ to SQL 版）</span></p>
+<div class="expand-panel" title="（LINQ to SQL 版）"><ul>
+<li><p>LINQ to SQL では、OOP の階層的データアクセスから、テーブル結合を行うような SQL クエリを自動的に生成します。</p>
+</li>
+<li><p>LINQ to SQL を利用する際には、</p>
+<ul>
+<li><p>エンティティ： Table 属性付きのクラスに、Column 属性付きのメンバーを定義</p>
+</li>
+<li><p>関連性： Association 属性を付けた EntityRef / EntitySet 型のメンバーを定義</p>
+</li>
+<li><p>DataContext： DataContext クラスに Table 型のメンバーを定義</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>を作る。</p></div>
+<p>次章の「<a href="/study/csharp/data/sp3_linqtosql/">[雑記] LINQ to SQL 実践編</a>」では、
+Visual Studio を使ってデータベースのテーブル定義 → LINQ to SQL クラス化 → クエリ式を使ったプログラム作成という一連の作業を具体的に説明します。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/data/">&#x30C7;&#x30FC;&#x30BF;&#x5217;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/data/sp_foreach/">foreach</a></li><li><a href="/study/csharp/data/sp2_iterator/">&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;&#x30FC;</a></li><li><a href="/study/csharp/data/sp2_itpattern/">[&#x96D1;&#x8A18;] &#x5185;&#x90E8;&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;&#x3068;&#x5916;&#x90E8;&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;</a></li><li><a href="/study/csharp/data/da_about/">&#x30C7;&#x30FC;&#x30BF;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/data/sp3_linq/">LINQ</a></li><li><a href="/study/csharp/data/sp3_stdquery/">&#x6A19;&#x6E96;&#x30AF;&#x30A8;&#x30EA;&#x6F14;&#x7B97;&#x5B50;&#xFF08;&#x30AF;&#x30A8;&#x30EA;&#x5F0F;&#x95A2;&#x4FC2;&#xFF09;</a></li><li><a href="/study/csharp/data/sp3_stdqueryo/">&#x6A19;&#x6E96;&#x30AF;&#x30A8;&#x30EA;&#x6F14;&#x7B97;&#x5B50;&#xFF08;&#x305D;&#x306E;&#x4ED6;&#xFF09;</a></li><li><a href="/study/csharp/data/sp3_lazylist/">[&#x96D1;&#x8A18;] LINQ &#x3068;&#x9045;&#x5EF6;&#x8A55;&#x4FA1;</a></li><li><a href="/study/csharp/data/datamodulararchitecture/">[&#x96D1;&#x8A18;] &#x5C0F;&#x3055;&#x306A;&#x6A5F;&#x80FD;&#x306E;&#x7D44;&#x307F;&#x5408;&#x308F;&#x305B;</a></li><li><a href="/study/csharp/data/sp3_ormismatch2/">[&#x96D1;&#x8A18;] O/R &#x30A4;&#x30F3;&#x30D4;&#x30FC;&#x30C0;&#x30F3;&#x30B9;&#x30DF;&#x30B9;&#x30DE;&#x30C3;&#x30C1;&#xFF08;&#x30AF;&#x30E9;&#x30B9;&#x306E;&#x7D99;&#x627F;&#xFF09;</a></li><li><a href="/study/csharp/data/sp3_linqtosql/">[&#x96D1;&#x8A18;] LINQ to SQL &#x5B9F;&#x8DF5;&#x7DE8;</a></li><li><a href="/study/csharp/data/sp3_iqueryable/">[&#x96D1;&#x8A18;] IQueryable &#x306E;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/data/misc_immutabledata/">&#x4E0D;&#x5909;(immutable)&#x306A;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/data/dataranges/">&#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;/&#x7BC4;&#x56F2;&#x51E6;&#x7406;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

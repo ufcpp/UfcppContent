@@ -1,0 +1,358 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x3010;&#x96D1;&#x8A18;&#x3011;&#x30A4;&#x30D9;&#x30F3;&#x30C8;&#x306E;&#x8CFC;&#x8AAD;&#x3068;&#x305D;&#x306E;&#x89E3;&#x9664; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/functional/misceventsubscribe/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">【雑記】イベントの購読とその解除</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>C# の event 構文の問題と、その解消方法について説明します。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>サンプル</h5>
+<p><a href="https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Event/Observable">https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Event/Observable</a></p>
+<h5 id="section-3"><a id="sec-generated-title-3"></a>ポイント</h5>
+<ul>
+<li><p>イベントには発生側と受取側があって、発生側に受取側を登録する口が必要。</p>
+</li>
+<li><p>C# の event 構文は、このイベント登録口を作るための構文。</p>
+</li>
+<li><p>ただ、結構使いにくい。</p>
+</li>
+<li><p><a href="https://rx.codeplex.com/">Reactive Extensions</a>使うのがいいんじゃないかな。</p>
+</li>
+</ul>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="event-syntax"></a>イベント</h2>
+<p>まず、イベントについておさらい。
+↓こういうの。「発生側」と「受取側」を明確に分離するためのパターン。</p>
+<figure>
+<p><a href="/assets/media/1029/observableobserver.png"><img src="/assets/media/1029/observableobserver.png" alt="イベントの概要" /></a></p>
+<figcaption>イベントの概要</figcaption>
+</figure>
+<p>event source, observable, event sender, ... など、呼び方はいろいろありますが、流儀や文脈の差であって、だいたい同じものです。</p>
+<h3 id="event"><a id="sec-generated-title-5"></a> <a id="revisit"></a>event 構文のおさらい</h3>
+<p>C# の場合、イベント発生側に「登録口」を作るための専用構文(以下、event 構文)を持っているわけですが。(参考: 「<a href="/study/csharp/functional/sp_event/">イベント</a>」)</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Threading.Tasks;
+
+<span class="keyword">class</span> EventSource
+{
+    <span class="keyword">public</span> <span class="keyword">event</span> EventHandler&lt;<span class="keyword">int</span>&gt; Progress; <span class="comment">// 登録口</span>
+
+    <span class="keyword">private</span> <span class="keyword">async</span> Task RunAsync()
+    {
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++)
+        {
+            <span class="keyword">await</span> Task.Delay(<span class="number">100</span>);
+            Progress(<span class="keyword">this</span>, i); <span class="comment">// イベントを起こす</span>
+        }
+    }
+}
+
+<span class="keyword">class</span> EventSubscriber : IDisposable
+{
+    EventSource _source;
+
+    <span class="keyword">public</span> EventSubscriber(EventSource source)
+    {
+        _source = source;
+        source.Progress += OnProgress; <span class="comment">// 購読開始</span>
+    }
+
+    <span class="comment">// イベントを受け取って処理</span>
+    <span class="keyword">private</span> <span class="keyword">void</span> OnProgress(<span class="keyword">object</span> sender, <span class="keyword">int</span> i)
+    {
+        Console.WriteLine(<span class="string">&quot;進捗 &quot;</span> + i + <span class="string">&quot;%&quot;</span>);
+    }
+
+    <span class="keyword">public</span> <span class="keyword">void</span> Dispose()
+    {
+        _source.Progress -= OnProgress; <span class="comment">// 購読解除</span>
+    }
+}</code></pre>
+<p>以下のような挙動になります。</p>
+<ul>
+<li><p>「イベントを起こす」の行: クラスの中からは、普通のデリゲートのように呼び出しができます(このデリゲート呼び出しによってイベントを送ります)。 (以下の、<code>+=</code>と<code>-=</code>はクラス内からでもできます。)</p>
+</li>
+<li><p>「購読開始」「購読解除」の行: クラスの外からは、<code>+=</code>で購読、<code>-=</code>でその解除ができます。 クラス内からとは違って、呼び出し(イベントを起こす)はできません。</p>
+</li>
+<li><p>購読開始から購読解除までの間、<code>EventSource</code>側で<code>Progress</code>を呼ぶたびに、<code>EventSubscribe</code>側の<code>OnProgress</code>が実行されます。</p>
+</li>
+</ul>
+<h3 id="section-5"><a id="sec-generated-title-6"></a> <a id="must-unsubscribe"></a>登録解除が必要</h3>
+<p>C# は、ガベージ コレクションというメモリの自動管理の仕組みを持っています(参考: 「<a href="/study/csharp/resource/rm_gc/">C# のメモリ管理</a>」)。
+(C# に限らず多くの言語がそうですが) C# のガベージ コレクションは、「もう誰からも参照されていないオブジェクトがあったら消す」という仕組みで動いています。
+逆に言うと、誰かが参照を持ち続けている限り、いつまでたってもメモリが解放されません。</p>
+<p>そして、知らず知らずのうちに参照を持ってしまうことがある(= メモリが解放されなくなる)機能の際たるものが、イベント購読だったりします。
+発生側から受取側にイベントを伝える都合上、必ず、発生側が受取側の参照を持ちます。
+発生側の寿命が長くて、受取側の寿命が短い場合、イベント購読解除しないとメモリ リークが起きます。</p>
+<p>メモリの自動管理を持っていないプログラミング言語でメモリの管理がものすごく大変なように、
+場合によってはイベント購読管理も結構大変になります。
+(メモリ管理と比べれば管理すべきオブジェクトの数が少ないのがせめてもの救い。
+寿命に差があるときにだけ管理すればいいので、全然大変にならないこともあります。
+それがかえって油断になるというか、管理し忘れを生みがちではあります。)</p>
+<h2 id="addremove"><a id="sec-generated-title-7"></a> <a id="add-remove-issue"></a>問題1: add/remove</h2>
+<p>C# の event 構文では、イベント購読の開始・解除が <code>+=</code> と <code>-=</code> です。
+(あるいは、コンパイル結果的には addX, removeX というようなメソッドが生成されています。)
+他のプログラミング言語でも、addListener/removeListener とか、addTarget/removeTarget とかいう名前のメソッドをよく見かけます。
+つまり、add/remove というメソッドのペアで、購読開始と解除をやります。</p>
+<p>これで何が問題かというと、add で渡したものと同じものを remove に渡さないといけないという点です。
+当たり前のようで、匿名関数(ラムダ式)を多用する今の C# 的には結構きつかったりします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> AnonymousFunctionProbrem
+{
+    <span class="keyword">public</span> <span class="keyword">event</span> Action X;
+
+    <span class="keyword">private</span> <span class="keyword">void</span> RaiseX() =&gt; X?.Invoke();
+
+    <span class="keyword">public</span> <span class="keyword">void</span> IncorrectSample()
+    {
+        <span class="comment">// 購読開始</span>
+        X += () =&gt; Console.WriteLine(<span class="string">&quot;X&quot;</span>);
+
+        <span class="comment">// 数回、イベントを起こしてみる</span>
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) RaiseX();
+
+        <span class="comment">// 購読解除は、これだと実はできてない</span>
+        <span class="comment">// () =&gt; ... の部分が、それぞれ別オブジェクトになってて、remove できない</span>
+        <span class="comment">// というか、2か所に書かせるな</span>
+        X -= () =&gt; Console.WriteLine(<span class="string">&quot;X&quot;</span>);
+
+        <span class="comment">// このイベントは受け取ってしまう。</span>
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) RaiseX();
+    }
+
+    <span class="keyword">public</span> <span class="keyword">void</span> CorrectSample()
+    {
+        <span class="comment">// こうすればいい。のだけど…</span>
+        <span class="comment">// どこにでも書けるのが匿名関数(ラムダ式)のいいところなのに、そのよさが台無し</span>
+        Action handler = () =&gt; Console.WriteLine(<span class="string">&quot;X&quot;</span>);
+
+        X += handler;
+
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) RaiseX();
+
+        X -= handler;
+
+        <span class="comment">// ちゃんと購読解除されてる</span>
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) RaiseX();
+    }</code></pre>
+<p>この問題の原因は add/remove (<code>+=</code>/<code>-=</code>)のペアでイベント購読をやっているせいです。
+解決策として簡単なのは、イベント購読解除側を IDisposable にしてしまう方法。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Reactive.Disposables;
+
+<span class="keyword">class</span> SubscribeAnonymousFunctionProbrem
+{
+    <span class="keyword">public</span> <span class="keyword">event</span> Action X;
+
+    <span class="keyword">public</span> IDisposable SubscribeX(Action handler)
+    {
+        X += handler;
+        <span class="keyword">return</span> Disposable.Create(() =&gt; X -= handler);
+    }
+
+    <span class="keyword">private</span> <span class="keyword">void</span> RaiseX() =&gt; X?.Invoke();
+
+    <span class="keyword">public</span> <span class="keyword">void</span> CorrectSample()
+    {
+        <span class="comment">// 購読解除は Dispose でやればいい</span>
+        <span class="keyword">using</span> (SubscribeX(() =&gt; Console.WriteLine(<span class="string">&quot;X&quot;</span>)))
+        {
+            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) RaiseX();
+        }
+
+        <span class="comment">// ちゃんと購読解除されてる</span>
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) RaiseX();
+    }
+}</code></pre>
+<h2 id="section-6"><a id="sec-generated-title-8"></a> <a id="parameter-issue"></a>問題2: メソッドの引数に渡せない</h2>
+<p>event 構文で作った「イベント登録口」は、「オブジェクトでもメソッドでもない」というのが結構困りものになります。
+一番きついのが、メソッドの引数として渡せないことでしょう。</p>
+<p>例えば、以下の例では、ボタンに対して「1回クリックされるのを待つ Task を作る」というような処理をしています。</p>
+<pre><code class="language-csharp"><span class="comment">// ボタンのクリックを1回受け取るまで待ちたい</span>
+<span class="keyword">public</span> <span class="keyword">static</span> Task FirstClickAsync(<span class="keyword">this</span> Button x)
+{
+    <span class="keyword">var</span> tcs = <span class="keyword">new</span> TaskCompletionSource&lt;<span class="keyword">bool</span>&gt;();
+    RoutedEventHandler handler = <span class="keyword">null</span>;
+    handler = (sender, arg) =&gt;
+    {
+        x.Click -= handler;
+        tcs.TrySetResult(<span class="keyword">false</span>);
+    };
+    x.Click += handler;
+    <span class="keyword">return</span> tcs.Task;
+}</code></pre>
+<p>これ自体はいいんですが、次に、同じような処理をダブルクリックのイベントでやりたくなったとします。
+同じようなコードをもう1つ書く必要があります。</p>
+<pre><code class="language-csharp"><span class="comment">// ボタンのダブルクリックを1回受け取るまで待ちたい</span>
+<span class="comment">// FirstClickAsync とほとんど同じなのに…</span>
+<span class="keyword">public</span> <span class="keyword">static</span> Task FirstDoubleClickAsync(<span class="keyword">this</span> Button x)
+{
+    <span class="keyword">var</span> tcs = <span class="keyword">new</span> TaskCompletionSource&lt;<span class="keyword">bool</span>&gt;();
+    MouseButtonEventHandler handler = <span class="keyword">null</span>;
+    handler = (sender, arg) =&gt;
+    {
+        x.MouseDoubleClick -= handler;
+        tcs.TrySetResult(<span class="keyword">false</span>);
+    };
+    x.MouseDoubleClick += handler;
+    <span class="keyword">return</span> tcs.Task;
+}</code></pre>
+<p>残念ながら、この2つのコードは、ほとんど見た目が同じなのに、処理を共通化できません。
+他にも、右クリック、ボタン長押し、フリック、… などなど、種類を増やしたくなった場合、そのすべてに対して同じコードを書く必要があります。</p>
+<p>そうなってしまう原因は、イベントがメソッドの引数として渡せないことにあります。
+希望を言うなら以下のようなことができればよかったんですが、これはできません。</p>
+<pre><code class="language-csharp"><span class="comment">// こんな感じのコードが書けたらよかったのにな(もちろん無理。コンパイル エラー)</span>
+<span class="keyword">public</span> <span class="keyword">static</span> Task FirstAsync&lt;TEventHandler&gt;(<span class="keyword">this</span> <span class="keyword">event</span> TEventHandler x)
+{
+    <span class="keyword">var</span> tcs = <span class="keyword">new</span> TaskCompletionSource&lt;<span class="keyword">bool</span>&gt;();
+    TEventHandler handler = <span class="keyword">null</span>;
+    handler = (sender, arg) =&gt;
+    {
+        x -= handler;
+        tcs.TrySetResult(<span class="keyword">false</span>);
+    };
+    x += handler;
+    <span class="keyword">return</span> tcs.Task;
+}</code></pre>
+<p>この問題の解決策は、1段階、以下のようなクラスを作ってラップしてしまうことです。
+event 構文を直接使うのをやめる。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Reactive.Disposables;
+
+<span class="comment">// イベントの登録口。</span>
+<span class="keyword">public</span> <span class="keyword">interface</span> IEvent&lt;TArg&gt;
+{
+    IDisposable Subscribe(EventHandler&lt;TArg&gt; handler);
+}
+
+<span class="comment">// イベントの登録口の実装 + イベントを起こす機能。</span>
+<span class="keyword">public</span> <span class="keyword">class</span> Event&lt;TArg&gt; : IEvent&lt;TArg&gt;
+{
+    <span class="keyword">event</span> EventHandler&lt;TArg&gt; e;
+
+    <span class="keyword">public</span> IDisposable Subscribe(EventHandler&lt;TArg&gt; handler)
+    {
+        e += handler;
+        <span class="keyword">return</span> Disposable.Create(() =&gt; e -= handler);
+    }
+
+    <span class="keyword">public</span> <span class="keyword">void</span> Raise(<span class="keyword">object</span> sender, TArg arg) =&gt; e?.Invoke(sender, arg);
+}</code></pre>
+<p>つまり、Button クラスに以下のようであってほしい。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Button
+{
+    <span class="keyword">public</span> IEvent&lt;RoutedEventArgs&gt; Click =&gt; _click;
+    <span class="keyword">private</span> Event&lt;RoutedEventArgs&gt; _click = <span class="keyword">new</span> Event&lt;RoutedEventArgs&gt;();
+
+    <span class="keyword">public</span> IEvent&lt;MouseButtonEventArgs&gt; MouseDoubleClick =&gt; _mouseDoubleClick;
+    <span class="keyword">private</span> Event&lt;MouseButtonEventArgs&gt; _mouseDoubleClick = <span class="keyword">new</span> Event&lt;MouseButtonEventArgs&gt;();
+}</code></pre>
+<p>これなら、どんなイベントであろうと、1つのメソッドで共通処理を書けます。
+先ほどの「イベントを1回受け取るまで待ちたい」という例であれば、以下のように書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">static</span> Task FirstAsync&lt;TArg&gt;(<span class="keyword">this</span> IEvent&lt;TArg&gt; x)
+{
+    <span class="keyword">var</span> tcs = <span class="keyword">new</span> TaskCompletionSource&lt;<span class="keyword">bool</span>&gt;();
+    IDisposable subscription = <span class="keyword">null</span>;
+    subscription = x.Subscribe((sender, arg) =&gt;
+    {
+        subscription.Dispose();
+        tcs.TrySetResult(<span class="keyword">false</span>);
+    });
+    <span class="keyword">return</span> tcs.Task;
+}</code></pre>
+<h2 id="section-7"><a id="sec-generated-title-9"></a> <a id="event-internal"></a>問題3: 結構中身が大げさ</h2>
+<p>C# の event 構文では、add/remove 句を書かなかった場合、コンパイラーが自動的に add/remove の中身を実装してくれます。
+この中身の自動実装が、実は結構大変なものだったりします。</p>
+<p>イベントの購読開始・解除は、複数のスレッドから同時に行われることがあります。
+そのため、C# の言語仕様では、event 構文の自動実装に、スレッド安全性を求めています。
+現在のマイクロソフト製 C# コンパイラーによる実装は以下の通りです。</p>
+<p>以下のようなイベントを書いたとします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> EventInternal
+{
+    <span class="keyword">public</span> <span class="keyword">event</span> EventHandler X;
+}</code></pre>
+<p>自動実装の結果は以下のようなものになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Threading;
+
+<span class="keyword">class</span> SameAsEventInternal
+{
+    <span class="keyword">private</span> EventHandler _X;
+
+    <span class="keyword">public</span> <span class="keyword">event</span> EventHandler X
+    {
+        add
+        {
+            EventHandler x2;
+            <span class="keyword">var</span> x1 = _X;
+            <span class="keyword">do</span>
+            {
+                x2 = x1;
+                <span class="keyword">var</span> x3 = (EventHandler)Delegate.Combine(x2, value);
+                x1 = Interlocked.CompareExchange(<span class="keyword">ref</span> _X, x3, x2);
+            }
+            <span class="keyword">while</span> (x1 != x2);
+        }
+        remove
+        {
+            EventHandler x2;
+            <span class="keyword">var</span> x1 = _X;
+            <span class="keyword">do</span>
+            {
+                x2 = x1;
+                <span class="keyword">var</span> x3 = (EventHandler)Delegate.Remove(x2, value);
+                x1 = Interlocked.CompareExchange(<span class="keyword">ref</span> _X, x3, x2);
+            }
+            <span class="keyword">while</span> (x1 != x2);
+        }
+    }
+}</code></pre>
+<p>軽く説明すると、スレッド安全性を保証しつつ、実行性能を落とさないようにする工夫の結果、こんな大変なコードになりました。
+昔の C# コンパイラーはもっとシンプルなコードを生成していましたが、性能上の問題などがあって、現在はこんな風になっています。
+「実行性能を落とさないスレッド安全保証は難しい」ということです。</p>
+<p>そして問題は、イベントを1つ作るたびに全部これと同種のコードが生成されるということです。
+まあ、前節で紹介したような、1段階 <code>Event</code> クラスを挟んでしまう方法を使うなら、この問題はなくなります
+(コード生成される箇所は1か所だけになる)。</p>
+<h2 id="reactive-extensions"><a id="sec-generated-title-10"></a> <a id="rx"></a>Reactive Extensions</h2>
+<p>event 構文に関して、いくつかの問題の説明と、
+その解決策として IEvent インターフェイス、Event クラスというものを作ってみました。
+まあ、実は Event クラスを自作する必要はなかったんですが。
+この手の、event 構文の問題を解消できるライブラリなら、実はすでにあります。</p>
+<p><a href="https://rx.codeplex.com/">Reactive Extensions</a> (通称 Rx)というもので、.NET Framework 同梱ではないものの、マイクロソフトが提供しているライブラリです
+(<a href="http://www.atmarkit.co.jp/fdotnet/chushin/nuget_01/nuget_01_01.html">NuGet パッケージ マネージャー</a>を使えば簡単に使えます)。
+Reactive (反応がある、反応性がよい)の名前通り、受動的にメッセージを受け取って、それに反応して何らかの処理を動かすためのライブラリです。
+イベント処理は、こういう、reactive な処理の一種なので、イベント処理にも有用です。</p>
+<p>Rx は、先ほど実装したような Event に相当するようなものを持っています。
+Subject クラス(System.Reactive.Subjects 名前空間)が、同じ用途に使えます。
+(ちなみに、IEvent に相当するようなものは、.NET の標準ライブラリに最初からあったりします。IObservable インターフェイス(System 名前空間)。)
+さきほどの、「Button クラスがこうだったらよかったのに」コードは、Rx を使って書くなら以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Button
+{
+    <span class="keyword">public</span> IObservable&lt;RoutedEventArgs&gt; Click =&gt; _click;
+    <span class="keyword">private</span> Subject&lt;RoutedEventArgs&gt; _click = <span class="keyword">new</span> Subject&lt;RoutedEventArgs&gt;();
+
+    <span class="keyword">public</span> IObservable&lt;MouseButtonEventArgs&gt; MouseDoubleClick =&gt; _mouseDoubleClick;
+    <span class="keyword">private</span> Subject&lt;MouseButtonEventArgs&gt; _mouseDoubleClick = <span class="keyword">new</span> Subject&lt;MouseButtonEventArgs&gt;();
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/functional/">&#x95A2;&#x6570;&#x6307;&#x5411;</a></li><li><a href="/study/csharp/functional/fun_functional/">&#x95A2;&#x6570;&#x6307;&#x5411;</a></li><li><a href="/study/csharp/functional/sp_delegate/">&#x30C7;&#x30EA;&#x30B2;&#x30FC;&#x30C8;</a></li><li><a href="/study/csharp/functional/misc_delegate/">[&#x96D1;&#x8A18;] &#x30C7;&#x30EA;&#x30B2;&#x30FC;&#x30C8;&#x306E;&#x5229;&#x7528;&#x4F8B;</a></li><li><a href="/study/csharp/functional/miscdelegateinternal/">[&#x96D1;&#x8A18;] &#x30C7;&#x30EA;&#x30B2;&#x30FC;&#x30C8;&#x306E;&#x5185;&#x90E8;</a></li><li><a href="/study/csharp/functional/fun_localfunctions/">&#x30ED;&#x30FC;&#x30AB;&#x30EB;&#x95A2;&#x6570;&#x3068;&#x533F;&#x540D;&#x95A2;&#x6570;</a></li><li><a href="/study/csharp/functional/sp2_anonymousmethod/">[&#x96D1;&#x8A18;] &#x533F;&#x540D;&#x95A2;&#x6570;&#x306E;&#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;</a></li><li><a href="/study/csharp/functional/sp3_lambda/">&#x30E9;&#x30E0;&#x30C0;&#x5F0F;</a></li><li><a href="/study/csharp/functional/sp_event/">&#x30A4;&#x30D9;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/functional/sp3_functional/">&#x95A2;&#x6570;&#x578B;&#x8A00;&#x8A9E;&#x30FB;&#x52D5;&#x7684;&#x8A00;&#x8A9E;&#x7684;&#x306A;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/functional/sp3_extension/">&#x62E1;&#x5F35;&#x30E1;&#x30BD;&#x30C3;&#x30C9;</a></li><li><a href="/study/csharp/functional/fun_whyextensions/">&#x30AF;&#x30E9;&#x30B9;&#x306E;&#x6A5F;&#x80FD;&#x62E1;&#x5F35;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

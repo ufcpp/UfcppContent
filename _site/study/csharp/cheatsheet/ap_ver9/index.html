@@ -1,0 +1,334 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>C# 9.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/cheatsheet/ap_ver9/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="c-9.0">C# 9.0 の新機能</h1>
+<div class="version version9">Ver. 9.0</div>
+<table>
+<tr>
+<th>リリース時期</th>
+<td>2020/11</td>
+</tr>
+<tr>
+<th>同世代技術</th>
+<td>
+<ul>
+<li>.NET 5.0</li>
+</td>
+</tr>
+<tr>
+<th>要約・目玉機能</ht>
+<td>
+<ul>
+<li>レコード型</li>
+</ul>
+</td>
+</tr>
+</table>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="record"></a>レコード型</h2>
+<p>C# 9.0 で、レコード型(records)という新しい種類の型が追加されました。
+record (記録)という名前通り、データの読み書きに使うことを意図した型です。
+例えば以下のような書き方で、「<code>Name</code> という文字列と <code>Birthday</code> という日付」を読み書きできます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+record Person(<span class="keyword">string</span> Name, DateTime birthday);</code></pre>
+<p>詳しくは「<a href="/study/csharp/datatype/record/">レコード型</a>」で説明します。</p>
+<h3 id="init-only"><a id="sec-generated-title-2"></a> <a id="init-only"></a>init-only プロパティ</h3>
+<p>以下のように <code>init</code> という新しいアクセサーを使って、「オブジェクト初期化子までは書き換え可能で、それ以降は書き換えできないプロパティ」を作れるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> p = <span class="keyword">new</span> Point { X = <span class="number">1</span>, Y = <span class="number">2</span> };
+p.X = <span class="number">3</span>; <span class="comment">// ダメ。</span>
+ 
+<span class="keyword">class</span> Point
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; init; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; init; }
+}</code></pre>
+<p><code>readonly</code> の制限が厳しすぎるので、問題ない範囲でちょっとだけ制限を緩めたもです。
+(歴史的経緯で <code>init</code> という新キーワードが使われていますが、もし C# をフルスクラッチで作り直せるなら <code>readonly</code> が最初から <code>init</code> 相当の仕様になっていたと思います。)</p>
+<p>詳しくは「<a href="/study/csharp/oop/oo_property/#init-only">init-only プロパティ</a>」で説明します。</p>
+<h2 id="section-1"><a id="sec-generated-title-3"></a> <a id="top-level-statements"></a>トップ レベル ステートメント</h2>
+<p>トップ レベル(top-leve: クラスや名前空間よりも外側、ファイル直下)に<a href="/study/csharp/start/st_variable/#statement">ステートメント</a>を直接書けるようになりました。</p>
+<p>例えばよくある「Hello World」であれば、単に以下のように書けるようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+Console.WriteLine(<span class="string">&quot;Hello World!&quot;</span>);</code></pre>
+<p>詳しくは「<a href="/study/csharp/misc/miscentrypoint/#top-level-statements">トップ レベル ステートメント</a>」で説明します。</p>
+<h2 id="section-2"><a id="sec-generated-title-4"></a> <a id="pattern-v3"></a>パターンの追加</h2>
+<p><a href="/study/csharp/cheatsheet/ap_ver7/">C# 7.0</a>から脈々と改善されてきた<a href="/study/csharp/datatype/patterns/">パターン マッチング</a>ですが、
+C# 9.0 でもいくつかのパターンが追加されています。</p>
+<pre><code class="language-csharp"><span class="comment">// not, and, or や、 &lt;, &lt;=, &gt;, &gt;= などのパターンが増えた。</span>
+<span class="keyword">int</span> M(<span class="keyword">uint</span> x) =&gt; x <span class="keyword">switch</span>
+{
+    <span class="number">0</span> or <span class="number">2</span> or <span class="number">4</span> or <span class="number">6</span> or <span class="number">8</span> =&gt; <span class="number">0</span>,
+    <span class="number">1</span> or <span class="number">3</span> or <span class="number">5</span> or <span class="number">7</span> or <span class="number">9</span> =&gt; <span class="number">1</span>,
+    &gt;= <span class="number">10</span> =&gt; -<span class="number">1</span>,
+};</code></pre>
+<p>3世代かけてようやく当初予定(C# に追加すること自体は最初から決めていた機能)が全て入りました。
+当初から予定に入ってたのは、既存のいくつかのプログラミング言語が同様の文法を持っていて、
+<a href="/study/csharp/datatype/patterns/#exhaustive">網羅性</a>や<a href="/study/csharp/datatype/patterns/#case-duplicate">重複</a>の検査を含めて実装手段が既知で、検討コストが低いからです。
+それでも、需要が高いものから少しずつ実装した結果、3世代に分かれました。
+3世代目なことを指して「パターン v3」(patterns v3)という俗称があったりもします。</p>
+<p>詳しくは「<a href="/study/csharp/datatype/patterns/">パターン マッチング</a>」で説明します。
+C# 9.0 で追加されているのは以下の3つです。</p>
+<ul>
+<li><a href="/study/csharp/datatype/patterns/#simplified-type-pattern">型パターンの簡単化</a></li>
+<li><a href="/study/csharp/datatype/patterns/#pattern-combintor">パターンの組み合わせ</a></li>
+<li><a href="/study/csharp/datatype/patterns/#relational-patterns">関係演算パターン</a></li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-5"></a> <a id="target-typed-inference"></a>ターゲット型推論の強化</h2>
+<h3 id="new"><a id="sec-generated-title-6"></a> <a id="target-typed-new"></a>ターゲットからの new 型推論</h3>
+<p>ターゲット型からの推論が効く場合に、<code>new T()</code> の <code>T</code> の部分を省略できるようになりました。
+(target-typed new とか呼ばれたりします。)</p>
+<p>特に、<a href="/study/csharp/start/sp3_inference/#type-inference"><code>var</code></a> が使えず、
+型名が長い特に便利です。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Collections.Generic;
+ 
+<span class="keyword">class</span> Sample
+{
+    <span class="comment">// フィールドに対しては var が使えない。</span>
+    <span class="comment">// 代わりに new 型推論を使うと便利なことがある(特に、型名が長い時)。</span>
+    Dictionary&lt;<span class="keyword">string</span>, List&lt;(<span class="keyword">int</span> x, <span class="keyword">int</span> y)&gt;&gt; _cache = <span class="keyword">new</span>();
+}</code></pre>
+<p>詳しくは「<a href="/study/csharp/oop/oo_construct/#target-typed-new">ターゲットからの new 型推論</a>」で説明します。</p>
+<h3 id="section-4"><a id="sec-generated-title-7"></a> <a id="target-typed-conditional"></a>条件演算子のターゲット型推論</h3>
+<p>条件演算子の第2・第3項がターゲット型からの型推論するようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> M(<span class="keyword">bool</span> b)
+{
+    <span class="comment">// int? を明示するとコンパイルできる(var だとダメ)。</span>
+    <span class="keyword">int</span>? i = b ? <span class="number">1</span> : <span class="keyword">null</span>;
+ 
+    <span class="comment">// Base を明示するとコンパイルできる(var だとダメ)</span>
+    Base c = b ? <span class="keyword">new</span> A() : <span class="keyword">new</span> B();
+}
+ 
+<span class="keyword">class</span> Base { }
+<span class="keyword">class</span> A : Base { }
+<span class="keyword">class</span> B : Base { }</code></pre>
+<p>詳しくは「<a href="/study/csharp/structured/st_branch/#terget-typed-conditional">条件演算子のターゲット型推論</a>」で説明します。
+「<a href="/study/csharp/start/misctyperesolution/">型の決定</a>」も参考にしてください。</p>
+<h2 id="section-5"><a id="sec-generated-title-8"></a> <a id="class-covariant-returns"></a>クラスの共変戻り値</h2>
+<p>仮想メソッドの戻り値に共変性が認められるようになりました。
+(機能名の俗称としては、「クラスの共変戻り値」と言ったりします。)</p>
+<p>例えば以下のようなコードを書けるようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Base
+{
+    <span class="keyword">public</span> <span class="keyword">virtual</span> Base Clone() =&gt; <span class="keyword">new</span> Base();
+}
+ 
+<span class="keyword">class</span> Derived : Base
+{
+    <span class="comment">// これの戻り値が Base じゃなくてもよくなった。</span>
+    <span class="comment">// Derived は常に Base に安全に変換可能なので、 Base Clone() の override として Derived Clone() を使える。</span>
+    <span class="keyword">public</span> <span class="keyword">override</span> Derived Clone() =&gt; <span class="keyword">new</span> Derived();
+}</code></pre>
+<p>詳しくは「<a href="/study/csharp/oop/oo_polymorphism/#covariance">多態性/戻り値の共変性</a>」で説明します。</p>
+<h2 id="unsafe"><a id="sec-generated-title-9"></a> <a id="unsafe"></a>unsafe/ネイティブ相互運用向け機能</h2>
+<p><a href="/study/csharp/cheatsheet/ap_ver7_2/">C# 7.2</a>の辺りから、
+言語の方向性として生産性や安全性を優先する C# でも、
+パフォーマンス改善を目的とするような言語機能が結構増えてきました。</p>
+<p>また、 クロスプラットフォーム化が進んだことで、ネイティブ相互運用関連の機能も増えています。</p>
+<p>この手の機能は一般的な開発者が直接触れることは少ないですが、
+.NET ランタイム自体や、大規模に使われているライブラリのパフォーマンス改善につながり、
+間接的にすべての C# 開発者が恩恵を受けるものになります。</p>
+<h3 id="section-6"><a id="sec-generated-title-10"></a> <a id="skip-locals-init"></a>ローカル変数の0初期化抑止</h3>
+<p><code>/unsafe</code> オプション指定時限定ですが、ローカル変数の0初期化を抑止できるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Runtime.CompilerServices;
+<span class="keyword">using</span> System.Text.Unicode;
+ 
+m(<span class="string">&quot;aあ&#128512;&quot;</span>);
+ 
+<span class="comment">// この属性を付けると stackalloc の要素の0初期化がなくなる。</span>
+[SkipLocalsInit]
+<span class="keyword">static</span> <span class="keyword">void</span> m(<span class="keyword">string</span> s)
+{
+    <span class="comment">// UTF-16 の文字数に大して、UTF-8 のバイト数は最大でも3倍以内。</span>
+    Span&lt;<span class="keyword">byte</span>&gt; buffer = <span class="keyword">stackalloc</span> <span class="keyword">byte</span>[s.Length * <span class="number">3</span>];
+    Utf8.FromUtf16(s, buffer, <span class="keyword">out</span> _, <span class="keyword">out</span> <span class="keyword">var</span> bytesWritten);
+ 
+    <span class="comment">// FromUtf16 の仕様上、bytesWritten バイト目までは必ず上書きされる。</span>
+    <span class="comment">// 上書きされた部分だけを使う分には0初期化は「余計なお世話」。</span>
+    <span class="keyword">var</span> written = buffer[..bytesWritten];
+ 
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> b <span class="keyword">in</span> written)
+    {
+        Console.WriteLine(b);
+    }
+}</code></pre>
+<p>詳しくは「<a href="/study/csharp/interop/sp_unsafe/#skip-locals-init">ローカル変数の0初期化抑止</a>」で説明します。</p>
+<h3 id="section-7"><a id="sec-generated-title-11"></a> <a id="function-pointer"></a>関数ポインター</h3>
+<p>C# で関数ポインターを書けるようになりました。</p>
+<p>.NET の内部的にはこれまでも関数ポインターがあったんですが、 それを C# から効率的に呼ぶ手段がありませんでした。 これに対して、C# 9 では delegate* という記法で関数ポインターを扱えるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.InteropServices;
+
+<span class="comment">// 関数ポインターを nint で取得。</span>
+nint kernel32 = NativeLibrary.Load(<span class="string">&quot;kernel32.dll&quot;</span>);
+nint p = NativeLibrary.GetExport(kernel32, <span class="string">&quot;Beep&quot;</span>);
+
+<span class="keyword">unsafe</span>
+{
+    <span class="comment">// 「関数ポインター型」にキャストして使う。</span>
+    <span class="comment">// 構文的には delegate* から初めて、 &lt;&gt; の中に引数を戻り値の型を並べる。</span>
+    <span class="comment">// (戻り値の型が最後。Func&lt;&gt; 風。)</span>
+    <span class="keyword">var</span> fp = (<span class="keyword">delegate</span>*&lt;<span class="keyword">uint</span>, <span class="keyword">uint</span>, <span class="keyword">int</span>&gt;)p;
+    fp(<span class="number">440</span>, <span class="number">1000</span>);
+}</code></pre>
+<p>詳しくは「<a href="/study/csharp/interop/functionpointer/">関数ポインター</a>」で説明します。</p>
+<h2 id="native-int"><a id="sec-generated-title-12"></a> <a id="nint"></a>native int</h2>
+<p><code>nint</code> と <code>nuint</code> というキーワードで、「CPU 依存の一番高速に扱える整数」が使えるようになりました。
+<code>nint</code> が符号付、<code>nuint</code> が符号なしです。</p>
+<pre><code class="language-csharp">nint x = 0x1_0000;
+x = x * x;
+
+<span class="comment">// 32ビット CPU だと 0、64ビット CPU だと 100000000 になるはず。</span>
+Console.WriteLine($<span class="string">&quot;{x:X}&quot;</span>);
+
+<span class="keyword">unsafe</span>
+{
+    <span class="comment">// 32ビット CPU だと 4、64ビット CPU だと 8 になるはず。</span>
+    Console.WriteLine(<span class="keyword">sizeof</span>(nint));
+}</code></pre>
+<p>ちなみに、内部的には <code>IntPtr</code>、<code>UIntPtr</code> (いずれも <code>System</code> 名前空間)にコンパイルされています。
+そのため、以下のようなコードはコンパイル エラーになります(引数の型が同じ同名のメソッドが2つあるため)。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Sample
+{
+    <span class="keyword">void</span> M(IntPtr x) { }
+    <span class="keyword">void</span> M(nint x) { }
+}</code></pre>
+<p>ただ、単純に 「<code>IntPtr</code>、<code>UIntPtr</code> に別名が付いた」というわけではなく、<code>+</code> などの演算子の挙動が違います。
+(※ C# 10 までの話。 <a href="/study/csharp/cheatsheet/ap_ver11/#numeric-intptr">C# 11</a> 以降は「<code>nint</code>、<code>nuint</code> は <code>IntPtr</code>、<code>UIntPtr</code> の別名 」という扱いになりました。)</p>
+<p><code>IntPtr</code> の場合は <code>operator +(IntPtr pointer, int offset)</code> しか持っていませんが、
+<code>nint</code> の場合は普通に整数としての四則演算が全て行えます。
+ちなみに、コンパイラーが <code>IntPtr</code> と <code>nint</code> を区別するため、<code>nint</code> だった場合は <code>NativeInteger</code> 属性(<code>System.Runtime.CompilerServices</code> 名前空間)が付きます。</p>
+<p>今更こんな機能が入った背景には、パフォーマンス改善やネイティブ相互運用の強化があります。
+例えば、以下のような場面で <code>nint</code> を使っています。</p>
+<ul>
+<li><a href="https://github.com/dotnet/runtime/blob/7984b32774916c98ab7c85c244c9e40581e4cdf5/src/libraries/Common/src/Interop/OSX/Interop.libobjc.cs#L11-L17">ネイティブ コード側が CPU 依存幅の整数になっている場合の相互運用</a></li>
+<li><a href="https://github.com/dotnet/runtime/blob/4017327955f1d8ddc43980eb1848c52fbb131dfc/src/libraries/System.Private.CoreLib/src/System/SpanHelpers.Char.cs#L30">配列のインデックス アクセスは <code>nint</code> を使った方が速い</a> (C++ でいう <code>size_t</code> な処理)</li>
+</ul>
+<h2 id="section-8"><a id="sec-generated-title-13"></a> <a id="other"></a>その他</h2>
+<h3 id="null"><a id="sec-generated-title-14"></a> <a id="nrt"></a>null 許容参照型の改善</h3>
+<p>C# 8.0 で入った <a href="/study/csharp/resource/nullablereferencetype/">null 許容参照型</a>に対してちょっと改善が入っています。
+主に以下の2点です。</p>
+<ul>
+<li><a href="/study/csharp/resource/nullablereferencetype/#unconstrained-generics">制約なしジェネリック型引数に <code>?</code> を付けれるようになった</a></li>
+<li><a href="/study/csharp/resource/nullablereferencetype/#annotation-attributes">アノテーション属性</a>に <code>MemberNotNull</code> と <code>MemberNotNullWhen</code> が増えた</li>
+</ul>
+<h3 id="section-9"><a id="sec-generated-title-15"></a> <a id="lambda-discard"></a>ラムダ式の引数を破棄</h3>
+<p>ラムダ式の引数で、<code>_</code> を使った値の破棄ができるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> Subscribe(INotifyPropertyChanged source)
+{
+    <span class="comment">// _ を破棄扱いして、2個以上並べられる</span>
+    source.PropertyChanged += (_, _) =&gt; { };
+}</code></pre>
+<p>詳細は「<a href="/study/csharp/datatype/declarationexpressions/#lambda-discard">値の破棄 - ラムダ式の引数</a>」で説明します。</p>
+<h3 id="section-10"><a id="sec-generated-title-16"></a> <a id="static-anonymous-function"></a>静的匿名関数</h3>
+<p>匿名関数に対しても <code>static</code> 修飾子を付けれるようになりました。
+「外部の変数を捕獲しない」という意味になります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">int</span> a = <span class="number">0</span>;
+ 
+<span class="comment">// 以下の行は自身の引数しか使っていないので static にしても怒られない。</span>
+Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; ok = <span class="keyword">static</span> x =&gt; x * x;
+ 
+<span class="comment">// 以下の行は外側のローカル変数 a を使ってしまったのでコンパイル エラー。</span>
+Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; ng = <span class="keyword">static</span> x =&gt; a * x;</code></pre>
+<p>詳しくは「<a href="/study/csharp/functional/fun_localfunctions/#static-local-function">静的匿名関数</a>」で説明します。</p>
+<h3 id="section-11"><a id="sec-generated-title-17"></a> <a id="local-function-attribute"></a>ローカル関数への属性適用</h3>
+<p><a href="/study/csharp/functional/fun_localfunctions/#local-function">ローカル関数</a>に属性を付けられるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Diagnostics.CodeAnalysis;
+ 
+m(<span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>);
+ 
+<span class="keyword">static</span> <span class="keyword">void</span> m(<span class="keyword">string</span>? a, <span class="keyword">string</span>? b)
+{
+    <span class="comment">// C# 9.0 からローカル関数に属性を付けれる。</span>
+    <span class="comment">// C# 8.0 の null 許容参照型がらみで特に有用。</span>
+    [<span class="keyword">return</span>: NotNullIfNotNull(<span class="string">&quot;s&quot;</span>)]
+    <span class="keyword">string</span>? toLower(<span class="keyword">string</span>? s) =&gt; s?.ToLower();
+ 
+    <span class="keyword">if</span> (a <span class="keyword">is</span> not <span class="keyword">null</span> &amp;&amp; b <span class="keyword">is</span> not <span class="keyword">null</span>)
+    {
+        <span class="comment">// a, b の null 許容性が、NotNullIfNotNull 属性のおかげで al, bl に伝搬。</span>
+        <span class="keyword">string</span> al = toLower(a);
+        <span class="keyword">string</span> bl = toLower(b);
+ 
+        <span class="comment">// a, b が非 null なので、al, bl は非 null で確定済み。改めてのチェック不要。</span>
+        Console.WriteLine(al.GetHashCode());
+        Console.WriteLine(bl.GetHashCode());
+    }
+}</code></pre>
+<h3 id="getenumerator"><a id="sec-generated-title-18"></a> <a id="extension-getenumerator"></a>拡張メソッドでの GetEnumerator 実装</h3>
+<p><a href="/study/csharp/misc/miscpatternbased/#index">パターン ベース</a>な <a href="/study/csharp/data/sp_foreach/#extension-getenumerator"><code>foreach</code></a>、<a href="/study/csharp/async/asyncstream/#await-foreach"><code>await foreach</code></a>で、拡張メソッドによる実装ができるようになりました。</p>
+<h2 id="section-12"><a id="sec-generated-title-19"></a> <a id="source-generator"></a>ソースコード生成</h2>
+<p>正確には C# という言語の機能ではなく、「C# 9.0 と同時期に実装された」というだけですが、
+C# 9.0 世代の C# コンパイラーにはソースコード生成(source generator)プラグインの作成機能が追加されました。
+詳細は「<a href="/study/csharp/misc/analyzer-generator/">コード解析とコード生成</a>」で説明しています。</p>
+<p>これと同時に、ソースコード生成を前提とした文法もいくつか実装されました。</p>
+<h3 id="section-13"><a id="sec-generated-title-20"></a> <a id="extended_partial_method"></a>部分メソッドの拡張</h3>
+<p><a href="/study/csharp/misc/analyzer-generator/">ソースコード生成</a>では、手書きでは不完全な C# コードを書いて、
+それをソースコード生成で埋めてもらうという状況があり得ます。
+C# 9.0 ではそのための文法として、<a href="/study/csharp/oop/oo_class/#partial_method"><code>partial</code> キーワード</a>を再利用することにしました。</p>
+<pre><code class="language-csharp"><span class="comment">// (1) 手書き前提のコード</span>
+<span class="keyword">partial</span> <span class="keyword">class</span> PartialClass
+{
+    <span class="keyword">public</span> <span class="keyword">void</span> M()
+    {
+        System.Console.WriteLine(
+            <span class="string">&quot;PreGeneratedMethod が呼ばれた直後&quot;</span>
+            + WantSourceGenerated());
+    }
+ 
+    <span class="comment">// C# コードが先にあって、これを元にソースコード生成してほしいメソッド。</span>
+    <span class="keyword">private</span> <span class="keyword">partial</span> <span class="keyword">string</span> WantSourceGenerated();
+}
+ 
+<span class="comment">// (2) C# からのソースコード生成が前提のコード</span>
+<span class="keyword">partial</span> <span class="keyword">class</span> PartialClass
+{
+    <span class="keyword">private</span> <span class="keyword">partial</span> <span class="keyword">string</span> WantSourceGenerated() =&gt; <span class="string">&quot;手書きはしづらしくて、ソースコード生成なら楽な文字列&quot;</span>;
+}</code></pre>
+<p>C# 2.0 の頃からある部分メソッドとの差は<a href="/study/csharp/oop/oo_conceal/#level">アクセシビリティ</a>修飾子の有無です。
+<code>private</code> などを付けるかどうかで「コード生成が先」か「手書きが先」かの用途が逆になります。</p>
+<p>詳しくは「<a href="/study/csharp/oop/oo_class/#extended_partial_method">部分メソッドの拡張</a>」で説明します。</p>
+<h3 id="section-14"><a id="sec-generated-title-21"></a> <a id="module-initializer"></a>モジュール初期化子</h3>
+<p>プログラムの実行時、最初に1回だけ呼び出したい処理が必要になることがあります。
+「<a href="/study/csharp/oop/oo_static/#ctor">静的コンストラクター</a>」で説明しているように、この静的コンストラクターという機能を使っても「最初に1回だけ呼ばれる」ということができますが、C# 9.0 ではモジュール初期化子という書き方もできるようになりました。</p>
+<p>以下のように、<code>ModuleInitilizer</code> 属性(<code>System.Runtime.CompilerServices</code> 名前空間)を付けた<a href="/study/csharp/oop/oo_static/#stmethod">静的メソッド</a>を書くと、それが必ず1回呼び出されるようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Runtime.CompilerServices;
+ 
+<span class="keyword">class</span> Sample
+{
+    [ModuleInitializer]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Init()
+    {
+        Console.WriteLine(<span class="string">&quot;必ず1回だけ呼ばれる&quot;</span>);
+    }
+}</code></pre>
+<p>これをモジュール初期化子(module initializer)と呼びます。</p>
+<p>ソースコード生成と組み合わせて、これまでなら<a href="/study/csharp/dynamic/sp_reflection/">リフレクション</a>に頼らざるを得なかったような処理を、コンパイル時コード生成に置き換えたりできます。
+(他にも使い道はありますが、モジュール初期化子導入の最大のモチベーションはこれです。)</p>
+<p>詳しくは「<a href="/study/csharp/oop/moduleinitializer/">モジュール初期化子</a>」で説明します。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/cheatsheet/">C# &#x306E;&#x6A5F;&#x80FD;&#x4E00;&#x89A7;&#xFF08;&#x7D22;&#x5F15;&#x7684;&#x306A;&#x3082;&#x306E;&#xFF09;</a></li><li><a href="/study/csharp/cheatsheet/list_expression/">C# &#x306E;&#x5F0F;&#x3068;&#x6587;&#x306E;&#x4E00;&#x89A7;</a></li><li><a href="/study/csharp/cheatsheet/list_type/">C# &#x306E;&#x578B;&#x3068;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/study/csharp/cheatsheet/list_versions/">&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver1/">C# 1.0</a></li><li><a href="/study/csharp/cheatsheet/ap_ver2/">C# 2.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver3/">C# 3.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver4/">C# 4.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver5/">C# 5.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver6/">C# 6 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7/">C# 7 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_1/">C# 7.1 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_2/">C# 7.2 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_3/">C# 7.3 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver8/">C# 8.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver10/">C# 10.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver11/">C# 11.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver12/">C# 12.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver13/">C# 13.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver14/">C# 14.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/langversionoption/">&#x8A00;&#x8A9E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x306E;&#x6307;&#x5B9A;</a></li><li><a href="/study/csharp/cheatsheet/listfxlangversion/">C#&#x306E;&#x8A00;&#x8A9E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x3068;.NET&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/cheatsheet/ap_modern/">&#x4F7F;&#x308F;&#x306A;&#x304F;&#x306A;&#x3063;&#x305F;&#x6A5F;&#x80FD;&#x30FB;&#x65B0;&#x3057;&#x3044;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/apscripting/">C#&#x30B9;&#x30AF;&#x30EA;&#x30D7;&#x30C8;&#x5B9F;&#x884C;</a></li><li><a href="/study/csharp/cheatsheet/file-based-app/">&#x30D5;&#x30A1;&#x30A4;&#x30EB; &#x30D9;&#x30FC;&#x30B9;&#x5B9F;&#x884C;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

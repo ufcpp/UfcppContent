@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x300C;project.json&#x8F9E;&#x3081;&#x307E;&#x3059;&#x300D;&#x306E;&#x610F;&#x5473; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/6/project-json/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-06-28T14:39:34">2016-06-28</time></span><span>更新: <time datetime="2016-06-28T14:39:34">2016-06-28</time></span></div><h1 id="project.json">「project.json辞めます」の意味</h1>
+<p><a href="https://github.com/dotnet/core">.NET Core</a>といい<a href="https://github.com/dotnet/roslyn">C#コンパイラー</a>といいオープンソースになったおかげで常に最新の情報を拾えてありがたい限りなわけですが。
+緩い段階のものが見えすぎて、いろいろ振り回されたりもします。</p>
+<p>最近の話題というと、<a href="https://www.infoq.com/news/2016/05/project-json/">「project.json辞めます」騒動</a>。</p>
+<p>これ、あんまり字面通り受け止めるとダメだと思うんですよね。
+話の出どころは「<a href="https://live.asp.net/">ASP.NET Community Standup</a>」の1コマ、<a href="https://www.youtube.com/watch?v=P9HqMZviaMg&amp;list=PL0M0zPgJ3HSftTAAHttA3JQU4vOjXFquF&amp;index=0">5月10日放映分</a>での会話らしいんですが。
+こういう、会話中で出てきた言葉って、割かし不正確(にとられかねない緩い表現)なわけです。</p>
+<h2 id="project.json-1">ここでいう「project.json辞めます」の意味</h2>
+<p>.NET Coreは、当初、脱msbuildを目指していたわけです。.NET Coreにとっかかり始めた当時の発想としては、</p>
+<ul>
+<li>msbuildとか、MS製のビルド ツールはC++、COM製で、クロスプラットフォーム化が大変</li>
+<li>ASP.NET に対応できればいい
+<ul>
+<li>モダンなWebっぽいものを作りたい</li>
+</ul>
+</li>
+</ul>
+<p>というような感じだったはずです。</p>
+<p>ところが今は、</p>
+<ul>
+<li>msbuildが.NETでクロスプラットフォーム実装になってる</li>
+<li>UWP、Xamarinなどなど、いろんなものに対応する必要が出てきた</li>
+</ul>
+<p>と、状況が変わってる。</p>
+<p>なので、実際のところは、「ASP.NET チーム主導で独自に作ってたビルド ツール辞めます」、「msbuild使います」という話になります。</p>
+<p>で、「ASP.NET チーム主導で独自に作ってたビルド ツール」に名前がないもんだから、そいつが解釈するプロジェクト設定ファイルであるところの「project.json」を辞めるという言い回しをしてしまっているという状況。</p>
+<h2 id="project.json-2">もう1つのproject.json</h2>
+<p>.NET Coreのリリースがずるずると伸びてる間に、1年近く早く先にリリース段階に達した別プロダクトがあるわけです。<a href="https://msdn.microsoft.com/en-us/windows/uwp/get-started/whats-a-uwp">UWP</a>とか<a href="https://github.com/nuget">NuGet</a> 3とか。</p>
+<p>.NET Coreは標準ライブラリの参照でNuGetの仕組みに乗っかってるわけですが、
+同じく、NuGetに乗っかりたかったのがUWP。
+Windwos 10のリリースに合わせる必要があったので、2015年7月の段階でRTM。
+そのために、NuGetも同時期にバージョン アップしました。</p>
+<p>このとき、.NET Coreのproject.jsonのうち、パッケージ参照がらみの部分だけを抜き出して使うことになりました。
+つまり、NuGet 3では、packages.configを辞めて、project.json形式を使うように。
+ここで、project.jsonが2つに分岐したわけです。
+この辺りは去年の12月にブログを書いてます。</p>
+<ul>
+<li><a href="/blog/2015/12/csprojprojectjson/">.csproj + project.json</a></li>
+</ul>
+<p>そしてこちらのproject.jsonは、msbuild に組み込まれています。</p>
+<p>先ほど言った通り、.NET Coreチームの言うところの「project.json辞めます」は、実際には「msbuild使います」の意味です。
+つまるところ、NuGet側のproject.json (msbuild対応済み)は辞めるどころか、むしろ積極的に使われるようになる立場。</p>
+<h2 id="nuget.json">nuget.json？</h2>
+<p>で、パッケージ参照設定なのに名前が「project」なの？とかいう問題に至ります。
+元々はprojectだったけども。その元々の方がお亡くなりになってしまい…</p>
+<p>ってことで、NuGetが使っている方のproject.jsonはnuget.jsonにリネームしようみたいな話もあるみたい？</p>
+<p>まあなんか、この「project.json辞めます」騒動のせいでもう、そこいら中から「project.json辞めたんじゃないの？」「UWPのやつどうなるの？」みたいな疑問の声が出まくってるんで、もう、リネーム必須な状況になってしまってるんじゃないかなぁ…という気がします。</p>
+<h2 id="project.json-3">project.json便利だったのに…</h2>
+<p>.NET Coreチームの言うproject.jsonは、.csprojほどファイルの衝突が起きなくて、ソースコードのバージョン管理的には大変ありがたかったです。</p>
+<p>「project.json辞めます」、すなわち、「msbuild使います」というのは、結局、「.csprojに戻ります」という意味でもあります。
+ありがたかった機能も一旦なくなるわけですが…</p>
+<p>.NET Coreチーム曰く、「msbuild/.csprojの方を改善します」とのこと。csprojでも、「フォルダー中の.csは全部コンパイル対象」みたいなことをできるようにしたいみたいです。
+てことで、「将来的に、msbuild/.csprojがもっと便利になる」と捉えるべき。</p>
+<h2 id="section">まとめ</h2>
+<p>緩い段階で出てきた話は字面通りに受け止めちゃダメというか。
+今時は情報の出どころがものすごい緩いことが多いというか。
+みんなタイトルだけ読んでわかった気になるんだから、緩い出どころを元にブログのタイトル付けちゃダメというか。</p>
+<p>.NET Coreチームの言う、元々の意味のproject.jsonはどうやらなくなります。
+ただし、その利便性をmsbuildに引き継ぎたいそうです。</p>
+<p>「project.json辞めます」の本当の意味は「.NET Coreでもmsbuildを使います」です。
+project.jsonでやろうとしていたことを、msbuildに取り込んでいきたいそうなので、「msbuildが便利になる」と考えるべきです。</p>
+<p>また、NuGetの方のproject.jsonはすでに1年前からmsbuldに組み込み済みなので、なくならないどころか、むしろ今後積極的に使われるようになる側にいます。
+ただし、nuget.jsonにリネームはするかも。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/6/">2016&#x5E74;6&#x6708;</a></li><li><a href="/blog/2016/6/cs7refreturns/">&#x53C2;&#x7167;&#x623B;&#x308A;&#x5024;&#x3068;&#x53C2;&#x7167;&#x30ED;&#x30FC;&#x30AB;&#x30EB;&#x5909;&#x6570;</a></li><li><a href="/blog/2016/6/versionnumber/">C# 6, C# 7</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

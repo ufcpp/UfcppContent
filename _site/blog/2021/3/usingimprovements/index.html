@@ -1,0 +1,158 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: using &#x304C;&#x3089;&#x307F; (using &#x30A8;&#x30A4;&#x30EA;&#x30A2;&#x30B9;&#x306E;&#x6539;&#x5584;&#x3068; global using) | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2021/3/usingimprovements/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2021-03-15T01:02:08">2021-03-15</time></span><span>更新: <time datetime="2021-03-20T20:49:34">2021-03-20</time></span></div><h1 id="roslyn-using-using-global-using">ピックアップRoslyn: using がらみ (using エイリアスの改善と global using)</h1>
+<p>今日も「C# Language Design Meeting 議事録」の中から1個1個機能紹介。</p>
+<p>今日は<a href="https://github.com/dotnet/csharplang/blob/main/meetings/2021/LDM-2021-02-10.md#global-usings">2/10</a>、<a href="https://github.com/dotnet/csharplang/blob/main/meetings/2021/LDM-2021-02-22.md#using-alias-improvements">2/22</a>辺りの話になります。</p>
+<p><a href="/study/csharp/structured/sp_namespace/#using">using</a>がらみに色々更新が掛かるみたいです。
+大まかに2点。</p>
+<ul>
+<li>using エイリアス改善: これまで書けてもよさそうなのに書けないエイリアスを書けるようにする</li>
+<li>global using: プロジェクト全域に対して有効な <code>using</code> ディレクティブ</li>
+</ul>
+<p><a href="https://github.com/dotnet/csharplang/blob/main/proposals/GlobalUsingDirective.md">global using の方は提案ドキュメントが merge 済み</a>、
+<a href="https://github.com/dotnet/csharplang/pull/4452">using エイリアスの話はレビュー中</a>です。</p>
+<h2 id="using">using エイリアス改善</h2>
+<p>これも細かく言うと3点。</p>
+<ul>
+<li>キーワードになってる型を直接使えるようにする</li>
+<li>配列の <code>[]</code>、nullable の <code>?</code>、ポインターの <code>*</code>、タプルとかを使えるようにする</li>
+<li>型引数を持てるようにする</li>
+</ul>
+<p>今でも OK なパターンだと以下のような書き方ができます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> Ok1 = System.Int32;
+<span class="keyword">using</span> Ok2 = System.Nullable&lt;<span class="keyword">int</span>&gt;;</code></pre>
+<p>ところが以下のようなやつは現状ではコンパイル エラー。
+ジェネリック型引数の中なら <code>int</code> を書けるのに、直接は書けない。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> Ng1 = <span class="keyword">int</span>;
+<span class="keyword">using</span> Ng2 = <span class="keyword">int</span>?;</code></pre>
+<p>以下のようなやつもコンパイル エラー。
+配列の <code>[]</code>、nullable の <code>?</code>、ポインターの <code>*</code>は現状書けません。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> Ng3 = System.Int32?;
+<span class="keyword">using</span> Ng4 = System.Int32[];
+<span class="keyword">using</span> Ng5 = System.Int32*;</code></pre>
+<p>あと、頻出で出ている要望がタプルで、
+以下のようなやつも「書きたいのに書けない」筆頭です。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> Ng6 = (System.Int32, System.String); <span class="comment">// これがダメな時点でお察しだけど…</span>
+<span class="keyword">using</span> Ng7 = (<span class="keyword">int</span>, <span class="keyword">string</span>); <span class="comment">// ほんとに書きたいのはこうだし、</span>
+<span class="keyword">using</span> Ng8 = (<span class="keyword">int</span> id, <span class="keyword">string</span> name); <span class="comment">// 名前付きタプルも書きたい。</span></code></pre>
+<p>この辺り、C# 10.0 でまとめて解消しようという感じになっています。
+ちなみに、似たような話だと、<code>enum</code> の基底にキーワードを書けるかどうかみたいなのが C# 6.0 の時に変わっています。</p>
+<pre><code class="language-csharp"><span class="comment">// これなら C# 1.0 の頃から書けた。</span>
+<span class="keyword">enum</span> A : System.Int32 { }
+ 
+<span class="comment">// これが書けるようになったのは C# 6.0 から。</span>
+<span class="keyword">enum</span> B : <span class="keyword">int</span> { }</code></pre>
+<p>タプルのエイリアスを付けれるようにしようとなると、まあ、「ジェネリックなエイリアス」も作りたくなります。
+これもこの際、C# 10.0 で一緒にやるそうです。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> Fix2&lt;T&gt; = (T, T);
+<span class="keyword">using</span> Fix3&lt;T&gt; = (T, T, T);
+<span class="keyword">using</span> Fix4&lt;T&gt; = (T, T, T, T);</code></pre>
+<p>もちろんタプル以外の「ジェネリックなエイリアス」も同じく C# 10.0 で取り組み。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> Option&lt;T&gt; = T ?;</code></pre>
+<p>「部分適用」もできるようにしたいみたいです。
+以下のような、「2引数のうち片方だけ確定」みたいな「ジェネリックなエイリアス」も作れるようにする予定です。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> StringDictionary&lt;T&gt; = System.Collections.Generic.Dictionary&lt;<span class="keyword">string</span>, T&gt;;</code></pre>
+<p>arity (型引数の数)違いのエイリアスは並べられるようにする予定だそうです。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> MyDictionary = System.Collections.Generic.Dictionary&lt;<span class="keyword">string</span>, <span class="keyword">string</span>&gt;;
+<span class="keyword">using</span> MyDictionary&lt;T&gt; = System.Collections.Generic.Dictionary&lt;<span class="keyword">string</span>, T&gt;;
+<span class="keyword">using</span> MyDictionary&lt;T1, T2&gt; = System.Collections.Generic.Dictionary&lt;T1, T2&gt;;</code></pre>
+<p>ちなみに、以下のようなオープン ジェネリック(引数なしの状態)は C# 10.0 でも書けません。</p>
+<pre><code class="language-csharp"><span class="comment">// これは引き続き今後もダメ。</span>
+<span class="comment">// 空っぽの &lt;&gt; が許されるのは typeof(T&lt;&gt;) だけ</span>
+<span class="keyword">using</span> OpenGeneric = System.Collections.Generic.List&lt;&gt;;</code></pre>
+<p>これをやるうえでちょっと悩ましいのが、「制約違反」みたいなのをどこで判定するか。
+選択肢は2つあって、1つ目はエイリアスを作る時点 (<code>using T = ...;</code> の行) でエラーにする方法。
+エイリアスを「実際にある型」に近い扱いにしようという感じ。
+(現状あんまり乗り気ではなさげ。)</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> Optional&lt;T&gt; = Nullable&lt;T&gt;; <span class="comment">// 「T に制約が付いてないのでダメ」扱いする</span>
+<span class="keyword">using</span> Optional&lt;T&gt; = Nullable&lt;T&gt; <span class="keyword">where</span> T : <span class="keyword">struct</span> <span class="comment">// と言うことはここに型制約(where)を書けるようにする必要あり</span></code></pre>
+<p>もう1つの選択肢は、「エイリアスの時点では素通し」で、現状、こっちが有力みたいです。
+「エイリアスはあくまでエイリアス」で、C 言語のマクロっぽい挙動というか。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> Optional&lt;T&gt; = Nullable&lt;T&gt;; <span class="comment">// この時点では T のチェックしない。</span>
+ 
+<span class="comment">// Nullable&lt;string&gt; とは書けないので、そのエイリアスの Optional&lt;string&gt; もダメ。</span>
+<span class="keyword">void</span> m(Optional&lt;<span class="keyword">string</span>&gt; opt) { }</code></pre>
+<p>後者が有力なので、<code>using A&lt;T&gt; = T?;</code> が <a href="/study/csharp/resource/sp2_nullable/">null 許容値型</a>になるか、
+<a href="/study/csharp/resource/nullablereferencetype/">null 許容参照型</a>になるか、
+<a href="/study/csharp/resource/nullablereferencetype/#unconstrained-generics">defaultable</a>になるかはおそらく利用側次第になります。</p>
+<h2 id="global-using">global using</h2>
+<p>プロジェクト全域に影響を及ぼす <code>using</code> ディレクティブを書きたいという要望も昔からちらほらあります。</p>
+<p>これはまあ、「全域に影響を及ぼす」ってのが怖くてやってなかっただけなんですが、
+それももう今更なのかなぁという感じになっています。
+と言うのも、</p>
+<ul>
+<li><a href="/study/csharp/resource/nullablereferencetype/">null 許容参照型</a>は <code>&lt;Nullable&gt;enable&lt;/Nullable</code> オプションを与えるとプロジェクト全体で有効・無効が切り替わる</li>
+<li><a href="/study/csharp/cheatsheet/ap_ver9/#skip-locals-init">SkipLocalsInit</a> は <code>[module:SkipLocalsInit]</code> と書けばプロジェクト全体に影響を及ぼせる</li>
+</ul>
+<p>みたいな文法がすでにあります。</p>
+<p>あと、 ASP.NET なプロジェクトを作るとテンプレート内に <code>_ViewImports.cshtml</code> っていうのが最初から存在しますが、その中身は以下のようになっています。</p>
+<pre><code class="language-razor">@using WebApplication1
+@using WebApplication1.Models
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers</code></pre>
+<p>これ、やってることはまさに「プロジェクト中のすべての cshtml に影響を及ぼす <code>using</code>」になります。</p>
+<p>あと例えば、最近の <a href="https://docs.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/tutorials/hello-world?tutorial-step=1">C# 公式チュートリアル</a>では、普通に以下のコードがコンパイルできたりします。
+どうも、暗黙的に、<code>System</code>、<code>System.Linq</code>、<code>System.Collections.Generic</code> 辺りがデフォルトで <code>using</code> されていそうな雰囲気。</p>
+<pre><code class="language-csharp">Console.WriteLine(<span class="string">&quot;Hello World!&quot;</span>);</code></pre>
+<p>ちなみに、現時点での実装はどうも「ごり押し」っぽい雰囲気があります。
+<a href="https://www.youtube.com/watch?v=yDrQ2nCPfR8&amp;t=4338s">Visual Studio Users Community Japan 勉強会 #6 質疑応答枠 1:12:18～</a>で話したことがあるですが、
+おそらく、「書いたコードの前に以下のコードを追加」みたいな実装になっていると思います。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Linq;
+<span class="keyword">using</span> System.Collections.Generic;
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {</code></pre>
+<p>相当に気持ち悪い実装ですが、
+こんな気持ち悪いことをしてまで、「<code>using</code> はおまじない」を消したいという状態になっています。</p>
+<p>だったら認めようと。</p>
+<p>問題は実現方法なんですが、これも初期案としては2案出ていました。</p>
+<ul>
+<li><code>&lt;Nullable&gt;enable&lt;/Nullable&gt;</code> みたいに、C# コンパイラーに渡すオプション/csproj ファイルに書く設定として提供</li>
+<li>C# ソースコード中に <code>global using N = int;</code> みたいなのを書けるようにする</li>
+</ul>
+<p>ちなみに、後者が有力になっています。<code>global using N = int;</code> 支持になっているのは以下のような理由。</p>
+<ul>
+<li>Source Generator で使う場合に C# コードで書ける方が助かる</li>
+<li>dotnet コマンドから csc (C# コンパイラー)に素通ししてあげないといけないオプションがすでに大量にあってあんまりもう増やしたくない</li>
+<li>「global using が欲しい」という要望も長年ずっと出続けてる</li>
+</ul>
+<p>で、後は文法なわけですが、<code>global using</code> で行くみたいです。</p>
+<pre><code class="language-csharp">global <span class="keyword">using</span> System;
+global <span class="keyword">using</span> System.Linq.Enumerable;
+global <span class="keyword">using</span> System.Collections.Generic;
+global <span class="keyword">using</span> <span class="keyword">static</span> System.Linq.Enumerable;</code></pre>
+<p>まあ、迷うとしたら語順くらいですかね。
+普通に <code>global</code> という単語を名前空間にもクラス名にも使えてしまうので、<code>using global</code> だと「キーワードの <code>global</code> か名前空間の <code>global</code> か」の弁別が大変だそうで。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> global;
+ 
+<span class="keyword">namespace</span> global
+{
+    <span class="keyword">class</span> global { }
+}</code></pre>
+<p>あと、さすがにファイル中散り散りに「プロジェクト全体に影響あり」なものが書かれるのは怖いということで、
+<code>global using</code> を書けるのはファイルの先頭(普通の <code>using</code> ディレクティブよりも前)だけにするみたいです。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2021/3/">3&#x6708;</a></li><li><a href="/blog/2021/3/mix-deconstruction/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: &#x5206;&#x89E3;&#x6642;&#x306E;&#x5BA3;&#x8A00;&#x3068;&#x5909;&#x6570;&#x306E;&#x6DF7;&#x5728;</a></li><li><a href="/blog/2021/3/improvedinterpolatedstrings/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: Improved Interpolated Strings</a></li><li><a href="/blog/2021/3/200b/">&#x306A;&#x3093;&#x3068;&#x304B;&#x3057;&#x3066;&#x304F;&#x308C;&#x308B;&#x30BC;&#x30ED;&#x5E45;&#x30B9;&#x30DA;&#x30FC;&#x30B9;</a></li><li><a href="/blog/2021/3/ufcpplive/">YouTube &#x3067; C# &#x304C;&#x3089;&#x307F;&#x306E;&#x30E9;&#x30A4;&#x30D6;&#x914D;&#x4FE1;&#x521D;&#x3081;&#x3066;&#x307E;&#x3057;&#x305F;(1&#x5E74;&#x7D4C;&#x3063;&#x305F;)</a></li><li><a href="/blog/2021/3/lambdaimprovements/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: &#x30E9;&#x30E0;&#x30C0;&#x5F0F;&#x306E;&#x6539;&#x5584;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

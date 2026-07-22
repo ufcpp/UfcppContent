@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>C# 8.0 Ranges | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2018/12/cs8ranges/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2018-12-07T11:44:46">2018-12-07</time></span><span>更新: <time datetime="2018-12-07T11:49:36">2018-12-07</time></span></div><h1 id="c-8.0-ranges">C# 8.0 Ranges</h1>
+<p>今日もC# 8.0の新機能の話で、今日のはすでに Visual Studio 2019 Preview 1に入っているやつです。</p>
+<p>Ranges and Indicesと呼ばれていて、配列などに対して、
+<code>a[^i]</code>で「後ろからi番目」とか、
+<code>a[i..j]</code>で「i番目からj番目の範囲」とかを取り出せるようにする機能です。</p>
+<p>正確にいうと、<code>^i</code>とか<code>i..j</code>とかの部分がC#の新機能で、
+これらはそれぞれ<code>Index</code>型、<code>Range</code>型になります。
+<code>Index</code>、<code>Range</code>を受け取るインデクサーやメソッドはライブラリ側の機能です。
+(ただし、配列だけは言語レベルで処理している模様。)</p>
+<h2 id="section">背景1: 統一ルールが欲しい</h2>
+<p>一旦先ほどの説明は忘れてまっさらな状態で、
+例えば「3..5」と言われると何を思い浮かべるでしょう。
+文脈次第だとは思いますが、以下のようなものがあり得ます。</p>
+<ul>
+<li>3, 4, 5 (5も含む)</li>
+<li>3, 4 (5は含まない)</li>
+<li>3, 4, 5, 6, 7 (3から初めて5つ)</li>
+</ul>
+<p>どれがいいかは用途次第で、実際、どれもあり得ます。
+例えば、.NET でも、以下のようなメソッドがあります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> r = <span class="keyword">new</span> Random();
+<span class="keyword">var</span> a = <span class="keyword">new</span>[] { <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span> };
+ 
+<span class="keyword">var</span> x = r.Next(<span class="number">3</span>, <span class="number">5</span>); <span class="comment">// 3, 4 (5を含まない)</span>
+<span class="keyword">var</span> s = a.AsSpan(<span class="number">3</span>, <span class="number">5</span>); <span class="comment">// 3, 4, 5, 6, 7 (3から始めて5つ)</span></code></pre>
+<p>ちょっとでもわかりやすくしたければ、以下のように名前付き引数にすべきかもしれません。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = r.Next(minValue: <span class="number">3</span>, maxValue: <span class="number">5</span>); <span class="comment">// 「5つ」でないことは明確なものの、5を含むかどうかわからず</span>
+<span class="keyword">var</span> s = a.AsSpan(start: <span class="number">3</span>, length: <span class="number">5</span>); <span class="comment">// これなら割とわかりやすく「3から始めて5つ」</span></code></pre>
+<p><code>Random.Next</code>の例のように、名前が「max」だけで、「含むかどうか」がわからないAPIも多いです。
+この区別のために、<code>Parallel.For</code>なんかは引数名が<code>fromInclusive</code>、<code>toExclusive</code>とかになっていたりします。
+しかし、どんどん名前が長くなって書きづらい上に、
+所詮は命名規約なので規約が守られない場合だってあり得ます。</p>
+<p>さらにいうと、多次元データになるともっとしんどくなります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> m = <span class="keyword">new</span>[,]
+{
+    { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span> },
+    { <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span> },
+    { <span class="number">9</span>, <span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span> },
+};
+ 
+<span class="comment">// (x, y) が (1, 2) ～ (3, 4) の範囲？</span>
+<span class="comment">// x が 1～2、y が 3～4 の範囲？</span>
+<span class="comment">// 2, 4 は含む？含まない？</span>
+<span class="keyword">var</span> n = m.Slice(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>);</code></pre>
+<p>ということで、範囲を表す専用の文法が欲しいという話になります。</p>
+<h2 id="section-1">背景2: インデックス用途</h2>
+<p>その両端を含むか含まないか問題ですが、どちらがいいかは正直用途によります。</p>
+<p>例えば、<code>x in 1..3</code> みたいに「<code>x</code> がその範囲に入るかどうか」(マッチング用途)の場合、
+大体は「3も含む」の方にしたいという要望が多いです。
+一方で、<code>x[1..3]</code>みたいに「<code>x</code>の1番から3番の要素」(インデックス用途)の場合、
+「3を含まない」にした方が都合がよかったりします。
+インデックス用途における「含まない」の利点は以下のようなもの。</p>
+<ul>
+<li>実装上、パフォーマンス的に有利
+<ul>
+<li>長さを <code>length = maxExclusive - minInclusive</code> で計算できる(<code>+1</code>が要らない)</li>
+<li>ループが <code>for (var i = minInclusive; i &lt; maxExclusive; i++)</code> になる(<code>&lt;=</code> だと <code>int.MaxValue</code>に対する特別扱いが必要)</li>
+</ul>
+</li>
+<li><code>i..i</code>が空(0要素)範囲になる。「含む」の方だと空範囲が<code>i..i-1</code>になってちょっとキモい</li>
+</ul>
+<p>C# 8.0で導入される範囲構文は、後者のインデックス用途を狙ったもので、「末尾は含まない」の方になります。</p>
+<p>ちなみに、「範囲に入るかどうか」の方は別途<a href="/study/csharp/datatype/patterns/">パターン マッチング</a>の一種(range pattern)として提供される可能性はあるんですが、
+おそらく別の文法(<code>x in 1 to 3</code>みたいな)になりそうです。</p>
+<p>一方、インデックス用途に絞ったことで、
+「配列の末尾からi番目」を表したいという別の要望も出てきます。
+そこで、<code>^</code>演算子を導入して、<code>^i</code>で「末尾からi番目」を表すことになりました。</p>
+<h2 id="section-2">文法</h2>
+<p>ということで、C# 8.0で導入されるのは以下のような文法です。</p>
+<ul>
+<li><code>^i</code> 演算子で「末尾からi番目」を表す <code>Index</code>型を作る
+<ul>
+<li>正確には「<code>Length - i</code>」を表す。<code>^0</code>は<code>Length</code>番目なので、<code>array[^0]</code>は OutOfRange。</li>
+</ul>
+</li>
+<li><code>i..j</code> 演算子で、「i番目からj番目」を表す<code>Range</code>型を作る
+<ul>
+<li>開始の方(<code>i</code>)は含む、末尾の方(<code>j</code>)は含まない</li>
+<li>両端は省略可能。<code>i..</code>なら「iから末尾」、<code>..j</code>なら「先頭からj」、<code>..</code>なら「配列全体」</li>
+<li><code>Index</code>を受け付ける。<code>^3..</code>なら「末尾から3要素」</li>
+</ul>
+</li>
+</ul>
+<p>ちなみに、<code>Range</code>、<code>Index</code>はいずれも<code>System</code>名前空間の構造体です。</p>
+<p>例えば以下のように書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> data = <span class="keyword">new</span>[] { <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> };
+ 
+<span class="comment">// 1～2要素目。2 は exclusive。なので、表示されるのは 1 だけ。</span>
+Write(data[<span class="number">1</span>..<span class="number">2</span>]);
+ 
+<span class="comment">// 先頭から1～末尾から1。 1, 2, 3, 4</span>
+Write(data[<span class="number">1</span>..^<span class="number">1</span>]);
+ 
+<span class="comment">// 先頭～末尾から1。 0, 1, 2, 3, 4</span>
+Write(data[..^<span class="number">1</span>]);
+ 
+<span class="comment">// 先頭から1～末尾。 1, 2, 3, 4, 5</span>
+Write(data[<span class="number">1</span>..]);
+ 
+<span class="comment">// 全体。0, 1, 2, 3, 4, 5</span>
+Write(data[..]);</code></pre>
+<p><img src="/assets/media/1167/ranges.png" alt="範囲構文" /></p>
+<h2 id="section-3">内部実装</h2>
+<p>実装としては以下のようになります。</p>
+<ul>
+<li><code>^i</code> は<code>new Index(i, true)</code>になる(第2引数の<code>true</code>が「末尾から」の意味)</li>
+<li>整数から <code>Index</code> へは暗黙の型変換がある</li>
+<li><code>i..j</code>は<code>Range.Create(i, j)</code>になる</li>
+<li><code>i..</code>は<code>Range.FromStart(i)</code>になる</li>
+<li><code>..j</code>は<code>Range.ToEnd(j)</code>になる</li>
+<li><code>..</code>は<code>Range.All()</code>になる</li>
+</ul>
+<pre><code class="language-csharp"><span class="keyword">var</span> r1 = Range.Create(<span class="number">1</span>, <span class="number">2</span>);                  <span class="comment">// 1..2</span>
+<span class="keyword">var</span> r2 = Range.Create(<span class="number">1</span>, <span class="keyword">new</span> Index(<span class="number">1</span>, <span class="keyword">true</span>)); <span class="comment">// 1..^1</span>
+<span class="keyword">var</span> r3 = Range.ToEnd(<span class="keyword">new</span> Index(<span class="number">1</span>, <span class="keyword">true</span>));     <span class="comment">// ..^1</span>
+<span class="keyword">var</span> r4 = Range.FromStart(<span class="number">1</span>);                  <span class="comment">// 1..</span>
+<span class="keyword">var</span> r5 = Range.All();                         <span class="comment">// ..</span></code></pre>
+<p>ちなみに、<code>Range</code>、<code>Index</code>はそれぞれ、</p>
+<ul>
+<li><code>Index</code> … <code>int</code>を1つだけ持つ構造体
+<ul>
+<li>.NET の配列は負のインデックスを想定していないので、負の数を使って「末尾から」を表現</li>
+</ul>
+</li>
+<li><code>Range</code> … <code>Index</code>を2つ持つ構造体</li>
+</ul>
+<p>になっています。</p>
+<p>また、構文上は、<code>^</code>の方は単なる単項演算子、
+<code>..</code>の方は専用の構文(オペランドを省略可能というのが特殊なので、単なる2項演算子扱いにはできない)だそうです。</p>
+<h2 id="range">Rangeを受け付けるインデクサー</h2>
+<p>配列に対して <code>a[i..j]</code> と書いた時の挙動はちょっとまだもめているみたいです。
+要は以下のどちらにすべきか。</p>
+<ul>
+<li>配列からは配列で「subarray」を返すべきではないか
+<ul>
+<li>新しい配列のアロケーションとコピーが発生</li>
+</ul>
+</li>
+<li>アロケーションを避けるために <code>Span&lt;T&gt;</code> で返すべきではないか</li>
+</ul>
+<p>Visual Studio 2019 Preview 1 での実装は前者になっていて、
+<code>new T[]</code>と<code>Array.Copy</code>が生成されます。
+パフォーマンスを気にするなら<code>a.AsSpan()[i..j]</code>と書く必要があります。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2018/12/">12&#x6708;</a></li><li><a href="/blog/2018/12/pickuproslyn1201/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/1</a></li><li><a href="/blog/2018/12/tupleelementcase/">&#x30BF;&#x30D7;&#x30EB;&#x8981;&#x7D20;&#x540D;&#x306E;&#x5927;&#x6587;&#x5B57;&#x30FB;&#x5C0F;&#x6587;&#x5B57;</a></li><li><a href="/blog/2018/12/directorybuild/">Directory.Build.*</a></li><li><a href="/blog/2018/12/runtimefeature/">RuntimeFeature &#x30AF;&#x30E9;&#x30B9;</a></li><li><a href="/blog/2018/12/vs2019p1/">Visual Studio 2019 Preview 1</a></li><li><a href="/blog/2018/12/cs8misc/">C# 8.0 &#x5C0F;&#x3055;&#x306A;&#x4FEE;&#x6B63;</a></li><li><a href="/blog/2018/12/cs8nrt/">C# 8.0 null&#x8A31;&#x5BB9;&#x53C2;&#x7167;&#x578B;</a></li><li><a href="/blog/2018/12/cs8switchexpr/">C# 8.0 switch &#x5F0F;</a></li><li><a href="/blog/2018/12/cs8patterns/">C# 8.0 &#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30DE;&#x30C3;&#x30C1;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2018/12/cs8asyncstreams/">C# 8.0 Async streams</a></li><li><a href="/blog/2018/12/cs8notyet/">C# 8.0 &#x305D;&#x306E;&#x4ED6; (Preview 1&#x3067;&#x306E;&#x672A;&#x5B9F;&#x88C5;&#x6A5F;&#x80FD;)</a></li><li><a href="/blog/2018/12/arrayindexer/">&#x914D;&#x5217;&#x306E;&#x30A4;&#x30F3;&#x30C7;&#x30AF;&#x30B5;&#x30FC;</a></li><li><a href="/blog/2018/12/unsafe/">System.Runtime.CompilerServices.Unsafe</a></li><li><a href="/blog/2018/12/arraydowncast/">&#x914D;&#x5217;&#x306E;&#x30C0;&#x30A6;&#x30F3;&#x30AD;&#x30E3;&#x30B9;&#x30C8;</a></li><li><a href="/blog/2018/12/staticdatareadonlyspan/">&#x9759;&#x7684;&#x306A;&#x30C7;&#x30FC;&#x30BF;&#x306E; ReadOnlySpan &#x6700;&#x9069;&#x5316;</a></li><li><a href="/blog/2018/12/devirtualization/">Devirtualization (&#x8131;&#x4EEE;&#x60F3;&#x5316;)</a></li><li><a href="/blog/2018/12/guardeddevirtualization/">Guarded Devirtualization</a></li><li><a href="/blog/2018/12/fastenumerator/">IEnumerator &#x306E;&#x5225;&#x5B9F;&#x88C5;</a></li><li><a href="/blog/2018/12/howtoenumerate/">foreach &#x306E;&#x639B;&#x3051;&#x65B9;&#x3044;&#x308D;&#x3044;&#x308D;</a></li><li><a href="/blog/2018/12/pickuproslyn1221/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/21 &amp; Connect() Japan &#x30D5;&#x30A9;&#x30ED;&#x30FC;&#x30A2;&#x30C3;&#x30D7;</a></li><li><a href="/blog/2018/12/arrayindex/">&#x914D;&#x5217;&#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;&#x306F;0&#x4EE5;&#x4E0A;</a></li><li><a href="/blog/2018/12/jitintrinsics/">JIT Intrinsics</a></li><li><a href="/blog/2018/12/statictypeof/">&#x9759;&#x7684;&#x306A; typeof/sizeof</a></li><li><a href="/blog/2018/12/unicodecategory/">&#x66F8;&#x8A18;&#x7D20;&#x5206;&#x5272;/Unicode &#x30AB;&#x30C6;&#x30B4;&#x30EA;&#x30FC;&#x5224;&#x5B9A;</a></li><li><a href="/blog/2018/12/spanify/">Span&lt;T&gt; &#x5229;&#x7528;&#x306B;&#x3088;&#x308B;&#x6700;&#x9069;&#x5316;</a></li><li><a href="/blog/2018/12/futurememorymanagement/">&#x5C06;&#x6765;&#x306E;&#x30E1;&#x30E2;&#x30EA;&#x7BA1;&#x7406;</a></li><li><a href="/blog/2018/12/unsafenogarantee/">Unsafe &#x30AF;&#x30E9;&#x30B9;(&#x4FDD;&#x8A3C;&#x5916;)</a></li><li><a href="/blog/2018/12/unsafegarantee/">Unsafe &#x30AF;&#x30E9;&#x30B9;(&#x4FDD;&#x8A3C;&#x306E;&#x3042;&#x308B;&#x5229;&#x7528;&#x4F8B;)</a></li><li><a href="/blog/2018/12/unsaferuntime/">&#x4EEE;&#x60F3;&#x30C6;&#x30FC;&#x30D6;&#x30EB;&#x306E;&#x4E2D;&#x8EAB;&#x3092;&#x306E;&#x305E;&#x304D;&#x898B;</a></li><li><a href="/blog/2018/12/tieredcompilation/">&#x6BB5;&#x968E;&#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB; (Tiered Compilation)</a></li><li><a href="/blog/2018/12/hdintrinsic/">Hardware Intrinsics</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x9759;&#x96FB;&#x5834; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/physics/em/electrostatic/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">静電場</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="maxwell"></a>静電場中のマクスウェルの方程式</h2>
+<p>時間的に変化しない電場を<strong id="static" class="keyword">静電場</strong>といいます。
+静電場中では、時間微分に関する項が0になるので、マクスウェルの方程式は</p>
+<table summary="">
+
+	<tr>
+		<th>微分形</th>
+		<th>積分形</th>
+		<th>不連続面での境界条件</th>
+	</tr>
+	<tr>
+		<td><div class="math">
+            <span class="vector">∇</span>×
+            <a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a> = 0
+          </div><div class="math">
+            <span class="vector">∇</span>・
+            <a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a> = <a href="/study/physics/em/variable/#eps" title="物質中の誘電率">ε</a><span class="vector">∇</span>・<a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a> = <a href="/study/physics/em/variable/#rho" title="電荷密度">ρ</a>
+          </div></td>
+		<td><div class="math">
+            <span class="ointegral">∮</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">C</td></tr></table>
+            <a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a>・<span class="normal">d</span><span class="vector">l</span> = 0
+          </div><div class="math">
+            <span class="ointegral">∮</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">S</td></tr></table>
+            <a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a>・<span class="normal">d</span><span class="vector">S</span> = <a href="/study/physics/em/variable/#eps" title="物質中の誘電率">ε</a><span class="ointegral">∮</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">S</td></tr></table><a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a>・<span class="normal">d</span><span class="vector">S</span> = <span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">V</td></tr></table><a href="/study/physics/em/variable/#rho" title="電荷密度">ρ</a>・<span class="normal">d</span>V
+          </div></td>
+		<td><div class="math">
+            <a href="/study/physics/em/variable/#n" title="法線ベクトル"><span class="vector">n</span></a>×<span class="paren" style="font-size:em;">(</span>
+              <a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a><sub>1</sub> − <a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a><sub>2</sub>
+            <span class="paren" style="font-size:em;">)</span> = 0
+          </div><div class="math">
+            <a href="/study/physics/em/variable/#n" title="法線ベクトル"><span class="vector">n</span></a>×<span class="paren" style="font-size:em;">(</span>
+              <a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a><sub>1</sub> − <a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a><sub>2</sub>
+            <span class="paren" style="font-size:em;">)</span> = <a href="/study/physics/em/variable/#xi" title="グザイ">ξ</a>
+          </div></td>
+	</tr>
+</table>
+<p>と表せます。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="elepotential"></a>電位</h2>
+<p>静電場中でのマクスウェルの方程式で、<span class="math">
+<a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a>
+</span>は<span class="math">
+<span class="vector">∇</span>×<a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a> = 0
+</span>を満たす保存場なので、スカラーポテンシャル<span class="math">
+<a href="/study/physics/em/variable/#phi" title="スカラーポテンシャル">φ</a>
+</span>が定義できて</p>
+<div class="math">
+      <em>
+        <a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a> = −<span class="vector">∇</span><a href="/study/physics/em/variable/#phi" title="スカラーポテンシャル">φ</a>
+      </em>
+    </div>
+この電場のスカラーポテンシャル<span class="math">
+        <a href="/study/physics/em/variable/#phi" title="スカラーポテンシャル">φ</a>
+      </span>を<strong id="elepotential" class="keyword">電位</strong>といいます。
+スカラーポテンシャルの性質から、点<span class="math">O</span>を基準とした点<span class="math">P</span>での電位<span class="math">
+        <a href="/study/physics/em/variable/#phi" title="スカラーポテンシャル">φ</a>
+        <sub>P</sub>
+      </span>は
+<div class="math">
+      <a href="/study/physics/em/variable/#phi" title="スカラーポテンシャル">φ</a>
+      <sub>P</sub> = <span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> O</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">P</td></tr></table><a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a>・<span class="normal">d</span><span class="vector">l</span>
+    </div>
+と表せます。
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="howtopotential"></a>静電場における電位の求め方</h2>
+<span class="math">
+        <a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a> = −<span class="vector">∇</span><a href="/study/physics/em/variable/#phi" title="スカラーポテンシャル">φ</a>
+      </span>を電場に関するガウスの法則に代入すると
+<div class="math">
+      <a href="/study/physics/em/variable/#Laplace" title="ラプラシアン">Δ</a>
+      <a href="/study/physics/em/variable/#phi" title="スカラーポテンシャル">φ</a> = −<table class="frac" summary="fraction"><tr><td class="num">
+          <a href="/study/physics/em/variable/#rho" title="電荷密度">ρ</a>
+        </td></tr><tr><td>
+          <a href="/study/physics/em/variable/#eps" title="物質中の誘電率">ε</a>
+        </td></tr></table>
+    </div>
+が得られます。
+この方程式を解けば静電場の電位を求めることが出来ます。
+具体的には、
+<div class="math">
+      <a href="/study/physics/em/variable/#Laplace" title="ラプラシアン">Δ</a>U = <a href="/study/physics/em/variable/#delta" title="デルタ関数">δ</a>
+    </div>
+の解<span class="math">
+        U = −<table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>
+          4π<span class="normal">|</span>
+            <a href="/study/physics/em/variable/#r" title="位置ベクトル"><span class="vector">r</span></a>
+          <span class="normal">|</span>
+        </td></tr></table>
+      </span>と<span class="math">
+        −<table class="frac" summary="fraction"><tr><td class="num">
+            <a href="/study/physics/em/variable/#rho" title="電荷密度">ρ</a>
+          </td></tr><tr><td>
+            <a href="/study/physics/em/variable/#eps" title="物質中の誘電率">ε</a>
+          </td></tr></table>
+      </span>
+との畳み込み積分
+<div class="math">
+      <a href="/study/physics/em/variable/#phi" title="スカラーポテンシャル">φ</a> = −<table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>
+        <a href="/study/physics/em/variable/#eps" title="物質中の誘電率">ε</a>
+      </td></tr></table>U*<a href="/study/physics/em/variable/#rho" title="電荷密度">ρ</a>
+    </div>
+つまり、
+<div class="math">
+      <em>
+        <a href="/study/physics/em/variable/#phi" title="スカラーポテンシャル">φ</a>(x,y,z) = −<table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>
+          <a href="/study/physics/em/variable/#eps" title="物質中の誘電率">ε</a>
+        </td></tr></table><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub"></td></tr></table><a href="/study/physics/em/variable/#rho" title="電荷密度">ρ</a>(<a href="/study/physics/em/variable/#xi" title="グザイ">ξ</a>,<a href="/study/physics/em/variable/#eta" title="イータ">η</a>,<a href="/study/physics/em/variable/#zeta" title="ゼータ">ζ</a>)U(x−<a href="/study/physics/em/variable/#xi" title="グザイ">ξ</a>,y−<a href="/study/physics/em/variable/#eta" title="イータ">η</a>,z−<a href="/study/physics/em/variable/#zeta" title="ゼータ">ζ</a>)<a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a><a href="/study/physics/em/variable/#xi" title="グザイ">ξ</a><a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a><a href="/study/physics/em/variable/#eta" title="イータ">η</a><a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a><a href="/study/physics/em/variable/#zeta" title="ゼータ">ζ</a> = <table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>
+          4π<a href="/study/physics/em/variable/#eps" title="物質中の誘電率">ε</a>
+        </td></tr></table><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub"></td></tr></table><table class="frac" summary="fraction"><tr><td class="num">
+            <a href="/study/physics/em/variable/#rho" title="電荷密度">ρ</a>(<a href="/study/physics/em/variable/#xi" title="グザイ">ξ</a>,<a href="/study/physics/em/variable/#eta" title="イータ">η</a>,<a href="/study/physics/em/variable/#zeta" title="ゼータ">ζ</a>)
+          </td></tr><tr><td>
+            <span class="normal">|</span>
+              <a href="/study/physics/em/variable/#r" title="位置ベクトル"><span class="vector">r</span></a>'
+            <span class="normal">|</span>
+          </td></tr></table><a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a><a href="/study/physics/em/variable/#xi" title="グザイ">ξ</a><a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a><a href="/study/physics/em/variable/#eta" title="イータ">η</a><a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a><a href="/study/physics/em/variable/#zeta" title="ゼータ">ζ</a> = <table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>
+          4π<a href="/study/physics/em/variable/#eps" title="物質中の誘電率">ε</a>
+        </td></tr></table><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub"></td></tr></table><table class="frac" summary="fraction"><tr><td class="num">
+            <a href="/study/physics/em/variable/#rho" title="電荷密度">ρ</a>
+          </td></tr><tr><td>r</td></tr></table><span class="normal">d</span>V
+      </em>
+    </div>
+と表される。
+ただし、<span class="math">
+        <a href="/study/physics/em/variable/#r" title="位置ベクトル"><span class="vector">r</span></a> = (x, y, z), <a href="/study/physics/em/variable/#r" title="位置ベクトル"><span class="vector">r</span></a>' = (x−<a href="/study/physics/em/variable/#xi" title="グザイ">ξ</a>, y−<a href="/study/physics/em/variable/#eta" title="イータ">η</a>, z−<a href="/study/physics/em/variable/#zeta" title="ゼータ">ζ</a>), r = <span class="normal">|</span>
+          <a href="/study/physics/em/variable/#r" title="位置ベクトル"><span class="vector">r</span></a>'
+        <span class="normal">|</span>
+      </span>である。
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="howtofield"></a>静電場における電場の求め方</h2>
+<p>電場<span class="math">
+<a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a>
+</span>は<span class="math">
+<a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a> = −<span class="vector">∇</span><a href="/study/physics/em/variable/#phi" title="スカラーポテンシャル">φ</a>
+</span>で与えられ、電位<span class="math">
+<a href="/study/physics/em/variable/#phi" title="スカラーポテンシャル">φ</a>
+</span>は<span class="math">
+<a href="/study/physics/em/variable/#phi" title="スカラーポテンシャル">φ</a>(x,y,z) = <table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>
+          4π<a href="/study/physics/em/variable/#eps" title="物質中の誘電率">ε</a>
+        </td></tr></table><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub"></td></tr></table><table class="frac" summary="fraction"><tr><td class="num">
+            <a href="/study/physics/em/variable/#rho" title="電荷密度">ρ</a>(<a href="/study/physics/em/variable/#xi" title="グザイ">ξ</a>,<a href="/study/physics/em/variable/#eta" title="イータ">η</a>,<a href="/study/physics/em/variable/#zeta" title="ゼータ">ζ</a>)
+          </td></tr><tr><td>
+            <span class="normal">|</span>
+              <a href="/study/physics/em/variable/#r" title="位置ベクトル"><span class="vector">r</span></a>'
+            <span class="normal">|</span>
+          </td></tr></table><a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a><a href="/study/physics/em/variable/#xi" title="グザイ">ξ</a><a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a><a href="/study/physics/em/variable/#eta" title="イータ">η</a><a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a><a href="/study/physics/em/variable/#zeta" title="ゼータ">ζ</a>
+</span>によって求められるので、電場<span class="math">
+<a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a>
+</span>は、</p>
+<div class="math">
+      <em>
+        <a href="/study/physics/em/variable/#E" title="電場ベクトル"><span class="vector">E</span></a> = −<table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>
+          4π<a href="/study/physics/em/variable/#eps" title="物質中の誘電率">ε</a>
+        </td></tr></table><span class="vector">∇</span><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub"></td></tr></table><table class="frac" summary="fraction"><tr><td class="num">
+            <a href="/study/physics/em/variable/#rho" title="電荷密度">ρ</a>(<a href="/study/physics/em/variable/#xi" title="グザイ">ξ</a>,<a href="/study/physics/em/variable/#eta" title="イータ">η</a>,<a href="/study/physics/em/variable/#zeta" title="ゼータ">ζ</a>)
+          </td></tr><tr><td>
+            <span class="normal">|</span>
+              <a href="/study/physics/em/variable/#r" title="位置ベクトル"><span class="vector">r</span></a>'
+            <span class="normal">|</span>
+          </td></tr></table><a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a><a href="/study/physics/em/variable/#xi" title="グザイ">ξ</a><a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a><a href="/study/physics/em/variable/#eta" title="イータ">η</a><a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a><a href="/study/physics/em/variable/#zeta" title="ゼータ">ζ</a> = −<table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>
+          4π<a href="/study/physics/em/variable/#eps" title="物質中の誘電率">ε</a>
+        </td></tr></table><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub"></td></tr></table><span class="vector">∇</span><table class="frac" summary="fraction"><tr><td class="num">
+            <a href="/study/physics/em/variable/#rho" title="電荷密度">ρ</a>(<a href="/study/physics/em/variable/#xi" title="グザイ">ξ</a>,<a href="/study/physics/em/variable/#eta" title="イータ">η</a>,<a href="/study/physics/em/variable/#zeta" title="ゼータ">ζ</a>)
+          </td></tr><tr><td>
+            <span class="normal">|</span>
+              <a href="/study/physics/em/variable/#r" title="位置ベクトル"><span class="vector">r</span></a>'
+            <span class="normal">|</span>
+          </td></tr></table><a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a><a href="/study/physics/em/variable/#xi" title="グザイ">ξ</a><a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a><a href="/study/physics/em/variable/#eta" title="イータ">η</a><a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a><a href="/study/physics/em/variable/#zeta" title="ゼータ">ζ</a>
+      </em>
+    </div><div class="math">
+      <em>
+        = <table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>
+          4π<a href="/study/physics/em/variable/#eps" title="物質中の誘電率">ε</a>
+        </td></tr></table><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub"></td></tr></table><table class="frac" summary="fraction"><tr><td class="num">
+            <a href="/study/physics/em/variable/#rho" title="電荷密度">ρ</a>(<a href="/study/physics/em/variable/#xi" title="グザイ">ξ</a>,<a href="/study/physics/em/variable/#eta" title="イータ">η</a>,<a href="/study/physics/em/variable/#zeta" title="ゼータ">ζ</a>)<a href="/study/physics/em/variable/#r" title="位置ベクトル"><span class="vector">r</span></a>'
+          </td></tr><tr><td>
+            <span class="normal">|</span>
+              <a href="/study/physics/em/variable/#r" title="位置ベクトル"><span class="vector">r</span></a>'
+            <span class="normal">|</span>
+            <sup>3</sup>
+          </td></tr></table><a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a><a href="/study/physics/em/variable/#xi" title="グザイ">ξ</a><a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a><a href="/study/physics/em/variable/#eta" title="イータ">η</a><a href="/study/physics/em/variable/#D" title="電束密度ベクトル"><span class="vector">D</span></a><a href="/study/physics/em/variable/#zeta" title="ゼータ">ζ</a> = <table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>
+          4π<a href="/study/physics/em/variable/#eps" title="物質中の誘電率">ε</a>
+        </td></tr></table><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub"></td></tr></table><table class="frac" summary="fraction"><tr><td class="num">
+            <a href="/study/physics/em/variable/#rho" title="電荷密度">ρ</a>
+            <span class="vector">i</span>
+            <sub>r</sub>
+          </td></tr><tr><td>
+            r<sup>2</sup>
+          </td></tr></table><span class="normal">d</span>V
+      </em>
+    </div>
+によって求められる。
+ただし、<span class="math">
+        <span class="vector">i</span>
+        <sub>r</sub>
+      </span>は<span class="math">
+        <a href="/study/physics/em/variable/#r" title="位置ベクトル"><span class="vector">r</span></a>'
+      </span>方向を向く単位ベクトル、すなわち<span class="math">
+        <span class="vector">i</span><sub>r</sub> = <table class="frac" summary="fraction"><tr><td class="num">
+            <a href="/study/physics/em/variable/#r" title="位置ベクトル"><span class="vector">r</span></a>'
+          </td></tr><tr><td>
+            <span class="normal">|</span>
+              <a href="/study/physics/em/variable/#r" title="位置ベクトル"><span class="vector">r</span></a>'
+            <span class="normal">|</span>
+          </td></tr></table>
+      </span>である。
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/physics/em/">&#x96FB;&#x78C1;&#x7406;&#x8AD6;</a></li><li><a href="/study/physics/em/maxwell/">&#x30DE;&#x30AF;&#x30B9;&#x30A6;&#x30A7;&#x30EB;&#x306E;&#x65B9;&#x7A0B;&#x5F0F;</a></li><li><a href="/study/physics/em/electro/">&#x96FB;&#x5834;&#x3068;&#x96FB;&#x675F;&#x5BC6;&#x5EA6;</a></li><li><a href="/study/physics/em/magnetro/">&#x78C1;&#x5834;&#x3068;&#x78C1;&#x675F;&#x5BC6;&#x5EA6;</a></li><li><a href="/study/physics/em/magnetrostatic/">&#x9759;&#x78C1;&#x5834;</a></li><li><a href="/study/physics/em/circuit/">&#x78C1;&#x6C17;&#x56DE;&#x8DEF;</a></li><li><a href="/study/physics/em/energy/">&#x96FB;&#x78C1;&#x5834;&#x306E;&#x6301;&#x3064;&#x30A8;&#x30CD;&#x30EB;&#x30AE;&#x30FC;</a></li><li><a href="/study/physics/em/emfield/">&#x6642;&#x9593;&#x7684;&#x306B;&#x5909;&#x5316;&#x3059;&#x308B;&#x96FB;&#x78C1;&#x5834;</a></li><li><a href="/study/physics/em/p_potential/">&#x96FB;&#x78C1;&#x30DD;&#x30C6;&#x30F3;&#x30B7;&#x30E3;&#x30EB;</a></li><li><a href="/study/physics/em/variable/">&#x5909;&#x6570;&#x306E;&#x610F;&#x5473;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

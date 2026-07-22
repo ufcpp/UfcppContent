@@ -1,0 +1,120 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Visual Studio 15.7 &#x30EA;&#x30EA;&#x30FC;&#x30B9; &#x306A;&#x3069; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2018/5/vs157/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2018-05-08T11:37:51">2018-05-08</time></span><span>更新: <time datetime="2018-05-08T11:37:51">2018-05-08</time></span></div><h1 id="visual-studio-15.7">Visual Studio 15.7 リリース など</h1>
+<p><a href="https://developer.microsoft.com/en-us/events/build">Micorsoft Build</a>に合わせて、Visual Studioの新バージョンが正式リリースしたみたいですね。その他、.NET/C# 関連をいくつか。</p>
+<p>告知ブログ:</p>
+<ul>
+<li><a href="https://blogs.msdn.microsoft.com/visualstudio/2018/05/07/microsoft-build-2018-new-releases-for-visual-studio-visual-studio-for-mac-net-core-and-xamarin-forms/">Microsoft Build 2018: New releases for Visual Studio, Visual Studio for Mac, .NET Core and Xamarin.Forms</a></li>
+</ul>
+<p>正式リリース:</p>
+<ul>
+<li><a href="https://blogs.msdn.microsoft.com/visualstudio/2018/05/07/visual-studio-2017-version-15-7-and-version-15-8-preview-1/">Visual Studio 2017 15.7</a>
+<ul>
+<li><a href="/study/csharp/cheatsheet/ap_ver7_3/">C# 7.3</a>も含まれています</li>
+</ul>
+</li>
+<li><a href="https://blogs.msdn.microsoft.com/visualstudio/2018/05/07/visual-studio-for-mac-version-7-5-and-beyond/">Visual Studio for Mac, version 7.5</a></li>
+<li><a href="https://github.com/dotnet/machinelearning">ML.NET</a>
+<ul>
+<li>.NET 実装のオープンソースな機械学習ライブラリ</li>
+<li>バージョン 0.1 ですが</li>
+</ul>
+</li>
+</ul>
+<p>リリース候補版:</p>
+<ul>
+<li><a href="https://blogs.msdn.microsoft.com/dotnet/2018/05/07/announcing-net-core-2-1-rc-1/">.NET Core 2.1 RC</a>
+<ul>
+<li>Go Live (自己責任だけど、もう実運用環境で使ってもいいよ)サポートに</li>
+<li>Alpine Linux サポート</li>
+<li>ARM プロセッサ サポート</li>
+<li><a href="https://github.com/dotnet/sourcelink">SourceLink</a></li>
+</ul>
+</li>
+</ul>
+<p>プレビュー版:</p>
+<ul>
+<li><a href="https://www.visualstudio.com/services/live-share/">Visual Studio Live Share</a>
+<ul>
+<li>パブリックに(これまで登録制のプライベート プレビューだった)</li>
+</ul>
+</li>
+<li><a href="https://blogs.msdn.microsoft.com/visualstudio/2018/05/07/introducing-visual-studio-intellicode/">Visual Studio IntelliCode</a>
+<ul>
+<li>AIでインテリセンスを賢くする的なものらしい</li>
+</ul>
+</li>
+</ul>
+<p>ロードマップ公開:</p>
+<ul>
+<li><a href="https://blogs.msdn.microsoft.com/dotnet/2018/05/07/net-core-3-and-support-for-windows-desktop-applications/">.NET Core 3</a>
+<ul>
+<li>今年後半にプレビュー公開、正式版は2019年リリース予定</li>
+</ul>
+</li>
+</ul>
+<h2 id="c-7.3">C# 7.3</h2>
+<p>地味な更新なのでほとんど触れられてませんが、C# 7.3も正式リリースっぽいです。</p>
+<p>一応なんとかリリースまでに全機能網羅できてんで、
+詳しくは「<a href="/study/csharp/cheatsheet/ap_ver7_3/">C# 7.3 の新機能</a>」を参照してください。</p>
+<p>「C# 7.2の延長」みたいな機能とか、
+相変わらず<a href="/study/csharp/resource/sp_ref/">refがらみ</a>(一般的なユーザーにはそこまで使われないかも)とか、
+<a href="/study/csharp/resource/span/"><code>Span&lt;T&gt;</code>がらみ</a>(言語機能だけは先にあるけど、<code>Span&lt;T&gt;</code>自体はまだリリース候補版の状態)とかが多いですけども。
+以下の2つとかは結構面白いかも。</p>
+<ul>
+<li><a href="/study/csharp/cheatsheet/ap_ver7_3/#overload-resolution">オーバーロード解決の改善</a></li>
+<li><a href="/study/csharp/cheatsheet/ap_ver7_3/#constraints">ジェネリック型引数に対する Enum, Delegate 制約</a></li>
+</ul>
+<h2 id="net-core-for-desktop">.NET Core for Desktop</h2>
+<p><a href="https://blogs.msdn.microsoft.com/dotnet/2018/05/07/net-core-3-and-support-for-windows-desktop-applications/">.NET Core 3</a>のロードマップでは、「Windowsデスクトップも .NET Coreの上で動くようにするよ」とのこと。</p>
+<p>ちなみに、あくまでWindows限定です。
+「WPFとかもクロスプラットフォームにする」的な意味ではなく、
+「Windowsでしか動かしようのないものもCore上に載せる」という意味です。</p>
+<p>メリットは以下のような感じ。</p>
+<ul>
+<li>ユーザー視点: Windows限定機能も、.NET Coreのメリットを享受できる
+<ul>
+<li>side by side アップデート可能
+<ul>
+<li>同一マシン内に複数バージョンの .NET Core ランタイムをインストールして、アプリごとに選べる</li>
+<li>最新ランタイムの機能を享受しやすい</li>
+<li>「最新版でしか動かない」みたいなものは少ないものの、「最新版にするだけで速くなる」みたいなのは常にある</li>
+<li>今後は<a href="https://github.com/dotnet/csharplang/issues/52">「最新版でしか動かない」もあり得る</a></li>
+</ul>
+</li>
+<li><a href="https://docs.microsoft.com/ja-jp/dotnet/core/deploying/#self-contained-deployments-scd">App-local デプロイ</a>ができる
+<ul>
+<li>アプリ自体に依存ライブラリを全部含めてデプロイできる</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>.NET チーム視点: ようやく Core に一本化できそう
+<ul>
+<li>.NET Frameworkにしかない機能がある限り、.NET Frameworkの開発は止めれない</li>
+</ul>
+</li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2018/5/">5&#x6708;</a></li><li><a href="/blog/2018/5/metricspace/">C# &#x306B;&#x3082;&#x578B;&#x30AF;&#x30E9;&#x30B9;(Shapes)&#x304C;&#x6B32;&#x3057;&#x3044;&#x2026; &#x8DDD;&#x96E2;&#x7A7A;&#x9593;&#x4E0A;&#x306E;&#x30A2;&#x30EB;&#x30B4;&#x30EA;&#x30BA;&#x30E0;&#x5B9F;&#x88C5;</a></li><li><a href="/blog/2018/5/cs80preview/">C# vNext Preview</a></li><li><a href="/blog/2018/5/pickuproslyn0520/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 5/20: 5&#x6708;&#x306E; Design Notes</a></li><li><a href="/blog/2018/5/pickuproslyn0524/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 5/24</a></li><li><a href="/blog/2018/5/netcore21/">.NET Core 2.1 &#x6B63;&#x5F0F;&#x30EA;&#x30EA;&#x30FC;&#x30B9;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,275 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x62BD;&#x8C61;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x3001;&#x62BD;&#x8C61;&#x30AF;&#x30E9;&#x30B9; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/oop/oo_abstract/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">抽象メソッド、抽象クラス</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>抽象メソッドとは、実装を持たず、メソッドの意味（規約）だけを定義したメソッドです。
+抽象メソッドの実装は基底クラスでは行わず、派生クラスで行います。</p>
+<p>また、抽象クラスとは、
+インスタンスを生成出来ないクラスのことで、
+継承して使うことを前提としたクラスのことです。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>抽象メソッド: 基底クラスでは実装せず、メソッドの意味（規約）だけを定義して、派生クラスで具体的な実装を行うようなメソッド。</p>
+</li>
+<li><p>（C++ では純粋仮想関数と呼ばれていたものです。）</p>
+</li>
+<li><p>抽象メソッドを1個でも持つクラス（抽象クラス）は、インスタンスを生成することができません。</p>
+</li>
+<li><p>クラスやメソッドの前に abstract キーワードを付ける。</p>
+</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="abstraction"></a>抽象化</h2>
+<p>「<a href="/study/csharp/oop/oo_polymorphism/">多態性</a>」で、
+仮想メソッドの利用例として <code>Person</code> クラスを挙げました。
+この <code>Person</code> 基底クラスには、
+<code>Age</code> というプロパティがありますが、
+このプロパティ自体は意味のある値を返さず、
+実装は派生クラスの <code>Age</code> プロパティで行っていました。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Person
+{
+  <span class="comment">// ここではあんまり関係ないんで name は省略。</span>
+  <span class="keyword">protected</span> <span class="keyword">int</span> age;
+
+  <span class="keyword">public</span> Person(<span class="keyword">int</span> age){<span class="keyword">this</span>.age  = age;}
+
+  <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="keyword">int</span> Age
+  {
+    <span class="comment">// 基底クラスでは特に意味のない値を返す。</span>
+    <span class="comment">// 意味のある実装は派生クラスで行います。</span>
+    <span class="keyword">get</span>
+    {
+      <span class="keyword">return</span> <span class="number">0</span>;
+    }
+  }
+}</code></pre>
+<p>しかし、<code>Person</code> クラスのように、
+意味のない値を返すメソッドを持つクラスのインスタンスが生成されてしまうというのはあまり好ましいことではありません。</p>
+<p>この問題を解決するためには2つの方法があります。
+1つは基底クラスにデフォルトの動作を定める方法です。
+すなわち、
+性善説を信じて <code>Person</code> がデフォルトで正直な答えを返すようにするか、
+性悪説を信じて <code>Person</code> がデフォルトで鯖を読むようにするか、
+とにかく、<code>Person</code> の <code>Age</code> プロパティが何らかの意味を持つ値を返すようにします。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Person
+{
+  <span class="keyword">protected</span> <span class="keyword">int</span> age;
+
+  <span class="keyword">public</span> Person(<span class="keyword">int</span> age){<span class="keyword">this</span>.age  = age;}
+
+  <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="keyword">int</span> Age
+  {
+    <span class="comment">// 性善説を信じてみる。</span>
+    <span class="comment">// 普通の人はみんな正直に年齢を答えてくれるに違いない。</span>
+    <span class="keyword">get</span>
+    {
+      <span class="keyword">return</span> <span class="keyword">this</span>.age;
+    }
+  }
+}</code></pre>
+<p>そして、もう1つの方法は、<code>Person</code> クラスのインスタンスを生成出来ないようにすることです。
+例えば、<code>Person</code> クラスのコンストラクタを protected にしてしまえば、<code>Person</code> クラスのインスタンスは外部から生成できなくなります。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Person
+{
+  <span class="keyword">protected</span> <span class="keyword">int</span> age;
+
+  <span class="comment">// ↓ protected なので外部からコンストラクタを呼べない。</span>
+  <span class="comment">//    Person は継承して使う専用のクラスになります。</span>
+  <span class="keyword">protected</span> Person(<span class="keyword">int</span> age){<span class="keyword">this</span>.age  = age;}
+
+  <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="keyword">int</span> Age{<span class="keyword">get</span>{<span class="keyword">return</span> <span class="number">0</span>;}}
+}</code></pre>
+<p>これで <code>Person</code> クラスのインスタンスが作られることはなくなるんですが、
+まだ <code>Person</code> クラスに意味のないメソッドの実装が残っています。
+これは意味のないものをわざわざ書かなくてはいけないので無駄になりますし、
+サブクラスでちゃんとオーバーライドしなければ無意味な値が返されてしまうという問題があります。</p>
+<p>この問題を解決するため、
+C# にはインスタンスを作成できないクラスや、
+実装のない(派生クラスで必ずオーバーライドしなければならない)メソッドを定義するための構文が用意されています。</p>
+<p>インスタンスを作成できないクラスは<strong id="abclass" class="keyword">抽象クラス</strong>（abstract class）と呼ばれています。
+抽象クラスを作成するには、クラスの定義時に <em>
+<code>abstract</code>
+</em> 修飾子を付けます。</p>
+<pre><code class="language-csharp"><span class="keyword">abstract</span> <span class="keyword">class</span> Person
+{
+  <span class="keyword">protected</span> <span class="keyword">int</span> age;
+
+  <span class="comment">// 抽象クラスなので、コンストラクタが public であってもインスタンスは生成できない。</span>
+  <span class="keyword">public</span> Person(<span class="keyword">int</span> age){<span class="keyword">this</span>.age  = age;}
+
+  <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="keyword">int</span> Age{<span class="keyword">get</span>{<span class="keyword">return</span> <span class="number">0</span>;}}
+}</code></pre>
+<p>また、実体を持たず、意味だけを定義し、実装は派生クラスで行うメソッドは<strong id="abmethod" class="keyword">抽象メソッド</strong>（abstract method）と呼ばれています。
+抽象メソッドを作成するには、メソッドの定義時に <code>abstract</code> 修飾子を付けます。
+抽象メソッドは抽象クラス中でしか定義できません。</p>
+<p>ちなみに、「<a href="/study/csharp/oop/oo_property/#property">プロパティ</a>」も、内部的に見るとメソッドのようなものなので、
+abstract を付けて抽象プロパティにすることができます。</p>
+<pre><code class="language-csharp"><span class="keyword">abstract</span> <span class="keyword">class</span> Person
+{
+  <span class="keyword">protected</span> <span class="keyword">int</span> age;
+
+  <span class="keyword">public</span> Person(<span class="keyword">int</span> age){<span class="keyword">this</span>.age  = age;}
+
+  <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">int</span> Age{<span class="keyword">get</span>;} <span class="comment">// 抽象メソッドや抽象プロパティには定義は要らない</span>
+}</code></pre>
+<h5 id="section-4"><a id="sec-generated-title-4"></a>サンプル</h5>
+<p>いままで例に挙げてきた <code>Person</code> クラスの最終形です。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">abstract</span> <span class="keyword">class</span> Person
+{
+  <span class="keyword">protected</span> <span class="keyword">string</span> name;
+  <span class="keyword">protected</span> <span class="keyword">int</span> age;
+
+  <span class="keyword">public</span> Person(<span class="keyword">string</span> name, <span class="keyword">int</span> age)
+  {
+    <span class="keyword">this</span>.name = name;
+    <span class="keyword">this</span>.age  = age;
+  }
+
+  <span class="keyword">public</span> <span class="keyword">string</span> Name{<span class="keyword">get</span>{<span class="keyword">return</span> <span class="keyword">this</span>.name;}}
+  <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">int</span> Age{<span class="keyword">get</span>;} <span class="comment">// 抽象メソッドには定義は要らない</span>
+}
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 正直者。</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 年齢を偽らない。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">class</span> Truepenny : Person
+{
+  <span class="keyword">public</span> Truepenny(<span class="keyword">string</span> name, <span class="keyword">int</span> age) : <span class="keyword">base</span>(name, age){}
+
+  <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">int</span> Age
+  {
+    <span class="keyword">get</span>
+    {
+      <span class="comment">// 実年齢をそのまま返す。</span>
+      <span class="keyword">return</span> <span class="keyword">this</span>.age;
+    }
+  }
+}
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 嘘つき。</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 鯖を読む(しかも、歳取るにつれ大幅に)。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">class</span> Liar : Person
+{
+  <span class="keyword">public</span> Liar(<span class="keyword">string</span> name, <span class="keyword">int</span> age) : <span class="keyword">base</span>(name, age){}
+
+  <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">int</span> Age
+  {
+    <span class="keyword">get</span>
+    {
+      <span class="comment">// 年齢を偽る。</span>
+      <span class="keyword">if</span>(<span class="keyword">this</span>.age &lt; <span class="number">20</span>) <span class="keyword">return</span> <span class="keyword">this</span>.age;
+      <span class="keyword">if</span>(<span class="keyword">this</span>.age &lt; <span class="number">25</span>) <span class="keyword">return</span> <span class="keyword">this</span>.age - <span class="number">1</span>;
+      <span class="keyword">if</span>(<span class="keyword">this</span>.age &lt; <span class="number">30</span>) <span class="keyword">return</span> <span class="keyword">this</span>.age - <span class="number">2</span>;
+      <span class="keyword">if</span>(<span class="keyword">this</span>.age &lt; <span class="number">35</span>) <span class="keyword">return</span> <span class="keyword">this</span>.age - <span class="number">3</span>;
+      <span class="keyword">if</span>(<span class="keyword">this</span>.age &lt; <span class="number">40</span>) <span class="keyword">return</span> <span class="keyword">this</span>.age - <span class="number">4</span>;
+      <span class="keyword">return</span> <span class="keyword">this</span>.age - <span class="number">5</span>;
+    }
+  }
+}
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> いいかげん。</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 大体の歳しか答えない。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">class</span> Equivocator : Person
+{
+  <span class="keyword">public</span> Equivocator(<span class="keyword">string</span> name, <span class="keyword">int</span> age) : <span class="keyword">base</span>(name, age){}
+
+  <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">int</span> Age
+  {
+    <span class="keyword">get</span>
+    {
+      <span class="comment">// 年齢を四捨五入した値を返す。</span>
+      <span class="keyword">return</span> ((<span class="keyword">this</span>.age + <span class="number">5</span>) / <span class="number">10</span>) * <span class="number">10</span>;
+    }
+  }
+}
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> いくつになったって気持ちは17歳。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">class</span> Seventeenist : Person
+{
+  <span class="keyword">public</span> Seventeenist(<span class="keyword">string</span> name, <span class="keyword">int</span> age) : <span class="keyword">base</span>(name, age) { }
+
+  <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">int</span> Age
+  {
+    <span class="keyword">get</span>
+    {
+      <span class="comment">// 「おいおい」って突っ込み入れてあげてね。</span>
+      <span class="keyword">return</span> <span class="number">17</span>;
+    }
+  }
+}
+
+<span class="keyword">class</span> PolymorphismTest
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    Introduce(<span class="keyword">new</span> Truepenny  (<span class="string">&quot;Ky Kiske&quot;</span>  , <span class="number">24</span>)); <span class="comment">//正直者のカイさん24歳。</span>
+    Introduce(<span class="keyword">new</span> Liar       (<span class="string">&quot;Axl Low&quot;</span>   , <span class="number">24</span>)); <span class="comment">//嘘つきのアクセルさん24歳。</span>
+    Introduce(<span class="keyword">new</span> Equivocator(<span class="string">&quot;Sol Badguy&quot;</span>, <span class="number">24</span>)); <span class="comment">//いい加減なソルさん24歳。</span>
+    Introduce(<span class="keyword">new</span> Seventeenist(<span class="string">&quot;Ino&quot;</span>       , <span class="number">24</span>)); <span class="comment">// 時空を超えるイノさん24歳。</span>
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> p さんの自己紹介をする。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> Introduce(Person p)
+  {
+    Console.Write(<span class="string">&quot;My name is {0}.\n&quot;</span>, p.Name);
+    Console.Write(<span class="string">&quot;I&#39;m {0} years old.\n\n&quot;</span>, p.Age);
+  }
+}</code></pre>
+<pre><code class="language-console">My name is Ky Kiske.
+I'm 24 years old.
+
+My name is Axl Low.
+I'm 23 years old.
+
+My name is Sol Badguy.
+I'm 20 years old.
+
+My name is Ino.
+I'm 17 years old.</code></pre>
+<h2 id="section-5"><a id="exercise"></a>演習問題</h2>
+<h3 id="section-6"><a id="exercise-abst1"></a>問題 1</h3>
+<p><a href="/study/csharp/oop/oo_polymorphism/">多態性</a>の<a href="/study/csharp/oop/oo_polymorphism/#exercise-polim1">問題 1</a>の <code>Shape</code> クラスを抽象クラス化せよ。</p>
+<h4 id="section-7">解答例 1</h4>
+<p>必要な箇所（Shape クラスの部分）だけ抜粋。</p>
+<pre><code class="language-csharp"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 2次元空間上の図形を表すクラス。</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 三角形や円等の共通の抽象基底クラス。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">abstract</span> <span class="keyword">class</span> Shape
+{
+  <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">double</span> GetArea();
+  <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">double</span> GetPerimeter();
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/oop/">&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x6307;&#x5411;</a></li><li><a href="/study/csharp/oop/oo_about/">&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x6307;&#x5411;&#x3068;&#x306F;</a></li><li><a href="/study/csharp/oop/oo_class/">&#x30AF;&#x30E9;&#x30B9;</a></li><li><a href="/study/csharp/oop/oo_construct/">&#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;</a></li><li><a href="/study/csharp/oop/oo_conceal/">&#x5B9F;&#x88C5;&#x306E;&#x96A0;&#x853D;</a></li><li><a href="/study/csharp/oop/oo_property/">&#x30D7;&#x30ED;&#x30D1;&#x30C6;&#x30A3;</a></li><li><a href="/study/csharp/oop/oo_static/">&#x9759;&#x7684;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/study/csharp/oop/moduleinitializer/">&#x30E2;&#x30B8;&#x30E5;&#x30FC;&#x30EB;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/study/csharp/oop/oo_operator/">&#x6F14;&#x7B97;&#x5B50;&#x306E;&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30ED;&#x30FC;&#x30C9;</a></li><li><a href="/study/csharp/oop/oo_indexer/">&#x30A4;&#x30F3;&#x30C7;&#x30AF;&#x30B5;&#x30FC;</a></li><li><a href="/study/csharp/oop/oo_inherit/">&#x7D99;&#x627F;</a></li><li><a href="/study/csharp/oop/miscimplictinherit/">[&#x4F59;&#x8AC7;] &#x6697;&#x9ED9;&#x7684;&#x306A;&#x6D3E;&#x751F;</a></li><li><a href="/study/csharp/oop/oo_multipleinheritance/">[&#x96D1;&#x8A18;] &#x591A;&#x91CD;&#x7D99;&#x627F;&#x3067;&#x304D;&#x306A;&#x3044;&#x7406;&#x7531;</a></li><li><a href="/study/csharp/oop/oo_polymorphism/">&#x591A;&#x614B;&#x6027;</a></li><li><a href="/study/csharp/oop/misc_as/">[&#x96D1;&#x8A18;] &#x30AD;&#x30E3;&#x30B9;&#x30C8;&#x3068; as</a></li><li><a href="/study/csharp/oop/misc_construct/">[&#x96D1;&#x8A18;] &#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;&#x5185;&#x306E;&#x4EEE;&#x60F3;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x547C;&#x3073;&#x51FA;&#x3057;</a></li><li><a href="/study/csharp/oop/oo_interface/">&#x30A4;&#x30F3;&#x30BF;&#x30FC;&#x30D5;&#x30A7;&#x30FC;&#x30B9;</a></li><li><a href="/study/csharp/oop/misc_autoimpl/">[&#x96D1;&#x8A18;] &#x62BD;&#x8C61;&#x5B9A;&#x7FA9;&#x3068;&#x81EA;&#x52D5;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/oop/oo_vftable/">[&#x96D1;&#x8A18;] &#x4EEE;&#x60F3;&#x95A2;&#x6570;&#x30C6;&#x30FC;&#x30D6;&#x30EB;</a></li><li><a href="/study/csharp/oop/sp2_generics/">&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/oop/sp4_variance/">&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30AF;&#x30B9;&#x306E;&#x5171;&#x5909;&#x6027;&#x30FB;&#x53CD;&#x5909;&#x6027;</a></li><li><a href="/study/csharp/oop/generic-math-operators/">&#x3010;Generic Math&#x3011; C# 11 &#x3067;&#x306E;&#x6F14;&#x7B97;&#x5B50;&#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

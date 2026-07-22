@@ -1,0 +1,278 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30A2;&#x30AF;&#x30BB;&#x30B9;&#x30AB;&#x30A6;&#x30F3;&#x30BF;&#x3092;&#x4F5C;&#x308D;&#x3046; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/dotnet/aspx/counter/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">アクセスカウンタを作ろう</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>アクセスログ記録に続き、アクセスカウンタを。</p>
+<p>せっかくだから色々やってみようということで、
+以下のような作り方をします。</p>
+<ul>
+<li><p>カウント数は、サーバ上のファイルに書いておきます。</p>
+</li>
+<li><p>カウントは Global.asax の Session_Start で行います。</p>
+</li>
+<li><p>前回のアクセス時のカウント数を Cookie で記録。リピート状況を見ます。</p>
+</li>
+<li><p>カウント数の表示方法を何パターンか説明（Web フォーム中に表示 ＆ 画像カウンタ）</p>
+</li>
+</ul>
+<p>そのため、以下のような項目について解説。</p>
+<ul>
+<li><p>Session State。</p>
+</li>
+<li><p>Cookie の利用。</p>
+</li>
+<li><p>ASP.NET を使った画像カウンタ</p>
+</li>
+</ul>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="count"></a>カウント処理</h2>
+<p>アクセスログ記録と同じく、
+カウント処理は Global.asax の Session_Start イベントハンドラで行うことにします。</p>
+<p>ファイルの読み書きに関しては、
+やることはほとんど「<a href="/study/dotnet/aspx/logging/#logging">ログの記録</a>」と同じです。
+カウント数を保存しておくファイルですが、
+ここで説明する例では総アクセス数しか記録しませんが、
+将来的に「今日だけのアクセス数」とかも記録することを考えて、
+count\total.txt というファイルに書くことにします。</p>
+<p>例えば、以下のような感じのコードを Global.asax.cs（Global.asax のコードビハインド）のクラス中に追加します。</p>
+<pre><code class="language-csharp"><span class="keyword">string</span> GetTotalCount()
+{
+  <span class="keyword">string</span> filename = Request.PhysicalApplicationPath +
+    <span class="stringCSharpVerbatim">@&quot;\count\total.txt&quot;</span>;
+
+  Application.Lock();
+
+  <span class="keyword">int</span> num;
+  <span class="keyword">using</span> (FileStream fs = <span class="keyword">new</span> FileStream(
+    filename, FileMode.OpenOrCreate,
+    FileAccess.ReadWrite, FileShare.None))
+  {
+    StreamReader sr = <span class="keyword">new</span> StreamReader(fs);
+    <span class="keyword">string</span> line = sr.ReadLine();
+
+    <span class="keyword">if</span> (<span class="keyword">string</span>.IsNullOrEmpty(line) || !<span class="keyword">int</span>.TryParse(line, <span class="keyword">out</span> num))
+    {
+      num = <span class="number">0</span>;
+    }
+
+    line = (num + <span class="number">1</span>).ToString();
+
+    fs.Seek(<span class="number">0</span>, SeekOrigin.Begin);
+
+    StreamWriter sw = <span class="keyword">new</span> StreamWriter(fs);
+    sw.WriteLine(line);
+    sw.Flush();
+  }
+  Application.UnLock();
+
+  <span class="keyword">return</span> num.ToString();
+}
+
+<span class="keyword">protected</span> <span class="keyword">void</span> Session_Start(Object sender, EventArgs e)
+{
+  <span class="keyword">if</span> (CheckExcludeList())
+    <span class="keyword">return</span>;
+
+  AddAccessLog();
+
+  <span class="keyword">string</span> count = GetTotalCount();
+  Session[<span class="string">&quot;TotalCount&quot;</span>] = count;
+}</code></pre>
+<p>この例中、最後の行の Session[&quot;TotalCount&quot;] = count; なんですが、
+Session はセッション状態を記憶しておくために使うプロパティです。
+（HttpApplication や Page クラスのプロパティで、
+HttpSessionState 型。）
+ここで Session[&quot;TotalCount&quot;] に代入した値は、
+セッションがタイムアウトするまでずっと保持されます。</p>
+<h2 id="cookie"><a id="sec-generated-title-3"></a> <a id="cookie"></a>Cookie の利用</h2>
+<p>ここで、カウント数もアクセスログに記録してみることにします。
+また、前回のアクセス時のカウント数も記録して、
+リピート状況をログに取れるようにします。
+前回のアクセスカウント数は、Cookie を使ってクライアント側に記憶しておいてもらいます。</p>
+<p>Cookie は、
+Request.Cookies でクライアントから送られて来た Cookie を取得し、
+Response.Cookies でサーバから送り返す Cookie を設定します。</p>
+<p>ということで、
+「<a href="/study/dotnet/aspx/logging/#logging">ログの記録</a>」で作った AddAccessLog メソッドを以下のように書き換えます。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> AddAccessLog(<span class="keyword">string</span> count)
+{
+      <span class="keyword">string</span> basePath = Request.PhysicalApplicationPath + <span class="stringCSharpVerbatim">@&quot;\accesslog\&quot;</span>;
+      DateTime now = DateTime.Now;
+      <span class="keyword">string</span> filename = basePath
+        + <span class="keyword">string</span>.Format(<span class="string">&quot;{0}{1:00}.csv&quot;</span>, now.Year, now.Month);
+
+  <span class="keyword">string</span> prev;
+  <span class="keyword">if</span> (Request.Cookies[<span class="string">&quot;PREV&quot;</span>] != <span class="keyword">null</span>)
+    prev = Request.Cookies[<span class="string">&quot;PREV&quot;</span>].Value;
+  <span class="keyword">else</span>
+    prev = count;
+
+  Response.Cookies[<span class="string">&quot;PREV&quot;</span>].Value = count;
+
+  Application.Lock();
+
+  <span class="keyword">using</span> (StreamWriter sw = <span class="keyword">new</span> StreamWriter(filename, <span class="keyword">true</span>))
+  {
+    sw.Write(<span class="string">&quot;\&quot;&quot;</span> + DateTime.Now.ToString() + <span class="string">&quot;\&quot;,&quot;</span>);
+    sw.Write(<span class="string">&quot;\&quot;&quot;</span> +
+      System.Net.Dns.GetHostEntry(Request.UserHostName).HostName +
+      <span class="string">&quot;\&quot;,&quot;</span>);
+    sw.Write(<span class="string">&quot;\&quot;&quot;</span> + Request.UserAgent + <span class="string">&quot;\&quot;,&quot;</span>);
+    sw.Write(<span class="string">&quot;\&quot;&quot;</span> + Request.Url + <span class="string">&quot;\&quot;,&quot;</span>);
+    sw.Write(<span class="string">&quot;\&quot;&quot;</span> + Request.UrlReferrer + <span class="string">&quot;\&quot;\n&quot;</span>);
+  }
+  Application.UnLock();
+}
+
+<span class="keyword">protected</span> <span class="keyword">void</span> Session_Start(Object sender, EventArgs e)
+{
+  <span class="keyword">if</span> (CheckExcludeList())
+    <span class="keyword">return</span>;
+
+  <span class="keyword">string</span> count = GetTotalCount();
+  Session[<span class="string">&quot;count&quot;</span>] = count;
+  AddAccessLog(count);
+}</code></pre>
+<h2 id="web"><a id="sec-generated-title-4"></a> <a id="display"></a>カウント数の表示（Web フォーム中）</h2>
+<p>Global.asax で Session 状態に記憶したカウント数を表示したいわけですが、
+Web フォーム（.aspx）ページ中に表示するのは非常に簡単です。</p>
+<p>1番簡単な方法でいうと、カウント数を表示したい位置に以下の1行を書くだけ。</p>
+<pre><code class="language-xml">&lt;%= Session[&quot;count&quot;] %&gt;</code></pre>
+<p>例えば、以下のような感じ。</p>
+<pre><code class="language-html">&lt;%@ Page Language=&quot;C#&quot; %&gt;
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">html</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">head</span><span class="htmlTagDelimiter">&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">title</span><span class="htmlTagDelimiter">&gt;</span>テストページ<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">title</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">head</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">body</span><span class="htmlTagDelimiter">&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">p</span><span class="htmlTagDelimiter">&gt;</span>
+    総アクセス数: &lt;%= Session[&quot;count&quot;] %&gt;
+  <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">p</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">body</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">html</span><span class="htmlTagDelimiter">&gt;</span></code></pre>
+<h2 id="section-3"><a id="sec-generated-title-5"></a> <a id="image"></a>画像カウンタ</h2>
+<p>普通の html ページ上にカウンタを設置しすることを考えて、
+CGI などでよくやるような、画像カウンタを作ることもできます。</p>
+<p>ASP.NET の Web フォームの出力を画像にしたければ、
+Response.ClearContent や Response.ContentType などを使って、
+Page_Load イベントハンドラに以下のようなコードを書きます。
+（画像の作り方に関してはほんの一例。
+要点は強調表示している4行。）</p>
+<pre><code class="language-csharp"><span class="keyword">private</span> <span class="keyword">void</span> Page_Load(<span class="keyword">object</span> sender, System.EventArgs e)
+{
+  <span class="keyword">string</span> text = (<span class="keyword">string</span>)Session[<span class="string">&quot;TotalCount&quot;</span>];
+  text = text.PadLeft(<span class="number">7</span>, <span class="string">&#39;0&#39;</span>);
+  Font font = <span class="keyword">new</span> Font(<span class="string">&quot;ＭＳ ゴシック&quot;</span>, <span class="number">15</span>);
+
+  Bitmap bitmap = <span class="keyword">new</span> Bitmap(<span class="number">75</span>, <span class="number">20</span>);
+  Graphics graphics = Graphics.FromImage(bitmap); 
+
+  graphics.FillRectangle(Brushes.White, <span class="number">0</span>, <span class="number">0</span>, <span class="number">75</span> , <span class="number">20</span>);
+  graphics.DrawString(text, font, Brushes.Black,<span class="number">0</span>,<span class="number">2</span>);
+
+  Response.ClearContent();
+  Response.ContentType = <span class="string">&quot;image/gif&quot;</span>;
+  bitmap.Save(Response.OutputStream, ImageFormat.Gif);
+  Response.End();
+
+  graphics.Dispose();
+  bitmap.Dispose(); 
+}</code></pre>
+<p>.aspx ファイル中に何を書いていようと、
+Response.ClearContent() メソッドを呼び出すことで、
+一度出力結果がまっさらになるので、
+.aspx には &lt;script&gt; タグだけを書くか、
+何も書かず &lt;%@ Page %&gt; ディレクティブでコードビハインドの設定だけを書きます。</p>
+<p>例えば以下のような感じ。
+（ここでは、これのファイル名は Counter.aspx としておきます。）</p>
+<pre><code class="language-html">&lt;%@ Page language=&quot;c#&quot; %&gt;
+&lt;%@ import Namespace=&quot;System.Drawing.Imaging&quot; %&gt;
+&lt;%@ import Namespace=&quot;System.Drawing&quot; %&gt;
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">script</span> <span class="htmlAttributeName">runat</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;server&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+
+<span class="keyword">private</span> <span class="keyword">void</span> Page_Load(object sender, System.EventArgs e)
+{
+  string text = (string)Session[<span class="string">&quot;count&quot;</span>];
+  text = text.PadLeft(7, <span class="string">&#39;0&#39;</span>);
+  Font font = <span class="keyword">new</span> Font(<span class="string">&quot;ＭＳ ゴシック&quot;</span>, 15);
+
+  Bitmap bitmap = <span class="keyword">new</span> Bitmap(75, 20);
+  Graphics graphics = Graphics.FromImage(bitmap); 
+
+  graphics.FillRectangle(Brushes.White, 0, 0, 75 , 20);
+  graphics.DrawString(text, font, Brushes.Black,0,2);
+
+  Response.ClearContent();
+  Response.ContentType = <span class="string">&quot;image/gif&quot;</span>;
+  bitmap.Save(Response.OutputStream, ImageFormat.Gif);
+  Response.End();
+
+  graphics.Dispose();
+  bitmap.Dispose(); 
+}
+
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">script</span><span class="htmlTagDelimiter">&gt;</span></code></pre>
+<p>この画像カウンタを呼び出す HTML 側には以下のような感じで &lt;img&gt; タグを書きます。</p>
+<pre><code class="language-html"><span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">html</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">head</span><span class="htmlTagDelimiter">&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">title</span><span class="htmlTagDelimiter">&gt;</span>テストページ<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">title</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">head</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">body</span><span class="htmlTagDelimiter">&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">p</span><span class="htmlTagDelimiter">&gt;</span>
+    総アクセス数: 
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">img</span> <span class="htmlAttributeName">src</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;Counter.aspx&quot;</span> <span class="htmlAttributeName">width</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;75&quot;</span> <span class="htmlAttributeName">height</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;20&quot;</span><span class="htmlTagDelimiter">/&gt;</span>
+  <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">p</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">body</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">html</span><span class="htmlTagDelimiter">&gt;</span></code></pre>
+<h3 id="javascript"><a id="sec-generated-title-6"></a> <a id="js"></a>おまけ（JavaScript 版）</h3>
+<p>同じ理屈で、JavaScript カウンタにしたりもできます。</p>
+<pre><code class="language-html">&lt;%@ Page language=&quot;c#&quot; %&gt;
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">script</span> <span class="htmlAttributeName">runat</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;server&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+
+<span class="keyword">private</span> <span class="keyword">void</span> Page_Load(object sender, System.EventArgs e)
+{
+  string text = (string)Session[<span class="string">&quot;count&quot;</span>];
+  Response.ClearContent();
+  Response.ContentType = <span class="string">&quot;text/javascript&quot;</span>;
+  Response.Output.Write(<span class="string">&quot;document.write(&quot;</span> + text + <span class="string">&quot;);&quot;</span>);
+}
+
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">script</span><span class="htmlTagDelimiter">&gt;</span></code></pre>
+<p>これを JsCounter.aspx という名前で保存したとすると、
+呼び出し側の HTML では以下のような書きます。</p>
+<pre><code class="language-html"><span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">html</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">head</span><span class="htmlTagDelimiter">&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">title</span><span class="htmlTagDelimiter">&gt;</span>テストページ<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">title</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">head</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">body</span><span class="htmlTagDelimiter">&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">p</span><span class="htmlTagDelimiter">&gt;</span>
+    総アクセス数: 
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">script</span> <span class="htmlAttributeName">type</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;text/javascript&quot;</span> <span class="htmlAttributeName">src</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;JsCounter.aspx&quot;</span><span class="htmlTagDelimiter">&gt;</span><span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">script</span><span class="htmlTagDelimiter">&gt;</span>
+  <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">p</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">body</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">html</span><span class="htmlTagDelimiter">&gt;</span></code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/dotnet/aspx/">ASP.NET</a></li><li><a href="/study/dotnet/aspx/aspx_abstract/">ASP.NET &#x6982;&#x8981;</a></li><li><a href="/study/dotnet/aspx/webapp/">Web &#x30A2;&#x30D7;&#x30EA;&#x30B1;&#x30FC;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/study/dotnet/aspx/logging/">&#x30A2;&#x30AF;&#x30BB;&#x30B9;&#x30ED;&#x30B0;&#x3092;&#x53D6;&#x308D;&#x3046;</a></li><li><a href="/study/dotnet/aspx/mailform/">&#x30E1;&#x30FC;&#x30EB;&#x30D5;&#x30A9;&#x30FC;&#x30E0;</a></li><li><a href="/study/dotnet/aspx/blog1/">&#x30D6;&#x30ED;&#x30B0;&#x8868;&#x793A;&#xFF08;&#xFF11;&#xFF09;</a></li><li><a href="/study/dotnet/aspx/blog2/">&#x30D6;&#x30ED;&#x30B0;&#x8868;&#x793A;&#xFF08;&#xFF12;&#xFF09;</a></li><li><a href="/study/dotnet/aspx/blog3/">&#x30D6;&#x30ED;&#x30B0;&#x8868;&#x793A;&#xFF08;&#xFF13;&#xFF09;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

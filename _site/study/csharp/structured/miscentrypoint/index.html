@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>[&#x96D1;&#x8A18;] &#x30A8;&#x30F3;&#x30C8;&#x30EA;&#x30FC;&#x30DD;&#x30A4;&#x30F3;&#x30C8; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/structured/miscentrypoint/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">[雑記] エントリーポイント</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>C# では通常、1つのプログラムは複数の C# ソースコードからなり、そのソースコード中には複数の関数が含まれています。
+その、多数ある関数の中で、プログラム起動時に最初に呼ばれるものを<strong id="entry-point" class="keyword">エントリーポイント</strong>(entry point: 入場地点)と呼びます。</p>
+<p>「<a href="/study/csharp/start/st_basis/">C# のプログラムの基本構造</a>」で例を出したように、
+C# では、<code>Main</code>という名前の関数が自動的にエントリーポイントになります。</p>
+<p>(「<a href="/study/csharp/structured/st_function/">関数</a>」内でも補足していますが、
+正確にいうと、<code>Main</code>という名前のメソッドがエントリーポイントになります。)</p>
+<h3 id="c"><a id="sec-generated-title-2"></a> <a id="cs-script"></a>[補足] C# スクリプト</h3>
+<p><a href="/study/csharp/cheatsheet/apscripting/">スクリプト実行</a>の場合は関数で囲わなくてもどこにでも処理を書けます。
+<code>Main</code>関数も不要です。</p>
+<h2 id="main"><a id="sec-generated-title-3"></a> <a id="Main"></a>Main の引数、戻り値</h2>
+<p><code>Main</code>の引数と戻り値は、以下のいずれかである必要があります。
+これ以外のオーバーロードはエントリーポイントになりません。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">int</span> Main()
+<span class="keyword">static</span> <span class="keyword">int</span> Main(<span class="keyword">string</span>[] args)
+<span class="keyword">static</span> <span class="keyword">void</span> Main()
+<span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)</code></pre>
+<p>(ただし、後述しますが、C# 7.1 からは戻り値として<code>Task</code>クラスが使えるようになりました。)</p>
+<p>引数を持っている場合、引数にはコマンドライン引数が渡ってきます。
+(引数なし版は、コマンドライン引数を受け取る必要がない時に使います。)</p>
+<p>また、戻り値はプログラムの終了コードを返します。
+<a href="https://msdn.microsoft.com/ja-jp/library/ms194959(v=vs.100).aspx">Windows の場合</a>は0が正常終了、1が部分的な成功、…などの意味があるようです。
+戻り値なし版の場合は常に0(正常終了)扱いです。</p>
+<h2 id="main-1"><a id="sec-generated-title-4"></a> <a id="no-main"></a>Main がないタイプのプロジェクト</h2>
+<p>GUI アプリや Web アプリでは、<code>Main</code>関数を書かない場合があります。
+この場合、以下のいずれかです。</p>
+<ul>
+<li>他のプログラムから呼び出される。どの関数から呼び出すかは、呼び出し元次第</li>
+<li>開発者に見えないところで自動的に<code>Main</code>が作られている</li>
+</ul>
+<p>例えば、ASP.NETの場合は前者、WPF アプリの場合は後者になります。</p>
+<h2 id="section-2"><a id="sec-generated-title-5"></a> <a id="explicit-entry-point"></a>エントリーポイントの指定</h2>
+<p>1つのプログラムの中に複数のクラスがあって、
+複数のクラスの中に<code>Main</code>関数がある場合、そのままではエントリーポイントを決定できず、コンパイル エラーになります。</p>
+<p>この場合、どの<code>Main</code>関数を使うかをオプション指定できます。</p>
+<p>参考:</p>
+<ul>
+<li><a href="https://msdn.microsoft.com/ja-jp/library/17k74w0c.aspx">方法 : アプリケーションのスタートアップ オブジェクトを変更する</a></li>
+<li><a href="https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/main-compiler-option">/main (C# Compiler Options</a></li>
+</ul>
+<h2 id="main-2"><a id="sec-generated-title-6"></a> <a id="async-main"></a>非同期 Main</h2>
+<h5 class="version version7_1">Ver. 7.1</h5>
+<p>C# 7.1で、以下のように、<code>Main</code>関数の戻り値に<code>Task</code>クラス(<code>System.Threading.Tasks</code>名前空間)を使えるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> Task&lt;<span class="keyword">int</span>&gt; Main()
+<span class="keyword">static</span> Task&lt;<span class="keyword">int</span>&gt; Main(<span class="keyword">string</span>[] args)
+<span class="keyword">static</span> Task Main()
+<span class="keyword">static</span> Task Main(<span class="keyword">string</span>[] args)</code></pre>
+<p>もちろん、<a href="/study/csharp/async/sp5_async/">非同期メソッド</a>を使えるようにするためです。
+例えば以下のような<code>Main</code>関数が、ちゃんとエントリーポイントとして認識されます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">async</span> Task Main()
+{
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">10</span>; i &gt; <span class="number">0</span>; i--)
+    {
+        Console.WriteLine(i);
+        <span class="keyword">await</span> Task.Delay(<span class="number">1000</span>);
+    }
+
+    Console.WriteLine(<span class="string">&quot;done.&quot;</span>);
+}</code></pre>
+<h3 id="main-3"><a id="sec-generated-title-7"></a> <a id="internal-async-main"></a>非同期 Main の仕組み</h3>
+<p>ちなみに、この機能は、コンパイラーが通常の(<code>void</code>/<code>int</code>戻り値の)エントリーポイントを別途自動生成することで実現しています。
+例えば、先ほどの例のように、<code>Task Main()</code>を書くと、追加で以下のような関数が作られ、これが実際のエントリーポイントとして機能します。</p>
+<pre><code class="language-csharp"><span class="comment">// 実際には &lt;Main&gt; というような、C# で本来使えない名前で生成される</span>
+<span class="keyword">static</span> <span class="keyword">void</span> _Main_(<span class="keyword">string</span>[] args)
+{
+    Main().GetAwaiter().GetResult();
+}</code></pre>
+<p>中身は<code>GetAwaiter().GetResult()</code>を呼んでいるだけです。</p>
+<h3 id="main-4"><a id="sec-generated-title-8"></a> <a id="compatibility"></a>通常の Main がすでにある場合</h3>
+<p>非同期 Main の仕様は C# 7.1 で追加されたものです。
+そのため、これまでに書いたコードの中にすでに、エントリーポイントにするつもりがない <code>Task Main()</code> が含まれている場合に対する考慮が必要です。</p>
+<p>C# 7.1 では、通常の(<code>void</code>/<code>int</code>戻り値の)<code>Main</code>関数がある場合、そちらだけをエントリーポイント扱いします。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+{
+    Console.WriteLine(<span class="string">&quot;こちらがエントリーポイント扱い&quot;</span>);
+}
+
+<span class="keyword">static</span> <span class="keyword">async</span> Task Main()
+{
+    Console.WriteLine(<span class="string">&quot;void Main(string[]) がある限り、こちらは呼ばれない&quot;</span>);
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/structured/">&#x69CB;&#x9020;&#x5316;</a></li><li><a href="/study/csharp/structured/st_structured/">&#x69CB;&#x9020;&#x5316;</a></li><li><a href="/study/csharp/structured/st_control/">&#x5236;&#x5FA1;&#x30D5;&#x30ED;&#x30FC;</a></li><li><a href="/study/csharp/structured/st_branch/">&#x6761;&#x4EF6;&#x5206;&#x5C90;</a></li><li><a href="/study/csharp/structured/st_loop/">&#x53CD;&#x5FA9;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/structured/st_array/">&#x914D;&#x5217;</a></li><li><a href="/study/csharp/structured/st_function/">&#x95A2;&#x6570;</a></li><li><a href="/study/csharp/structured/miscinlining/">[&#x96D1;&#x8A18;] &#x30A4;&#x30F3;&#x30E9;&#x30A4;&#x30F3;&#x5316;</a></li><li><a href="/study/csharp/structured/miscoverloadresolution/">[&#x96D1;&#x8A18;] &#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30ED;&#x30FC;&#x30C9;&#x89E3;&#x6C7A;</a></li><li><a href="/study/csharp/structured/sp_params/">&#x53EF;&#x5909;&#x9577;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/sp4_optional/">&#x30AA;&#x30D7;&#x30B7;&#x30E7;&#x30F3;&#x5F15;&#x6570;&#x30FB;&#x540D;&#x524D;&#x4ED8;&#x304D;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/st_command/">&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x30E9;&#x30A4;&#x30F3;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/st_library/">&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li><li><a href="/study/csharp/structured/st_enum/">&#x5217;&#x6319;&#x578B;</a></li><li><a href="/study/csharp/structured/st_struct/">&#x30C7;&#x30FC;&#x30BF;&#x306E;&#x69CB;&#x9020;&#x5316;(&#x8907;&#x5408;&#x578B;)</a></li><li><a href="/study/csharp/structured/st_anonymoustype/">&#x540D;&#x524D;&#x306E;&#x306A;&#x3044;&#x8907;&#x5408;&#x578B;</a></li><li><a href="/study/csharp/structured/sp_namespace/">&#x540D;&#x524D;&#x7A7A;&#x9593;</a></li><li><a href="/study/csharp/structured/oo_exception/">&#x4F8B;&#x5916;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/structured/misc_exception/">[&#x96D1;&#x8A18;] &#x4F8B;&#x5916;&#x306E;&#x4F7F;&#x3044;&#x65B9;</a></li><li><a href="/study/csharp/structured/misc_stacktrace/">[&#x96D1;&#x8A18;] &#x4F8B;&#x5916;&#x306E;&#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x30C8;&#x30EC;&#x30FC;&#x30B9;</a></li><li><a href="/study/csharp/structured/miscexpressions/">[&#x96D1;&#x8A18;] &#x5F0F;&#x306B;&#x307E;&#x3064;&#x308F;&#x308B;&#x88DC;&#x8DB3;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

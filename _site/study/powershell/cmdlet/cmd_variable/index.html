@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5909;&#x6570;&#x64CD;&#x4F5C;&#x95A2;&#x9023;&#x306E; Cmdlet | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/powershell/cmdlet/cmd_variable/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="cmdlet">変数操作関連の Cmdlet</h1>
+<h2 id="set-variable-get-variable"><a id="sec-generated-title-1"></a> <a id="setget"></a>Set-Variable, Get-Variable</h2>
+<p>$ を使って変数の読み書きをする以外に、
+<strong id="set_variable" class="keyword">Set-Variable</strong> と <strong id="get_variable" class="keyword">Get-Variable</strong> という Cmdlet を使うことでも変数の読み書きができます。</p>
+<pre><code class="language-console">&gt;  Set-Variable a 1
+&gt;  Get-Variable a
+
+Name                           Value
+----                           -----
+a                              1
+
+&gt;  $a = 2
+&gt;  Get-Variable a
+
+Name                           Value
+----                           -----
+a                              2</code></pre>
+<p>まあ、単に値を代入するだけなら Set-Variable は必要ないんですが、
+Set-Variable を使うと、
+ReadOnly / Constant 属性を付与することができます。</p>
+<pre><code class="language-console">&gt;  Set-Variable a 1 -option ReadOnly
+&gt;  $a = 0
+変数 a は読み取り専用または定数であるため、上書きできません。</code></pre>
+<p>また、
+Get-Variable では任意のレベルのスコープの変数にアクセスしたりできます。</p>
+<pre><code class="language-console">&gt;  Get-Variable a –scope 1  # 親スコープから値を取得
+&gt;  $Get-Variable a –scope 2  # 祖父</code></pre>
+<p>その他、<strong id="remove_variable" class="keyword">Remove-Variable</strong> で変数を削除したりもできます。</p>
+<pre><code class="language-console">&gt;  $a = 0
+&gt;  Remove-Variable a
+&gt;  Get-Variable a
+Get-Variable : 名前 'a' の変数が見つかりません。</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/powershell/cmdlet/">Cmdlet</a></li><li><a href="/study/powershell/cmdlet/cmdlet/">&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x5B9F;&#x884C;</a></li><li><a href="/study/powershell/cmdlet/cmd_object/">&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x64CD;&#x4F5C; Cmdlet</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

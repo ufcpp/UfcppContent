@@ -1,0 +1,203 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>CPU | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/computer/general/cpu/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="cpu">CPU</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>「<a href="/study/computer/basis/combinationalcircuit/">組み合わせ回路</a>」や「<a href="/study/computer/basis/sequentialcircuit/">順序回路</a>」では、
+ディジタル液晶表示回路やカウンター回路など、簡単な機能をディジタル回路化する方法について説明しました。
+しかしながら、これらの機能はかなり簡素な部類に入ります。
+現実にはもっと複雑で多用な機能が必要となりますが、複雑な機能をすべてハードウェア的に実装すると、ハードウェア規模が肥大化してしまいます。</p>
+<p>そこで、図1に示すように、
+外部からある種の「命令」（instruction）を与えることでさまざまな処理を行うことができる汎用的なハードウェアを作って、
+「命令」の与え方の工夫で複雑な処理を行うことを考えます。
+現在、いわゆる「コンピューター」（computer: 計算機）と呼ばれるものの多くはこういう汎用的な作りになっていて、
+汎用コンピューター（general computer）と呼ばれます。</p>
+<p>汎用コンピューターを構成するハードウェアのうち、特に重要なのはその「命令」を解釈して実行する部分で、
+<strong id="cpu" class="keyword">CPU</strong>（Central Processing Unit：中央演算処理装置）と呼ばれます。
+そして、このCPUに与える命令がいわゆる<strong id="software" class="keyword">ソフトウェア</strong>というものになります。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/General/CPU.png"><img src="/assets/media/ufcpp2000/computer/fig/General/CPU.png" alt="CPU" /></a></p>
+<figcaption>CPU</figcaption>
+</figure>
+<p>本稿では、CPUというハードウェアがどのようにして作られているかや、CPUへの命令の与え方について説明します。</p>
+<h2 id="section-1"><a id="sec-generated-title-2"></a> <a id="structure"></a>汎用コンピューターの構造</h2>
+<p>現在の主流な汎用コンピューターの中枢部分は、図2に示すように、メイン・メモリ（main memory: 主記憶）とCPUと呼ばれる部分から構成されています。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/General/ComputerStructure.png"><img src="/assets/media/ufcpp2000/computer/fig/General/ComputerStructure.png" alt="汎用コンピューターの構造： CPUとメイン・メモリ" /></a></p>
+<figcaption>汎用コンピューターの構造： CPUとメイン・メモリ</figcaption>
+</figure>
+<p>メイン・メモリは、プログラム自体や、プログラムで使うデータを格納しておく大容量の記憶素子です。
+一方、CPUは、中央演算処理装置という名前の通り、汎用コンピューターの処理の中心となる部分です。</p>
+<p>メイン・メモリに関しては次項「<a href="/study/computer/general/memory/">メイン・メモリ</a>」で説明します。
+本項では、CPUに関して、より詳細に見ていきましょう。CPUの概念的な内部構造を図3に示します。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/General/CpuStructure.png"><img src="/assets/media/ufcpp2000/computer/fig/General/CpuStructure.png" alt="CPUの概念的な内部構造" /></a></p>
+<figcaption>CPUの概念的な内部構造</figcaption>
+</figure>
+<p>CPUの内部には、<strong id="alu" class="keyword">ALU</strong>（Arithmetic Logic Unit： 算術論理演算処理部）と呼ばれる部分と<strong id="register" class="keyword">レジスター</strong>（register）と呼ばれる部分が存在します。</p>
+<p>ALUの中には加算器や乗算器など、基礎的な演算を行うディジタル回路が入っていて、命令によってどの回路を動かすかを選択し、さまざまな演算を実行します。</p>
+<p>一方、レジスターという言葉には少し注意が必要です。
+「<a href="/study/computer/basis/sequentialcircuit/">順序回路</a>」では、記憶素子全般を指してレジスターと呼びましたが、
+汎用コンピューターの話をする場合には、CPU内部に持っている小容量で高速な記憶素子のことをレジスターと呼びます。
+実行したいプログラムや、プログラムで使うデータは大容量で低速なメイン・メモリに置かれますが、データの読み書きが実行速度のネックにならないように、
+いったんレジスターに読み込んでからALUに渡します。
+CPU内部にある複数のレジスターをまとめた全体の呼称として、レジスター・ファイル（register file）と呼ぶこともあります。</p>
+<p>レジスターの中には特殊な用途に使うものがあり、その代表がプログラム・カウンターと命令レジスターです。
+プログラムは複数の命令で構成されるわけですが、命令の実行位置を管理する(命令を実行するたびに、次に実行すべきメモリー番地に上書かれる)のがプログラム・カウンターで、
+ちょうど実行中の命令を記憶しておくのが命令レジスターです。</p>
+<h3 id="section-2"><a id="sec-generated-title-3"></a> <a id="word"></a>余談: ワード</h3>
+<p>よく、「32ビットCPU」とか「64ビットCPU」という呼び名を聞くと思いますが、
+この32とか64とかのビット数は、レジスターに記録し、ALUで演算できるデータのサイズのことを指します。
+例えば、32ビットCPUなら、32ビット単位でのデータの読み書きや演算が基本となります。
+32ビットCPUでは、8ビットや16ビットの演算をする場合でも1度32ビットのデータを取ってきてから不要な部分を捨てることになります。
+逆に、32ビットCPUで64ビット演算をする場合には、複数サイクルかけて演算を行うことになります。</p>
+<p>この、読み書きや演算の基本単位（32ビットCPUなら32ビット、64ビットCPUなら64ビット）のことをワード（word: 単語）と呼びます。
+あるいは、メイン・メモリとCPUなど、ハードウェア間をつなぐ信号線のことをバス（bus: 交通手段のバスと同じ単語。CPU と周辺機器をつなぐ通り道という意味合い）と呼びますが、
+ここに流れるデータもワード単位になりますので、ワードのことをバス幅（bus width）と呼ぶこともあります。</p>
+<h2 id="cpu-1"><a id="sec-generated-title-4"></a> <a id="control"></a>CPUの制御</h2>
+<p>前節で説明したとおり、CPUは外部から命令（すなわち、ソフトウェア）を与えて初めて動作します。
+ここでは、CPUへの命令の与え方について説明します。簡単に言うと、CPUというのは以下のようなハードウェアです。</p>
+<ul>
+<li><p>加算器や乗算器など、複数の演算回路を持っている。</p>
+</li>
+<li><p>レジスターと呼ばれる記憶素子を複数持っている。</p>
+</li>
+<li><p>どのレジスターからデータを読み出し、どの演算回路を通し、どのレジスターにデータを書き戻すかを、外部から与えた命令で選択する。</p>
+</li>
+</ul>
+<p>すなわち、CPUへの命令というのは、データや演算回路の選択信号をひとまとめにしたものになります。
+ちなみに、あるCPUが解釈可能な命令の一覧を命令セット（instruction set）と呼びます。
+もちろん、この命令の与え方はCPUの構造に依存するので、CPUの種類の数だけ命令セットができることになります。
+（もちろん、シリーズもののCPUの場合は命令セットが今までと同じか、「命令の追加」にとどまります。
+また、あるCPUと同じ命令セットを受け付けるような「互換CPU」というものも作られています。）</p>
+<h3 id="section-3"><a id="sec-generated-title-5"></a> <a id="machine-language"></a>機械語とアセンブリ言語</h3>
+<p>CPUへの命令も、コンピューターの内部ではすべて0, 1の羅列で表現されています。
+この0, 1の羅列のままの命令列を<strong id="machine-language" class="keyword">機械語</strong>（machine language）と呼びます。
+もちろん、表記上、2進数の代わりに16進数を使って表現することもありますが、それでも0～9, A～Fの16進数字の羅列になります。</p>
+<p>当然、機械語のままでは人が理解するのが非常に大変なので、機械語とほぼ1対1に対応する人が読みやすい形式の言語を別途用意して使います。
+このような言語を<strong id="assembly-language" class="keyword">アセンブリ言語</strong>（assembly language: assembly は組み立て部品）と呼びます。</p>
+<p>図4にアセンブリ言語と機械語の例を挙げます。
+アセンブリ言語では、加算ならADD、乗算ならMULというような、
+ある程度人が見てわかりやすい記号（通常は、英単語、もしくは、その略記）を使って命令を表現します。
+命令の後ろに続くBXやCXという記号は「どのレジスターから値を読み出すか」などを指定するものです。</p>
+<p>アセンブリ言語から機械語への変換には、「ADD命令なら000」というような一定のルールがあり、
+やろうと思えば対応表を見ながら手動で機械語化することもできます
+（通常は、アセンブラー（Assembler）と呼ばれるプログラムを使って自動的に変換します）。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/General/AssemblyLanguage.png"><img src="/assets/media/ufcpp2000/computer/fig/General/AssemblyLanguage.png" alt="アセンブリ言語と機械語" /></a></p>
+<figcaption>アセンブリ言語と機械語</figcaption>
+</figure>
+<p>こうして得られた機械語（すなわち、CPUに与える命令）は、図5に例示するような形でCPUに解釈されます。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/General/Interpretation.png"><img src="/assets/media/ufcpp2000/computer/fig/General/Interpretation.png" alt="アセンブリ言語と機械語" /></a></p>
+<figcaption>アセンブリ言語と機械語</figcaption>
+</figure>
+<p>この例のように、演算結果の書き込み先が特定のレジスターに固定されている場合もあります。
+これは命令やハードウェア構成を単純化するためです。
+実際、書き込み先を固定化して省略することで、命令長が8ビットに収まっています。
+（汎用コンピューターが作られた初期の頃には、このような省略によるハードウェアの単純化が多くみられました。
+例えば、Intel 8086 プロセッサーがまさにこういう命令セットでした。）</p>
+<h2 id="cpu-2"><a id="sec-generated-title-6"></a> <a id="instruction-set"></a>CPU の命令の種類</h2>
+<p>命令には、大きく分けて以下のような種類があります。</p>
+<ul>
+<li><p>データの移動</p>
+</li>
+<li><p>演算</p>
+</li>
+<li><p>実行制御</p>
+</li>
+</ul>
+<h3 id="section-4"><a id="sec-generated-title-7"></a> <a id="move-instruction"></a>データの移動</h3>
+<p>レジスターとメイン・メモリの間や、レジスター同士の間でデータをコピーしたり、定数値をレジスターに書き込んだりします。
+多くのCPUでは、以下のような命令を持っています。</p>
+<ul>
+<li><p>Load： メイン・メモリからレジスターに値を読み込みます（図6）。</p>
+</li>
+<li><p>Store： レジスターからメイン・メモリに値を書き込みます（図7）</p>
+</li>
+<li><p>Move： レジスター間で値をコピーします（図8）</p>
+</li>
+<li><p>Load Immediate： 命令中に埋め込んだ定数（即値（immediate value）と呼びます）をレジスターに代入します（図9）。</p>
+</li>
+</ul>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/General/Load.png"><img src="/assets/media/ufcpp2000/computer/fig/General/Load.png" alt="メイン・メモリから値を読み込み（Load）" /></a></p>
+<figcaption>メイン・メモリから値を読み込み（Load）</figcaption>
+</figure>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/General/Store.png"><img src="/assets/media/ufcpp2000/computer/fig/General/Store.png" alt="メイン・メモリに値を書き込み（Store）" /></a></p>
+<figcaption>メイン・メモリに値を書き込み（Store）</figcaption>
+</figure>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/General/Move.png"><img src="/assets/media/ufcpp2000/computer/fig/General/Move.png" alt="レジスター間での値のコピー（Move）" /></a></p>
+<figcaption>レジスター間での値のコピー（Move）</figcaption>
+</figure>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/General/Immediate.png"><img src="/assets/media/ufcpp2000/computer/fig/General/Immediate.png" alt="レジスターへの即値代入（Load Immediate）" /></a></p>
+<figcaption>レジスターへの即値代入（Load Immediate）</figcaption>
+</figure>
+<h3 id="section-5"><a id="sec-generated-title-8"></a> <a id="arithmetic-instruction"></a>演算</h3>
+<p>加減乗除などの算術演算や、AND/ORなどの論理演算など、さまざまな演算を行います。
+図10に演算命令の例として、加算命令を示します。
+通常、演算に使うオペランド（operand: 被演算子、演算対象）はレジスターから読み、演算結果もレジスターに書き込みます。
+CPUによっては、オペランドを命令に埋め込んだり（即値命令）、メイン・メモリから直接オペランドを読み込んだり（間接参照命令）が可能なものもあります。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/General/Add.png"><img src="/assets/media/ufcpp2000/computer/fig/General/Add.png" alt="演算命令の例（ADD）" /></a></p>
+<figcaption>演算命令の例（ADD）</figcaption>
+</figure>
+<p>加算器などの具体的なハードウェアの作り方については別途「<a href="/study/computer/general/generalcomputercircuit/">汎用コンピューターの作り方</a>」にて説明します。</p>
+<h3 id="section-6"><a id="sec-generated-title-9"></a> <a id="control-instruction"></a>実行制御</h3>
+<p>命令の実行フローはプログラム・カウンターと呼ばれる特別なレジスターで管理されています。
+プログラム・カウンターには、今、メイン・メモリのどこに格納された命令を実行中かを指し示すアドレス値（詳細は次節で説明）が格納されています。
+通常の実行フローでは、実行した命令長分ずつプログラム・カウンターの値が増加し、
+メイン・メモリ中に格納された命令を前から順に逐次実行することになります。</p>
+<p>これに対して、プログラム・カウンターの値を意図的に書き換えることで、実行順（flow）を制御（control）するための命令がいくつかあります。
+実行制御には条件の有無という観点と、アドレス指定の仕方で以下のように分類することができます。</p>
+<ul>
+<li><p>条件の有無</p>
+<ul>
+<li><p>ジャンプ（jump）： 無条件に指定したアドレスに実行フローを移します。</p>
+</li>
+<li><p>分岐（branch）： 特定の条件下でのみ（直前の命令の結果が0だったとか、負の数になっていたとか）、指定したアドレスに実行フローを移します。</p>
+</li>
+</ul>
+</li>
+<li><p>アドレス指定の仕方</p>
+<ul>
+<li><p>相対アドレス指定： 図11に示すように、現在のプログラム・カウンターの値を基準にして、相対的に次の実行アドレスを決定します。</p>
+</li>
+<li><p>絶対アドレス指定： 図12に示すように、指定した値でプログラム・カウンターの値を上書きし、絶対的に次の実行アドレスを決定します。</p>
+</li>
+</ul>
+</li>
+</ul>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/General/RelativeJump.png"><img src="/assets/media/ufcpp2000/computer/fig/General/RelativeJump.png" alt="相対アドレス指定" /></a></p>
+<figcaption>相対アドレス指定</figcaption>
+</figure>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/General/AbsoluteJump.png"><img src="/assets/media/ufcpp2000/computer/fig/General/AbsoluteJump.png" alt="絶対アドレス指定" /></a></p>
+<figcaption>絶対アドレス指定</figcaption>
+</figure>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/computer/general/">&#x6C4E;&#x7528;&#x30B3;&#x30F3;&#x30D4;&#x30E5;&#x30FC;&#x30BF;&#x30FC;</a></li><li><a href="/study/computer/general/memory/">&#x30E1;&#x30A4;&#x30F3;&#x30FB;&#x30E1;&#x30E2;&#x30EA;</a></li><li><a href="/study/computer/general/generalcomputercircuit/">&#x6C4E;&#x7528;&#x30B3;&#x30F3;&#x30D4;&#x30E5;&#x30FC;&#x30BF;&#x30FC;&#x306E;&#x4F5C;&#x308A;&#x65B9;</a></li><li><a href="/study/computer/general/advancedcpu/">CPU &#x306E;&#x9AD8;&#x901F;&#x5316;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

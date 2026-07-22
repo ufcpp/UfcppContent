@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Blazor Wasm &#x5B9F;&#x52D5;&#x4F5C;&#x30C7;&#x30E2;&#x306F;&#x3058;&#x3081;&#x307E;&#x3057;&#x305F; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2022/10/blazorwasmdemo/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2022-10-31T22:14:02">2022-10-31</time></span><span>更新: <time datetime="2022-10-31T22:14:02">2022-10-31</time></span></div><h1 id="blazor-wasm">Blazor Wasm 実動作デモはじめました</h1>
+<p>昔、うちのサイトのページ内に iframe で張り付けとくような実動作デモを<a href="https://github.com/ufcpp/UfcppSample/tree/master/Chapters/ufcpp2000/csharp/source">いろいろと Silverlight 作ってた</a>んですが、
+Silverlight のサポート終了後、移行先がなくてほったらかしになっていました。</p>
+<p>「<a href="https://github.com/ufcpp/UfcppSample/labels/%E3%81%9D%E3%81%AE%E6%99%82%E3%81%8C%E6%9D%A5%E3%81%9F%E3%82%89%E6%9C%AC%E6%B0%97%E5%87%BA%E3%81%99">その時が来たら本気出す</a>」とかいう雑なタグをつけて放置してたんですが、
+そろそろ <a href="https://learn.microsoft.com/ja-jp/aspnet/core/blazor/#blazor-webassembly">Blazor WebAssembly</a> 化でもしてみようかという感じで数年越しに作業する気になり。</p>
+<p>とりあえず、ソートのページで使っていたソートの可視化プログラムを移植。</p>
+<ul>
+<li><a href="/study/algorithm/sort/sort/#demo">ソート概要</a></li>
+<li><a href="/study/algorithm/sort/sort_bubble/#abstract">バブルソート</a></li>
+<li><a href="/study/algorithm/sort/sort_quick/#abstract">クイックソート</a></li>
+<li>(他、一通りのソートのページに)</li>
+</ul>
+<p>移植というか、もう完全に忘れてるし、なんだったら思い立った瞬間には昔のコードをどこに置いたかわからなくなっていたので1から作ったんですが。</p>
+<ul>
+<li>ソースコード: <a href="https://github.com/ufcpp/StaticWebApps/tree/main/BlazorWasm/SortVisualizer">SortVisualizer</a></li>
+<li><a href="https://azure.microsoft.com/ja-jp/products/app-service/static/">Static Web App</a> のデプロイ先: <a href="https://black-ocean-009cb0000.2.azurestaticapps.net/">https://black-ocean-009cb0000.2.azurestaticapps.net/</a></li>
+</ul>
+<p>実物 iframe (クイックソート単品):</p>
+<div><iframe src="https://black-ocean-009cb0000.2.azurestaticapps.net/?a=quick&i=0&s=0&w=300" width="304" height="332"></iframe></div>
+<p>実物 iframe (一覧):</p>
+<div><iframe src="https://black-ocean-009cb0000.2.azurestaticapps.net/?i=0&s=0&w=150" width="780" height="500"></iframe></div>
+<p><code>&lt;span style=&quot;witdh: ...; height: ...&quot; /&gt;</code> とかでバーを表示するという雑なことやっても、
+スマホとかで表示しても結構ちゃんと動いていてほんと富豪的…</p>
+<p>まあさらっとやってさらっと動いたので、
+他にも何かしらこの手の実動作デモがページ内にあるとよさげなものがあれば作ろうかなという気分になっています。
+(何かいいものがあれば。)</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2022/10/">10&#x6708;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,572 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30EC;&#x30B3;&#x30FC;&#x30C9;&#x578B; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/datatype/record/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">レコード型</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract">概要</a></h2>
+<p>C# 9.0 で、レコード型(records)という新しい種類の型が追加されました。
+(また、C# 10.0 では構造体版レコード型(record structs)が追加されました。)</p>
+<p>record (記録)という名前通り、データの読み書きに使うことを意図した型です。
+例えば以下のような書き方で、「<code>Name</code> という文字列と <code>Birthday</code> という日付」を読み書きできます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+record Person(<span class="keyword">string</span> Name, DateTime Birthday);</code></pre>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="data-centric">データが主役のプログラミング</a></h2>
+<p>プログラミングをしていると、データが主役・データが中心になる場面がちらほらあります。
+「データが主役」(data centric)というのは、例えば以下のように、「<code>Name</code> という文字列と、<code>Birthday</code> という日付を持っている」というような「何の型がどういうデータを記録しているか」という情報が強い意味を持つような場面です。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">class</span> Person
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> Name;
+    <span class="keyword">public</span> DateTime Birthday;
+}</code></pre>
+<p><a href="/study/csharp/oop/oo_about/">オブジェクト指向</a>ではこれと真逆の考え方をしたりします。
+「<a href="/study/csharp/oop/oo_conceal/">実装の隠ぺい</a>」などで書いていますが、
+オブジェクト指向では「内部的にどういうデータを持っているか」はあまり重要ではなく、
+「外から見てどうふるまうか」の方が主役(behavior centric)になります。
+例えば上記の例に当てはめるなら、<code>Birthday</code> (誕生日)はなんだったら <code>int</code> (単なる整数。例えば独自の基準日からの経過日数で表すなど)でデータを記録していてもよくて、「外から見て <code>DateTime</code> 型で <code>Birthday</code> を取れれば中身は何でもいい」みたいに考えます。</p>
+<p>ところが、データを保存・復元したり、ネットワーク越しに送受信したり、GUI で表示・編集する場合、結局「どういうデータをどういう形式で持っているか」という内部的な情報がそのまま必要になったりします。
+例えば上記の <code>Person</code> 型であれば、以下のような JSON 形式で保存して、これを読み書きしたりすることが結構あると思います。</p>
+<pre><code class="language-json">{
+  <span class="jsonKey">&quot;name&quot;</span>: <span class="jsonString">&quot;天馬飛雄&quot;</span>,
+  <span class="jsonKey">&quot;birthday&quot;</span>: <span class="jsonString">&quot;2003/04/07&quot;</span>
+}</code></pre>
+<h3 id="section-3"><a id="sec-generated-title-3"></a> <a id="data-boilerplate">ボイラープレートなコード</a></h3>
+<p>上記の例に挙げた <code>Person</code> 型の作りは、話を単純化するために簡素化して書いたものですが、
+これを「C# のお作法的に好ましい書き方」で書こうとすると実は結構なコード量を書く必要があります。
+例えば以下のようなコードになります。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Person : IEquatable&lt;Person&gt;
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> Name { <span class="keyword">get</span>; init; }
+    <span class="keyword">public</span> DateTime Birthday { <span class="keyword">get</span>; init; }
+ 
+    <span class="keyword">public</span> Person(<span class="keyword">string</span> name, DateTime birthday)
+    {
+        Name = name;
+        Birthday = birthday;
+    }
+ 
+    <span class="keyword">public</span> <span class="keyword">bool</span> Equals(Person? other)
+        =&gt; other <span class="keyword">is</span> { } person &amp;&amp;
+            Name == person.Name &amp;&amp;
+            Birthday == person.Birthday;
+ 
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">bool</span> Equals(<span class="keyword">object</span>? obj)
+        =&gt; obj <span class="keyword">is</span> Person person &amp;&amp;
+            Name == person.Name &amp;&amp;
+            Birthday == person.Birthday;
+ 
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">int</span> GetHashCode()
+        =&gt; HashCode.Combine(Name, Birthday);
+ 
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString()
+        =&gt; $<span class="string">&quot;Person {{ Name = {Name}, Birthday = {Birthday} }}&quot;</span>;
+}</code></pre>
+<p>このコードで書いているのは以下のようなものです。</p>
+<ul>
+<li>immutable (1度作ったデータは書き換え不可能にする)にした方がいい
+<ul>
+<li>C# (8.0 以前)で immutable なデータ型を作ろうと思うと<a href="/study/csharp/oop/oo_construct/">コンストラクター</a>が必要になる</li>
+<li>そうなると、コンストラクターの引数と、プロパティへの代入で同じ名前を何度も書く必要がある</li>
+</ul>
+</li>
+<li><a href="/study/csharp/resource/oo_reference/#reftype">参照型</a>であっても値的にふるまう(value semantics を持つ)ようにしたい
+<ul>
+<li>2つのインスタンスが「全て同じプロパティ値を持つなら等しい」という判定にする</li>
+<li>等値判定(<code>Equals</code> メソッドや <code>GetHashCode</code> メソッド)を書く必要がある</li>
+</ul>
+</li>
+<li>必須ではないものの、<code>ToString</code> で中身のデータが見れると便利</li>
+</ul>
+<p>これは、どんな「データ中心の型」でもほぼ同じものを書く必要があり、かなり定型コードです。
+あまりにも同じものを繰り返し書かないといけないので「ボイラープレート」(boilerplate: 焼き型製品。タイ焼きとかみたいな同じ形状のものを大量生産するやつ)と呼ばれたりします。</p>
+<p>当然、毎度毎度同じようなコードを繰り返し書かないといけないのはしんどいです。
+「お作法的に好ましいものを書こうとするとボイラープレートがしんどい」という状態はあまり好ましくなく、
+簡潔に書ける専用の文法が求められていました。</p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="record">レコード型</a></h2>
+<p>このボイラープレート問題を解決するために、データ中心の型向けの新しい構文として導入されたのが<strong id="key-record" class="keyword">レコード型</strong>です。
+最も短い書き方をすると、例えば以下のようになります。</p>
+<pre><code class="language-csharp">record Person(<span class="keyword">string</span> Name, DateTime Birthday);</code></pre>
+<p>クラスとの差は以下の2点です。</p>
+<ul>
+<li><code>class</code> キーワードの代わりに <code>record</code> キーワードを使う</li>
+<li>型名の後ろに直接コンストラクター引数を書ける(プライマリ コンストラクター)
+<ul>
+<li>この場合、コンストラクター引数と同名のプロパティが自動的に作られる</li>
+</ul>
+</li>
+</ul>
+<p>ちなみに、「プライマリ コンストラクター」(後述)は使わずに、以下のように書くこともできます。</p>
+<pre><code class="language-csharp">record Person
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> Name { <span class="keyword">get</span>; init; }
+    <span class="keyword">public</span> DateTime Birthday { <span class="keyword">get</span>; init; }
+}</code></pre>
+<p>どちらの書き方でも、<code>record</code> キーワードを使って定義した型に対しては、
+以下のようなものが自動生成されます。</p>
+<ul>
+<li><code>Equals</code> や <code>GetHashCode</code> や <code>==</code> などの等値判定メソッド
+<ul>
+<li><code>IEquatable&lt;T&gt;</code> インターフェイスの実装も含む</li>
+</ul>
+</li>
+<li><code>ToString</code> メソッド</li>
+<li>後述する <code>with</code> 式で使うクローン メソッド</li>
+<li>後述する派生クラス判別のための <code>EqualityContract</code> プロパティ</li>
+</ul>
+<p>要するに、前述した「お作用的に好ましい」とされるコードを一通りコンパイラーが用意してくれます。</p>
+<h3 id="section-5"><a id="sec-generated-title-5"></a> <a id="record-to-class">レコード型とクラス</a></h3>
+<p>ちなみに、コンパイラーが色々と自動生成してくれる以外は通常のクラスと同じというか、
+内部的には実際にただのクラスとしてコンパイルされます。
+(※ C# 9.0 の <code>record</code> の場合。C# 10.0 で導入された <code>record struct</code> は構造体としてコンパイルされます。)</p>
+<p>コンパイラー生成のコードをそのまま書くと以下のような感じになります。
+(一部、実際には手書きの C# コードでは書けないメソッド名で生成されていたりしますし、
+C# コンパイラーのバージョンによって微妙に異なるコードになったりはしますが、
+意味的にはほぼこのままのコードになります。)</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Person : IEquatable&lt;Person&gt;
+{
+    <span class="keyword">protected</span> <span class="keyword">virtual</span> Type EqualityContract =&gt; <span class="keyword">typeof</span>(Person);
+ 
+    <span class="keyword">public</span> <span class="keyword">string</span> Name { <span class="keyword">get</span>; init; }
+    <span class="keyword">public</span> DateTime Birthday { <span class="keyword">get</span>; init; }
+
+    <span class="keyword">public</span> Person(<span class="keyword">string</span> Name, DateTime Birthday)
+    {
+        <span class="keyword">this</span>.Name = Name;
+        <span class="keyword">this</span>.Birthday = Birthday;
+    }
+    
+    <span class="keyword">public</span> <span class="keyword">void</span> Deconstruct(<span class="keyword">out</span> <span class="keyword">string</span> Name, <span class="keyword">out</span> DateTime Birthday)
+    {
+        Name = <span class="keyword">this</span>.Name;
+        Birthday = <span class="keyword">this</span>.Birthday;
+    }
+
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString()
+    {
+        StringBuilder stringBuilder = <span class="keyword">new</span> StringBuilder();
+        stringBuilder.Append(<span class="string">&quot;Person&quot;</span>);
+        stringBuilder.Append(<span class="string">&quot; { &quot;</span>);
+        <span class="keyword">if</span> (PrintMembers(stringBuilder))
+        {
+            stringBuilder.Append(<span class="string">&quot; &quot;</span>);
+        }
+        stringBuilder.Append(<span class="string">&quot;}&quot;</span>);
+        <span class="keyword">return</span> stringBuilder.ToString();
+    }
+ 
+    <span class="keyword">protected</span> <span class="keyword">virtual</span> <span class="keyword">bool</span> PrintMembers(StringBuilder builder)
+    {
+        builder.Append(<span class="string">&quot;Name&quot;</span>);
+        builder.Append(<span class="string">&quot; = &quot;</span>);
+        builder.Append((<span class="keyword">object</span>)Name);
+        builder.Append(<span class="string">&quot;, &quot;</span>);
+        builder.Append(<span class="string">&quot;Birthday&quot;</span>);
+        builder.Append(<span class="string">&quot; = &quot;</span>);
+        builder.Append(Birthday.ToString());
+        <span class="keyword">return</span> <span class="keyword">true</span>;
+    }
+ 
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> <span class="keyword">operator</span> !=(Person r1, Person r2) =&gt; !(r1 == r2);
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> <span class="keyword">operator</span> ==(Person r1, Person r2) =&gt; (<span class="keyword">object</span>)r1 == r2 || (r1 <span class="keyword">is</span> not <span class="keyword">null</span> &amp;&amp; r1.Equals(r2));
+ 
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">int</span> GetHashCode()
+        =&gt; (EqualityComparer&lt;Type&gt;.Default.GetHashCode(EqualityContract) * -<span class="number">1521134295</span>
+        + EqualityComparer&lt;<span class="keyword">string</span>&gt;.Default.GetHashCode(Name)) * -<span class="number">1521134295</span>
+        + EqualityComparer&lt;DateTime&gt;.Default.GetHashCode(Birthday);
+ 
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">bool</span> Equals(<span class="keyword">object</span> obj) =&gt; Equals(obj <span class="keyword">as</span> Person);
+ 
+    <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="keyword">bool</span> Equals(Person other)
+        =&gt; (<span class="keyword">object</span>)other != <span class="keyword">null</span>
+        &amp;&amp; EqualityContract == other.EqualityContract
+        &amp;&amp; EqualityComparer&lt;<span class="keyword">string</span>&gt;.Default.Equals(Name, other.Name)
+        &amp;&amp; EqualityComparer&lt;DateTime&gt;.Default.Equals(Birthday, other.Birthday);
+ 
+    <span class="keyword">public</span> <span class="keyword">virtual</span> Person Clone() =&gt; <span class="keyword">new</span> Person(<span class="keyword">this</span>);
+ 
+    <span class="keyword">protected</span> Person(Person original)
+    {
+        Name = original.Name;
+        Birthday = original.Birthday;
+    }
+}</code></pre>
+<h3 id="section-6"><a id="sec-generated-title-6"></a> <a id="equality">等値判定</a></h3>
+<p>前節で示した通り、レコード型を書くと自動的に <code>==</code> や <code>Equals</code> などの等値判定用のメソッド・演算子が追加されます。</p>
+<p>ここで1点注意なんですが、レコード型から作られる <code>==</code> や <code>Equals</code> は <code>EqualityComparer&lt;T&gt;.Default</code> を経由して、最終的にはプロパティごとに <code>Equals</code> メソッドを呼ぶことになります。
+通常、<code>==</code> と <code>Equals</code> の結果が違うなんてことは求められないので、
+そんな実装になっていることはめったにはありませんが…
+悪名高いものとして、<a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.double.nan"><code>NaN</code></a> (<a href="https://ja.wikipedia.org/wiki/NaN">Not a Number</a>)は <code>==</code> と <code>Equals</code> の結果が違ったりするので、
+「<code>double</code> で直接比較」と「レコード型で1段包んで比較」の結果が変わったりします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">double</span> nan = <span class="keyword">double</span>.NaN;
+ 
+Console.WriteLine(nan == nan); <span class="comment">// 常に false を返す。</span>
+Console.WriteLine(nan.Equals(nan)); <span class="comment">// こっちは true だったりする。</span>
+ 
+<span class="keyword">var</span> recordNan = <span class="keyword">new</span> Double(nan);
+ 
+Console.WriteLine(recordNan == recordNan); <span class="comment">// true</span>
+Console.WriteLine(recordNan.Equals(recordNan)); <span class="comment">// true</span>
+ 
+record Double(<span class="keyword">double</span> Value);</code></pre>
+<p>ちなみに、等値判定を <code>EqualityComparer&lt;T&gt;.Default</code> 越しにやっている都合で、レコード型のプロパティやフィールドに型引数にできない型(例えば<a href="/study/csharp/interop/sp_unsafe/#pointer">ポインター</a>や<a href="/study/csharp/resource/refstruct/">ref 構造体</a>など)は使えません。<code>unsafe record R(int* P);</code> はコンパイル エラーになります。</p>
+<h3 id="record-class-record-struct"><a id="sec-generated-title-7"></a> <a id="record-struct">record class と record struct</a></h3>
+<h5 class="version version10">Ver. 10</h5>
+<p>C# 9.0 (レコード型の最初のバージョン)では、レコード型は常に<a href="/study/csharp/resource/oo_reference/#reftype">参照型</a>(クラスと同系統の型)になります。
+これに対して C# 10.0 では<a href="/study/csharp/resource/oo_reference/#valtype">値型</a>も選べるようにしました。
+そのため、以下のように、<code>record class</code> と <code>record struct</code> というキーワードで書き分けができるようになりました。</p>
+<pre><code class="language-csharp">record <span class="keyword">class</span> Reference(<span class="keyword">int</span> X, <span class="keyword">int</span> Y); <span class="comment">// record だけ書いた場合こちらと同じ意味</span>
+record <span class="keyword">struct</span> Value(<span class="keyword">int</span> X, <span class="keyword">int</span> Y);</code></pre>
+<p>ちなみに、C# 9.0 の頃からある <code>record</code> だけを使う書き方と、C# 10.0 で追加された <code>record class</code> という書き方は全く同じ意味になります。
+(レコード型の思想としては、一番よく使う書き方を極力短く書けるようにしたいというものがあって、
+「クラスの方がよく使うから、<code>record</code> という短い書き方は <code>record class</code> の意味で使う」という判断があるようです。)</p>
+<h4 id="record-struct"><a id="sec-generated-title-8"></a> <a id="record-struct-specific"></a>record struct の特徴</h4>
+<p><code>record class</code> と <code>record struct</code> の差は、ほぼ<a href="/study/csharp/resource/oo_reference/">クラス(参照型)と構造体(値型)の差</a>そのままなんですが、
+ちょっとだけ細かい差があります。
+(といっても、それも参照型と値型の用途の違いからくるものです。)</p>
+<p>まず、構造体の場合は<a href="/study/csharp/oop/oo_inherit/">継承</a>がありません。
+なので、継承に関係して必要になる <a href="#inheritance"><code>EqualityContract</code> プロパティ</a>は生成されません。</p>
+<p>また、構造体の場合、mutable (最初に作ったタイミング以外でも好きなタイミングでメンバーを書き換え可能)であっても <code>record class</code> ほど問題は起こしません。
+なので、<code>record struct</code> (だけ書く)だと、mutable なプロパティが生成されます。</p>
+<pre><code class="language-csharp"><span class="comment">// class の場合、X, Y から生成されるプロパティは</span>
+<span class="comment">// public int X { get; init; }</span>
+<span class="comment">// public int Y { get; init; }</span>
+record <span class="keyword">class</span> RecordClass(<span class="keyword">int</span> X, <span class="keyword">int</span> Y);
+
+<span class="comment">// struct の場合は、</span>
+<span class="comment">// public int X { get; set; }</span>
+<span class="comment">// public int Y { get; set; }</span>
+record <span class="keyword">struct</span> RecordStruct(<span class="keyword">int</span> X, <span class="keyword">int</span> Y);</code></pre>
+<p>構造体には <a href="/study/csharp/resource/readonlyness/#readonly-struct"><code>readonly</code> 修飾</a>を付けることができるので、immutable (書き換え不能)な <code>record struct</code> を作りたければ <code>readonly record struct</code> と書きます。
+この場合は <code>record class</code> と同じようなプロパティが生成されます。</p>
+<pre><code class="language-csharp"><span class="comment">// readonly struct の場合は、</span>
+<span class="comment">// public int X { get; init; }</span>
+<span class="comment">// public int Y { get; init; }</span>
+<span class="keyword">readonly</span> record <span class="keyword">struct</span> ReadOnlyRecordStruct(<span class="keyword">int</span> X, <span class="keyword">int</span> Y);</code></pre>
+<h3 id="section-7"><a id="sec-generated-title-9"></a> <a id="anonymous-type">レコード型と匿名型</a></h3>
+<p>導入順序的な問題で、C# 的に言うとレコード型は「名前のある<a href="/study/csharp/start/sp3_inference/#anonymous">匿名型</a>」みたいな感じ(トゲナシトゲトゲっぽいやつ)だったりはします。
+(匿名型が C# 3.0 で導入された機能なのに対して、レコード型は C# 9.0 です。)</p>
+<p>C# は既存機能と新機能の整合性を極力取るように頑張って機能追加をしていて、
+レコード型追加の際には匿名型や<a href="/study/csharp/datatype/tuples/#key-tuple">タプル</a>との整合性を結構気にして設計しています。</p>
+<p>例えば以下のようなコードがあったとします。
+これは「とりあえず型名は付けずに匿名(タプル)でコードを書いてみた」みたいな状態です。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">var</span> p = (X: <span class="number">1</span>, Y: <span class="number">2</span>); <span class="comment">// これはタプル</span>
+<span class="keyword">var</span> (x, y) = p;
+Console.WriteLine($<span class="string">&quot;{x} * {y} = {x * y}&quot;</span>);</code></pre>
+<p>ここで、<code>X, Y</code> のペアに <code>Point</code> という名前を付けたいとして、そのためにレコード型を使ったとします。</p>
+<pre><code class="language-csharp">record Point(<span class="keyword">int</span> X, <span class="keyword">int</span> Y);</code></pre>
+<p>先ほどのコードには、<code>new Point</code> を足すだけで「匿名の型から名前付きの型に移行」ができます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">var</span> p = <span class="keyword">new</span> Point(X: <span class="number">1</span>, Y: <span class="number">2</span>); <span class="comment">// これで名前付きになった</span>
+<span class="keyword">var</span> (x, y) = p;
+Console.WriteLine($<span class="string">&quot;{x} * {y} = {x * y}&quot;</span>);</code></pre>
+<h3 id="section-8"><a id="sec-generated-title-10"></a> <a id="vs-normal-struct">レコード型と構造体</a></h3>
+<p>プロパティごとの比較で等値判定したり、プロパティごとの代入でクローン(後述の <a href="#with"><code>with</code> 式</a>を使う)を作ったりを取ったりする操作は、構造体であれば元々できる操作です。
+ある意味、C# 9.0 で導入されたレコード型は「構造体(値型)的な扱いができるクラス(参照型)を作れるようにする」と言うものです。
+(こういう操作ができることを「値セマンティクス(value semantics)を持つ」という用語で呼んだりします。)</p>
+<p>一方で、C# 10.0 では <code>record struct</code> が追加されました。
+「構造体的な扱いができるクラスの構造体版」みたいなものができてしまったわけですが…</p>
+<p>当初、「通常の構造体にレコード型と同程度の機能性を持たせるように仕様を変えようか」という案も上がっていました。
+しかし、その案だと、
+既存コードへの影響が大きすぎたり、
+コンパイラーによる自動生成物が増えることが好ましくない場面もあったりで、
+デメリットもそれなりにあります。
+なので結局、通常の構造体(<code>struct</code>)とは別に「構造体版レコード」(<code>record struct</code>)が追加されました。</p>
+<p>大まかな違いとしては、次節のプライマリ コンストラクターを持てる点と、<code>IEquatable&lt;T&gt;</code> インターフェイス実装がコンパイラー生成される点です。</p>
+<ul>
+<li>プライマリ コンストラクターを持てる
+<ul>
+<li>その引数からプロパティや <a href="/study/csharp/datatype/deconstruction/#arbitrary-types"><code>Deconstruct</code> メソッド</a>がコンパイラー生成される</li>
+</ul>
+</li>
+<li><code>IEquatable&lt;T&gt;</code> インターフェイス実装がコンパイラー生成される
+<ul>
+<li>通常の構造体よりも <code>Equals</code> のパフォーマンスがいい</li>
+<li>ただし、コンパイル結果のプログラム サイズがちょっと大きくなる</li>
+<li>インターフェイスを実装する都合上、<a href="/study/csharp/resource/refstruct/">ref 構造体</a> と両立しない (<code>ref record struct</code> とは書けない)</li>
+</ul>
+</li>
+</ul>
+<h2 id="section-9"><a id="sec-generated-title-11"></a> <a id="primary-constructor">プライマリ コンストラクター</a></h2>
+<p>先ほど、レコード型の最も短い書き方として以下のような例を挙げました。</p>
+<pre><code class="language-csharp">record Person(<span class="keyword">string</span> Name, DateTime Birthday);</code></pre>
+<p>この、型名の直後に <code>()</code> でコンストラクター引数を並べる書き方を<strong id="key-primary-constructor" class="keyword">プライマリ コンストラクター</strong>と言います。</p>
+<p>名前にコンストラクターと入っている通り、この構文からコンストラクターがコンパイラー生成されます。
+それだけではなく、引数名と同名の <a href="/study/csharp/oop/oo_property/#init-only">init-only プロパティ</a>が生成されます。
+<a href="#record-to-class">前述</a>の「レコード型から生成されるクラスの例」で挙げたコードのうち、
+以下のものは「プライマリ コンストラクターからの生成物」になります。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Person
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> Name { <span class="keyword">get</span>; init; }
+    <span class="keyword">public</span> DateTime Birthday { <span class="keyword">get</span>; init; }
+
+    <span class="keyword">public</span> Person(<span class="keyword">string</span> Name, DateTime Birthday)
+    {
+        <span class="keyword">this</span>.Name = Name;
+        <span class="keyword">this</span>.Birthday = Birthday;
+    }
+    
+    <span class="keyword">public</span> <span class="keyword">void</span> Deconstruct(<span class="keyword">out</span> <span class="keyword">string</span> Name, <span class="keyword">out</span> DateTime Birthday)
+    {
+        Name = <span class="keyword">this</span>.Name;
+        Birthday = <span class="keyword">this</span>.Birthday;
+    }
+}</code></pre>
+<p>残りの <code>Equals</code> や <code>PrintMember</code> などについては、プライマリ コンストラクターの有無にかかわらず、
+レコード型であれば常にコンパイラー生成されます。
+(public な get アクセサーを持ったすべてのプロパティが「生成元」になります。)</p>
+<p>ちなみに、プライマリ コンストラクターの引数は、以下のように、
+他のメンバーの初期化子や、メソッドの中身で参照することもできます。</p>
+<pre><code class="language-csharp">record X(<span class="keyword">int</span> Value)
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> Squared { <span class="keyword">get</span>; } = Value * Value;
+    <span class="keyword">public</span> <span class="keyword">int</span> Cubed { <span class="keyword">get</span>; } = Value * Value * Value;
+    <span class="keyword">public</span> <span class="keyword">double</span> GetSqrt() =&gt; Math.Sqrt(Value);
+}</code></pre>
+<p>また「プライマリ」(primary: 一番の、最優先の)の名前の通り、
+このコンストラクターは特別というか、「手書きで他のコンストラクターを書き足す場合、必ずプライマリ コンストラクターが呼ばれるようにしなければならない」という強い制約が掛かります。
+例えば以下のコードはコンパイル エラーを起こします。</p>
+<pre><code class="language-csharp">record Person(<span class="keyword">string</span> Name, DateTime Birthday)
+{
+    <span class="comment">// プライマリ コンストラクターを呼んでいないのでコンパイル エラーになる。</span>
+    <span class="keyword">public</span> Person() { }
+}</code></pre>
+<p>以下のように <code>this</code> 初期化子を足せばコンパイルできるようになります。</p>
+<pre><code class="language-csharp">record Person(<span class="keyword">string</span> Name, DateTime Birthday)
+{
+    <span class="comment">// これならエラーにはならない。</span>
+    <span class="comment">// (&quot;&quot; や default をとりあえず入れてしまう行為の良し悪しは置いておいて…)</span>
+    <span class="keyword">public</span> Person() : <span class="keyword">this</span>(<span class="string">&quot;&quot;</span>, <span class="keyword">default</span>(DateTime)) { }
+}</code></pre>
+<p>ちなみに、プライマリ コンストラクターの引数に <a href="/study/csharp/resource/sp_ref/#in"><code>in</code></a> と <a href="/study/csharp/structured/sp_params/"><code>params</code></a> を付けることはできます(その引数からプロパティの生成もされます)が、<a href="/study/csharp/resource/sp_ref/#sec-byref"><code>ref</code></a> と <a href="/study/csharp/resource/sp_ref/#out"><code>out</code></a> は付けれません。</p>
+<pre><code class="language-csharp"><span class="comment">// in と params は受け付ける。</span>
+<span class="keyword">public</span> record Record(<span class="keyword">in</span> <span class="keyword">int</span> X, <span class="keyword">params</span> <span class="keyword">int</span>[] Y);
+
+<span class="comment">// ちなみに、 ref と out はダメ。</span>
+<span class="keyword">public</span> record Record2(<span class="keyword">ref</span> <span class="keyword">int</span> X, <span class="keyword">out</span> <span class="keyword">int</span> Y);</code></pre>
+<h3 id="section-10"><a id="sec-generated-title-12"></a> <a id="primary-constructor-attribute">プライマリ コンストラクター引数への属性付与</a></h3>
+<p>プライマリ コンストラクターからはプロパティがコンパイラー生成されます。
+また、<a href="/study/csharp/oop/oo_property/#auto">プロパティからもさらにフィールドが生成</a>されています。
+ということで、プライマリ コンストラクターの引数には3重の意味(引数、プロパティ、フィールド)が含まれていたりします。</p>
+<p>必要となる場面はそれほど多くはないと思いますが、
+コンパイラー生成されるプロパティやフィールドに対しても、
+以下のような書き方で属性を付けることができます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Reflection;
+ 
+<span class="keyword">var</span> t = <span class="keyword">typeof</span>(X);
+ 
+<span class="comment">// parameter</span>
+Console.WriteLine(t.GetConstructor(<span class="keyword">new</span>[] { <span class="keyword">typeof</span>(<span class="keyword">int</span>) }).GetParameters()[<span class="number">0</span>].GetCustomAttribute&lt;A&gt;().Name);
+ 
+<span class="comment">// property</span>
+Console.WriteLine(t.GetProperty(<span class="string">&quot;Value&quot;</span>).GetCustomAttribute&lt;A&gt;().Name);
+ 
+<span class="comment">// field</span>
+Console.WriteLine(t.GetFields(BindingFlags.NonPublic | BindingFlags.Instance)[<span class="number">0</span>].GetCustomAttribute&lt;A&gt;().Name);
+ 
+record X(
+    [A(<span class="string">&quot;parameter&quot;</span>)]
+    [<span class="keyword">property</span>: A(<span class="string">&quot;property&quot;</span>)]
+    [<span class="keyword">field</span>: A(<span class="string">&quot;field&quot;</span>)]
+    <span class="keyword">int</span> Value);
+ 
+<span class="keyword">class</span> A : Attribute
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> Name { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> A(<span class="keyword">string</span> name) =&gt; Name = name;
+}</code></pre>
+<h2 id="section-11"><a id="sec-generated-title-13"></a> <a id="manual-override">生成物の上書き</a></h2>
+<p>レコード型の目標の1つは「お作法として最も好ましいものを最も短い書き方で書ける」というものです。</p>
+<p>一方で、わかった上でお作法から外れたい場合や、ちょっとしたカスタマイズをしたい場合もあります。
+そこで、C# のレコード型では、コンパイラー生成されるであろう物と同名のプロパティやメソッドを手書きすると、
+手書きした方のコードが優先される仕様になっています。</p>
+<p>例えば、文字列の比較で大文字・小文字を無視したい場合、<code>Equals</code> メソッドなどを以下のように書き加えることでできます。
+(例と言うことで <code>Equals</code> のみを書きますが、実際は <code>GetHashCode</code> などの書き足しも必要です。)</p>
+<pre><code class="language-csharp">record Person(<span class="keyword">string</span> Name, DateTime Birthday)
+{
+    <span class="keyword">bool</span> IEquatable&lt;Person&gt;.Equals(Person? other)
+        =&gt; other <span class="keyword">is</span> not <span class="keyword">null</span>
+        &amp;&amp; Name.Equals(other.Name, StringComparison.OrdinalIgnoreCase)
+        &amp;&amp; Birthday == other.Birthday;
+}</code></pre>
+<p>他の例として、本来あまり好ましくはないんですが、プロパティを書き換え可能にしてしまいたい場合、
+以下のようにプロパティを手書きで足してしまうことでできます。</p>
+<pre><code class="language-csharp">record Person(<span class="keyword">string</span> Name, DateTime Birthday)
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> Name { <span class="keyword">get</span>; <span class="keyword">set</span>; } = Name;
+    <span class="keyword">public</span> DateTime Birthday { <span class="keyword">get</span>; <span class="keyword">set</span>; } = Birthday;
+}</code></pre>
+<p>ちなみに、この場合、「<code>Name</code> 引数を <code>Name</code> プロパティに自動代入する」みたいな処理は掛からないので注意が必要です。
+上記の例で <code>Name { get; } = Name;</code> としているように、明示的な初期化が必要になります。</p>
+<h3 id="section-12"><a id="sec-generated-title-14"></a> <a id="manual-override-field">フィールドでの生成物の上書き</a></h3>
+<h5 class="version version10">Ver. 10</h5>
+<p>C# 9.0 時点では、プライマリ コンストラクター引数からの生成物の上書きはプロパティでしかできませんでした。</p>
+<p>これが C# 10.0 ではフィールドでも上書きできるようになりました。
+例えば以下のコードは C# 10.0 から有効なコードになります。
+(C# 9.0 時代は「(生成物の)プロパティ <code>X</code> と(手書きの)フィールド <code>X</code> が名前衝突してる」というエラーになっていました。)</p>
+<pre><code class="language-csharp">record R(<span class="keyword">int</span> X)
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X = X;
+}</code></pre>
+<p><code>record struct</code> を導入するにあたって、
+「クラスと違って、構造体では public フィールドを使うことがそれなりに需要としてある」
+という背景からこの仕様が入りました。
+プロパティ生成を抑止して、フィールドに変えたいときにこの機能を使います。</p>
+<p>とはいえ、別に <code>record class</code> で使えてしまって困る機能でもないので、クラスか構造体かは問わずこの機能を使えます。</p>
+<h2 id="section-13"><a id="sec-generated-title-15"></a> <a id="inheritance">レコード型の継承</a></h2>
+<p>レコード型はクラスと同じく<a href="/study/csharp/oop/oo_inherit/">継承</a>ができます。
+例えば以下のように書けます。</p>
+<pre><code class="language-csharp">record Base;
+record A(<span class="keyword">int</span> N) : Base;
+record B(<span class="keyword">string</span> S) : Base;</code></pre>
+<p>ちなみに、基底クラスがプライマリ コンストラクターを持っている場合、
+派生クラスからそのプライマリ コンストラクターの呼び出しが必要です。
+以下のように、基底クラス名の後ろに <code>()</code> を付けることで呼び出せます。</p>
+<pre><code class="language-csharp">record Base(<span class="keyword">int</span> X);
+ 
+<span class="comment">// Base(int X) を呼んでいないのでエラーになる。</span>
+record Error1(<span class="keyword">int</span> X) : Base;
+ 
+<span class="comment">// コンパイルできる例1: 引数を伝搬。</span>
+record Ok1(<span class="keyword">int</span> X) : Base(X);
+ 
+<span class="comment">// コンパイルできる例2: 引数に何らかの既定値を与える。</span>
+record Ok2() : Base(<span class="number">1</span>);
+ 
+<span class="comment">// コンパイルできる例3: 引数を伝搬しつつ、プロパティ Y を追加。</span>
+<span class="comment">// (この場合、X は Base.X が優先されて、Ok3.X はコンパイラー生成されない。)</span>
+record Ok3(<span class="keyword">int</span> X, <span class="keyword">int</span> Y) : Base(X);
+ 
+<span class="comment">// Ok2 と似たようなものだけど、これはコンパイルできない。</span>
+<span class="comment">// コンパイラーの実装都合で () が必要。</span>
+record Error2 : Base(<span class="number">1</span>);</code></pre>
+<p>また、将来的なことを言うと、以下のような話もあります。</p>
+<ul>
+<li>C# 9.0 時点ではレコード型の派生はレコード型同士でしかできない
+<ul>
+<li>将来的にはクラスからレコード型、レコード型からクラスの派生も認めるかもしれない</li>
+</ul>
+</li>
+<li><code>record struct</code> が入るとすると、派生できるのは <code>record class</code> のみ
+<ul>
+<li>(単に <code>record</code> と書くと <code>record class</code> の意味なので派生できる)</li>
+</ul>
+</li>
+</ul>
+<p>ちなみに、「<a href="#record-to-class">レコード型とクラス</a>」で書いたコンパイラー生成物に <code>EqualityContract</code> というプロパティがありますが、
+これは派生クラスを弁別するためにあります。</p>
+<p>例えば以下のコードの出力結果は false です。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="comment">// 同じ値を持っていても型が違うと「不一致」扱い。</span>
+Console.WriteLine(<span class="keyword">new</span> Base(<span class="number">1</span>) == <span class="keyword">new</span> Derived(<span class="number">1</span>)); <span class="comment">// false</span>
+ 
+record Base(<span class="keyword">int</span> X);
+record Derived(<span class="keyword">int</span> X) : Base(X);</code></pre>
+<p>コンパイラー生成物の <code>Equals</code> 等が <code>EqualityContract == other.EqualityContract</code> みたいなコードを含んでいるのはこのためです。
+ちなみに、ちゃんと <code>new Base(x).Equals(new Derived(y))</code> と <code>new Derived(y).Equals(new Base(x))</code> の結果が一致するように作られています。
+(これが成り立つようにするのは意外と手間で、レコード型からのコンパイラー生成物は結構なコード量になっていますし、手書きメンバー追加でのカスタマイズは結構大変です。)</p>
+<p>逆に、型は無視してプロパティの一致だけで等価判定してほしい場合、以下のように <code>EqualityContract</code> を手書き追加すればできます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="comment">// EqualityContract で typeof(Base) を返すことで「一致」扱いに変わる。</span>
+Console.WriteLine(<span class="keyword">new</span> Base(<span class="number">1</span>) == <span class="keyword">new</span> Derived(<span class="number">1</span>)); <span class="comment">// true</span>
+ 
+record Base(<span class="keyword">int</span> X);
+record Derived(<span class="keyword">int</span> X) : Base(X)
+{
+    <span class="keyword">protected</span> <span class="keyword">override</span> Type EqualityContract =&gt; <span class="keyword">typeof</span>(Base);
+}</code></pre>
+<h2 id="with"><a id="sec-generated-title-16"></a> <a id="with">with 式</a></h2>
+<p>「お作法として好ましいのは immutable (書き換え不可)」と言いましたし、
+レコード型もそのお作法に則って(手書きでカスタマイズしない限り) immutable な型を生成します。</p>
+<p>immutable なデータに対しても、「データの一部分だけを書き換えたい」という要件はよくあるんですが、
+この場合「元のデータを書き換えず、クローンして一部分書き換えたデータを新規作成」という手順を踏みます。
+C# 8.0 以前の書き方でいうと、以下のようなコードを書くことになります。
+(が、1つ問題があって、実際には C# 8.0 で完全にこれと同じことは実現できません。)</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">var</span> p1 = <span class="keyword">new</span> Person(<span class="string">&quot;天馬飛雄&quot;</span>, <span class="keyword">new</span>(<span class="number">2003</span>, <span class="number">4</span>, <span class="number">7</span>));
+ 
+<span class="keyword">var</span> p2 = p1.Clone();
+p2.Name = <span class="string">&quot;鉄腕アトム&quot;</span>;
+ 
+record Person(<span class="keyword">string</span> Name, DateTime Birthday);</code></pre>
+<p>このコードなんですが、(immutable というお作法上)「<code>Name</code> は書き換え不能」で作られているはずです。
+その書き換え不能プロパティを書き換えないといけないので、C# 8.0 でこれと同様のコードは書けません。
+これが <a href="/study/csharp/oop/oo_property/#init-only">init-only プロパティ</a>という機能の導入の動機で、C# コンパイラーが「クローン直後」だけを特別扱いして書き換えを認めています。</p>
+<p>C# 9.0 ではどうしたかと言うと、<code>with</code> 式という構文を追加しました。
+これが内部的に上記の「まずクローンして、クローン直後のインスタンスの一部分を書き換える」という処理に展開されます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> p1 = <span class="keyword">new</span> Person(<span class="string">&quot;天馬飛雄&quot;</span>, <span class="keyword">new</span>(<span class="number">2003</span>, <span class="number">4</span>, <span class="number">7</span>));
+<span class="keyword">var</span> p2 = p1 with { Name = <span class="string">&quot;鉄腕アトム&quot;</span> };</code></pre>
+<p>とりあえず以下のように覚えてください。</p>
+<ul>
+<li>immutable なデータに対して一部分だけの書き換えをしたいときには <code>with</code> 式を使う</li>
+<li>内部的にやっていることはクローンしてからの部分書き換え</li>
+</ul>
+<p>ちなみに、<code>with { } </code> だけ書く(「一部書き換え」はしない)のでもクローンになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">var</span> p1 = <span class="keyword">new</span> Point(<span class="number">1</span>, <span class="number">2</span>);
+<span class="keyword">var</span> p2 = p1 with { }; <span class="comment">// p1 のクローンが作られる</span>
+ 
+Console.WriteLine(p1 == p2); <span class="comment">// 持ってる値的には等しいので true。</span>
+Console.WriteLine(ReferenceEquals(p1, p2)); <span class="comment">// クローン(別インスタンス)ができてるのでこちらは false。</span>
+ 
+record Point(<span class="keyword">int</span> X, <span class="keyword">int</span> Y);</code></pre>
+<p>また、C# 9.0 時点ではクローン用のメソッドを <code>with</code> 式以外から呼ぶ手段はありません。
+(<code>&lt;Clone&gt;$</code> みたいな通常の C# コードでは書けないような変な名前でクローン メソッドが生成されています。
+逆に、この自動生成のクローンと紛らわしくならないようにするため、
+レコード型に自前で <code>Clone</code> という名前のメソッドを定義することは認められていません。)
+将来的には認める可能性もあるものの、現状は「クローン方法のカスタマイズ」もできません
+(<code>Equals</code> 等と違って、<code>&lt;Clone&gt;$</code> メソッドを「手書きで上書き」はできません)。</p>
+<p>また、このクローン用メソッドを手書きできない都合上、C# 9.0 時点では <code>with</code> 式はレコード型専用の構文になります。
+(ただし、C# 10.0 で <code>struct</code> に対しては <code>with</code> 式を使えるようになる予定です。
+構造体は元からクローン相当の機能を持っているので、それを使う予定です。)</p>
+<h3 id="with-1"><a id="sec-generated-title-17"></a> <a id="anonymous-type">匿名型と構造体に対する with 式</a></h3>
+<h5 class="version version10">Ver. 10</h5>
+<p>C# 9.0 時点では、<code>with</code> 式はレコード型に対してしか使えません。
+ただ、<code>with</code> 式に求められる要件は「クローンメソッドを持っていて、<code>set</code> もしくは <code>init</code> 持ちのプロパティがある」という点だけです。
+前述の通り、「クローン方法のカスタマイズ」を提供することで任意の型に対して <code>with</code> 式を使えるようにするという提案も出ていますが、その一方で、C# 9.0 時点でも <code>with</code> 式が使える条件を満たせるけどもスケジュールの都合で C# 10.0 での実装になったものもあります。</p>
+<p>ということで C# 10.0 では、匿名型と、任意の構造体に対して <code>with</code> 式を使えるようになりました。
+以下のコードは C# 9.0 ではコンパイルできませんが、C# 10.0  ではコンパイルできるます。</p>
+<p><a href="/study/csharp/start/sp3_inference/#anonymous">匿名型</a>:</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> p1 = <span class="keyword">new</span> { X = <span class="number">1</span>, Y = <span class="number">2</span> };
+<span class="keyword">var</span> p2 = p1 with { X = <span class="number">3</span> };</code></pre>
+<p>任意の<a href="/study/csharp/resource/rm_struct/">構造体</a>:</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> p1 = <span class="keyword">new</span> Point { X = <span class="number">1</span>, Y = <span class="number">2</span> };
+<span class="keyword">var</span> p2 = p1 with { X = <span class="number">3</span> };
+ 
+<span class="keyword">readonly</span> <span class="keyword">struct</span> Point
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; init; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; init; }
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/datatype/">&#x30C7;&#x30FC;&#x30BF;&#x578B;</a></li><li><a href="/study/csharp/datatype/tuples/">&#x30BF;&#x30D7;&#x30EB;</a></li><li><a href="/study/csharp/datatype/deconstruction/">&#x8907;&#x5408;&#x578B;&#x306E;&#x5206;&#x89E3;</a></li><li><a href="/study/csharp/datatype/typeswitch/">is&#x3001;switch &#x306E;&#x62E1;&#x5F35; (&#x578B;&#x30B9;&#x30A4;&#x30C3;&#x30C1;)</a></li><li><a href="/study/csharp/datatype/patterns/">&#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30DE;&#x30C3;&#x30C1;&#x30F3;&#x30B0;</a></li><li><a href="/study/csharp/datatype/declarationexpressions/">&#x7279;&#x6B8A;&#x306A;&#x5909;&#x6570;&#x5BA3;&#x8A00;</a></li><li><a href="/study/csharp/datatype/collection-expression/">&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x5F0F;</a></li><li><a href="/study/csharp/datatype/inline-array/">[&#x96D1;&#x8A18;] InlineArray</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

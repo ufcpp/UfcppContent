@@ -1,0 +1,314 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x975E;&#x540C;&#x671F;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x306E;&#x5185;&#x90E8;&#x5B9F;&#x88C5; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/async/sp5_awaitable/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">非同期メソッドの内部実装</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<h5 class="version version5">Ver. 5.0</h5>
+<p>C# はこれまでも一貫して、「言語自体（コンパイラー）に多くのことをさせ過ぎない」、
+「可能な限りフレームワーク側（クラス ライブラリ側）に実装を任せる」という方針で機能追加を行っています。
+例えば、foreach や LINQ の実装がその例ですが、以下のように、コンパイラーの仕事はメソッド呼び出しへの変換になります。</p>
+<ul>
+<li><p>「<a href="/study/csharp/structured/st_loop/#foreach">foreach</a>」は、enumrable/enumerator パターンに沿って実装されたクラスなら何でも列挙可能。</p>
+<ul>
+<li>単純に、GetEnumerator メソッドや MoveNext, Current などの呼び出しに置き換えられる。</li>
+</ul>
+</li>
+<li><p>LINQ「<a href="/study/csharp/data/sp3_linq/#query">クエリ式</a>」は、Select や Where という名前のメソッドを持っていれば何でも問い合わせ可能。</p>
+</li>
+</ul>
+<p>非同期メソッドも同様の方針を取っていて、
+本項で説明するようなパターンに沿ったクラスなら、なんでも await の対象にできます。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>サンプル</h5>
+<ul>
+<li><p><a href="http://code.msdn.microsoft.com/C-Async-3185c2e8">C# Async の例</a></p>
+</li>
+<li><p><a href="http://code.msdn.microsoft.com/EAPTAP-bb69ab56">EAPをTAP化するラッパー クラスの自動生成</a></p>
+</li>
+</ul>
+<h2 id="awaitable"><a id="sec-generated-title-3"></a> <a id="awaiter"></a>Awaitable パターン</h2>
+<p>await の対象にできるのは、
+以下のような Awaitable パターンを実装したクラスです。
+（インターフェイスなどの実装も不要で、いわゆる「<a href="/study/csharp/appendix/ap_term/#ducktype">ダックタイピング</a>」的。）</p>
+<pre><code class="language-csharp"><span class="comment">// 同名のメソッドを持っていれば型は問わない。</span>
+<span class="keyword">class</span> Awatable
+{
+    <span class="keyword">public</span> Awaiter GetAwaiter() { }
+}
+
+<span class="comment">// 同上、同名のメソッドを持っていれば型は問わない。</span>
+<span class="keyword">struct</span> Awaiter
+{
+    <span class="keyword">public</span> <span class="keyword">bool</span> IsCompleted { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="keyword">void</span> OnCompleted(Action continuation) { }
+    <span class="keyword">public</span> T GetResult() { }
+}</code></pre>
+<p>await 可能な型は、上記の Awaitable クラスのように、Awaiter を返す GetAwaiter メソッド（あるいは拡張メソッドでも OK）を持つ必要があります。
+Awaiter は、以下のようなプロパティ/メソッドを持つ必要があります。</p>
+<ul>
+<li><code>
+        <span class="reserved">bool</span> IsCompleted
+      </code>プロパティ
+  * タスクが完了していれば true を返します。 この場合、後述の<code>OnCompleted</code>メソッドで「[継続](misc_continuation.md#key_continuation)」呼び出しするのではなく、 即座に続きの処理を行います。
+</li>
+<li><code>
+        <span class="reserved">void</span> OnCompleted
+      </code>メソッド
+  * タスクが未完（<code>IsCompleted</code>が false）な場合、 引数で与えた continuation を「[継続](misc_continuation.md#key_continuation)」登録（例えば Task&lt;T&gt;.ContinueWith に渡す）します。
+</li>
+<li><p><code>T GetResult()</code></p>
+<ul>
+<li><p>タスクの結果を取り出します。</p>
+</li>
+<li><p>非同期処理の結果が戻り値を持つ場合 （例えば、 タスクがいわゆる「<a href="/study/csharp/async/misc_continuation/#key_future">先物</a>」（ジェネリック版の Task&lt;T&gt; など）の場合）、 結果の値を返します。</p>
+</li>
+<li><p>非同期処理の結果が戻り値なし（void）の場合、 GetResult メソッドの戻り値も void で、 単にタスクの完了を待ちます。</p>
+</li>
+<li><p>タスク内で例外が発生していた場合、GetResult でその例外を受け取れます（スレッド間の例外の伝搬）。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>Task クラスなどに直接 IsCompleted/OnCompleted/GetRusult を持たせるのではなく、
+GetAwaiter を挟むことで拡張性を持たせています。
+GetAwaiter は拡張メソッドでもいいので、独自実装で挙動を変えるということもしやすくなっています。</p>
+<h5 id="section-3"><a id="sec-generated-title-4"></a>サンプル</h5>
+<p>（参考： <a href="http://code.msdn.microsoft.com/C-Async-3185c2e8/sourcecode?itemId=105647">サンプルの AwaiterPatternSample プロジェクト</a>。）</p>
+<p>実装例を挙げてみましょう。
+せっかくの非同期呼び出しを同期化（処理が終わるまでブロッキング）するという、使い道のない実装ですが、
+シンプルなのでサンプルとしては分かりやすいと思います。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> BlockingAwaitable&lt;T&gt;
+{
+    <span class="keyword">private</span> BlockingAwaiter&lt;T&gt; _awaiter;
+
+    <span class="keyword">public</span> BlockingAwaitable(Task&lt;T&gt; task) { _awaiter = <span class="keyword">new</span> BlockingAwaiter&lt;T&gt;(task); }
+
+    <span class="keyword">public</span> BlockingAwaiter&lt;T&gt; GetAwaiter() { <span class="keyword">return</span> _awaiter; }
+}
+
+<span class="keyword">public</span> <span class="keyword">class</span> BlockingAwaiter&lt;T&gt;
+{
+    <span class="keyword">private</span> Task&lt;T&gt; _task;
+
+    <span class="keyword">public</span> BlockingAwaiter(Task&lt;T&gt; task) { _task = task; }
+
+    <span class="keyword">public</span> <span class="keyword">bool</span> IsCompleted { <span class="keyword">get</span> { <span class="keyword">return</span> <span class="keyword">true</span>; } }
+
+    <span class="keyword">public</span> <span class="keyword">void</span> OnCompleted(Action continuation) { }
+
+    <span class="keyword">public</span> T GetResult()
+    {
+        _task.Wait();
+        <span class="keyword">return</span> _task.Result;
+    }
+}
+
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> BlockingAwaitableExtensions
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> BlockingAwaitable&lt;T&gt; ToBlocking&lt;T&gt;(<span class="keyword">this</span> Task&lt;T&gt; task)
+    {
+        <span class="keyword">return</span> <span class="keyword">new</span> BlockingAwaitable&lt;T&gt;(task);
+    }
+}</code></pre>
+<p>以下のように利用します。</p>
+<pre><code class="language-csharp">varresult = <span class="keyword">await</span> task.ToBlocking();</code></pre>
+<h2 id="section-4"><a id="sec-generated-title-5"></a> <a id="statemachine"></a>状態機械生成</h2>
+<p>それでは、この awaitable/awaiter が実際にどのように利用されているのかを見てみましょう。
+仕組みとしては、「<a href="/study/csharp/data/sp2_iterator/#iterator">イテレーター</a>」と似ていて、
+一種の状態機械（state machine）の生成となっています。</p>
+<p>イテレーターの場合には、yield return の部分が以下のようなコードに置き換えられます。</p>
+<pre><code class="language-csharp">state = State1; <span class="comment">// 次に復帰するときのための状態の記録</span>
+Current = x;    <span class="comment">// 戻り値を Current に保持</span>
+<span class="keyword">return</span> <span class="keyword">true</span>;    <span class="comment">// いったん処理終了</span>
+<span class="keyword">case</span> State1:    <span class="comment">// 次に呼ばれたときに続きから処理するためのラベル</span></code></pre>
+<p>処理はいったん中断し、次に呼ばれたときには state の値に応じた switch や goto によって、
+続きの処理を再開します。</p>
+<p>非同期メソッドの場合には、await の部分が以下のようなコードに置き換えられます。</p>
+<pre><code class="language-csharp">state = State1;                  <span class="comment">// 次に復帰するときのための状態の記録</span>
+<span class="keyword">var</span> task = RunAsync();
+<span class="keyword">var</span> awaiter = task.GetAwaiter();
+<span class="keyword">if</span> (!awaiter.IsCompleted)
+{
+    awaiter.OnCompleted(a);      <span class="comment">// タスクが未完の場合だけ、継続登録して一度 return</span>
+    <span class="keyword">return</span>;
+}
+<span class="keyword">case</span> State1:                     <span class="comment">// 次に呼ばれたときに続きから処理するためのラベル</span>
+<span class="keyword">var</span> y = awaiter.GetReslt();      <span class="comment">// タスクの結果を受け取り</span>
+awaiter = <span class="keyword">default</span>(T);            <span class="comment">// ガベージ コレクションが働きやすくなるように null 代入</span></code></pre>
+<p>このコードはラムダ式で囲われていて、
+（BeginAwait の引数となっている）Action 型の変数 a に代入されているものと思ってください。
+結果として、タスクの継続として自分自身が呼ばれ、state に応じた switch や goto によって続きの処理が行われます。</p>
+<p>ちなみに、awaitable/awaiter を介さない単純な実装に展開するなら、以下のようになります。
+（実際には、await は Task クラス以外にも使えますし、単純に ContinueWith を呼ぶより少しだけ複雑な処理（後述の SynchronizationContext を利用）を行っています。）</p>
+<pre><code class="language-csharp">state = State1;                  <span class="comment">// 次に復帰するときのための状態の記録</span>
+<span class="keyword">var</span> task = AnotherTaskAsync();
+<span class="keyword">if</span> (!task.IsCompleted)
+{
+    <span class="comment">// 他のタスクの完了待ちに入って、いったん処理中止</span>
+    task.ContinueWith(a);
+    <span class="keyword">return</span>;
+}
+<span class="comment">// ただし、タスクがすでに完了済みだったら処理続行</span>
+<span class="keyword">case</span> State1:                     <span class="comment">// 次に呼ばれたときに続きから処理するためのラベル</span>
+<span class="keyword">var</span> y = task.Result;             <span class="comment">// タスクの結果を受け取り</span></code></pre>
+<h5 id="section-5"><a id="sec-generated-title-6"></a>サンプル</h5>
+<p>（参考： <a href="http://code.msdn.microsoft.com/C-Async-3185c2e8/sourcecode?itemId=105659">サンプルの PseudoAsync プロジェクト</a>。）</p>
+<p>例えば、以下のような非同期メソッドを考えてみましょう。
+要は、複数の URL から文字列をダウンロードしてきて表示するプログラムです（ShowTitle の実装については割愛）。</p>
+<pre><code class="language-csharp"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">async</span> <span class="keyword">void</span> RunTaskAsync(<span class="keyword">params</span> <span class="keyword">string</span>[] uriList)
+{
+    <span class="keyword">var</span> client = <span class="keyword">new</span> WebClient();
+
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> uri <span class="keyword">in</span> uriList)
+    {
+        <span class="keyword">var</span> html = <span class="keyword">await</span> client.DownloadStringTaskAsync(uri);
+        ShowTitle(html);
+    }
+}</code></pre>
+<p>非同期メソッドがイテレーターと似たようなコード生成をしているということは、
+イテレーターを使って似たようなことができなくもないです。
+上記の例は、イテレーターを使って書くと以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> RunPseudoAsync(<span class="keyword">params</span> <span class="keyword">string</span>[] uriList)
+{
+    AsyncHelper(RunIterator(uriList));
+}
+
+<span class="keyword">private</span> <span class="keyword">static</span> IEnumerable&lt;Task&gt; RunIterator(<span class="keyword">params</span> <span class="keyword">string</span>[] uriList)
+{
+    <span class="keyword">var</span> client = <span class="keyword">new</span> WebClient();
+
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> uri <span class="keyword">in</span> uriList)
+    {
+        <span class="comment">//↓ここから</span>
+        <span class="keyword">var</span> task = client.DownloadStringTaskAsync(uri);
+        <span class="keyword">if</span> (!task.IsCompleted)
+        {
+            <span class="keyword">yield</span> <span class="keyword">return</span> task;
+        }
+        <span class="keyword">var</span> html = task.Result;
+        <span class="comment">//↑ここまでが await 相当の処理</span>
+
+        ShowTitle(html);
+    }
+
+    <span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">null</span>;
+}
+
+<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> AsyncHelper(IEnumerable&lt;Task&gt; asyncTask)
+{
+    <span class="keyword">var</span> e = asyncTask.GetEnumerator();
+
+    Action a = <span class="keyword">null</span>;
+
+    a = () =&gt;
+    {
+        <span class="keyword">if</span> (e.MoveNext() &amp;&amp; e.Current != <span class="keyword">null</span>)
+        {
+            e.Current.ContinueWith(t =&gt; a());
+        }
+    };
+
+    a();
+}</code></pre>
+<p>さらに、イテレーター相当の処理も展開すると以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> RunAsyncInside(IEnumerable&lt;<span class="keyword">string</span>&gt; uriList)
+{
+    Action a = <span class="keyword">null</span>;
+    <span class="keyword">var</span> e = uriList.GetEnumerator();
+    <span class="keyword">int</span> state = <span class="number">0</span>;
+    WebClient client = <span class="keyword">null</span>;
+    Task&lt;<span class="keyword">string</span>&gt; task = <span class="keyword">null</span>;
+
+    a = () =&gt;
+    {
+        <span class="keyword">switch</span>(state)
+        {
+            <span class="keyword">case</span> <span class="number">0</span>: <span class="keyword">goto</span> State0;
+            <span class="keyword">case</span> <span class="number">1</span>: <span class="keyword">goto</span> State1;
+        }
+
+        State0:
+        client = <span class="keyword">new</span> WebClient();
+
+        <span class="comment">// goto の都合上、ループは if goto とか if return に置き換わる。</span>
+        <span class="keyword">if</span> (!e.MoveNext()) <span class="keyword">return</span>;
+
+        <span class="comment">//↓ここから</span>
+        state = <span class="number">1</span>;
+        task = client.DownloadStringTaskAsync(e.Current);
+        <span class="keyword">if</span> (!task.IsCompleted)
+        {
+            task.ContinueWith(t =&gt; a);
+            <span class="keyword">return</span>;
+        }
+        State1:
+        <span class="keyword">var</span> html = task.Result;
+        <span class="comment">//↑ここまでが await 相当の処理</span>
+
+        ShowTitle(html);
+    };
+
+    a();
+}</code></pre>
+<h3 id="catchfinallyawait"><a id="sec-generated-title-7"></a> <a id="catch-finally"></a>catch句、finally句内でのawait</h3>
+<h5 class="version version6">Ver. 6</h5>
+<p>C# 6からは、catch句、finally句内にも<code>await</code>を書けるようになりました。</p>
+<p>これの展開は結構面倒で、ここまでで説明してきたような単純な置き替えルールではできません。追加で、以下のようなことをしています。</p>
+<ul>
+<li>すべての例外を無差別にcatch</li>
+<li>catch句内、finally句内相当の処理を実行</li>
+<li>例外を再throw</li>
+</ul>
+<p>最後の例外の再throwが曲者で、例外の<a href="/study/csharp/structured/misc_stacktrace/">スタック トレース</a>を保ったまま例外をthrowし直すのは結構難しかったりします(.NET Frameworkの内部的な機能(internalなメソッド)を使わないとできなかったりします)。</p>
+<h2 id="section-6"><a id="sec-generated-title-8"></a> <a id="synchronization"></a>同期コンテキスト</h2>
+<p>（書きかけ）</p>
+<p>（参考： <a href="http://code.msdn.microsoft.com/C-Async-3185c2e8/sourcecode?itemId=105663">サンプルの SynchronizationContextSample プロジェクト</a>。）</p>
+<p>GUI アプリの場合、UI を更新できるのは UI スレッドだけ。
+非同期処理の結果を UI スレッドに返す必要あり。
+参考: 「<a href="/study/csharp/async/misc_uithread/">[雑記] GUI と非同期処理</a>」</p>
+<pre><code class="language-text">・ディスパッチャーを呼ぶ仕組み
+WPF とか Silverlight の場合、継続がディスパッチャー経由で呼ばれる。
+SynchronizationContext.Post 経由。
+
+（標準提供の TaskAwaiter がこういう挙動してる。
+  気に入らなければ Awaiter の自作で回避可能。）
+
+詰まるところ、いくら await しても UI スレッドに処理戻ってくる。
+当然、そこで重たい処理したら UI フリーズするので注意。
+（一番向いてる処理は、IO 待ち）
+
+
+・もし、重たい処理が必要なら
+
+await Task.Run(() =&gt;
+{
+    // 重たい処理
+    // ここは別スレッドで動いてる
+}
+
+// SynchronizationContext 経由で UI スレッドに戻る
+
+// UI スレッドで実行しないといけない処理
+
+と書く。</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/async/">&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/async/sp_thread/">&#x30DE;&#x30EB;&#x30C1;&#x30B9;&#x30EC;&#x30C3;&#x30C9;</a></li><li><a href="/study/csharp/async/asyncvariation/">&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406;&#x306E;&#x7A2E;&#x985E;</a></li><li><a href="/study/csharp/async/asyncinside/">&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406;&#x3092;&#x652F;&#x3048;&#x308B;&#x30A4;&#x30F3;&#x30D5;&#x30E9;</a></li><li><a href="/study/csharp/async/asyncexecutioncontext/">&#x5B9F;&#x884C;&#x30B3;&#x30F3;&#x30C6;&#x30AD;&#x30B9;&#x30C8;</a></li><li><a href="/study/csharp/async/misc_synchronize/">[&#x96D1;&#x8A18;] &#x30B9;&#x30EC;&#x30C3;&#x30C9;&#x9593;&#x306E;&#x7AF6;&#x5408;&#x56DE;&#x907F;</a></li><li><a href="/study/csharp/async/misc_task/">[&#x96D1;&#x8A18;] &#x30B9;&#x30EC;&#x30C3;&#x30C9; &#x30D7;&#x30FC;&#x30EB;&#x3068;&#x30BF;&#x30B9;&#x30AF;</a></li><li><a href="/study/csharp/async/misc_asyncflow/">[&#x96D1;&#x8A18;] &#x975E;&#x540C;&#x671F;&#x5236;&#x5FA1;&#x30D5;&#x30ED;&#x30FC;</a></li><li><a href="/study/csharp/async/sp5_async/">&#x975E;&#x540C;&#x671F;&#x30E1;&#x30BD;&#x30C3;&#x30C9;</a></li><li><a href="/study/csharp/async/misc_continuation/">[&#x96D1;&#x8A18;] &#x7D99;&#x7D9A;&#x3068;&#x5148;&#x7269;</a></li><li><a href="/study/csharp/async/misc_uithread/">[&#x96D1;&#x8A18;] GUI &#x3068;&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/async/asyncstream/">&#x975E;&#x540C;&#x671F;&#x30B9;&#x30C8;&#x30EA;&#x30FC;&#x30E0;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

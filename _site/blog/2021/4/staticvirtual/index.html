@@ -1,0 +1,186 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 4/4: static virtual/abstract members | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2021/4/staticvirtual/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2021-04-04T17:07:36">2021-04-04</time></span><span>更新: <time datetime="2021-04-04T17:07:36">2021-04-04</time></span></div><h1 id="roslyn-44-static-virtualabstract-members">ピックアップRoslyn 4/4: static virtual/abstract members</h1>
+<p>インターフェイスの静的メソッドを virtual/abstract 指定できるようにする話が出ています。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/4436">[Proposal]: Static abstract members in interfaces #4436</a></li>
+</ul>
+<p>主な用途は、</p>
+<ul>
+<li>ファクトリ</li>
+<li>比較 (<code>Equatable</code> とか <code>Comparable</code>)</li>
+<li>数値計算</li>
+</ul>
+<p>とかになると思います。
+一番求められている用途は数値計算で、要は <a href="https://ja.wikipedia.org/wiki/NumPy">NumPy</a> みたいなことを C# でも苦痛なく、かつ、パフォーマンスを損なうことなく実現したいというものです。</p>
+<h2 id="section"><a id="factory">ファクトリ</a></h2>
+<p>数値計算に特化した仕様かと言うとそんなこともないので、先に他の用途について触れておきます。</p>
+<p>ジェネリックなメソッドを作るとき、<code>new()</code> 制約を付けることで引数なしのコンストラクターなら呼び出せるんですが…</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> m&lt;T&gt;() <span class="keyword">where</span> T : <span class="keyword">new</span>()
+{
+    <span class="keyword">var</span> x = <span class="keyword">new</span> T(); <span class="comment">// OK</span>
+}</code></pre>
+<p>ところが、この <code>new</code> には引数を渡せません。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> m&lt;T&gt;(<span class="keyword">int</span> i)
+    <span class="keyword">where</span> T : <span class="keyword">new</span>(<span class="keyword">int</span>) <span class="comment">// こう書きたい(ダメ)</span>
+{
+    <span class="keyword">var</span> x = <span class="keyword">new</span> T(i); <span class="comment">// ダメ</span>
+}</code></pre>
+<p>これを例えば以下のように書けるようにすることで代替できるようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> m&lt;T&gt;(<span class="keyword">int</span> i)
+    <span class="keyword">where</span> T : IConvartibleFromInt <span class="comment">// 普通のインターフェイス制約</span>
+{
+    <span class="keyword">var</span> x = T.New(i); <span class="comment">// こう書けるようにする</span>
+}
+
+<span class="keyword">interface</span> IConvartibleFromInt
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">abstract</span> IConvartibleFromInt New(<span class="keyword">int</span> i);
+}</code></pre>
+<h2 id="generic-math"><a id="generic-math">generic math</a></h2>
+<p>たびたび出てくる要望として、 <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code> をジェネリックな型で使いたいというものがあります。
+わかりやすい例だと「<a href="https://source.dot.net/#System.Linq/System/Linq/Sum.cs,17ae8142727f08ee"><code>Enumerable.Sum</code></a> の実装何個あるんだ」って話で。
+中身はほぼ定型文で、以下のようなコードのコピペが何個も並んでいます。</p>
+<pre><code class="language-csharp"><span class="keyword">foreach</span> (<span class="keyword">int</span> v <span class="keyword">in</span> source)
+{
+    sum += v;
+}</code></pre>
+<p>コピペせざるを得ないのはジェネリックな型に対して <code>+</code> を使えないからです。</p>
+<p>業務アプリ開発とかでは大体 <code>int</code> か <code>double</code>、せいぜい <code>decimal</code> を使っておけばいいのでジェネリックじゃなくてもそこまで困らないんですが、
+汎用数学ライブラリみたいなのを作ろうとすると結構困ります。
+<a href="https://ja.wikipedia.org/wiki/NumPy">NumPy</a> みたいなものの利用者を取り込みたいし、この問題を解決したいという流れ。</p>
+<p>現状の C# で汎用数学処理を書こうとするとどうなるかと言うと、以下のような感じ(3年位前のブログ):</p>
+<ul>
+<li><a href="/blog/2018/5/metricspace/">C# にも型クラス(Shapes)が欲しい…</a></li>
+</ul>
+<p>ブログタイトルが「型クラス」となっていますが、まあ、それが今回出ている「<a href="https://github.com/dotnet/csharplang/issues/4436">static virtual 提案</a>」の原型。</p>
+<ul>
+<li><a href="/blog/2017/2/pickuproslyn0223/">Shapes and Extensions</a></li>
+</ul>
+<p>この「Shapes」というやつは結構込み入った仕様なんですが、
+いったんこのうちの一部分というか、既存の文法からそう大きく外れない範囲でできるものが
+「インターフェイスの <a href="/study/csharp/oop/oo_static/">static</a> メソッドに <a href="/study/csharp/oop/oo_polymorphism/#virtual">virtual</a>/<a href="/study/csharp/oop/oo_abstract/">abstract</a> を認めよう」というものです。</p>
+<p>上記の <code>Sum</code> であれば、「0 を取得」と「足し算」の2つがあれば書けるので、まず以下のようなインターフェイスを用意。</p>
+<pre><code class="language-csharp"><span class="keyword">interface</span> IAddable&lt;T&gt; <span class="keyword">where</span> T : IAddable&lt;T&gt;
+{
+    <span class="keyword">static</span> <span class="keyword">virtual</span> T Zero { <span class="keyword">get</span>; } =&gt; <span class="keyword">default</span>(T);
+    <span class="keyword">static</span> <span class="keyword">abstract</span> T <span class="keyword">operator</span> +(T t1, T t2);
+}</code></pre>
+<p>これが入るのであれば、標準の <code>int</code> 型(<code>Int32</code> 構造体(<code>System</code> 名前空間))に以下のような実装も足されることになります。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> Int32 : …, IAddable&lt;Int32&gt;
+{
+    <span class="keyword">static</span> Int32 I.<span class="keyword">operator</span> +(Int32 x, Int32 y) =&gt; x + y; <span class="comment">// Explicit</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> Zero =&gt; <span class="number">0</span>;                          <span class="comment">// Implicit</span>
+}</code></pre>
+<p>これを使って <code>Sum</code> メソッドを書くと以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">static</span> T Sum&lt;T&gt;(T[] ts) <span class="keyword">where</span> T : IAddable&lt;T&gt;
+{
+    T result = T.Zero;                   <span class="comment">// Call static operator</span>
+    <span class="keyword">foreach</span> (T t <span class="keyword">in</span> ts) { result += t; } <span class="comment">// Use `+`</span>
+    <span class="keyword">return</span> result;
+}</code></pre>
+<p>これ、下手な実装をするとパフォーマンスを著しく損ねます。
+<code>+</code> なんてネイティブコード化されると CPU の1命令だったりするわけですが、
+そこに、インターフェイスが挟まることで仮想関数呼び出しが挟まったり、インライン展開阻害が起きたりして数倍～1桁遅くなります。</p>
+<p>とはいえ、<a href="/blog/2018/5/metricspace/">前述の3年前のブログ</a>でやっているような「値型ジェネリクスを使った黒魔術」でパフォーマンスは解決できるんですが、型引数が余分に1個増えたり、演算子を使えなかったり、だいぶ使い勝手は悪いです。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">static</span> T Sum&lt;T, TAddable&gt;(T[] ts) <span class="keyword">where</span> TAddable : IAddable&lt;T&gt;
+{
+    T result = <span class="keyword">default</span>(TAddable).Zero;
+    <span class="keyword">foreach</span> (T t <span class="keyword">in</span> ts) { result = <span class="keyword">default</span>(TAddable).Add(result, t); }
+    <span class="keyword">return</span> result;
+}</code></pre>
+<h2 id="section-1"><a id="type-param">型引数による分岐</a></h2>
+<p>普通の、既存の virtual/abstract メソッドの場合、
+実際にどのメソッドが呼び出されるかはインスタンスの実行時の型によって決まります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="comment">// 型引数が何だろうと、インスタンスが A なので表示されるのは &quot;A&quot;。</span>
+m&lt;I&gt;(<span class="keyword">new</span> A());
+m&lt;A&gt;(<span class="keyword">new</span> A());
+ 
+<span class="comment">// 型引数が何だろうと、インスタンスが B なので表示されるのは &quot;B&quot;。</span>
+m&lt;I&gt;(<span class="keyword">new</span> B());
+m&lt;A&gt;(<span class="keyword">new</span> B());
+m&lt;B&gt;(<span class="keyword">new</span> B());
+ 
+<span class="keyword">void</span> m&lt;T&gt;(T x) <span class="keyword">where</span> T : I =&gt; x.M();
+ 
+<span class="keyword">interface</span> I
+{
+    <span class="keyword">void</span> M();
+}
+ 
+<span class="keyword">class</span> A : I
+{
+    <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="keyword">void</span> M() =&gt; Console.WriteLine(<span class="string">&quot;A&quot;</span>);
+}
+ 
+<span class="keyword">class</span> B : A
+{
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> M() =&gt; Console.WriteLine(<span class="string">&quot;B&quot;</span>);
+}</code></pre>
+<p>一方、static virtual/abstract の場合は型引数を見ます。
+コンパイル時に決定済み。
+abstract なままのもの(実態がないもの)を使うとコンパイル自体できません。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="comment">// static virtual/abstract の場合は型引数の方で呼び出し先が決まる。</span>
+m&lt;I&gt;(<span class="keyword">new</span> A()); <span class="comment">// コンパイル エラー。 I.M に実装がない。</span>
+m&lt;A&gt;(<span class="keyword">new</span> A()); <span class="comment">// &quot;A&quot;</span>
+ 
+m&lt;I&gt;(<span class="keyword">new</span> B()); <span class="comment">// コンパイル エラー。 I.M に実装がない。</span>
+m&lt;A&gt;(<span class="keyword">new</span> B()); <span class="comment">// &quot;A&quot;</span>
+m&lt;B&gt;(<span class="keyword">new</span> B()); <span class="comment">// &quot;B&quot;</span>
+ 
+<span class="keyword">void</span> m&lt;T&gt;(T x) <span class="keyword">where</span> T : I =&gt; T.M();
+ 
+<span class="keyword">interface</span> I
+{
+    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">static</span> <span class="keyword">void</span> M();
+}
+ 
+<span class="keyword">class</span> A : I
+{
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">static</span> <span class="keyword">void</span> M() =&gt; Console.WriteLine(<span class="string">&quot;A&quot;</span>);
+}
+ 
+<span class="keyword">class</span> B : A
+{
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">static</span> <span class="keyword">void</span> M() =&gt; Console.WriteLine(<span class="string">&quot;B&quot;</span>);
+}</code></pre>
+<h2 id="section-2"><a id="runtime-mod">型システムの修正</a></h2>
+<p>これ、C# コンパイラーのレベルで実現しようと思うと、多分前述の「黒魔術的な構造体ジェネリクス」みたいなコードを生成することになります。
+さすがにちょっと「コンパイラーが裏でこっそり生成するコード」にするのもためらわれる(型引数の個数が変わるとかだいぶつらい)レベルです。</p>
+<p>なので、.NET ランタイムの型システム自体に手を入れる必要がありました。
+実際、型システムに手を入れる(.NET 5 以前では使えない機能になる)方向で実装を進めるそうです。</p>
+<p>C# 8.0 くらいから、こういう「古いランタイムでは動かない機能」がちらほら入ってきています。</p>
+<ul>
+<li>C# 8.0 の<a href="/study/csharp/oop/oo_interface/#dim">インターフェイスのデフォルト実装</a>: .NET Core 3.0 以降でだけ動く</li>
+<li>C# 9.0 の<a href="/study/csharp/oop/oo_polymorphism/#covariance">共変戻り値</a>: .NET 5.0 以降でだけ動く</li>
+</ul>
+<p>(ちなみに、この辺りの一定バージョン以上のランタイムでしか動かない機能については「<a href="/blog/2018/12/runtimefeature/">RuntimeFeature</a>」でちょっと書いています。)</p>
+<p>とはいえ、デフォルト実装とか共変戻り値と比べても、static virtual/abstract は実装が難しめの機能になります。</p>
+<p>結構な大事なんですが、<a href="https://github.com/migueldeicaza">Miguel de Icaza</a> (<a href="https://ja.wikipedia.org/wiki/Mono_(%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2)">Mono</a> 創設者)が<a href="https://github.com/partydonk/partydonk/">プロトタイプ</a>を作っていて、これをベースに話が進んでいるみたいです。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2021/4/">4&#x6708;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

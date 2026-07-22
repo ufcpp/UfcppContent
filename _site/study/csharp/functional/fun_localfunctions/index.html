@@ -1,0 +1,825 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30ED;&#x30FC;&#x30AB;&#x30EB;&#x95A2;&#x6570;&#x3068;&#x533F;&#x540D;&#x95A2;&#x6570; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/functional/fun_localfunctions/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">ローカル関数と匿名関数</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>C# には、関数内に関数を書く方法として、ローカル関数と匿名関数という2つの機能があります。</p>
+<p>いずれも共通して、以下のような性質があります。</p>
+<ul>
+<li>定義している関数の中でしか使えない</li>
+<li>周りの(定義している関数側にある)ローカル変数を取り込める</li>
+</ul>
+<p>ローカル関数の方ができることは多いですが、書ける場所は少なくなります。
+匿名関数はその逆で、できることに少し制限がある代わりに、どこにでも書けます。</p>
+<p>サンプル コード: <a href="https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Functional/LocalFunctions">https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Functional/LocalFunctions</a></p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="local-function"></a>ローカル関数</h2>
+<h5 class="version version7">Ver. 7</h5>
+<p>C# 7では、関数の中で別の関数を定義して使うことができます。
+関数の中でしか使えないため、<strong id="key-local">ローカル関数</strong>(local function: その場所でしか使えない関数)と呼びます。</p>
+<p>例えば以下のように書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// Main 関数の中で、ローカル関数 f を定義</span>
+        <span class="keyword">int</span> f(<span class="keyword">int</span> n) =&gt; n &gt;= <span class="number">1</span> ? n * f(n - <span class="number">1</span>) : <span class="number">1</span>;
+
+        Console.WriteLine(f(<span class="number">10</span>));
+    }
+}</code></pre>
+<p>ローカル関数(この例でいう <code>f</code>)は、定義した関数(この例でいう <code>Main</code>メソッド)の中でしか使えません。</p>
+<p>ローカル関数は、通常のメソッドでできることであれば概ね何でもできます。例えば、以下のようなこともできます。</p>
+<ul>
+<li>再帰呼び出し</li>
+<li>イテレーター</li>
+<li>非同期メソッド</li>
+</ul>
+<p>また、メソッド内に限らず、<a href="/study/csharp/structured/st_function/#sec-function-member">関数メンバー</a>ならどれの中でも定義できます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Sample
+{
+    <span class="keyword">public</span> Sample()
+    {
+        <span class="keyword">int</span> f(<span class="keyword">int</span> n) =&gt; n * n;
+    }
+
+    <span class="keyword">public</span> <span class="keyword">int</span> Property
+    {
+        <span class="keyword">get</span>
+        {
+            <span class="keyword">int</span> f(<span class="keyword">int</span> n) =&gt; n * n;
+            <span class="keyword">return</span> f(<span class="number">10</span>);
+        }
+    }
+
+    <span class="keyword">public</span> <span class="keyword">static</span> Sample <span class="keyword">operator</span>+(Sample x)
+    {
+        <span class="keyword">int</span> f(<span class="keyword">int</span> n) =&gt; n * n;
+        <span class="keyword">return</span> <span class="keyword">null</span>;
+    }
+}</code></pre>
+<h3 id="section-3"><a id="sec-generated-title-3"></a> <a id="local-function-attribute"></a>ローカル関数への属性適用</h3>
+<h5 class="version version9">Ver. 9.0</h5>
+<p>ローカル関数の追加当初、ローカル関数には属性を付けれなかったんですが、C# 9.0 でできるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Diagnostics.CodeAnalysis;
+ 
+m(<span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>);
+ 
+<span class="keyword">static</span> <span class="keyword">void</span> m(<span class="keyword">string</span>? a, <span class="keyword">string</span>? b)
+{
+    <span class="comment">// C# 9.0 からローカル関数に属性を付けれる。</span>
+    <span class="comment">// C# 8.0 の null 許容参照型がらみで特に有用。</span>
+    [<span class="keyword">return</span>: NotNullIfNotNull(<span class="string">&quot;s&quot;</span>)]
+    <span class="keyword">string</span>? toLower(<span class="keyword">string</span>? s) =&gt; s?.ToLower();
+ 
+    <span class="keyword">if</span> (a <span class="keyword">is</span> not <span class="keyword">null</span> &amp;&amp; b <span class="keyword">is</span> not <span class="keyword">null</span>)
+    {
+        <span class="comment">// a, b の null 許容性が、NotNullIfNotNull 属性のおかげで al, bl に伝搬。</span>
+        <span class="keyword">string</span> al = toLower(a);
+        <span class="keyword">string</span> bl = toLower(a);
+ 
+        <span class="comment">// a, b が非 null なので、al, bl は非 null で確定済み。改めてのチェック不要。</span>
+        Console.WriteLine(al.GetHashCode());
+        Console.WriteLine(bl.GetHashCode());
+    }
+}</code></pre>
+<p>ローカル関数が追加された C# 7.0 時点で特に属性を付けれない積極的な理由はなく、
+9.0 で入ったのは単に実装都合です。
+(メソッド本体(<code>{}</code> の中身)内で属性を使えるような文法がこれまで全くなくて、
+新たに書かないといけないコードが案外多く、
+単純な割には実装コストが高くて後回しになっていただけ。
+C# 8.0 の <a href="/study/csharp/resource/nullablereferencetype/">null 許容参照型</a>がらみでローカル関数にも属性を付けたい需要が急激に増えたので実装優先度が上がったみたいです。)</p>
+<h3 id="section-4"><a id="sec-generated-title-4"></a> <a id="local-function-usage"></a>ローカル関数の使い道</h3>
+<p>ローカル関数を使いたくなる一番の動機は、定義した関数内からだけ使えるというになるでしょう。</p>
+<p>あるメソッド<code>M</code>の中から、その<code>M</code>でしか使わないメソッドを呼び出したい場面が時々あります。
+このとき、ローカル関数を使わないと、<code>M</code>でしか使わないメソッドに<code>MInternal</code>など、あまり意味のない名前を付ける羽目になり、不格好です。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> M()
+{
+    <span class="comment">// 何らかの前準備とか</span>
+    MInternal();
+}
+
+<span class="keyword">static</span> <span class="keyword">void</span> MInternal()
+{
+    <span class="comment">// 実際の処理はこちらで</span>
+}</code></pre>
+<p>名前が不格好な程度ならそれほど大きな問題ではないんですが、
+この<code>MInternal</code>は、<code>M</code>以外のメソッドからも呼べてしまうという問題が発生します。
+こういう場合に、ローカル関数を使えば、以下のように書くことができ、呼びたい場所からだけ呼べるようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> M()
+{
+    <span class="comment">// 何らかの前準備とか</span>
+
+    <span class="keyword">void</span> m()
+    {
+        <span class="comment">// 実際の処理はこちらで</span>
+    }
+
+    m();
+}</code></pre>
+<h4 id="section-5"><a id="sec-generated-title-5"></a> <a id="iterator"></a>例1: イテレーターの引数チェック</h4>
+<p>例えば、<a href="/study/csharp/data/sp2_iterator/#iterator">イテレーター</a>の引数チェックではこういうコードが必要になりがちです。</p>
+<p>例として、標準ライブラリ中の処理を1つ自作してみましょう。<code>Enumerable</code>クラス(<code>System.Linq</code>名前空間)の<code>Where</code>メソッドをまねてみます。
+まず、単純な書き方をしてみましょう。この書き方には、コメントに書いてあるように、少し欠陥があります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Collections.Generic;
+
+<span class="keyword">static</span> <span class="keyword">class</span> MyEnumerable
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> IEnumerable&lt;T&gt; Where&lt;T&gt;(<span class="keyword">this</span> IEnumerable&lt;T&gt; source, Func&lt;T, <span class="keyword">bool</span>&gt; predicate)
+    {
+        <span class="comment">// イテレーター中のコードは、最初に列挙した(foreach などに渡す)時に初めて実行される</span>
+        <span class="comment">// このメソッドを呼んだ時点では、↓この引数チェックが働かない</span>
+        <span class="keyword">if</span> (source == <span class="keyword">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(source));
+        <span class="keyword">if</span> (predicate == <span class="keyword">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(predicate));
+
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> source)
+            <span class="keyword">if</span> (predicate(x))
+                <span class="keyword">yield</span> <span class="keyword">return</span> x;
+    }
+}</code></pre>
+<p>コメント中に「メソッドを呼んだ時点では引数チェックが働かない」とありますが、使う側のコードも書いてみると問題がよりはっきりするでしょう。
+以下のように、期待されるのと異なるタイミングで例外が起きます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> Iterator1;
+<span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Collections.Generic;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        IEnumerable&lt;<span class="keyword">string</span>&gt; input = <span class="keyword">null</span>;
+
+        <span class="comment">// input が null なので例外を投げてほしい</span>
+        <span class="comment">// 多くの人がそれを期待する</span>
+        <span class="keyword">var</span> output = input.Where(x =&gt; x.Length &lt; <span class="number">10</span>);
+
+        Console.WriteLine(<span class="string">&quot;ここが表示されるとおかしい&quot;</span>); <span class="comment">// でも表示される</span>
+
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> output) <span class="comment">// 実際に例外が出るのはこの行</span>
+        {
+            Console.WriteLine(x);
+        }
+    }
+}</code></pre>
+<p>そこで、よく以下のような書き方をします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Collections.Generic;
+
+<span class="keyword">static</span> <span class="keyword">class</span> MyEnumerable
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> IEnumerable&lt;T&gt; Where&lt;T&gt;(<span class="keyword">this</span> IEnumerable&lt;T&gt; source, Func&lt;T, <span class="keyword">bool</span>&gt; predicate)
+    {
+        <span class="comment">// イテレーターではなくなった(イテレーターなのは WhereInternal の方)ので、ちゃんと呼ばれた時点でチェックが走る</span>
+        <span class="keyword">if</span> (source == <span class="keyword">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(source));
+        <span class="keyword">if</span> (predicate == <span class="keyword">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(predicate));
+
+        <span class="keyword">return</span> WhereInternal(source, predicate);
+    }
+
+    <span class="keyword">private</span> <span class="keyword">static</span> IEnumerable&lt;T&gt; WhereInternal&lt;T&gt;(IEnumerable&lt;T&gt; source, Func&lt;T, <span class="keyword">bool</span>&gt; predicate)
+    {
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> source)
+            <span class="keyword">if</span> (predicate(x))
+                <span class="keyword">yield</span> <span class="keyword">return</span> x;
+    }
+}</code></pre>
+<p>こういう場面こそ、ローカル関数の出番です。
+以下のように書き直すことができます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Collections.Generic;
+
+<span class="keyword">static</span> <span class="keyword">class</span> MyEnumerable
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> IEnumerable&lt;T&gt; Where&lt;T&gt;(<span class="keyword">this</span> IEnumerable&lt;T&gt; source, Func&lt;T, <span class="keyword">bool</span>&gt; predicate)
+    {
+        <span class="comment">// イテレーターではなくなった(イテレーターなのは WhereInternal の方)ので、ちゃんと呼ばれた時点でチェックが走る</span>
+        <span class="keyword">if</span> (source == <span class="keyword">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(source));
+        <span class="keyword">if</span> (predicate == <span class="keyword">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(predicate));
+
+        IEnumerable&lt;T&gt; f()
+        {
+            <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> source)
+                <span class="keyword">if</span> (predicate(x))
+                    <span class="keyword">yield</span> <span class="keyword">return</span> x;
+        }
+
+        <span class="keyword">return</span> f();
+    }
+}</code></pre>
+<h4 id="toarray"><a id="sec-generated-title-6"></a> <a id="ToArray"></a>例2: イテレーターをToArrayしてから返す</h4>
+<p><a href="/study/csharp/data/sp2_iterator/#iterator">イテレーター</a>を使って書きたいものの、
+遅延実行(foreachで列挙されて初めて実行される)ではなく即座に実行するために、<code>ToArray</code>メソッド(<code>System.Enumerable</code>クラスの拡張メソッド)を掛けてから返したい場合があります。</p>
+<p>この場合も、1つのメソッドからしか呼ばれないメソッドが作られがちです。
+例えば以下のようなコードになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Collections.Generic;
+<span class="keyword">using</span> System.Linq;
+
+<span class="keyword">static</span> <span class="keyword">class</span> MyEnumerable
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> U[] SelectToArray&lt;T, U&gt;(<span class="keyword">this</span> T[] array, Func&lt;T, U&gt; selector)
+    {
+        <span class="keyword">return</span> Select(array, selector).ToArray();
+    }
+
+    <span class="comment">// SelectToArray からしか呼ばれない</span>
+    <span class="keyword">private</span> <span class="keyword">static</span> IEnumerable&lt;U&gt; Select&lt;T, U&gt;(IEnumerable&lt;T&gt; source, Func&lt;T, U&gt; selector)
+    {
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> source)
+            <span class="keyword">yield</span> <span class="keyword">return</span> selector(x);
+    }
+}</code></pre>
+<p>これも、以下のように書き直せます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Collections.Generic;
+<span class="keyword">using</span> System.Linq;
+
+<span class="keyword">static</span> <span class="keyword">class</span> MyEnumerable
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> U[] SelectToArray&lt;T, U&gt;(<span class="keyword">this</span> T[] array, Func&lt;T, U&gt; selector)
+    {
+        IEnumerable&lt;U&gt; inner()
+        {
+            <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> array)
+                <span class="keyword">yield</span> <span class="keyword">return</span> selector(x);
+        }
+
+        <span class="keyword">return</span> inner().ToArray();
+    }
+}</code></pre>
+<h4 id="section-6"><a id="sec-generated-title-7"></a> <a id="async-task"></a>例3: 非同期メソッドのキャッシュ</h4>
+<p>最後の例は、非同期メソッドで作った<code>Task</code>のキャッシュです。</p>
+<p>非同期メソッドを呼び出すと、呼び出すたびに<code>Task</code>クラス(<code>System.Threading.Tasks</code>名前空間)のインスタンスが作られます。
+しかし、これを、1度だけ呼んで、2度目以降はキャッシュして持っている<code>Task</code>を返したいことがあります。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">async</span> Task MainAsync()
+{
+    <span class="comment">// 何度か呼ぶけども、キャッシュされているので通信は1回きり</span>
+    Console.WriteLine(<span class="keyword">await</span> LoadAsync());
+    Console.WriteLine(<span class="keyword">await</span> LoadAsync());
+    Console.WriteLine(<span class="keyword">await</span> LoadAsync());
+}
+
+<span class="keyword">static</span> Task&lt;<span class="keyword">string</span>&gt; LoadAsync()
+{
+    _loadCache = _loadCache ?? LoadAsyncInternal();
+    <span class="keyword">return</span> _loadCache;
+}
+<span class="keyword">static</span> Task&lt;<span class="keyword">string</span>&gt; _loadCache;
+
+<span class="keyword">static</span> <span class="keyword">async</span> Task&lt;<span class="keyword">string</span>&gt; LoadAsyncInternal()
+{
+    <span class="keyword">var</span> c = <span class="keyword">new</span> HttpClient();
+    <span class="keyword">var</span> res = <span class="keyword">await</span> c.GetAsync(<span class="string">&quot;http://ufcpp.net&quot;</span>);
+    <span class="keyword">var</span> content = <span class="keyword">await</span> res.Content.ReadAsStringAsync();
+
+    <span class="keyword">return</span> Regex.Match(content, <span class="stringCSharpVerbatim">@&quot;\&lt;title\&gt;(.*?)\&lt;&quot;</span>).Groups[<span class="number">1</span>].Value;
+}</code></pre>
+<p>これも、以下のように書き直せます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> Task&lt;<span class="keyword">string</span>&gt; LoadAsync()
+{
+    <span class="keyword">async</span> Task&lt;<span class="keyword">string</span>&gt; inner()
+    {
+        <span class="keyword">var</span> c = <span class="keyword">new</span> HttpClient();
+        <span class="keyword">var</span> res = <span class="keyword">await</span> c.GetAsync(<span class="string">&quot;http://ufcpp.net&quot;</span>);
+        <span class="keyword">var</span> content = <span class="keyword">await</span> res.Content.ReadAsStringAsync();
+
+        <span class="keyword">return</span> Regex.Match(content, <span class="stringCSharpVerbatim">@&quot;\&lt;title\&gt;(.*?)\&lt;&quot;</span>).Groups[<span class="number">1</span>].Value;
+    }
+
+    _loadCache = _loadCache ?? inner();
+    <span class="keyword">return</span> _loadCache;
+}
+<span class="keyword">static</span> Task&lt;<span class="keyword">string</span>&gt; _loadCache;</code></pre>
+<h2 id="section-7"><a id="sec-generated-title-8"></a> <a id="anonymous-function"></a>匿名関数 (ラムダ式)</h2>
+<h5 class="version version2">Ver. 2.0</h5>
+<h5 class="version version3">Ver. 3.0</h5>
+<p>C# 2.0では<a href="/study/csharp/functional/sp_delegate/#anonymous-method">匿名メソッド式</a>、C# 3.0では<a href="/study/csharp/functional/sp_delegate/#lambda">ラムダ式</a>という構文が入り、これらを合わせて<strong id="key-anonymous" class="keyword">匿名関数</strong>と呼びます。</p>
+<p>(ラムダ式は匿名メソッド式のほぼ上位互換です。
+C#開発者も、「ラムダ式が最初からあれば、匿名メソッド式の構文はC#には不要だった」と言っています。
+そのため、匿名メソッド式はC# 2.0時代の互換性を保つためだけの機能だと考えて差し支えないです。
+こういう背景から、匿名関数という名前が使われることはあまりなく、
+<strong id="key-lambda" class="keyword">ラムダ式</strong>(lambda expression)という言葉の方がよく目にすることになると思います。
+本節でも、以下の説明はラムダ式でのみ行います。)</p>
+<p>ラムダ式は、以下の例のように、引数リストと関数本体を <code>=&gt;</code>でつないで書きます。</p>
+<pre><code class="language-csharp">(<span class="keyword">int</span> x) =&gt;
+{
+    <span class="keyword">var</span> sum = <span class="number">0</span>;
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; x; i++)
+        sum += i;
+    <span class="keyword">return</span> sum;
+}</code></pre>
+<p>この例を見ての通り、関数名がありません。これが「匿名」と呼ばれる理由です。</p>
+<p><code>=&gt;</code> は、矢印のように見えることからアロー演算子(arrow operator)と呼ばれたり、
+その矢印を「行先」に見立ててgoes to演算子と呼ばれたりします。
+(実際、<code>x =&gt; 2 * x</code>を x goes to 2x (xが2xに行く)と読むと、英語的に案外しっくり来るそうです。)</p>
+<p><code>=&gt;</code> の後ろの関数本体の部分は、式が1つだけの場合、<code>{}</code>と<code>return</code>を省略して、以下のように書くことができます。</p>
+<pre><code class="language-csharp">(<span class="keyword">int</span> x) =&gt; x * x</code></pre>
+<p>また、<code>=&gt;</code>の前の引数リストでは、引数の型を推論できる場合には型を省略できます。
+このとき、引数が1つだけであれば、<code>()</code>も省略できます。</p>
+<pre><code class="language-csharp">(x, y) =&gt; x * y</code></pre>
+<pre><code class="language-csharp">x =&gt; x * x</code></pre>
+<p>例えば、以下のような使い方ができます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Linq;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> input = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> };
+        <span class="keyword">var</span> output = input
+            .Where(n =&gt; n &gt; <span class="number">3</span>)
+            .Select(n =&gt; n * n);
+
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> output)
+        {
+            Console.WriteLine(x);
+        }
+    }
+}</code></pre>
+<p>強調表示している部分が匿名関数です。
+匿名関数の引数(<code>n</code>)の型は、渡す先（<code>Where</code>や<code>Select</code>)から推論されます。</p>
+<h2 id="section-8"><a id="sec-generated-title-9"></a> <a id="pros-cons"></a>ローカル関数と匿名関数のそれぞれの利点</h2>
+<p>前節の例のように、匿名関数は式(この例では<code>Where</code>メソッドや<code>Select</code>メソッドの引数)の中に書くことができます。
+ここがローカル関数との最大の違いになります。
+ローカル関数の場合は、関数(この場合<code>Main</code>メソッド)直下にしか書けません。</p>
+<p>匿名関数はどこにでも書けるという利点がある一方で、以下のような制限があります。</p>
+<ul>
+<li>再帰呼び出しが素直にはできない</li>
+<li>イテレーターにできない</li>
+<li>ジェネリックにできない</li>
+<li>引数の既定値を持てない</li>
+</ul>
+<pre><code class="language-csharp"><span class="comment">// ローカル関数は素直に再帰を書ける</span>
+<span class="keyword">int</span> f1(<span class="keyword">int</span> n) =&gt; n &gt;= <span class="number">1</span> ? n * f1(n - <span class="number">1</span>) : <span class="number">1</span>;
+
+<span class="comment">// 匿名関数はひと手間必要</span>
+Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; f2 = <span class="keyword">null</span>;
+f2 = n =&gt; n &gt;= <span class="number">1</span> ? n * f2(n - <span class="number">1</span>) : <span class="number">1</span>;</code></pre>
+<pre><code class="language-csharp"><span class="comment">// ローカル関数ならイテレーターにできる</span>
+IEnumerable&lt;<span class="keyword">int</span>&gt; g1(IEnumerable&lt;<span class="keyword">int</span>&gt; items)
+{
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> items)
+        <span class="keyword">yield</span> <span class="keyword">return</span> <span class="number">2</span> * x;
+}
+
+<span class="comment">// 匿名関数ではコンパイル エラー</span>
+Func&lt;IEnumerable&lt;<span class="keyword">int</span>&gt;, IEnumerable&lt;<span class="keyword">int</span>&gt;&gt; g2 = items =&gt;
+{
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> items)
+        <span class="keyword">yield</span> <span class="keyword">return</span> <span class="number">2</span> * x;
+}</code></pre>
+<pre><code class="language-csharp"><span class="comment">// ローカル関数ならジェネリックに使える</span>
+<span class="keyword">bool</span> eq1&lt;T&gt;(T x, T y) <span class="keyword">where</span> T : IComparable&lt;T&gt; =&gt; x.CompareTo(y) == <span class="number">0</span>;
+Console.WriteLine(eq1(<span class="number">1</span>, <span class="number">2</span>));
+Console.WriteLine(eq1(<span class="string">&quot;aaa&quot;</span>, <span class="string">&quot;aaa&quot;</span>));
+
+<span class="comment">// 匿名関数はジェネリックにならない</span>
+<span class="comment">// Func&lt;T, T, bool&gt; の時点でコンパイル エラー</span>
+<span class="comment">// where 制約を付ける構文もない</span>
+Func&lt;T, T, <span class="keyword">bool</span>&gt; eq2 = (x, y) =&gt; x.CompareTo(y) == <span class="number">0</span>;
+<span class="comment">// 当然、呼べない</span>
+Console.WriteLine(eq2(<span class="number">1</span>, <span class="number">2</span>));
+Console.WriteLine(eq2(<span class="string">&quot;aaa&quot;</span>, <span class="string">&quot;aaa&quot;</span>));</code></pre>
+<pre><code class="language-csharp"><span class="comment">// ローカル関数の引数には既定値を与えられる</span>
+<span class="keyword">int</span> f1(<span class="keyword">int</span> n = <span class="number">0</span>) =&gt; <span class="number">2</span> * n;
+Console.WriteLine(f1());
+Console.WriteLine(f1(<span class="number">5</span>));
+
+<span class="comment">// 匿名関数は無理</span>
+<span class="comment">// この時点でコンパイル エラー</span>
+Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; f2 = (<span class="keyword">int</span> n = <span class="number">0</span>) =&gt; <span class="number">2</span> * n;
+<span class="comment">// 当然、呼べない</span>
+Console.WriteLine(f2());
+Console.WriteLine(f2(<span class="number">5</span>));</code></pre>
+<p>すなわち、以下のことが言えます。</p>
+<ul>
+<li>ローカル関数は書ける場所が限られるものの、機能的には通常のメソッドと同程度に何でも書ける</li>
+<li>逆に、匿名関数はどこにでも書ける代わりに、いくつか機能的に制限がある</li>
+</ul>
+<p>また、詳しくは「<a href="/study/csharp/functional/sp2_anonymousmethod/#closure-local-function">[雑記] 匿名関数のコンパイル結果</a>」で説明しますが、
+多少、実行性能にも差があります。
+呼び出し方次第ではありますが、ローカル関数の方が高速になる場合があります。</p>
+<h3 id="section-9"><a id="sec-generated-title-10"></a> <a id="background-local-function"></a>余談: 経緯</h3>
+<p>ちなみに、C# 7でローカル関数が導入されるに至った経緯としては、匿名関数の制限を緩和してほしいという要望から始まっています。
+すなわち、前述の、「匿名関数はイテレーター化できない、再帰呼び出しが大変」という問題の解決策がローカル関数です。</p>
+<p>書ける場所にも違いがあるので、この要望が完全に満たされたわけではありません。
+しかし、「イテレーター化」あるいは「再帰呼び出し」をしたい場面を改めて考えてみたところ、
+「別に式中に書きたいわけじゃない」、「ローカル関数で十分」、「ローカル関数の方が実行性能的にお得になる場面もある」となったみたいです。</p>
+<h2 id="section-10"><a id="sec-generated-title-11"></a> <a id="capture-local"></a>ローカル変数の捕獲</h2>
+<p>ローカル関数でも匿名関数でも、周りの(定義している関数内の)ローカル変数や引数を取り込んで使うことができます。
+例えば以下のようなコードが書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Linq;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// ユーザーからの入力をローカル変数に記録</span>
+        <span class="keyword">var</span> m = <span class="keyword">int</span>.Parse(Console.ReadLine());
+        <span class="keyword">var</span> n = <span class="keyword">int</span>.Parse(Console.ReadLine());
+
+        <span class="keyword">var</span> input = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span> };
+
+        <span class="comment">// ユーザーの入力 m よりも大きいか判定</span>
+        <span class="keyword">bool</span> filter(<span class="keyword">int</span> x) =&gt; x &gt; m;
+
+        <span class="keyword">var</span> output = input
+            .Where(filter)
+            .Select(x =&gt; n * x); <span class="comment">// ユーザーの入力 n を掛ける</span>
+
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> output)
+        {
+            Console.WriteLine(x);
+        }
+    }
+}</code></pre>
+<p>こういう処理を、ローカル変数の捕獲(capture)と言います(カタカナ言葉で「キャプチャする」ともよく言います)。
+また、ローカル変数を捕獲しているローカル関数や匿名関数を<strong id="closure" class="keyword">クロージャ</strong>(closure: 囲い込み)と呼んだりします。</p>
+<p>捕獲したローカル変数は書き換えることもできます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> x = <span class="number">1</span>;
+
+        <span class="comment">// ローカル関数内で変数xを書き換え</span>
+        <span class="keyword">void</span> f(<span class="keyword">int</span> n) =&gt; x = n;
+
+        Console.WriteLine(x); <span class="comment">// 1</span>
+
+        f(<span class="number">2</span>);
+        Console.WriteLine(x); <span class="comment">// 2</span>
+    }
+}</code></pre>
+<p>注意点として、詳しくは「<a href="/study/csharp/functional/sp2_anonymousmethod/#closure">[雑記] 匿名関数のコンパイル結果</a>」で説明しますが、
+ローカル変数の取り込みには少々ペナルティがかかります。
+実行性能への要求が極めて高い場合には、避けれるなら避けるべきです
+(ペナルティは小さいので、ボトルネックになっていない場所でまで無理に頑張る必要はありません)。</p>
+<h2 id="section-11"><a id="sec-generated-title-12"></a> <a id="avoid-capture"></a>ローカル変数捕獲の禁止</h2>
+<p>前節での説明の通り、外部の変数を捕獲してしまうと少々ペナルティが掛かります。
+意図してやっているのならいいんですが、無自覚にやってしまうのは避けたいです。</p>
+<p>そこで、C# 8.0 では静的ローカル関数、C# 9.0 では静的匿名関数という仕様が入りました。</p>
+<h3 id="section-12"><a id="sec-generated-title-13"></a> <a id="static-local-function"></a>静的ローカル関数</h3>
+<h5 class="version version8">Ver. 8.0</h5>
+<p>C# 8.0 から、外部の変数を捕獲しないことを明示するため、
+ローカル関数に <code>static</code> 修飾を付けれるようになりました。
+この機能を<strong id="key-static-local-function" class="keyword">静的ローカル関数</strong>(static local function)と呼びます。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> M(<span class="keyword">int</span> a)
+{
+    <span class="comment">// 外部の変数(引数)を捕獲(クロージャ化)。</span>
+    <span class="keyword">int</span> f(<span class="keyword">int</span> x) =&gt; a * x;
+ 
+    <span class="comment">// static を付けて、クロージャ化を禁止。</span>
+    <span class="comment">// a を使っているところでコンパイル エラーになる。</span>
+    <span class="keyword">static</span> <span class="keyword">int</span> g(<span class="keyword">int</span> x) =&gt; a * x;
+}</code></pre>
+<p>「<a href="/study/csharp/functional/sp2_anonymousmethod/#compile_anonymous">匿名関数のコンパイル結果</a>」で説明していますが、
+こういう何も捕獲していないローカル関数は、静的メソッドに展開されます。
+なので、<code>static</code> 修飾子を使って、静的ローカル関数と呼びます。</p>
+<p>ちなみに、「静的」の名前が示す通り、インスタンス メンバーの参照もできません。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> LocalFunction
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> StaticProperty { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> InstanceProperty { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+ 
+    <span class="keyword">public</span> <span class="keyword">void</span> M()
+    {
+        <span class="comment">// これは OK。</span>
+        <span class="keyword">static</span> <span class="keyword">int</span> f1() =&gt; StaticProperty;
+ 
+        <span class="comment">// これはコンパイル エラー。</span>
+        <span class="keyword">static</span> <span class="keyword">int</span> f2() =&gt; InstanceProperty;
+    }
+}</code></pre>
+<p>ちなみに、定数や <code>nameof</code> であれば外側のスコープにあるものに触ることができます。
+例えば以下のコードはコンパイルできます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">const</span> <span class="keyword">string</span> s = <span class="string">&quot;bc&quot;</span>;
+<span class="keyword">int</span> a = <span class="number">0</span>;
+ 
+<span class="comment">// a を使っているように見えて、nameof(a) は単に &quot;a&quot; に展開されるのでセーフ。</span>
+<span class="keyword">static</span> <span class="keyword">string</span> m() =&gt; nameof(a) + s;
+ 
+Console.WriteLine(m());</code></pre>
+<h3 id="section-13"><a id="sec-generated-title-14"></a> <a id="static-anonymous-function"></a>静的匿名関数</h3>
+<h5 class="version version9">Ver. 9.0</h5>
+<p>同様に、C# 9.0 では匿名関数に対しても <code>static</code> 修飾子を付けれるようになりました。
+意味的には<a href="#static-local-function">静的ローカル関数</a>と全く同じで、「外部の変数を捕獲しない」という宣言になります。
+ラムダ式、匿名メソッド式ともに、式の前に <code>static</code> を付けます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">int</span> a = <span class="number">0</span>;
+ 
+<span class="comment">// 以下の2行は自身の引数しか使っていないので static にしても怒られない。</span>
+Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; ok1 = <span class="keyword">static</span> x =&gt; x * x;
+Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; ok2 = <span class="keyword">static</span> <span class="keyword">delegate</span> (<span class="keyword">int</span> x) { <span class="keyword">return</span> x * x; };
+ 
+<span class="comment">// 以下の2行は外側のローカル変数 a を使ってしまったのでコンパイル エラー。</span>
+Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; ng1 = <span class="keyword">static</span> x =&gt; a * x;
+Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; ng2 = <span class="keyword">static</span> <span class="keyword">delegate</span> (<span class="keyword">int</span> x) { <span class="keyword">return</span> a * x; };</code></pre>
+<p>静的ローカル関数がある時点で匿名関数でも同様のことができてしかるべきもので、
+ただちょっと構文解析が大変なので後回しになっていたものです。
+順当に「1バージョン遅れで実装」となりました。</p>
+<h3 id="section-14"><a id="sec-generated-title-15"></a> <a id="not-pure"></a>注意: 純粋関数(副作用なしのメソッド)ではない</h3>
+<p>静的ローカル関数にしても静的匿名関数にしても、ローカル変数の捕獲(によるパフォーマンスのペナルティ)は避けることができますが、静的フィールドの読み書きは普通にできます。
+例えば以下のコードは有効な C# 8.0 コードになります。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> StaticLocalFunction
+{
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> _count;
+ 
+    <span class="keyword">public</span> <span class="keyword">void</span> M()
+    {
+        <span class="comment">// ローカル関数内から外の変数を読み書きしてる。</span>
+        <span class="comment">// _count が static なのでコンパイル可能。</span>
+        <span class="keyword">static</span> <span class="keyword">int</span> local() =&gt; ++_count;
+ 
+        System.Console.WriteLine(local());
+    }
+}</code></pre>
+<p><code>static</code> を付けてもいわゆる純粋関数(pure function、同じ引数で呼べば必ず同じ戻り値が得られる)にはならないので注意してください。</p>
+<h2 id="section-15"><a id="sec-generated-title-16"></a> <a id="shadowing"></a>変数のシャドーイング</h2>
+<h5 class="version version8">Ver. 8.0</h5>
+<p>前節の静的ローカル関数に伴って新たに認められた機能に、変数の<strong id="key-shadowing" class="keyword">シャドーイング</strong>(shadowing)というものがあります。
+ローカル関数内で、外側にすでに存在している変数や引数と同じ名前で、
+新たに変数・引数を定義できる機能です。
+外側のものを「影で覆い隠す」という意味で shadowing と呼びます。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> M(<span class="keyword">int</span> a)
+{
+    <span class="keyword">int</span> x;
+ 
+    <span class="keyword">int</span> f(<span class="keyword">int</span> a) <span class="comment">// この a は M(int a) の a とは別物</span>
+    {
+        <span class="keyword">var</span> x = a; <span class="comment">// この x も外側の x とは別物</span>
+        <span class="keyword">return</span> x;
+    }
+}</code></pre>
+<p>C# 8.0 以降であれば、普通のローカル関数でも使えます。
+ただ、外側の変数を捕獲したものなのか、ローカル関数側でシャドーイングしたものなのかの区別がわかりにくくなるという問題があるので、静的ローカル関数と同時(C# 8.0)に認められました。
+静的ローカル関数でだけ認めるのも気持ち悪く、普通のローカル関数でも認めるようにしたそうです。</p>
+<h2 id="section-16"><a id="sec-generated-title-17"></a> <a id="lambda-csharp10"></a>ラムダ式の戻り値の明示と属性</h2>
+<h5 class="version version10">Ver. 10</h5>
+<p>C# 10.0 で、ラムダ式の戻り値を明示できるようになりました。
+また、属性も付けられるようになりました。
+例えば以下のようなコードが書けます。</p>
+<pre><code class="language-csharp">Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>, <span class="keyword">int</span>&gt; f =
+    [A]
+    <span class="keyword">int</span> (<span class="keyword">int</span> x, <span class="keyword">int</span> y)
+    =&gt; x + y;
+
+<span class="keyword">class</span> AAttribute : Attribute { }</code></pre>
+<p>これだけ見るとあまり使い道がなさそうな機能ですが、
+同時に入る<a href="/study/csharp/functional/sp_delegate/#natural-type">デリゲートの自然な型決定</a>と併せるとそれなりに意味を持ちます。
+「<a href="/study/csharp/functional/sp_delegate/#natural-type">自然な型</a>」の方でも書いていますが、
+.NET 6.0 (C# 10.0 と同世代)の Web アプリ テンプレートで作られるコードは以下のようになっています。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> builder = WebApplication.CreateBuilder(args);
+<span class="keyword">var</span> app = builder.Build();
+
+app.MapGet(<span class="string">&quot;/&quot;</span>, () =&gt; <span class="string">&quot;Hello World!&quot;</span>);
+
+app.Run();</code></pre>
+<p><code>MapGet</code> にラムダ式を渡すことで Web API を簡潔に書けるようになりました。
+この書き方がそのまま大規模開発に向いているかというと微妙ですが、
+少なくとも入門用のコードとしてはこれくらいの簡潔さが求められています。</p>
+<p>この例では、HTTP GET で <code>/</code> (Web サイトのルート)にアクセスすると、<code>Hellow World!</code> という文字列を返します。
+ここで、<code>/</code> アクセス時に色々と凝ったことをしようと思うと、属性や戻り値の型を指定したくなります。</p>
+<h3 id="section-17"><a id="sec-generated-title-18"></a> <a id="lambda-explicit-return"></a>戻り値の型の明示</h3>
+<p>ラムダ式に戻り値の型を明示できるようになりました。
+戻り値の型は、引数の <code>()</code> の前に書きます。
+例えば以下のような書き方ができます。</p>
+<pre><code class="language-csharp"><span class="comment">// 新文法。</span>
+<span class="comment">// ラムダ式に戻り値の型を明示。</span>
+<span class="comment">// (引数も明示。)</span>
+Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; f1 = <span class="keyword">int</span> (<span class="keyword">int</span> x) =&gt; x;
+
+<span class="comment">// 元々の文法。</span>
+<span class="comment">// 引数の型の方を明示。</span>
+Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; f2 = (<span class="keyword">int</span> x) =&gt; x;
+
+<span class="comment">// 新文法。</span>
+<span class="comment">// 戻り値の型だけ明示。 () が必要。</span>
+Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; f3 = <span class="keyword">int</span> (x) =&gt; x;
+
+<span class="comment">// これはエラーになる。</span>
+<span class="comment">// int が引数に掛かっているのか戻り値に掛かっているのか不明瞭。</span>
+Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; f4 = <span class="keyword">int</span> x =&gt; x;</code></pre>
+<p>たとえ<a href="/study/csharp/functional/sp_delegate/#natural-type">自然な型決定</a>と組み合わせたとしても、
+たいていの場合は引数だけ型を明示すれば戻り値の型は決定できたりするので、
+必要になる場面はそう多くないかもしれません。
+以下のようなコード(右辺のラムダ式の部分は C# 9.0 でも有効)でも問題なく自然な型決定ができます。</p>
+<pre><code class="language-csharp"><span class="comment">// 引数の int から、戻り値の型が int に決定する。</span>
+<span class="comment">// その後、ラムダ式の型は Func&lt;int, int&gt; として決定できる。</span>
+<span class="keyword">var</span> f = (<span class="keyword">int</span> x) =&gt; x;</code></pre>
+<p>(おそらく、後述する属性のついでで実装された(ついででやれたから手間が掛かっていない)機能だと思われます。)</p>
+<p>戻り値の型の明示が有効なのは、
+例えば、
+ラムダ式の中身自体がターゲット型推論に依存している場合などです。
+サンプル コードとして<a href="/study/csharp/cheatsheet/ap_ver9/#target-typed-conditional">条件演算子のターゲット型推論</a>を使いますが、以下のような式は後者のみ有効になります。</p>
+<pre><code class="language-csharp"><span class="comment">// 条件演算子だけでは int と null の共通型が決定できなくて、戻り値の型が決まらない。</span>
+<span class="comment">// (条件演算子の後方互換性のために掛かってる制限。)</span>
+<span class="keyword">var</span> f1 = (<span class="keyword">bool</span> x, <span class="keyword">int</span> y) =&gt; x ? y : <span class="keyword">null</span>;
+
+<span class="comment">// 一方で、これなら、戻り値の型からのターゲット型推論で条件演算子を書ける。</span>
+<span class="comment">// f2 の自然な型決定もできるようになる (Func&lt;bool, int, int?&gt; になる)。</span>
+<span class="keyword">var</span> f2 = <span class="keyword">int</span>? (<span class="keyword">bool</span> x, <span class="keyword">int</span> y) =&gt; x ? y : <span class="keyword">null</span>;</code></pre>
+<p>ちなみに、<a href="#static-local-function">静的匿名関数</a>の <code>static</code> と併用する場合、戻り値の型を書く場所は <code>static</code> の後ろです。
+(通常のメソッドと同じ。)</p>
+<pre><code class="language-csharp"><span class="comment">// 戻り値の型を各場所は static の後ろ。</span>
+<span class="keyword">var</span> f = <span class="keyword">static</span> <span class="keyword">int</span> (<span class="keyword">int</span> x) =&gt; x;</code></pre>
+<p>また、明示した戻り値の型からラムダ式の引数の型を推論することはできません。</p>
+<pre><code class="language-csharp"><span class="comment">// 戻り値の型から引数の型の推論はできない。</span>
+<span class="comment">// 結果的に、Func&lt;T, int&gt; への代入はできても、自然な型決定(var などへの代入)はできない。</span>
+<span class="keyword">var</span> f6 = <span class="keyword">int</span> (x) =&gt; x;</code></pre>
+<h3 id="section-18"><a id="sec-generated-title-19"></a> <a id="lambda-attribute"></a>属性</h3>
+<p>同じくラムダ式に属性を付けれるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> f =
+    [A]
+    [<span class="keyword">return</span>: B]
+    <span class="keyword">static</span> <span class="keyword">int</span> ([C] <span class="keyword">int</span> x)
+    =&gt; x;
+
+[AttributeUsage(AttributeTargets.Method)]
+<span class="keyword">class</span> AAttribute : Attribute { }
+
+[AttributeUsage(AttributeTargets.ReturnValue)]
+<span class="keyword">class</span> BAttribute : Attribute { }
+
+[AttributeUsage(AttributeTargets.Parameter)]
+<span class="keyword">class</span> CAttribute : Attribute { }</code></pre>
+<p>属性を書く位置は通常のメソッドと同じです。
+ラムダ式(メソッド)自体、引数、戻り値が対象になります。
+また、(<a href="#static-local-function">静的匿名関数</a>と併用するなら)ラムダ式全体(メソッド全体)や戻り値に属性を付けたい場合は <code>static</code> よりも前に書きます。</p>
+<p>これも、 .NET 6 の新しい Web テンプレートで使います。
+<code>MapGet</code> などのメソッドでは、引数などに属性を付けて Web API の挙動をカスタマイズできます。
+例えば以下のような書き方ができます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> Microsoft.AspNetCore.Mvc;
+
+<span class="keyword">var</span> builder = WebApplication.CreateBuilder(args);
+
+<span class="comment">// テンプレに1行を追加。DI 用。</span>
+builder.Services.AddSingleton&lt;Counter&gt;();
+
+<span class="keyword">var</span> app = builder.Build();
+
+<span class="comment">// テンプレを1行書き換え。引数を DI で受け取ったり、クエリ文字列から受け取ったり。</span>
+<span class="comment">// counter: ページをリロードするたびに +1。</span>
+<span class="comment">// value: クエリ文字列で数値を指定。</span>
+<span class="comment">// その2つの値から何らかの計算して返す。</span>
+app.MapGet(<span class="string">&quot;/&quot;</span>, ([FromServices] Counter counter, [FromQuery] <span class="keyword">int</span>? value) =&gt; counter.Count * (value ?? <span class="number">1</span>));
+
+app.Run();
+
+<span class="comment">// テンプレに1クラス追加。上記 DI で渡すデモ用の型。</span>
+<span class="keyword">class</span> Counter
+{
+    <span class="keyword">private</span> <span class="keyword">int</span> _count;
+    <span class="keyword">public</span> <span class="keyword">int</span> Count { <span class="keyword">get</span> =&gt; _count++; }
+}</code></pre>
+<h2 id="params"><a id="sec-generated-title-20"></a> <a id="lambda-default">ラムダ式のオプション引数(既定値)と params 引数</a></h2>
+<h5 class="version version12">Ver. 12</h5>
+<p>C# 12 でラムダ式の引数に<a href="/study/csharp/structured/sp4_optional/#optional">オプション引数</a>にできる(既定値を与えられる)ようになりました。
+また、<a href="/study/csharp/structured/sp_params/">params 引数</a>も使えるようになりました。</p>
+<pre><code class="language-csharp"><span class="comment">// オプション引数(既定値値指定)。</span>
+<span class="keyword">var</span> f1 = (<span class="keyword">int</span> x = <span class="number">1</span>) =&gt; <span class="number">0</span>;
+
+<span class="comment">// params 引数。</span>
+<span class="keyword">var</span> f2 = (<span class="keyword">params</span> <span class="keyword">int</span>[] x) =&gt; <span class="number">0</span>;
+
+<span class="comment">// 混在も OK。</span>
+<span class="keyword">var</span> f3 = (<span class="keyword">int</span> x = <span class="number">1</span>, <span class="keyword">params</span> <span class="keyword">int</span>[] y) =&gt; <span class="number">0</span>;</code></pre>
+<p>前節の<a href="#lambda-csharp10">戻り値の型の指定や属性付与</a>と同様、
+<a href="/study/csharp/functional/sp_delegate/#natural-type">デリゲートの自然な型</a>との併用で使ったり、
+リフレクションを使って情報を取得するために使います。</p>
+<p>自然な型決定(要するに <code>var</code> への代入)した場合、
+匿名デリゲート型が生成されて、既定値や params の情報が残ります。
+例えば <code>(int x = 1) =&gt; x</code> であれば <code>delegate int F(int x = 1)</code> 相当の匿名デリゲート型が生成されます。</p>
+<pre><code class="language-csharp"><span class="comment">// 引数にデフォルト値指定。</span>
+<span class="comment">// delegate int &lt;anonymous&gt;(int x = 1); みたいな匿名デリゲート型になる。</span>
+<span class="keyword">var</span> f1 = (<span class="keyword">int</span> x = <span class="number">1</span>) =&gt; <span class="number">0</span>;
+
+f1(); <span class="comment">// f1(1) と同じ。</span>
+
+<span class="comment">// params 引数。</span>
+<span class="comment">// delegate int &lt;anonymous&gt;(params int[] x); みたいな匿名デリゲート型になる。</span>
+<span class="keyword">var</span> f2 = (<span class="keyword">params</span> <span class="keyword">int</span>[] x) =&gt; <span class="number">0</span>;
+
+f2(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>); <span class="comment">// f2(new int[] { 1, 2, 3 }) と同じ。</span></code></pre>
+<p>一方で、既定値違い、params 違いのデリゲート型への代入もできてしまいます。
+この場合、既定値などの情報は消えます。
+(ちょっと罠なので、一応、警告はしてくれます。)</p>
+<pre><code class="language-csharp"><span class="comment">// 既定値の情報がないデリゲート型に代入。</span>
+Action&lt;<span class="keyword">int</span>&gt; f1 = (<span class="keyword">int</span> x = <span class="number">1</span>) =&gt; { };
+
+f1(); <span class="comment">// エラー。 f1(1) と書かないとダメ。</span>
+
+<span class="comment">// params の情報がないデリゲート型に代入。</span>
+Action&lt;<span class="keyword">int</span>[]&gt; f2 = (<span class="keyword">params</span> <span class="keyword">int</span>[] x) =&gt; { };
+
+f2(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>); <span class="comment">// エラー。 f2(new int[] { 1, 2, 3 }) と書かないとダメ。</span></code></pre>
+<p>この点についてもう少し踏み込んで注意すると、
+ラムダ式の側とデリゲート型の側で異なる既定値を与えたとき、
+リフレクションで値を取るときに変なことが起きたりもします。
+<code>Delegate.Method</code> で取る情報(ラムダ式側)と、<code>Type.GetMethod</code> で取る情報(デリゲート型型)が食い違います。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Reflection;
+
+<span class="comment">// ラムダ式としては既定値 2。</span>
+<span class="comment">// ちゃんと警告にはなるものの、無視してしまうと…</span>
+A a = (<span class="keyword">int</span> x = <span class="number">2</span>) =&gt; { };
+
+MethodInfo m1 = a.Method; <span class="comment">// ラムダ式側の情報が取れる。</span>
+MethodInfo m2 = a.GetType().GetMethod(<span class="string">&quot;Invoke&quot;</span>)!; <span class="comment">// デリゲート型側の情報が取れる。</span>
+
+Console.WriteLine(m1.GetParameters()[<span class="number">0</span>].DefaultValue); <span class="comment">// 2</span>
+Console.WriteLine(m2.GetParameters()[<span class="number">0</span>].DefaultValue); <span class="comment">// 1</span>
+
+<span class="comment">// デリゲート型としては既定値 1。</span>
+<span class="keyword">delegate</span> <span class="keyword">void</span> A(<span class="keyword">int</span> x = <span class="number">1</span>);</code></pre>
+<h2 id="section-19"><a id="sec-generated-title-21"></a> <a id="simple-param-with-modifier">修飾子付きの引数の型名省略</a></h2>
+<h5 class="version version14">Ver. 14.0</h5>
+<p>ラムダ式には導入以来ずっと、「型を推論できる限り、引数の型は省略できる」という仕様があります。
+ところが、<code>ref</code> や <code>out</code> などの修飾子が必須の引数の場合、C# 13 までは型名省略できませんでした。
+これが C# 14 で改善されました。</p>
+<p>例えば、<code>int</code> などをはじめ多くの型が以下のような <code>TryParse</code> メソッドを持っています。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Diagnostics.CodeAnalysis;
+
+<span class="keyword">readonly</span> <span class="keyword">struct</span> Int32
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> TryParse([NotNullWhen(<span class="keyword">true</span>)] <span class="keyword">string</span>? s, <span class="keyword">out</span> <span class="keyword">int</span> result)
+    {
+        <span class="comment">// ...</span>
+    }
+}</code></pre>
+<p>以下のように、この類の処理用のデリゲート型があったとして、</p>
+<pre><code class="language-csharp"><span class="keyword">delegate</span> <span class="keyword">bool</span> TryParse&lt;T&gt;(<span class="keyword">string</span> text, <span class="keyword">out</span> T result);</code></pre>
+<p>C# 13 までは以下のように書くことができませんでした。</p>
+<pre><code class="language-csharp"><span class="comment">// C# 13 までは書けなかった。</span>
+TryParse&lt;<span class="keyword">int</span>&gt; m = (text, <span class="keyword">out</span> result) =&gt; { result = <span class="number">0</span>; <span class="keyword">return</span> <span class="keyword">true</span>; };
+
+<span class="comment">// out や ref がないならこう書けるのに…</span>
+Func&lt;<span class="keyword">string</span>, <span class="keyword">int</span>, <span class="keyword">int</span>&gt; f = (text, x) =&gt; <span class="number">0</span>;
+
+<span class="comment">// out が付いた瞬間、型名が必須だった(これなら C# 13 でもコンパイル可能)。</span>
+TryParse&lt;<span class="keyword">int</span>&gt; m13 = (<span class="keyword">string</span> text, <span class="keyword">out</span> <span class="keyword">int</span> result) =&gt; { result = <span class="number">0</span>; <span class="keyword">return</span> <span class="keyword">true</span>; };
+
+<span class="keyword">delegate</span> <span class="keyword">bool</span> TryParse&lt;T&gt;(<span class="keyword">string</span> text, <span class="keyword">out</span> T result);</code></pre>
+<p>これが C# 14 では認められます。</p>
+<pre><code class="language-csharp"><span class="comment">// C# 14 で可能に。</span>
+TryParse&lt;<span class="keyword">int</span>&gt; m = (text, <span class="keyword">out</span> result) =&gt; { result = <span class="number">0</span>; <span class="keyword">return</span> <span class="keyword">true</span>; };</code></pre>
+<p>対象となる修飾子は <code>out</code>、<code>ref</code>、<code>in</code>、<code>ref readonly</code>、<code>scoped</code> などです。</p>
+<pre><code class="language-csharp">M m = (<span class="keyword">in</span> a, <span class="keyword">ref</span> b, <span class="keyword">out</span> c, <span class="keyword">ref</span> <span class="keyword">readonly</span> d, scoped e) =&gt; c = <span class="number">0</span>;
+
+<span class="comment">// C# 13 以前だと以下のように書く必要あり。</span>
+M m13 = (<span class="keyword">in</span> <span class="keyword">int</span> a, <span class="keyword">ref</span> <span class="keyword">int</span> b, <span class="keyword">out</span> <span class="keyword">int</span> c, <span class="keyword">ref</span> <span class="keyword">readonly</span> <span class="keyword">int</span> d, scoped Span&lt;<span class="keyword">int</span>&gt; e) =&gt; c = <span class="number">0</span>;
+
+<span class="keyword">delegate</span> <span class="keyword">void</span> M(<span class="keyword">in</span> <span class="keyword">int</span> a, <span class="keyword">ref</span> <span class="keyword">int</span> b, <span class="keyword">out</span> <span class="keyword">int</span> c, <span class="keyword">ref</span> <span class="keyword">readonly</span> <span class="keyword">int</span> d, scoped Span&lt;<span class="keyword">int</span>&gt; e);</code></pre>
+<p>ちなみに、これが認められているのは引数リストを <code>()</code> でくくっている場合だけです。
+ラムダ式は、引数が1つだけの時は <code>x =&gt; { }</code> というように引数リストの <code>()</code> も省略できるわけですが、
+この場合は <code>ref x =&gt; { }</code> みたいな書き方はできません(というか元々、<code>int x =&gt; { }</code> みたいな型名指定も許されていません)。</p>
+<pre><code class="language-csharp"><span class="comment">// 修飾子をつけたい場合、() は必須。</span>
+In m1 = (<span class="keyword">in</span> <span class="keyword">int</span> a) =&gt; { };
+In m2 = (<span class="keyword">in</span> a) =&gt; { };
+
+<span class="comment">// () 省略不可でエラーに。</span>
+In m3 = <span class="keyword">in</span> <span class="keyword">int</span> a =&gt; { };
+In m4 = <span class="keyword">in</span> a =&gt; { };
+
+<span class="comment">// ちなみに、in を抜こうとすると型が合わなくてエラーになる。</span>
+In m5 = (<span class="keyword">int</span> a) =&gt; { };
+In m6 = (a) =&gt; { };
+In m7 = a =&gt; { };
+
+<span class="comment">// 参考: 修飾子がない場合:</span>
+Value v1 = a =&gt; { };
+Value v2 = (a) =&gt; { };
+Value v3 = (<span class="keyword">int</span> a) =&gt; { };
+<span class="comment">// Value v4 = int a =&gt; { }; はこっちでもダメ。コンパイル エラーに。</span>
+
+<span class="keyword">delegate</span> <span class="keyword">void</span> Value(<span class="keyword">int</span> a);
+<span class="keyword">delegate</span> <span class="keyword">void</span> In(<span class="keyword">in</span> <span class="keyword">int</span> a);</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/functional/">&#x95A2;&#x6570;&#x6307;&#x5411;</a></li><li><a href="/study/csharp/functional/fun_functional/">&#x95A2;&#x6570;&#x6307;&#x5411;</a></li><li><a href="/study/csharp/functional/sp_delegate/">&#x30C7;&#x30EA;&#x30B2;&#x30FC;&#x30C8;</a></li><li><a href="/study/csharp/functional/misc_delegate/">[&#x96D1;&#x8A18;] &#x30C7;&#x30EA;&#x30B2;&#x30FC;&#x30C8;&#x306E;&#x5229;&#x7528;&#x4F8B;</a></li><li><a href="/study/csharp/functional/miscdelegateinternal/">[&#x96D1;&#x8A18;] &#x30C7;&#x30EA;&#x30B2;&#x30FC;&#x30C8;&#x306E;&#x5185;&#x90E8;</a></li><li><a href="/study/csharp/functional/sp2_anonymousmethod/">[&#x96D1;&#x8A18;] &#x533F;&#x540D;&#x95A2;&#x6570;&#x306E;&#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;</a></li><li><a href="/study/csharp/functional/sp3_lambda/">&#x30E9;&#x30E0;&#x30C0;&#x5F0F;</a></li><li><a href="/study/csharp/functional/sp_event/">&#x30A4;&#x30D9;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/functional/misceventsubscribe/">&#x3010;&#x96D1;&#x8A18;&#x3011;&#x30A4;&#x30D9;&#x30F3;&#x30C8;&#x306E;&#x8CFC;&#x8AAD;&#x3068;&#x305D;&#x306E;&#x89E3;&#x9664;</a></li><li><a href="/study/csharp/functional/sp3_functional/">&#x95A2;&#x6570;&#x578B;&#x8A00;&#x8A9E;&#x30FB;&#x52D5;&#x7684;&#x8A00;&#x8A9E;&#x7684;&#x306A;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/functional/sp3_extension/">&#x62E1;&#x5F35;&#x30E1;&#x30BD;&#x30C3;&#x30C9;</a></li><li><a href="/study/csharp/functional/fun_whyextensions/">&#x30AF;&#x30E9;&#x30B9;&#x306E;&#x6A5F;&#x80FD;&#x62E1;&#x5F35;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

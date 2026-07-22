@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>queue | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/stl/container_adaptor/queue/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="queue">queue</h1>
+<h2 id="queue-1"><a id="sec-generated-title-1"></a> <a id="d24e4"></a>queueとは</h2>
+<p>queue(キュー)とは、「行列」という意味の単語です。
+ただ、「行列」だと、matrixと区別がつかなくなるので、日本語では待ち行列といいます。
+(ちなみに、matrixの英語本来の意味は母体・基盤・鋳型)</p>
+<p>キューは「要素の挿入は末尾から、取り出し・削除は先頭から行うデータ構造」です。
+後ろから並んで前に出て行くという意味でこの名前がつきました。
+FIFO(first-in first-out)と呼ばれることもあります。
+キューでは要素を追加することをenqueue、要素を取り出すことをdequeueといいます。
+(ただし、STLでは他のコンテナと名前をあわせるためにpush,popという用語を用います)<br></br>	<a href="/assets/media/ufcpp2000/stl/fig/queue.png"><img src="/assets/media/ufcpp2000/stl/fig/queue.png" alt="queue.png" /></a></p>
+<p>キューは末尾への要素の挿入と先頭からの要素の削除が可能なデータ構造なら何を使っても実装することができます。
+普通はリングバッファや双方向循環連結リストを用いて実装します。</p>
+<h2 id="stlqueue"><a id="sec-generated-title-2"></a> <a id="d24e18"></a>STLにおけるqueue</h2>
+<p>STLのqueueは何を使って実装するかをdeque,listのいずれかから選べます。
+キューの要素の型をTとすると、</p>
+<table summary="">
+
+	<tr>
+		<td><p><code>queue&lt;T, deque&lt;T&gt; &gt;</code></p></td>
+		<td><p>dequeによるqueue</p></td>
+	</tr>
+	<tr>
+		<td><p><code>queue&lt;T, list&lt;T&gt; &gt;</code></p></td>
+		<td><p>listによるqueue</p></td>
+	</tr>
+	<tr>
+		<td><p><code>queue&lt;T&gt;</code></p></td>
+		<td><p>queue&lt;T, deque&lt;T&gt; &gt;と同じ意味</p></td>
+	</tr>
+</table>
+<p>他にも、<code>push_back, pop_front, front, back, size</code>などのメソッドを適当に定義したクラスなら
+何でもキューの実装に使えます。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/stl/container_adaptor/">&#x30B3;&#x30F3;&#x30C6;&#x30CA;&#x30A2;&#x30C0;&#x30D7;&#x30BF;</a></li><li><a href="/study/stl/container_adaptor/stack/">stack</a></li><li><a href="/study/stl/container_adaptor/priority_queue/">priority_queue</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

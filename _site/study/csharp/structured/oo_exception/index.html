@@ -1,0 +1,541 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x4F8B;&#x5916;&#x51E6;&#x7406; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/structured/oo_exception/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">例外処理</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p><strong id="exc" class="keyword">例外</strong>（exception）とは、
+本来ならばプログラム中で起こってはいけないことが起こってしまうことをいいます。
+堅牢なプログラムを作成するためには、
+例外が起こったときでもプログラムが異常な動作をしないよう、
+しっかりと<strong id="exchandle" class="keyword">例外処理</strong>（exception handling）を行う必要があります。</p>
+<p>C# では、例外処理を行うための専用の構文が用意されていて、
+プログラマが例外処理を容易に行えるようになっています。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>例外: 「開こうとしたファイルが存在しなかった」など、特別な対処が必要な状況。</p>
+</li>
+<li><p>例外への対処には、例外用の構文があるのでそれを使いましょう。</p>
+</li>
+<li><p>try { 例外が発生する可能性のあるコード } catch(例外) { 例外処理 }</p>
+</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="exception"></a>例外処理とは</h2>
+<p>例外の例を挙げると、ユーザーが想定外の文字列を入力してきたときや、
+プログラムに必要なファイルが開けなかったときなどがあります。</p>
+<p>例えば、文字列を整数に変換することを考えてみます。
+簡単化のため、とりあえず正の整数のみを扱うことにします。
+想定外の文字列が来ないものと仮定するとプログラムは以下のようになります。</p>
+<pre><code class="language-csharp"><span class="comment">// 文字→整数</span>
+<span class="keyword">static</span> <span class="keyword">int</span> CharToInt(<span class="keyword">char</span> c)
+{
+  <span class="keyword">return</span> c - <span class="string">&#39;0&#39;</span>;
+}
+
+<span class="comment">// 文字列→整数</span>
+<span class="keyword">static</span> <span class="keyword">int</span> StringToInt(<span class="keyword">string</span> str)
+{
+  <span class="keyword">int</span> val = <span class="number">0</span>;
+  <span class="keyword">foreach</span>(<span class="keyword">char</span> c <span class="keyword">in</span> str)
+  {
+    <span class="keyword">int</span> i = CharToInt(c);
+    val = val * <span class="number">10</span> + i;
+  }
+  <span class="keyword">return</span> val;
+}</code></pre>
+<p>当然、この関数に対して想定外の文字列を入力すると、おかしな結果が得られます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> Main()
+{
+  Console.Write(<span class="string">&quot;{0}\n&quot;</span>, StringToInt(<span class="string">&quot;12345&quot;</span>));
+  Console.Write(<span class="string">&quot;{0}\n&quot;</span>, StringToInt(<span class="string">&quot;12a45&quot;</span>)); <span class="comment">// 途中に数字以外の文字が</span>
+}</code></pre>
+<pre><code class="language-console">12345
+16945    ←変な値が出力されてる</code></pre>
+<p>利用側が「想定外の文字列は絶対に入力しない」とか、
+「変な結果が出てきても文句は言わない」とかいう風に開き直っているのなら、
+別にこれでも問題はありません。
+しかし、通常は想定外の文字列が入力されていないかどうか調べる手段が必要になると思います。</p>
+<p>このような例外が起きたとき、
+例外処理用の構文が用意されていない言語ではどのように対処していたかというと、
+「通常はありえない値を返す」とか、
+「関数の戻り値とは別に、関数が正しく終了したかどうかを示すフラグを返す」
+といった手段を用いていました。</p>
+<p>例えば、今回の場合、正の整数しか想定していないので、
+想定外の文字列が来たときには負の数を返すことにしておけば、
+例外が起きたかどうか調べることが出来ます。</p>
+<pre><code class="language-csharp"><span class="comment">// 文字→整数</span>
+<span class="keyword">static</span> <span class="keyword">int</span> CharToInt(<span class="keyword">char</span> c)
+{
+  <span class="keyword">if</span>(<span class="string">&#39;0&#39;</span> &lt;= c &amp;&amp; c &lt;= <span class="string">&#39;9&#39;</span>)
+    <span class="keyword">return</span> c - <span class="string">&#39;0&#39;</span>;
+  <span class="keyword">else</span>
+    <span class="keyword">return</span> -<span class="number">1</span>; <span class="comment">// 想定外の文字が入力された場合、-1 を返す。</span>
+}
+
+<span class="comment">// 文字列→整数</span>
+<span class="keyword">static</span> <span class="keyword">int</span> StringToInt(<span class="keyword">string</span> str)
+{
+  <span class="keyword">int</span> val = <span class="number">0</span>;
+  <span class="keyword">foreach</span>(<span class="keyword">char</span> c <span class="keyword">in</span> str)
+  {
+    <span class="keyword">int</span> i = CharToInt(c);
+    <span class="keyword">if</span>(i == -<span class="number">1</span>) <span class="keyword">return</span> -<span class="number">1</span>; <span class="comment">// 想定外の文字列が入力された場合、-1 を返す。</span>
+    val = val * <span class="number">10</span> + i;
+  }
+  <span class="keyword">return</span> val;
+}</code></pre>
+<p>関数の利用側のコードは以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> Main()
+{
+  <span class="keyword">int</span> i;
+
+  i = StringToInt(<span class="string">&quot;12345&quot;</span>);
+  <span class="keyword">if</span>(i == -<span class="number">1</span>)
+    Console.Write(<span class="string">&quot;想定外の文字列が入力されました&quot;</span>);
+  <span class="keyword">else</span>
+    Console.Write(<span class="string">&quot;{0}\n&quot;</span>, i);
+
+  i = StringToInt(<span class="string">&quot;12a45&quot;</span>);
+  <span class="keyword">if</span>(i == -<span class="number">1</span>)
+    Console.Write(<span class="string">&quot;想定外の文字列が入力されました&quot;</span>);
+  <span class="keyword">else</span>
+    Console.Write(<span class="string">&quot;{0}\n&quot;</span>, i);
+}</code></pre>
+<pre><code class="language-console">12345
+想定外の文字列が入力されました</code></pre>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="syntax"></a>例外処理構文</h2>
+<p>上述したように、例外処理専用の構文を用いなくても例外処理を行えます。
+しかし、上述したような方法にはいくつか欠点があります。
+その欠点を以下に挙げます。</p>
+<ul>
+<li><p>例外の検出が面倒。</p>
+</li>
+<li><p>正常動作部と例外処理部の区別が分かりにくい。</p>
+</li>
+<li><p>関数利用者に例外処理を行うことを強制出来ない。</p>
+</li>
+<li><p>関数を呼び出すたびに例外処理用のコードを書く必要がある。</p>
+</li>
+</ul>
+<p>例外処理構文を用いるとこれらの問題を解決することが出来ます。
+ここでようやく本題に入るわけですが、
+それでは、C# の例外処理構文について説明していきたいと思います。</p>
+<h5 id="throw"><a id="sec-generated-title-5"></a>throw</h5>
+<p>まず、関数定義側、すなわち、例外が発生する可能性のある側では、
+<strong id="throw" class="keyword">throw 文</strong>を使って例外が起こったことを利用側に知らせます。
+throw 文は以下のようにして使用します。</p>
+<pre><code class="language-csharp"><span class="keyword">throw</span> 例外クラスのインスタンス</code></pre>
+<p>この throw 文は想定外のことが起こった場所に挿入します。
+このような処理を「<em>例外を投げる</em>」といいます。
+例外が投げられると、正常動作部の処理は中断され、例外処理部が呼び出されます。</p>
+<p>throw 文によって投げられる例外は、
+<code>System.Exception</code> クラスの派生クラスのインスタンスです。
+それ以外のクラスのインスタンスを throw することは出来ません。
+例えば、<code>throw new Exception();</code> というようにします。</p>
+<p>例として先ほどの文字列→整数変換関数を throw 文を使って書き直してみましょう。</p>
+<pre><code class="language-csharp"><span class="comment">// 文字→整数</span>
+<span class="keyword">static</span> <span class="keyword">int</span> CharToInt(<span class="keyword">char</span> c)
+{
+  <span class="keyword">if</span>(c &lt; <span class="string">&#39;0&#39;</span> || <span class="string">&#39;9&#39;</span> &lt; c)
+    <span class="keyword">throw</span> <span class="keyword">new</span> FormatException(); <span class="comment">// 不正な文字が入力された場合、例外を投げる</span>
+
+  <span class="keyword">return</span> c - <span class="string">&#39;0&#39;</span>;
+}
+
+<span class="comment">// 文字列→整数</span>
+<span class="keyword">static</span> <span class="keyword">int</span> StringToInt(<span class="keyword">string</span> str)
+{
+  <span class="keyword">int</span> val = <span class="number">0</span>;
+  <span class="keyword">foreach</span>(<span class="keyword">char</span> c <span class="keyword">in</span> str)
+  {
+    <span class="keyword">int</span> i = CharToInt(c);
+    val = <span class="keyword">checked</span>(val * <span class="number">10</span> + i);
+  }
+  <span class="keyword">return</span> val;
+}</code></pre>
+<h5 id="try-catch-finally"><a id="sec-generated-title-6"></a>try-catch-finally</h5>
+<p>次に、関数利用側、すなわち、例外を処理する側では、
+<strong id="try" class="keyword">try-catch-finally 文</strong>を使って例外を処理します。
+try-catch-finally 文は以下のようにして使用します。</p>
+<pre><code class="language-csharp"><span class="keyword">try</span>
+{
+  例外が投げられる可能性のあるコード
+}
+<span class="keyword">catch</span>(例外の種類)
+{
+  例外処理コード
+}
+<span class="keyword">finally</span>
+{
+  例外発生の有無にかかわらず実行したいコード
+  リソースの破棄などを行う
+}</code></pre>
+<p><code>try</code>句は必須ですが、<code>catch</code>、<code>finally</code>はどちらか片方だけにできます。
+というか、<code>catch</code>を使いたい範囲と<code>finally</code>を使いたい範囲は違っていることが多く、
+片方だけ使うことは多いです。</p>
+<pre><code class="language-csharp"><span class="keyword">try</span>
+{
+    (リソースの寿命の方が広い)
+
+    <span class="keyword">try</span>
+    {
+        例外が投げられる可能性のあるコード(範囲が狭い)
+    }
+    <span class="keyword">catch</span> (例外の種類)
+    {
+        例外処理
+    }
+}
+<span class="keyword">finally</span>
+{
+    リソースの破棄など
+}</code></pre>
+<p>本項では主に<code>catch</code>の方について説明して行きます。
+<code>finally</code> については「<a href="/study/csharp/resource/oo_dispose/">リソースの破棄</a>」で改めて説明します。
+ちなみに、try-finally には using ステートメントという短縮記法があるので、
+<code>finally</code>が必要になる頻度は少なめです。</p>
+<h5 id="catch"><a id="sec-generated-title-7"></a>複数の catch</h5>
+<p><code>catch</code>句は複数並べて書けます。</p>
+<p>こちらも例として、先ほどの文字列→整数変換関数利用側コードを try-catch 文を使って書き直してみましょう。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> Main()
+{
+    <span class="keyword">try</span>
+    {
+        Console.Write(<span class="string">&quot;{0}\n&quot;</span>, StringToInt(<span class="string">&quot;12345&quot;</span>));
+        Console.Write(<span class="string">&quot;{0}\n&quot;</span>, StringToInt(<span class="string">&quot;12a45&quot;</span>));
+        <span class="comment">//↑ ここで FormatException 例外が投げられる。</span>
+    }
+    <span class="keyword">catch</span>(FormatException)
+    {
+        Console.Write(<span class="string">&quot;想定外の文字列が入力されました&quot;</span>);
+    }
+    <span class="keyword">catch</span>(OverflowException)
+    {
+        Console.Write(桁あふれしました&quot;);
+    }
+}</code></pre>
+<p>ちなみに、同じ型の<code>catch</code>を複数並べるとエラーになります。</p>
+<pre><code class="language-csharp"><span class="keyword">try</span>
+{
+}
+<span class="keyword">catch</span>(FormatException)
+{
+}
+<span class="keyword">catch</span>(FormatException)
+{
+}</code></pre>
+<h5 id="try-catch"><a id="sec-generated-title-8"></a>try-catch 文の利点</h5>
+<p>try-catch 文を使った例外処理には以下のような利点があります。</p>
+<ul>
+<li><p>正常動作部と例外処理部の区別が明確になります。</p>
+<ul>
+<li>try の中には動作が正常な時の処理が、 catch の中には例外発生時の対処のみが書かれます。</li>
+</ul>
+</li>
+<li><p>関数利用側に例外処理させることを強制できます。</p>
+<ul>
+<li><p>もし、正しく例外処理しなければ（throw された例外を catch しなければ）、プログラムは強勢終了されます。</p>
+</li>
+<li><p>対処のしようのないエラーがあった場合、対処できないままプログラムが動き続けるよりは、強制終了される方が後々困ることが少なくなります。</p>
+</li>
+</ul>
+</li>
+<li><p>例外処理部（catch 節）や、正常・例外問わず必ず実行する必要なある部分（finaly 節）が一か所にまとまります。</p>
+<ul>
+<li>同じような処理を何か所も書く必要がなくなります。</li>
+</ul>
+</li>
+</ul>
+<h3 id="throw-1"><a id="sec-generated-title-9"></a> <a id="throwexpr"></a>throw 式</h3>
+<h5 class="version version7">Ver. 7</h5>
+<p><code>throw</code>はこれまでステートメントでしか書けませんでした。
+C# 6ではバージョン アップとともに、式として書けるものや、式でだけ使える便利な文法が増えている中、
+<code>throw</code>も式として書きたいという要望がありました。</p>
+<p>限られてはいますが、確かに書きたい場面はあります。
+そこで、C# 7では、<code>throw</code>式(throw expression)が追加されました。
+以下の3カ所でに書けます。</p>
+<ul>
+<li>ラムダ式や式形式メンバーの中(<code>=&gt;</code> の後ろ)</li>
+<li><a href="/study/csharp/resource/sp2_nullable/#nullableType">null合体演算子</a>(<code>??</code>)の後ろ</li>
+<li><a href="">条件演算子</a>の第2、第3引数(条件式以外の部分。 <code>:</code> の前後)</li>
+</ul>
+<pre><code class="language-csharp"><span class="comment">// 式形式メンバーの中( =&gt; の直後)</span>
+<span class="keyword">static</span> <span class="keyword">void</span> A() =&gt; <span class="keyword">throw</span> <span class="keyword">new</span> NotImplementedException();
+
+<span class="keyword">static</span> <span class="keyword">string</span> B(<span class="keyword">object</span> obj)
+{
+    <span class="comment">// null 合体演算子(??)の後ろ</span>
+    <span class="keyword">var</span> s = obj <span class="keyword">as</span> <span class="keyword">string</span> ?? <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentException(nameof(obj));
+
+    <span class="comment">// 条件演算子(?:)の条件以外の部分</span>
+    <span class="keyword">return</span> s.Length == <span class="number">0</span> ? <span class="string">&quot;empty&quot;</span> :
+        s.Length &lt; <span class="number">5</span> ? <span class="string">&quot;short&quot;</span> :
+        <span class="keyword">throw</span> <span class="keyword">new</span> InvalidOperationException(<span class="string">&quot;too long&quot;</span>);
+}</code></pre>
+<p>これ以外の文脈で<code>throw</code>式を書くことはできません。
+例えば、以下のコードはコンパイル エラーになります。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> C()
+{
+    <span class="comment">// コンパイル エラー。この文脈に throw 式は書けない</span>
+    B(<span class="keyword">throw</span> <span class="keyword">new</span> InvalidOperationException());
+}</code></pre>
+<p>ちなみに、式になっている以上「戻り値の型」を考えないといけないわけですが、
+<code>throw</code>式の戻り値の型は「任意の型に変換可能」とみなされます。
+<code>throw</code> 式単体で具体的な型を持っているわけではないので、以下のように、型を決めれない書き方をするとコンパイル エラーになります。</p>
+<pre><code class="language-csharp"><span class="comment">// コンパイル エラー。null(型を持っていない)と並べると型が決まらない。</span>
+<span class="keyword">var</span> x = <span class="keyword">true</span> ? <span class="keyword">null</span> : <span class="keyword">throw</span> <span class="keyword">new</span> Exception();
+
+<span class="comment">// コンパイル エラー。throw 式同士を並べると型が決まらない。</span>
+<span class="keyword">var</span> y = <span class="keyword">true</span> ? <span class="keyword">throw</span> <span class="keyword">new</span> InvalidOperationException() : <span class="keyword">throw</span> <span class="keyword">new</span> NotSupportedException();</code></pre>
+<h3 id="section-5"><a id="sec-generated-title-10"></a> <a id="std"></a>標準で用意されている例外クラス</h3>
+<p>.NET Frameowrk が標準で提供する例外クラスのうち、よく出てくるもの/よく使うものをいくつか例に挙げます。</p>
+<table summary="">
+
+	<tr>
+		<th>クラス名</th>
+		<th>throw される状況</th>
+	</tr>
+	<tr>
+		<td colspan="2"><p>System 名前空間</p></td>
+	</tr>
+	<tr>
+		<td><p>ArgumentException</p></td>
+		<td><p>メソッドの引数が変な場合。ArgumentNullExceptionやArgumentOutOfRangeException以外の場合で変な時に使う。</p></td>
+	</tr>
+	<tr>
+		<td><p>ArgumentNullException</p></td>
+		<td><p>引数がnullの場合。</p></td>
+	</tr>
+	<tr>
+		<td><p>ArgumentOutOfRangeException</p></td>
+		<td><p>メソッドの許容範囲外の値が引数として渡された場合。</p></td>
+	</tr>
+	<tr>
+		<td><p>ArithmeticException</p></td>
+		<td><p>算術演算によるエラーの基本クラス。OverflowException, DivideByZeroException, NotFiniteNumberException以外の算術エラーを示したければ使う。</p></td>
+	</tr>
+	<tr>
+		<td><p>OverflowException</p></td>
+		<td><p>算術演算やキャストでオーバーフローが起きた場合。</p></td>
+	</tr>
+	<tr>
+		<td><p>DivideByZeroException</p></td>
+		<td><p>0で割ったときのエラー。</p></td>
+	</tr>
+	<tr>
+		<td><p>NotFiniteNumberException</p></td>
+		<td><p>浮動小数点値が無限大の場合。</p></td>
+	</tr>
+	<tr>
+		<td><p>FormatException</p></td>
+		<td><p>引数の書式が仕様に一致していない場合。</p></td>
+	</tr>
+	<tr>
+		<td><p>IndexOutOfRangeException</p></td>
+		<td><p>配列のインデックスが変な場合。</p></td>
+	</tr>
+	<tr>
+		<td><p>InvalidCastException</p></td>
+		<td><p>無効なキャストの場合。</p></td>
+	</tr>
+	<tr>
+		<td><p>InvalidOperationException</p></td>
+		<td><p>引数以外の原因でエラーが起きた場合。</p></td>
+	</tr>
+	<tr>
+		<td><p>ObjectDisposedException</p></td>
+		<td><p>Dispose済みのオブジェクトで操作が実行される場合。</p></td>
+	</tr>
+	<tr>
+		<td><p>NotImplementedException</p></td>
+		<td><p>メソッドが未実装の場合。</p></td>
+	</tr>
+	<tr>
+		<td><p>NotSupportedException</p></td>
+		<td><p>呼び出されたメソッドがサポートされていない場合、または呼び出された機能を備えていないストリームに対して読み取り、シーク、書き込みが試行された場合。</p></td>
+	</tr>
+	<tr>
+		<td><p>NullReferenceException</p></td>
+		<td><p>nullオブジェクト参照を逆参照しようとした場合。</p></td>
+	</tr>
+	<tr>
+		<td><p>PlatformNotSupportException</p></td>
+		<td><p>特定のプラットフォームで機能が実行されない場合。</p></td>
+	</tr>
+	<tr>
+		<td><p>TimeoutException</p></td>
+		<td><p>指定したタイムアウト時間が経過した場合。</p></td>
+	</tr>
+	<tr>
+		<td colspan="2"><p>System.Collections.Generics 名前空間</p></td>
+	</tr>
+	<tr>
+		<td><p>KeyNotFoundException</p></td>
+		<td><p>コレクションに該当するキーが無い場合。</p></td>
+	</tr>
+	<tr>
+		<td colspan="2"><p>System.IO 名前空間</p></td>
+	</tr>
+	<tr>
+		<td><p>DirectoryNotFoundException</p></td>
+		<td><p>ディレクトリが無い場合。</p></td>
+	</tr>
+	<tr>
+		<td><p>FileNotFoundException</p></td>
+		<td><p>ファイルが無い場合。</p></td>
+	</tr>
+	<tr>
+		<td><p>EndOfStreamException</p></td>
+		<td><p>ストリームの末尾を超えて読み込もうとしている場合。</p></td>
+	</tr>
+</table>
+<h2 id="section-6"><a id="sec-generated-title-11"></a> <a id="propagation"></a>例外の伝搬</h2>
+<p>例外は、<code>catch</code>句でキャッチされるまで、どんどん上位の呼び出し元に伝搬していきます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Program
+{
+    <span class="comment">// A で投げた例外が</span>
+    <span class="keyword">static</span> <span class="keyword">void</span> A() =&gt; <span class="keyword">throw</span> <span class="keyword">new</span> NotImplementedException();
+
+    <span class="comment">// B → C と伝搬して</span>
+    <span class="keyword">static</span> <span class="keyword">void</span> B() =&gt; A();
+    <span class="keyword">static</span> <span class="keyword">void</span> C() =&gt; B();
+
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">try</span>
+        {
+            C();
+        }
+        <span class="keyword">catch</span>(NotImplementedException ex)
+        {
+            <span class="comment">// 最終的にここでキャッチされる</span>
+            Console.WriteLine(ex);
+        }
+    }
+}</code></pre>
+<p>例外が最後までキャッチされなかった場合<sup>※</sup>、アプリ自体が停止します。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> A() =&gt; <span class="keyword">throw</span> <span class="keyword">new</span> NotImplementedException();
+    <span class="keyword">static</span> <span class="keyword">void</span> B() =&gt; A();
+    <span class="keyword">static</span> <span class="keyword">void</span> C() =&gt; B();
+
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        C(); <span class="comment">// 例外が出るけども、誰もキャッチしていない</span>
+        <span class="comment">// この時点でアプリが停止</span>
+
+        Console.WriteLine(<span class="string">&quot;ここは絶対に通らない&quot;</span>);
+    }
+}</code></pre>
+<p>このとき、以下のような、例外で停止した旨を示すメッセージが表示されます。</p>
+<pre><code class="language-console">Unhandled Exception: System.NotImplementedException: The method or operation is not implemented.
+   at Program.A() in C:\Projects\ConsoleApp1\Program.cs:line 5
+   at Program.B() in C:\Projects\ConsoleApp1\Program.cs:line 6
+   at Program.C() in C:\Projects\ConsoleApp1\Program.cs:line 7
+   at Program.Main() in C:\Users\xii-h\Documents\Visual Studio 2017\Projects\ConsoleApp1\ConsoleApp1\Program.cs:line 11</code></pre>
+<p>例外の種類の他に、どのメソッドを経由して例外が発生したかや、メソッドがソースコード中のどこにあるかなどの情報が入っています。この情報を<a href="/study/csharp/structured/misc_stacktrace/">スタックトレース</a>と呼びます。</p>
+<p><sup>※</sup> GUI アプリの場合、GUI フレームワーク内で例外がキャッチされていて、未処理例外があっても即座にアプリが停止することはありません。代わりに、エラー ダイアログ画面が表示されたりします。</p>
+<h2 id="section-7"><a id="sec-generated-title-12"></a> <a id="guide"></a>例外処理の指針</h2>
+<p>一般に、tyr-catch を用いた例外処理は、
+if 文などを使った値のチェックに比べて、
+実行速度が遅いといわれています。
+try ブロックで囲んだだけでは（例外が発生しなければ）ほとんどオーバーヘッドはないのですが、
+例外発生時には少し大き目のコストが発生します。</p>
+<p>このコストを考えても、try-catch を用いるメリットの方が大きいのですが、
+まあ、避けれるのならばコストの大きな処理は避けたいというのがプログラマの心情というものです。</p>
+<p>ということで、例外の使い方（特に、避けれる例外を避ける方法）について別ページで説明をします → 「<a href="/study/csharp/structured/misc_exception/">[雑記] 例外の使い方</a>」。</p>
+<h2 id="section-8"><a id="sec-generated-title-13"></a> <a id="exception-filter"></a>例外フィルター</h2>
+<h5 class="version version6">Ver. 6</h5>
+<p>C# 6で、例外のcatch句に続けてwhenと書くことで、catchしたい例外の条件を書けるようになりました。
+この機能を<strong id="key-exception-filter" class="keyword">例外フィルター</strong>(exception filter)といいます。</p>
+<pre><code class="language-csharp"><span class="keyword">try</span>
+{
+  例外が投げられる可能性のあるコード
+}
+<span class="keyword">catch</span>(例外の種類) when (条件)
+{
+  例外処理コード
+}</code></pre>
+<p>用途としては、例えば、以下のように、複数の種類の例外に対して、同じ例外処理を掛けたい場合があります。</p>
+<pre><code class="language-csharp"><span class="keyword">try</span>
+{
+    F();
+}
+<span class="keyword">catch</span> (DirectoryNotFoundException e)
+{
+    <span class="comment">// DirectoryNotFoundException のときと FileNotFoundException の時で</span>
+    <span class="comment">// 全く同じ例外処理の仕方をしたい場合がある。</span>
+    Console.WriteLine(e);
+}
+<span class="keyword">catch</span> (FileNotFoundException e)
+{
+    <span class="comment">// DirectoryNotFoundException のときと FileNotFoundException の時で</span>
+    <span class="comment">// 全く同じ例外処理の仕方をしたい場合がある。</span>
+    Console.WriteLine(e);
+
+    <span class="comment">// コピペ コードになっちゃうので嫌！</span>
+}</code></pre>
+<p>これに対して、例外フィルターを使うと、以下のように書き直せます。</p>
+<pre><code class="language-csharp"><span class="keyword">try</span>
+{
+    F();
+}
+<span class="keyword">catch</span> (IOException e) when (e <span class="keyword">is</span> DirectoryNotFoundException || e <span class="keyword">is</span> FileNotFoundException)
+{
+    <span class="comment">// DirectoryNotFoundException のときと FileNotFoundException の時で</span>
+    <span class="comment">// 全く同じ例外処理の仕方をしたい場合がある。</span>
+    Console.WriteLine(e);
+}</code></pre>
+<p>また、入れ子になっている例外の処理にも有効です。
+例えば、Parallelクラス(System.Threading.Tasks名前空間)のメソッドを使って並列処理を行った場合、1段階ラップされた状態で例外が throw されます。この時、以下のように例外フィルターを使うことで、catch句が書きやすくなります。</p>
+<pre><code class="language-csharp"><span class="keyword">try</span>
+{
+    Parallel.For(<span class="number">0</span>, <span class="number">10000</span>, F);
+}
+<span class="keyword">catch</span> (AggregateException e) when (e.InnerExceptions.Any(i =&gt; i <span class="keyword">is</span> ArgumentException))
+{
+    <span class="comment">// F が ArgumentException を throw する場合でも、</span>
+    <span class="comment">// Parellel.For を通した結果、ここに来る例外は AggregateException で、</span>
+    <span class="comment">// AggregateException.InnerExceptions の中に ArgumentException が入っている。</span>
+}</code></pre>
+<p><code>when</code>句が付いている場合は、同じ型の<code>catch</code>を複数書くことができます。
+この場合、書いた順に上から調べて最初に条件を満たした<code>catch</code>句が実行されます。</p>
+<pre><code class="language-csharp"><span class="keyword">try</span>
+{
+}
+<span class="keyword">catch</span> (Exception e) when (e <span class="keyword">is</span> FormatException || (e <span class="keyword">is</span> AggregateException a &amp;&amp; a.InnerException <span class="keyword">is</span> FormatException))
+{
+}
+<span class="keyword">catch</span> (Exception e) when (e <span class="keyword">is</span> OverflowException || (e <span class="keyword">is</span> AggregateException a &amp;&amp; a.InnerException <span class="keyword">is</span> OverflowException))
+{
+}
+<span class="keyword">catch</span> (Exception e)
+{
+}</code></pre>
+<p>ちなみに、この例外フィルターは、<a href="/study/il/summary/il_about/">IL</a>のレベルでは.NET 1.0の頃からある機能です。単に、それに対応するILコードをC#を使って書くすべが今までなく、C# 6で追加されたというものです。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/structured/">&#x69CB;&#x9020;&#x5316;</a></li><li><a href="/study/csharp/structured/st_structured/">&#x69CB;&#x9020;&#x5316;</a></li><li><a href="/study/csharp/structured/st_control/">&#x5236;&#x5FA1;&#x30D5;&#x30ED;&#x30FC;</a></li><li><a href="/study/csharp/structured/st_branch/">&#x6761;&#x4EF6;&#x5206;&#x5C90;</a></li><li><a href="/study/csharp/structured/st_loop/">&#x53CD;&#x5FA9;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/structured/st_array/">&#x914D;&#x5217;</a></li><li><a href="/study/csharp/structured/st_function/">&#x95A2;&#x6570;</a></li><li><a href="/study/csharp/structured/miscentrypoint/">[&#x96D1;&#x8A18;] &#x30A8;&#x30F3;&#x30C8;&#x30EA;&#x30FC;&#x30DD;&#x30A4;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/structured/miscinlining/">[&#x96D1;&#x8A18;] &#x30A4;&#x30F3;&#x30E9;&#x30A4;&#x30F3;&#x5316;</a></li><li><a href="/study/csharp/structured/miscoverloadresolution/">[&#x96D1;&#x8A18;] &#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30ED;&#x30FC;&#x30C9;&#x89E3;&#x6C7A;</a></li><li><a href="/study/csharp/structured/sp_params/">&#x53EF;&#x5909;&#x9577;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/sp4_optional/">&#x30AA;&#x30D7;&#x30B7;&#x30E7;&#x30F3;&#x5F15;&#x6570;&#x30FB;&#x540D;&#x524D;&#x4ED8;&#x304D;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/st_command/">&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x30E9;&#x30A4;&#x30F3;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/st_library/">&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li><li><a href="/study/csharp/structured/st_enum/">&#x5217;&#x6319;&#x578B;</a></li><li><a href="/study/csharp/structured/st_struct/">&#x30C7;&#x30FC;&#x30BF;&#x306E;&#x69CB;&#x9020;&#x5316;(&#x8907;&#x5408;&#x578B;)</a></li><li><a href="/study/csharp/structured/st_anonymoustype/">&#x540D;&#x524D;&#x306E;&#x306A;&#x3044;&#x8907;&#x5408;&#x578B;</a></li><li><a href="/study/csharp/structured/sp_namespace/">&#x540D;&#x524D;&#x7A7A;&#x9593;</a></li><li><a href="/study/csharp/structured/misc_exception/">[&#x96D1;&#x8A18;] &#x4F8B;&#x5916;&#x306E;&#x4F7F;&#x3044;&#x65B9;</a></li><li><a href="/study/csharp/structured/misc_stacktrace/">[&#x96D1;&#x8A18;] &#x4F8B;&#x5916;&#x306E;&#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x30C8;&#x30EC;&#x30FC;&#x30B9;</a></li><li><a href="/study/csharp/structured/miscexpressions/">[&#x96D1;&#x8A18;] &#x5F0F;&#x306B;&#x307E;&#x3064;&#x308F;&#x308B;&#x88DC;&#x8DB3;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

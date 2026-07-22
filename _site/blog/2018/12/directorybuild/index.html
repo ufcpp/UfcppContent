@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Directory.Build.* | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2018/12/directorybuild/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2018-12-03T17:21:44">2018-12-03</time></span><span>更新: <time datetime="2020-09-24T23:05:16">2020-09-24</time></span></div><h1 id="directory.build">Directory.Build.*</h1>
+<p>なんか、Gist に書き捨ててそのまま放置なものが結構増えてきたので、
+しばらくそれを元にブログに起こしていこうかという気分に。</p>
+<p>ここ2年くらい、.NET Core や C# のテーマの1つがパフォーマンス改善だったせいもあって、だいぶ Unsafe でだいぶきわどい最適化の話が多めになるとは思います…</p>
+<p>(ちなみに、今日のは全然その系統ではなく、きわどさもない話。)</p>
+<h2 id="directory.build-1">Directory.Build.*</h2>
+<p>Visual Studio 2017 の頃から、所定のフォルダー以下にあるすべての <code>csproj</code> に対して掛かる共通設定を記述できるようになりました。以下の名前のファイルを置くことで、その内容が自動的に<code>csproj</code>にインポートされます。
+(<code>dotnet</code>コマンドでのビルドにも有効です。)</p>
+<ul>
+<li><code>Directory.Build.props</code> … <code>csproj</code>の先頭にインポートされる</li>
+<li><code>Directory.Build.targets</code> … <code>csproj</code> の末尾(NuGetパッケージに含まれている targets ファイルよりも後)にインポートされる</li>
+</ul>
+<p>そういえばあんまり紹介していなかったで、今日はこれの話でも。</p>
+<h2 id="section">全フォルダーに影響</h2>
+<p>このファイルを置くと、本当にありとあらゆる<code>csproj</code>に影響を及ぼします。
+ビルド エラーを起こすようなミスを書いてしまうと、全プロジェクトがきっちり全滅します。
+(そういうヤバさもあるので、これまでこの手の一括設定系の機能はあんまり提供されてこなかったんですけども。ここ数年、Visual Studio チームもだいぶ軟化しています。)</p>
+<p>そんな、「全てに一律にかかってほしい設定」ってのがどれくらいあるかという話ではあります。</p>
+<h3 id="deterministic">Deterministic</h3>
+<p>公式ドキュメントでは、「Deterministic オプション」を例に挙げています。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">Project</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Deterministic</span><span class="xmlDelimiter">&gt;</span>true<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Deterministic</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Project</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>これも Visual Studio 2017 (C# 7.0) の辺りで入った C# コンパイラーの機能なんですが、ソースコードを変更しない限り生成される DLL/EXE が常に同じバイナリになるというオプションです。</p>
+<p>当たり前っぽく聞こえる話ですが、これまで、タイムスタンプが含まれてしまったり、
+<a href="/study/csharp/oop/oo_class/#partial">partial 定義</a>している型を並列処理したとき順序保証が緩かったりで、ビルドのたびに生成物が変化していました。
+そのせいで、CI ツールの類で毎度処理が走ってしまい、CI が当たり前な今の時代、だいぶ負担になっていたみたいです。</p>
+<p>ただ、いきなり挙動を変えてしまうと既存の CI を壊す可能性があったので、オプションで切り替え可能に作ってあります。
+今は、 .NET Core なプロジェクトであれば既定で Deterministic オプションが true になりますが、.NET Framework なプロジェクトの場合は既定が false だそうです。レガシーな .NET Framework は既定動作を変えなかったという話です。</p>
+<p>ということで、.NET Framework でも常に true にしたいときに使うのが上記の設定。</p>
+<h3 id="langversion-latest">LangVersion latest</h3>
+<p>僕が常用しているのはこれ。「LangVersion オプション」を常に latest に。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">Project</span><span class="xmlDelimiter">&gt;</span>
+ <span class="xmlDelimiter">&lt;</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span>
+   <span class="xmlDelimiter">&lt;</span><span class="xmlName">LangVersion</span><span class="xmlDelimiter">&gt;</span>latest<span class="xmlDelimiter">&lt;/</span><span class="xmlName">LangVersion</span><span class="xmlDelimiter">&gt;</span>
+ <span class="xmlDelimiter">&lt;/</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Project</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>C# 7.0 以降、7.1、7.2、7.3 と、マイナー アップデートをしてきました。
+細かく頻繁なリリースなので追いかけれない人というのを懸念してか、</p>
+<ul>
+<li>default … 最新のメジャー バージョンを使う(今だと、C# 7.0)</li>
+<li>latest … 最新のマイナー バージョンを使う(今だと、C# 7.3)</li>
+</ul>
+<p>というような設定になります。
+名前通り、規定値は default。つまり、何もしないと C# 7.0 までしか使えない。</p>
+<p>うるせー、俺は常に最新の C# しか使わん。
+と言う人にお勧めなのが、<code>Directory.Build.props</code> に<code>&lt;LangVersion&gt;latest&lt;/LangVersion&gt;</code>オプションを入れてしまう方法。
+本当におすすめ。是非。</p>
+<h3 id="section-1">パッケージ バージョン</h3>
+<p>NuGet パッケージの面倒なところに、「バージョンの衝突があったとき、一番古い奴が使われる」という挙動があります。</p>
+<p><img src="/assets/media/1164/packageversion.png" alt="NuGet パッケージのバージョン衝突の解決" /></p>
+<p>まあ、バージョン違いのものを参照している時点でいろいろ問題は起こしがちなので、
+できれば全部のプロジェクトでバージョンをそろえたいです。
+が、それはそれですごくめんどくさい。
+Visual Studio にはソリューション全体の NuGet パッケージをまとめて管理する機能もありますが、ソリューションが分かれたりすると大変面倒です。
+また、まとめてバージョン アップできても、Git の差分が多くて嫌になったりします。</p>
+<p>そこで、<code>Directory.Build.targets</code>が使えます。
+例として、<code>Google.Apis</code>パッケージでも参照してみましょう。
+<code>Directory.Build.targets</code> (<code>props</code>だとダメ。最後に読まれる<code>targets</code>の方)に、以下のように<code>Update</code>属性指定でタグを書きます。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">Project</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">ItemGroup</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">PackageReference</span> <span class="xmlAttribute">Update</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Google.Apis</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Version</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">1.36.1</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">ItemGroup</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Project</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>配下にある <code>csproj</code> では、<code>Version</code> を指定せず、<code>Include</code> だけ指定します。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">Project</span> <span class="xmlAttribute">Sdk</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Microsoft.NET.Sdk</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">OutputType</span><span class="xmlDelimiter">&gt;</span>Exe<span class="xmlDelimiter">&lt;/</span><span class="xmlName">OutputType</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">TargetFramework</span><span class="xmlDelimiter">&gt;</span>netcoreapp2.1<span class="xmlDelimiter">&lt;/</span><span class="xmlName">TargetFramework</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">ItemGroup</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">PackageReference</span> <span class="xmlAttribute">Include</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Google.Apis</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">ItemGroup</span><span class="xmlDelimiter">&gt;</span>
+
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Project</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>これで、<code>Directory.Build.targets</code> 側に書かれた設定で「上書き」されて、
+バージョンが 1.36.1 にそろいます。</p>
+<p><code>Directory.Build.targets</code> 側に <code>Include</code> を書かないのは、無条件にパッケージ参照されないようにです。<code>Update</code>はすでに同じキーの<code>Include</code>がある場合にだけ働きます。</p>
+<h3 id="c-8.0-null">C# 8.0 の null 許容参照型</h3>
+<p>C# 8.0 で、null 許容参照型(単に <code>T</code> と書くと非 null で、参照型でも <code>T?</code> と書いて初めて null 許容になるフロー解析機能)が入りますが、
+<code>T</code> の意味を変えてしまう手前、opt-in (明示的にオプション指定しないとこの機能が有効にならない)になります。</p>
+<p>ソースコード中に <code>#nullable</code> ディレクティブを書くことでその行以下の opt-in/opt-out ができますが、それに加えて、プロジェクト全体で opt-in するための csproj プロパティも用意されています。
+今のところ、<code>NullableReferenceTypes</code>というタグ名になりそう<sup>※</sup>。</p>
+<p><sup>※</sup> 追記: その後、正式リリースまでの間に <code>Nullable</code> タグに変更になりました。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">NullableReferenceTypes</span><span class="xmlDelimiter">&gt;</span>True<span class="xmlDelimiter">&lt;/</span><span class="xmlName">NullableReferenceTypes</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Nullable</span><span class="xmlDelimiter">&gt;</span>enable<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Nullable</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>既存のプロジェクトに対していきなりこのオプションを指定するのはちょっと勇気が要ります(相当数の警告が出ます)が、
+新規に作り始めるプロジェクトであれば、この設定を入れてしまった方がいいでしょう。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2018/12/">12&#x6708;</a></li><li><a href="/blog/2018/12/pickuproslyn1201/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/1</a></li><li><a href="/blog/2018/12/tupleelementcase/">&#x30BF;&#x30D7;&#x30EB;&#x8981;&#x7D20;&#x540D;&#x306E;&#x5927;&#x6587;&#x5B57;&#x30FB;&#x5C0F;&#x6587;&#x5B57;</a></li><li><a href="/blog/2018/12/runtimefeature/">RuntimeFeature &#x30AF;&#x30E9;&#x30B9;</a></li><li><a href="/blog/2018/12/vs2019p1/">Visual Studio 2019 Preview 1</a></li><li><a href="/blog/2018/12/cs8misc/">C# 8.0 &#x5C0F;&#x3055;&#x306A;&#x4FEE;&#x6B63;</a></li><li><a href="/blog/2018/12/cs8ranges/">C# 8.0 Ranges</a></li><li><a href="/blog/2018/12/cs8nrt/">C# 8.0 null&#x8A31;&#x5BB9;&#x53C2;&#x7167;&#x578B;</a></li><li><a href="/blog/2018/12/cs8switchexpr/">C# 8.0 switch &#x5F0F;</a></li><li><a href="/blog/2018/12/cs8patterns/">C# 8.0 &#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30DE;&#x30C3;&#x30C1;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2018/12/cs8asyncstreams/">C# 8.0 Async streams</a></li><li><a href="/blog/2018/12/cs8notyet/">C# 8.0 &#x305D;&#x306E;&#x4ED6; (Preview 1&#x3067;&#x306E;&#x672A;&#x5B9F;&#x88C5;&#x6A5F;&#x80FD;)</a></li><li><a href="/blog/2018/12/arrayindexer/">&#x914D;&#x5217;&#x306E;&#x30A4;&#x30F3;&#x30C7;&#x30AF;&#x30B5;&#x30FC;</a></li><li><a href="/blog/2018/12/unsafe/">System.Runtime.CompilerServices.Unsafe</a></li><li><a href="/blog/2018/12/arraydowncast/">&#x914D;&#x5217;&#x306E;&#x30C0;&#x30A6;&#x30F3;&#x30AD;&#x30E3;&#x30B9;&#x30C8;</a></li><li><a href="/blog/2018/12/staticdatareadonlyspan/">&#x9759;&#x7684;&#x306A;&#x30C7;&#x30FC;&#x30BF;&#x306E; ReadOnlySpan &#x6700;&#x9069;&#x5316;</a></li><li><a href="/blog/2018/12/devirtualization/">Devirtualization (&#x8131;&#x4EEE;&#x60F3;&#x5316;)</a></li><li><a href="/blog/2018/12/guardeddevirtualization/">Guarded Devirtualization</a></li><li><a href="/blog/2018/12/fastenumerator/">IEnumerator &#x306E;&#x5225;&#x5B9F;&#x88C5;</a></li><li><a href="/blog/2018/12/howtoenumerate/">foreach &#x306E;&#x639B;&#x3051;&#x65B9;&#x3044;&#x308D;&#x3044;&#x308D;</a></li><li><a href="/blog/2018/12/pickuproslyn1221/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/21 &amp; Connect() Japan &#x30D5;&#x30A9;&#x30ED;&#x30FC;&#x30A2;&#x30C3;&#x30D7;</a></li><li><a href="/blog/2018/12/arrayindex/">&#x914D;&#x5217;&#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;&#x306F;0&#x4EE5;&#x4E0A;</a></li><li><a href="/blog/2018/12/jitintrinsics/">JIT Intrinsics</a></li><li><a href="/blog/2018/12/statictypeof/">&#x9759;&#x7684;&#x306A; typeof/sizeof</a></li><li><a href="/blog/2018/12/unicodecategory/">&#x66F8;&#x8A18;&#x7D20;&#x5206;&#x5272;/Unicode &#x30AB;&#x30C6;&#x30B4;&#x30EA;&#x30FC;&#x5224;&#x5B9A;</a></li><li><a href="/blog/2018/12/spanify/">Span&lt;T&gt; &#x5229;&#x7528;&#x306B;&#x3088;&#x308B;&#x6700;&#x9069;&#x5316;</a></li><li><a href="/blog/2018/12/futurememorymanagement/">&#x5C06;&#x6765;&#x306E;&#x30E1;&#x30E2;&#x30EA;&#x7BA1;&#x7406;</a></li><li><a href="/blog/2018/12/unsafenogarantee/">Unsafe &#x30AF;&#x30E9;&#x30B9;(&#x4FDD;&#x8A3C;&#x5916;)</a></li><li><a href="/blog/2018/12/unsafegarantee/">Unsafe &#x30AF;&#x30E9;&#x30B9;(&#x4FDD;&#x8A3C;&#x306E;&#x3042;&#x308B;&#x5229;&#x7528;&#x4F8B;)</a></li><li><a href="/blog/2018/12/unsaferuntime/">&#x4EEE;&#x60F3;&#x30C6;&#x30FC;&#x30D6;&#x30EB;&#x306E;&#x4E2D;&#x8EAB;&#x3092;&#x306E;&#x305E;&#x304D;&#x898B;</a></li><li><a href="/blog/2018/12/tieredcompilation/">&#x6BB5;&#x968E;&#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB; (Tiered Compilation)</a></li><li><a href="/blog/2018/12/hdintrinsic/">Hardware Intrinsics</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

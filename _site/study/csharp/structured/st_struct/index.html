@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30C7;&#x30FC;&#x30BF;&#x306E;&#x69CB;&#x9020;&#x5316;(&#x8907;&#x5408;&#x578B;) | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/structured/st_struct/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">データの構造化(複合型)</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>C# では、複数の異なるデータ型の変数を1まとめにして管理するため、クラスや構造体と呼ばれるものを定義して使うことが出来ます。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li>複合型: 複数のデータを1つにまとめて使うための型</li>
+<li>C# の複合型にはクラスと構造体の2種類ある
+<ul>
+<li>クラス: <code>class 型名 { メンバー定義 }</code></li>
+<li>構造体: <code>struct 型名 { メンバー定義 }</code></li>
+<li>大体の場合はクラスを使う</li>
+<li>(C# 9.0 ではもう1つ<a href="/study/csharp/datatype/record/">レコード型</a>というものも追加)</li>
+</ul>
+</li>
+<li>例えば、「2次元中の点」を表す複合型なら <code>class Point { public int X; public int Y; }</code></li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="about"></a>複合型</h2>
+<p>今まで <code>int</code> や <code>double</code> などの組込み型だけを使ってきましたが、
+組込み型だけでは複雑なデータを扱うことはできません。
+例えば、名簿を管理するプログラムを作りたいとします。
+説明を簡単にするために、名前と年齢と住所のみを考えましょう。
+この、名前と年齢と住所を一まとめにして管理できるような型があれば便利だとは思いませんか？
+要するに、以下のような「データをまとめた型」を使いたいことがあります。</p>
+<ul>
+<li><code>個人情報 = { 名前, 年齢, 住所 }</code></li>
+</ul>
+<p>このような、「データをまとめた型」を複合型（complex type）と呼びます。</p>
+<p>C# の場合、複合型には
+<strong id="class" class="keyword">クラス</strong>（class）と
+<strong id="struct" class="keyword">構造体</strong>（structure type）の2種類あり、
+以下のように定義します。
+(C# 9.0 では<a href="/study/csharp/datatype/record/">レコード型</a>というものが追加されました。これはクラスの亜種みたいなものです。)</p>
+<p>まず、クラスの定義は以下の通り。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> クラス名
+{
+  クラスのメンバー
+}</code></pre>
+<p>一方、構造体の定義は以下のようなります。<code>class</code>キーワードの代わりに<code>struct</code>キーワードを使う以外はクラスとほぼ同じです。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> 構造体名
+{
+  構造体のメンバー
+}</code></pre>
+<p>クラスと構造体の違いについては別項(<a href="/study/csharp/resource/rm_struct/">構造体</a>)で説明します。
+当面は、<em>ほとんどの場合クラスを使っておけばいい</em>とだけ覚えておいてください。</p>
+<p>クラスや構造体のメンバーとして書けるものは色々ありますが、詳細は今後少しずつ説明していきます。
+本項の主題、つまり、データをまとめる意図で使うのは、データを保持するためのメンバーです。
+これを<strong id="field" class="keyword">フィールド</strong>(field: 作業領域)と呼びます。</p>
+<p>(C#ではフィールドという呼び方が一般的ですが、
+他のプログラミング言語(特に古めの言語)では<em>メンバー変数</em>(member variable)と読んだりもします。)</p>
+<p>フィールドは、以下のように、クラスや構造体の中に変数宣言を書くような書式で定義します。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> クラス名
+{
+    フィールドの型 フィールド名;
+}</code></pre>
+<p>例えば、先ほどの例の名前と年齢と住所を一まとめにした構造体を定義したければ、以下のように書きます。
+構造体の名前は Person にでもしておきましょう。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Person
+{
+  <span class="keyword">public</span> <span class="keyword">string</span> name;    <span class="comment">// 名前</span>
+  <span class="keyword">public</span> <span class="keyword">uint</span>   age;     <span class="comment">// 年齢</span>
+  <span class="keyword">public</span> <span class="keyword">string</span> address; <span class="comment">// 住所</span>
+}</code></pre>
+<p><code>public</code> というキーワードについては「<a href="/study/csharp/oop/oo_conceal/">実装の隠蔽</a>」で説明します。</p>
+<p>このクラスを利用するときには以下のようにします。</p>
+<pre><code class="language-csharp">Person p = <span class="keyword">new</span> Person(); <span class="comment">// string とか配列と同じような感じで宣言＆初期化</span>
+
+<span class="comment">// 「 . 」 を使って各メンバーにアクセスする</span>
+<span class="comment">// 構造体変数名.メンバー名</span>
+p.name    = <span class="string">&quot;ちゆ&quot;</span>;
+p.age     = <span class="number">12</span>;
+p.address = <span class="string">&quot;http://www.tiyu.to&quot;</span>;</code></pre>
+<p>複合型、特にクラスの機能の詳細については、「<a href="/study/csharp/#oop">オブジェクト指向</a>」で説明して行きます。</p>
+<h5 id="section-4"><a id="sec-generated-title-4"></a>サンプル</h5>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 2次元の点をあらわすクラス</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">class</span> Point
+{
+  <span class="keyword">public</span> <span class="keyword">double</span> x; <span class="comment">// x 座標</span>
+  <span class="keyword">public</span> <span class="keyword">double</span> y; <span class="comment">// y 座標</span>
+
+  <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString()
+  {
+    <span class="keyword">return</span> <span class="string">&quot;(&quot;</span> + x + <span class="string">&quot;, &quot;</span> + y + <span class="string">&quot;)&quot;</span>;
+  }
+}
+
+<span class="keyword">class</span> StructSample
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    Point p1 = <span class="keyword">new</span> Point();
+    Point p2 = <span class="keyword">new</span> Point();
+
+    p1.x = <span class="number">100</span>;
+    p1.y = <span class="number">0</span>;
+
+    p2.x = <span class="number">400</span>;
+    p2.y = <span class="number">400</span>;
+
+    Console.Write(<span class="string">&quot;{0} と {1} の間の距離は {2}&quot;</span>, p1, p2, Distance(p1, p2));
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 2点間の距離を求める</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="keyword">static</span> <span class="keyword">double</span> Distance(Point p1, Point p2)
+  {
+    <span class="keyword">double</span> dx = p1.x - p2.x;
+    <span class="keyword">double</span> dy = p1.y - p2.y;
+    <span class="keyword">return</span> Math.Sqrt(dx*dx + dy*dy);
+  }
+}</code></pre>
+<pre><code class="language-console">(100, 0) と (400, 400) の間の距離は 500</code></pre>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="anonymous"></a>匿名の複合型</h2>
+<h5 class="version version3">Ver. 3.0</h5>
+<h5 class="version version7">Ver. 7.0</h5>
+<p>C# 3.0 からは<a href="/study/csharp/start/sp3_inference/#anonymous">匿名型</a>、
+C# 7.0 からは<a href="/study/csharp/datatype/tuples/">タプル</a>という機能が追加されて、
+<code>struct</code>や<code>class</code>などを定義しなくても複合型を書けるようになりました。</p>
+<pre><code class="language-csharp"><span class="comment">// 匿名型</span>
+<span class="comment">// new { } 内に値を並べる</span>
+<span class="keyword">var</span> x = <span class="keyword">new</span> { p.name, p.age };</code></pre>
+<pre><code class="language-csharp"><span class="keyword">var</span> p = <span class="keyword">new</span> Point();
+
+<span class="comment">// タプル</span>
+<span class="comment">// () 内に値を並べる</span>
+<span class="keyword">var</span> q = (Math.Sqrt(p.X * p.X + p.Y * p.Y), Math.Atan2(p.Y, p.X));</code></pre>
+<p>匿名型とタプルの違いについては「<a href="/study/csharp/structured/st_anonymoustype/">名前のない複合型</a>」で説明します。</p>
+<h2 id="section-6"><a id="exercise"></a>演習問題</h2>
+<h3 id="section-7"><a id="exercise-str1"></a>問題 1</h3>
+<p>サンプル中の Point 構造体を使って、三角形を表す構造体 <code>Triangle</code> を作成せよ。
+（3つの頂点を a, b, c 等のメンバー変数として持つ。）</p>
+<p>また、作成した構造体に、三角形の面積を求めるメンバー関数 <code>GetArea</code>を追加せよ。</p>
+<pre><code class="language-csharp"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 三角形の面積を求める。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">面積&lt;/returns&gt;</span>
+<span class="keyword">public</span> <span class="keyword">double</span> GetArea()</code></pre>
+<h4 id="section-8">解答例 1</h4>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 2次元の点をあらわす構造体</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">struct</span> Point
+{
+  <span class="keyword">public</span> <span class="keyword">double</span> x; <span class="comment">// x 座標</span>
+  <span class="keyword">public</span> <span class="keyword">double</span> y; <span class="comment">// y 座標</span>
+
+  <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString()
+  {
+    <span class="keyword">return</span> <span class="string">&quot;(&quot;</span> + x + <span class="string">&quot;, &quot;</span> + y + <span class="string">&quot;)&quot;</span>;
+  }
+}
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 2次元空間上の三角形をあらわす構造体</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">struct</span> Triangle
+{
+  <span class="keyword">public</span> Point a;
+  <span class="keyword">public</span> Point b;
+  <span class="keyword">public</span> Point c;
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 三角形の面積を求める。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">面積&lt;/returns&gt;</span>
+  <span class="keyword">public</span> <span class="keyword">double</span> GetArea()
+  {
+    <span class="keyword">double</span> abx, aby, acx, acy;
+    abx = b.x - a.x;
+    aby = b.y - a.y;
+    acx = c.x - a.x;
+    acy = c.y - a.y;
+    <span class="keyword">return</span> <span class="number">0</span>.<span class="number">5</span> * Math.Abs(abx * acy - acx * aby);
+  }
+}
+
+<span class="keyword">class</span> Test
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    Triangle t;
+    t.a.x = <span class="number">0</span>;
+    t.a.y = <span class="number">0</span>;
+    t.b.x = <span class="number">3</span>;
+    t.b.y = <span class="number">4</span>;
+    t.c.x = <span class="number">4</span>;
+    t.c.y = <span class="number">3</span>;
+    Console.Write(<span class="string">&quot;{0}\n&quot;</span>, t.GetArea());
+  }
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/structured/">&#x69CB;&#x9020;&#x5316;</a></li><li><a href="/study/csharp/structured/st_structured/">&#x69CB;&#x9020;&#x5316;</a></li><li><a href="/study/csharp/structured/st_control/">&#x5236;&#x5FA1;&#x30D5;&#x30ED;&#x30FC;</a></li><li><a href="/study/csharp/structured/st_branch/">&#x6761;&#x4EF6;&#x5206;&#x5C90;</a></li><li><a href="/study/csharp/structured/st_loop/">&#x53CD;&#x5FA9;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/structured/st_array/">&#x914D;&#x5217;</a></li><li><a href="/study/csharp/structured/st_function/">&#x95A2;&#x6570;</a></li><li><a href="/study/csharp/structured/miscentrypoint/">[&#x96D1;&#x8A18;] &#x30A8;&#x30F3;&#x30C8;&#x30EA;&#x30FC;&#x30DD;&#x30A4;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/structured/miscinlining/">[&#x96D1;&#x8A18;] &#x30A4;&#x30F3;&#x30E9;&#x30A4;&#x30F3;&#x5316;</a></li><li><a href="/study/csharp/structured/miscoverloadresolution/">[&#x96D1;&#x8A18;] &#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30ED;&#x30FC;&#x30C9;&#x89E3;&#x6C7A;</a></li><li><a href="/study/csharp/structured/sp_params/">&#x53EF;&#x5909;&#x9577;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/sp4_optional/">&#x30AA;&#x30D7;&#x30B7;&#x30E7;&#x30F3;&#x5F15;&#x6570;&#x30FB;&#x540D;&#x524D;&#x4ED8;&#x304D;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/st_command/">&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x30E9;&#x30A4;&#x30F3;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/st_library/">&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li><li><a href="/study/csharp/structured/st_enum/">&#x5217;&#x6319;&#x578B;</a></li><li><a href="/study/csharp/structured/st_anonymoustype/">&#x540D;&#x524D;&#x306E;&#x306A;&#x3044;&#x8907;&#x5408;&#x578B;</a></li><li><a href="/study/csharp/structured/sp_namespace/">&#x540D;&#x524D;&#x7A7A;&#x9593;</a></li><li><a href="/study/csharp/structured/oo_exception/">&#x4F8B;&#x5916;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/structured/misc_exception/">[&#x96D1;&#x8A18;] &#x4F8B;&#x5916;&#x306E;&#x4F7F;&#x3044;&#x65B9;</a></li><li><a href="/study/csharp/structured/misc_stacktrace/">[&#x96D1;&#x8A18;] &#x4F8B;&#x5916;&#x306E;&#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x30C8;&#x30EC;&#x30FC;&#x30B9;</a></li><li><a href="/study/csharp/structured/miscexpressions/">[&#x96D1;&#x8A18;] &#x5F0F;&#x306B;&#x307E;&#x3064;&#x308F;&#x308B;&#x88DC;&#x8DB3;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

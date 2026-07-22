@@ -1,0 +1,139 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30DE;&#x30FC;&#x30B8;&#x30BD;&#x30FC;&#x30C8; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/algorithm/sort/sort_merge/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">マージソート</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>マージ（merge: 併合、吸収）とは、
+2つのソート済み配列を、1つのソート済み配列にまとめる操作のことを言います。
+そして、<strong id="merge" class="keyword">マージソート</strong>（merge sort）は分割統治法に基づく、
+以下のようなアルゴリズムです。</p>
+<ol>
+<li><p>配列を2つに分割。</p>
+</li>
+<li><p>分けた配列を再帰的にマージソート。</p>
+</li>
+<li><p>2つのソート済み配列をマージ。</p>
+</li>
+</ol>
+<p>平均・最悪ともに計算量 O(n log n) の高速なソートです。
+高速なソートの中では唯一「<a href="/study/algorithm/sort/sort/#stable">安定</a>」なアルゴリズムであるという利点があるのですが、「<a href="/study/algorithm/sort/sort/#outer">外部</a>」ソート（配列長の 1/2 のサイズの余分な領域が必要）になってしまうという欠点もあります。</p>
+<p>また、配列にランダムアクセスする（ランダムな順序 <code>i</code> で配列の要素 <code>a[i]</code> にアクセス）必要がないため、
+シーケンシャル（前から順番）アクセスしかできない連結リスト構造に対しても使用できるという利点もあります。
+連結リストに対してマージソートを用いる場合、
+余分な領域を確保する必要がなくなるので、
+連結リストに対するソートといえばマージソートになります。</p>
+<p>計算量 O(n log n) のソートの中では遅い部類に入り、
+安定性が必要な場合や、連結リストに対するソート以外ではあまり利用されません。</p>
+<div><iframe src="https://black-ocean-009cb0000.2.azurestaticapps.net/?a=merge&i=0&s=0&w=300" width="304" height="332"></iframe></div>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="sample"></a>サンプルソース</h2>
+<p><a href="https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/MergeSort.cs">https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/MergeSort.cs</a></p>
+<pre><code class="language-csharp"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> マージソート。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;a&quot;&gt;</span><span class="xmlDocComment">対象の配列&lt;/param&gt;</span>
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> MergeSort&lt;T&gt;(T[] a)
+  <span class="keyword">where</span> T : IComparable&lt;T&gt;
+{
+  T[] work = <span class="keyword">new</span> T[a.Length / <span class="number">2</span>];
+  MergeSort(a, <span class="number">0</span>, a.Length, work);
+}
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> マージソート → 挿入ソートに切り替える配列長の閾値。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">const</span> <span class="keyword">int</span> THREASHOLD = <span class="number">64</span>;
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 挿入ソート。</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 配列のどこからどこまでをソートするかを指定するバージョン。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;a&quot;&gt;</span><span class="xmlDocComment">対象の配列&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;first&quot;&gt;</span><span class="xmlDocComment">ソート対象の先頭インデックス&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;last&quot;&gt;</span><span class="xmlDocComment">ソート対象の末尾インデックス&lt;/param&gt;</span>
+<span class="keyword">static</span> <span class="keyword">void</span> InsertSort&lt;T&gt;(T[] a, <span class="keyword">int</span> first, <span class="keyword">int</span> last)
+  <span class="keyword">where</span> T : IComparable&lt;T&gt;
+{
+  <span class="keyword">for</span> (<span class="keyword">int</span> i = first + <span class="number">1</span>; i &lt;= last; i++)
+    <span class="keyword">for</span> (<span class="keyword">int</span> j = i; j &gt; first &amp;&amp; a[j - <span class="number">1</span>].CompareTo(a[j]) &gt; <span class="number">0</span>; --j)
+      Swap(<span class="keyword">ref</span> a[j], <span class="keyword">ref</span> a[j - <span class="number">1</span>]);
+}
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> マージソート。</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 配列のどこからどこまでをソートするかを指定するバージョン。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;a&quot;&gt;</span><span class="xmlDocComment">対象の配列&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;begin&quot;&gt;</span><span class="xmlDocComment">ソート対象部分の先頭&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;end&quot;&gt;</span><span class="xmlDocComment">ソート対象部分の末尾＋1&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;work&quot;&gt;</span><span class="xmlDocComment">作業領域。a の 1/2 のサイズが必要。&lt;/param&gt;</span>
+<span class="keyword">static</span> <span class="keyword">void</span> MergeSort&lt;T&gt;(T[] a, <span class="keyword">int</span> begin, <span class="keyword">int</span> end, T[] work)
+  <span class="keyword">where</span> T : IComparable&lt;T&gt;
+{
+  <span class="keyword">if</span> (end - begin &lt; THREASHOLD)
+  {
+    InsertSort(a, begin, end - <span class="number">1</span>);
+    <span class="keyword">return</span>;
+  }
+
+  <span class="keyword">int</span> mid = (begin + end) / <span class="number">2</span>;
+  MergeSort(a, begin, mid, work);
+  MergeSort(a, mid, end, work);
+  Merge(a, begin, mid, end, work);
+}
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 配列 a の、[begin, mid) の部分と [mid, end) の部分をマージ。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;typeparam name=&quot;T&quot;&gt;</span><span class="xmlDocTag">&lt;/typeparam&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;a&quot;&gt;</span><span class="xmlDocComment">マージ対象の配列&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;begin1&quot;&gt;</span><span class="xmlDocComment">aの先頭&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;mid&quot;&gt;</span><span class="xmlDocComment">aの分割点&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;end&quot;&gt;</span><span class="xmlDocComment">aの末尾＋1&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;work&quot;&gt;</span><span class="xmlDocComment">作業領域&lt;/param&gt;</span>
+<span class="keyword">static</span> <span class="keyword">void</span> Merge&lt;T&gt;(T[] a, <span class="keyword">int</span> begin, <span class="keyword">int</span> mid, <span class="keyword">int</span> end, T[] work)
+  <span class="keyword">where</span> T : IComparable&lt;T&gt;
+{
+  <span class="keyword">int</span> i, j, k;
+
+  <span class="keyword">for</span> (i = begin, j = <span class="number">0</span>; i != mid; ++i, ++j) work[j] = a[i];
+
+  mid -= begin;
+  <span class="keyword">for</span> (j = <span class="number">0</span>, k = begin; i != end &amp;&amp; j != mid; ++k)
+  {
+    <span class="keyword">if</span> (a[i].CompareTo(work[j]) &lt; <span class="number">0</span>)
+    {
+      a[k] = a[i];
+      ++i;
+    }
+    <span class="keyword">else</span>
+    {
+      a[k] = work[j];
+      ++j;
+    }
+  }
+
+  <span class="keyword">for</span> (; i &lt; end; ++i, ++k) a[k] = a[i];
+  <span class="keyword">for</span> (; j &lt; mid; ++j, ++k) a[k] = work[j];
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/algorithm/sort/">&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort/">&#x30BD;&#x30FC;&#x30C8;&#x6982;&#x8981;</a></li><li><a href="/study/algorithm/sort/sort_bubble/">&#x30D0;&#x30D6;&#x30EB;&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort_select/">&#x9078;&#x629E;&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort_insert/">&#x633F;&#x5165;&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort_shell/">&#x30B7;&#x30A7;&#x30EB;&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort_quick/">&#x30AF;&#x30A4;&#x30C3;&#x30AF;&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort_heap/">&#x30D2;&#x30FC;&#x30D7;&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort_bucket/">&#x30D0;&#x30B1;&#x30C3;&#x30C8;&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort_radix/">&#x57FA;&#x6570;&#x30BD;&#x30FC;&#x30C8;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

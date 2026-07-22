@@ -1,0 +1,673 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Java &#x958B;&#x767A;&#x8005;&#x5411;&#x3051;&#x30C1;&#x30FC;&#x30C8; &#x30B7;&#x30FC;&#x30C8; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/cs4j/java_cheatsheet/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="java">Java 開発者向けチート シート</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>キーワードや演算子の対訳表。</p>
+<p>参考: <a href="http://msdn.microsoft.com/en-us/gg715299.aspx">Moving to C# and the .NET Framework, for Java Developers</a>。</p>
+<h2 id="section-1"><a id="sec-generated-title-2"></a> <a id="keyword"></a>キーワード</h2>
+<table summary="">
+
+	<tr>
+		<th>Java</th>
+		<th>C#</th>
+		<th>関連記事</th>
+	</tr>
+	<tr>
+		<td><p><code>abstract</code></p></td>
+		<td><p><code>abstract</code></p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_abstract/#abstraction">抽象化</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>assert</code></p></td>
+		<td><p>なし</p></td>
+		<td><p>キーワードではなく、Debug.Assert メソッドとして提供。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>break</code></p></td>
+		<td><p><code>break</code></p></td>
+		<td><p>「<a href="/study/csharp/structured/st_loop/#while">while 文</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>case</code></p></td>
+		<td><p><code>case</code></p></td>
+		<td><p>「<a href="/study/csharp/structured/st_branch/#switch">switch 文</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>catch</code></p></td>
+		<td><p><code>catch</code></p></td>
+		<td><p>「<a href="/study/csharp/structured/oo_exception/#syntax">例外処理構文</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>class</code></p></td>
+		<td><p><code>class</code></p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_class/#definition">クラス定義</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>continue</code></p></td>
+		<td><p><code>continue</code></p></td>
+		<td><p>「<a href="/study/csharp/structured/st_loop/#while">while 文</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>default</code></p></td>
+		<td><p><code>default</code></p></td>
+		<td><p>「<a href="/study/csharp/structured/st_branch/#switch">switch 文</a>」「<a href="/study/csharp/oop/sp2_generics/#default">既定値</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>do</code></p></td>
+		<td><p><code>do</code></p></td>
+		<td><p>「<a href="/study/csharp/structured/st_loop/#dowhile">do-while 文</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>else</code></p></td>
+		<td><p><code>else</code></p></td>
+		<td><p>「<a href="/study/csharp/structured/st_branch/#if">if 文</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>enum</code></p></td>
+		<td><p><code>enum</code></p></td>
+		<td><p>「<a href="/study/csharp/structured/st_enum/#about">列挙型とは</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>extends</code></p></td>
+		<td><p><code>:</code></p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_inherit/#inherit">クラスの継承</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>false</code></p></td>
+		<td><p><code>false</code></p></td>
+		<td><p>「<a href="/study/csharp/start/st_embeddedtype/#bool">論理値型</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>final</code></p></td>
+		<td><p><code>sealed</code></p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_inherit/#sealed">sealed</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>finally</code></p></td>
+		<td><p><code>finally</code></p></td>
+		<td><p>「<a href="/study/csharp/structured/oo_exception/#syntax">例外処理構文</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>for</code></p></td>
+		<td><p><code>for / foreach</code></p></td>
+		<td><p>「<a href="/study/csharp/structured/st_loop/#for">for 文</a>」「<a href="/study/csharp/structured/st_loop/#foreach">foreach文</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>if</code></p></td>
+		<td><p><code>if</code></p></td>
+		<td><p>「<a href="/study/csharp/structured/st_branch/#if">if 文</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>implements</code></p></td>
+		<td><p><code>:</code></p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_interface/#interface">C# のインターフェース</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>import</code></p></td>
+		<td><p><code>using</code></p></td>
+		<td><p>「<a href="/study/csharp/structured/sp_namespace/#use">名前空間の使い方</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>instanceof</code></p></td>
+		<td><p><code>is</code></p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_polymorphism/#downcast">ダウンキャスト</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>interface</code></p></td>
+		<td><p><code>interface</code></p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_interface/#interface">C# のインターフェース</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>native</code></p></td>
+		<td><p><code>extern</code></p></td>
+		<td><p>「<a href="/study/csharp/structured/sp_namespace/#extern">外部エイリアス</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>new</code></p></td>
+		<td><p><code>new</code></p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_class/#use">クラスの利用</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>null</code></p></td>
+		<td><p><code>null</code></p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_class/#use">クラスの利用</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>package</code></p></td>
+		<td><p><code>namespace</code></p></td>
+		<td><p>「<a href="/study/csharp/structured/sp_namespace/#use">名前空間の使い方</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>private</code></p></td>
+		<td><p><code>private</code></p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_conceal/#level">アクセスレベル</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>protected</code></p></td>
+		<td><p><code>protected</code></p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_conceal/#level">アクセスレベル</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>public</code></p></td>
+		<td><p><code>public</code></p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_conceal/#level">アクセスレベル</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>return</code></p></td>
+		<td><p><code>return</code></p></td>
+		<td><p>「<a href="/study/csharp/structured/st_function/#definition">関数定義</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>static</code></p></td>
+		<td><p><code>static</code></p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_static/#use">静的メンバーの使い方</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>strictfp</code></p></td>
+		<td><p>なし</p></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><p><code>super</code></p></td>
+		<td><p><code>base</code></p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_inherit/#base_ctor">基底クラスのコンストラクタを明示的に呼び出す</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>switch</code></p></td>
+		<td><p><code>switch</code></p></td>
+		<td><p>「<a href="/study/csharp/structured/st_branch/#switch">switch 文</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>synchronized</code></p></td>
+		<td><p><code>lock</code></p></td>
+		<td><p>「<a href="/study/csharp/async/sp_thread/#lock">lock 文</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>this</code></p></td>
+		<td><p><code>this</code></p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_construct/#ctor">コンストラクター</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>throw</code></p></td>
+		<td><p><code>throw</code></p></td>
+		<td><p>「<a href="/study/csharp/structured/oo_exception/#syntax">例外処理構文</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>throws</code></p></td>
+		<td><p>なし</p></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><p><code>transient</code></p></td>
+		<td><p>なし</p></td>
+		<td><p>[Nonserialized]「<a href="/study/csharp/dynamic/sp_attribute/#attribute">属性</a>」を利用。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>true</code></p></td>
+		<td><p><code>true</code></p></td>
+		<td><p>「<a href="/study/csharp/start/st_embeddedtype/#bool">論理値型</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>try</code></p></td>
+		<td><p><code>try</code></p></td>
+		<td><p>「<a href="/study/csharp/structured/oo_exception/#syntax">例外処理構文</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>...</code></p></td>
+		<td><p><code>params</code></p></td>
+		<td><p>「<a href="/study/csharp/structured/sp_params/#params">params キーワード</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>void</code></p></td>
+		<td><p><code>void</code></p></td>
+		<td><p>「<a href="/study/csharp/structured/st_function/#void">引数が複数ある関数、引数のない関数、戻り値のない関数</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>volatile</code></p></td>
+		<td><p><code>volatile</code></p></td>
+		<td><p>「<a href="/study/csharp/async/sp_thread/#volatile">volatile</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>while</code></p></td>
+		<td><p><code>while</code></p></td>
+		<td><p>「<a href="/study/csharp/structured/st_loop/#while">while 文</a>」</p></td>
+	</tr>
+</table>
+<h3 id="java-1"><a id="sec-generated-title-3"></a> <a id="not-in-java-keyword"></a>Java にないキーワード</h3>
+<p>Java にはないか、あっても少し挙動の違うキーワードの一覧です。</p>
+<table summary="">
+
+	<tr>
+		<th>キーワード</th>
+		<th>説明</th>
+		<th>関連記事</th>
+	</tr>
+	<tr>
+		<td><p><code>checked / unchecked</code></p></td>
+		<td><p>整数演算のオーバーフロー時に例外を発生させるかどうかを選択する。</p></td>
+		<td><p>「<a href="/study/csharp/start/sp_checked/#checked">checked キーワード</a>」「<a href="/study/csharp/start/sp_checked/#unchecked">unchecked キーワード</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>const</code></p></td>
+		<td><p>定数を作る。 Java はキーワードの予約のみで、実際は機能を持っていません。</p></td>
+		<td><p>「<a href="/study/csharp/start/sp_const/#const">const</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>delegate</code></p></td>
+		<td><p>メソッドを参照するための型を作る。</p></td>
+		<td><p>「<a href="/study/csharp/functional/sp_delegate/#definition">デリゲートの定義</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>event</code></p></td>
+		<td><p>イベント ハンドラーの登録口を作る。</p></td>
+		<td><p>「<a href="/study/csharp/functional/sp_event/#event">イベント</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>explicit / implicit</code></p></td>
+		<td><p>キャスト演算子用。暗黙の型変換を認めるかどうかを指定する。</p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_operator/#overload">演算子のオーバーロードの方法</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>goto</code></p></td>
+		<td><p>いわゆる goto 文（無条件ジャンプ）。 Java はキーワードの予約のみで、実際は機能を持っていません。</p></td>
+		<td><p>「<a href="/study/csharp/structured/st_branch/#goto">goto 文</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>in / out</code></p></td>
+		<td><p>ジェネリクスの共変性/反変性を指定する。</p></td>
+		<td><p>「<a href="/study/csharp/oop/sp4_variance/#variance">ジェネリックの共変性・反変性</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>new</code></p></td>
+		<td><p>（new 演算子の他に） 基底クラスのメンバーを隠して再実装するために使う。</p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_inherit/#conceal">基底クラスのメンバーの隠蔽</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>operator</code></p></td>
+		<td><p>演算子をオーバーロードする。</p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_operator/#overload">演算子のオーバーロードの方法</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>out / ref</code></p></td>
+		<td><p>メソッドの引数を参照渡しする。</p></td>
+		<td><p>「<a href="/study/csharp/resource/sp_ref/#byref">参照渡し</a>」「<a href="/study/csharp/resource/sp_ref/#out">出力引数</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>override</code></p></td>
+		<td><p>C# では、仮想メソッドをオーバーライドする際に override 修飾子を付けます。 （スペル ミスによるオーバーライド失敗を検出できるように。）</p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_polymorphism/#virtual">仮想メソッド</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>protected</code></p></td>
+		<td><p>Java の protected メンバーは、派生クラス内からだけでなく、パッケージ内の他のクラスから参照できます（C# で一番近いのは protected internal）。 C# の protected メンバーはクラス内、もしくは派生クラス内からのみ参照できます。</p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_conceal/#level">アクセスレベル</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>readonly</code></p></td>
+		<td><p>読み取り専用メンバーを作る。 Java でいうところの、フィールドに対して final を付けた時と同様の挙動になります。</p></td>
+		<td><p>「<a href="/study/csharp/start/sp_const/#readonly">readonly</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>struct</code></p></td>
+		<td><p>値型を作る。</p></td>
+		<td><p>「<a href="/study/csharp/structured/st_struct/#about">構造体とは</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>unsafe</code></p></td>
+		<td><p>unsafe コードを有効にする。</p></td>
+		<td><p>「<a href="/study/csharp/interop/sp_unsafe/#unsafe">unsafe コード</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>virtual</code></p></td>
+		<td><p>Java では全てのメソッドが仮想メソッドになりますが、 C# では virtual 修飾子を付けたものだけが仮想メソッドになります。</p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_polymorphism/#virtual">仮想メソッド</a>」</p></td>
+	</tr>
+</table>
+<h3 id="java-2"><a id="sec-generated-title-4"></a> <a id="not-in-java-context"></a>Java にないコンテキスト キーワード</h3>
+<p>C# のいくつかのキーワードはコンテキスト キーワードになっていて、特定の文脈でのみキーワード扱いされます。</p>
+<table summary="">
+
+	<tr>
+		<th>キーワード</th>
+		<th>説明</th>
+		<th>関連記事</th>
+	</tr>
+	<tr>
+		<td><p><code>add / remove</code></p></td>
+		<td><p>イベントのハンドラー追加/削除用のアクセサーを定義。</p></td>
+		<td><p>「<a href="/study/csharp/functional/sp_event/#event">イベント</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>dynamic</code></p></td>
+		<td><p>動的な変数を定義。</p></td>
+		<td><p>「<a href="/study/csharp/dynamic/sp4_dynamic/#dynamic">動的型付け変数</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>get / set / value</code></p></td>
+		<td><p>プロパティ/インデクサーのアクセサーを定義。</p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_property/#about">プロパティとは</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>from / select /where</code>など</p></td>
+		<td><p>クエリ式。</p></td>
+		<td><p>「<a href="/study/csharp/data/sp3_linq/#query">クエリ式</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>partial</code></p></td>
+		<td><p>部分クラスを作る。</p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_class/#partial">クラスの分割定義</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>var</code></p></td>
+		<td><p>変数を定義（型推論）。</p></td>
+		<td><p>「<a href="/study/csharp/start/sp3_inference/#implicit">型推論</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>where</code></p></td>
+		<td><p>ジェネリクスの型制約を付ける。</p></td>
+		<td><p>「<a href="/study/csharp/oop/sp2_generics/#where">制約条件</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>yield</code></p></td>
+		<td><p>イテレーター ブロック中で値を返す。</p></td>
+		<td><p>「<a href="/study/csharp/data/sp2_iterator/#block">イテレーター ブロック</a>」</p></td>
+	</tr>
+</table>
+<h2 id="section-2"><a id="sec-generated-title-5"></a> <a id="operator"></a>演算子</h2>
+<table summary="">
+
+	<tr>
+		<th>Java</th>
+		<th>C#</th>
+		<th>説明</th>
+		<th>関連記事</th>
+	</tr>
+	<tr>
+		<td><p><code>x.y</code></p></td>
+		<td><p><code>x.y</code></p></td>
+		<td><p>メンバー参照。</p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_class/#use">クラスの利用</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>f(x)</code></p></td>
+		<td><p><code>f(x)</code></p></td>
+		<td><p>メソッド呼び出し。</p></td>
+		<td><p>「<a href="/study/csharp/structured/st_function/#function">関数</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>a[x]</code></p></td>
+		<td><p><code>a[x]</code></p></td>
+		<td><p>配列の要素参照。</p></td>
+		<td><p>「<a href="/study/csharp/structured/st_array/#array">配列</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>++, --</code></p></td>
+		<td><p><code>++, --</code></p></td>
+		<td><p>インクリメント/デクリメント。</p></td>
+		<td><p>「<a href="/study/csharp/start/st_operator/#inc">インクリメント・デクリメント</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>new</code></p></td>
+		<td><p><code>new</code></p></td>
+		<td><p>インスタンス生成。</p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_class/#use">クラスの利用</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>instanceof</code></p></td>
+		<td><p><code>is</code></p></td>
+		<td><p>インスタンスの型を調べる。</p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_polymorphism/#downcast">ダウンキャスト</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>+, -</code></p></td>
+		<td><p><code>+, -</code></p></td>
+		<td><p>（単項）数値の符号反転 /（2項）数値の加減算 / 文字列の連結。</p></td>
+		<td><p>「<a href="/study/csharp/start/st_operator/#arithmetic">算術演算子</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>+</code></p></td>
+		<td><p><code>+</code></p></td>
+		<td><p>文字列の連結。</p></td>
+		<td><p>「<a href="/study/csharp/start/st_operator/#concat">文字列連結</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>!</code></p></td>
+		<td><p><code>!</code></p></td>
+		<td><p>論理否定。</p></td>
+		<td><p>「<a href="/study/csharp/start/st_operator/#logical">論理演算子</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>&amp;&amp;, ||</code></p></td>
+		<td><p><code>&amp;&amp;, ||</code></p></td>
+		<td><p>論理積 / 論理和（短絡評価版）。</p></td>
+		<td><p>「<a href="/study/csharp/start/st_operator/#logical">論理演算子</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>&amp;, |, ^</code></p></td>
+		<td><p><code>&amp;, |, ^</code></p></td>
+		<td><p>論理積 / 論理和 / 排他的論理和。</p></td>
+		<td><p>「<a href="/study/csharp/start/st_operator/#logical">論理演算子</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>~</code></p></td>
+		<td><p><code>~</code></p></td>
+		<td><p>補数（ビット反転）。</p></td>
+		<td><p>「<a href="/study/csharp/start/st_operator/#logical">論理演算子</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>&lt;&lt;, &gt;&gt;</code></p></td>
+		<td><p><code>&lt;&lt;, &gt;&gt;</code></p></td>
+		<td><p>左右シフト。</p></td>
+		<td><p>「<a href="/study/csharp/start/st_operator/#shift">シフト</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>&gt;&gt;&gt;</code></p></td>
+		<td><p>なし</p></td>
+		<td><p>C# では、符号付き整数の右シフト（<code>&gt;&gt;</code>）は算術シフトに、 符号なし整数の右シフトは論理シフトになります。</p></td>
+		<td><p>「<a href="/study/csharp/start/st_operator/#shift">シフト</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>*, /, %</code></p></td>
+		<td><p><code>*, /, %</code></p></td>
+		<td><p>数値の乗除算、剰余。</p></td>
+		<td><p>「<a href="/study/csharp/start/st_operator/#arithmetic">算術演算子</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>==, !=</code></p></td>
+		<td><p><code>==, !=</code></p></td>
+		<td><p>等値比較。</p></td>
+		<td><p>「<a href="/study/csharp/start/st_operator/#relation">関係演算</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>&lt;, &lt;=, &gt;, &gt;=</code></p></td>
+		<td><p><code>&lt;, &lt;=, &gt;, &gt;=</code></p></td>
+		<td><p>大小比較。</p></td>
+		<td><p>「<a href="/study/csharp/start/st_operator/#relation">関係演算</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>x ? y : z</code></p></td>
+		<td><p><code>x ? y : z</code></p></td>
+		<td><p>条件演算子。</p></td>
+		<td><p>「<a href="/study/csharp/start/st_operator/#condition">条件演算子</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>=</code></p></td>
+		<td><p><code>=</code></p></td>
+		<td><p>代入。</p></td>
+		<td><p>「<a href="/study/csharp/start/st_operator/#substitute">代入演算</a>」</p></td>
+	</tr>
+</table>
+<h3 id="java-3"><a id="sec-generated-title-6"></a> <a id="not-in-java-operator"></a>Java にない演算子</h3>
+<table summary="">
+
+	<tr>
+		<th>演算子</th>
+		<th>説明</th>
+		<th>関連記事</th>
+	</tr>
+	<tr>
+		<td><p><code>??</code></p></td>
+		<td><p>値が null の時に別の値に置き換える。</p></td>
+		<td><p>「<a href="/study/csharp/start/st_operator/#null">null 合体演算子</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>=&gt;</code></p></td>
+		<td><p>ラムダ式を作る。</p></td>
+		<td><p>「<a href="/study/csharp/functional/sp3_lambda/#lambda">ラムダ式</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>as</code></p></td>
+		<td><p>例外を投げる代わりに null を返す型変換。</p></td>
+		<td><p>「<a href="/study/csharp/oop/oo_polymorphism/#downcast">ダウンキャスト</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>checked / unchecked</code></p></td>
+		<td><p>整数演算のオーバーフロー時に例外を発生させるかどうかを選択する。</p></td>
+		<td><p>「<a href="/study/csharp/start/sp_checked/#checked">checked キーワード</a>」「<a href="/study/csharp/start/sp_checked/#unchecked">unchecked キーワード</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>default(T)</code></p></td>
+		<td><p>T 型の規定値（値型なら 0 や false、参照型なら null）を返す。 ジェネリクスで利用。</p></td>
+		<td><p>「<a href="/study/csharp/oop/sp2_generics/#default">既定値</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>sizeof(T)</code></p></td>
+		<td><p>T 型のサイズを返す。</p></td>
+		<td><p>「<a href="/study/csharp/interop/sp_unsafe/#function">unsafe コード限定機能</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>stackalloc</code></p></td>
+		<td><p>スタック上に配列を確保する。</p></td>
+		<td><p>「<a href="/study/csharp/interop/sp_unsafe/#function">unsafe コード限定機能</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p><code>typeof(T)</code></p></td>
+		<td><p>T 型の型情報を取得。</p></td>
+		<td><p>「<a href="/study/csharp/dynamic/sp_reflection/#type">実行時型情報の取得</a>」</p></td>
+	</tr>
+</table>
+<h2 id="section-3"><a id="sec-generated-title-7"></a> <a id="type"></a>基礎的な型</h2>
+<p>参考: 「<a href="/study/csharp/start/st_embeddedtype/">組込み型</a>」</p>
+<table summary="">
+
+	<tr>
+		<th colspan="2">種類</th>
+		<th>Java</th>
+		<th>C#</th>
+		<th>注釈</th>
+	</tr>
+	<tr>
+		<th colspan="2">論理型</th>
+		<td><p>boolean</p></td>
+		<td><p>bool</p></td>
+		<td></td>
+	</tr>
+	<tr>
+		<th rowspan="4">符号付き<br></br>整数</th>
+		<th>1byte</th>
+		<td><p>byte</p></td>
+		<td><p>sbyte</p></td>
+		<td rowspan="8"><p>Java の整数型は符号付きのみ。</p></td>
+	</tr>
+	<tr>
+		<th>2byte</th>
+		<td><p>short</p></td>
+		<td><p>short</p></td>
+	</tr>
+	<tr>
+		<th>4byte</th>
+		<td><p>int</p></td>
+		<td><p>int</p></td>
+	</tr>
+	<tr>
+		<th>8byte</th>
+		<td><p>long</p></td>
+		<td><p>long</p></td>
+	</tr>
+	<tr>
+		<th rowspan="4">符号なし<br></br>整数</th>
+		<th>1byte</th>
+		<td></td>
+		<td><p>byte</p></td>
+	</tr>
+	<tr>
+		<th>2byte</th>
+		<td></td>
+		<td><p>ushort</p></td>
+	</tr>
+	<tr>
+		<th>4byte</th>
+		<td></td>
+		<td><p>uint</p></td>
+	</tr>
+	<tr>
+		<th>8byte</th>
+		<td></td>
+		<td><p>ulong</p></td>
+	</tr>
+	<tr>
+		<th rowspan="2">浮動小数<br></br>点数</th>
+		<th>4byte</th>
+		<td><p>float</p></td>
+		<td><p>float</p></td>
+		<td rowspan="2"><p>いずれも IEEE 754 形式</p></td>
+	</tr>
+	<tr>
+		<th>8byte</th>
+		<td><p>double</p></td>
+		<td><p>double</p></td>
+	</tr>
+	<tr>
+		<th colspan="2">デシマル</th>
+		<td><p>なし</p></td>
+		<td><p>decimal</p></td>
+		<td><p>Java の場合は BigDecimal クラスを利用。 C# の decimal は IEEE 754-2008 形式ではない。</p></td>
+	</tr>
+	<tr>
+		<th colspan="2">文字</th>
+		<td><p>char</p></td>
+		<td><p>char</p></td>
+		<td><p>UTF-16</p></td>
+	</tr>
+	<tr>
+		<th colspan="2">文字列</th>
+		<td><p>String</p></td>
+		<td><p>string</p></td>
+		<td><p>いずれも不変なオブジェクト。</p></td>
+	</tr>
+	<tr>
+		<th colspan="2">オブジェクト型</th>
+		<td><p>Object</p></td>
+		<td><p>object</p></td>
+		<td></td>
+	</tr>
+	<tr>
+		<th colspan="2">他</th>
+		<td><p>Date</p></td>
+		<td><p>DateTime</p></td>
+		<td><p>扱える範囲が異なるので注意。 Java は1970年1月1日以降（上限は未定義）。 C# は1年1月1日から9999年12月31日まで。</p></td>
+	</tr>
+</table>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/cs4j/">&#x4ED6;&#x306E;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30DF;&#x30F3;&#x30B0;&#x8A00;&#x8A9E;&#x7D4C;&#x9A13;&#x8005;&#x5411;&#x3051;</a></li><li><a href="/study/csharp/cs4j/ab_csspec/">C# &#x306E;&#x7279;&#x5FB4;&#xFF08;C&#x2B;&#x2B;&#x3001;Java &#x5229;&#x7528;&#x8005;&#x5411;&#x3051;&#xFF09;</a></li><li><a href="/study/csharp/cs4j/cmp_type/">C&#x2B;&#x2B;&#x3068;Java&#x3068;&#x306E;&#x7D44;&#x8FBC;&#x307F;&#x578B;&#x306E;&#x6BD4;&#x8F03;</a></li><li><a href="/study/csharp/cs4j/ap_visualbasic/">C# &#x3068; Visual Basic</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

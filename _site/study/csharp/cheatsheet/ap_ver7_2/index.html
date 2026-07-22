@@ -1,0 +1,289 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>C# 7.2 &#x306E;&#x65B0;&#x6A5F;&#x80FD; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/cheatsheet/ap_ver7_2/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="c-7.2">C# 7.2 の新機能</h1>
+<h2 id="c-7.2-1"><a id="sec-generated-title-1"></a> <a id="ver7_2"></a>C# 7.2</h2>
+<div class="version version7_1">Ver. 7.2</div>
+<table>
+<tr>
+<th>リリース時期</th>
+<td>2017/12</td>
+</tr>
+<tr>
+<th>同世代技術</th>
+<td>
+<ul>
+<li>Visual Studio 2017 15.5</li>
+</td>
+</tr>
+<tr>
+<th>要約・目玉機能</ht>
+<td>
+<ul>
+<li>構造体と参照の活用</li>
+</ul>
+</td>
+</tr>
+</table>
+<p>C# 7.2で追加された機能の多くは「構造体と参照の活用によってパフォーマンス改善」と言った感じのものです。
+パフォーマンスが求められるようなライブラリの作者にとっては重要になりますが、
+多くのC#開発者にとっては直接利用する機能ではないかもしれません。
+ただし、そういった開発者にとっても、
+「知らないうちに使っていた」とか「使っているライブラリがなんだか速くなった」というような、
+間接的な恩恵が受けられるものです。</p>
+<p>また、C# 7.1に引き続いての小さな更新がいくつかあります。</p>
+<p>※C# 7.2 は、リリース時点ではバグが多く、その後の更新で修正されたものが結構な数あります。
+バグが多いのは主に<a href="#ref">参照がらみの機能</a>の辺りです。
+(具体的なバグについては<a href="/blog/2017/12/%E3%83%90%E3%82%B0%E5%A0%B1%E5%91%8A%E7%A5%AD%E3%82%8A/">昔書いたブログ</a>があるのでそちらを参照。)
+本サイト内で説明している機能がうまく動かなかったときには、一度コンパイラーやVisual Studioのバージョンを挙げてみてください。</p>
+<h2 id="section"><a id="sec-generated-title-2"></a> <a id="leading-separator"></a>先頭区切り文字</h2>
+<p><code>0b</code>、<code>0x</code>の直後に区切り文字の <code>_</code> を入れることができるようになりました。</p>
+<pre><code class="language-csharp"><span class="comment">// C# 7.0 から書ける</span>
+<span class="keyword">var</span> b1 = 0b1111_0000;
+<span class="keyword">var</span> x1 = 0x0001_F408;
+
+<span class="comment">// C# 7.2 から書ける</span>
+<span class="comment">// b, x の直後に _ 入れてもOKに</span>
+<span class="keyword">var</span> b2 = 0b_1111_0000;
+<span class="keyword">var</span> x2 = 0x_0001_F408;</code></pre>
+<p>区切り文字に関しては「<a href="/study/csharp/start/stnumber/#digit-separator">数字区切り文字</a>」を参照してください。</p>
+<h2 id="section-1"><a id="sec-generated-title-3"></a> <a id="non-trailing-named"></a>非末尾名前付き引数</h2>
+<h5 class="version version7_1">Ver. 7.2</h5>
+<p>前の方の引数を名前付きにできるようになりました。
+例えば、以下のような書き方が許されるようになりました。</p>
+<pre><code class="language-csharp"><span class="comment">// C# 7.2</span>
+<span class="comment">// 末尾以外でも名前を書けるように</span>
+Sum(x: <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</code></pre>
+<p>詳しくは「<a href="/study/csharp/structured/sp4_optional/#non-trailing-named">オプション引数・名前付き引数</a>」で説明します。</p>
+<h2 id="private-protected"><a id="sec-generated-title-4"></a> <a id="private-protected"></a>private protected</h2>
+<p><code>private protected</code>というキーワード(語順は自由)で、「<code>protected</code>かつ<code>internal</code>」なアクセシビリティを指定できるようになりました。</p>
+<p><img src="/assets/media/1142/accessibilitycs72.png" alt="private protected" /></p>
+<p>詳しくは「<a href="/study/csharp/oop/oo_conceal/#protected-internal">実装の隠蔽</a>」で説明します。</p>
+<h2 id="section-2"><a id="sec-generated-title-5"></a> <a id="ref"></a>参照の活用</h2>
+<p>ここから先が、C# 7.2 の大部分を占める「参照の活用」になります。
+小さな機能の組み合わせになっているのでそれぞれについて説明します。</p>
+<h3 id="ref"><a id="sec-generated-title-6"></a> <a id="conditional-ref"></a>条件演算子での ref 利用</h3>
+<p><a href="/study/csharp/start/st_operator/#condition">条件演算子</a>の2項目、3項目を参照にできるようになりました。
+以下のような書き方ができます。</p>
+<pre><code class="language-csharp">x &gt; y ? <span class="keyword">ref</span> x : <span class="keyword">ref</span> y</code></pre>
+<p>詳しくは「<a href="/study/csharp/resource/sp_ref/#conditional-ref">条件演算子での ref 利用</a>」で説明します。</p>
+<h3 id="ref-readonly"><a id="sec-generated-title-7"></a> <a id="ref-readonly"></a>ref readonly</h3>
+<p>「参照渡しだけども読み取り専用」というような渡し方ができるようになりました。
+読み取り専用参照(ref readonly)と呼ばれています。</p>
+<p>引数の場合には<code>in</code>修飾子を使って以下のように書きます。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">struct</span> Quaternion
+{
+    <span class="keyword">public</span> <span class="keyword">double</span> W;
+    <span class="keyword">public</span> <span class="keyword">double</span> X;
+    <span class="keyword">public</span> <span class="keyword">double</span> Y;
+    <span class="keyword">public</span> <span class="keyword">double</span> Z;
+    <span class="keyword">public</span> Quaternion(<span class="keyword">double</span> w, <span class="keyword">double</span> x, <span class="keyword">double</span> y, <span class="keyword">double</span> z) =&gt; (W, X, Y, Z) = (w, x, y, z);
+
+    <span class="keyword">public</span> <span class="keyword">static</span> Quaternion <span class="keyword">operator</span> *(<span class="keyword">in</span> Quaternion a, <span class="keyword">in</span> Quaternion b)
+        =&gt; <span class="keyword">new</span> Quaternion(
+            a.W * b.W - a.X * b.X - a.Y * b.Y - a.Z * b.Z,
+            a.W * b.X + a.X * b.W + a.Y * b.Z - a.Z * b.Y,
+            a.W * b.Y + a.Y * b.W + a.Z * b.X - a.X * b.Z,
+            a.W * b.Z + a.Z * b.W + a.X * b.Y - a.Y * b.X);
+}</code></pre>
+<p><code>ref</code>引数や<code>out</code>引数とは異なり、<code>in</code>引数は以下のような呼び出し方ができます。</p>
+<ul>
+<li><code>F(x)</code> というように、修飾なしで呼ぶ</li>
+<li><code>F(10)</code> というように、リテラルを引数として渡す</li>
+<li><code>F(x + y)</code> というように、右辺値(式の計算結果)を引数として渡す</li>
+</ul>
+<p>また、ローカル変数と戻り値の場合は<code>ref readonly</code>修飾子を使います。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">ref</span> <span class="keyword">readonly</span> <span class="keyword">int</span> Max(<span class="keyword">in</span> <span class="keyword">int</span> x, <span class="keyword">in</span> <span class="keyword">int</span> y)
+{
+    <span class="keyword">ref</span> <span class="keyword">readonly</span> <span class="keyword">var</span> t = <span class="keyword">ref</span> x;
+    <span class="keyword">ref</span> <span class="keyword">readonly</span> <span class="keyword">var</span> u = <span class="keyword">ref</span> y;
+
+    <span class="keyword">if</span> (t &lt; u) <span class="keyword">return</span> <span class="keyword">ref</span> u;
+    <span class="keyword">else</span> <span class="keyword">return</span> <span class="keyword">ref</span> t;
+}</code></pre>
+<p>詳しくは「<a href="/study/csharp/resource/sp_ref/#in">入力参照引数 (in 引数)</a>」、「<a href="/study/csharp/resource/sp_ref/#ref-readonly">ref readonly</a>」で説明します。</p>
+<h4 id="in"><a id="sec-generated-title-8"></a> <a id="in-operator"></a>演算子のin引数</h4>
+<p>これまで、<a href="/study/csharp/oop/oo_operator/">演算子オーバーロード</a>の引数は値渡しである必要がありました。
+C# 7.2では、<code>in</code>引数も演算子の引数にできるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> Complex
+{
+    <span class="keyword">public</span> <span class="keyword">double</span> X;
+    <span class="keyword">public</span> <span class="keyword">double</span> Y;
+    <span class="keyword">public</span> Complex(<span class="keyword">double</span> x, <span class="keyword">double</span> y) =&gt; (X, Y) = (x, y);
+
+    <span class="comment">// これは OK</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> Complex <span class="keyword">operator</span> +(Complex a, Complex b)
+        =&gt; <span class="keyword">new</span> Complex(a.X + b.X, a.Y + b.Y);
+
+    <span class="comment">// これはコンパイル エラーになる</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> Complex <span class="keyword">operator</span> +(<span class="keyword">ref</span> Complex a, <span class="keyword">ref</span> Complex b)
+        =&gt; <span class="keyword">new</span> Complex(a.X + b.X, a.Y + b.Y);
+
+    <span class="comment">// これなら OK</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> Complex <span class="keyword">operator</span> +(<span class="keyword">in</span> Complex a, <span class="keyword">in</span> Complex b)
+        =&gt; <span class="keyword">new</span> Complex(a.X + b.X, a.Y + b.Y);
+}</code></pre>
+<h3 id="section-3"><a id="sec-generated-title-9"></a> <a id="ref-extensions"></a>参照渡しの拡張メソッド</h3>
+<p>拡張メソッドの第1引数(<code>this</code>が付いている引数)を参照渡し(<a href="/study/csharp/resource/sp_ref/#sec-byref"><code>ref</code></a>もしくは<a href="/study/csharp/resource/sp_ref/#in"><code>in</code></a>)で渡せるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> QuaternionExtensions
+{
+    <span class="comment">// 構造体の書き換えを拡張メソッドでやりたい場合に ref 引数が使える</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Conjugate(<span class="keyword">ref</span> <span class="keyword">this</span> Quaternion q)
+    {
+        <span class="keyword">var</span> norm = q.W * q.W + q.X * q.X + q.Y * q.Y + q.Z * q.Z;
+        q.W = q.W / norm;
+        q.X = -q.X / norm;
+        q.Y = -q.Y / norm;
+        q.Z = -q.Z / norm;
+    }
+
+    <span class="comment">// コピーを避けたい場合に in 引数が使える</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> Quaternion Rotate(<span class="keyword">in</span> <span class="keyword">this</span> Quaternion p, <span class="keyword">in</span> Quaternion q)
+    {
+        <span class="keyword">var</span> qc = q;
+        qc.Conjugate();
+        <span class="keyword">return</span> q * p * qc;
+    }
+}</code></pre>
+<p>詳しくは「<a href="/study/csharp/functional/sp3_extension/#ref-extensions">参照渡しの拡張メソッド</a>」で説明します。</p>
+<h3 id="readonly-struct"><a id="sec-generated-title-10"></a> <a id="readonly-struct"></a>readonly struct</h3>
+<p>構造体に <code>readonly</code> 修飾子を付けることで、以下のような制約を掛けれるようになりました。</p>
+<ul>
+<li>すべてのフィールドに<code>readonly</code>を付けることが必須</li>
+<li><code>this</code>参照も<code>readonly</code>扱いされて、構造体の書き換えが完全にできなくなる</li>
+</ul>
+<pre><code class="language-csharp"><span class="comment">// 構造体自体に readonly を付ける</span>
+<span class="keyword">readonly</span> <span class="keyword">struct</span> Point
+{
+    <span class="comment">// フィールドには readonly が必須</span>
+    <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">int</span> X;
+    <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">int</span> Y;
+
+    <span class="keyword">public</span> Point(<span class="keyword">int</span> x, <span class="keyword">int</span> y) =&gt; (X, Y) = (x, y);
+
+    <span class="comment">// readonly を付けない場合と違って、以下のような this 書き換えも不可</span>
+    <span class="comment">//public void Set(int x, int y) =&gt; this = new Point(x, y);</span>
+}</code></pre>
+<p>詳細は「<a href="/study/csharp/resource/readonlyness/#readonly-struct">readonly struct</a>」で説明します。</p>
+<p>「参照」とは直接は関係ないですが、<a href="/study/csharp/resource/sp_ref/#in">in 引数</a>や、ref safety rule (今後追加予定)と関連して必要になった機能です。</p>
+<h3 id="stackalloc"><a id="sec-generated-title-11"></a> <a id="safe-stackalloc"></a>安全な stackalloc</h3>
+<p><code>Span&lt;T&gt;</code>構造体と併用することで、unsafe なしで <a href="/study/csharp/interop/sp_unsafe/#stackalloc"><code>stackalloc</code></a> を使えるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">const</span> <span class="keyword">int</span> BufferSize = <span class="number">128</span>;
+
+<span class="keyword">using</span> (<span class="keyword">var</span> f = File.OpenRead(<span class="string">&quot;test.data&quot;</span>))
+{
+    <span class="keyword">var</span> rest = (<span class="keyword">int</span>)f.Length;
+    <span class="comment">// Span&lt;byte&gt; で受け取ることで、new (配列)を stackalloc (スタック確保)に変更できる</span>
+    Span&lt;<span class="keyword">byte</span>&gt; buffer = <span class="keyword">stackalloc</span> <span class="keyword">byte</span>[BufferSize];
+
+    <span class="keyword">while</span> (<span class="keyword">true</span>)
+    {
+        <span class="comment">// Read(Span&lt;byte&gt;) が追加された</span>
+        <span class="keyword">var</span> read = f.Read(buffer);
+        rest -= read;
+        <span class="keyword">if</span> (rest == <span class="number">0</span>) <span class="keyword">break</span>;
+
+        <span class="comment">// buffer に対して何か処理する</span>
+    }
+}</code></pre>
+<p><code>stackalloc</code>を使っていますがポインターは不要で、ちゃんと範囲チェックも掛かって安全に扱えます。</p>
+<p>詳しくは「<a href="/study/csharp/resource/span/#safe-stackalloc"><code>Span&lt;T&gt;</code>構造体</a>」で説明します。</p>
+<h3 id="ref-1"><a id="sec-generated-title-12"></a> <a id="span-safety"></a>ref 構造体</h3>
+<p>C# 7.2 と深く関連する型に<a href="/study/csharp/resource/span/"><code>Span&lt;T&gt;</code></a>という構造体があります。
+この <code>Span&lt;T&gt;</code> は、C#7.2 の主たる目的の「構造体と参照の活用によってパフォーマンス改善」の主役となる構造体です。</p>
+<p>この型を安全に使うためにはいくつが制限が必要で、そのために<code>ref</code>構造体という構文と、それに対するフロー解析が実装されました。</p>
+<pre><code class="language-csharp"><span class="comment">// Span&lt;T&gt; は ref 構造体になっている</span>
+<span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">ref</span> <span class="keyword">struct</span> Span&lt;T&gt; { ... }
+
+まず、`Span&lt;T&gt;`を持てるのは`<span class="keyword">ref</span>`修飾子がついた構造体(`<span class="keyword">ref</span>`構造体)だけです。
+
+<span class="comment">// ref 構造体を持てるのは ref 構造体だけ</span>
+<span class="keyword">ref</span> <span class="keyword">struct</span> RefStruct
+{
+    <span class="keyword">private</span> Span&lt;<span class="keyword">int</span>&gt; _span; <span class="comment">//OK</span>
+}</code></pre>
+<p><code>ref</code>構造体には参照ローカル変数・参照戻りと同じ制限がかかります。</p>
+<pre><code class="language-csharp"><span class="comment">// 引数で受け取ったものは戻り値で返せる</span>
+<span class="keyword">private</span> <span class="keyword">static</span> Span&lt;<span class="keyword">int</span>&gt; Success(Span&lt;<span class="keyword">int</span>&gt; x) =&gt; x;
+
+<span class="comment">// ローカルで確保したもの変数はダメ</span>
+<span class="keyword">private</span> <span class="keyword">static</span> Span&lt;<span class="keyword">int</span>&gt; Error()
+{
+    Span&lt;<span class="keyword">int</span>&gt; x = <span class="keyword">stackalloc</span> <span class="keyword">int</span>[<span class="number">1</span>];
+    <span class="keyword">return</span> x;
+}</code></pre>
+<p>その他、<code>ref</code>構造体には「スタック上になければならない(stack-only)」という制限があり、
+その結果、例えば以下のような制限がかかります(一部抜粋)。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Threading.Tasks;
+
+<span class="comment">//❌ インターフェイス実装</span>
+<span class="keyword">ref</span> <span class="keyword">struct</span> RefStruct : IDisposable { <span class="keyword">public</span> <span class="keyword">void</span> Dispose() { } }
+
+<span class="keyword">class</span> Program
+{
+    <span class="comment">//❌ 非同期メソッドの引数</span>
+    <span class="keyword">static</span> <span class="keyword">async</span> Task Async(Span&lt;<span class="keyword">int</span>&gt; x)
+    {
+        <span class="comment">//❌ 非同期メソッドのローカル変数</span>
+        Span&lt;<span class="keyword">int</span>&gt; local = <span class="keyword">stackalloc</span> <span class="keyword">int</span>[<span class="number">10</span>];
+    }
+
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        Span&lt;<span class="keyword">int</span>&gt; local = <span class="keyword">stackalloc</span> <span class="keyword">int</span>[<span class="number">1</span>];
+
+        <span class="comment">//❌ クロージャ</span>
+        Func&lt;<span class="keyword">int</span>&gt; a1 = () =&gt; local[<span class="number">0</span>];
+        <span class="keyword">int</span> F() =&gt; local[<span class="number">0</span>];
+
+        <span class="comment">//❌ 型引数にも渡せない</span>
+        List&lt;Span&lt;<span class="keyword">int</span>&gt;&gt; list;
+    }
+}</code></pre>
+<p>詳しくは「<a href="/study/csharp/resource/refstruct/">ref構造体</a>」で説明します。</p>
+<h2 id="section-4"><a id="sec-generated-title-13"></a> <a id="minor-change"></a>マイナーな更新</h2>
+<p>C# の<a href="https://www.nuget.org/packages/Microsoft.Net.Compilers/">コンパイラー</a>のバージョン 2.7 や、Visual Studio 15.6 というバージョン(2018/3リリース)で、
+C# にちょっとした修正が入っています。
+かなりマイナーな更新なので、「C# 7.3」とはせず「C# 7.2 fix」(バグ修正扱い、あるいは、バグ修正とまとめてリリースして差し支えない程度の更新)としています。</p>
+<p>修正されたのは以下の2点です。</p>
+<ul>
+<li>参照渡しの拡張メソッド
+<ul>
+<li>2.6 時点: <code>ref this</code>、<code>in this</code> の語順でないとダメ</li>
+<li>2.7 から: <code>this ref</code>、<code>this in</code> の語順でも OK</li>
+</ul>
+</li>
+<li><code>in</code>引数のメソッド呼び出し/値渡しのメソッドとの呼び分け
+<ul>
+<li><code>void M(T x)</code>と<code>void M(in T x)</code>の両方のメソッドがあるとき</li>
+<li>2.6 時点: <code>M(x)</code> という呼び出しはエラーになる</li>
+<li>2.7 から: <code>M(x)</code> だと<code>void M(T x)</code>の方が、<code>M(in x)</code> だと <code>void M(in T x)</code>の方が呼ばれる</li>
+</ul>
+</li>
+</ul>
+<p>あくまで「C# 7.2に対する修正」としてリリースされているので、
+新しい(2.7以降の)コンパイラーで、昔の(2.6以前の)挙動にすることはできません。
+「できてしかるべきことができていなかったのを、できるようにしただけなので問題は起きないはず」という判断です。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/cheatsheet/">C# &#x306E;&#x6A5F;&#x80FD;&#x4E00;&#x89A7;&#xFF08;&#x7D22;&#x5F15;&#x7684;&#x306A;&#x3082;&#x306E;&#xFF09;</a></li><li><a href="/study/csharp/cheatsheet/list_expression/">C# &#x306E;&#x5F0F;&#x3068;&#x6587;&#x306E;&#x4E00;&#x89A7;</a></li><li><a href="/study/csharp/cheatsheet/list_type/">C# &#x306E;&#x578B;&#x3068;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/study/csharp/cheatsheet/list_versions/">&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver1/">C# 1.0</a></li><li><a href="/study/csharp/cheatsheet/ap_ver2/">C# 2.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver3/">C# 3.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver4/">C# 4.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver5/">C# 5.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver6/">C# 6 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7/">C# 7 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_1/">C# 7.1 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_3/">C# 7.3 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver8/">C# 8.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver9/">C# 9.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver10/">C# 10.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver11/">C# 11.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver12/">C# 12.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver13/">C# 13.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver14/">C# 14.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/langversionoption/">&#x8A00;&#x8A9E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x306E;&#x6307;&#x5B9A;</a></li><li><a href="/study/csharp/cheatsheet/listfxlangversion/">C#&#x306E;&#x8A00;&#x8A9E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x3068;.NET&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/cheatsheet/ap_modern/">&#x4F7F;&#x308F;&#x306A;&#x304F;&#x306A;&#x3063;&#x305F;&#x6A5F;&#x80FD;&#x30FB;&#x65B0;&#x3057;&#x3044;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/apscripting/">C#&#x30B9;&#x30AF;&#x30EA;&#x30D7;&#x30C8;&#x5B9F;&#x884C;</a></li><li><a href="/study/csharp/cheatsheet/file-based-app/">&#x30D5;&#x30A1;&#x30A4;&#x30EB; &#x30D9;&#x30FC;&#x30B9;&#x5B9F;&#x884C;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

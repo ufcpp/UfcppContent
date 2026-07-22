@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5C0F;&#x30CD;&#x30BF; &#x5F15;&#x6570;&#x306E;&#x500B;&#x6570;&#x306E;&#x4E0A;&#x9650; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/12/tipsnumargs/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-12-22T15:06:44">2016-12-22</time></span><span>更新: <time datetime="2016-12-22T13:30:26">2016-12-22</time></span></div><h1 id="section">小ネタ 引数の個数の上限</h1>
+<p>引数の個数に制限があること、ご存じでしょうか。 むやみに多くても実装上の無駄が大きかったりしますし、上限が決まっていたりします。</p>
+<p>C#は意外と大きくて、最大で65536個まで行けます。要するに2バイト分。
+ということで、以下のC#コードはコンパイル可能です。
+1バイトで収まらない、0～256までの257個の引数。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> M(
+<span class="keyword">int</span> x0, <span class="keyword">int</span> x1, <span class="keyword">int</span> x2, <span class="keyword">int</span> x3, <span class="keyword">int</span> x4, <span class="keyword">int</span> x5, <span class="keyword">int</span> x6, <span class="keyword">int</span> x7, <span class="keyword">int</span> x8, <span class="keyword">int</span> x9, <span class="keyword">int</span> x10, <span class="keyword">int</span> x11, <span class="keyword">int</span> x12, <span class="keyword">int</span> x13, <span class="keyword">int</span> x14, <span class="keyword">int</span> x15,
+<span class="keyword">int</span> x16, <span class="keyword">int</span> x17, <span class="keyword">int</span> x18, <span class="keyword">int</span> x19, <span class="keyword">int</span> x20, <span class="keyword">int</span> x21, <span class="keyword">int</span> x22, <span class="keyword">int</span> x23, <span class="keyword">int</span> x24, <span class="keyword">int</span> x25, <span class="keyword">int</span> x26, <span class="keyword">int</span> x27, <span class="keyword">int</span> x28, <span class="keyword">int</span> x29, <span class="keyword">int</span> x30, <span class="keyword">int</span> x31,
+<span class="keyword">int</span> x32, <span class="keyword">int</span> x33, <span class="keyword">int</span> x34, <span class="keyword">int</span> x35, <span class="keyword">int</span> x36, <span class="keyword">int</span> x37, <span class="keyword">int</span> x38, <span class="keyword">int</span> x39, <span class="keyword">int</span> x40, <span class="keyword">int</span> x41, <span class="keyword">int</span> x42, <span class="keyword">int</span> x43, <span class="keyword">int</span> x44, <span class="keyword">int</span> x45, <span class="keyword">int</span> x46, <span class="keyword">int</span> x47,
+<span class="keyword">int</span> x48, <span class="keyword">int</span> x49, <span class="keyword">int</span> x50, <span class="keyword">int</span> x51, <span class="keyword">int</span> x52, <span class="keyword">int</span> x53, <span class="keyword">int</span> x54, <span class="keyword">int</span> x55, <span class="keyword">int</span> x56, <span class="keyword">int</span> x57, <span class="keyword">int</span> x58, <span class="keyword">int</span> x59, <span class="keyword">int</span> x60, <span class="keyword">int</span> x61, <span class="keyword">int</span> x62, <span class="keyword">int</span> x63,
+<span class="keyword">int</span> x64, <span class="keyword">int</span> x65, <span class="keyword">int</span> x66, <span class="keyword">int</span> x67, <span class="keyword">int</span> x68, <span class="keyword">int</span> x69, <span class="keyword">int</span> x70, <span class="keyword">int</span> x71, <span class="keyword">int</span> x72, <span class="keyword">int</span> x73, <span class="keyword">int</span> x74, <span class="keyword">int</span> x75, <span class="keyword">int</span> x76, <span class="keyword">int</span> x77, <span class="keyword">int</span> x78, <span class="keyword">int</span> x79,
+<span class="keyword">int</span> x80, <span class="keyword">int</span> x81, <span class="keyword">int</span> x82, <span class="keyword">int</span> x83, <span class="keyword">int</span> x84, <span class="keyword">int</span> x85, <span class="keyword">int</span> x86, <span class="keyword">int</span> x87, <span class="keyword">int</span> x88, <span class="keyword">int</span> x89, <span class="keyword">int</span> x90, <span class="keyword">int</span> x91, <span class="keyword">int</span> x92, <span class="keyword">int</span> x93, <span class="keyword">int</span> x94, <span class="keyword">int</span> x95,
+<span class="keyword">int</span> x96, <span class="keyword">int</span> x97, <span class="keyword">int</span> x98, <span class="keyword">int</span> x99, <span class="keyword">int</span> x100, <span class="keyword">int</span> x101, <span class="keyword">int</span> x102, <span class="keyword">int</span> x103, <span class="keyword">int</span> x104, <span class="keyword">int</span> x105, <span class="keyword">int</span> x106, <span class="keyword">int</span> x107, <span class="keyword">int</span> x108, <span class="keyword">int</span> x109, <span class="keyword">int</span> x110, <span class="keyword">int</span> x111,
+<span class="keyword">int</span> x112, <span class="keyword">int</span> x113, <span class="keyword">int</span> x114, <span class="keyword">int</span> x115, <span class="keyword">int</span> x116, <span class="keyword">int</span> x117, <span class="keyword">int</span> x118, <span class="keyword">int</span> x119, <span class="keyword">int</span> x120, <span class="keyword">int</span> x121, <span class="keyword">int</span> x122, <span class="keyword">int</span> x123, <span class="keyword">int</span> x124, <span class="keyword">int</span> x125, <span class="keyword">int</span> x126, <span class="keyword">int</span> x127,
+<span class="keyword">int</span> x128, <span class="keyword">int</span> x129, <span class="keyword">int</span> x130, <span class="keyword">int</span> x131, <span class="keyword">int</span> x132, <span class="keyword">int</span> x133, <span class="keyword">int</span> x134, <span class="keyword">int</span> x135, <span class="keyword">int</span> x136, <span class="keyword">int</span> x137, <span class="keyword">int</span> x138, <span class="keyword">int</span> x139, <span class="keyword">int</span> x140, <span class="keyword">int</span> x141, <span class="keyword">int</span> x142, <span class="keyword">int</span> x143,
+<span class="keyword">int</span> x144, <span class="keyword">int</span> x145, <span class="keyword">int</span> x146, <span class="keyword">int</span> x147, <span class="keyword">int</span> x148, <span class="keyword">int</span> x149, <span class="keyword">int</span> x150, <span class="keyword">int</span> x151, <span class="keyword">int</span> x152, <span class="keyword">int</span> x153, <span class="keyword">int</span> x154, <span class="keyword">int</span> x155, <span class="keyword">int</span> x156, <span class="keyword">int</span> x157, <span class="keyword">int</span> x158, <span class="keyword">int</span> x159,
+<span class="keyword">int</span> x160, <span class="keyword">int</span> x161, <span class="keyword">int</span> x162, <span class="keyword">int</span> x163, <span class="keyword">int</span> x164, <span class="keyword">int</span> x165, <span class="keyword">int</span> x166, <span class="keyword">int</span> x167, <span class="keyword">int</span> x168, <span class="keyword">int</span> x169, <span class="keyword">int</span> x170, <span class="keyword">int</span> x171, <span class="keyword">int</span> x172, <span class="keyword">int</span> x173, <span class="keyword">int</span> x174, <span class="keyword">int</span> x175,
+<span class="keyword">int</span> x176, <span class="keyword">int</span> x177, <span class="keyword">int</span> x178, <span class="keyword">int</span> x179, <span class="keyword">int</span> x180, <span class="keyword">int</span> x181, <span class="keyword">int</span> x182, <span class="keyword">int</span> x183, <span class="keyword">int</span> x184, <span class="keyword">int</span> x185, <span class="keyword">int</span> x186, <span class="keyword">int</span> x187, <span class="keyword">int</span> x188, <span class="keyword">int</span> x189, <span class="keyword">int</span> x190, <span class="keyword">int</span> x191,
+<span class="keyword">int</span> x192, <span class="keyword">int</span> x193, <span class="keyword">int</span> x194, <span class="keyword">int</span> x195, <span class="keyword">int</span> x196, <span class="keyword">int</span> x197, <span class="keyword">int</span> x198, <span class="keyword">int</span> x199, <span class="keyword">int</span> x200, <span class="keyword">int</span> x201, <span class="keyword">int</span> x202, <span class="keyword">int</span> x203, <span class="keyword">int</span> x204, <span class="keyword">int</span> x205, <span class="keyword">int</span> x206, <span class="keyword">int</span> x207,
+<span class="keyword">int</span> x208, <span class="keyword">int</span> x209, <span class="keyword">int</span> x210, <span class="keyword">int</span> x211, <span class="keyword">int</span> x212, <span class="keyword">int</span> x213, <span class="keyword">int</span> x214, <span class="keyword">int</span> x215, <span class="keyword">int</span> x216, <span class="keyword">int</span> x217, <span class="keyword">int</span> x218, <span class="keyword">int</span> x219, <span class="keyword">int</span> x220, <span class="keyword">int</span> x221, <span class="keyword">int</span> x222, <span class="keyword">int</span> x223,
+<span class="keyword">int</span> x224, <span class="keyword">int</span> x225, <span class="keyword">int</span> x226, <span class="keyword">int</span> x227, <span class="keyword">int</span> x228, <span class="keyword">int</span> x229, <span class="keyword">int</span> x230, <span class="keyword">int</span> x231, <span class="keyword">int</span> x232, <span class="keyword">int</span> x233, <span class="keyword">int</span> x234, <span class="keyword">int</span> x235, <span class="keyword">int</span> x236, <span class="keyword">int</span> x237, <span class="keyword">int</span> x238, <span class="keyword">int</span> x239,
+<span class="keyword">int</span> x240, <span class="keyword">int</span> x241, <span class="keyword">int</span> x242, <span class="keyword">int</span> x243, <span class="keyword">int</span> x244, <span class="keyword">int</span> x245, <span class="keyword">int</span> x246, <span class="keyword">int</span> x247, <span class="keyword">int</span> x248, <span class="keyword">int</span> x249, <span class="keyword">int</span> x250, <span class="keyword">int</span> x251, <span class="keyword">int</span> x252, <span class="keyword">int</span> x253, <span class="keyword">int</span> x254, <span class="keyword">int</span> x255,
+<span class="keyword">int</span> x256
+        )
+    { }
+}</code></pre>
+<p>確かJavaだと、256個までだったはずです。1バイト分。</p>
+<p>こういう制限、Javaや.NETの場合、何によって制約されるかというと、中間コードの命令セットに依ります。例えば、.NETの場合だと、引数参照のために以下のような命令を持っています。</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>op code</th>
+<th>概要</th>
+<th>命令サイズ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ldarg.0</code></td>
+<td><code>02</code></td>
+<td>最初の引数をスタックにロードする</td>
+<td>1バイト</td>
+</tr>
+<tr>
+<td><code>ldarg.1</code></td>
+<td><code>03</code></td>
+<td>2つ目の引数をスタックにロードする</td>
+<td>1バイト</td>
+</tr>
+<tr>
+<td><code>ldarg.2</code></td>
+<td><code>04</code></td>
+<td>3つ目の引数をスタックにロードする</td>
+<td>1バイト</td>
+</tr>
+<tr>
+<td><code>ldarg.3</code></td>
+<td><code>05</code></td>
+<td>4つ目の引数をスタックにロードする</td>
+<td>1バイト</td>
+</tr>
+<tr>
+<td><code>ldarg.s</code></td>
+<td><code>0E &lt;index&gt;</code></td>
+<td>1バイトのオペランドで指定したインデックスの引数をスタックにロードする</td>
+<td>命令1バイト+オペランド1バイト</td>
+</tr>
+<tr>
+<td><code>ldarg</code></td>
+<td><code>FE 09 &lt;index&gt;</code></td>
+<td>2バイトのオペランドで指定したインデックスの引数をスタックにロードする</td>
+<td>命令2バイト+オペランド2バイト</td>
+</tr>
+</tbody>
+</table>
+<p>4つ目の引数まで(0～3番目)なら1バイトで参照できます。
+4～255番目までなら2バイト、そして、それ以上になると4バイト必要になります。
+というように、オペランドによってプログラム サイズがでかくならないように、よく使うものほど短く、そうでないものほど長くなるように、複数の命令が用意されています。</p>
+<p>この場面で効いてくるJavaと.NETの最大の差は、中間コード(Javaの場合はbyte code、.NETの場合はILと呼ばれてるやつ)の命令長の差です。
+.NETは可変長になっていて、多くの命令が1バイトですが、いくつか2バイト命令を持っています。
+上記の<code>ldarg</code> (2バイト オペランドの方)もその1つで、めったに使わないであろう命令に2バイトのコードを割り当てています。</p>
+<p>一方、Javaのbyte codeは1バイト固定長の命令セットになっています。
+使える命令は最大で256個ですし、無駄な命令はあまり入れたくありません。</p>
+<p>まあ、引数の数が257個以上になるというのはほとんどないでしょう…
+と締めたいところですが、ごくまれに、「機械生成で作ったコードで257個超えてJavaでコンパイル エラーになった」なんていう恐ろしいことを言いだす人も見かけるので侮れません。
+そういう人が実際にいたから、.NETは<code>ldarg</code>命令を用意したんでしょうかね…</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/12/">2016/12</a></li><li><a href="/blog/2016/12/tipstryroslyn/">C#&#x5C0F;&#x30CD;&#x30BF;&#x96C6;: C#&#x3092;Web&#x4E0A;&#x3067;&#x8A66;&#x3059;</a></li><li><a href="/blog/2016/12/tipsildasm/">&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x3092;&#x8997;&#x3044;&#x3066;&#x307F;&#x3088;&#x3046;</a></li><li><a href="/blog/2016/12/tipscorefxlab/">&#x5C0F;&#x30CD;&#x30BF; corefxlab&#x3068;System.Memory</a></li><li><a href="/blog/2016/12/tipsevalorder/">&#x5C0F;&#x30CD;&#x30BF; &#x5F0F;&#x306E;&#x8A55;&#x4FA1;&#x9806;&#x5E8F;</a></li><li><a href="/blog/2016/12/tipsobjectinitializer/">&#x5C0F;&#x30CD;&#x30BF; &#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2016/12/tipscollectioninitializer/">&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2016/12/tipsindexedforeach/">&#x5C0F;&#x30CD;&#x30BF; &#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;&#x4ED8;&#x304D; foreach</a></li><li><a href="/blog/2016/12/tipsuniontypes/">&#x5C0F;&#x30CD;&#x30BF; &#x30C1;&#x30A7;&#x30C3;&#x30AF;&#x4F8B;&#x5916;&#x3068;Union&#x578B;</a></li><li><a href="/blog/2016/12/tipscontextfreetask/">&#x5C0F;&#x30CD;&#x30BF; &#x540C;&#x671F;&#x30B3;&#x30F3;&#x30C6;&#x30AD;&#x30B9;&#x30C8;&#x3092;&#x62FE;&#x308F;&#x306A;&#x3044;Task&#x578B;</a></li><li><a href="/blog/2016/12/tipsformattingcharacter/">&#x5C0F;&#x30CD;&#x30BF; &#x30D5;&#x30A9;&#x30FC;&#x30DE;&#x30C3;&#x30C8;&#x6587;&#x5B57;&#x8B58;&#x5225;&#x5B50;</a></li><li><a href="/blog/2016/12/tipsimplicitmembers/">&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/blog/2016/12/tipstadpoleoperator/">&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x6F14;&#x7B97;&#x5B50;(&#xFF1F;)</a></li><li><a href="/blog/2016/12/tipsnulloperation/">&#x5C0F;&#x30CD;&#x30BF; null&#x95A2;&#x4FC2;&#x306E;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/blog/2016/12/vs2017rc2/">Updating Visual Studio 2017 Release Candidate</a></li><li><a href="/blog/2016/12/patternmatching/">&#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30DE;&#x30C3;&#x30C1;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/pickuproslyn1214/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/14</a></li><li><a href="/blog/2016/12/tipsdeconstruct/">&#x5C0F;&#x30CD;&#x30BF; &#x300C;deconstruct&#x300D;&#x3068;&#x3044;&#x3046;&#x5358;&#x8A9E;</a></li><li><a href="/blog/2016/12/tipsgeneratedil/">&#x5C0F;&#x30CD;&#x30BF; &#x69CB;&#x6587;&#x7CD6;&#x8863;&#x3068;&#x3001;&#x305D;&#x3046;&#x3067;&#x306F;&#x306A;&#x3044;&#x69CB;&#x6587;&#x3068;</a></li><li><a href="/blog/2016/12/tipsprimitives/">&#x5C0F;&#x30CD;&#x30BF; &#x30D7;&#x30EA;&#x30DF;&#x30C6;&#x30A3;&#x30D6;&#x578B;</a></li><li><a href="/blog/2016/12/tipsapisurface/">&#x5C0F;&#x30CD;&#x30BF; private&#x30E1;&#x30F3;&#x30D0;&#x30FC;&#x306F;API&#x306E;&#x4E00;&#x90E8;&#x304B;</a></li><li><a href="/blog/2016/12/tipsstringmarshal/">&#x5C0F;&#x30CD;&#x30BF; string&#x578B;&#x306E;&#x30DE;&#x30FC;&#x30B7;&#x30E3;&#x30EA;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/tipsotherlangs/">&#x5C0F;&#x30CD;&#x30BF; C# &#x3068;&#x4ED6;&#x306E;&#x8A00;&#x8A9E;&#x3068;&#x306E;&#x5DEE;&#x3068;&#x3044;&#x3046;&#x3068;</a></li><li><a href="/blog/2016/12/tipsconcurrentcollections/">&#x5C0F;&#x30CD;&#x30BF; Concurrent &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/blog/2016/12/discards/">discards</a></li><li><a href="/blog/2016/12/tipssmallheapallocation/">&#x5C0F;&#x30CD;&#x30BF; &#x5C0F;&#x3055;&#x306A;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x5272;&#x308A;&#x5F53;&#x3066;</a></li><li><a href="/blog/2016/12/tipsparallelism/">&#x5C0F;&#x30CD;&#x30BF; &#x4E26;&#x5217;&#x5316;</a></li><li><a href="/blog/2016/12/tipsdowhile/">&#x5C0F;&#x30CD;&#x30BF; do-while</a></li><li><a href="/blog/2016/12/tipsatan2/">&#x5C0F;&#x30CD;&#x30BF; atan2</a></li><li><a href="/blog/2016/12/tipsnormaldistribution/">&#x5C0F;&#x30CD;&#x30BF; &#x6B63;&#x898F;&#x5206;&#x5E03;&#x306E;&#x4E38;&#x307F;</a></li><li><a href="/blog/2016/12/lookbackattheyear/">&#x4ECA;&#x5E74;&#x306E;&#x632F;&#x308A;&#x8FD4;&#x308A;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

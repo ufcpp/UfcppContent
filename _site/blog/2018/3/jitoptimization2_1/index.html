@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>.NET Core 2.1 &#x306E; JIT &#x6700;&#x9069;&#x5316;&#x306E;&#x8A71; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2018/3/jitoptimization2_1/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2018-03-18T00:59:53">2018-03-18</time></span><span>更新: <time datetime="2018-03-18T01:01:24">2018-03-18</time></span></div><h1 id="net-core-2.1-jit">.NET Core 2.1 の JIT 最適化の話</h1>
+<h2 id="section">唐突ですが問題</h2>
+<p>とある構造体、例えば以下のようなものがあったとします。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> X : IDisposable
+{
+    <span class="keyword">public</span> <span class="keyword">bool</span> IsDisposed;
+    <span class="keyword">void</span> IDisposable.Dispose() =&gt; IsDisposed = <span class="keyword">true</span>;
+}</code></pre>
+<p>この構造体 <code>X</code> の <code>Dispose</code> メソッドを呼び出すにあたって、
+以下の3つのうち、一番高速なのはどれでしょう。</p>
+<pre><code class="language-csharp">    <span class="comment">// (1) インターフェイス引数で受け取って呼ぶ</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Interface(IDisposable x) =&gt; x.Dispose();
+
+    <span class="comment">// (2) X のまま受け取って、メソッド内でインターフェイスにキャストして呼ぶ</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> NonGeneric(X x) =&gt; ((IDisposable)x).Dispose();
+
+    <span class="comment">// (3) ジェネリックなメソッドで受け取って呼ぶ</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Generic&lt;T&gt;(T x) <span class="keyword">where</span> T : IDisposable =&gt; x.Dispose();</code></pre>
+<h2 id="section-1">解答</h2>
+<p>基本的に、というか、これまでは、(3) が最速です。</p>
+<p>(1) は、構造体のインスタンスを引数に渡そうとした時点で<a href="/study/csharp/resource/rmboxing/#boxing">ボックス化</a>が発生。
+ヒープ確保と値のコピーが発生するので、結構な遅さになります。</p>
+<p>(2) は、結局<code>((IDisposable)x)</code>と書いた時点でボックス化が発生するので、(1)と大差ない速度になっていました。
+過去形なのは、.NET Core 2.1でこいつに関する最適化が入ったみたいで、これが実は今日の本題。</p>
+<p>(3) だと、ボックス化は発生しません。
+.NET の<a href="/study/csharp/oop/sp2_generics/">ジェネリクス</a>は構造体に対しては型1つ1つに対してそれぞれメソッドを展開するような最適化を行います。
+そんな大変なことをやる設計にしたのは、こういうボックス化を避けるためです。
+大変なことした甲斐あって、(1)の数倍高速です。
+(手元で取ったベンチマークだと6倍くらい高速。)</p>
+<p>ベンチマークはGistに置いてあります:</p>
+<ul>
+<li><a href="https://gist.github.com/ufcpp/fef52f31e11e0bb11ccbd22638e2dfc0">構造体のインターフェイス明示的実装の devirtualize 問題</a></li>
+</ul>
+<h2 id="devirtualize">devirtualize最適化</h2>
+<p>すでに少し触れていますが、この(2)が、.NET Core 2.1で実行すると(3)と同程度の速度が出るようになったみたいです。</p>
+<p>要するに、ジェネリックなメソッドの時にやっているのと同じような最適化を、単に<code>((IDispose)x)</code>と書いた時にも行うようになったみたいです。</p>
+<ul>
+<li><a href="https://github.com/dotnet/coreclr/pull/14698">JIT: after devirtualization try undoing box and invoking unboxed entry #14698</a></li>
+</ul>
+<p>devirtualize (脱・仮想化)ってのは、要は、「<code>Dispose</code>は仮想メソッドだから本来は仮想呼び出しされるべき。それを、直接的な呼び出しに戻す」と言うような感じ。
+構造体に対してこれが効くと、単に仮想呼び出しのコストがなくなるだけじゃなくて、
+ボックス化自体が消滅する(結果、ヒープ確保がなくなる)ので、相当効果の大きい最適化になります。</p>
+<h3 id="ref">また「ref」を忘れてる…</h3>
+<p>Merge 日時を見ての通り、まあ、結構前からだったみたいなんですけども。
+気付いたのは、以下のプルリクを見て。</p>
+<ul>
+<li><a href="https://github.com/dotnet/coreclr/pull/17006">JIT: remove boxing for interface call to shared generic struct #17006</a></li>
+</ul>
+<p>どうも、値渡しの時にしか上記の最適化が効いていなくて、「参照渡しでも同じこと効くようにしないとダメだろ」っていう不具合報告が入ったみたいでして。</p>
+<pre><code class="language-csharp">    <span class="comment">// これは devirtualize される(去年の10月から)</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> NonGeneric(X x) =&gt; ((IDisposable)x).Dispose();
+    <span class="comment">// これは devirtualize し忘れてた(今出てるプルリクで治る)</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> NonGeneric(<span class="keyword">ref</span> X x) =&gt; ((IDisposable)x).Dispose();</code></pre>
+<p><a href="/study/csharp/resource/sp_ref/#sec-byref">ref</a> がらみ、
+「動作確認が漏れてて後から気付いて修正」みたいなのかなり多いんですよねぇ…</p>
+<h3 id="section-2">そういうとこだぞ</h3>
+<p>ジェネリックな場合に対してこの最適化が掛かっていたのを見ての通り、
+この devirtualize っていう手法は大昔から知られている最適化です。
+が、まあ、.NET はなんか「JITが頑張らなくてもジェネリクス使えば速いよ？」(実際、ちゃんと書けばほんとに速い)みたいなところがありまして。
+JIT は案外さぼってることが結構ありました。</p>
+<p>.NET Core 2.1 だと、JIT でも頑張ろうという感じの動きが結構見られます。</p>
+<p>もちろんその分、JIT 自体が遅くなったりはするんですが…
+そこは、.NET にも <a href="http://mattwarren.org/2017/12/15/How-does-.NET-JIT-a-method-and-Tiered-Compilation/">Tiered JIT</a> (Java でいう<a href="https://ja.wikipedia.org/wiki/HotSpot">HotSpot</a>みたいな、段階最適化)を導入することにしたみたいです。</p>
+<p>ちなみに、JIT が頑張れば必ず速くなるってものでもないんですけども。
+<a href="/blog/2016/12/tipssmallheapallocation/">Escape Analysis</a>みたいに、「.NET だと構造体を使うのが普通で、JIT が頑張る余地が大して残らない」、「頑張った分のコストでかえって損」的なこともあり得たりします。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2018/3/">3&#x6708;</a></li><li><a href="/blog/2018/3/upload-cszip/">cszip&#x3001;nuget.org &#x306B;&#x4E0A;&#x3052;&#x307E;&#x3057;&#x305F;</a></li><li><a href="/blog/2018/3/vs15_6/">Visual Studio 15.6 &#x30EA;&#x30EA;&#x30FC;&#x30B9;</a></li><li><a href="/blog/2018/3/pickuproslyn0321/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 3/21: Design Notes&#x4E00;&#x6589;&#x30A2;&#x30C3;&#x30D7;&#x30ED;&#x30FC;&#x30C9;&#x796D;&#x308A;</a></li><li><a href="/blog/2018/3/pickuproslyn0323/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 3/23: no-allocation&#x975E;&#x540C;&#x671F;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x3001;&#x6700;&#x8FD1;&#x306E; Utf8String</a></li><li><a href="/blog/2018/3/ranges/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 3/24: Ranges</a></li><li><a href="/blog/2018/3/pickuproslyn0331/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 3/31: C# 7.3</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

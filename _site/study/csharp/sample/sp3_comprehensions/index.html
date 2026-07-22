@@ -1,0 +1,342 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>[&#x30B5;&#x30F3;&#x30D7;&#x30EB;] &#x30AF;&#x30A8;&#x30EA;&#x5F0F;&#x3068;&#x30EA;&#x30B9;&#x30C8;&#x5185;&#x5305; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/sample/sp3_comprehensions/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">[サンプル] クエリ式とリスト内包</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>C# 3.0 の「<a href="/study/csharp/data/sp3_linq/#linq">LINQ</a>」を使うと、リスト内包（list comprehensions）のようなことが可能。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="in_ex"></a>内包と外延</h2>
+<p>ここでいう内包ってのは、元々は公理的集合論の用語で、</p>
+<ul>
+<li><p>内包（intension）記法： {f(x) | x ∈ A} みたいな書き方。</p>
+</li>
+<li><p>外延（extension）記法： {a, b, c, d, e, …} みたいな書き方。</p>
+</li>
+</ul>
+<p>というようなものの事をいいます。
+この言葉はさらにさかのぼると、哲学とか論理学の用語で、</p>
+<ul>
+<li><p>内包：「ある事物が充たすべき条件」… 事物が内に持っているだろう性質。</p>
+</li>
+<li><p>外延：「ある条件を充たす事物の集合」… 具体例で外堀埋めるように事物を記述。</p>
+</li>
+</ul>
+<p>というような意味です。
+要するに例えば、犬というものを定義するに当たって、</p>
+<ul>
+<li><p>内包： 犬は、哺乳類で、4足歩行で、群れを成す生き物で、・・・</p>
+</li>
+<li><p>外延： お隣のポチは犬、向かいのシロも犬・・・</p>
+</li>
+</ul>
+<p>というような考え方の区分。
+こういう考え方を集合論の記号で表したものが最初に例示したような内包記法・外延記法です。</p>
+<ul>
+<li><p>内包記法： 犬 ＝ {x | x ⊂ 哺乳類, x は4足歩行, x は群れを成す, ・・・}</p>
+</li>
+<li><p>外延記法： 犬 ＝ {お隣のポチ, 向かいのシロ, ・・・}</p>
+</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="list_init"></a>リストの初期化</h2>
+<p>具体例を挙げてみましょう。
+0 以上 10未満の偶数の集合といわれると、
+数学的には以下の2通りの書き方ができます。</p>
+<ul>
+<li><p>外延記法：<span class="math">
+<span class="paren" style="font-size:em;">{</span>
+<span class="normal">0</span>, <span class="normal">2</span>, <span class="normal">4</span>, <span class="normal">6</span>, <span class="normal">8</span>
+<span class="paren" style="font-size:em;">}</span>
+</span></p>
+</li>
+<li><p>内包記法：<span class="math">
+<span class="paren" style="font-size:em;">{</span>
+n <span class="normal">|</span> n <span class="normal">∈</span><span class="normal">10</span>, <span class="normal">2</span><span class="normal">|</span>n
+<span class="paren" style="font-size:em;">}</span>
+</span>あるいは<span class="math">
+<span class="paren" style="font-size:em;">{</span>
+<span class="normal">2</span>n <span class="normal">|</span> n <span class="normal">∈</span><span class="normal">5</span>
+<span class="paren" style="font-size:em;">}</span>
+</span></p>
+</li>
+</ul>
+<p>ただし、
+集合論的には 10 ってのは <span class="math">
+<span class="paren" style="font-size:em;">{</span>
+<span class="normal">0</span>, <span class="normal">1</span>, <span class="normal">2</span>, <span class="normal">3</span>, <span class="normal">4</span>, <span class="normal">5</span>, <span class="normal">6</span>, <span class="normal">7</span>, <span class="normal">8</span>, <span class="normal">9</span>
+<span class="paren" style="font-size:em;">}</span>
+</span> という集合と同じ意味で、
+<span class="math">
+<span class="normal">2</span><span class="normal">|</span>n
+</span> は「2 は n の約数」（したがって、n は偶数）の意味です。</p>
+<p>で、プログラミング言語的には、
+外延記法の方は、C 言語の配列でもできます。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> evens[] = { <span class="number">0</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">8</span> };</code></pre>
+<p>でも、内包記号の方は無理です。これと近いことを C 言語でやろうとすると、以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> evens[<span class="number">5</span>];
+<span class="keyword">int</span> i = <span class="number">0</span>;
+<span class="keyword">for</span> (<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; <span class="number">10</span>; ++k)
+{
+  <span class="keyword">if</span> (k % <span class="number">2</span> == <span class="number">0</span>)
+  {
+    evens[i] = k;
+    ++i;
+  }
+}</code></pre>
+<p>C# の List を使って書くとほんの少しだけ数学の記法に近づく事ができて、
+以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> _10 = Enumerable.Range(<span class="number">0</span>, <span class="number">10</span>);
+
+List&lt;<span class="keyword">int</span>&gt; evens = <span class="keyword">new</span> List&lt;<span class="keyword">int</span>&gt;();
+<span class="keyword">foreach</span> (<span class="keyword">var</span> n <span class="keyword">in</span> _10)
+  <span class="keyword">if</span> (n % <span class="number">2</span> == <span class="number">0</span>)
+    evens.Add(n);</code></pre>
+<p>とはいえ、
+<span class="math">
+n <span class="normal">∈</span><span class="normal">10</span>
+</span> の部分を <code>n in _10</code> と書けたくらいで、
+数学の集合の内包記法とは程遠いです。
+ の中に条件式を書けるわけじゃないですし、
+何よりも、
+「先にリストを作ってからそれに値を Add する形で初期化する」って形になるのが少々不恰好。</p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="comprehension"></a>リスト内包</h2>
+<p>いくつかの言語では、数学の内包記法に似た書き方でリストを初期化できる構文を持っています。
+この構文を<strong id="comprehension" class="keyword">リスト内包</strong>（list comprehensions）と呼びます。
+（intension と comprehension はほぼ同義語。日本語訳的にはどっちも内包。）</p>
+<p>特に、関数型言語にそういう機能を持った言語が多いんですが、
+例えば、Erlang では以下のようにしてリストを作れます。</p>
+<pre><code class="language-csharp">Ten = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>]
+Evens = [n || n &lt;- Ten, n rem <span class="number">2</span> == <span class="number">0</span>]</code></pre>
+<p>関数型言語でも F# の場合、以下のように for とか when が必要。</p>
+<pre><code class="language-fsharp"><span class="keyword">let</span> evens = { <span class="keyword">for</span> n <span class="keyword">in</span> 0 .. 9 <span class="keyword">when</span> n % 2= 0 <span class="keyword">-&gt;</span> n }</code></pre>
+<p>関数型言語以外でも、例えば、Python はリスト内包構文を持っています。
+F# と同様、数学の集合の内包記法とは違って、for とか if とかいうキーワードが必要になります。</p>
+<pre><code class="language-python">ten = <span>range</span>(<span class="number">0</span>, <span class="number">10</span>)
+evens = [n <span class="keyword">for</span> n <span class="keyword">in</span> ten <span class="keyword">if</span> n % <span class="number">2</span> == <span class="number">0</span>]</code></pre>
+<p>これは、以下のように解釈されるようです。
+（Python にはそんなに詳しくないんで、もしかすると間違ってるかも。）</p>
+<pre><code class="language-python">ten = <span>range</span>(<span class="number">0</span>, <span class="number">10</span>)
+evens = []
+<span class="keyword">for</span> n <span class="keyword">in</span> ten :
+  <span class="keyword">if</span> n % <span class="number">2</span> == <span class="number">0</span> :
+    evens<span class="number">.</span>append(n)</code></pre>
+<p>これは、前節の最後で書いたような C# のコードに近いです。</p>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="linq"></a>クエリ式とリスト内包</h2>
+<p>さて、前節の Python コード</p>
+<pre><code class="language-python">ten = <span>range</span>(<span class="number">0</span>, <span class="number">10</span>)
+evens = [n <span class="keyword">for</span> n <span class="keyword">in</span> ten <span class="keyword">if</span> n % <span class="number">2</span> == <span class="number">0</span>]</code></pre>
+<p>と、以下の C# コードを比べてみてください。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> ten = Enumerable.Range(<span class="number">0</span>, <span class="number">10</span>);
+<span class="keyword">var</span> evens = <span class="keyword">from</span> n <span class="keyword">in</span> ten <span class="keyword">where</span> n % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">select</span> n;</code></pre>
+<p>先頭の n が末尾の select n に、
+for が from に、
+if が where に変わっていますが、
+そういう見かけの差を除けばやってることは一緒です。
+そして、結果として得られるのは同じ「0以上10未満の偶数」になります。</p>
+<p>（実際には、Python 版はリスト、C# 版で IEnumerable になるんで、
+細かいこと言うといろいろ違いますけど。
+あと、生成されるコードも全然違います。）</p>
+<p>ということで、C# 3.0 のクエリ式は、書き方こそ微妙に違えど、性質はリスト内包に近いかも。</p>
+<p>まあ、クエリ式の方が、join とか order by とか group by とかが使えて、
+より高機能なんですが。</p>
+<h2 id="section-6"><a id="sec-generated-title-6"></a> <a id="projection"></a>具体例： 3次元格子点の平面への投影</h2>
+<p>リスト内包表記っぽいものを実際に C# 3.0 のクエリ式で書いてみましょう。</p>
+<h5 id="section-7"><a id="sec-generated-title-7"></a>題材</h5>
+<p>ここでの例として、3次元上の格子点を平面に投影してみた結果がどういう点を描くかというのをやってみます。
+3次元の格子点って言うと、数学の記号を使って書くと以下のような感じです。</p>
+<div class="math">
+      L<sub><span class="normal">3</span></sub><span class="normal">=</span><span class="paren" style="font-size:em;">{</span>
+        <span class="paren" style="font-size:em;">(</span>x, y, z<span class="paren" style="font-size:em;">)</span><span class="normal">∈</span><span class="bold">R</span><sup><span class="normal">3</span></sup><span class="normal">|</span>
+        x <span class="normal">∈</span><span class="bold">N</span>,
+        y <span class="normal">∈</span><span class="bold">N</span>,
+        z <span class="normal">∈</span><span class="bold">N</span>
+      <span class="paren" style="font-size:em;">}</span>
+    </div>
+で、3次元上の点を平面に投影する関数
+<span class="math">
+        Pr: <span class="bold">R</span><sup><span class="normal">3</span></sup><span class="normal">→</span><span class="bold">R</span><sup><span class="normal">2</span></sup>
+      </span>
+を用意して、
+以下のような集合を作ります。
+<div class="math">
+      P
+      <span class="normal">=</span><span class="paren" style="font-size:em;">{</span>
+        Pr<span class="paren" style="font-size:em;">(</span>p<span class="paren" style="font-size:em;">)</span><span class="normal">|</span>
+        p <span class="normal">∈</span> L<sub><span class="normal">3</span></sub>
+      <span class="paren" style="font-size:em;">}</span>
+    </div>
+簡単化のため、投影面は原点を通る平面に限定します。
+で、この平面の正規直交基底を
+<span class="math">
+        <span class="vector">i</span><sub><span class="normal">1</span></sub>, <span class="vector">i</span><sub><span class="normal">2</span></sub>
+      </span>
+とすると、投影関数 Pr は以下のように書くことができます。
+<div class="math">
+      Pr<span class="paren" style="font-size:em;">(</span>p<span class="paren" style="font-size:em;">)</span><span class="normal">=</span><span class="paren" style="font-size:em;">(</span>
+        p <span class="normal">⋅</span><span class="vector">i</span><sub><span class="normal">1</span></sub> ,
+        p <span class="normal">⋅</span><span class="vector">i</span><sub><span class="normal">2</span></sub>
+      <span class="paren" style="font-size:em;">)</span>
+    </div>
+すなわち、投影された点の集合 <span class="math">P</span> は以下のように書けます。
+<div class="math">
+      P
+      <span class="normal">=</span><span class="paren" style="font-size:em;">{</span>
+        <span class="paren" style="font-size:em;">(</span>
+          p <span class="normal">⋅</span><span class="vector">i</span><sub><span class="normal">1</span></sub> ,
+          p <span class="normal">⋅</span><span class="vector">i</span><sub><span class="normal">2</span></sub>
+        <span class="paren" style="font-size:em;">)</span><span class="normal">|</span>
+        p <span class="normal">∈</span> L<sub><span class="normal">3</span></sub>
+      <span class="paren" style="font-size:em;">}</span>
+    </div>
+<h5 id="section-8"><a id="sec-generated-title-8"></a>コーディング</h5>
+<p>まず、3次元上の格子点は C# 3.0 的に書くと以下のような感じ。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> points3d =
+  <span class="keyword">from</span> x <span class="keyword">in</span> Enumerable.Range(-N, <span class="number">2</span> * N)
+  <span class="keyword">from</span> y <span class="keyword">in</span> Enumerable.Range(-N, <span class="number">2</span> * N)
+  <span class="keyword">from</span> z <span class="keyword">in</span> Enumerable.Range(-N, <span class="number">2</span> * N)
+  <span class="keyword">select</span> <span class="keyword">new</span> Vector3D(x, y, z);</code></pre>
+<p>N は適当な定数です。
+無限個の点を扱うわけにもいかないので、N で探索範囲を限定します。
+Vector3D は 「<a href="/study/dotnet/wpf/wpf_abst/#wpf0">WPF</a>」 の System.Windows.Media.Media3D.Vector3D クラス。
+Enumerable は .NET Framework 3.5 で追加された System.Linq.Enumerable クラスです。</p>
+<p>平面への投影は、平面の基底ベクトル i1, i2 を与えて、以下のようにします。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> projectedPoints =
+  <span class="keyword">from</span> p <span class="keyword">in</span> points3d
+  <span class="keyword">let</span> x = Vector3D.DotProduct(p, i1)
+  <span class="keyword">let</span> y = Vector3D.DotProduct(p, i2)
+  <span class="keyword">select</span> <span class="keyword">new</span> Point(x, y);</code></pre>
+<p>そこそこ数学のイメージ通りにコーディングできているんじゃないかと。</p>
+<p>ちなみに、（原点を通る）平面は法線ベクトル1つを与えて定められるわけですが、
+法線ベクトル normal から適当な平面状の基底ベクトル2つを求めるには、
+以下のような関数を使います。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> GetOrthogonalBase(
+  Vector3D normal, <span class="keyword">out</span> Vector3D i1, <span class="keyword">out</span> Vector3D i2)
+{
+  Vector3D temp;
+
+  <span class="keyword">if</span> (normal.X &gt; normal.Y)
+    <span class="keyword">if</span> (normal.X &gt; normal.Z) temp = <span class="keyword">new</span> Vector3D(<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>);
+    <span class="keyword">else</span> temp = <span class="keyword">new</span> Vector3D(<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>);
+  <span class="keyword">else</span>
+    <span class="keyword">if</span> (normal.Y &gt; normal.Z) temp = <span class="keyword">new</span> Vector3D(<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>);
+    <span class="keyword">else</span> temp = <span class="keyword">new</span> Vector3D(<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>);
+
+  i1 = Vector3D.CrossProduct(normal, temp); i1.Normalize();
+  i2 = Vector3D.CrossProduct(normal, i1); i2.Normalize();
+}</code></pre>
+<p>あと、探索する範囲をもう少し絞って、
+「平面から遠い点」と「表示可能な範囲外」の点を除外するために、
+以下のような条件をつけておきます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> points3d = (
+  <span class="keyword">from</span> x <span class="keyword">in</span> Enumerable.Range(-M, <span class="number">2</span> * M)
+  <span class="keyword">from</span> y <span class="keyword">in</span> Enumerable.Range(-M, <span class="number">2</span> * M)
+  <span class="keyword">from</span> z <span class="keyword">in</span> Enumerable.Range(-M, <span class="number">2</span> * M)
+  <span class="keyword">select</span> <span class="keyword">new</span> Vector3D(x, y, z) <span class="keyword">into</span> p
+  <span class="keyword">let</span> distance = Math.Abs(Vector3D.DotProduct(p, normal))
+  <span class="keyword">where</span> distance &lt; THICKNESS
+  <span class="keyword">select</span> p
+  ).ToArray();
+
+Vector3D i1, i2;
+GetOrthogonalBase(normal, <span class="keyword">out</span> i1, <span class="keyword">out</span> i2);
+
+<span class="keyword">var</span> projectedPoints =
+  <span class="keyword">from</span> p <span class="keyword">in</span> points3d
+  <span class="keyword">let</span> x = Vector3D.DotProduct(p, i1)
+  <span class="keyword">let</span> y = Vector3D.DotProduct(p, i2)
+  <span class="keyword">where</span> -WIDTH &lt;= x &amp;&amp; x &lt;= WIDTH
+    &amp;&amp; -WIDTH &lt;= y &amp;&amp; y &lt;= WIDTH
+  <span class="keyword">select</span> <span class="keyword">new</span> Point(x, y);</code></pre>
+<p>THICKNESS が平面からの距離、
+WIDTH が表示可能な範囲の幅を表す定数です。</p>
+<p>完成品 →
+<a href="/assets/media/ufcpp2000/csharp/source/Projection.zip">Projection.zip</a>
+（ソース一式、zip 圧縮）。</p>
+<p>↑WPF を使っているので、コーディングは簡単なんですけど、
+かなり処理が重たいです。</p>
+<p>あと、現状では、法線ベクトルはハードコーディングしています。
+ちょっとした修正で、実行時に法線ベクトルの向きを変更することも簡単にできると思いますが。</p>
+<h5 id="section-9"><a id="sec-generated-title-9"></a>結果</h5>
+<p>さて、投影結果ですが、
+法線の向きを変えていくつかプロットしたものを見てみましょう。</p>
+<p>法線が (1, 0, 0) みたいなのだと、投影結果もきれいに格子点になって、↓みたいな感じになります。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/projection/1_0_0.png"><img src="/assets/media/ufcpp2000/csharp/fig/projection/1_0_0.png" alt="" /></a></p>
+<figcaption></figcaption>
+</figure>
+<p>法線を (1, 1, 1) とかにすると、最密充填な感じの6角形状の点が得られます↓。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/projection/1_1_1.png"><img src="/assets/media/ufcpp2000/csharp/fig/projection/1_1_1.png" alt="" /></a></p>
+<figcaption></figcaption>
+</figure>
+<p>(1, 5, 7) みたいな多少妙な比率にしても、有理比である限りきれいな格子模様になります↓。（精度の問題でぼやけてるけど、理屈の上ではちゃんと点になる。）</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/projection/1_5_7.png"><img src="/assets/media/ufcpp2000/csharp/fig/projection/1_5_7.png" alt="" /></a></p>
+<figcaption></figcaption>
+</figure>
+<p>一方、
+<span class="math">
+<span class="paren" style="font-size:em;">(</span>
+<span class="normal">1</span>, <span class="normal" style="font-size:em;">√</span><span class="bar">
+<span class="normal">2</span>
+</span>, <span class="normal" style="font-size:em;">√</span><span class="bar">
+<span class="normal">3</span>
+</span>
+<span class="paren" style="font-size:em;">)</span>
+</span>
+みたいに無理数比にしてしまうと、周期性がなくなります↓。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/projection/1_r2_r3_t10.png"><img src="/assets/media/ufcpp2000/csharp/fig/projection/1_r2_r3_t10.png" alt="" /></a></p>
+<figcaption></figcaption>
+</figure>
+<p>この画像は THICKNESS == 10 の厚み（平面からの距離）くらいまでをプロットしたものです。
+厚みを太くすればするほど、全体が真っ赤に染まるはず。
+逆に薄くすると↓みたいな感じになります（厚み 1.2）。
+規則性があるようなないようなちょっと不思議な模様に。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/projection/1_r2_r3_t1.2.png"><img src="/assets/media/ufcpp2000/csharp/fig/projection/1_r2_r3_t1.2.png" alt="" /></a></p>
+<figcaption></figcaption>
+</figure>
+<p>で、
+<span class="math">
+<span class="paren" style="font-size:em;">(</span>
+<span class="normal">2</span>,
+<span class="normal">1</span><span class="normal">−</span><span class="normal" style="font-size:em;">√</span><span class="bar">
+<span class="normal">5</span>
+</span>,
+<span class="normal">1</span><span class="normal">+</span><span class="normal" style="font-size:em;">√</span><span class="bar">
+<span class="normal">5</span>
+</span>
+<span class="paren" style="font-size:em;">)</span>
+</span>
+みたいな比率にすると、x, y, z のうち2つだけが独立（x = y + z）なので、
+縞模様が現れます
+（ある1方向には周期性がなくなって、別の1方向には周期性が残る）↓。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/projection/2_1-r5_1+r5.png"><img src="/assets/media/ufcpp2000/csharp/fig/projection/2_1-r5_1+r5.png" alt="" /></a></p>
+<figcaption></figcaption>
+</figure>
+<p>ちょっと数学的な話をすると、
+こういう、高次元の格子点を法線が無理数比の平面に投影するって話、準結晶の研究で出てきた話らしい。
+うまくやれば5回回転対称性を持つような準周期構造が作れるとか
+（完全な結晶構造だと、1,2,3,4,6 回の回転対象性しか作れない）。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/sample/">&#x30B5;&#x30F3;&#x30D7;&#x30EB;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;</a></li><li><a href="/study/csharp/sample/ap_sample/">C# &#x30B5;&#x30F3;&#x30D7;&#x30EB;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;</a></li><li><a href="/study/csharp/sample/sm_soundlib/">[&#x30B5;&#x30F3;&#x30D7;&#x30EB;] SoundLibrary</a></li><li><a href="/study/csharp/sample/sp2_microthread/">[&#x30B5;&#x30F3;&#x30D7;&#x30EB;] &#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;&#x3068;&#x30DE;&#x30A4;&#x30AF;&#x30ED;&#x30B9;&#x30EC;&#x30C3;&#x30C9;</a></li><li><a href="/study/csharp/sample/sp3_linqreconstruct/">[&#x30B5;&#x30F3;&#x30D7;&#x30EB;] &#x5F0F;&#x6728;&#x304B;&#x3089;&#x30AF;&#x30A8;&#x30EA;&#x5F0F;&#x306E;&#x518D;&#x69CB;&#x7BC9;</a></li><li><a href="/study/csharp/sample/sp3_expressionsample/">[&#x30B5;&#x30F3;&#x30D7;&#x30EB;] &#x5F0F;&#x6728;&#x306E;&#x5229;&#x7528;&#x4F8B;</a></li><li><a href="/study/csharp/sample/sm_genericop/">[&#x30B5;&#x30F3;&#x30D7;&#x30EB;] &#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30C3;&#x30AF;&#x306A;&#x8907;&#x7D20;&#x6570;&#x578B;</a></li><li><a href="/study/csharp/sample/sm_treeview/">[&#x30B5;&#x30F3;&#x30D7;&#x30EB;] &#x5F0F;&#x6728;&#x3092; WPF &#x3067; GUI &#x8868;&#x793A;</a></li><li><a href="/study/csharp/sample/sm_sov/">[&#x30B5;&#x30F3;&#x30D7;&#x30EB;] SOV &#x578B;&#x306E;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x547C;&#x3073;&#x51FA;&#x3057;</a></li><li><a href="/study/csharp/sample/sm_proxy/">[&#x30B5;&#x30F3;&#x30D7;&#x30EB;] &#x900F;&#x904E;&#x30D7;&#x30ED;&#x30AD;&#x30B7;</a></li><li><a href="/study/csharp/sample/sm_daifugou/">[&#x30B5;&#x30F3;&#x30D7;&#x30EB;] &#x5927;&#x5BCC;&#x8C6A;</a></li><li><a href="/study/csharp/sample/sm_silverlight/">[&#x30B5;&#x30F3;&#x30D7;&#x30EB;] Silverlight &#x30B5;&#x30F3;&#x30D7;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

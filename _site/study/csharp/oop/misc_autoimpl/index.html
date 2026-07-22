@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>[&#x96D1;&#x8A18;] &#x62BD;&#x8C61;&#x5B9A;&#x7FA9;&#x3068;&#x81EA;&#x52D5;&#x5B9F;&#x88C5; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/oop/misc_autoimpl/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">[雑記] 抽象定義と自動実装</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>C# の文法では、メソッドやプロパティなどの抽象定義（abstract 修飾子が付いているもの）と自動実装（コンパイラーが具体的な実装を生成してくれるもの）の見た目が似ているため、
+少し混乱しやすいです。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>抽象定義 … インターフェイスのメンバーや抽象メソッドのように、宣言のみの（規約だけ定めて、実装を持たない）もの。</p>
+</li>
+<li><p>具象定義 … 通常のメソッドやプロパティのように、実装まで書いてあるもの。</p>
+</li>
+<li><p>自動実装 … プロパティとイベントは、実装を省略して、コンパイラーに自動生成してもらうことが可能。この際、抽象定義と見た目が近いので注意。</p>
+</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="auto-property"></a>自動実装プロパティ</h2>
+<p>C# では、プロパティとイベントの場合、実装を省略して書くことで、コンパイラー任せで自動的に実装を作ることができます。
+参考:</p>
+<ul>
+<li><p>「<a href="/study/csharp/oop/oo_property/#auto">自動プロパティ</a>」</p>
+</li>
+<li><p>「<a href="/study/csharp/functional/sp_event/#event">イベント</a>」</p>
+</li>
+</ul>
+<p>便利な機能ですが、抽象定義（abstract 修飾子が付いていたり、インターフェイス中に定義されるメンバー）の書き方と似ているため注意が必要です。</p>
+<p>例えば、プロパティの場合、以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">interface</span> ISample
+{
+    <span class="comment">// 抽象定義: これは宣言のみで実装を持たない（規約のみを定める）</span>
+    <span class="keyword">int</span> A { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+}
+
+<span class="keyword">abstract</span> <span class="keyword">class</span> Sample
+{
+    <span class="comment">// 抽象定義: これも宣言のみで、実装を持たない</span>
+    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">int</span> A { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+    <span class="comment">// 具象定義: これは自動実装プロパティ（コンパイラー生成の実体を持つ）</span>
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+}</code></pre>
+<p>単純に、abstract が付いているか、もしくはインターフェイス内にあれば抽象定義（宣言）です。
+その他の場合は自動実装プロパティになります。</p>
+<p>ちなみに、X の自動実装の展開（コンパイラーによる自動生成）結果は以下のようになります。
+（A の側は抽象定義なので、このような展開は起こりません。）</p>
+<pre><code class="language-csharp">    <span class="keyword">public</span> <span class="keyword">int</span> X
+    {
+        <span class="keyword">get</span> { <span class="keyword">return</span> _X; }
+        <span class="keyword">set</span> { _X = value; }
+    }
+
+    <span class="comment">// 実際には、プログラマーに見えない特殊な名前が与えられます</span>
+    <span class="keyword">private</span> <span class="keyword">int</span> _X;</code></pre>
+<p>自動的に生成されたフィールド（この例でいう <code>_X</code>）をバック フィールド（backing field）と呼びます。
+通常、C# コードからバック フィールドは見えなくなっていますが、
+「<a href="/study/csharp/dynamic/sp_reflection/#reflection">リフレクション</a>」を使うことで覗き見ることができます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Reflection;
+
+<span class="keyword">abstract</span> <span class="keyword">class</span> Sample
+{
+    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">int</span> A { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+}
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> fields = <span class="keyword">typeof</span>(Sample).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> field <span class="keyword">in</span> fields)
+        {
+            Console.WriteLine(field.Name);
+        }
+    }
+}</code></pre>
+<p>結果として表示されるのは X プロパティのバック フィールドになります。
+（繰り返しますが、A の方は抽象プロパティなので、同様のフィールドは生成されません。）</p>
+<pre><code class="language-console">&lt;X&gt;k__BackingField</code></pre>
+<p>見ての通り、通常の C# コードからは定義できない名前（&lt; から始まる名前）になっています。
+（「<a href="/study/csharp/abstract/ab_dotnet/#il">IL</a>」的には有効な名前です。）</p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="auto-event"></a>自動実装イベント</h2>
+<p>プロパティは get; set; を明示的に書くだけまだましで、イベント構文はより一層、混乱を招きます。</p>
+<pre><code class="language-csharp"><span class="keyword">interface</span> ISample
+{
+    <span class="comment">// 抽象定義: 宣言のみ、実装ない</span>
+    <span class="keyword">public</span> <span class="keyword">event</span> Action&lt;<span class="keyword">int</span>&gt; A;
+}
+
+<span class="keyword">class</span> Sample
+{
+    <span class="comment">// 抽象定義: 宣言のみ、実装ない</span>
+    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">event</span> Action&lt;<span class="keyword">int</span>&gt; A;
+
+    <span class="comment">// 具象定義: 自動実装イベント</span>
+    <span class="keyword">public</span> <span class="keyword">event</span> Action&lt;<span class="keyword">int</span>&gt; X;
+
+    <span class="comment">// ↑パッと見、デリゲート型のフィールドに見えるのがまた（別物です）</span>
+    Action&lt;<span class="keyword">int</span>&gt; x;
+}</code></pre>
+<p>プロパティ同様、abstract が付いているか、インターフェイス中で定義されている場合には抽象定義、それ以外は自動実装イベントです。</p>
+<p>デリゲート型のフィールドと似て見える点にも注意が必要ですが、
+実際には以下のようなアクセサーが自動生成されています。</p>
+<pre><code class="language-csharp">    <span class="comment">// 簡易版。本当はこれに、スレッド安全性の保証用コードが入る。</span>
+    <span class="keyword">public</span> <span class="keyword">event</span> Action&lt;<span class="keyword">int</span>&gt; X
+    {
+        add { _X = (Action&lt;<span class="keyword">int</span>&gt;)Delegate.Combine(_X, value); }
+        remove { _X = (Action&lt;<span class="keyword">int</span>&gt;)Delegate.Remove(_X, value); }
+    }
+
+    <span class="comment">// バック フィールド</span>
+    <span class="comment">// C# の文法上は認められていないのでここでは _X で代用したものの、</span>
+    <span class="comment">// 実際にはイベントと同名のフィールド（この例の場合 X）が作られる。</span>
+    <span class="comment">// （IL 的には OK。）</span>
+    <span class="keyword">private</span> Action&lt;<span class="keyword">int</span>&gt; _X;</code></pre>
+<p>イベントの場合、クラス内から普通のデリゲート型のフィールドのように扱えますが、
+これは実際には、自動実装によって生成されたバック フィールドへのアクセスになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Sample
+{
+    <span class="keyword">public</span> <span class="keyword">event</span> Action&lt;<span class="keyword">int</span>&gt; X;
+
+    <span class="keyword">public</span> <span class="keyword">void</span> RaiseX(<span class="keyword">int</span> value)
+    {
+        <span class="keyword">var</span> d = X; <span class="comment">// 実はこの X は自動生成されたバック フィールドの X</span>
+        <span class="keyword">if</span> (d != <span class="keyword">null</span>) d(value);
+    }
+}
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> s = <span class="keyword">new</span> Sample();
+        s.X += x =&gt; { }; <span class="comment">// この X はイベントの X</span>
+    }
+}</code></pre>
+<p>実際、
+「<a href="/study/csharp/dynamic/sp_reflection/#reflection">リフレクション</a>」を使うことでバック フィールドを確認できます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Reflection;
+
+<span class="keyword">abstract</span> <span class="keyword">class</span> Sample
+{
+    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">event</span> Action&lt;<span class="keyword">int</span>&gt; A;
+    <span class="keyword">public</span> <span class="keyword">event</span> Action&lt;<span class="keyword">int</span>&gt; X;
+}
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> fields = <span class="keyword">typeof</span>(Sample).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> field <span class="keyword">in</span> fields)
+        {
+            Console.WriteLine(field.Name);
+        }
+    }
+}</code></pre>
+<p>X とだけ表示されます（イベントと同名のフィールドが生成されている）。
+（前述のプロパティの例と同様、A の方は抽象イベントなので、同様のフィールドは生成されません。）</p>
+<pre><code class="language-console">X</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/oop/">&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x6307;&#x5411;</a></li><li><a href="/study/csharp/oop/oo_about/">&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x6307;&#x5411;&#x3068;&#x306F;</a></li><li><a href="/study/csharp/oop/oo_class/">&#x30AF;&#x30E9;&#x30B9;</a></li><li><a href="/study/csharp/oop/oo_construct/">&#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;</a></li><li><a href="/study/csharp/oop/oo_conceal/">&#x5B9F;&#x88C5;&#x306E;&#x96A0;&#x853D;</a></li><li><a href="/study/csharp/oop/oo_property/">&#x30D7;&#x30ED;&#x30D1;&#x30C6;&#x30A3;</a></li><li><a href="/study/csharp/oop/oo_static/">&#x9759;&#x7684;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/study/csharp/oop/moduleinitializer/">&#x30E2;&#x30B8;&#x30E5;&#x30FC;&#x30EB;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/study/csharp/oop/oo_operator/">&#x6F14;&#x7B97;&#x5B50;&#x306E;&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30ED;&#x30FC;&#x30C9;</a></li><li><a href="/study/csharp/oop/oo_indexer/">&#x30A4;&#x30F3;&#x30C7;&#x30AF;&#x30B5;&#x30FC;</a></li><li><a href="/study/csharp/oop/oo_inherit/">&#x7D99;&#x627F;</a></li><li><a href="/study/csharp/oop/miscimplictinherit/">[&#x4F59;&#x8AC7;] &#x6697;&#x9ED9;&#x7684;&#x306A;&#x6D3E;&#x751F;</a></li><li><a href="/study/csharp/oop/oo_multipleinheritance/">[&#x96D1;&#x8A18;] &#x591A;&#x91CD;&#x7D99;&#x627F;&#x3067;&#x304D;&#x306A;&#x3044;&#x7406;&#x7531;</a></li><li><a href="/study/csharp/oop/oo_polymorphism/">&#x591A;&#x614B;&#x6027;</a></li><li><a href="/study/csharp/oop/misc_as/">[&#x96D1;&#x8A18;] &#x30AD;&#x30E3;&#x30B9;&#x30C8;&#x3068; as</a></li><li><a href="/study/csharp/oop/misc_construct/">[&#x96D1;&#x8A18;] &#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;&#x5185;&#x306E;&#x4EEE;&#x60F3;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x547C;&#x3073;&#x51FA;&#x3057;</a></li><li><a href="/study/csharp/oop/oo_abstract/">&#x62BD;&#x8C61;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x3001;&#x62BD;&#x8C61;&#x30AF;&#x30E9;&#x30B9;</a></li><li><a href="/study/csharp/oop/oo_interface/">&#x30A4;&#x30F3;&#x30BF;&#x30FC;&#x30D5;&#x30A7;&#x30FC;&#x30B9;</a></li><li><a href="/study/csharp/oop/oo_vftable/">[&#x96D1;&#x8A18;] &#x4EEE;&#x60F3;&#x95A2;&#x6570;&#x30C6;&#x30FC;&#x30D6;&#x30EB;</a></li><li><a href="/study/csharp/oop/sp2_generics/">&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/oop/sp4_variance/">&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30AF;&#x30B9;&#x306E;&#x5171;&#x5909;&#x6027;&#x30FB;&#x53CD;&#x5909;&#x6027;</a></li><li><a href="/study/csharp/oop/generic-math-operators/">&#x3010;Generic Math&#x3011; C# 11 &#x3067;&#x306E;&#x6F14;&#x7B97;&#x5B50;&#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

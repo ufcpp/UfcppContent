@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>ASP.NET &#x6982;&#x8981; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/dotnet/aspx/aspx_abstract/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="asp.net">ASP.NET 概要</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p><strong id="aspdotnet" class="keyword">ASP.NET</strong> は、Microsoft が開発したサーバサイトアプリケーションフレームワークです。</p>
+<p>動的な処理はウェブサーバ上で行い、
+クライアントには（普通の HTML などの）結果のみが表示されます。</p>
+<p>ASP.NET のフレームワークを用いることで、
+（人が直接操作することを前提に）結果を HTML で表示するウェブフォームや、
+（プログラムから呼び出して使うことが前提の）SOAP と呼ばれる通信プロトコルでデータを返す XML ウェブサービスを簡単に作ることができます。</p>
+<p>ここでは、ウェブフォームを中心に説明していきます。</p>
+<h2 id="section-1"><a id="sec-generated-title-2"></a> <a id="sample"></a>例</h2>
+<p>ASP.NET のウェブフォームでは、HTML （ただし、拡張子は .html ではなく、.aspx にする）の中にプログラムを埋め込んだり、
+「HTML ＋ プログラムソースファイル」で開発ができます。</p>
+<p>例として、現在時刻を表示するだけの単純な ASP.NET ウェブフォームを示します。
+以下のような内容を、拡張子 .aspx を付けて保存するだけで OK です。</p>
+<pre><code class="language-html">&lt;%@ Page Language=&quot;C#&quot; %&gt;
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">html</span> <span class="htmlAttributeName">lang</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;ja&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">body</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">p</span> <span class="htmlAttributeName">style</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;color:#0000ff;&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+
+&lt;%= DateTime.Now.ToString() %&gt;
+
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">p</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">body</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">html</span><span class="htmlTagDelimiter">&gt;</span></code></pre>
+<p>こうすると、
+&lt;% %&gt; という特殊なタグでくくられた部分がサーバ上で解釈されて、
+結果を該当箇所に埋め込んだ HTML が出力されます。</p>
+<p>特にコンパイル作業なども必要なく、
+この .aspx ファイルをサーバ上に置くだけで OK。
+（サーバ側で拡張子 .aspx を ASP.NET アプリケーションとして認識する設定は必要。
+「ASP.NET を使える」という触れ込みのサーバなら最初から設定済みのはず。）
+ページが始めて表示される際に、
+自動的にコンパイルされて、
+以後は .aspx ファイルや関連するファイルの中身が修正されるまでの間、
+ページを表示するたびにコンパイル済みのバイナリが呼び出されます。</p>
+<p>ちなみに、
+この &lt;% %&gt; でコードを囲って書く方式は、
+（ビジュアルとロジックが混ざるのがあまりよくないと言われていて）
+非推奨とされています。
+代わりに、以下のように、&lt;script&gt; タグを使ってロジックを分離します。</p>
+<pre><code class="language-html">&lt;%@ Page Language=&quot;C#&quot; %&gt;
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">script</span> <span class="htmlAttributeName">runat</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;server&quot;</span> <span class="htmlAttributeName">type</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;text/C#&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+  <span class="keyword">void</span> Page_Load(object sender, EventArgs e)
+  {
+    <span class="keyword">this</span>.label1.Text = DateTime.Now.ToString();
+  }
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">script</span><span class="htmlTagDelimiter">&gt;</span>
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">html</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">body</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">form</span> <span class="htmlAttributeName">id</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;form1&quot;</span> <span class="htmlAttributeName">runat</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;server&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">p</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">Label</span> <span class="htmlAttributeName">runat</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;server&quot;</span> <span class="htmlAttributeName">ID</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;label1&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">p</span><span class="htmlTagDelimiter">&gt;</span>
+
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">form</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">body</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">html</span><span class="htmlTagDelimiter">&gt;</span></code></pre>
+<p>Page_Load というのは、このページが表示される際に呼び出される特殊な関数です。
+属性に runat=&quot;server&quot; と書いたタグの箇所には、サーバ側での処理の結果が表示されます。</p>
+<p>先ほどの &lt;% %&gt; を使ったものや、
+この .aspx ファイル中に直接 &lt;script&gt; タグを書くような方式は、
+インラインコード（inline code）と呼ばれています。
+これに対して、ASP.NET では、
+.aspx ファイルとプログラムコードを完全に分離して書くことができます。
+例えば、以下の通り。</p>
+<pre><code class="language-html">using System;
+
+namespace WebApplication1
+{
+  public partial class _Default : System.Web.UI.Page
+  {
+    protected void Page_Load(object sender, EventArgs e)
+    {
+      this.label1.Text = DateTime.Now.ToString();
+    }
+  }
+}</code></pre>
+<pre><code class="language-html">&lt;%@ Page Language=&quot;C#&quot;
+  CodeBehind=&quot;Default.aspx.cs&quot; Inherits=&quot;WebApplication1._Default&quot; %&gt;
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">html</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">body</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">form</span> <span class="htmlAttributeName">id</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;form1&quot;</span> <span class="htmlAttributeName">runat</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;server&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">p</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">Label</span> <span class="htmlAttributeName">runat</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;server&quot;</span> <span class="htmlAttributeName">ID</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;label1&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">p</span><span class="htmlTagDelimiter">&gt;</span>
+
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">form</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">body</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">html</span><span class="htmlTagDelimiter">&gt;</span></code></pre>
+<p>このような方式を<strong id="codebehind" class="keyword">コードビハインド</strong>（code-behind: ニュアンスとしては code behind the page、aspx ページの後ろに隠れたコード。「分離コード」と訳すことも。）といいます。
+こうすることで、
+完全にビジュアル（見た目・視覚的なデザイン）とロジック（処理内容・論理的なデザイン）を分離できます。
+ビジュアルとロジックの分離によって、
+ビジュアルデザイナーとプログラマーの分業がしやすくなるなどのメリットがあって、
+ASP.NET では、このコードビハインド方式での開発が推奨されています。</p>
+<p>ただし、この場合、コードの方はコンパイル作業が必要です。
+（Visual Studio などを使えばコンパイルも簡単。）</p>
+<p>ちなみに、
+コードビハインドを使ってビジュアルとロジックを分離するという思想は、
+「<a href="/study/dotnet/wpf/wpf_abst/#wpf">Windows Presentation Foundation</a>」にも引き継がれています。</p>
+<h2 id="section-2"><a id="sec-generated-title-3"></a> <a id="devenv"></a>開発環境</h2>
+<p>ASP.NET は、ウェブフォームを作るにしろウェブサービスを作るにしろ、
+全てテキスト形式のソースファイルで書くことができます。
+なので、やろうと思えば、テキストエディタ一つあれば開発ができます。
+（実際、前節の例はテキストエディタで書いてる。）</p>
+<p>まあ、でも、普通は統合開発環境を使って開発します。
+<a href="http://www.microsoft.com/japan/msdn/vstudio/">Visual Studio</a> や、
+その入門者向け無料サブセット版の<a href="http://www.microsoft.com/japan/msdn/vstudio/express/vwd/">Visual Web Developer 2005 Express Edition</a> を使うのが一般的です。</p>
+<iframe style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" src="http://rcm-jp.amazon.co.jp/e/cm?t=cunflc-22&amp;o=9&amp;p=8&amp;l=as1&amp;asins=B000CSRIYG&amp;fc1=000000&amp;IS2=1&amp;lt1=_blank&amp;lc1=0000ff&amp;bc1=000000&amp;bg1=ffffff&amp;f=ifr">
+asin 番号: B000CSRIYG</iframe>
+<h2 id="section-3"><a id="sec-generated-title-4"></a> <a id="server"></a>ウェブサーバ</h2>
+<p>ウェブアプリケーションを使うためには、当然、ウェブサーバが必要になります。
+「自宅でサーバを稼動させて・・・」なんてやる人はそう多くないので、
+レンタルサーバを少し紹介。</p>
+<p>というか、Microsoft のサイト中に <a href="http://www.microsoft.com/japan/msdn/asp.net/hosting/">ASP.NET ホスティングサービス情報</a>があったりします。
+<a href="http://www.fsdotnet.jp/index.shtml">無料で利用できるもの</a>とか、
+<a href="http://www.activeweb.jp/">ドメイン取得費無料・月額525円</a>とかいう安いのもあるので、
+気軽に試してみたい方はこのあたりを。</p>
+<h2 id="section-4"><a id="sec-generated-title-5"></a> <a id="link"></a>リンク</h2>
+<p>本格的に ASP.NET を勉強してみるつもりなら、
+以下の辺りを。</p>
+<!-- 以下、reflinks 要素の変換後の出力です。参照先に同じリンクが記述されている可能性があります。-->
+<p><a href="http://www.microsoft.com/japan/msdn/asp.net/">ASP.NET Developer Center</a>
+: 日本語公式サイト。</p>
+<p><a href="http://ja.gotdotnet.com/quickstart/aspplus/">ASP.NET クイック スタート チュートリアル</a>
+: Microsoft が提供するチュートリアル。 Microsoft はドキュメントの多言語対応に結構力をいれているので、 日本語的にも割りと安心して読めると思います。</p>
+<p><a href="http://www.atmarkit.co.jp/fdotnet/aspnet/index/index.html">＠IT 連載　 プログラミングASP.NET</a>
+: こちらは＠ITの記事。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/dotnet/aspx/">ASP.NET</a></li><li><a href="/study/dotnet/aspx/webapp/">Web &#x30A2;&#x30D7;&#x30EA;&#x30B1;&#x30FC;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/study/dotnet/aspx/logging/">&#x30A2;&#x30AF;&#x30BB;&#x30B9;&#x30ED;&#x30B0;&#x3092;&#x53D6;&#x308D;&#x3046;</a></li><li><a href="/study/dotnet/aspx/counter/">&#x30A2;&#x30AF;&#x30BB;&#x30B9;&#x30AB;&#x30A6;&#x30F3;&#x30BF;&#x3092;&#x4F5C;&#x308D;&#x3046;</a></li><li><a href="/study/dotnet/aspx/mailform/">&#x30E1;&#x30FC;&#x30EB;&#x30D5;&#x30A9;&#x30FC;&#x30E0;</a></li><li><a href="/study/dotnet/aspx/blog1/">&#x30D6;&#x30ED;&#x30B0;&#x8868;&#x793A;&#xFF08;&#xFF11;&#xFF09;</a></li><li><a href="/study/dotnet/aspx/blog2/">&#x30D6;&#x30ED;&#x30B0;&#x8868;&#x793A;&#xFF08;&#xFF12;&#xFF09;</a></li><li><a href="/study/dotnet/aspx/blog3/">&#x30D6;&#x30ED;&#x30B0;&#x8868;&#x793A;&#xFF08;&#xFF13;&#xFF09;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

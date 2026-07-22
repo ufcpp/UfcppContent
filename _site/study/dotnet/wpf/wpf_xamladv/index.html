@@ -1,0 +1,404 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>XAML &#x306E;&#x9AD8;&#x5EA6;&#x306A;&#x6A5F;&#x80FD;&#xFF08;WPF&#xFF09; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/dotnet/wpf/wpf_xamladv/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="xaml-wpf">XAML の高度な機能（WPF）</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="dependency"></a>依存プロパティ</h2>
+<p>「<a href="/study/dotnet/wpf/wpf_xamlbasic/#structure">基本構造</a>」では、
+XAML 中の XML タグの属性や子要素を通して、
+クラスの「<a href="/study/csharp/oop/oo_property/#property">プロパティ</a>」の値を設定できると説明しました。
+これはより正確にいうと、
+「普通のプロパティ<em>も</em>使える」となります。</p>
+<p>WPF では、通常のプロパティでは実現できない機能を実装するために、
+<strong id="dependency" class="keyword">依存プロパティ</strong>（dependency property）というものを用意しています。
+XAML では、
+通常のプロパティと同名の依存プロパティがある場合、
+依存プロパティの方が優先されます。
+（依存プロパティと区別する目的で、
+通常のプロパティを「CLR プロパティ」と呼んだりもします。）</p>
+<p>依存プロパティを使いたいクラスは DependencyObject クラスを継承する必要があります。
+DependencyObject は、SetValue と GetValue というメソッドを持っていて、
+以下のようにして依存プロパティの取得・設定を行います。</p>
+<pre><code class="language-csharp"><span class="keyword">object</span> val = GetValue(DependencyPropertyIdentifier);
+SetValue(DependencyPropertyIdentifier, val);</code></pre>
+<p>DependencyPropertyIdentifier の部分は、
+DependencyProperty クラスのインスタンスを渡します。
+この DependencyProperty クラスのインスタンスは、
+static readonly なメンバー変数としてクラス中に定義します。
+例えば、TextBlock という名前のクラス中に Text という名前の依存プロパティを作りたければ、以下のようにします。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> TextBlock
+{
+  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">readonly</span> DependencyProperty TextProperty =
+    DependencyProperty.Register(<span class="string">&quot;Text&quot;</span>, <span class="keyword">typeof</span>(<span class="keyword">string</span>), <span class="keyword">typeof</span>(TextBlock));
+}</code></pre>
+<p>通常、利便性のために、
+同名の CLR プロパティも用意しておきます。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> TextBlock : DependencyObject
+{
+  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">readonly</span> DependencyProperty TextProperty =
+    DependencyProperty.Register(<span class="string">&quot;Text&quot;</span>, <span class="keyword">typeof</span>(<span class="keyword">string</span>), <span class="keyword">typeof</span>(TextBlock));
+
+  <span class="keyword">public</span> <span class="keyword">string</span> Text
+  {
+    <span class="keyword">get</span> { <span class="keyword">return</span> (<span class="keyword">string</span>)<span class="keyword">this</span>.GetValue(TextProperty); }
+    <span class="keyword">set</span> { <span class="keyword">this</span>.SetValue(TextProperty, value); }
+  }
+}</code></pre>
+<p>これで、XAML 中で、</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">TextBlock</span> <span class="xmlAttribute">Name</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">textBlock</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Text</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">テキスト</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span></code></pre>
+<p>と書けば、（通常の Text プロパティよりも、依存プロパティの TextProperty が優先されて、）
+以下のコードと同じ効果が得られます。</p>
+<pre><code class="language-csharp">textBlock.SetValue(TextProperty, <span class="string">&quot;テキスト&quot;</span>);</code></pre>
+<h2 id="section-1"><a id="sec-generated-title-2"></a> <a id="attached"></a>添付プロパティ</h2>
+<p>「<a href="#dependency">依存プロパティ</a>」にできて通常のプロパティにできないことの最たるものが、
+<strong id="attached" class="keyword">添付プロパティ</strong>（attached property）です。</p>
+<p>添付プロパティの例を示すのに、Grid を使ってみましょう。
+Grid は、子要素をテーブル状にレイアウトするためのものです。
+子要素を何行何列目に配置するかは、以下のように、
+Grid.Row と Grid.Column を使って指定します。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">Page</span>
+  <span class="xmlAttribute">xmlns</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml/presentation</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns:x</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Grid</span> <span class="xmlAttribute">Width</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">120</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Height</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">120</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Background</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Black</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Grid.ColumnDefinitions</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">ColumnDefinition</span> <span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">ColumnDefinition</span> <span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Grid.ColumnDefinitions</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Grid.RowDefinitions</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">RowDefinition</span> <span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">RowDefinition</span> <span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Grid.RowDefinitions</span><span class="xmlDelimiter">&gt;</span>
+
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Border</span> <span class="xmlAttribute">Grid.Row</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Grid.Column</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0</span><span class="xmlAttributeQuotes">&quot;</span>
+      <span class="xmlAttribute">Width</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Height</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Background</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Red</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Border</span> <span class="xmlAttribute">Grid.Row</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Grid.Column</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">1</span><span class="xmlAttributeQuotes">&quot;</span>
+      <span class="xmlAttribute">Width</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Height</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Background</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Green</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Border</span> <span class="xmlAttribute">Grid.Row</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">1</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Grid.Column</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0</span><span class="xmlAttributeQuotes">&quot;</span>
+      <span class="xmlAttribute">Width</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Height</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Background</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Blue</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Border</span> <span class="xmlAttribute">Grid.Row</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">1</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Grid.Column</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">1</span><span class="xmlAttributeQuotes">&quot;</span>
+      <span class="xmlAttribute">Width</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Height</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Background</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Yellow</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Grid</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Page</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>この例では、4色の四角形（Border）が2×2のテーブル状に配置されます。
+見てのとおり、
+4つの Border では、親要素である Grid の依存プロパティが設定されています。</p>
+<p>このように、自分自身のクラス中のプロパティではなく、
+親要素で定義されたプロパティ値を設定することを添付プロパティと呼びます。
+添付プロパティは（通常のプロパティは使えず、）依存プロパティでなければいけません。
+（というか、通常のプロパティではこのような仕組みは実現できません。）</p>
+<p>「依存プロパティ」という名前は、添付プロパティの例のように、
+「他のクラスとの依存関係を持つことができるプロパティ」というような意味合いです。</p>
+<h2 id="section-2"><a id="sec-generated-title-3"></a> <a id="resource"></a>リソース</h2>
+<p>「<a href="/study/dotnet/wpf/wpf_xamlbasic/#attribute">Attribute Syntax</a>」 を使うにしろ、
+「<a href="/study/dotnet/wpf/wpf_xamlbasic/#property">Property Element Syntax</a>」 を使うにしろ、
+普通に値を設定した場合、
+プロパティごと新しいインスタンスが作られます。</p>
+<p>ところで、新しいインスタンスではなく、
+既にあるインスタンスを参照したい場合もあります。
+（例えば、どこかで1度定義したブラシを、複数のコントロールの背景で使いまわすとか。）
+このような場合、
+<strong id="resource" class="keyword">リソース</strong>というものを使います。</p>
+<p>まず、リソースを定義する側ですが、
+リソースは、どこかの要素（通常、リソースを使う要素自体か、ルート要素中）の
+Resources プロパティ中で定義します。</p>
+<p>例えば、&lt;Page&gt; 中でグラデーションブラシをリソース化する場合、
+以下のようにします。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">Page</span>
+  <span class="xmlAttribute">xmlns</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml/presentation</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns:x</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Page.Resources</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">LinearGradientBrush</span> <span class="xmlAttribute">x:Key</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">brush1</span><span class="xmlAttributeQuotes">&quot;</span>
+      <span class="xmlAttribute">StartPoint</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0, 0</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">EndPoint</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">1, 1</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">GradientStop</span> <span class="xmlAttribute">Color</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Violet</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Offset</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0.0</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">GradientStop</span> <span class="xmlAttribute">Color</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Coral</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Offset</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">1.0</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">LinearGradientBrush</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Page.Resources</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Page</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>リソースを参照するときのことを考えて、
+x:Key 属性をつけておきます。</p>
+<p>リソースを参照する側では、
+「<a href="/study/dotnet/wpf/wpf_xamlbasic/#attribute">Attribute Syntax</a>」 の場合には、</p>
+<pre><code class="language-html">&lt;object property=&quot;{StaticResource key}&quot; .../&gt;</code></pre>
+<p>「<a href="/study/dotnet/wpf/wpf_xamlbasic/#property">Property Element Syntax</a>」 の場合には、</p>
+<pre><code class="language-html"><span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">object</span><span class="htmlTagDelimiter">&gt;</span>
+  &lt;object.property&gt;
+    &lt;StaticResource ResourceKey=&quot;key&quot; .../&gt;
+  &lt;/object.property&gt;
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">object</span><span class="htmlTagDelimiter">&gt;</span></code></pre>
+<p>というように書きます。
+先ほどの例のグラデーションブラシをテキストブロックの背景として参照したい場合には、
+以下のように書きます。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">TextBlock</span> <span class="xmlAttribute">Background</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">{StaticResource brush1}</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Text</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">textblock 1</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span></code></pre>
+<h5 id="section-3"><a id="sec-generated-title-4"></a>サンプル</h5>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">Page</span>
+  <span class="xmlAttribute">xmlns</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml/presentation</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns:x</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Page.Resources</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">LinearGradientBrush</span> <span class="xmlAttribute">x:Key</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">brush1</span><span class="xmlAttributeQuotes">&quot;</span>
+      <span class="xmlAttribute">StartPoint</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0, 0</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">EndPoint</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">1, 1</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">GradientStop</span> <span class="xmlAttribute">Color</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Violet</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Offset</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0.0</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">GradientStop</span> <span class="xmlAttribute">Color</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Coral</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Offset</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">1.0</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">LinearGradientBrush</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">LinearGradientBrush</span> <span class="xmlAttribute">x:Key</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">brush2</span><span class="xmlAttributeQuotes">&quot;</span>
+      <span class="xmlAttribute">StartPoint</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0, 0</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">EndPoint</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">1, 1</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">GradientStop</span> <span class="xmlAttribute">Color</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Turquoise</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Offset</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0.0</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">GradientStop</span> <span class="xmlAttribute">Color</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Gainsboro</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Offset</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">1.0</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">LinearGradientBrush</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Page.Resources</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">StackPanel</span> <span class="xmlAttribute">Orientation</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Vertical</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">TextBlock</span> <span class="xmlAttribute">Background</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">{StaticResource brush1}</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Text</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">textblock 1</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">TextBlock</span> <span class="xmlAttribute">Background</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">{StaticResource brush2}</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Text</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">textblock 2</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Button</span>    <span class="xmlAttribute">Background</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">{StaticResource brush1}</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Content</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">button 1</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">TextBox</span>   <span class="xmlAttribute">Background</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">{StaticResource brush2}</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Text</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">textbox 1</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">StackPanel</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Page</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<h3 id="section-4"><a id="sec-generated-title-5"></a> <a id="extern_resource"></a>外部リソース</h3>
+<p>Resources プロパティの型は ResourceDictionary なんですが、
+ResourceDictionary の Source プロパティを指定することで、
+外部の XAML からリソースを読みこむことができます。</p>
+<p>例えば、まず、以下のような XAML を StyleForLabel.xaml という名前で保存して、</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">ResourceDictionary</span>
+  <span class="xmlAttribute">xmlns</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml/presentation</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns:x</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Style</span> <span class="xmlAttribute">TargetType</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">{x:Type Label}</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Background</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#eeeeff</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Style</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">ResourceDictionary</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>以下のような XAML を書くと、
+StyleForLabel.xaml 中の設定が反映されます。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">WrapPanel</span>
+  <span class="xmlAttribute">xmlns</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml/presentation</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns:x</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">WrapPanel.Resources</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">ResourceDictionary</span> <span class="xmlAttribute">Source</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">StyleForLabel.xaml</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">WrapPanel.Resources</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Label</span> <span class="xmlAttribute">Content</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">label 1</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Label</span> <span class="xmlAttribute">Content</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">label 2</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Label</span> <span class="xmlAttribute">Content</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">label 3</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">WrapPanel</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>（スタイルに関しては、「<a href="#style">スタイル</a>」で説明します。）</p>
+<p>複数の外部リソースをマージしたければ、
+以下のように、MergedDictionaries プロパティを設定します。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">WrapPanel</span>
+  <span class="xmlAttribute">xmlns</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml/presentation</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns:x</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">WrapPanel.Resources</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">ResourceDictionary</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">ResourceDictionary.MergedDictionaries</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">ResourceDictionary</span> <span class="xmlAttribute">Source</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">StyleForButton.xaml</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">ResourceDictionary</span> <span class="xmlAttribute">Source</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">StyleForLabel.xaml</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;/</span><span class="xmlName">ResourceDictionary.MergedDictionaries</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">ResourceDictionary</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">WrapPanel.Resources</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Button</span> <span class="xmlAttribute">Content</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">button 1</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Label</span> <span class="xmlAttribute">Content</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">label 1</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Button</span> <span class="xmlAttribute">Content</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">button 2</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Label</span> <span class="xmlAttribute">Content</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">label 2</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Button</span> <span class="xmlAttribute">Content</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">button 3</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Label</span> <span class="xmlAttribute">Content</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">label 3</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">WrapPanel</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>実物 →</p>
+<p><a href="/assets/media/ufcpp2000/dotnet/sample/ResourceDictionary.xaml">ResourceDictionary.xaml</a>
+。
+リソースファイル →</p>
+<p><a href="/assets/media/ufcpp2000/dotnet/sample/StyleForButton.xaml">StyleForButton.xaml</a>
+、</p>
+<p><a href="/assets/media/ufcpp2000/dotnet/sample/StyleForLabel.xaml">StyleForLabel.xaml</a>
+。
+（今のところ説明していない機能使いまくってます。
+詳細は、「<a href="/study/dotnet/wpf/wpf_xamlani/">アニメーション（WPF）</a>」などで説明します。）</p>
+<h2 id="section-5"><a id="sec-generated-title-6"></a> <a id="extension"></a>マークアップ拡張</h2>
+<p>「<a href="/study/dotnet/wpf/wpf_xamlbasic/#property">プロパティの設定</a>」で説明したとおり、
+「<a href="/study/dotnet/wpf/wpf_xamlbasic/#attribute">Attribute Syntax</a>」 を使ってプロパティの値を設定する場合、
+属性の値は文字列もしくは文字列から直接変換可能な型として扱われます。
+このような単純な仕様に加えて、
+XAML では、<strong id="extension" class="keyword">マークアップ拡張</strong>（markup extension）という高度な仕組みを持っています。</p>
+<p>実は、前節ですでにマークアップ拡張を使っています。
+マークアップ拡張を使って実現できるもっとも簡単な例は、リソースの参照、
+すなわち、StaticResource です。
+実は、StaticResource の仕組みは、
+StaticResourceExtension というクラスによって提供されています。
+例えば、前節の例、</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">TextBlock</span>
+  <span class="xmlAttribute">Name</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">textblock1</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">Background</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">{StaticResource brush1}</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">Text</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">textblock 1</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span></code></pre>
+<p>の場合、以下のようなコードと同じような意味合いになります。</p>
+<pre><code class="language-csharp">StaticResourceExtension ex = <span class="keyword">new</span> StaticResourceExtension();
+ex.ResourceKey = <span class="string">&quot;brush1&quot;</span>;
+
+TextBlock textblock1 = <span class="keyword">new</span> TextBlock();
+textblock1.Background = (Brush)ex.ProvideValue(serviceProvider);
+textblock1.Text       = <span class="string">&quot;textblock 1&quot;</span>;</code></pre>
+<p>StaticResourceExtension クラスは、
+リソース辞書（Page.Resources 中などで定義されたリソース一覧）の中から、
+brush1 というキーを持つリソースを捜してくる機構を持っているわけです。</p>
+<p StaticResource="" ResourceKey="brush1">ちなみに、StaticResourceExtension クラスは、
+プロパティが ResourceKey の1つだけなので、
+本来は  と書くべき所を、
+ と省略できます。</p>
+<p>StaticResource 以外にも、
+DynamicResource や Binding などのマークアップ拡張がありますが、
+これらはすべて、MarkupExtension クラスのサブクラスです。
+MarkupExtension クラスのサブクラスを実装すれば、
+マークアップ拡張の自作も可能です。
+（「マークアップ拡張」という名前がそもそも、「XAML の構文をユーザが拡張できる」という意味。）</p>
+<p>マークアップ拡張は
+StaticResource や Binding 以外にもたくさん標準で用意されています。
+どのようなマークアップ拡張が標準で用意されているのかは WPF のヘルプを参照してください。</p>
+<h2 id="section-6"><a id="sec-generated-title-7"></a> <a id="style"></a>スタイル</h2>
+<p>コントロールごとに Foreground や Background プロパティの値を設定することで、
+個々に文字色などを変更することができました。
+これに対して、
+「全てのテキストボックスを一律同じ文字色に変更したい」
+などといった要望もあると思います。
+このような要望は、<strong id="style" class="keyword">スタイル</strong>（style）というものを使って実現することができます。</p>
+<p>XAML のスタイルは、HTML に対する CSS のような感じで設定できます。
+HTML の場合、&lt;p&gt; タグに対して一律フォントサイズを 18pt にしたければ、
+CSS 中に p {font-size: 18pt;} などと記述しました。
+また、特定の &lt;p&gt; タグに対してだけスタイルを適用したければ、
+CSS の方で p.footnote {font-size: 10pt;} などというようにクラス名を付けて定義し、
+HTML の方では &lt;p class=&quot;footnote&quot;&gt; というようにします。</p>
+<p>XAML のスタイルでもほぼ同様のことが実現できます。
+まず、一律でスタイルを指定する方法ですが、
+以下のようにします。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">Page</span>
+  <span class="xmlAttribute">xmlns</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml/presentation</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns:x</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">FontSize</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">18pt</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Page.Resources</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Style</span> <span class="xmlAttribute">TargetType</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">TextBlock</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Foreground</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Blue</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">FontFamily</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Times New Roman</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">FontStyle</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Italic</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Style</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Page.Resources</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">StackPanel</span> <span class="xmlAttribute">Orientation</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Vertical</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">TextBlock</span> <span class="xmlAttribute">Text</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">text block 1</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Button</span> <span class="xmlAttribute">Content</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">button 1</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">TextBlock</span> <span class="xmlAttribute">Text</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">text block 2</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Button</span> <span class="xmlAttribute">Content</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">button 2</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">TextBlock</span> <span class="xmlAttribute">Text</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">text block 3</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">StackPanel</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Page</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>スタイルは、リソース中に Style 要素を記述することで定義できます。
+Style の TargetType プロパティには型名を指定します。
+このとき、Style 要素に x:Key 属性を付けなければ、
+指定した型の要素全てにスタイルが適用されるようになります。</p>
+<p>Style 中には、Setter というものを並べて、
+この中でどのプロパティにどういう値を設定するかを設定します。
+この例の場合、全ての TextBlock が、Times New Roman のイタリック体の青色文字になります。</p>
+<p>一方で、以下のように、Style 要素に x:Key を指定すると、
+特定の要素にのみスタイルが適用されるようになります。
+適用したい要素には、Style 属性を付けます。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">Page</span>
+  <span class="xmlAttribute">xmlns</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml/presentation</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns:x</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">FontSize</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">18pt</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Page.Resources</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Style</span> <span class="xmlAttribute">TargetType</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">TextBlock</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">x:Key</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">em</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Foreground</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Blue</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">FontFamily</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Times New Roman</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">FontStyle</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Italic</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Style</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Page.Resources</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">StackPanel</span> <span class="xmlAttribute">Orientation</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Vertical</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">TextBlock</span> <span class="xmlAttribute">Style</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">{StaticResource em}</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Text</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">text block 1</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Button</span> <span class="xmlAttribute">Content</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">button 1</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">TextBlock</span> <span class="xmlAttribute">Text</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">text block 2</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Button</span> <span class="xmlAttribute">Content</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">button 2</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">TextBlock</span> <span class="xmlAttribute">Text</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">text block 3</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">StackPanel</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Page</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>もちろん、
+特定の要素にだけ特別なスタイルを適用しつつ、
+残り全ての要素にもスタイルを適用することもできます。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">Page</span>
+  <span class="xmlAttribute">xmlns</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml/presentation</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns:x</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">FontSize</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">18pt</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Page.Resources</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Style</span> <span class="xmlAttribute">TargetType</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">TextBlock</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">FontFamily</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Times New Roman</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">FontStyle</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Italic</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Style</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Style</span> <span class="xmlAttribute">TargetType</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">TextBlock</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">x:Key</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">em</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Foreground</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Blue</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">FontWeight</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Bold</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Style</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Page.Resources</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">StackPanel</span> <span class="xmlAttribute">Orientation</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Vertical</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">TextBlock</span> <span class="xmlAttribute">Style</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">{StaticResource em}</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Text</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">text block 1</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Button</span> <span class="xmlAttribute">Content</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">button 1</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">TextBlock</span> <span class="xmlAttribute">Text</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">text block 2</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Button</span> <span class="xmlAttribute">Content</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">button 2</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">TextBlock</span> <span class="xmlAttribute">Text</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">text block 3</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">StackPanel</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Page</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>この場合、「text block 1」だけが青色太字に、
+残りのテキストブロックは Times New Roman のイタリック体になります。</p>
+<p>スタイルは別のスタイルを継承・拡張する形で定義することもできます。
+Style 要素に対して BasedOn 属性を指定します。
+BasedOn 属性には、x:Key 名か TargetType で指定した型を参照するようにします。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">Page</span>
+  <span class="xmlAttribute">xmlns</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml/presentation</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns:x</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">FontSize</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">18pt</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Page.Resources</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Style</span> <span class="xmlAttribute">TargetType</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">TextBlock</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">FontFamily</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Times New Roman</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">FontStyle</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Italic</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Style</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Style</span> <span class="xmlAttribute">BasedOn</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">{StaticResource {x:Type TextBlock}}</span><span class="xmlAttributeQuotes">&quot;</span>
+      <span class="xmlAttribute">TargetType</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">TextBlock</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">x:Key</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">em</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">FontWeight</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Bold</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Style</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Style</span> <span class="xmlAttribute">BasedOn</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">{StaticResource em}</span><span class="xmlAttributeQuotes">&quot;</span>
+      <span class="xmlAttribute">TargetType</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">TextBlock</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">x:Key</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">emred</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Foreground</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Red</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Style</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Page.Resources</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">StackPanel</span> <span class="xmlAttribute">Orientation</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Vertical</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">TextBlock</span> <span class="xmlAttribute">Style</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">{StaticResource em}</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Text</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">text block 1</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Button</span> <span class="xmlAttribute">Content</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">button 1</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">TextBlock</span> <span class="xmlAttribute">Style</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">{StaticResource emred}</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Text</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">text block 2</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Button</span> <span class="xmlAttribute">Content</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">button 2</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">TextBlock</span> <span class="xmlAttribute">Text</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">text block 3</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">StackPanel</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Page</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>この例では、
+特に指定のないテキストブロックは Times New Roman イタリック、
+「text block 1」は Times New Roman イタリックに加えて太字、
+「text block 2」は Times New Roman 太字イタリックにさらに赤文字になります。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/dotnet/wpf/">Windows Presentation Foundation</a></li><li><a href="/study/dotnet/wpf/wpf_abst/">Windows Presentation Foundation &#x6982;&#x8981;&#xFF08;WPF&#xFF09;</a></li><li><a href="/study/dotnet/wpf/wpf_xaml/">XAML &#x6982;&#x8981;&#xFF08;WPF&#xFF09;</a></li><li><a href="/study/dotnet/wpf/wpf_xamlbasic/">XAML &#x306E;&#x57FA;&#x672C;&#x69CB;&#x9020;&#xFF08;WPF&#xFF09;</a></li><li><a href="/study/dotnet/wpf/wpf_container/">WPF &#x306E;&#x30B3;&#x30F3;&#x30C6;&#x30CA;&#xFF08;WPF&#xFF09;</a></li><li><a href="/study/dotnet/wpf/wpf_uielement/">WPF &#x306E; GUI &#x8981;&#x7D20;&#xFF08;WPF&#xFF09;</a></li><li><a href="/study/dotnet/wpf/wpf_xamlcode/">XAML &#x3068;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x30B3;&#x30FC;&#x30C9;&#xFF08;WPF&#xFF09;</a></li><li><a href="/study/dotnet/wpf/wpf_binding/">&#x30C7;&#x30FC;&#x30BF;&#x30D0;&#x30A4;&#x30F3;&#x30C7;&#x30A3;&#x30F3;&#x30B0;&#xFF08;WPF&#xFF09;</a></li><li><a href="/study/dotnet/wpf/wpf_template/">&#x30C6;&#x30F3;&#x30D7;&#x30EC;&#x30FC;&#x30C8;&#xFF08;WPF&#xFF09;</a></li><li><a href="/study/dotnet/wpf/wpf_xamlani/">&#x30A2;&#x30CB;&#x30E1;&#x30FC;&#x30B7;&#x30E7;&#x30F3;&#xFF08;WPF&#xFF09;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

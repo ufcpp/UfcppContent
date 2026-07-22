@@ -1,0 +1,304 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: C# 10.0 &#x30C8;&#x30EA;&#x30A2;&#x30FC;&#x30B8; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2020/10/pickuproslyncs10triage/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2020-10-12T23:02:47">2020-10-12</time></span><span>更新: <time datetime="2020-10-12T23:02:47">2020-10-12</time></span><span class="entry-tags"><span class="entry-tag">C# 10.0</span></span></div><h1 id="roslyn-c-10.0">ピックアップRoslyn: C# 10.0 トリアージ</h1>
+<p><a href="/blog/2020/10/pickuproslynlowlevel10/">前回</a>、<a href="/blog/2020/10/pickuproslynrecord10/">前々回</a>の続きというか、大きくなりすぎたので分けたのの続き。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2020/LDM-2020-09-23.md">C# Language Design Meeting for September 23rd, 2020</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2020/LDM-2020-09-28.md">C# Language Design Meeting for September 28th, 2020</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2020/LDM-2020-09-30.md">C# Language Design Meeting for September 30th, 2020</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2020/LDM-2020-10-05.md">C# Language Design Meeting for October 5th, 2020</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2020/LDM-2020-10-07.md">C# Language Design Meeting for October 7th, 2020</a></li>
+</ul>
+<p>ここ数週、C# 10.0 向けの検討が続いていて、
+そのうち大きなものは<a href="/blog/2020/10/pickuproslynrecord10/">前々回の record struct</a>と<a href="/blog/2020/10/pickuproslynlowlevel10/">前回の低水準機能</a>で、残りはこまごまとしたトリアージ作業になります。</p>
+<p>今回でやっと最後、その残りのトリアージの話。</p>
+<h2 id="nan">NaN 比較</h2>
+<p>C# では、というか、IEEE 754 (浮動小数点数の標準規格)では、
+NaN (Not a Number)との比較は常に false ということになっています。</p>
+<pre><code class="language-csharp"><span class="keyword">bool</span> m(<span class="keyword">double</span> x) =&gt; x == <span class="keyword">double</span>.NaN;
+ 
+Console.WriteLine(m(<span class="number">1</span>.<span class="number">0</span>)); <span class="comment">// 当然 false</span>
+Console.WriteLine(m(<span class="keyword">double</span>.NaN)); <span class="comment">// これですら false</span></code></pre>
+<p>最近の C# では「常に false な式」に対して警告を出すことが結構あるんで、
+過去の文法に対しても「常に false 警告」を足してもいいんじゃないかという話があります。</p>
+<p>ただ、これまでの C# だと、「警告であっても追加すると破壊的変更になりうる」ということで消極でした。</p>
+<p>これに対して C# 9.0/.NET 5.0 では警告ウェーブ(AnalysisLevel オプション。<a href="https://www.youtube.com/watch?v=VQLtwak8W0U&amp;feature=youtu.be">RC 1 記念ライブ配信</a>のときに口頭説明はしてる)が入るので、今後は警告の追加もしていきたいということになっています。</p>
+<p>で、NaN との比較の話に戻りますが、
+実はすでに FxCop Analyzer (Roslyn 標準ではないものの、Visual Studio ではデフォルトで有効になっているアナライザー)が NaN 比較に対する修正を提案してきます。
+「Roslyn 標準に置き換えるほどではない」ということで、「特に何もしない」とのこと。</p>
+<h2 id="null">null 許容参照型の改善</h2>
+<p>C# 8.0 で <a href="/study/csharp/resource/nullablereferencetype/">null 許容参照型</a>が入りましたが、最初から完全なものを作るのは無理なので段階的に改善していくという計画になっていて、C# 9.0 でもいくつか改善が入っています。</p>
+<ul>
+<li><code>MemberNotNull</code> 属性</li>
+</ul>
+<pre><code class="language-csharp"><span class="keyword">class</span> X
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> NotNull;
+    <span class="keyword">public</span> X() =&gt; Init();
+ 
+    <span class="comment">// このメソッドの呼び出し後、NotNull プロパティの非 null を保証</span>
+    [MemberNotNull(nameof(NotNull))]
+    <span class="keyword">private</span> <span class="keyword">void</span> Init() =&gt; NotNull = <span class="string">&quot;&quot;</span>;
+}</code></pre>
+<ul>
+<li>制約なしジェネリック型に対する <code>T?</code></li>
+</ul>
+<pre><code class="language-csharp">#nullable enable
+ 
+<span class="keyword">class</span> X
+{
+    <span class="comment">// where T を書かないときも T? が利用できるように。</span>
+    <span class="comment">// ただし、意味的には nullable というよりも &quot;defaultable&quot; で…</span>
+    <span class="keyword">static</span> T? M&lt;T&gt;() =&gt; <span class="keyword">default</span>;
+ 
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">string</span>? s1 = M&lt;<span class="keyword">string</span>?&gt;(); <span class="comment">// string? → string?</span>
+        <span class="keyword">string</span>? s2 = M&lt;<span class="keyword">string</span>&gt;();  <span class="comment">// string → string?</span>
+        <span class="keyword">int</span>?    i1 = M&lt;<span class="keyword">int</span>?&gt;();    <span class="comment">// int? → int?</span>
+        <span class="keyword">int</span>     i2 = M&lt;<span class="keyword">int</span>&gt;();     <span class="comment">// int → int で 0 が返る</span>
+    }
+}</code></pre>
+<p>で、C# 9.0 にも漏れたものがいくつかあって、引き続き 10.0 向けに検討していくとのこと。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/3950"><code>Task&lt;T&gt;</code> の改善</a>
+<ul>
+<li>共変性を認めたい(<code>Task&lt;T&gt;</code> を <code>Task&lt;T?&gt;</code> に代入できるようにしたい&gt;)</li>
+</ul>
+</li>
+<li><a href="https://github.com/dotnet/csharplang/issues/3951">LINQ の改善</a>
+<ul>
+<li>特に <code>source.Where(x =&gt; x != null).Select(x =&gt; xは非null扱い)</code> ができるようにできないものか</li>
+</ul>
+</li>
+<li>未初期フィールド(今のところ良案なし)</li>
+</ul>
+<h2 id="required">required プロパティ</h2>
+<p><a href="/blog/2020/10/pickuproslynrecord10/">前々回</a>、少し nominal record (オブジェクト初期化子で初期化する前提のレコード型)の話をしましたが、
+C# 9.0 時点では nominal に(プロパティで)定義したメンバーは初期化を必須にできません。
+常に省略可能で、省略した場合は 0/null に自動的に初期化されます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> p = <span class="keyword">new</span> Point
+{
+    <span class="comment">// X, Y ともに何も書かなくても別に構わない</span>
+};
+ 
+record Point
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; init; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; init; }
+}</code></pre>
+<p>これに対して、明示的な初期化を義務付けたいという話があって、
+1案としては以下のような書き方が提案されています。
+これを required プロパティといいます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> p = <span class="keyword">new</span> Point
+{
+    X = <span class="number">1</span>, <span class="comment">// X は書かないとコンパイル エラー</span>
+    <span class="comment">// Y はなくてもいい</span>
+};
+ 
+record Point
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; req; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; init; }
+}</code></pre>
+<p>元々「間に合う物なら C# 9.0 で」くらいの感じで提案が出ていたものなので、引き続き 10.0 候補として検討していくとのこと。</p>
+<h2 id="with">匿名型に対する with 式</h2>
+<p>これも<a href="/blog/2020/10/pickuproslynrecord10/">前々回</a>書きましたが、
+レコード型は「名前付きの匿名型」という側面があります。</p>
+<p>となると逆に、「匿名型は名前なしのレコード型」という扱いになっている方が自然で、
+この一貫性を取るために、匿名型にも <code>with</code> 式を認めたいという話が出ています。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> a = <span class="keyword">new</span> { X = <span class="number">1</span>, Y = <span class="number">2</span> };
+<span class="keyword">var</span> b = a with { X = <span class="number">3</span> }; <span class="comment">// 9.0 時点ではできないものの、10.0 で検討</span></code></pre>
+<p><a href="https://github.com/dotnet/csharplang/discussions/3952">discussion</a>では「匿名型自体どうなの？」とか言われたりもしますが…</p>
+<p>C# チーム的には前向き(たぶん、変更コストがそんなに高くなく、レコード型との一貫性を重要視してる)みたいで、10.0 候補になっています。
+元々 <code>with</code> 式には 10.0 向け残作業(ユーザー定義の <code>Clone</code> メソッドとか)があるので、それと合わせて検討。</p>
+<h2 id="shebang">shebang</h2>
+<p>C# でも shebang (Unix シェルでよくある、1行目に <code>#!</code> を書いてスクリプトを何で実行するか指定するやつ)を認めよう(C# コンパイラー的には単にコメント扱いで無視)という話があります。</p>
+<pre><code class="language-csharp">#! dotnet run
+ 
+System.Console.WriteLine(<span class="string">&quot;Hello&quot;</span>);</code></pre>
+<p>ただ、これはどちらかというと <a href="https://docs.microsoft.com/ja-jp/dotnet/core/tools/?WT.mc_id=DT-MVP-4028921">donet CLI</a>側の問題なので、C# チーム的には「X.0」(いつやるか未定)扱い。
+「CLI 側が dotnet run でスクリプト実行できるようになったら本気出す」みたいな感じみたいです。</p>
+<h2 id="section">リスト パターン</h2>
+<p>配列とか <code>List&lt;T&gt;</code> とか(あるいはもしかしたら汎用に <code>IEnumerable&lt;T&gt;</code> も)を <code>[]</code> を使った<a href="/study/csharp/datatype/patterns/">パターン</a>でマッチングできるようにしたいという話があります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span> };
+ 
+<span class="keyword">if</span> (x <span class="keyword">is</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="keyword">var</span> i])
+{
+    ...
+}</code></pre>
+<p>(すでにコミュニティ貢献でプロトタイプ実装があったりします。)</p>
+<p>これに対して C# チーム的には「リスト パターンは辞書パターンと一緒に考えたい」、
+「ただ、プロパティ パターンの <code>{}</code> と明確に区別がついて、かつ、辞書らしい文法を思いつかない」という感じ。</p>
+<p>「C# 10.0 に入れれる気はしないけども」という補足付きで「10.0 で検討」とのこと。</p>
+<h2 id="global-using">global using</h2>
+<p>今、<a href="https://docs.microsoft.com/ja-jp/dotnet/csharp/tutorials/intro-to-csharp/hello-world?tutorial-step=1&amp;WT.mc_id=DT-MVP-4028921">マイクロソフトによる公式 C# チュートリアル</a>とかでは、「ブラウザーでコードを試す」という機能があって、ブラウザー内で C# コードを書いてその場で実行できたりします。</p>
+<p>ここでは C# のスクリプト文法を使えるので、例えば、以下のような1行のコードが「実行」ボタン1つで実行できます。</p>
+<pre><code class="language-csharp">Console.WriteLine(<span class="string">&quot;Hellow World!&quot;</span>);</code></pre>
+<p>これ、実は <code>using System;</code> なしで <code>Console</code> クラスにアクセスできたりします。
+スクリプト文法限定なんですが、いくつかの名前空間は「デフォルトで <code>using</code> 済み扱い」みたいにする機能があるということだったりします。</p>
+<p>一方で、C# 9.0 からは<a href="/study/csharp/misc/miscentrypoint/#top-level-statements">トップ レベル ステートメント</a>という機能が入ります。
+プロジェクト(csproj)を作ってコンパイルする通常の C# 文法とスクリプト文法の差を縮めたいという意図で、
+ファイル直下にステートメントを書いて <code>Main</code> メソッドを省略できるという機能です。</p>
+<p>ここで、「通常文法とスクリプト文法の差を縮めたい」という意図があるので、
+前述の「デフォルトで <code>using</code> 済み扱い」も通常文法に入れたいという議題が上がります。
+これを指して global using といっていて、コンパイラー オプションとか csproj 中のタグで、プロジェクト全体に「<code>using</code> した状態にする」というオプションを提供したいそうです。</p>
+<p><a href="https://devblogs.microsoft.com/dotnet/net-interactive-preview-3-vs-code-insiders-and-polyglot-notebooks/">.NET Notebooks</a>とか、 .NET 6 辺りをターゲットにした「C# インタラクティブ実行環境」があったりするので、その辺りのユーザーの使用感のフィードバックをもらいつつ、C# 10.0 で検討とのこと。</p>
+<h2 id="closed-enum">closed enum</h2>
+<p>enum 型に対して、「メンバー定義してない値は取らない」という保証を与えて、
+<code>switch</code> の網羅性チェックが働くようにしたいという話があります。</p>
+<p>例えば以下のコードは現状では警告が出るんですが、「警告をなくせる enum が欲しい」というのが closed enum です(ここでいう close (閉じる)というのは、「これ以上のメンバー追加はない」という意味です)。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> m(X x) =&gt; x <span class="keyword">switch</span>
+{
+    X.A =&gt; <span class="number">1</span>,
+    X.B =&gt; <span class="number">2</span>,
+    X.C =&gt; <span class="number">4</span>,
+    <span class="comment">// 今の enum の仕様だと (X)100 とか書けるので、A, B, C だけでは「網羅した」判定を受けない。</span>
+    <span class="comment">// 警告が出る。</span>
+};
+ 
+<span class="keyword">enum</span> X
+{
+    A, B, C
+}</code></pre>
+<p>この辺りの網羅性のロジックは、別途 C# 10.0 で検討されている <a href="https://github.com/dotnet/csharplang/issues/113">discriminated union</a> でも同様なので、それと一緒に考えたいとのこと。</p>
+<h2 id="section-1">トップ レベル関数</h2>
+<p>C# 9.0 で入った<a href="/study/csharp/misc/miscentrypoint/#top-level-statements">トップ レベル ステートメント</a>で、トップ レベルにメソッドを書いた場合、
+それはトップ レベルからのみアクセスできます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="comment">// トップ レベルでメソッドを書く。</span>
+<span class="keyword">void</span> m() =&gt; Console.WriteLine(<span class="string">&quot;m&quot;</span>);
+ 
+<span class="comment">// トップ レベルから呼ぶのは OK。</span>
+m();
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="comment">// トップじゃない場所から呼ぶとコンパイル エラー。</span>
+    <span class="comment">// ちなみにエラー内容は「m が見つからない」じゃなくて、</span>
+    <span class="comment">// 「トップ レベルの m はトップ レベルからだけ呼べる」。</span>
+    <span class="keyword">static</span> <span class="keyword">void</span> M() =&gt; m();
+}</code></pre>
+<p>少なくとも C# 9.0 時点では意図的にこういう仕様になっているんですが、
+「将来、この <code>m</code> をプロジェクト内のどこからでも呼んでいい global 関数的なものとして認めてもいいんじゃないか」という議題は残っていました
+(今エラーになるものを将来エラーじゃなくすというのは破壊的変更にはならないので検討の余地がある)。</p>
+<p>とはいえ元々「可能性はある」と言っていただけなので、あまり積極的ではなく。
+「もし C# を1から再設計するんなら入れるけど、今から入れるのはちょっと」みたいな意見の人が多いそうです。
+今回やっぱりばっさりと「rejected」とのことです。</p>
+<h2 id="section-2">プライマリ コンストラクター</h2>
+<p><a href="/blog/2020/10/pickuproslynrecord10/">前々回</a>触れたとおり。
+今、レコード型にだけ許されている <code>record Point(int X, int Y)</code> みたいな書き方(型名直後に <code>()</code> で引数リスト)をクラス、構造体にも認めようという話。</p>
+<p>引き続き 10.0 目標で検討。</p>
+<h2 id="null-1">パラメーターの null 検証の簡素化</h2>
+<p>null 許容参照型による null 検証はあくまでコンパイル時の検証で、
+unsafe とか<a href="/study/csharp/resource/nullablereferencetype/#null-forgiving">抑止演算子の <code>!</code></a>とかを使うとコンパイル時検証をすり抜けられます。
+また、構造体や配列要素の規定値とか、フロー解析がしにくくて、今のところ検証をすり抜けてしまう穴があります。</p>
+<p>そこで、必要であればやっぱり実行時の検証、要するに以下のようなコードも必要だろうという空気感。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> M(<span class="keyword">string</span> s)
+{
+    <span class="keyword">if</span> (s <span class="keyword">is</span> <span class="keyword">null</span>)
+        <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(s));
+ 
+    ...
+}</code></pre>
+<p>これを、<code>string s!</code> とかで簡素化したいという案も出ています。
+「文法は <code>!</code> でいいのか」みたいな部分で合意が取れておらず 9.0 では流れましたが、10.0 で再検討とのこと。</p>
+<h2 id="generic-type-alias">generic type alias</h2>
+<p><code>using</code> エイリアスで以下のような書き方をしたいという話はずっと昔からたびたび出ています。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> List&lt;T&gt; = System.Collections.Generic.List&lt;T&gt;;</code></pre>
+<p>「欲しいけど、他にたくさんある C# 10.0 候補を押しのけてまでは…」という感じみたいで、
+「X.0」(いつやるか不明)行き。</p>
+<h2 id="nameof">パラメーターに対する nameof</h2>
+<p>null 許容参照型の <a href="/study/csharp/resource/nullablereferencetype/#sec-generated-title-6"><code>NutNullIfNotNull</code></a> とかの登場で急に需要が高まったんですが、
+属性内で、メソッドの引数を <code>nameof</code> 参照したいという要求があります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Diagnostics.CodeAnalysis;
+ 
+<span class="keyword">class</span> Path
+{
+    <span class="comment">// 今、nameof(path) とは書けない。</span>
+    [<span class="keyword">return</span>: NotNullIfNotNull(<span class="string">&quot;path&quot;</span>)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">string</span>? GetFileName(<span class="keyword">string</span>? path);
+}</code></pre>
+<p>まあ、C# 8.0 時点でこれの需要が急増することはわかっていて、
+単に優先度的に 9.0 に入らなかっただけです。
+すでに実装は始めているそうなので、10.0 候補。</p>
+<h2 id="span">Span<T> パターン</h2>
+<p>今や普通に <code>string</code> と <code>Span&lt;char&gt;</code>、<code>ReadOnlySpan&lt;char&gt;</code> を比較することがあるわけで、
+だったら、<code>Span&lt;chat&gt;</code> を <code>switch</code> 式に掛けたいという要求が当然あります。</p>
+<pre><code class="language-csharp"><span class="comment">// string に対してこんな感じの switch していたものを…</span>
+<span class="keyword">int</span> M(<span class="keyword">string</span> s) =&gt; s <span class="keyword">switch</span>
+{
+    <span class="string">&quot;Id&quot;</span> =&gt; <span class="number">1</span>,
+    <span class="string">&quot;Name&quot;</span> =&gt; <span class="number">2</span>,
+    <span class="string">&quot;Age&quot;</span> =&gt; <span class="number">3</span>,
+    _ =&gt; <span class="number">0</span>,
+};
+ 
+<span class="comment">// Span や ReadOnlySpan でもやりたい。</span>
+<span class="keyword">int</span> M(ReadOnlySpan&lt;<span class="keyword">char</span>&gt; s) =&gt; s <span class="keyword">switch</span>
+{
+    <span class="string">&quot;Id&quot;</span> =&gt; <span class="number">1</span>,
+    <span class="string">&quot;Name&quot;</span> =&gt; <span class="number">2</span>,
+    <span class="string">&quot;Age&quot;</span> =&gt; <span class="number">3</span>,
+    _ =&gt; <span class="number">0</span>,
+};</code></pre>
+<p>これは「Any Time」(C# チーム的には乗り気じゃないけど、コミュニティ貢献は受け付ける)扱いなんですが、
+実際にコミュニティ貢献の Pull Request が出ていたりします。
+それに対する細かい判断:</p>
+<ul>
+<li><code>Span&lt;char&gt;</code>、<code>ReadOnlySpan&lt;char&gt;</code> に対する特殊対応なので気持ち悪いものの…
+<ul>
+<li>実のところ <code>Span</code> に対しては <code>foreach</code> とかですでに特別扱いしているので今更</li>
+</ul>
+</li>
+<li>後から足すと破壊的変更にならないか…
+<ul>
+<li><code>Span</code> は <a href="/study/csharp/resource/refstruct/">ref 構造体</a>で <code>object</code> に代入できないとかの制限が幸いして、破壊的変更を避けれそう</li>
+</ul>
+</li>
+<li><code>ReadOnlySpan&lt;char&gt;</code> だけ？
+<ul>
+<li><code>ReadOnlySpan&lt;char&gt;</code> を受け付けるんなら <code>Span&lt;char&gt;</code> も受け付けてよさそう</li>
+</ul>
+</li>
+<li><code>Memory&lt;char&gt;</code> と <code>ReadOnlyMemory&lt;char&gt;</code> は？
+<ul>
+<li>それはなしで。<code>m.Span</code> と書くだけでいいし、<code>Span</code> 限定で</li>
+</ul>
+</li>
+<li><code>switch</code> だけ認める？
+<ul>
+<li>パターンを掛ける任意のコンテキスト(<code>is</code> とかでも)で認めてよさそう</li>
+</ul>
+</li>
+<li>ジャンプ テーブル化
+<ul>
+<li>内部実装的なことをいうと、今、<code>string</code> に対する <code>switch</code> は <code>case</code> が6個以上あるときハッシュ値を使ったジャンプ テーブル化する最適化を掛けてる</li>
+<li><code>Span&lt;char&gt;</code>、<code>ReadOnlySpan&lt;char&gt;</code> でも同様の最適化が要る。アロケーション除けによるメリットを打ち消すくらい遅くなる実装は避けたい</li>
+</ul>
+</li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2020/10/">10&#x6708;</a></li><li><a href="/blog/2020/10/pickuproslynrecord10/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: C# 10.0 &#x3067;&#x306E;&#x30EC;&#x30B3;&#x30FC;&#x30C9;&#x8A71;</a></li><li><a href="/blog/2020/10/pickuproslynlowlevel10/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: C# 10.0 &#x3067;&#x306E;&#x4F4E;&#x6C34;&#x6E96;&#x6A5F;&#x80FD;&#x6539;&#x5584;(ref &#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306A;&#x3069;)</a></li><li><a href="/blog/2020/10/pickuproslyn1030/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 10/31: csharplang &#x306E;&#x904B;&#x55B6;&#x65B9;&#x91DD;&#x3068;&#x304B;&#x30C8;&#x30EA;&#x30A2;&#x30FC;&#x30B8;&#x3068;&#x304B;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

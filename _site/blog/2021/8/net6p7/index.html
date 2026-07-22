@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>.NET 6 Preview 7 &amp; Visual Studio 2020 Preview 3 | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2021/8/net6p7/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2021-08-13T20:31:31">2021-08-13</time></span><span>更新: <time datetime="2021-08-13T20:31:31">2021-08-13</time></span></div><h1 id="net-6-preview-7-visual-studio-2020-preview-3">.NET 6 Preview 7 &amp; Visual Studio 2020 Preview 3</h1>
+<p>一昨日くらいに来てました。</p>
+<ul>
+<li><a href="https://devblogs.microsoft.com/visualstudio/visual-studio-2022-preview-3-now-available/">Visual Studio 2022 Preview 3 now available!</a></li>
+<li><a href="https://devblogs.microsoft.com/dotnet/announcing-net-6-preview-7/">Announcing .NET 6 Preview 7</a></li>
+<li><a href="https://devblogs.microsoft.com/dotnet/preview-features-in-net-6-generic-math/">Preview Features in .NET 6 – Generic Math</a></li>
+<li><a href="https://devblogs.microsoft.com/dotnet/string-interpolation-in-c-10-and-net-6/">String Interpolation in C# 10 and .NET 6</a></li>
+<li><a href="https://docs.microsoft.com/ja-jp/dotnet/core/tutorials/top-level-templates">新しい C# テンプレート</a></li>
+<li><a href="https://devblogs.microsoft.com/aspnet/asp-net-core-updates-in-net-6-preview-7/">ASP.NET Core updates in .NET 6 Preview 7</a></li>
+<li><a href="https://devblogs.microsoft.com/dotnet/announcing-net-maui-preview-7/">Announcing .NET MAUI Preview 7</a></li>
+</ul>
+<p>当日、このネタでライブ配信:</p>
+<div>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/5m2qiJ24tqI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+<p>「一気に情報が来ても小一時間では話しきれない」って感じで極々一部しか話せませんでしたが。</p>
+<p>「Visual Studio 2020 Preview 3 の方が CDN トラブルで配信が1日延期」というトラブルに見舞われ、
+「SDK だけを先に .NET 6 Preview 7 に上げてしまうと、標準のテンプレートがコンパイル エラーを起こす」という事件もありましたが、1日経って問題は解消済みです。</p>
+<p>とりあえず、ブログとしては「今回入った C# 10.0 機能」の話を書こうと思います。
+ちなみに、今回の更新でほぼ C# 10.0 の全機能が入っています。
+(1個だけまだなものがあるけども、「10.0 リリース時点で preview 機能として残る」判定を受けている機能なので、非 preview な 10.0 機能は全部 merge 済み。)</p>
+<p>(全機能一覧は<a href="https://github.com/ufcpp/UfcppSample/issues/342">トラッキング issue</a> を立ててるので現状そちらを見ていただけると。)</p>
+<h2 id="net-6-preview-7-c-10.0">.NET 6 Preview 7 での C# 10.0 新機能</h2>
+<p><a href="https://github.com/dotnet/roslyn/blob/main/docs/Language%20Feature%20Status.md">Language Feature Status</a>で Merged into 17.0 と 17.0p3 になっているやつが今回入っています。
+(17.0 になってる2つはもっと前に入ってた疑惑ちょっとあり。 Visual Studio 2020 Preview 2.1 のときかも。)</p>
+<p>以下の6つ。</p>
+<ul>
+<li><a href="#definite-assignment">Improved Definite Assignment</a></li>
+<li><a href="#property-pattern">Extended property patterns</a></li>
+<li><a href="#interpolated-string">Interpolated string improvements</a></li>
+<li><a href="#file-scoped-namespace">File-scoped namespace</a></li>
+<li><a href="#parameterless-ctor">Parameterless struct constructors</a></li>
+<li><a href="#caller-expression">Caller expression attribute</a></li>
+</ul>
+<p>あと、<a href="#lambda">Lambda improvements</a> も1個前の Preview では動いていなかった機能が増えているので、合計7つ。</p>
+<h3 id="improved-definite-assignment"><a id="definite-assignment">Improved Definite Assignment</a></h3>
+<p>C# には元々、確実な代入ルールってのがあって、「未初期化変数から未定義な値を取り出す」みたいなことはできない仕様になっています。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> x;
+
+Console.WriteLine(x); <span class="comment">// コンパイルエラー</span>
+
+<span class="keyword">if</span> (<span class="keyword">int</span>.TryParse(Console.ReadLine(), <span class="keyword">out</span> x))
+{
+    <span class="comment">// ここでは x が初期化済みな保証があるのでエラーが消える。</span>
+    Console.WriteLine(x);
+}</code></pre>
+<p>これのためのフロー解析に改善の余地があることが周知の事実で長らく手つかずだったんですが、それが C# 10.0 でちょっと改善します。</p>
+<p>これまで <a href="/study/csharp/resource/rm_nullusage/#null-conditional"><code>?.</code></a> とか <a href="/study/csharp/resource/rm_nullusage/#null-coalesce"><code>??</code></a> とか <a href="/study/csharp/start/st_operator/#condition"><code>? : </code></a> が絡むときの解析が甘くて、過剰にエラーになっていました。
+それが緩和されて、例えば、以下のようなコードがコンパイルできるようになっています。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Diagnostics.CodeAnalysis;
+
+m(<span class="keyword">null</span>);
+m(<span class="keyword">new</span> R&lt;<span class="keyword">string</span>&gt;(<span class="keyword">null</span>));
+m(<span class="keyword">new</span> R&lt;<span class="keyword">string</span>&gt;(<span class="string">&quot;abc&quot;</span>));
+
+<span class="keyword">void</span> m(R&lt;<span class="keyword">string</span>&gt;? x)
+{
+    <span class="keyword">if</span> (x?.TryGetValue(<span class="keyword">out</span> <span class="keyword">var</span> v) == <span class="keyword">true</span>) <span class="comment">// ここの var v の definite assignment 判定が改善された。</span>
+    {
+        Console.WriteLine(v.Length); <span class="comment">// 前までこの行がエラーになってた(C# 10.0 から OK に)。</span>
+    }
+    <span class="keyword">else</span>
+    {
+        Console.WriteLine(<span class="string">&quot;null&quot;</span>);
+    }
+}
+
+record <span class="keyword">class</span> R&lt;T&gt;(T? Value)
+{
+    <span class="keyword">public</span> <span class="keyword">bool</span> TryGetValue([NotNullWhen(<span class="keyword">true</span>)] <span class="keyword">out</span> T value)
+    {
+        <span class="keyword">if</span>(Value <span class="keyword">is</span> { } v)
+        {
+            value = v;
+            <span class="keyword">return</span> <span class="keyword">true</span>;
+        }
+        <span class="keyword">else</span>
+        {
+            value = <span class="keyword">default</span>!;
+            <span class="keyword">return</span> <span class="keyword">false</span>;
+        }
+    }
+}</code></pre>
+<h3 id="extended-property-patterns"><a id="property-pattern"> Extended property patterns</a></h3>
+<p><a href="/study/csharp/datatype/patterns/#property">プロパティ パターン</a>で、
+多段のメンバーを <code>.</code> でつないでマッチングできるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = <span class="keyword">new</span> A(<span class="keyword">new</span> B(<span class="string">&quot;a&quot;</span>));
+
+<span class="keyword">if</span> (x <span class="keyword">is</span> A { X.Value.Length: <span class="number">1</span> })
+{
+    Console.WriteLine(<span class="string">&quot;len 1&quot;</span>);
+}
+
+record A(B X);
+record B(<span class="keyword">string</span> Value);</code></pre>
+<h3 id="interpolated-string-improvements"><a id="interpolated-string"> Interpolated string improvements</a></h3>
+<p><a href="/study/csharp/start/st_string/#string-interpolation">文字列補間</a>のパフォーマンスが大幅に向上します。</p>
+<p>以下のようなコードがあったとして、</p>
+<pre><code class="language-csharp">Console.WriteLine(m(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>));
+
+<span class="keyword">string</span> m(<span class="keyword">int</span> a, <span class="keyword">int</span> b, <span class="keyword">int</span> c, <span class="keyword">int</span> d) =&gt; $<span class="string">&quot;{a}.{b}.{c}.{d}&quot;</span>;</code></pre>
+<p>これまでは <code>string.Format(&quot;{0}.{1}.{2}.{3}&quot;, new object[] { a, b, c, d })</code> に展開されていました。
+それが、所定の条件を満たせば(普通にやってれば .NET 6 をターゲットにして C# 10.0 でコンパイルすると)、以下のようなコードに変化します。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> h = <span class="keyword">new</span> System.Runtime.CompilerServices.DefaultInterpolatedStringHandler(<span class="number">3</span>, <span class="number">4</span>);
+h.AppendFormatted(a);
+h.AppendLiteral(<span class="string">&quot;.&quot;</span>);
+h.AppendFormatted(b);
+h.AppendLiteral(<span class="string">&quot;.&quot;</span>);
+h.AppendFormatted(c);
+h.AppendLiteral(<span class="string">&quot;.&quot;</span>);
+h.AppendFormatted(d);
+<span class="keyword">return</span> h.ToStringAndClear();</code></pre>
+<p>ちなみに、C# コンパイラーのレベルで頑張っていることなので再コンパイルが必要です。
+これに関しては「既存のコンパイル済みプログラムを .NET 6 で動かすだけで速くなる」みたいなことはないです。</p>
+<h3 id="file-scoped-namespace"><a id="file-scoped-namespace"> File-scoped namespace</a></h3>
+<p>いままで:</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Collections.Generic;
+<span class="keyword">using</span> System.Linq;
+<span class="keyword">using</span> System.Text;
+<span class="keyword">using</span> System.Threading.Tasks;
+
+<span class="keyword">namespace</span> ConsoleApp1
+{
+    <span class="keyword">class</span> A
+    {
+    }
+}</code></pre>
+<p>これから:</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> ConsoleApp1;
+
+<span class="keyword">class</span> A
+{
+}</code></pre>
+<p>「たかが1インデント」と言われてたやつなんですが…
+まあ確かにこの1インデントが深い言語の方が、今となっては少なく。</p>
+<h3 id="parameterless-struct-constructors"><a id="parameterless-ctor"> Parameterless struct constructors</a></h3>
+<p><a href="/blog/2021/2/parameterlessstructctor/">さかのぼること C# 6.0 の時に、<code>Activator</code> のバグでできなかったやつ</a>、再チャレンジ(成功)。</p>
+<p>構造体のフィールドでも非 null 保証とかがやりやすくなります。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> A
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> S { <span class="keyword">get</span>; } = <span class="string">&quot;abc&quot;</span>; <span class="comment">// 前まで初期化子を書けなかった</span>
+}
+
+<span class="keyword">struct</span> B
+{
+    <span class="keyword">public</span> <span class="keyword">int</span>[] Array { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> B() =&gt; Array = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">4</span>]; <span class="comment">// 前まで B() を書けなかった</span>
+}</code></pre>
+<p>まあ、<code>default</code> からは逃げられないんですが…</p>
+<pre><code class="language-csharp"><span class="comment">// これは大丈夫。引数なしコンストラクターで new int[] されてる。</span>
+Array4 a = <span class="keyword">new</span>();
+Console.WriteLine(a[<span class="number">0</span>]);
+
+<span class="comment">// default は引数なしコンストラクターを呼ばない。</span>
+a = <span class="keyword">default</span>;
+Console.WriteLine(a[<span class="number">0</span>]); <span class="comment">// ぬるぽ</span>
+
+<span class="keyword">struct</span> Array4
+{
+    <span class="keyword">private</span> <span class="keyword">readonly</span> <span class="keyword">int</span>[] _array;
+    <span class="keyword">public</span> Array4() =&gt; _array = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">4</span>];
+    <span class="keyword">public</span> <span class="keyword">int</span> <span class="keyword">this</span>[<span class="keyword">int</span> index] =&gt; _array[index];
+}</code></pre>
+<h3 id="caller-expression-attribute"><a id="caller-expression"> Caller expression attribute</a></h3>
+<p><a href="/study/csharp/cheatsheet/ap_ver5/#CallerInfo">CallerInfo 系の属性</a>に新しい仲間が増えました。</p>
+<p><code>CallerArgumentExpression</code> 属性で、「引数に渡した式」を取れるようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+m(<span class="number">2</span> * <span class="number">3</span> * <span class="number">4</span>); <span class="comment">// 2 * 3 * 4 = 24</span>
+
+<span class="keyword">var</span> (x, y, z) = (<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);
+m(x + y + z); <span class="comment">// x + y + z = 6</span>
+
+<span class="keyword">static</span> <span class="keyword">void</span> m(<span class="keyword">int</span> result, [CallerArgumentExpression(<span class="string">&quot;result&quot;</span>)] <span class="keyword">string</span>? expression = <span class="keyword">null</span>)
+{
+    Console.WriteLine($<span class="string">&quot;{expression} = {result}&quot;</span>);
+}</code></pre>
+<p>主にロギング用途になると思います。</p>
+<h3 id="lambda-improvements"><a id="lambda"> Lambda improvements</a></h3>
+<p>.NET 6 Preview 6 時点で以下のようなコードは書けていたんですが。</p>
+<pre><code class="language-csharp">Delegate f = <span class="keyword">int</span> (<span class="keyword">int</span> x) =&gt; x * x;</code></pre>
+<p>Prevew 7 から以下のようなコードも書けるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> f = <span class="keyword">int</span> (<span class="keyword">int</span> x) =&gt; x * x;</code></pre>
+<p>この場合、<code>f</code> の型は <code>Func&lt;int, int&gt;</code> になります。
+<code>System.Action</code> か <code>System.Func</code> が使える場合にはそれを、
+使えない場合には internal なデリゲート型をコンパイラー生成して使うそうです。</p>
+<p>デリゲートの仕様上、以下のような挙動をするのでその点には注意が必要です。</p>
+<pre><code class="language-csharp"><span class="comment">// これは target-typed 型決定で、Predicate&lt;int&gt; になる(コンパイル可)。</span>
+m(x =&gt; x == <span class="number">0</span>);
+
+<span class="comment">// 一方で、これは f の型が Func&lt;int, bool&gt; になる。</span>
+<span class="keyword">var</span> f = (<span class="keyword">int</span> x) =&gt; x == <span class="number">0</span>;
+m(f); <span class="comment">// Func&lt;int, bool&gt; を Predicate&lt;int&gt; に変換でしません(コンパイル エラー)。</span>
+
+<span class="keyword">static</span> <span class="keyword">void</span> m(Predicate&lt;<span class="keyword">int</span>&gt; f) { }</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2021/8/">8&#x6708;</a></li><li><a href="/blog/2021/8/newprojecttemplate/">&#x6700;&#x521D;&#x306E; C# &#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;(.NET 6 &#x65B0;&#x30C6;&#x30F3;&#x30D7;&#x30EC;&#x30FC;&#x30C8;)</a></li><li><a href="/blog/2021/8/invariantculture/">.NET &#x306E;&#x30AB;&#x30EB;&#x30C1;&#x30E3;&#x30FC;&#x4F9D;&#x5B58; API &#x554F;&#x984C;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7; Roslyn 3/3: &#x30BF;&#x30D7;&#x30EB; &#x30D9;&#x30FC;&#x30B9;&#x306E;position-to-property&#x30DE;&#x30C3;&#x30C1; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/3/pickuproslyn0303/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-03-03T03:42:50">2016-03-03</time></span><span>更新: <time datetime="2016-03-03T03:42:50">2016-03-03</time></span></div><h1 id="roslyn-33-position-to-property">ピックアップ Roslyn 3/3: タプル ベースのposition-to-propertyマッチ</h1>
+<p><a href="/blog/2016/3/pickuproslyn0301/">一昨日の</a>の補足。</p>
+<p>先日は以下のようなLanguage Design Notesが出てたわけですが。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/9330">C# Design Notes - catch up edition, Feb 29, 2016 (deconstruction and immutable object creation) #9330</a></li>
+</ul>
+<p>コンストラクター引数とプロパティの名前の一致を見て、何番目の引数がどのプロパティに対応するかを調べる(position-to-propertyマッチする)方針を使おうという話。
+もちろんいろんな対案あった中で、今、こういう方針に傾いてるという話なんですが、そういう過程抜きに「名前の一致を見る」の話だけしたので多少炎上中。</p>
+<p>ということで、対案の1つ、<a href="http://www.buildinsider.net/column/iwanaga-nobuyuki/003">タプル</a>を使ったパターンの話も公開されました。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/9411">Proposal: Tuple-based construction and deconstruction of immutable types #9411</a></li>
+</ul>
+<p>以下のようなメソッドを用意することで、position-to-propertyマッチしようというもの。
+拡張メソッドでもいいことにしておけば、既存のクラスの拡張もできます(ただし、その拡張メソッドを書くのは手動。大変めんどいはず)。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> Person
+{
+  ...
+  <span class="keyword">public</span> (<span class="keyword">string</span> FirstName, <span class="keyword">string</span> LastName) GetValues() { ... }
+  <span class="keyword">public</span> Person With((<span class="keyword">string</span> FirstName, <span class="keyword">string</span> LastName) builder) { ... }
+}</code></pre>
+<p>with式みたいなものの実現には、既存の言語構文だけでやるならいわゆる「ビルダー パターン」を使ったりします。
+そのためにはビルダー用のクラスを1個余計に作らないと行けなくて、余計なメモリ アロケーションが発生したり、余計なクラスを書く手間が掛かったり。</p>
+<p>でも、<a href="http://www.buildinsider.net/column/iwanaga-nobuyuki/003">タプル型</a>を使えば、タプルはmutableな構造体なので余計なアロケーションは起きない。
+それに、新しいクラスの追加も必要なくて、手間は多少マシになる。
+タプルは元々、引数位置と名前の対応関係を持っているので、黒魔術的な特殊処理なしでposition-to-propertyマッチできるはず、ということになります。</p>
+<p>とはいえ、以下のように、悪い面もあります。</p>
+<ul>
+<li>既存の型に対してそのままでは使えない。<code>GetValues</code>や<code>With</code>などの追加(拡張メソッドでもいいけど、手動での追加)が必要</li>
+<li>オブジェクトの分解(<code>GetValues</code>)やwith式(<code>With</code>)はインスタンス メソッドになるのでvirtualにできても、新規インスタンス作成ではできない</li>
+<li>(レコード型などの新構文で)コンパイラーが自動生成するコードが増える</li>
+<li>タプル型という、別の新構文に強く依存することになる(複雑度が増す)</li>
+</ul>
+<p>というような話があっての、先日の「<a href="/blog/2016/3/pickuproslyn0301/">名前で解決</a>」の流れになったという話です。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/3/">2016&#x5E74;3&#x6708;</a></li><li><a href="/blog/2016/3/pickuproslyn0301/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 3/1: position-to-property&#x30DE;&#x30C3;&#x30C1;</a></li><li><a href="/blog/2016/3/pickuproslyn0318/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 3/18</a></li><li><a href="/blog/2016/3/vs-updates-0331/">Visual Studio 2015 Update 2&#x304C;RTM &#xFF06; Visual Studio &quot;15&quot; Preview</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,332 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x3010;&#x96D1;&#x8A18;&#x3011;&#x5F31;&#x53C2;&#x7167; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/resource/rmweakreference/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">【雑記】弱参照</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>ガベージ コレクションに関連して、弱参照というものがあります。
+めったに使うものではありませんが、使い方・使い道を説明します。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>サンプル</h5>
+<p><a href="https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Resource/WeakReference">https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Resource/WeakReference</a></p>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="weak-reference"></a>弱参照とは</h2>
+<p>「<a href="/study/csharp/resource/rm_gc/#garbage-collection">ガベージ コレクション</a>」(以下、GC)では、「他のオブジェクトから参照されているものは生きてる、誰からも参照されていないものはもう不要」という判定方法で、
+不要なオブジェクトを削除します。
+逆に言うと、誰か1つでも参照を持っているオブジェクトは削除されません。</p>
+<p>一方で、「オブジェクトを使いたいんだけども、GC 的には参照していることにしないでほしい」、
+「自分以外が全員参照を手放したらその時点で削除対象にしてほしい」というような要件がまれにあります。
+こういう、GC の参照探索上は除外してほしい参照を、<strong id="key-weak-reference" class="keyword">弱参照</strong>(weak reference)といいます。</p>
+<p>.NET では、WeakReference クラス(System 名前空間）を使うことで弱参照を扱えます。
+例えば以下のように使います。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Threading.Tasks;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+    {
+        RunAsync().Wait();
+    }
+
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">async</span> Task RunAsync()
+    {
+        <span class="keyword">var</span> obj = (<span class="keyword">object</span>)<span class="number">123</span>;
+        <span class="keyword">var</span> t = StartLoop(<span class="keyword">new</span> WeakReference&lt;<span class="keyword">object</span>&gt;(obj));
+
+        <span class="comment">// 2.5秒後にオブジェクトを消す</span>
+        <span class="keyword">await</span> Task.Delay(<span class="number">2500</span>);
+        obj = <span class="keyword">null</span>;
+        GC.Collect();
+
+        <span class="keyword">await</span> t;
+    }
+
+    <span class="comment">// 1秒に1回、「参照中」メッセージを表示</span>
+    <span class="keyword">static</span> <span class="keyword">async</span> Task StartLoop(WeakReference&lt;<span class="keyword">object</span>&gt; r)
+    {
+        <span class="keyword">while</span> (<span class="keyword">true</span>)
+        {
+            <span class="keyword">object</span> obj;
+            <span class="keyword">if</span> (r.TryGetTarget(<span class="keyword">out</span> obj))
+            {
+                Console.WriteLine(obj + <span class="string">&quot; を参照中&quot;</span>);
+            }
+            <span class="keyword">else</span>
+            {
+                Console.WriteLine(<span class="string">&quot;参照がなくなりました&quot;</span>);
+                <span class="keyword">break</span>;
+            }
+
+            <span class="keyword">await</span> Task.Delay(<span class="number">1000</span>);
+        }
+    }
+}</code></pre>
+<p>この例では、RunAsync 側で GC.Collect (ガベージ コレクションを強制起動)を呼んだ時点で、<code>(object)123</code> (整数を object 化(ボックス化)したもの)の参照が消えます。
+つまり、<code>WeakReference&lt;object&gt; r</code> 越しに参照している分は、GC 的には参照扱いしていません。</p>
+<p>そして、その後、StartLoop 側で TryGetTarget に失敗(false が返って、else 側に進む)して、ループが終了します。
+GC により元のオブジェクト(Target)が削除されていたら、TryGetTarget が失敗します。</p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="usage"></a>弱参照の用途</h2>
+<p>普通に C# を使っていて、WeakReference を見かけることはほとんどないと思います。
+だいたいのプログラムでは、メモリ管理について気にすることはめったにありません(GC 任せ)。
+弱参照を使うというのは、メモリ管理を自分で気にかけるということなので、当然、あまり出番はありません。</p>
+<p>それに、弱参照を使うと、GC が掛かるタイミング(普通は制御しない。不定なタイミング)に依存することになるので、挙動が読めないという問題もあります。</p>
+<p>ということで、弱参照を使う場面はほとんどありませんが、一応、いくつか用途を紹介しておきましょう。</p>
+<h3 id="section-5"><a id="sec-generated-title-5"></a> <a id="weak-key-table"></a>用途1: 弱参照キーのテーブル</h3>
+<p>あるオブジェクトに、外から別のオブジェクトを紐づけたいとします。
+これに対する手っ取り早い実現方法は Dictionary を使ったテーブル化です。</p>
+<p>例えば、以下のようなクラス(名簿か何かで使う、「個人」型)があったとします。</p>
+<pre><code class="language-csharp"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 仮に、このクラスが自作じゃなくて、どこか別のライブラリで定義されているものとする。</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 自分のプログラムでは、ID と名前だけじゃなくて、住所も足したくなったとして…</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">public</span> <span class="keyword">class</span> Person
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> Id { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">string</span> Name { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+}</code></pre>
+<p>元々の名簿管理では ID と名前くらいしか使っていなかったものに対して、追加で別の情報を足すことになったとしましょう。
+一応、Dictionary を使えば、情報の関連付けはできます。
+例えば、所在地を足すなら以下のようにします。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> people = <span class="keyword">new</span>[]
+{
+    <span class="keyword">new</span> Person {Id = <span class="number">1</span>, Name = <span class="string">&quot;Jurian Naul&quot;</span> },
+    <span class="keyword">new</span> Person {Id = <span class="number">2</span>, Name = <span class="string">&quot;Thomas Bent&quot;</span> },
+    <span class="keyword">new</span> Person {Id = <span class="number">3</span>, Name = <span class="string">&quot;Ellen Carson&quot;</span> },
+    <span class="keyword">new</span> Person {Id = <span class="number">4</span>, Name = <span class="string">&quot;Katrina Lauran&quot;</span> },
+    <span class="keyword">new</span> Person {Id = <span class="number">5</span>, Name = <span class="string">&quot;Monica Ausbach&quot;</span> },
+};
+
+<span class="keyword">var</span> locations = <span class="keyword">new</span> Dictionary&lt;Person, <span class="keyword">string</span>&gt;();
+
+locations[people[<span class="number">0</span>]] = <span class="string">&quot;Shinon&quot;</span>;
+locations[people[<span class="number">1</span>]] = <span class="string">&quot;Lance&quot;</span>;
+locations[people[<span class="number">2</span>]] = <span class="string">&quot;Pidona&quot;</span>;
+locations[people[<span class="number">3</span>]] = <span class="string">&quot;Loanne&quot;</span>;
+locations[people[<span class="number">4</span>]] = <span class="string">&quot;Loanne&quot;</span>;
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> p <span class="keyword">in</span> people)
+{
+    <span class="keyword">var</span> location = locations[p];
+    Console.WriteLine(p.Name + <span class="string">&quot; at &quot;</span> + location);
+}</code></pre>
+<p>ここで、この Person 情報は追加・削除が結構あるとしましょう。
+削除された Person に対しては、一緒に所在地情報も消えてほしかったりします。
+locations テーブルが Person をキーとして参照していることによって、Person が GC 対象から外れる(いつまでたっても削除されない)ようでは困ります。
+こういう場合に弱参照が使えます。
+Dictionary のキー側を弱参照にすればいいわけです。</p>
+<p>というような、キー側が弱参照なテーブルは、実は最初からあって、
+ConditionalWeakTable というクラス(System.Runtime.CompilerServices 名前空間)です。
+(実際には WeakReference クラスを使って弱参照管理しているのではなく、ネイティブ実装で弱参照管理しているようですが。)</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> people = <span class="keyword">new</span>[]
+{
+    <span class="keyword">new</span> Person {Id = <span class="number">1</span>, Name = <span class="string">&quot;Jurian Naul&quot;</span> },
+    <span class="keyword">new</span> Person {Id = <span class="number">2</span>, Name = <span class="string">&quot;Thomas Bent&quot;</span> },
+    <span class="keyword">new</span> Person {Id = <span class="number">3</span>, Name = <span class="string">&quot;Ellen Carson&quot;</span> },
+    <span class="keyword">new</span> Person {Id = <span class="number">4</span>, Name = <span class="string">&quot;Katrina Lauran&quot;</span> },
+    <span class="keyword">new</span> Person {Id = <span class="number">5</span>, Name = <span class="string">&quot;Monica Ausbach&quot;</span> },
+};
+
+<span class="keyword">var</span> locations = <span class="keyword">new</span> ConditionalWeakTable&lt;Person, <span class="keyword">string</span>&gt;();
+
+locations.Add(people[<span class="number">0</span>], <span class="string">&quot;Shinon&quot;</span>);
+locations.Add(people[<span class="number">1</span>], <span class="string">&quot;Lance&quot;</span>);
+locations.Add(people[<span class="number">2</span>], <span class="string">&quot;Pidona&quot;</span>);
+locations.Add(people[<span class="number">3</span>], <span class="string">&quot;Loanne&quot;</span>);
+locations.Add(people[<span class="number">4</span>], <span class="string">&quot;Loanne&quot;</span>);
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> p <span class="keyword">in</span> people)
+{
+    <span class="keyword">string</span> location;
+    <span class="keyword">if</span> (locations.TryGetValue(p, <span class="keyword">out</span> location))
+        Console.WriteLine(p.Name + <span class="string">&quot; at &quot;</span> + location);
+}</code></pre>
+<p>これなら、locations テーブルがあっても、キーになっている Person は GC の対象になります。</p>
+<p>もっとも、ほとんどの場合、「自分の要件にあった別の Person クラスを作りなおす」という方が正しい解決策でしょう。
+弱参照キーの出番もそれほど多くないです。
+ConditionalWeakTable クラスも、名前空間が CompilerServices になっている通り、元々、C# のコンパイラーが使うために作られた用途の狭いクラスです。
+(Java なんかは、同系統のクラスである WeakHashMap が java.util 名前空間にあったりしますが…)</p>
+<h3 id="section-6"><a id="sec-generated-title-6"></a> <a id="weak-event"></a>用途2: 弱イベント</h3>
+<p>GC を持っている(ので、めったなことではメモリ リークしないはずの)プログラミング言語で、メモリ リークの温床になっているのがイベント購読です。
+「<a href="/study/csharp/functional/misceventsubscribe/">【雑記】イベントの購読とその解除</a>」で説明していますが、
+イベント発生側と受取側の寿命が違う場合、イベント購読解除をしないとメモリ リークになります。</p>
+<p>イベントの購読解除をきっちり行うためには、要は、Dispose 処理(参考: 「<a href="/study/csharp/resource/oo_dispose/#using">using ステートメント</a>」)をちゃんとすればいいわけですが…
+まれに、Dispose 処理がものすごく面倒(ちゃんとするためにはコードがかなり複雑化してしまう)ものがあります(参考: 例えば、「<a href="/study/csharp/resource/rm_disposable/#task">Task クラス</a>」)。</p>
+<p>こういう、Dispose 処理が必須なのに Dispose しにくいものの救済策にも、弱参照が使えたりします。
+弱参照を使って、イベント受取側が消えた時に自動的にイベント購読解除してしまうやり方を、
+弱イベント(weak event)パターンとか、
+弱購読(weak subscription)とか呼んだりします。</p>
+<p>ちなみに、こういう要件が頻発する代表例は、GUI のデータ バインディングです(参考: <a href="http://www.atmarkit.co.jp/ait/articles/1010/08/news123.html">WPFの「データ・バインディング」を理解する</a>)。
+なので、WPF は、弱イベント パターンを補助するために <a href="http://msdn.microsoft.com/ja-jp/library/system.windows.weakeventmanager.aspx">WeakEventManager</a> というクラス(System.Windows 名前空間)を持っていたりします。
+とはいえ、C# の event 構文に対する弱イベント パターン実装は結構めんどくさくて、この WeakEventManager もあんまり使いたい作りではなかったりします。</p>
+<p>event 構文で弱イベントを使いにくい理由は、「<a href="/study/csharp/functional/misceventsubscribe/">【雑記】イベントの購読とその解除</a>」 で説明してるような、add/remove 型の購読開始/解除だからだと思います。
+IDisposable Subscribe 型のイベント購読なら、意外と簡単に書けます。
+例えば、<a href="https://rx.codeplex.com/">Reactive Extensions</a> を使って実装するなら以下のような感じ。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Reactive.Disposables;
+
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> WeakEventExtensions
+{
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> 弱イベント購読。</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> 戻り値の &lt;see cref=&quot;IDisposable&quot;/&gt; が誰からも参照されなくなったら自動的にイベント購読解除する。</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;typeparam name=&quot;T&quot;&gt;</span><span class="xmlDocComment">イベント引数の型。&lt;/typeparam&gt;</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;observable&quot;&gt;</span><span class="xmlDocComment">イベント発生側。&lt;/param&gt;</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;onNext&quot;&gt;</span><span class="xmlDocComment">イベント受取側。&lt;/param&gt;</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">イベント購読解除用の disposable。&lt;/returns&gt;</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;remarks&gt;</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> 弱参照の性質上、&lt;see cref=&quot;GC&quot;/&gt; がかかって初めて「誰も使ってない」判定を受ける。</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> それまではイベント購読解除されず、イベントが届き続ける。</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> GC タイミングに左右されるコードは推奨できないんで、可能な限り、</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> 戻り値の &lt;see cref=&quot;IDisposable.Dispose&quot;/&gt; を明示的に呼ぶべき。</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/remarks&gt;</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> IDisposable WeakSubscribe&lt;T&gt;(<span class="keyword">this</span> IObservable&lt;T&gt; observable, Action&lt;T&gt; onNext)
+    {
+        WeakReference&lt;IDisposable&gt; weakSubscription = <span class="keyword">null</span>;
+        IDisposable subscription = <span class="keyword">null</span>;
+
+        subscription = observable.Subscribe(x =&gt;
+        {
+            IDisposable d;
+            <span class="keyword">if</span> (!weakSubscription.TryGetTarget(<span class="keyword">out</span> d))
+            {
+                <span class="comment">// 弱参照のターゲットが消えてたらイベント購読解除。</span>
+                subscription.Dispose();
+                <span class="keyword">return</span>;
+            }
+            onNext(x);
+        });
+
+        <span class="comment">// subscription は↑のラムダ式が参照を持っちゃうことになるので、</span>
+        <span class="comment">// 別の IDisposable を作ってラップ。</span>
+        <span class="keyword">var</span> s = <span class="keyword">new</span> SingleAssignmentDisposable();
+        s.Disposable = subscription;
+
+        <span class="comment">// 作った、外から呼ぶ用 IDisposable の弱参照を作る。</span>
+        weakSubscription = <span class="keyword">new</span> WeakReference&lt;IDisposable&gt;(s);
+        <span class="keyword">return</span> s;
+    }
+}</code></pre>
+<p>利用例も示しましょう。以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Reactive.Subjects;
+<span class="keyword">using</span> System.Threading;
+<span class="keyword">using</span> System.Threading.Tasks;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        RunAsync(<span class="keyword">true</span>).Wait();
+        RunAsync(<span class="keyword">false</span>).Wait();
+    }
+
+    <span class="keyword">private</span> <span class="keyword">const</span> <span class="keyword">int</span> Interval = <span class="number">100</span>;
+
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">async</span> Task RunAsync(<span class="keyword">bool</span> manualDispose)
+    {
+        <span class="keyword">if</span> (manualDispose) Console.WriteLine(<span class="string">&quot;ちゃんと Dispose&quot;</span>);
+        <span class="keyword">else</span> Console.WriteLine(<span class="string">&quot;GC 任せ&quot;</span>);
+
+        <span class="comment">// イベントを、</span>
+        <span class="comment">// d1: 通常のイベント購読</span>
+        <span class="comment">// d2: 弱イベント購読</span>
+        <span class="keyword">var</span> x = <span class="keyword">new</span> Subject&lt;<span class="keyword">int</span>&gt;();
+        <span class="keyword">var</span> d1 = x.Subscribe(i =&gt; Console.WriteLine(<span class="string">&quot;subscribe &quot;</span> + i));
+        <span class="keyword">var</span> d2 = x.WeakSubscribe(i =&gt; Console.WriteLine(<span class="string">&quot;weak subscribe &quot;</span> + i));
+        <span class="keyword">var</span> cts = <span class="keyword">new</span> CancellationTokenSource();
+        <span class="keyword">var</span> t = EventSourceLoop(x, cts.Token);
+
+        <span class="comment">// イベントが飛んでくる間隔の3倍待つ → 3回イベントが来る</span>
+        <span class="keyword">await</span> Task.Delay(<span class="number">3</span> * Interval);
+
+        <span class="keyword">if</span> (manualDispose)
+        {
+            <span class="comment">// ちゃんと Dispose。</span>
+            <span class="comment">// 当たり前だけども、以後、イベントは受け取らなくなる。</span>
+            d1.Dispose();
+            d2.Dispose();
+        }
+        <span class="keyword">else</span>
+        {
+            <span class="comment">// Dispose 忘れたままオブジェクトを捨てる。</span>
+            <span class="comment">// d1 は、Subscribe 内で参照を握っているので GC 対象にならない。メモリ リーク。</span>
+            <span class="comment">// d2 は、WeakSubscribe 内は弱参照なので、こっちの参照なくせば GC 対象。</span>
+            <span class="comment">// 以後、イベントは subscribe 側にだけ届く。</span>
+            d1 = <span class="keyword">null</span>;
+            d2 = <span class="keyword">null</span>;
+            GC.Collect();
+        }
+
+        <span class="comment">// 同じく3回分待つ</span>
+        <span class="keyword">await</span> Task.Delay(<span class="number">300</span>);
+
+        cts.Cancel();
+        <span class="keyword">await</span> t;
+    }
+
+    <span class="comment">// イベントを飛ばし続けるループ</span>
+    <span class="keyword">static</span> <span class="keyword">async</span> Task EventSourceLoop(IObserver&lt;<span class="keyword">int</span>&gt; observer, CancellationToken ct)
+    {
+        <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; !ct.IsCancellationRequested; ++i)
+        {
+            observer.OnNext(i);
+            <span class="keyword">await</span> Task.Delay(Interval);
+        }
+    }
+}</code></pre>
+<pre><code class="language-console">ちゃんと Dispose
+subscribe 0
+weak subscribe 0
+subscribe 1
+weak subscribe 1
+subscribe 2
+weak subscribe 2
+GC 任せ
+subscribe 0
+weak subscribe 0
+subscribe 1
+weak subscribe 1
+subscribe 2
+weak subscribe 2
+subscribe 3
+subscribe 4
+subscribe 5</code></pre>
+<p>ちなみにこの例だと、戻り値の IDisposable が弱参照になっていますが、
+弱参照な IObservable を作るような作り方もできます(例: <a href="https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Resource/WeakReference/WeakEvent/WeakEventExtensions.AsWeakObservable.cs">WeakEventExtensions.AsWeakObservable.cs</a>)。</p>
+<p>あと、ファイナライザーを使う方法もなくはないです(例: <a href="https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Resource/WeakReference/WeakEvent/WeakEventExtensions.FinalizeDiposable.cs">WeakEventExtensions.FinalizeDiposable.cs</a> )が、
+こっちの方は、コードはシンプルになるものの、実行性能上はあんまりよくないはず。</p>
+<p>まあ、この弱イベント購読も、割かし「最終手段」なもので、本来はちゃんと自前で Dispose 処理すべきものです。
+Dispose 処理をかけるのが著しく困難な場面はそこまで頻出しないでしょう。
+(ただ、Dispose し忘れを検出するのには、この弱参照やファイナライザーを使ったパターンを使うのも悪くないです。
+自動解除がかかるタイミングにデバッグ ログを仕込んでおけば、解除漏れを探すのに役立ちます。)</p>
+<h3 id="section-7"><a id="sec-generated-title-7"></a> <a id="cache"></a>誤用: オブジェクト キャッシュ</h3>
+<p>最後に、弱参照の用途としてたまに上がるものの、そんなによい効果を得られないものについて触れておきます。</p>
+<p>オブジェクト作成にそこそこ時間がかかるので、作成したものをしばらく保存しておきたい(キャッシュ)場面は結構あります。
+ここで、「しばらく」というのを「積極的に破棄はしないけども、GC のタイミングでは削除してもらって構わない」と考えると、
+弱参照の出番のように思えます。</p>
+<p>ただ、GC の gen0 (参考: 「<a href="/study/csharp/resource/rm_gc/#garbage-collection">C# のガベージ コレクション</a>」)は GC 実行頻度が高すぎて想像以上にあっさりキャッシュが消えます。</p>
+<p>逆に、gen2 が走るようなタイミングはメモリが不足している状況なので、
+ページング(メモリの内容をハードディスクなどに退避して、見かけのメモリ容量を増やす)が発生するなど、
+性能に深刻な影響が出たりします。
+無頓着に gen2 に割り当てられるようなキャッシュを持ったりすると、かえって動作が遅くなったりするようです。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/resource/">&#x30E1;&#x30E2;&#x30EA;&#x3068;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x7BA1;&#x7406;</a></li><li><a href="/study/csharp/resource/rm_gc/">C# &#x306E;&#x30E1;&#x30E2;&#x30EA;&#x7BA1;&#x7406;</a></li><li><a href="/study/csharp/resource/rm_struct/">&#x69CB;&#x9020;&#x4F53;</a></li><li><a href="/study/csharp/resource/oo_reference/">&#x5024;&#x578B;&#x3068;&#x53C2;&#x7167;&#x578B;</a></li><li><a href="/study/csharp/resource/readonlyness/">readonly &#x306E;&#x6CE8;&#x610F;&#x70B9;</a></li><li><a href="/study/csharp/resource/rm_default/">&#x65E2;&#x5B9A;&#x5024;</a></li><li><a href="/study/csharp/resource/sp_ref/">&#x53C2;&#x7167;&#x6E21;&#x3057;</a></li><li><a href="/study/csharp/resource/span/">Span&lt;T&gt;&#x69CB;&#x9020;&#x4F53;</a></li><li><a href="/study/csharp/resource/refstruct/">ref&#x69CB;&#x9020;&#x4F53;</a></li><li><a href="/study/csharp/resource/misc_heap/">[&#x96D1;&#x8A18;] &#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x3068;&#x30D2;&#x30FC;&#x30D7;</a></li><li><a href="/study/csharp/resource/rmboxing/">&#x30DC;&#x30C3;&#x30AF;&#x30B9;&#x5316;</a></li><li><a href="/study/csharp/resource/sp2_nullable/">null&#x8A31;&#x5BB9;&#x5024;&#x578B;(Nullable&amp;lt;T&amp;gt; &#x578B;)</a></li><li><a href="/study/csharp/resource/nullablereferencetype/">null &#x8A31;&#x5BB9;&#x53C2;&#x7167;&#x578B;</a></li><li><a href="/study/csharp/resource/rm_nullusage/">null &#x306E;&#x53D6;&#x308A;&#x6271;&#x3044;</a></li><li><a href="/study/csharp/resource/oo_dispose/">&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x7834;&#x68C4;</a></li><li><a href="/study/csharp/resource/rm_destructor/">&#x30D5;&#x30A1;&#x30A4;&#x30CA;&#x30E9;&#x30A4;&#x30B6;&#x30FC;</a></li><li><a href="/study/csharp/resource/rm_disposable/">[&#x96D1;&#x8A18;] Dispose &#x306B;&#x307E;&#x3064;&#x308F;&#x308B;&#x4F59;&#x8AC7;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

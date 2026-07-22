@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>stack | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/stl/container_adaptor/stack/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="stack">stack</h1>
+<h2 id="stack-1"><a id="sec-generated-title-1"></a> <a id="d23e4"></a>stackとは</h2>
+<p>スタックは末尾(または先頭)に限って要素の追加削除を行うことのできるデータ構造です。
+末尾からしか要素を取り出せないので、
+必然的に「後に入れたものから先に取り出さなくてなはならない」ということになります。
+そのため、スタックはLIFO(last-in first-out)とも呼ばれます。
+スタックに新しい要素を挿入することをpush、要素を取り出すことをpopといいます。<br></br>	<a href="/assets/media/ufcpp2000/stl/fig/stack.png"><img src="/assets/media/ufcpp2000/stl/fig/stack.png" alt="stack.png" /></a></p>
+<p>スタックは末尾への要素の挿入・削除ができるデータ構造なら何を使っても実装することができます。
+普通は配列や単方向連結リストを用いて実装します。</p>
+<h2 id="stlstack"><a id="sec-generated-title-2"></a> <a id="d23e17"></a>STLにおけるstack</h2>
+<p>STLのstackは何を使って実装するかをvector,deque,listの中から選べます。
+スタックの要素の型をTとすると、</p>
+<table summary="">
+
+	<tr>
+		<td><p><code>stack&lt;T, vector&lt;T&gt; &gt;</code></p></td>
+		<td><p>vectorによるstack</p></td>
+	</tr>
+	<tr>
+		<td><p><code>stack&lt;T, deque&lt;T&gt; &gt;</code></p></td>
+		<td><p>dequeによるstack</p></td>
+	</tr>
+	<tr>
+		<td><p><code>stack&lt;T, list&lt;T&gt; &gt;</code></p></td>
+		<td><p>listによるstack</p></td>
+	</tr>
+	<tr>
+		<td><p><code>stack&lt;T&gt;</code></p></td>
+		<td><p>stack&lt;T, vector&lt;T&gt; &gt;と同じ意味</p></td>
+	</tr>
+</table>
+<p>他にも、<code>push_back, pop_back, back, size</code>などのメソッドを適当に定義したクラスなら
+何でもスタックの実装に使えます。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/stl/container_adaptor/">&#x30B3;&#x30F3;&#x30C6;&#x30CA;&#x30A2;&#x30C0;&#x30D7;&#x30BF;</a></li><li><a href="/study/stl/container_adaptor/queue/">queue</a></li><li><a href="/study/stl/container_adaptor/priority_queue/">priority_queue</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

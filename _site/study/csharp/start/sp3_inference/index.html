@@ -1,0 +1,171 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x578B;&#x63A8;&#x8AD6;(&#x6697;&#x9ED9;&#x7684;&#x578B;&#x4ED8;&#x3051;)&#x3068;&#x533F;&#x540D;&#x578B; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/start/sp3_inference/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">型推論(暗黙的型付け)と匿名型</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>（※修正予定:
+型推論だけに絞って、「変数と式」の直後にでも移動。
+匿名型の話は「クラス」の辺りか、「メソッド指向」か「データ処理」の辺りに移動。</p>
+<h5 class="version version3">Ver. 3.0</h5>
+<p>C# 2.0 以前、「静的型付け言語は冗長な記述が多くてめんどくさい」などと言われることがありました。
+例えば、以下の例について考えてみてください。</p>
+<pre><code class="language-csharp">System.Collections.Generic.List&lt;<span class="keyword">int</span>&gt; list =
+  <span class="keyword">new</span> System.Collections.Generic.List&lt;<span class="keyword">int</span>&gt;();</code></pre>
+<p>「なんでこんな長ったらしい型名を左辺と右辺の両方で書かなきゃいけないんだ、
+どっちか片方書けば、もう片方は推論できるだろう」という話です。</p>
+<p>これに対して、C# 3.0 では、可能な限り型推論を行うような構文が追加されています。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>var： 変数の型を推論してくれる。<code>var x = 1;</code>なら x は int になる。</p>
+</li>
+<li><p>暗黙的配列：<code>new int[] { 1, 2, 3 }</code>を<code>new[] { 1, 2, 3 }</code>と書けるようになりました。</p>
+</li>
+<li><p X="1," Y="2">匿名型：<code>var anonymous = new ;</code>みたいに、匿名のクラスを作ることができるようになりました。</p>
+</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="implicit"></a>変数の型推論(変数の暗黙的型付け)</h2>
+<p>var キーワードを用いて、<strong id="type-inference" class="keyword">型推論</strong>（type inference）して、
+暗黙的に型付けされたローカル変数（Implicitly typed local variables）を定義できるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> n = <span class="number">1</span>;
+<span class="keyword">var</span> x = <span class="number">1</span>.<span class="number">0</span>;
+<span class="keyword">var</span> s = <span class="string">&quot;test&quot;</span>;</code></pre>
+<p>var を用いる際には、必ず初期値を伴う必要があります。
+そして、初期値から、変数の型を自動判別（型推論）してくれます。
+上記の例では、
+<code>n</code> は <code>int</code>、
+<code>x</code> は <code>double</code>、
+<code>s</code> は <code>string</code> 型の変数になります。</p>
+<p>注意すべき点は、
+あくまで型の自動判別・推論であって、
+<em>任意の型の値を代入できる万能な変数を作れるわけではない</em>ということです。
+したがって、以下のように、初期値を伴わない宣言は（型の推論ができないので）エラーになります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> n; <span class="comment">// エラー。初期値が必要。</span></code></pre>
+<p><code>TypeName x = new TypeName();</code> というように、
+式の両辺に型名を書かないといけないのは冗長ではあります。
+var は、この冗長さを省くため、左辺側の型名を省略できる機能だと思ってください。</p>
+<p>ただし、冗長性がエラー耐性（2か所とも間違っていないとコンパイル エラーになって間違いに気付く）になっている場合もあるので、
+<code>TypeName x = new TypeName();</code> という冗長な書き方も悪いことばかりではありません。</p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="anonymous"></a>匿名型</h2>
+<p>C# 3.0 では<strong id="anonytype" class="keyword">匿名型</strong>（anonymous type）を作成できるようになりました。
+匿名型の作り方は以下の通りです。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = <span class="keyword">new</span> { FamilyName = <span class="string">&quot;糸色&quot;</span>, FirstName=<span class="string">&quot;望&quot;</span>};</code></pre>
+<p>このようなコードから、自動的に、以下のような型が生成されます。</p>
+<pre><code class="language-csharp"><span class="comment">// ↓この __Anonymous という名前はプログラマが参照できるわけではない。</span>
+<span class="keyword">class</span> __Anonymous1
+{
+  <span class="keyword">private</span> <span class="keyword">string</span> f1;
+  <span class="keyword">private</span> <span class="keyword">string</span> f2;
+  
+  <span class="keyword">public</span> __Anonymous1(<span class="keyword">string</span> f1, <span class="keyword">string</span> f2)
+  {
+    <span class="keyword">this</span>.f1 = f1;
+    <span class="keyword">this</span>.f2 = f2;
+  }
+
+  <span class="keyword">public</span> <span class="keyword">string</span> FamilyName
+  {
+    <span class="keyword">get</span> { <span class="keyword">return</span> <span class="keyword">this</span>.f1}
+  };
+  <span class="keyword">public</span> <span class="keyword">string</span> FirstName
+  {
+    <span class="keyword">get</span> { <span class="keyword">return</span> <span class="keyword">this</span>.f2}
+  };
+  
+  <span class="comment">// あと、Equals, GetHashCode, ToString も実装</span>
+}</code></pre>
+<p>そして、変数 x に対して、
+2つのプロパティ FamilyName と FirstName が使えます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = <span class="keyword">new</span> { FamilyName = <span class="string">&quot;糸色&quot;</span>, FirstName=<span class="string">&quot;望&quot;</span>};
+
+Console.Write(<span class="string">&quot;{0}\n&quot;</span>, x.FamilyName, x.FirstName);</code></pre>
+<h5 id="section-5"><a id="sec-generated-title-5"></a>不変性</h5>
+<p>自動生成されたクラスを見てのとおり、自動実装されたプロパティには set アクセサーがありません。
+要するに、読み取り専用（immutable: 不変）になります。</p>
+<p>通常の「<a href="/study/csharp/functional/sp3_lambda/#objectinit">オブジェクト初期化子</a>」では、public な set アクセサーを持つプロパティしか初期化できませんでしたが、
+匿名型の場合には、コンストラクター呼び出しに置き換えられます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> p = <span class="keyword">new</span> Point { X = <span class="number">1</span>, Y = <span class="number">2</span> };
+<span class="comment">// Point p = new Point();</span>
+<span class="comment">// p.X = 1;</span>
+<span class="comment">// p.Y = 2;</span>
+<span class="comment">// と同じ意味。</span>
+
+<span class="keyword">var</span> anonymous = <span class="keyword">new</span> { X = <span class="number">1</span>, Y = <span class="number">2</span> };
+<span class="comment">// __Anonymous anonymous = new __Anonymous(1, 2);</span>
+<span class="comment">// みたいなコードが生成される。</span></code></pre>
+<h5 id="section-6"><a id="sec-generated-title-6"></a>プロパティ名の省略</h5>
+<p>ちなみに、以下のように、他のクラスのプロパティを初期化子に渡す場合には、
+「プロパティ名 =」の部分を省略することもできます。
+（初期化子で渡したプロパティの名前がそのまま匿名クラスでも使われます。）</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> A
+{
+  <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">set</span>; <span class="keyword">get</span>; }
+  <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">set</span>; <span class="keyword">get</span>; }
+  <span class="keyword">public</span> <span class="keyword">int</span> Z { <span class="keyword">set</span>; <span class="keyword">get</span>; }
+}
+
+<span class="keyword">class</span> Program
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+  {
+    A a = <span class="keyword">new</span> A { X = <span class="number">0</span>, Y = <span class="number">1</span>, Z = <span class="number">2</span>};
+    <span class="keyword">var</span> b = <span class="keyword">new</span> { a.X, a.Y };
+    <span class="comment">//↑ new { X = a.X, Y = a.Y } と同じ意味。</span>
+    Console.Write(<span class="string">&quot;{0}, {1}\n&quot;</span>, b.X, b.Y);
+  }
+}</code></pre>
+<h5 id="linq"><a id="sec-generated-title-7"></a>LINQ との組み合わせ</h5>
+<p>まあ、匿名クラスは、その場限りの使い捨てなクラスになるわけで、
+普通はあまり使うような機能ではありません。
+基本的には、「<a href="/study/csharp/data/sp3_linq/#linq">LINQ</a>」 のための機能だと思っていいでしょう。
+例えば、後述するクエリ式中で、以下のように利用します。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> list1 =
+  <span class="keyword">from</span> p <span class="keyword">in</span> list
+  <span class="keyword">where</span> p.id &lt;= <span class="number">15</span>
+  <span class="keyword">orderby</span> p.id
+  <span class="keyword">select</span> <span class="keyword">new</span> { p.FamilyName, p.FirstName };</code></pre>
+<h2 id="section-7"><a id="sec-generated-title-8"></a> <a id="impl_array"></a>暗黙型付け配列</h2>
+<p>new で配列を作成する際、
+型を省略できるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span>[] array = <span class="keyword">new</span>[] {<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>};</code></pre>
+<p>見ての通り、
+new の後ろの型を省略しています。
+配列の型は、 の中身の型から推定されます。
+この例の場合、中身が 1, 2, 3, 4 といずれも int 型なので、
+配列は int[] 型になります。</p>
+<p>まあ、これだけだと、
+ちょっとタイピングをサボれる程度ですが、
+var および「<a href="#anonytype">匿名型</a>」と組み合わせることによって、
+真価が発揮されます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> array = <span class="keyword">new</span>[]
+  {
+    <span class="keyword">new</span> {X =  <span class="number">0</span>, Y =  <span class="number">1</span>},
+    <span class="keyword">new</span> {X =  <span class="number">3</span>, Y = -<span class="number">1</span>},
+    <span class="keyword">new</span> {X =  <span class="number">7</span>, Y =  <span class="number">3</span>},
+    <span class="keyword">new</span> {X = <span class="number">13</span>, Y = -<span class="number">5</span>},
+  };
+
+<span class="keyword">foreach</span>(<span class="keyword">var</span> p <span class="keyword">in</span> array) Console.Write(<span class="string">&quot;{0}\n&quot;</span>, p);</code></pre>
+<p>配列宣言の中身が匿名なんだから、
+new の後ろにどういう型名を書いたらいいかわかるはずがないですからね。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/start/">&#x57FA;&#x790E;</a></li><li><a href="/study/csharp/start/st_basis/">C#&#x306E;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x57FA;&#x672C;&#x69CB;&#x9020;</a></li><li><a href="/study/csharp/start/st_compile/">&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x4F5C;&#x6210;&#x30FB;&#x5B9F;&#x884C;</a></li><li><a href="/study/csharp/start/st_comment/">&#x30B3;&#x30E1;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/start/st_consoleio/">&#x5024;&#x306E;&#x5165;&#x51FA;&#x529B;</a></li><li><a href="/study/csharp/start/st_variable/">&#x5909;&#x6570;&#x3068;&#x5F0F;</a></li><li><a href="/study/csharp/start/misc_identifier/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x540D;&#x306B;&#x4F7F;&#x3048;&#x308B;&#x6587;&#x5B57;</a></li><li><a href="/study/csharp/start/misc_unicode/">[&#x96D1;&#x8A18;] C# &#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x3068; Unicode</a></li><li><a href="/study/csharp/start/st_embeddedtype/">&#x7D44;&#x8FBC;&#x307F;&#x578B;</a></li><li><a href="/study/csharp/start/stnumber/">&#x6570;&#x5024;</a></li><li><a href="/study/csharp/start/st_string/">&#x7279;&#x6B8A;&#x306A;&#x6587;&#x5B57;&#x5217;&#x30EA;&#x30C6;&#x30E9;&#x30EB;</a></li><li><a href="/study/csharp/start/improvedinterpolatedstring/">C# 10.0 &#x306E;&#x88DC;&#x9593;&#x6587;&#x5B57;&#x5217;&#x306E;&#x6539;&#x5584;</a></li><li><a href="/study/csharp/start/st_operator/">&#x7D44;&#x8FBC;&#x307F;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/study/csharp/start/st_cast/">&#x7D44;&#x8FBC;&#x307F;&#x578B;&#x5909;&#x63DB;</a></li><li><a href="/study/csharp/start/sp_checked/">&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30D5;&#x30ED;&#x30FC;&#x306E;&#x30C1;&#x30A7;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/start/sp_const/">&#x5B9A;&#x6570;</a></li><li><a href="/study/csharp/start/sp3_var/">[&#x96D1;&#x8A18;] &#x578B;&#x63A8;&#x8AD6;&#x306E;&#x662F;&#x975E;</a></li><li><a href="/study/csharp/start/st_scope/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x306E;&#x30B9;&#x30B3;&#x30FC;&#x30D7;&#x3068;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x5BFF;&#x547D;</a></li><li><a href="/study/csharp/start/misctyperesolution/">[&#x96D1;&#x8A18;] &#x578B;&#x306E;&#x6C7A;&#x5B9A;</a></li><li><a href="/study/csharp/start/miscreservedattribute/">[&#x96D1;&#x8A18;] &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x306B;&#x5F71;&#x97FF;&#x3092;&#x53CA;&#x307C;&#x3059;&#x5C5E;&#x6027;</a></li><li><a href="/study/csharp/start/definiteassignment/">[&#x96D1;&#x8A18;] &#x660E;&#x78BA;&#x306A;&#x4EE3;&#x5165;&#x30EB;&#x30FC;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

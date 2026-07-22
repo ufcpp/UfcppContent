@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>.NET Core 3.0 &#x3092;&#x3082;&#x3063;&#x3066; .NET Framework &#x304B;&#x3089;&#x306E;&#x79FB;&#x690D;&#x4F5C;&#x696D;&#x306F;&#x5B8C;&#x7D50; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2019/10/netcore3concludesfxporting/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2019-10-15T19:50:14">2019-10-15</time></span><span>更新: <time datetime="2019-10-15T19:50:14">2019-10-15</time></span></div><h1 id="net-core-3.0.net-framework">.NET Core 3.0 をもって .NET Framework からの移植作業は完結</h1>
+<p>corefx で以下のようなアナウンスが。</p>
+<ul>
+<li><a href="https://github.com/dotnet/corefx/issues/41769">.NET Core 3.0 concludes the .NET Framework API porting project</a></li>
+</ul>
+<p><a href="/blog/2019/5/build2019/">build</a>の時点で .NET を .NET Core ベースに一本化、.NET Framework は 4.8 をもって最後にするという話があったわけですが、
+改めてというか、総括的なアナウンスです。</p>
+<h2 id="api">API 数</h2>
+<p>まず、.NET Framework から .NET Core に移植してきた API 数の総括。
+メソッドのオーバーロード1個1個を「1 API」とカウントしてるんだともいますが、以下のような数字が書かれています。</p>
+<ul>
+<li>.NET Core 1.0 時点では1.8万個</li>
+<li>.NET Standard 2.0 では .NET Framework、.NET Core、Xamarin の共通部分として3.8万個</li>
+<li>Windows 限定な機能も <a href="https://devblogs.microsoft.com/dotnet/announcing-the-windows-compatibility-pack-for-net-core/">Windows Compatibility Pack</a> として提供して、これが2.1万個
+<ul>
+<li>.NET Standard 2.0 と合わせて6万個</li>
+</ul>
+</li>
+<li>.NET Core 3.0 では WPF と WinForms を移植して、これが12万個
+<ul>
+<li>.NET Framework の API の約半分</li>
+</ul>
+</li>
+<li>依然として6.2万個の API が未移植なものの、8割の API が移植済み</li>
+</ul>
+<h2 id="section">移植しないもの</h2>
+<p>これも build の時点でアナウンス済みですが、AppDomain、remoting、Web Forms、WCF、Workflow は .NET Core への移植をしません。</p>
+<p>この辺りはレガシー扱いで、
+モダンなアプリ開発に必要なテクノロジーは .NET Core 3.0 をもって一通りそろったといえる段階に達したと判断されています。
+今後はもう、レガシー移植よりも、新しいテクノロジーに開発リソースを割いていきます。</p>
+<p>.NET Framework のコード自体は<a href="https://github.com/microsoft/referencesource">Microsoft .NET Reference Source</a> として MIT ライセンスで GitHub 上にあるので、
+Microsoft が保守を止めてしまった部分も、コミュニティ ベースで保守していくことはできます。
+(実際、<a href="https://github.com/UiPath/corewf">Core WF</a>や<a href="https://github.com/CoreWCF/CoreWCF">Core WCF</a>など、いくつかのコミュニティ プロジェクトがすでにあります。)</p>
+<p>ちなみに、<a href="https://github.com/microsoft/referencesource">Reference Source</a>は本当にソースコードの公開のみで、ビルド基盤をもう保守していないので、
+ビルドして動くものが欲しければ<a href="https://github.com/CoreWCF/CoreWCF">Core WCF</a>などのコミュニティ プロジェクトを参照(なければ立ち上げ)してほしいそうです。</p>
+<h2 id="issue-close">移植の要望 issue を close</h2>
+<p>「このテクノロジーを移植してほしい」という要望 issue があって、
+これまで「どれを優先的に移植するか」の判断材料として使ってきました。
+しかし、.NET Core 3.0 をもってもう移植作業は打ち切りということで、issue も一通り close したそうです。</p>
+<p>ただ、打ち切ったといってもあくまで WCF であるとか Web Forms であるとかのテクノロジー単位での話で、
+例えば「移植済みのクラスのこのオーバーロードがないみたいだけども、あった方が便利じゃない？」くらいのものであれば追加される可能性はあります。</p>
+<p>「.NET Framework にあるから」という理由だけで .NET Core に追加されることはなくなりますが、同時に、「.NET Framework にある(けどまだ .NET Core にない)から」というだけで絶対にその API が移植されないということもありません。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2019/10/">10&#x6708;</a></li><li><a href="/blog/2019/10/pickuproslyn1004/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 10/4: C# 9.0, &#x30D1;&#x30BF;&#x30FC;&#x30F3;&#x8FFD;&#x52A0;&#x3001;switch &#x5F0F;&#x30B9;&#x30C6;&#x30FC;&#x30C8;&#x30E1;&#x30F3;&#x30C8;&#x3001;&#x5171;&#x5909;&#x623B;&#x308A;&#x5024;</a></li><li><a href="/blog/2019/10/pickuproslyn1025/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 10/25: Records&#x3001;Static lambdas</a></li><li><a href="/blog/2019/10/pickuproslyn1029/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 10/9: base(T), UTF-8 String, Discard parameters</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

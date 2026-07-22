@@ -1,0 +1,489 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x7834;&#x68C4; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/resource/oo_dispose/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">リソースの破棄</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>ファイルや周辺機器などのリソース(OSが管理している資源)を使用する場合、
+まずリソースを使用する権利を取得し、
+リソースに対する操作(ファイルの読み書きなど)を行った後、
+リソース使用権を破棄する必要があります。</p>
+<p>メモリは .NET Framework の「<a href="/study/csharp/cs4j/ab_csspec/#gc">ガーベジコレクション</a>」機能が自動的に管理していて、
+プログラマが明示的に破棄してやる必要はないのですが、
+ファイルなどは「<a href="/study/csharp/cs4j/ab_csspec/#gc">ガーベジコレクション</a>」の管理対象外で、
+明示的な破棄が必要です。</p>
+<p>リソースの破棄を怠ると操作が正しく完了しなかったり、
+他のプログラムからそのリソースを使用できなくなったりします。
+（例えば、ファイルにロックが掛かったままになって、ファイルの読み書きがしばらくできなくなったり。）
+そのため、リソースの破棄は確実に行う必要があるのですが、
+これは意外に面倒な作業だったりします。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>.NET Framework でメモリー管理は自動化されたけど、 管理外のリソース（たとえば、ファイルIO）もある。</p>
+</li>
+<li><p>管理外のリソースは明示的に破棄が必要。</p>
+</li>
+<li><p>例外が発生した場合でも正しくリソース破棄ができるように、try-catch-finally や using を使いましょう。</p>
+</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="ex"></a>リソース破棄の例</h2>
+<p>例えば、ファイルの読み書きを行う場合、
+まずファイルを開いて、読み書きを行った後、ファイルを閉じる必要があります。
+以下に簡単な例を示します。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.IO;
+
+<span class="keyword">class</span> DisposeTest
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+    {
+        FileStream reader = <span class="keyword">new</span> FileStream(args[<span class="number">0</span>], FileMode.Open);
+
+        <span class="comment">// 先頭のNバイトを読み出して画面に表示</span>
+        <span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">32</span>;
+        <span class="keyword">byte</span>[] buf = <span class="keyword">new</span> <span class="keyword">byte</span>[N];
+        reader.Read(buf, <span class="number">0</span>, N);
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; N; ++i)
+        {
+            Console.Write(<span class="string">&quot;{0,4}&quot;</span>, (<span class="keyword">int</span>)buf[i]);
+            <span class="keyword">if</span> (i % <span class="number">8</span> == <span class="number">7</span>) Console.Write(<span class="string">&#39;\n&#39;</span>);
+        }
+
+        reader.Close(); <span class="comment">// ファイルを閉じる(リソースの破棄)</span>
+    }
+}</code></pre>
+<p>この例のようなリソース破棄の仕方には実は問題があります。
+この例のコードでは<em>例外が発生したときに <code>Close</code> メソッドが呼ばれない</em>ため、
+リソースの開放が出来なくなります。
+例外が発生した場合にも <code>Close</code> メソッドが呼ばれるようにするためには、
+以下のように <em>try-catch-finally ステートメントを用います</em>。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.IO;
+
+<span class="keyword">class</span> DisposeTest
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+    {
+        FileStream reader = <span class="keyword">new</span> FileStream(args[<span class="number">0</span>], FileMode.Open);
+
+        <span class="keyword">try</span>
+        {
+            <span class="comment">// 先頭のNバイトを読み出して画面に表示</span>
+            <span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">32</span>;
+            <span class="keyword">byte</span>[] buf = <span class="keyword">new</span> <span class="keyword">byte</span>[N];
+            reader.Read(buf, <span class="number">0</span>, N);
+            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; N; ++i)
+            {
+                Console.Write(<span class="string">&quot;{0,4}&quot;</span>, (<span class="keyword">int</span>)buf[i]);
+                <span class="keyword">if</span> (i % <span class="number">8</span> == <span class="number">7</span>) Console.Write(<span class="string">&#39;\n&#39;</span>);
+            }
+        }
+        <span class="keyword">catch</span> (Exception)
+        {
+            <span class="comment">// 例外処理を行う</span>
+        }
+        <span class="keyword">finally</span>
+        {
+            <span class="comment">// 例外が発生しようがしまいが finally ブロックは必ず実行される。</span>
+            <span class="comment">// リソースの破棄は finally ブロックで行う。</span>
+            <span class="keyword">if</span> (reader != <span class="keyword">null</span>)
+                reader.Close();
+        }
+    }
+}</code></pre>
+<h2 id="using"><a id="sec-generated-title-4"></a> <a id="using"></a>using ステートメント</h2>
+<p>リソースの破棄の手順をまとめると以下のようになります。
+(ただし、<code>Resource</code> はリソース管理用クラスで、
+<code>Dispose</code> メソッドによりリソースの破棄を行うものとする。)</p>
+<pre><code class="language-csharp">Resource r = <span class="keyword">new</span> Resource();
+<span class="keyword">try</span>
+{
+  リソースに対する操作
+}
+<span class="keyword">finally</span>
+{
+  <span class="keyword">if</span>(r != <span class="keyword">null</span>)
+    r.Dispose();
+}</code></pre>
+<p>リソースの破棄は必ずこの手順で行います
+（「Dispose パターン」という呼び名もついてる定型パターン）。
+しかし、毎回同じ手順を繰り返すのは面倒です。
+そこで、C#ではこの手順を自動的に行ってくれる構文が用意されています。
+この構文は <strong id="using" class="keyword">using ステートメント</strong>と呼ばれ、以下のようにして用います。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span>(Resource r = <span class="keyword">new</span> Resource())
+{
+  リソースに対する操作
+}</code></pre>
+<p>using ステートメントを用いると、
+コンパイラが自動的に上述のリソース破棄用のコードに展開してくれます。
+ただし、using ステートメントで使うリソース管理用クラスは <em>
+<code>System.IDisposable</code> インターフェース
+</em>を実装している必要があります。
+(<code>FileStream</code> などのクラスライブラリ中のクラスは <code>System.IDisposable</code> インターフェースを実装しています。)</p>
+<p>using ステートメントを用いて上述の例を書き直したものを以下に示します。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.IO;
+
+<span class="keyword">class</span> DisposeTest
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+    {
+        <span class="keyword">using</span> (FileStream reader = <span class="keyword">new</span> FileStream(args[<span class="number">0</span>], FileMode.Open))
+        {
+            <span class="comment">// 先頭のNバイトを読み出して画面に表示</span>
+
+            <span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">32</span>;
+            <span class="keyword">byte</span>[] buf = <span class="keyword">new</span> <span class="keyword">byte</span>[N];
+            reader.Read(buf, <span class="number">0</span>, N);
+            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; N; ++i)
+            {
+                Console.Write(<span class="string">&quot;{0,4}&quot;</span>, (<span class="keyword">int</span>)buf[i]);
+                <span class="keyword">if</span> (i % <span class="number">8</span> == <span class="number">7</span>) Console.Write(<span class="string">&#39;\n&#39;</span>);
+            }
+        }
+    }
+}</code></pre>
+<h3 id="using-1"><a id="sec-generated-title-5"></a> <a id="expression-using"></a>式だけの using ステートメント</h3>
+<p>ちなみに、using() の中身は変数宣言だけではなく、式にすることもできます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span>(式)
+{
+  リソースに対する操作
+}</code></pre>
+<p>これで、以下のようなコードと同等な処理になります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span>(IDisposable r = 式)
+{
+  リソースに対する操作
+}</code></pre>
+<p>さらに展開すると、以下のような意味です。</p>
+<pre><code class="language-csharp">Resource r = 式;
+<span class="keyword">try</span>
+{
+  リソースに対する操作
+}
+<span class="keyword">finally</span>
+{
+  <span class="keyword">if</span>(r != <span class="keyword">null</span>)
+    r.Dispose();
+}</code></pre>
+<p>用途としては例えば、以下の「<a href="/study/csharp/oop/sp2_generics/#generics">ジェネリック</a>」を使ったメソッドのように、
+T が IDispose を実装している時だけ Dispose を呼び出したい場合などに便利です。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> GenericMethod&lt;T&gt;(T obj)
+{
+    <span class="keyword">using</span> (obj <span class="keyword">as</span> IDisposable)
+    {
+       obj に対する操作
+    }
+}</code></pre>
+<h3 id="dispose"><a id="sec-generated-title-6"></a> <a id="dtor"></a>Dispose とファイナライザー</h3>
+<p>ちなみに、確実に解放しなければならないリソースは、<code>Dispose</code>メソッドだけでなく、ファイナライザーも使って破棄処理を行うべきです。
+詳しくは「<a href="/study/csharp/resource/rm_disposable/#idisposable">IDisposable インターフェイスの実装</a>」で説明します。</p>
+<h2 id="using-2"><a id="sec-generated-title-7"></a> <a id="using-declaration"></a>using 変数宣言</h2>
+<h5 class="version version8">Ver. 8.0</h5>
+<p>C# 8.0 で、変数宣言に対して <code>using</code> 修飾を付けることで、
+その変数のスコープに紐づいて <code>using</code> ステートメントと同じ効果を得られるようになりました。
+これを <code>using</code> 変数宣言(using declaration)と呼びます。</p>
+<p>例えば以下のように書きます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">readonly</span> <span class="keyword">struct</span> DeferredMessage : IDisposable
+{
+    <span class="keyword">private</span> <span class="keyword">readonly</span> <span class="keyword">string</span> _message;
+    <span class="keyword">public</span> DeferredMessage(<span class="keyword">string</span> message) =&gt; _message = message;
+ 
+    <span class="comment">// Dispose 時にメッセージ表示</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> Dispose() =&gt; Console.WriteLine(_message);
+}
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// using var で、変数のスコープに紐づいた using になる。</span>
+        <span class="comment">// スコープを抜けるときに Dispose が呼ばれる。</span>
+        <span class="keyword">using</span> <span class="keyword">var</span> a = <span class="keyword">new</span> DeferredMessage(<span class="string">&quot;a&quot;</span>);
+        <span class="keyword">using</span> <span class="keyword">var</span> b = <span class="keyword">new</span> DeferredMessage(<span class="string">&quot;b&quot;</span>);
+ 
+        Console.WriteLine(<span class="string">&quot;c&quot;</span>);
+ 
+        <span class="comment">// c, b, a の順でメッセージが表示される</span>
+    }
+}</code></pre>
+<p><code>Main</code> メソッド内は以下のコードと同じ意味になります。</p>
+<pre><code class="language-csharp"><span class="comment">// using var で、変数のスコープに紐づいた using になる。</span>
+<span class="comment">// スコープを抜けるときに Dispose が呼ばれる。</span>
+<span class="keyword">using</span> (<span class="keyword">var</span> a = <span class="keyword">new</span> DeferredMessage(<span class="string">&quot;a&quot;</span>))
+{
+    <span class="keyword">using</span> (<span class="keyword">var</span> b = <span class="keyword">new</span> DeferredMessage(<span class="string">&quot;b&quot;</span>))
+    {
+        Console.WriteLine(<span class="string">&quot;c&quot;</span>);
+    }
+}</code></pre>
+<p>この展開結果からもわかるように、複数の <code>using</code> 変数宣言が並んでいた場合、
+<code>Dispose</code> メソッドの呼び出しは宣言の逆順で行われます。
+この例では、変数は <code>a</code>、<code>b</code> の順で宣言しているので、
+<code>Dispose</code> は <code>b</code>、<code>a</code> の順になります。</p>
+<h3 id="using-3"><a id="sec-generated-title-8"></a> <a id="using-declaration-pitfall"></a>using 変数宣言の注意点</h3>
+<p><code>using</code> 変数宣言は両手放し喜べる機能ではありません。
+<code>Dispose</code> が呼ばれるタイミングを伸ばしてしまって、パフォーマンスに悪影響を及ぼす可能性があります。
+例えば以下のコードを考えます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.IO;
+<span class="keyword">using</span> System.Threading;
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">string</span> content;
+        <span class="keyword">using</span> (<span class="keyword">var</span> s = <span class="keyword">new</span> StreamReader(<span class="string">&quot;sample.txt&quot;</span>))
+        {
+            content = s.ReadToEnd();
+        }
+        <span class="comment">// s.Dispose はここで呼ばれる。</span>
+ 
+        <span class="comment">// すごく長い処理。ここでは Sleep で代用。</span>
+        Thread.Sleep(<span class="number">5000</span>);
+ 
+        Console.WriteLine(content);
+    }
+}</code></pre>
+<p>ファイルからの内容読み込み後、少し長い処理が挟まってからその内容を使います。
+これを単純に <code>using</code> 変数宣言に置き換えたとしましょう。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.IO;
+<span class="keyword">using</span> System.Threading;
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">using</span> <span class="keyword">var</span> s = <span class="keyword">new</span> StreamReader(<span class="string">&quot;sample.txt&quot;</span>);
+        <span class="keyword">var</span> content = s.ReadToEnd();
+ 
+        <span class="comment">// すごく長い処理。ここでは Sleep で代用。</span>
+        Thread.Sleep(<span class="number">5000</span>);
+ 
+        Console.WriteLine(content);
+        <span class="comment">// s.Dispose はここで呼ばれる。</span>
+    }
+}</code></pre>
+<p>この例では、<code>Dispose</code> が呼ばれるタイミングが5秒、無駄に遅れることになります。
+5秒もファイルを開きっぱなしになるのでだいぶ悪影響があります。
+なので、この場合は単純置き換えがダメだということです。</p>
+<p>ただ、実用的には、この手の処理は必要な部分だけメソッドに切り出すことが多いです。
+この例でも、実際には以下のように書くべきでしょう。
+これならまさに <code>using</code> 変数宣言がふさわしい書き方です。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.IO;
+<span class="keyword">using</span> System.Threading;
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> content = ReadToEnd(<span class="string">&quot;sample.txt&quot;</span>);
+ 
+        <span class="comment">// すごく長い処理。ここでは Sleep で代用。</span>
+        Thread.Sleep(<span class="number">5000</span>);
+ 
+        Console.WriteLine(content);
+    }
+ 
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">string</span> ReadToEnd(<span class="keyword">string</span> path)
+    {
+        <span class="keyword">using</span> <span class="keyword">var</span> s = <span class="keyword">new</span> StreamReader(path);
+        <span class="keyword">return</span> s.ReadToEnd();
+        <span class="comment">// s.Dispose はここで呼ばれる。</span>
+    }
+}</code></pre>
+<h2 id="idispose"><a id="sec-generated-title-9"></a> <a id="interface-required"></a>IDispose インターフェイス必須</h2>
+<p>C# の構文の多くは、C# コンパイラーによる簡単な置き換え
+(いわゆる構文糖衣(syntax sugar))になっています。
+例えば、<a href="/study/csharp/data/sp_foreach/#foreach"><code>foreach</code>ステートメント</a>の場合は <code>GetEnumerator</code>、<code>MoveNext</code>、<code>Current</code> などのメソッド/プロパティ呼び出しに置き換えられます。</p>
+<p>この際、C# の大体の構文糖衣は
+「ある特定の名前のメソッドさえ持っていれば使える」
+という割と緩い条件になっていて、
+これをパターン ベース(pattern-based)な構文と呼びます。</p>
+<p>そんな中、<code>using</code> ステートメントだけは <code>IDisposable</code> インターフェイス(<code>System</code> 名前空間)の実装が必須です。
+<a href="#pattern-based-using">次節で説明する</a>ように、C# 8.0 で少しだけ条件緩和されましたが、
+既存のコードを壊さないようにするためにはかなり限定的にせざるを得なかったらしく、基本的にはインターフェイス実装が必須です。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="comment">// using で使える型。</span>
+<span class="keyword">class</span> Disposable : IDisposable
+{
+    <span class="keyword">public</span> <span class="keyword">void</span> Dispose() { }
+}
+ 
+<span class="comment">// 残念ながら IDisposable を実装していないと using で使えない。</span>
+<span class="keyword">class</span> NonDisposable
+{
+    <span class="keyword">public</span> <span class="keyword">void</span> Dispose() { }
+}
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// こっちは OK。</span>
+        <span class="keyword">using</span> (<span class="keyword">new</span> Disposable()) { }
+ 
+        <span class="comment">// こっちはコンパイル エラーに。</span>
+        <span class="keyword">using</span> (<span class="keyword">new</span> NonDisposable()) { }
+    }
+}</code></pre>
+<p>一方で、C# 8.0 で新規導入する非同期 <code>using</code> ステートメントの場合は、
+既存コードのことを心配する必要がないため、元からパターン ベースにしてあります。
+すなわち、別に <code>IAsyncDisposable</code> インターフェイスの実装は必要ありません。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Runtime.CompilerServices;
+<span class="keyword">using</span> System.Threading.Tasks;
+ 
+<span class="comment">// 非同期 using は別に IAsyncDisposable インターフェイスの実装を求めない。</span>
+<span class="keyword">class</span> AsyncDisposable
+{
+    <span class="comment">// ちゃんと await using のブロックの最後で呼ばれる。</span>
+    <span class="comment">// 戻り値の型が Task や ValueTask である必要もない。</span>
+    <span class="keyword">public</span> MyAwaitable DisposeAsync()
+    {
+        Console.WriteLine(<span class="string">&quot;disposed async&quot;</span>);
+        <span class="keyword">return</span> <span class="keyword">default</span>;
+    }
+}
+ 
+<span class="keyword">struct</span> MyAwaitable&lt;T&gt; { <span class="keyword">public</span> ValueTaskAwaiter&lt;T&gt; GetAwaiter() =&gt; <span class="keyword">default</span>; }
+<span class="keyword">struct</span> MyAwaitable { <span class="keyword">public</span> ValueTaskAwaiter GetAwaiter() =&gt; <span class="keyword">default</span>; }
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">async</span> Task Main()
+    {
+        <span class="keyword">await</span> <span class="keyword">using</span>(<span class="keyword">new</span> AsyncDisposable())
+        {
+            Console.WriteLine(<span class="string">&quot;iside using&quot;</span>);
+        }
+    }
+}</code></pre>
+<pre><code class="language-console">iside using
+disposed async</code></pre>
+<h3 id="using-4"><a id="sec-generated-title-10"></a> <a id="pattern-based-using"></a>パターン ベースな using</h3>
+<h5 class="version version8">Ver. 8.0</h5>
+<p><code>using</code> ステートメントで使うのにインターフェイスの実装が必須となると、
+C# 7.2 で導入された<a href="/study/csharp/resource/refstruct/">ref 構造体</a>で困ることになりました。</p>
+<p>ref 構造体を使いたいような場面では <code>Dispose</code> したいリソースを握ることもあり、
+<code>using</code> ステートメントを使いたい動機があります。
+しかし、ref 構造体にはインターフェイスが実装できません。</p>
+<p>ということで、<code>using</code> ステートメントもパターン ベースにしてしまおうということになりました。
+ところが、無条件に変更すると既存のコードを壊しかねない懸念があって断念されました。</p>
+<p>その結果、C# 8.0 では、ref 構造体に対してだけパターン ベースでの <code>using</code> ステートメントを認めることにしました。
+以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="comment">// これまで通り、using で使える型。</span>
+<span class="keyword">struct</span> Disposable : IDisposable
+{
+    <span class="keyword">public</span> <span class="keyword">void</span> Dispose() { }
+}
+ 
+<span class="comment">// 残念ながら IDisposable を実装していないと using で使えない。</span>
+<span class="keyword">struct</span> NonDisposable
+{
+    <span class="keyword">public</span> <span class="keyword">void</span> Dispose() { }
+}
+ 
+<span class="comment">// となると、インターフェイスを実装できない ref struct で困っていた。</span>
+<span class="comment">// ref struct の場合、IDisposable なしでも Dispose メソッドさえあれば using で使えるようになった。</span>
+<span class="keyword">ref</span> <span class="keyword">struct</span> RefDisposable
+{
+    <span class="keyword">public</span> <span class="keyword">void</span> Dispose() { }
+}
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// この行は元々 OK。</span>
+        <span class="keyword">using</span> (<span class="keyword">new</span> Disposable()) { }
+ 
+        <span class="comment">// 残念ながら今でもコンパイル エラーに。</span>
+        <span class="keyword">using</span> (<span class="keyword">new</span> NonDisposable()) { }
+ 
+        <span class="comment">// C# 8.0 で、これは OK になった。</span>
+        <span class="keyword">using</span> (<span class="keyword">new</span> RefDisposable()) { }
+    }
+}</code></pre>
+<p>この変更は、<code>foreach</code> ステートメントに対しても適用されます。
+<code>foreach</code> ステートメントは、列挙対象が <code>IDisposable</code> だった場合に <code>Dispose</code> メソッドを呼び出す仕様になっています。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="comment">// GetEnumerator/MoveNext/Current は元々パターン ベース。</span>
+<span class="comment">// ただ、Dispose の呼び出しだけは IDisposable の実装が必須だった。</span>
+<span class="comment">// C# 8.0 で、ref struct の場合はパターン ベースで Dispose メソッドを呼んでもらえるように。</span>
+<span class="keyword">ref</span> <span class="keyword">struct</span> RefEnumerable
+{
+    <span class="keyword">public</span> RefEnumerable GetEnumerator() =&gt; <span class="keyword">this</span>;
+    <span class="keyword">public</span> <span class="keyword">int</span> Current =&gt; <span class="number">0</span>;
+    <span class="keyword">public</span> <span class="keyword">bool</span> MoveNext() =&gt; <span class="keyword">false</span>;
+    <span class="keyword">public</span> <span class="keyword">void</span> Dispose() =&gt; Console.WriteLine(<span class="string">&quot;ref disposed&quot;</span>);
+}
+ 
+<span class="comment">// RefEnumerable と比べて、 ref を取っただけ。</span>
+<span class="keyword">struct</span> BrokenEnumerable
+{
+    <span class="keyword">public</span> BrokenEnumerable GetEnumerator() =&gt; <span class="keyword">this</span>;
+    <span class="keyword">public</span> <span class="keyword">int</span> Current =&gt; <span class="number">0</span>;
+    <span class="keyword">public</span> <span class="keyword">bool</span> MoveNext() =&gt; <span class="keyword">false</span>;
+ 
+    <span class="comment">// この Dispose は呼ばれない。</span>
+    <span class="comment">// ref struct でない場合、IDisposable インターフェイスの実装が必須。</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> Dispose() =&gt; Console.WriteLine(<span class="string">&quot;broken disposed&quot;</span>);
+}
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// ref disposed は表示される。</span>
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> _ <span class="keyword">in</span> <span class="keyword">new</span> RefEnumerable()) ;
+ 
+        <span class="comment">// broken disposed は表示されない。</span>
+        <span class="comment">// コンパイル エラーにはならないので特に注意。</span>
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> _ <span class="keyword">in</span> <span class="keyword">new</span> BrokenEnumerable()) ;
+    }
+}</code></pre>
+<pre><code class="language-console">ref disposed</code></pre>
+<h2 id="using-5"><a id="sec-generated-title-11"></a> <a id="await-using"></a>非同期using</h2>
+<h5 class="version version8">Ver. 8.0</h5>
+<p>C# 8.0で非同期版の<code>using</code>が追加されました。
+<code>await using</code>という構文で、<code>IAsyncDisposable</code>インターフェイス(<code>System</code>名前空間)か、
+それと同じ<a href="/study/csharp/async/asyncstream/#await-foreach">パターン</a>を満たす型の列挙ができます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">async</span> Task AsyncUsing&lt;T&gt;(T x)
+    <span class="keyword">where</span> T : IAsyncDisposable
+{
+    <span class="keyword">await</span> <span class="keyword">using</span> (x)
+    {
+        <span class="comment">// x を破棄する前にやっておきたい処理</span>
+    }
+}</code></pre>
+<p>詳しくは「<a href="/study/csharp/async/asyncstream/#await-using">非同期using</a>」で説明します。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/resource/">&#x30E1;&#x30E2;&#x30EA;&#x3068;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x7BA1;&#x7406;</a></li><li><a href="/study/csharp/resource/rm_gc/">C# &#x306E;&#x30E1;&#x30E2;&#x30EA;&#x7BA1;&#x7406;</a></li><li><a href="/study/csharp/resource/rm_struct/">&#x69CB;&#x9020;&#x4F53;</a></li><li><a href="/study/csharp/resource/oo_reference/">&#x5024;&#x578B;&#x3068;&#x53C2;&#x7167;&#x578B;</a></li><li><a href="/study/csharp/resource/readonlyness/">readonly &#x306E;&#x6CE8;&#x610F;&#x70B9;</a></li><li><a href="/study/csharp/resource/rm_default/">&#x65E2;&#x5B9A;&#x5024;</a></li><li><a href="/study/csharp/resource/sp_ref/">&#x53C2;&#x7167;&#x6E21;&#x3057;</a></li><li><a href="/study/csharp/resource/span/">Span&lt;T&gt;&#x69CB;&#x9020;&#x4F53;</a></li><li><a href="/study/csharp/resource/refstruct/">ref&#x69CB;&#x9020;&#x4F53;</a></li><li><a href="/study/csharp/resource/misc_heap/">[&#x96D1;&#x8A18;] &#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x3068;&#x30D2;&#x30FC;&#x30D7;</a></li><li><a href="/study/csharp/resource/rmboxing/">&#x30DC;&#x30C3;&#x30AF;&#x30B9;&#x5316;</a></li><li><a href="/study/csharp/resource/sp2_nullable/">null&#x8A31;&#x5BB9;&#x5024;&#x578B;(Nullable&amp;lt;T&amp;gt; &#x578B;)</a></li><li><a href="/study/csharp/resource/nullablereferencetype/">null &#x8A31;&#x5BB9;&#x53C2;&#x7167;&#x578B;</a></li><li><a href="/study/csharp/resource/rm_nullusage/">null &#x306E;&#x53D6;&#x308A;&#x6271;&#x3044;</a></li><li><a href="/study/csharp/resource/rm_destructor/">&#x30D5;&#x30A1;&#x30A4;&#x30CA;&#x30E9;&#x30A4;&#x30B6;&#x30FC;</a></li><li><a href="/study/csharp/resource/rm_disposable/">[&#x96D1;&#x8A18;] Dispose &#x306B;&#x307E;&#x3064;&#x308F;&#x308B;&#x4F59;&#x8AC7;</a></li><li><a href="/study/csharp/resource/rmweakreference/">&#x3010;&#x96D1;&#x8A18;&#x3011;&#x5F31;&#x53C2;&#x7167;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

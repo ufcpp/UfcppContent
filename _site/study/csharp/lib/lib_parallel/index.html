@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x4E26;&#x5217;&#x51E6;&#x7406;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/lib/lib_parallel/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">並列処理ライブラリ</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<h5 class="version version4">Ver. 4.0</h5>
+<p>マルチコア CPU の普及に伴って、並列処理の重要性が増しています。
+この時代背景に合わせるかのように、.NET Framework 4で並列処理用のライブラリが追加されました。</p>
+<h2 id="parallel"><a id="sec-generated-title-2"></a> <a id="parallel"></a>Parallel クラス</h2>
+<p>まずは、制御フロー（「<a href="/study/csharp/structured/st_control/">制御フロー</a>」参照）の並列化です。
+Parallel クラス（System.Threading.Tasks 名前空間）を使うことで、
+通常の for 文や foreach 文に非常に似た書き方で並列処理を行えます。</p>
+<p>Parallel クラスは Invoke、For、ForEach の3つの静的メソッドを持っています。</p>
+<table summary="Parallel クラスを使った制御フローの並列化">
+	<caption>
+		Parallel クラスを使った制御フローの並列化
+	</caption>
+	<tr>
+		<th>メソッド</th>
+		<th>逐次処理版</th>
+		<th>並列処理版</th>
+	</tr>
+	<tr>
+		<td><p>Invoke</p></td>
+		<td><pre class="source" title="3つのメソッドを逐次呼び出し" lang=""><code class="language-csharp">A();
+B();
+C();</code></pre></td>
+		<td><pre class="source" title="3つのメソッドを並列呼び出し" lang=""><code class="language-csharp">Parallel.Invoke(A, B, C);</code></pre></td>
+	</tr>
+	<tr>
+		<td><p>For</p></td>
+		<td><pre class="source" title="0～N まで逐次処理" lang=""><code class="language-csharp">for (int i = 0; i &lt; N; i++)
+{
+    Console.WriteLine(i * i);
+}</code></pre></td>
+		<td><pre class="source" title="0～N まで並列処理" lang=""><code class="language-csharp">Parallel.For(0, N, i =&gt;
+{
+    Console.WriteLine(i * i);
+});</code></pre></td>
+	</tr>
+	<tr>
+		<td><p>ForEach</p></td>
+		<td><pre class="source" title="data の要素を逐次列挙" lang=""><code class="language-csharp">var data = Enumerable.Range(0, N);
+ 
+foreach (var x in data)
+{
+    Console.WriteLine(x * x);
+}</code></pre></td>
+		<td><pre class="source" title="data の要素を並列列挙" lang=""><code class="language-csharp">var data = Enumerable.Range(0, N);
+ 
+Parallel.ForEach(data, x =&gt;
+{
+    Console.WriteLine(x * x);
+});</code></pre></td>
+	</tr>
+</table>
+<p>逐次処理とほとんど同じ書き方で並列処理ができます。</p>
+<p>ただし、複数のスレッドから同じデータを読み書きする場合には「<a href="/study/csharp/async/sp_thread/#exclusive">排他制御</a>」が必要なので注意してください。
+例えば、以下のような処理は、単に foreach 文を Parallel.ForEach メソッドに置き換えるだけでなく、
+ロックが必要です。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> data = Enumerable.Range(<span class="number">0</span>, N);
+ 
+<span class="keyword">var</span> sum = <span class="number">0</span>;
+<span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> data)
+{
+    sum += x;
+}
+Console.WriteLine(sum);</code></pre>
+<p>以下のように、sum += x の部分にロックを掛けます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> data = Enumerable.Range(<span class="number">0</span>, N);
+ 
+<span class="keyword">var</span> sum = <span class="number">0</span>;
+Parallel.ForEach(data, x =&gt;
+{
+    <span class="keyword">lock</span> (data) sum += x;
+});
+Console.WriteLine(sum);</code></pre>
+<p>ロック自体がそれなりにオーバーヘッドのかかる処理なので、
+この例の場合、並列化するとかえって遅くなる可能性があります。</p>
+<h2 id="parallel-linq"><a id="sec-generated-title-3"></a> <a id="plinq"></a>Parallel LINQ</h2>
+<p>「<a href="/study/csharp/data/sp3_linq/#linq">LINQ</a>」 に対する並列化の仕組みも用意されています。
+System.Linq 名前空間に ParallelEnumerable というクラスが追加されていて、
+このクラスで定義されている AsParallel 拡張メソッドを使えば、LINQ クエリを並列化できます。
+（データ ソースに対して .AsParallel() を付けるだけです。）</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> data = Enumerable.Range(<span class="number">0</span>, N);
+<span class="keyword">var</span> sqSum = data.AsParallel().Sum(x =&gt; x * x);
+Console.WriteLine(sqSum);</code></pre>
+<p>必要な「<a href="/study/csharp/async/sp_thread/#exclusive">排他制御</a>」は適宜ライブラリ内で行ってくれるので、
+こちらはロックが不要です。
+なので、データ ストリーム（「<a href="/study/csharp/data/da_about/#stream">ストリームとパイプライン</a>」参照）に対する並列処理は、
+Parallel クラスを使うよりも、こちらを使う方がおすすめです。</p>
+<p>ただし、多少の工夫が必要な場合もあります。
+例えば、1つ前の要素を参照したいというような場合、
+以下のように書いてしまいがちです。</p>
+<pre><code class="language-csharp"><span class="comment">// 1つ前の値を保存しておく</span>
+<span class="keyword">var</span> prev = data.First();
+<span class="keyword">var</span> max = <span class="keyword">int</span>.MinValue;
+<span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> data.Skip(<span class="number">1</span>))
+{
+    <span class="comment">// 階差の最大値</span>
+    max = Math.Max(x - prev, max);
+    prev = x;
+}</code></pre>
+<p>並列化したい場合、必ずしも順序の保証がないので、prev = x; では「1つ前の要素を保存」という処理になりません。
+以下のような工夫が必要になります。</p>
+<pre><code class="language-csharp"><span class="comment">// 1項ずらしたデータ ストリームと Zip</span>
+<span class="keyword">var</span> difference = data.Zip(data.Skip(<span class="number">1</span>), (i, j) =&gt; j - i);
+<span class="comment">// そのあと、AsParallel</span>
+<span class="keyword">var</span> max = difference.AsParallel().Max();</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/lib/">&#x6A19;&#x6E96;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li><li><a href="/study/csharp/lib/lib_string/">&#x6587;&#x5B57;&#x5217;&#x95A2;&#x4FC2;</a></li><li><a href="/study/csharp/lib/lib_file/">&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x64CD;&#x4F5C;</a></li><li><a href="/study/csharp/lib/lib_drawing/">&#x30B0;&#x30E9;&#x30D5;&#x30A3;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/lib/lib_forms/">GUI &#x30A2;&#x30D7;&#x30EA;&#x30B1;&#x30FC;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/lib/lib_other/">&#x305D;&#x306E;&#x4ED6;&#x306E;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li><li><a href="/study/csharp/lib/lib_dotnet3/">.NET Framework 3.0 / 3.5</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

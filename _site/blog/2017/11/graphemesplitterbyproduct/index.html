@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>GraphemeSplitter &#x306E;&#x526F;&#x7523;&#x7269;(&#x7D75;&#x6587;&#x5B57;&#x8ABF;&#x67FB;&#x30C4;&#x30FC;&#x30EB;&#x3068;Range&#x30B9;&#x30A4;&#x30C3;&#x30C1;) | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2017/11/graphemesplitterbyproduct/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2017-11-05T14:09:28">2017-11-05</time></span><span>更新: <time datetime="2017-11-05T14:09:28">2017-11-05</time></span></div><h1 id="graphemesplitter-range">GraphemeSplitter の副産物(絵文字調査ツールとRangeスイッチ)</h1>
+<p><a href="/blog/2017/10/graphemesplitter/">先週</a>書いた <a href="https://github.com/ufcpp/GraphemeSplitter">GraphemeSplitter</a> の話からの派生で2点。</p>
+<h2 id="web">常設の Web サイト化</h2>
+<p><a href="https://github.com/ufcpp/GraphemeSplitter/tree/master/RazorPageSample">GraphemeSplitter のサンプル</a>のつもりで ASP.NET Razor Page なページを1個作ったんですけども。</p>
+<p>その後。</p>
+<ul>
+<li>なんか気になる絵文字を見かけた</li>
+<li>絵文字なのでそれの正確な意味わからないくて気になる</li>
+<li>しょうがないからその絵文字でググったり</li>
+<li>文字コードを調べて U+1F680 でググったり(面倒)</li>
+<li>そうだ、こないだ作ったサンプル用のページでコード調べられる</li>
+<li>Visual Studio でわざわざデバッグ実行起動するのばかばかしくなってきた</li>
+<li>そうだ、<a href="http://ufcppfree.azurewebsites.net/Grapheme">Azure の Free プランでホストしとこう</a></li>
+<li>ついでだから便利機能(自分用)足しとこう(今ここ)</li>
+</ul>
+<p><img src="/assets/media/1147/%E3%82%AD%E3%83%A3%E3%83%97%E3%83%81%E3%83%A3.png" alt="ということで、書記素分割サンプルの今" /></p>
+<p>追加した機能は以下のようなもの。</p>
+<ul>
+<li>入力用のフォームを設置</li>
+<li>1コードポイントごとにばらした文字も表示</li>
+<li>文字コードに対して、「<a href="https://www.google.co.jp/search?q=U%2B1F680">U+1F680</a>」みたいなGoogle検索のURLのリンクを生成</li>
+</ul>
+<p>書記素分割というか、単なる絵文字調査ツールになりました。
+仕組み上、絵文字だけじゃなくて、ASCII顔文字の類も調べられます。</p>
+<p>ソースコードは「自分用」と言わんばかりに <a href="https://github.com/ufcpp/UfcppSample/tree/master/Tools/UnicodeService">UfcppSample リポジトリの Tools フォルダー以下</a>に置いてたり。</p>
+<h2 id="rangeswitch-case">Rangeベースのswitch-case</h2>
+<p>書記素分割のために、unicode.org 内の <a href="http://www.unicode.org/Public/10.0.0/ucd/auxiliary/GraphemeBreakProperty.txt">GraphemeBreakProperty</a> ってデータを参照して、そこからコード生成で<code>switch</code>ステートメントを作ったわけですが。<a href="https://github.com/ufcpp/GraphemeSplitter/blob/master/GraphemeBreakPropertyCodeGeneratorTest/Benchmark.switch.cs">2万行弱のクソコード</a>っぷりがひどく…</p>
+<p>で、以下のような最適化を掛けてほしいというの、<a href="https://github.com/dotnet/roslyn/issues/22997">とりあえず issue 立てとくことに</a>。</p>
+<pre><code class="language-csharp"><span class="comment">// 1コード1 case に展開 (最適化が掛かって結構速いけど、クソコード。コンパイル時間もやたらと遅い)</span>
+<span class="keyword">switch</span> (codePoint)
+{
+    <span class="keyword">case</span> <span class="number">1536</span>:
+    <span class="keyword">case</span> <span class="number">1537</span>:
+    <span class="keyword">case</span> <span class="number">1538</span>:
+    <span class="keyword">case</span> <span class="number">1539</span>:
+    <span class="keyword">case</span> <span class="number">1540</span>:
+    <span class="keyword">case</span> <span class="number">1541</span>:
+        <span class="comment">// ...</span>
+}
+
+<span class="comment">// when 句を使って範囲を表現 (コードは綺麗になったけど、条件判定が線形探索になっちゃって O(n)。遅い)</span>
+<span class="comment">// 二分探索するような最適化をしてほしい</span>
+<span class="keyword">switch</span> (codePoint)
+{
+    <span class="keyword">case</span> <span class="keyword">uint</span> i0 when <span class="number">1536</span> &lt;= i0 &amp;&amp; i0 &lt;= <span class="number">1541</span>:
+        <span class="comment">// ...</span>
+}
+
+<span class="comment">// こういう文法ほしい(C# 8とか9とかくらいでは入るかなぁ、きっと)</span>
+<span class="comment">// これなら、コードが綺麗、かつ、最適化しやすいのではないか</span>
+<span class="keyword">switch</span> (codePoint)
+{
+    <span class="keyword">case</span> <span class="number">1536</span>..<span class="number">1541</span>:
+        <span class="comment">// ...</span>
+}</code></pre>
+<p>まあさすがに、実用途の説明と、ベンチマークを添えとくと反応よさげ。<code>case 1536..1541</code> みたいな書き方であれば範囲の重複チェック(同じ値の
+<code>case</code> が複数あったらエラーにする)のとか、二分探索化する最適化もしやすそうということで、興味を持ってもらえたっぽい。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2017/11/">11&#x6708;</a></li><li><a href="/blog/2017/11/pickuproslyn1116/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 11/16: Microsoft Connect(); 2017</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

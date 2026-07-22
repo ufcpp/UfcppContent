@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Code-Aware&#x306A;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/package/pkgcodeawarelibrary/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="code-aware">Code-Awareなライブラリ</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<h5 class="version version6">Ver. 6</h5>
+<p>(C# 6の言語的な機能ではありませんが、C# 6と同世代(Visual Studio 2015世代)の技術なので、利用できるのはC# 6以降になります。)</p>
+<p><a href="/study/csharp/misc/misc_roslyn/#compiler-platform">.NET Compiler Platform</a>を使うことで、
+コードを解析してその問題点の指摘やその修正方法を提供できる、コード アナライザーというものを作れます。</p>
+<p>ライブラリを作る際、そのライブラリに特化したコード アナライザーを作って同梱して配ることで、
+「ライブラリ自身が、ライブラリ利用側のコードを理解して、問題点の指摘やその修正方法まで提供」ということが実現できます。</p>
+<p>こういう、「利用側のコードを理解するライブラリ」を、Code-Aware なライブラリと呼びます。</p>
+<h5 id="section-1"><a id="sec-generated-title-2"></a>サンプル</h5>
+<p><a href="https://github.com/ufcpp/UfcppSample/tree/master/Chapters/DevEnv/CodeAwareLibrarySample">https://github.com/ufcpp/UfcppSample/tree/master/Chapters/DevEnv/CodeAwareLibrarySample</a></p>
+<h2 id="section-2"><a id="sec-generated-title-3"></a>コード アナライザー</h2>
+<p>(アナライザー自体の説明はたぶんそのうち別ページに分ける。分けたあかつきには:</p>
+<ol>
+<li>C#はリアルタイムに、書いてるそばからエラー・警告出してもらえる言語。</li>
+<li>Visual Studio以外もRoslyn対応そのうちするはず。Xamarinは近々？VSチームがOmniSharpにも協力してたはず。)</li>
+</ol>
+<p><a href="/study/csharp/cheatsheet/ap_ver6/">C# 6 の新機能</a>の冒頭で触れていますが、しばらくの間、C#コンパイラーの再実装に工数を割いていて、C# 6は言語機能としては大きなものがあまりありません。言語的に大きな機能追加がなかった代わりと言ってはなんですが、新しくなったコンパイラーには別の「売り」があります。それが、コード アナライザーの作成です。</p>
+<p>コード アナライザーは、「コードを解析するもの」という名前通り、C#ソースコードを解析して、問題点を指摘したり、その修正機能を提供するものです。こういう解析機能を、誰でも自由に作れるようになりました。</p>
+<p>その結果、C#コンパイラー自身では提供しにくいような、以下の様なコード解析が実現できます。</p>
+<ol>
+<li>経験則的な警告・エラーの提示</li>
+</ol>
+<ul>
+<li>機械的な判断だと間違う可能性のあるものは、コンパイラー機能としては実装しにくい</li>
+</ul>
+<ol start="2">
+<li>チーム内でのローカル ルールの解析</li>
+</ol>
+<ul>
+<li>ルールはチームごとに違ったりするので、コンパイラーにはわからない</li>
+</ul>
+<ol start="3">
+<li>ライブラリ固有の事情</li>
+</ol>
+<ul>
+<li>特定のライブラリのためだけのコード解析は、標準では提供すべきではない</li>
+</ul>
+<p>本稿の主題は3つ目の「ライブラリ固有の事情」になります。</p>
+<h2 id="section-3"><a id="sec-generated-title-4"></a> <a id="libary-specific"></a>ライブラリ固有の事情の例</h2>
+<p>簡単な例を上げてみましょう。以下のようなコードをライブラリ化することを考えます。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> FluentArithmetic
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> FluentExtensions
+    {
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> Add(<span class="keyword">this</span> <span class="keyword">int</span> x, <span class="keyword">int</span> y) =&gt; x + y;
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> Sub(<span class="keyword">this</span> <span class="keyword">int</span> x, <span class="keyword">int</span> y) =&gt; x - y;
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> Mul(<span class="keyword">this</span> <span class="keyword">int</span> x, <span class="keyword">int</span> y) =&gt; x * y;
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> Div(<span class="keyword">this</span> <span class="keyword">int</span> x, <span class="keyword">int</span> y) =&gt; x / y;
+    }
+}</code></pre>
+<p><code>a + b - c</code> などと書く代わりに、<code>a.Add(b).Sub(c)</code> と書けるようにするコードです。特に使い道はないんですが、「ライブラリ固有の事情」の説明にはなかなか手頃だと思います。</p>
+<p>単純な四則演算なわけですから、いくつかの経験則が働くでしょう。ここでは2つほど挙げると、以下のようなものがあります。</p>
+<ul>
+<li><code>1.Div(0)</code> というような、「0割り」は実行してみるまでもなくエラーになることがわかっている</li>
+<li><code>1.Add(2)</code> というような、<a href="/study/csharp/start/st_variable/#literal">リテラル</a>同士の演算は、<code>3</code> などに置き換えて最適化できる</li>
+</ul>
+<p>「<code>Div(0)</code> と書いたら常にエラーを起こす」というのは完全にこのライブラリ固有の事情になります。このライブラリのこの<code>Div</code>メソッドに限り、常に実行時エラーを起こすんだからもうコンパイル時にエラーにしたい。しかし、コンパイラーは、そんな特定のライブラリだけの特殊対応なんてできません。こんな時こそコード アナライザーの出番です。</p>
+<h2 id="section-4"><a id="sec-generated-title-5"></a> <a id="libary-specific-analyzer"></a>ライブラリ固有のコード アナライザーの例</h2>
+<p>ということで、以下のような機能を提供するコード アナライザーを考えます。</p>
+<ul>
+<li><code>Div(0)</code> を見たら問答無用でコンパイル エラーにする</li>
+<li><code>1.Add(2)</code> とかのリテラル同士の演算は最適化できる旨、情報を出す
+<ul>
+<li>この最適化を自動的に行う「クイック アクション」を提供する</li>
+</ul>
+</li>
+</ul>
+<p>実際に実装してみた感じが以下の通り。</p>
+<p>まず、<code>Div(0)</code>エラー。ちゃんとコンパイル エラーです。直さないとコンパイルできません。</p>
+<p><img src="/assets/media/1007/codeawarelibrary1.png" alt="Div(0) エラー" /></p>
+<p>次が、<code>1.Add(2)</code> は最適化できるという情報。この場合、別にエラーにもならないし、警告も出ません。</p>
+<p><img src="/assets/media/1008/codeawarelibrary2.png" alt="リテラル同士の演算" /></p>
+<p>エラーにも警告にもなりませんが、該当箇所には電球(lightbulb)マークがついています。この電球をクリックする(もしくは、<code>Ctrl+.</code> ショートカットキーを押す)と、コードの自動修正(code fix)が働きます。</p>
+<p><img src="/assets/media/1009/codeawarelibrary3.png" alt="電球マークをクリック" /></p>
+<p>実行すると以下のようになるはずです。</p>
+<p><img src="/assets/media/1010/codeawarelibrary4.png" alt="自動修正の結果" /></p>
+<p>ちなみに、Visual Studio的には、この「電球マークを起点として何か処理を掛ける」操作を「クイック アクション」といいます。</p>
+<h2 id="code-aware-1"><a id="sec-generated-title-6"></a> <a id="code-aware"></a>Code-Aware ライブラリ</h2>
+<p><a href="https://github.com/ufcpp/UfcppSample/tree/master/DevEnv/CodeAwareLibrarySample">サンプル</a>は実際にこの例のライブラリとそれ用コード アナライザーを実装したものです。</p>
+<ul>
+<li>FluentArithmetic.dll: ライブラリ本体。<code>a.Add(b).Sub(c)</code> という類の書き方で整数の四則演算をするためのライブラリ。</li>
+<li>FluentArithmeticAnalyzer.dll: FluentArithmetic 専用のコード アナライザー。</li>
+</ul>
+<p>ライブラリ専用なわけですから、コード アナライザーはライブラリ本体とセットで配布すべきでしょう。
+そうすることで、ライブラリ自身がライブラリ利用側のコードを見て、問題点の指摘やその修正方法まで提供できる状態になります。こういう状態のライブラリを、「利用側のコードまで理解する」、「利用側のコードを意識している」という意味で「Code-Aware」と言います。</p>
+<p>要するに、以下の様なパッケージを作って配布します。</p>
+<ul>
+<li>ライブラリと、それ用コード アナライザーを同梱する</li>
+<li>パッケージ インストール時に走るスクリプトで、コード アナライザーへの参照を足す</li>
+</ul>
+<p>（書きかけ）以下、作成手順の説明</p>
+<ul>
+<li>テンプレート通りに「Analyzer with Code Fix (NuGet + VSIX)」を作れば大体それっぽいものできてる
+<ul>
+<li>nuspec とか、install.ps1 最初からある</li>
+</ul>
+</li>
+<li>これに、ライブラリ本体の参照を足す</li>
+<li>今回の場合、nuspec とか install.ps1 とか、「ビルド後に実行するコマンドライン」でNuGetコマンドを呼ぶ処理は別プロジェクトに分離・移動</li>
+<li>コード アナライザーの動作確認は Test プロジェクトの実行で
+<ul>
+<li>Vsix プロジェクトを実行すると別 Visual Studio が立ち上がってデバッグ実行できるんだけど、重いし、エラーが出た時悲惨だし</li>
+</ul>
+</li>
+<li>一応 NuGet Gallary においてある: <a href="https://www.nuget.org/packages/FluentArithmetic/">https://www.nuget.org/packages/FluentArithmetic/</a></li>
+</ul>
+<p>（書きかけ）どういう場合に有効かの例をもう何例か列挙</p>
+<ul>
+<li>JSONパーサー ライブラリ同梱で、文字列リテラル中のJSONを解析</li>
+<li>正規表現ライブラリ同梱で、<code>Regex(&quot;ここの解析&quot;)</code></li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/package/">&#x30D1;&#x30C3;&#x30B1;&#x30FC;&#x30B8;&#x7BA1;&#x7406;</a></li><li><a href="/study/csharp/package/project/">&#x30D7;&#x30ED;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x5206;&#x5272;</a></li><li><a href="/study/csharp/package/toplevelaccessibility/">&#x30C8;&#x30C3;&#x30D7; &#x30EC;&#x30D9;&#x30EB;&#x306E;&#x30A2;&#x30AF;&#x30BB;&#x30B7;&#x30D3;&#x30EA;&#x30C6;&#x30A3;</a></li><li><a href="/study/csharp/package/typeforwarding/">&#x578B;&#x30D5;&#x30A9;&#x30EF;&#x30FC;&#x30C7;&#x30A3;&#x30F3;&#x30B0;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

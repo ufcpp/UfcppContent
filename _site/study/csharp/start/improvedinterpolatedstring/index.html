@@ -1,0 +1,471 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>C# 10.0 &#x306E;&#x88DC;&#x9593;&#x6587;&#x5B57;&#x5217;&#x306E;&#x6539;&#x5584; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/start/improvedinterpolatedstring/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="c-10.0">C# 10.0 の補間文字列の改善</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<h5 class="version version10">Ver. 10</h5>
+<p>C# 10.0 で、補間文字列(interpolated string)のコンパイル結果に変更が掛かって、
+これまでよりもかなり高速化されました。
+詳細は気にせず単に高速化の恩恵だけを受けたい場合、
+言語バージョン、SDK バージョンを C# 10.0/.NET  6.0 にアップデートして再コンパイルするだけで速くなります。</p>
+<p>一方、本項では、
+C# 9.0 までの補間文字列の問題点と、
+C# 10.0 から補間文字列がどのように展開されるかについて説明します。
+仕組みがわかれば、補間文字列の解釈を結構自由にカスタマイズすることができます。</p>
+<p>サンプル コード: <a href="https://github.com/ufcpp/UfcppSample/tree/master/Demo/2021/Csharp10/InterpolatedStrings">InterpolatedStrings</a></p>
+<h2 id="c-9.0"><a id="sec-generated-title-2"></a> <a id="csharp9"></a>C# 9.0 までの補間文字列</h2>
+<p>例えば以下のようなコードがあったとします。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">string</span> m(<span class="keyword">int</span> a, <span class="keyword">int</span> b, <span class="keyword">int</span> c, <span class="keyword">int</span> d) =&gt; $<span class="string">&quot;{a}.{b}.{c}.{d}&quot;</span>;</code></pre>
+<p>C# 9.0 までは、このコードは以下のように展開されていました。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">string</span> m(<span class="keyword">int</span> a, <span class="keyword">int</span> b, <span class="keyword">int</span> c, <span class="keyword">int</span> d) =&gt; <span class="keyword">string</span>.Format(<span class="string">&quot;{0}.{1}.{2}.{3}&quot;</span>, a, b, c, d);</code></pre>
+<p>要は <code>string.Format</code> メソッド呼び出しへの展開でした。
+ちなみに、ここで呼ばれている <code>Format</code> メソッドは以下のようなオーバーロードです。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">string</span> Format(<span class="keyword">string</span> format, <span class="keyword">params</span> <span class="keyword">object</span>?[] args)</code></pre>
+<p>この展開方法では以下のようなコストがどうしても避けられず、用途によっては使うのがためらわれていました。</p>
+<ul>
+<li><a href="/study/csharp/structured/sp_params/"><code>params</code></a> を介していて、<code>new object[4]</code> のコストが発生する</li>
+<li><code>object</code> を介していて、<code>int</code> などの値を渡すと<a href="/study/csharp/resource/rmboxing/">ボックス化</a> のコストが発生する</li>
+<li>(ログレベルの変更などで)実際には文字列を全く使わない状況でも必ず文字列インスタンスが作られる</li>
+<li><a href="/study/csharp/resource/span/"><code>Span</code> 構造体</a>を渡せない</li>
+</ul>
+<p>そこで、C# 10.0 では以下のように、<code>AppendLiteral</code>, <code>AppendFormatted</code> メソッドを何度も呼び出す方針に変更されました。</p>
+<pre><code class="language-csharp">DefaultInterpolatedStringHandler handler = <span class="keyword">new</span> DefaultInterpolatedStringHandler(<span class="number">3</span>, <span class="number">4</span>);
+handler.AppendFormatted(a);
+handler.AppendLiteral(<span class="string">&quot;.&quot;</span>);
+handler.AppendFormatted(b);
+handler.AppendLiteral(<span class="string">&quot;.&quot;</span>);
+handler.AppendFormatted(c);
+handler.AppendLiteral(<span class="string">&quot;.&quot;</span>);
+handler.AppendFormatted(d);
+<span class="keyword">string</span> s = handler.ToStringAndClear();</code></pre>
+<h2 id="section-1"><a id="sec-generated-title-3"></a> <a id="handler-pattern"></a>ハンドラー パターン</h2>
+<p>前述の通り、C# 10.0 からは補間文字列(<code>$&quot;&quot;</code>)を<code>AppendFormatted</code>や<code>AppendLiteral</code>メソッドに展開します。
+これは<a href="/study/csharp/misc/miscpatternbased/#key-pattern-based">パターン ベース</a>になっていて、
+所定のパターンを満たしていればどんな型であっても可能です。</p>
+<p>まず、以下の条件を満たす型を補間文字列ハンドラー (interpolated string handler)と呼びます。
+(以下、このページ内では単に「ハンドラー型」と呼びます。)</p>
+<ul>
+<li><code>InterpolatedStringHandler</code> 属性(<code>System.Runtime.CompilerServices</code>名前空間)が付いている</li>
+<li>最低限、以下の引数を持つコンストラクターを持つ
+<ul>
+<li><code>int literalLength</code>: 補間文字列のリテラル部分(<code>$&quot;&quot;</code> の中から <code>{}</code> を除いた部分)の文字列長</li>
+<li><code>int formattedCount</code>: <code>{}</code> (interpolation hole: 補間穴)の個数</li>
+<li>追加で、<code>out bool</code> なアウト引数を持てる</li>
+<li><code>InterpolatedStringHandlerArgument</code> 属性と組み合わせ得て、追加で任意の引数を足せる</li>
+</ul>
+</li>
+<li>リテラル部分を書き込むための <code>AppendLiteral(string)</code> メソッドを持つ
+<ul>
+<li><code>void</code> か <code>bool</code> 戻り値(後述)</li>
+</ul>
+</li>
+<li><code>{}</code> の部分を書き込むための `AppendFormatted(T)' メソッドを持つ
+<ul>
+<li><code>void</code> か <code>bool</code> 戻り値(後述)</li>
+<li>追加で <code>int alignment</code> 引数(フォーマット時の幅指定)を持てる</li>
+<li>追加で <code>string format</code> 引数(フォーマット指定文字列)を持てる</li>
+</ul>
+</li>
+</ul>
+<p>最低ライン必要なメンバーをそろえた型を作ると以下のようになります。
+(本当に「コンパイルが通る」レベルで、中身が何もないので <code>Dummy</code> という名前にしてあります。)</p>
+<pre><code class="language-csharp">[System.Runtime.CompilerServices.InterpolatedStringHandler]
+<span class="keyword">public</span> <span class="keyword">struct</span> DummyHandler
+{
+    <span class="keyword">public</span> DummyHandler(<span class="keyword">int</span> literalLength, <span class="keyword">int</span> formattedCount) { }
+    <span class="keyword">public</span> <span class="keyword">void</span> AppendLiteral(<span class="keyword">string</span> s) { }
+    <span class="keyword">public</span> <span class="keyword">void</span> AppendFormatted&lt;T&gt;(T x) { }
+}</code></pre>
+<h3 id="section-2"><a id="sec-generated-title-4"></a> <a id="assign-to-handler"></a>ハンドラー型への直接代入</h3>
+<p>まず、補間文字列をハンドラー型に直接渡す場合、
+コンストラクター、<code>AppendLiteral</code>、<code>AppendFormatted</code> メソッドの呼び出しに展開されます。</p>
+<p>例えば以下のようなコードがあるとき、</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> m(<span class="keyword">int</span> a, <span class="keyword">int</span> b)
+{
+    DummyHandler h = $<span class="string">&quot;{a} / {b}&quot;</span>;
+}</code></pre>
+<p>以下のように展開されます。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> m(<span class="keyword">int</span> a, <span class="keyword">int</span> b)
+{
+    DummyHandler temp = <span class="keyword">new</span>(<span class="number">3</span>, <span class="number">2</span>);
+    temp.AppendFormatted(a);
+    temp.AppendLiteral(<span class="string">&quot; / &quot;</span>);
+    temp.AppendFormatted(b);
+    DummyHandler h = temp;
+}</code></pre>
+<h3 id="string"><a id="sec-generated-title-5"></a> <a id="assign-to-string"></a>string への代入</h3>
+<p><code>string</code> 型は特殊で、補間文字列を <code>string</code> 型に渡す場合、
+以下のような展開が行われます。</p>
+<ul>
+<li><code>DefaultInterpolatedStringHandler</code> 型(<code>System.Runtime.CompilerServices</code> 名前空間)が利用可能な場合
+<ul>
+<li>まず、この型に対する代入処理と同様に <code>AppendLiteral</code>、<code>AppendFormatted</code> メソッドを呼び出す</li>
+<li>最後に <code>DefaultInterpolatedStringHandler.ToStringAndClear</code> メソッドを呼んで文字列化する</li>
+</ul>
+</li>
+<li>利用できない場合、<code>string.Format</code> に展開する(C# 9.0 までの挙動と同じ)</li>
+</ul>
+<p><code>DefaultInterpolatedStringHandler</code> 型が存在するならほとんどの場合はこれを利用可能です。
+そして、この型は .NET 6.0 からは標準ライブラリに入っています。
+例えば以下のようなコードを書いて .NET 6.0 向けにコンパイルした場合、</p>
+<pre><code class="language-csharp"><span class="keyword">string</span> m(<span class="keyword">int</span> a, <span class="keyword">int</span> b) =&gt; $<span class="string">&quot;{a} / {b}&quot;</span>;</code></pre>
+<p>以下のように展開されます。
+(<code>DefaultInterpolatedStringHandler</code> 型への代入の展開結果 + <code>ToStringAndClear</code> 呼び出しみたいなコードになります。)</p>
+<pre><code class="language-csharp"><span class="keyword">string</span> m(<span class="keyword">int</span> a, <span class="keyword">int</span> b)
+{
+    DefaultInterpolatedStringHandler h = <span class="keyword">new</span>(<span class="number">3</span>, <span class="number">2</span>);
+    h.AppendFormatted(a);
+    h.AppendLiteral(<span class="string">&quot; / &quot;</span>);
+    h.AppendFormatted(b);
+    <span class="keyword">return</span> h.ToStringAndClear();
+}</code></pre>
+<p><code>DefaultInterpolatedStringHandler</code> 型自体は存在するのに補間文字列として利用できない状況は、
+補間穴(<code>{}</code>)の中に <a href="/study/csharp/async/sp5_async/#async"><code>await</code></a> を含む場合などです。
+<code>DefaultInterpolatedStringHandler</code> 型は <a href="/study/csharp/resource/refstruct/">ref 構造体</a>なので、<code>await</code> と共存できません。
+例えば以下のようなコードを書くと <code>string.Format</code> に展開されます。</p>
+<pre><code class="language-csharp"><span class="keyword">async</span> Task&lt;<span class="keyword">string</span>&gt; m(Task&lt;<span class="keyword">int</span>&gt; a) =&gt; $<span class="string">&quot;result: {await a}&quot;</span>;</code></pre>
+<p>ちなみに、<code>DefaultInterpolatedStringHandler</code> 型は標準ライブラリ中のものでなくても構いません。
+もし .NET 5.0 以前をターゲットにした場合でも同様の最適化が掛かって欲しいなら、
+<code>DefaultInterpolatedStringHandler</code> 型を移植すれば可能です。
+.NET 6.0 にしかない機能をちらほら使っているので 5.0 以前への移植は<a href="https://github.com/ufcpp/UfcppSample/issues/355#issuecomment-916822451">多少面倒ですが、できなくはないレベルかと思います</a>。</p>
+<h3 id="appendformatted"><a id="sec-generated-title-6"></a> <a id="AppendFormatted-overload"></a>AppendFormatted メソッドのオーバーロード</h3>
+<p>ハンドラー型を作る際、<code>AppendFormatted</code> メソッドはいくつオーバーロードがあっても構いません。
+よく使いそうなのは、ジェネリック型引数として使えない <code>ReadOnlySpan&lt;char&gt;</code> や、
+その他最適化のために具象型を直接受け取りたい場合(<code>string</code> など)用のオーバーロードなどです。</p>
+<pre><code class="language-csharp">DummyHandler h = $<span class="string">&quot;{123}, {&quot;</span>abc<span class="string">&quot;}, {stackalloc char[1]}&quot;</span>;
+
+[System.Runtime.CompilerServices.InterpolatedStringHandler]
+<span class="keyword">public</span> <span class="keyword">struct</span> DummyHandler
+{
+    <span class="keyword">public</span> DummyHandler(<span class="keyword">int</span> literalLength, <span class="keyword">int</span> formattedCount) { }
+    <span class="keyword">public</span> <span class="keyword">void</span> AppendLiteral(<span class="keyword">string</span> s) =&gt; Console.WriteLine(<span class="string">&quot;(literal)&quot;</span>);
+    <span class="keyword">public</span> <span class="keyword">void</span> AppendFormatted&lt;T&gt;(T x) =&gt; Console.WriteLine(<span class="string">&quot;ジェネリック版&quot;</span>);
+    <span class="keyword">public</span> <span class="keyword">void</span> AppendFormatted(<span class="keyword">string</span> x) =&gt; Console.WriteLine(<span class="string">&quot;string 版&quot;</span>);
+    <span class="keyword">public</span> <span class="keyword">void</span> AppendFormatted(ReadOnlySpan&lt;<span class="keyword">char</span>&gt; x) =&gt; Console.WriteLine(<span class="string">&quot;ReadOnlySpan 版&quot;</span>);
+}</code></pre>
+<pre><code class="language-console">ジェネリック版
+(literal)
+string 版
+(literal)
+ReadOnlySpan 版</code></pre>
+<h3 id="section-3"><a id="sec-generated-title-7"></a> <a id="formatting"></a>書式指定</h3>
+<p>補間文字列の <code>{}</code> の中では<a href="/study/csharp/start/st_string/#formatting">書式指定</a>ができます。
+(ハンドラー型が使える状況下で)書式指定した場合、<code>AppendFormatted</code> メソッドの第2、第3引数に書式が渡ります。
+例えば以下のようなコードを書いた場合、</p>
+<pre><code class="language-csharp"><span class="keyword">string</span> m(<span class="keyword">int</span> a, <span class="keyword">int</span> b, <span class="keyword">int</span> c) =&gt; $<span class="string">&quot;({a, 8:X}) ({b:X}) ({c,4})&quot;</span>;</code></pre>
+<p>以下のように展開されます。</p>
+<pre><code class="language-csharp"><span class="keyword">string</span> m(<span class="keyword">int</span> a, <span class="keyword">int</span> b, <span class="keyword">int</span> c)
+{
+    DefaultInterpolatedStringHandler h = <span class="keyword">new</span>(<span class="number">8</span>, <span class="number">3</span>);
+    h.AppendLiteral(<span class="string">&quot;(&quot;</span>);
+    h.AppendFormatted(a, <span class="number">8</span>, <span class="string">&quot;X&quot;</span>);
+    h.AppendLiteral(<span class="string">&quot;) (&quot;</span>);
+    h.AppendFormatted(b, <span class="string">&quot;X&quot;</span>);
+    h.AppendLiteral(<span class="string">&quot;) (&quot;</span>);
+    h.AppendFormatted(c, <span class="number">4</span>);
+    h.AppendLiteral(<span class="string">&quot;)&quot;</span>);
+    <span class="keyword">return</span> h.ToStringAndClear();
+}</code></pre>
+<p>ハンドラー型を自作する場合、<code>AppendFormatted</code> メソッドの引数は、
+以下のようにオーバーロードをいくつか用意しても構いませんし、</p>
+<pre><code class="language-csharp">    <span class="keyword">public</span> <span class="keyword">void</span> AppendFormatted&lt;T&gt;(T x) { }
+    <span class="keyword">public</span> <span class="keyword">void</span> AppendFormatted&lt;T&gt;(T x, <span class="keyword">int</span> alignment) { }
+    <span class="keyword">public</span> <span class="keyword">void</span> AppendFormatted&lt;T&gt;(T x, <span class="keyword">string</span> format) { }
+    <span class="keyword">public</span> <span class="keyword">void</span> AppendFormatted&lt;T&gt;(T x, <span class="keyword">int</span> alignment, <span class="keyword">string</span> format) { }</code></pre>
+<p>以下のようにオプション引数で1つのメソッドにまとめても構いません。</p>
+<pre><code class="language-csharp">    <span class="keyword">public</span> <span class="keyword">void</span> AppendFormatted&lt;T&gt;(T x, <span class="keyword">int</span>? alignment = <span class="keyword">null</span>, <span class="keyword">string</span>? format = <span class="keyword">null</span>) { }</code></pre>
+<h3 id="bool"><a id="sec-generated-title-8"></a> <a id="bool-return"></a>bool 戻り値</h3>
+<p>ハンドラー型のコンストラクターでは第3引数に <code>out bool</code> を、
+<code>AppendLiteral</code>、<code>AppendFormatted</code> メソッドでは戻り値として <code>bool</code> を返すことができます。
+この場合、false が返ってきたら処理を途中で打ち切るようなコードに展開されます。
+例えば以下のようなハンドラー型があったとします。</p>
+<pre><code class="language-csharp">[InterpolatedStringHandler]
+<span class="keyword">public</span> <span class="keyword">struct</span> DummyHandler
+{
+    <span class="keyword">public</span> DummyHandler(<span class="keyword">int</span> literalLength, <span class="keyword">int</span> formattedCount, <span class="keyword">out</span> <span class="keyword">bool</span> result) =&gt; result = <span class="keyword">true</span>;
+    <span class="keyword">public</span> <span class="keyword">bool</span> AppendLiteral(<span class="keyword">string</span> s) =&gt; <span class="keyword">true</span>;
+    <span class="keyword">public</span> <span class="keyword">bool</span> AppendFormatted&lt;T&gt;(T x) =&gt; <span class="keyword">true</span>;
+}</code></pre>
+<p>このハンドラー型に対して、例えば以下のように補間文字列を渡した場合、</p>
+<pre><code class="language-csharp">DummyHandler m(<span class="keyword">int</span> a, <span class="keyword">int</span> b, <span class="keyword">int</span> c, <span class="keyword">int</span> d) =&gt; $<span class="string">&quot;{a}.{b}.{c}.{d}&quot;</span>;</code></pre>
+<p>以下のような展開結果になります。</p>
+<pre><code class="language-csharp">DummyHandler m(<span class="keyword">int</span> a, <span class="keyword">int</span> b, <span class="keyword">int</span> c, <span class="keyword">int</span> d)
+{
+    DummyHandler h = <span class="keyword">new</span>(<span class="number">3</span>, <span class="number">4</span>, <span class="keyword">out</span> <span class="keyword">var</span> result);
+    <span class="keyword">if</span> (result
+        &amp;&amp; h.AppendFormatted(a)
+        &amp;&amp; h.AppendLiteral(<span class="string">&quot;.&quot;</span>)
+        &amp;&amp; h.AppendFormatted(b)
+        &amp;&amp; h.AppendLiteral(<span class="string">&quot;.&quot;</span>)
+        &amp;&amp; h.AppendFormatted(c)
+        &amp;&amp; h.AppendLiteral(<span class="string">&quot;.&quot;</span>))
+        h.AppendFormatted(d);
+    <span class="keyword">return</span> h;
+}</code></pre>
+<p>これを使って、例えば、「一定文字数を超えたらそこで処理を打ち切り」とか、
+「ログ レベル的に全く文字列化処理が必要ない場合、 <code>AppendLiteral</code>/<code>AppendFormatted</code> を一切呼ばない」とかができます。</p>
+<h3 id="interpolatedstringhandlerargument"><a id="sec-generated-title-9"></a> <a id="InterpolatedStringHandlerArgument"></a>InterpolatedStringHandlerArgument 属性</h3>
+<p><code>InterpolatedStringHandlerArgument</code> 属性(<code>System.Runtime.CompilerServices</code> 名前空間)を使って、
+ハンドラー型のコンストラクターに追加の引数を渡すことができます。
+例えば以下のような使い方をします。
+(実際、<code>DefaultInterpolatedStringHandler</code> がそういう使い方をしています。)</p>
+<ul>
+<li>カルチャー指定して文字列を作りたいとき用に、引数で <code>IFormatProvider</code> を渡す</li>
+<li>文字列を作る際に使うバッファーとして外から <code>Span&lt;char&gt;</code> を渡す</li>
+</ul>
+<p>これを使うためにはまず、以下のようにコンストラクターに追加の引数を持ったハンドラー型を作ります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+[InterpolatedStringHandler]
+<span class="keyword">public</span> <span class="keyword">ref</span> <span class="keyword">struct</span> DummyHandler
+{
+    <span class="keyword">public</span> DummyHandler(<span class="keyword">int</span> literalLength, <span class="keyword">int</span> formattedCount) : <span class="keyword">this</span>(literalLength, formattedCount, <span class="keyword">null</span>, <span class="keyword">default</span>) { }
+
+    <span class="comment">// 追加の引数持ち</span>
+    <span class="keyword">public</span> DummyHandler(<span class="keyword">int</span> literalLength, <span class="keyword">int</span> formattedCount, IFormatProvider? provider)
+        : <span class="keyword">this</span>(literalLength, formattedCount, provider, <span class="keyword">default</span>) { }
+
+    <span class="keyword">public</span> DummyHandler(<span class="keyword">int</span> literalLength, <span class="keyword">int</span> formattedCount, IFormatProvider? provider, Span&lt;<span class="keyword">char</span>&gt; initialBuffer)
+    <span class="comment">// 以下略</span>
+}</code></pre>
+<p>次に、以下のように、<code>InterpolatedStringHandlerArgument</code> 属性を使って、メソッドの引数とハンドラー型のコンストラクター引数の結び付けるメソッドを書きます。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> Formatter
+{
+    <span class="comment">// 追加の引数なし。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Format(DummyHandler handler)
+    <span class="comment">// 省略</span>
+
+    <span class="comment">// provider を追加。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Format(
+        IFormatProvider provider,
+        [InterpolatedStringHandlerArgument(<span class="string">&quot;provider&quot;</span>)] DummyHandler handler)
+        =&gt; Format(handler);
+
+    <span class="comment">// provider と initialBuffer を追加。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Format(
+        IFormatProvider provider, Span&lt;<span class="keyword">char</span>&gt; initialBuffer,
+        [InterpolatedStringHandlerArgument(<span class="string">&quot;provider&quot;</span>, <span class="string">&quot;initialBuffer&quot;</span>)] DummyHandler handler)
+        =&gt; Format(handler);
+}</code></pre>
+<p>そしてこれらのメソッドを呼ぶと、ハンドラー型に追加の引数が渡るようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Globalization;
+
+<span class="comment">// Format(DummyHandler) を呼んでて、</span>
+<span class="comment">// new DummyHandler(5, 2) が作られる。</span>
+Formatter.Format($<span class="string">&quot;abc {1} {2}&quot;</span>);
+
+<span class="comment">// Format(IFormatProvider, DummyHandler) を呼んでて、</span>
+<span class="comment">// new DummyHandler(5, 2, CultureInfo.InvariantCulture) が作られる。</span>
+Formatter.Format(CultureInfo.InvariantCulture, $<span class="string">&quot;abc {1} {2}&quot;</span>);
+
+<span class="comment">// Format(IFormatProvider, Span&lt;char&gt;, DummyHandler) を呼んでて、</span>
+<span class="comment">// new DummyHandler(5, 2, CultureInfo.InvariantCulture, stackalloc char[128]) が作られる。</span>
+Formatter.Format(CultureInfo.InvariantCulture, <span class="keyword">stackalloc</span> <span class="keyword">char</span>[<span class="number">128</span>], $<span class="string">&quot;abc {1} {2}&quot;</span>);</code></pre>
+<h2 id="section-4"><a id="sec-generated-title-10"></a> <a id="overload-resolution"></a>オーバーロード解決</h2>
+<p>C# 10.0 でハンドラー型の仕様が追加され、
+C# 9.0 まででも <a href="/study/csharp/start/st_string/#FormattableString">FormattableString</a> の仕様があるので、
+補間文字列を受け取る候補となるメソッドを3つ同時に定義できます。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(DefaultInterpolatedStringHandler _) =&gt; Console.WriteLine(<span class="string">&quot;handler&quot;</span>);
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">string</span> _) =&gt; Console.WriteLine(<span class="string">&quot;string&quot;</span>);
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(IFormattable _) =&gt; Console.WriteLine(<span class="string">&quot;formattable&quot;</span>);</code></pre>
+<p>こういう状況では、ハンドラー型 &gt; <code>string</code> 型 &gt; FormattableString
+(ハンドラー型が一番呼ばれやすい) という優先順位になります。</p>
+<pre><code class="language-csharp"><span class="comment">// ハンドラー型最優先。</span>
+M($<span class="string">&quot;{1}&quot;</span>); <span class="comment">// handler</span>
+
+<span class="comment">// ただの文字列の場合は string に行く。</span>
+M(<span class="string">&quot;abc&quot;</span>); <span class="comment">// string</span>
+
+<span class="comment">// ちょっと混乱しそうなのが、const になる場合に限り、 $ がついてても string 行き。</span>
+M($<span class="string">&quot;&quot;</span>); <span class="comment">// string</span>
+M($<span class="string">&quot;abc {&quot;</span>abc<span class="string">&quot;} abc&quot;</span>); <span class="comment">// string</span>
+
+<span class="comment">// もちろん、キャストしてしまえば任意に呼び分け可能。</span>
+M($<span class="string">&quot;{1}&quot;</span>); <span class="comment">// handler</span>
+M((<span class="keyword">string</span>)$<span class="string">&quot;{1}&quot;</span>); <span class="comment">// string</span>
+M((IFormattable)$<span class="string">&quot;{1}&quot;</span>); <span class="comment">// formattable</span></code></pre>
+<p><code>string</code> 型が真ん中なのがちょっと不思議な仕様ですが、
+これは FormattableString のときの反省からです。
+FormattableString を優先してほしいのに優先してもらえなくて困るので、
+<a href="/study/csharp/start/st_string/#FormattableString-overload"><code>RawString</code></a>みたいな「<code>string</code> 型を覆った別の型」を1段挟むことで無理やり FormattableString 優先になるようにする手法が知られていました。
+ハンドラー型では同じ轍を踏まないよう、最初からハンドラー型優先になっています。</p>
+<p>ちなみに、ハンドラーの条件を満たす型が複数あって、
+それでオーバーロードした場合、オーバーロード解決できません。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Caller()
+{
+    <span class="comment">// 優先度は付かないので不明瞭エラーを起こす。</span>
+    M($<span class="string">&quot;&quot;</span>);
+
+    <span class="comment">// 明示的にキャストすれば呼び分け可能。</span>
+    M((Handler1)$<span class="string">&quot;&quot;</span>);
+    M((Handler2)$<span class="string">&quot;&quot;</span>);
+}
+
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(Handler1 _) =&gt; Console.WriteLine(<span class="string">&quot;Handler1&quot;</span>);
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(Handler2 _) =&gt; Console.WriteLine(<span class="string">&quot;Handler2&quot;</span>);</code></pre>
+<h2 id="net-6.0-api"><a id="sec-generated-title-11"></a> <a id="api-in-net6"></a>.NET 6.0 で追加された API</h2>
+<p>ここまで補間文字列ハンドラーの説明してきましたが、
+実際のところ、ハンドラー型を自作することは少ないでしょう。
+一方で、標準ライブラリ中に存在するハンドラー型(を使っているメソッド)を使うことで、
+補間文字列のパフォーマンス改善によって間接的な利益になる場面は多々あると思います。</p>
+<p>C# 10.0 と同時に出た .NET 6.0 ではハンドラー型や、それを使ったメソッドがいくつか追加されています。
+本項では最後に、.NET 6.0 で追加されたいくつかのメソッドを紹介して終わりにしたいと思います。</p>
+<h3 id="string.create"><a id="sec-generated-title-12"></a> <a id="string.Create"></a>string.Create</h3>
+<p><code>string.Create</code> に以下の2つのオーバーロードが追加されています。</p>
+<ul>
+<li><a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.string.create?view=net-6.0#System_String_Create_System_IFormatProvider_System_Runtime_CompilerServices_DefaultInterpolatedStringHandler__"><code>Create(IFormatProvider, DefaultInterpolatedStringHandler)</code></a></li>
+<li><a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.string.create?view=net-6.0#System_String_Create_System_IFormatProvider_System_Span_System_Char__System_Runtime_CompilerServices_DefaultInterpolatedStringHandler__"><code>Create(IFormatProvider, Span&lt;Char&gt;, DefaultInterpolatedStringHandler)</code></a></li>
+</ul>
+<p>「<a href="/study/csharp/start/improvedinterpolatedstring/">InterpolatedStringHandlerArgument 属性</a>」で例に挙げた通り、カルチャー指定で文字列補間するための引数と、初期バッファーを渡すための引数です。</p>
+<h4 id="section-5"><a id="sec-generated-title-13"></a> <a id="string.Create-culture"></a>カルチャー指定</h4>
+<p>C# の補間文字列はカルチャー依存で、何も指定しないと <a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.globalization.cultureinfo.currentculture"><code>CurrentCulture</code></a> が使われます。
+その結果、手元の環境で実行すると日本式のフォーマットになるけど、
+サーバー上で実行すると米国式のフォーマットになったりすることがあります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Globalization;
+
+<span class="comment">// サンプルなので明示的に指定。</span>
+<span class="comment">// 手元の環境が ja-jp カルチャーだとして…</span>
+Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(<span class="string">&quot;ja-jp&quot;</span>);
+
+<span class="comment">// 日本式。</span>
+<span class="comment">// yyyy/MM/dd hh:mm:ss</span>
+Console.WriteLine($<span class="string">&quot;{DateTime.Now}&quot;</span>);
+
+<span class="comment">// 一方、サーバーとかで別カルチャーだったりすると…</span>
+<span class="comment">// (最近、データ量削減のために「CurrentCulture が常に InvariantCulture」みたいなモードがあったりする。)</span>
+Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
+<span class="comment">// .NET の InvariantCulture は Invariant (不変)と言いつつ、米国基準。</span>
+<span class="comment">// MM/dd/yyyy hh:mm:ss</span>
+Console.WriteLine($<span class="string">&quot;{DateTime.Now}&quot;</span>);</code></pre>
+<pre><code class="language-console">2021/09/23 22:39:39
+09/23/2021 22:39:39</code></pre>
+<p><code>CurrentCulture</code> 依存が怖いなら、<code>string.Create</code> メソッドを使ってカルチャーを明示します。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Globalization;
+
+<span class="comment">// どこか日本でも Invariant でもない適当なカルチャー。</span>
+Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(<span class="string">&quot;fr-fr&quot;</span>);
+
+<span class="comment">// これは CurrentCulture 依存。</span>
+Console.WriteLine($<span class="string">&quot;{DateTime.Now}&quot;</span>);
+
+<span class="comment">// string.Create を使ってカルチャーを明示すれば CurrentCulture 依存はなくなる。</span>
+Console.WriteLine(<span class="keyword">string</span>.Create(CultureInfo.InvariantCulture, $<span class="string">&quot;{DateTime.Now}&quot;</span>));</code></pre>
+<pre><code class="language-console">23/09/2021 22:39:39
+09/23/2021 22:39:39</code></pre>
+<p>ちなみに<a href="https://github.com/ufcpp/UfcppSample/tree/master/Demo/2021/Csharp10/InterpolatedStrings/InvariantGlobalization">サンプル コード</a>では、以下のようなハンドラー型を提供していたりします。</p>
+<ul>
+<li><a href="https://github.com/ufcpp/UfcppSample/blob/master/Demo/2021/Csharp10/InterpolatedStrings/InvariantGlobalization/Invariant.cs"><code>Invariant</code></a>: 常に <code>InvariantCulture</code> で文字列補間する型</li>
+<li><a href="https://github.com/ufcpp/UfcppSample/blob/master/Demo/2021/Csharp10/InterpolatedStrings/InvariantGlobalization/Iso8601.cs"><code>Iso8601</code></a>: 常に <code>InvariantCulture</code> を使いつつ、日付だけは MM/dd/yyyy を許さず、ISO 8601 形式で文字列補間する型</li>
+</ul>
+<h4 id="section-6"><a id="sec-generated-title-14"></a> <a id="string.Create-buffer"></a>初期バッファー指定</h4>
+<p>冒頭での説明通り、C# 10.0 で再コンパイルするだけで文字列補間は高速化されます。
+ただ、パフォーマンスを求めるのであれば、素の <code>$&quot;&quot;</code> を使うよりも、
+<code>string.Create</code> で初期バッファーを与える方がいいです。
+特に、補間結果の文字数がある程度わかっている場合には初期バッファーの指定でパフォーマンスが劇的に改善することがあります。</p>
+<p>例えば<a href="https://github.com/ufcpp/UfcppSample/blob/master/Demo/2021/Csharp10/InterpolatedStrings/Benchmark/Program.cs">サンプル コードのベンチマーク</a>では以下のようなもののパフォーマンス比較を行っています。</p>
+<ul>
+<li>OldStyle: C# 9.0 までの展開結果である <code>string.Format</code> を使ったコード</li>
+<li>Improved: C# 10.0 の文字列補間に任せる(<code>DefaultInterpolatedStringHandler</code> が使われる)</li>
+<li>InitialBuffer: <code>string.Create(_currentCulture, stackalloc char[InitialBufferSize], $&quot;{a}.{b}.{c}.{d}&quot;)</code> で初期バッファー指定</li>
+</ul>
+<p>手元の環境でベンチマーク計測した結果、これらは以下のような実行結果になりました。</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th style="text-align: right;">Mean</th>
+<th style="text-align: right;">Error</th>
+<th style="text-align: right;">StdDev</th>
+<th style="text-align: right;">Gen 0</th>
+<th style="text-align: right;">Allocated</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OldStyle</td>
+<td style="text-align: right;">978.2 us</td>
+<td style="text-align: right;">0.97 us</td>
+<td style="text-align: right;">0.76 us</td>
+<td style="text-align: right;">228.5156</td>
+<td style="text-align: right;">1,875 KB</td>
+</tr>
+<tr>
+<td>Improved</td>
+<td style="text-align: right;">530.8 us</td>
+<td style="text-align: right;">0.77 us</td>
+<td style="text-align: right;">0.64 us</td>
+<td style="text-align: right;">46.8750</td>
+<td style="text-align: right;">391 KB</td>
+</tr>
+<tr>
+<td>InitialBuffer</td>
+<td style="text-align: right;">377.2 us</td>
+<td style="text-align: right;">0.73 us</td>
+<td style="text-align: right;">0.61 us</td>
+<td style="text-align: right;">47.3633</td>
+<td style="text-align: right;">391 KB</td>
+</tr>
+</tbody>
+</table>
+<h3 id="stringbuilder.append"><a id="sec-generated-title-15"></a> <a id="StringBuilder.Append"></a>StringBuilder.Append</h3>
+<p>これまで <code>StringBuilder</code> (<code>System.Text</code> 名前空間)に対して
+<code>builder.Append($&quot;{1} {2} {3}&quot;);</code> みたいなコードを書くと、
+一度 <code>string.Format</code> で文字列インスタンスを作った上で、それを <code>Append</code> していました。</p>
+<p>一方、C# 10.0/.NET 6.0 では、<a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.text.stringbuilder.append?view=net-6.0#System_Text_StringBuilder_Append_System_Text_StringBuilder_AppendInterpolatedStringHandler__"><code>Append(AppendInterpolatedStringHandler)</code></a> というオーバーロードが追加されています。
+このオーバーロードを呼ぶと、
+<code>builder.Append($&quot;{1} {2} {3}&quot;);</code> を、以下のようなコードとそん色ないパフォーマンスで呼ぶことができます。</p>
+<pre><code class="language-csharp">builder.Append(<span class="number">1</span>);
+builder.Append(<span class="string">&quot; &quot;</span>);
+builder.Append(<span class="number">2</span>);
+builder.Append(<span class="string">&quot; &quot;</span>);
+builder.Append(<span class="number">3</span>);</code></pre>
+<h3 id="memoryextensions.trywrite"><a id="sec-generated-title-16"></a> <a id="MemoryExtensions.TryWrite"></a>MemoryExtensions.TryWrite</h3>
+<p><code>MemoryExtensions</code> (<code>System</code> 名前空間)に <a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.memoryextensions.trywrite?view=net-6.0#System_MemoryExtensions_TryWrite_System_Span_System_Char__System_MemoryExtensions_TryWriteInterpolatedStringHandler__System_Int32__"><code>TryWrite</code></a> と言う名前で、
+<code>Span&lt;char&gt;</code> バッファーに直接書き込みするメソッドも追加されています。
+<code>string.Create</code> の場合は最終的に必ず1個は <code>new string()</code> が発生しますが、
+<code>MemoryExtensions.TryWrite</code> なら完全にアロケーションなしで文字列補間ができます。
+バッファー管理がちょっと大変ですが、一応、最速を目指すならこのメソッドを使うことになります。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> m(<span class="keyword">int</span> a,<span class="keyword">int</span> b,<span class="keyword">int</span> c,<span class="keyword">int</span> d)
+{
+    Span&lt;<span class="keyword">char</span>&gt; buffer = <span class="keyword">stackalloc</span> <span class="keyword">char</span>[<span class="number">128</span>];
+    buffer.TryWrite($<span class="string">&quot;{a}.{b}.{c}.{d}&quot;</span>, <span class="keyword">out</span> <span class="keyword">var</span> charsWritten);
+
+    <span class="comment">// デモ用なので ToString しちゃってるけども…</span>
+    <span class="comment">// 工夫次第ではこの ToString 負担も避けれる。</span>
+    Console.WriteLine(buffer[..charsWritten].ToString());
+}</code></pre>
+<h3 id="debug.assert"><a id="sec-generated-title-17"></a> <a id="Debug.Assert"></a>Debug.Assert</h3>
+<p><code>Debug.Assert</code> (<code>System.Diagnostics</code> 名前空間)に<a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.diagnostics.debug.assert?view=net-6.0#System_Diagnostics_Debug_Assert_System_Boolean_System_Diagnostics_Debug_AssertInterpolatedStringHandler__">ハンドラー型を受け取るオーバーロード</a>が増えています。</p>
+<p>このオーバーロードを使うと、<code>condition</code> 引数が <code>false</code> の時だけ <code>AppendLiteral</code>/<code>AppendFormatted</code> を呼び出します。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Diagnostics;
+
+Debug.Assert(<span class="keyword">true</span>, $<span class="stringCSharpVerbatim">@&quot;condition が true な限り、Append は全く呼ばれない。
+(Assert の condition はバグがない限り true になっている想定でコードを書く物なので、めったに通らない。)
+なので重たい処理を書いても割かし平気。
+{DateTime.Now}
+{Environment.StackTrace}
+{Environment.UserName}
+&quot;</span>);</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/start/">&#x57FA;&#x790E;</a></li><li><a href="/study/csharp/start/st_basis/">C#&#x306E;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x57FA;&#x672C;&#x69CB;&#x9020;</a></li><li><a href="/study/csharp/start/st_compile/">&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x4F5C;&#x6210;&#x30FB;&#x5B9F;&#x884C;</a></li><li><a href="/study/csharp/start/st_comment/">&#x30B3;&#x30E1;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/start/st_consoleio/">&#x5024;&#x306E;&#x5165;&#x51FA;&#x529B;</a></li><li><a href="/study/csharp/start/st_variable/">&#x5909;&#x6570;&#x3068;&#x5F0F;</a></li><li><a href="/study/csharp/start/misc_identifier/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x540D;&#x306B;&#x4F7F;&#x3048;&#x308B;&#x6587;&#x5B57;</a></li><li><a href="/study/csharp/start/misc_unicode/">[&#x96D1;&#x8A18;] C# &#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x3068; Unicode</a></li><li><a href="/study/csharp/start/st_embeddedtype/">&#x7D44;&#x8FBC;&#x307F;&#x578B;</a></li><li><a href="/study/csharp/start/stnumber/">&#x6570;&#x5024;</a></li><li><a href="/study/csharp/start/st_string/">&#x7279;&#x6B8A;&#x306A;&#x6587;&#x5B57;&#x5217;&#x30EA;&#x30C6;&#x30E9;&#x30EB;</a></li><li><a href="/study/csharp/start/st_operator/">&#x7D44;&#x8FBC;&#x307F;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/study/csharp/start/st_cast/">&#x7D44;&#x8FBC;&#x307F;&#x578B;&#x5909;&#x63DB;</a></li><li><a href="/study/csharp/start/sp_checked/">&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30D5;&#x30ED;&#x30FC;&#x306E;&#x30C1;&#x30A7;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/start/sp_const/">&#x5B9A;&#x6570;</a></li><li><a href="/study/csharp/start/sp3_inference/">&#x578B;&#x63A8;&#x8AD6;(&#x6697;&#x9ED9;&#x7684;&#x578B;&#x4ED8;&#x3051;)&#x3068;&#x533F;&#x540D;&#x578B;</a></li><li><a href="/study/csharp/start/sp3_var/">[&#x96D1;&#x8A18;] &#x578B;&#x63A8;&#x8AD6;&#x306E;&#x662F;&#x975E;</a></li><li><a href="/study/csharp/start/st_scope/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x306E;&#x30B9;&#x30B3;&#x30FC;&#x30D7;&#x3068;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x5BFF;&#x547D;</a></li><li><a href="/study/csharp/start/misctyperesolution/">[&#x96D1;&#x8A18;] &#x578B;&#x306E;&#x6C7A;&#x5B9A;</a></li><li><a href="/study/csharp/start/miscreservedattribute/">[&#x96D1;&#x8A18;] &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x306B;&#x5F71;&#x97FF;&#x3092;&#x53CA;&#x307C;&#x3059;&#x5C5E;&#x6027;</a></li><li><a href="/study/csharp/start/definiteassignment/">[&#x96D1;&#x8A18;] &#x660E;&#x78BA;&#x306A;&#x4EE3;&#x5165;&#x30EB;&#x30FC;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

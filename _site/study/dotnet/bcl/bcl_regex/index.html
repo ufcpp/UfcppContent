@@ -1,0 +1,545 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x6B63;&#x898F;&#x8868;&#x73FE;&#xFF08;&#x6587;&#x5B57;&#x5217;&#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30DE;&#x30C3;&#x30C1;&#x30F3;&#x30B0;&#xFF09; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/dotnet/bcl/bcl_regex/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">正規表現（文字列パターン マッチング）</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p><strong id="regex" class="keyword">正規表現</strong>（regular expression）は、文字列のパターン マッチングに使う簡易言語です。
+.NET の場合、Regex クラス（System.Text.RegularExpressions 名前空間）を使うことで、正規表現によるパターン マッチングができます。</p>
+<p>Regex クラスが受け付ける正規表現の書き方は、Perl での書き方に準じます。
+ネットで「正規表現」で検索すると、Perl や Java のものが多く見つかりますが、同じ書き方ができます。</p>
+<p>参考:</p>
+<ul>
+<li><a href="http://msdn.microsoft.com/ja-jp/library/system.text.regularexpressions.regex.aspx">MSDN: Regex クラス</a></li>
+</ul>
+<h2 id="regex"><a id="sec-generated-title-2"></a> <a id="regex-class"></a>Regex クラス</h2>
+<p>概要の通り、Regex クラスを使って文字列パターン マッチングを行います。</p>
+<p>例えば、以下のように書くことで、ハイフンで区切られた単語を抜き出すことができます。
+Match メソッド（最初の1件を得る）や、Matches メソッド（マッチした個所すべてを得る）を使います。</p>
+<div class="tab-container">
+<ul>
+	<li>C#</li>
+	<li>VB</li>
+	<li>F#</li>
+</ul>
+<div>
+<pre><code class="language-csharp"><span class="keyword">var</span> text = <span class="stringCSharpVerbatim">@&quot;
+C# (pronounced C sharp) is a programming language that
+is designed for building a variety of applications that
+run on the .NET Framework. C# is simple, powerful,
+type-safe, and object-oriented. The many innovations
+in C# enable rapid application development while
+retaining the expressiveness and elegance of C-style
+languages. &quot;</span>;
+
+<span class="keyword">var</span> withHyphen = <span class="keyword">new</span> Regex(<span class="stringCSharpVerbatim">@&quot;\w+-\w+&quot;</span>, RegexOptions.Multiline);
+
+<span class="keyword">var</span> hyphenedWord =
+    <span class="keyword">from</span> Match m <span class="keyword">in</span> withHyphen.Matches(text)
+    <span class="keyword">select</span> m.Value;
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> item <span class="keyword">in</span> hyphonedWords)
+{
+    Console.WriteLine(item);
+}</code></pre>
+</div>
+<div>
+<pre><code class="language-vbnet"><span class="keyword">Dim</span> text = <span class="string">&quot;C# (pronounced C sharp) is a programming language that&quot;</span> &amp; vbCrLf &amp;
+    <span class="string">&quot;is designed for building a variety of applications that&quot;</span> &amp; vbCrLf &amp;
+    <span class="string">&quot;run on the .NET Framework. C# is simple, powerful,&quot;</span> &amp; vbCrLf &amp;
+    <span class="string">&quot;type-safe, and object-oriented. The many innovations&quot;</span> &amp; vbCrLf &amp;
+    <span class="string">&quot;in C# enable rapid application development while&quot;</span> &amp; vbCrLf &amp;
+    <span class="string">&quot;retaining the expressiveness and elegance of C-style&quot;</span> &amp; vbCrLf &amp;
+    <span class="string">&quot;languages. &quot;</span>
+
+<span class="keyword">Dim</span> withHyphen = <span class="keyword">New</span> Regex(<span class="string">&quot;\w+-\w+&quot;</span>, RegexOptions.Multiline)
+
+<span class="keyword">Dim</span> hyphenedWord = <span class="keyword">From</span> m <span class="keyword">As</span> Match <span class="keyword">In</span> withHyphen.Matches(text).OfType(Of Match)()
+                   <span class="keyword">Select</span> m.Value
+
+<span class="keyword">For</span> <span class="keyword">Each</span> item <span class="keyword">In</span> hyphenedWord
+    Console.WriteLine(item)
+<span class="keyword">Next</span></code></pre>
+</div>
+<div>
+<pre><code class="language-fsharp"><span class="keyword">open</span> System
+<span class="keyword">open</span> System.Text.RegularExpressions
+
+<span class="keyword">let</span> text = &quot;
+C# (pronounced C sharp) is a programming language that
+is designed <span class="keyword">for</span> building a variety <span class="keyword">of</span> applications that
+run on the .NET Framework. C# is simple, powerful,
+<span class="keyword">type</span>-safe, <span class="keyword">and</span> <span class="keyword">object</span>-oriented. The many innovations
+<span class="keyword">in</span> C# enable rapid application development <span class="keyword">while</span>
+retaining the expressiveness <span class="keyword">and</span> elegance <span class="keyword">of</span> C-style
+languages. &quot;
+
+<span class="keyword">let</span> withHyphen = <span class="keyword">new</span> Regex(<span class="stringCSharpVerbatim">@&quot;\w+-\w+&quot;</span>, RegexOptions.Multiline)
+
+<span class="keyword">let</span> hyphenedWord = seq {
+    <span class="keyword">for</span> m <span class="keyword">in</span> withHyphen.Matches(text) <span class="keyword">do</span>
+        <span class="keyword">yield</span> m.Value
+        }
+
+<span class="keyword">let</span> e = seq {
+    <span class="keyword">for</span> x <span class="keyword">in</span> 0..10 <span class="keyword">do</span>
+        <span class="keyword">for</span> y <span class="keyword">in</span> 0..10 <span class="keyword">do</span>
+            System.Threading.Thread.Sleep(100)
+            <span class="keyword">yield</span> x * y
+            }
+
+<span class="keyword">for</span> x <span class="keyword">in</span> hyphenedWord <span class="keyword">do</span> Console.WriteLine x</code></pre>
+</div>
+</div>
+<pre><code class="language-console">type-safe
+object-oriented
+C-style</code></pre>
+<p>もう1つ、単語の出現頻度を数える例を示しましょう。
+単語の区切りを表すのに正規表現を使います。
+Split メソッドで、単語の切り出しを行います。</p>
+<div class="tab-container">
+<ul>
+	<li>C#</li>
+	<li>VB</li>
+</ul>
+<div>
+<pre><code class="language-csharp"><span class="keyword">var</span> text = <span class="stringCSharpVerbatim">@&quot;
+C# (pronounced C sharp) is a programming language that
+is designed for building a variety of applications that
+run on the .NET Framework. C# is simple, powerful,
+type-safe, and object-oriented. The many innovations
+in C# enable rapid application development while
+retaining the expressiveness and elegance of C-style
+languages. &quot;</span>;
+
+<span class="keyword">var</span> splitter = <span class="keyword">new</span> Regex(<span class="stringCSharpVerbatim">@&quot;[\s\(\)\.,\n\r]+&quot;</span>, RegexOptions.Multiline);
+
+<span class="keyword">var</span> wordCount =
+    <span class="keyword">from</span> word <span class="keyword">in</span> splitter.Split(text)
+    <span class="keyword">where</span> !<span class="keyword">string</span>.IsNullOrEmpty(word)
+    <span class="keyword">group</span> word <span class="keyword">by</span> word <span class="keyword">into</span> g
+    <span class="keyword">orderby</span> g.Count()
+    <span class="keyword">select</span> <span class="keyword">new</span> { Count = g.Count(), Word = g.Key };
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> item <span class="keyword">in</span> wordCount)
+{
+    Console.WriteLine(item);
+}</code></pre>
+</div>
+<div>
+<pre><code class="language-vbnet"><span class="keyword">Dim</span> text = <span class="string">&quot;C# (pronounced C sharp) is a programming language that&quot;</span> &amp; vbCrLf &amp;
+    <span class="string">&quot;is designed for building a variety of applications that&quot;</span> &amp; vbCrLf &amp;
+    <span class="string">&quot;run on the .NET Framework. C# is simple, powerful,&quot;</span> &amp; vbCrLf &amp;
+    <span class="string">&quot;type-safe, and object-oriented. The many innovations&quot;</span> &amp; vbCrLf &amp;
+    <span class="string">&quot;in C# enable rapid application development while&quot;</span> &amp; vbCrLf &amp;
+    <span class="string">&quot;retaining the expressiveness and elegance of C-style&quot;</span> &amp; vbCrLf &amp;
+    <span class="string">&quot;languages. &quot;</span>
+
+<span class="keyword">Dim</span> splitter = <span class="keyword">New</span> Regex(<span class="string">&quot;[\s\(\)\.,\n\r]+&quot;</span>, RegexOptions.Multiline)
+
+<span class="keyword">Dim</span> wordCount = <span class="keyword">From</span> word <span class="keyword">In</span> splitter.Split(text)
+                <span class="keyword">Where</span> <span class="keyword">Not</span> <span class="keyword">String</span>.IsNullOrEmpty(word)
+                <span class="keyword">Group</span> <span class="keyword">By</span> Word = word <span class="keyword">Into</span> <span class="keyword">Group</span>
+                <span class="keyword">Order</span> <span class="keyword">By</span> <span class="keyword">Group</span>.<span class="keyword">Count</span>()
+                <span class="keyword">Select</span> <span class="keyword">New</span> <span class="keyword">With</span> {<span class="keyword">Group</span>.<span class="keyword">Count</span>(), Word}
+
+<span class="keyword">For</span> <span class="keyword">Each</span> item <span class="keyword">In</span> wordCount
+    Console.WriteLine(item)
+<span class="keyword">Next</span></code></pre>
+</div>
+</div>
+<pre><code class="language-console">前略
+{ Count = 2, Word = of }
+{ Count = 2, Word = the }
+{ Count = 2, Word = and }
+{ Count = 3, Word = C# }
+{ Count = 3, Word = is }    </code></pre>
+<p>これらの例では、Regex クラスのインスタンスを作っています。
+作ったインスタンスを取っておけば、文字列で与えた正規表現を、内部的な表現にコンパイルする作業を1度限りにできて、実行効率が良くなります。
+一方、実行効率を気にしない、もしくは、一度きりのパターン マッチングなら、静的メソッド版も使えます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> text = <span class="string">&quot;abcde&quot;</span>;
+Console.WriteLine(Regex.Match(text, <span class="string">&quot;a+&quot;</span>));
+Console.WriteLine(Regex.Match(text, <span class="string">&quot;a.*e&quot;</span>));</code></pre>
+<pre><code class="language-console">a
+abcde</code></pre>
+<p>以下では、正規表現の中身（Regex クラスに与える文字列）の説明をしていきましょう。</p>
+<h2 id="section-2"><a id="sec-generated-title-3"></a> <a id="basic"></a>正規表現の基本: 文字をそのまま書く</h2>
+<p>いくつかの特別な意味を持った記号（.  \ * + など）以外は、一致させたい文字をそのまま書きます。例えば、abという正規表現は、abを含む文字列に一致します。</p>
+<table summary="">
+
+	<tr>
+		<th>正規表現</th>
+		<td colspan="2"><p><code>ab</code></p></td>
+	</tr>
+	<tr>
+		<th>説明</th>
+		<td colspan="2"><p><code>ab</code>を含む文字列に一致します。<code>ab</code>の前後に別の文字があっても構いません。<code>a</code>と<code>b</code>の間に別の文字が入る場合には一致しません。</p></td>
+	</tr>
+	<tr>
+		<th>一致例</th>
+		<td><p><code>abc</code></p></td>
+		<td><p><code>stab</code></p></td>
+	</tr>
+	<tr>
+		<th>不一致例</th>
+		<td><p><code>a</code></p></td>
+		<td><p><code>acb</code></p></td>
+	</tr>
+</table>
+<p>この例をC#で書くと、以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> r = <span class="keyword">new</span> Regex(<span class="string">&quot;ab&quot;</span>);
+Console.WriteLine(r.Match(<span class="string">&quot;abc&quot;</span>).Success); <span class="comment">// true</span>
+Console.WriteLine(r.Match(<span class="string">&quot;enable&quot;</span>).Success); <span class="comment">// true</span>
+Console.WriteLine(r.Match(<span class="string">&quot;a&quot;</span>).Success); <span class="comment">// false</span>
+Console.WriteLine(r.Match(<span class="string">&quot;acb&quot;</span>).Success); <span class="comment">// false</span></code></pre>
+<h2 id="section-3"><a id="sec-generated-title-4"></a> <a id="quantity"></a>数量指定</h2>
+<p>同じ文字の繰り返しを検出したい場合に使える、数量指定用の特殊記号として、 <code>*</code>（アスタリスク）、<code>+</code>（プラス）、<code>?</code> （はてな）、<code></code> （波括弧）などがあります。</p>
+<table summary="">
+
+	<tr>
+		<th>正規表現</th>
+		<td colspan="2"><p><code>ab*a</code></p></td>
+	</tr>
+	<tr>
+		<th>説明</th>
+		<td colspan="2"><p><code>*</code> (アスタリスク)で、0個以上の同じ文字を表します</p></td>
+	</tr>
+	<tr>
+		<th>一致例</th>
+		<td><p><code>aa</code></p></td>
+		<td><p><code>abbba</code></p></td>
+	</tr>
+	<tr>
+		<th>不一致例</th>
+		<td><p><code>a</code></p></td>
+		<td><p><code>ab</code></p></td>
+	</tr>
+	<tr>
+		<td colspan="3"></td>
+	</tr>
+	<tr>
+		<th>正規表現</th>
+		<td colspan="2"><p><code>ab+a</code></p></td>
+	</tr>
+	<tr>
+		<th>説明</th>
+		<td colspan="2"><p><code>+</code> (プラス)で、1個以上の同じ文字を表します</p></td>
+	</tr>
+	<tr>
+		<th>一致例</th>
+		<td><p><code>aba</code></p></td>
+		<td><p><code>abbba</code></p></td>
+	</tr>
+	<tr>
+		<th>不一致例</th>
+		<td><p><code>aa</code></p></td>
+		<td><p><code>aca</code></p></td>
+	</tr>
+	<tr>
+		<td colspan="3"></td>
+	</tr>
+	<tr>
+		<th>正規表現</th>
+		<td colspan="2"><p><code>ab?a</code></p></td>
+	</tr>
+	<tr>
+		<th>説明</th>
+		<td colspan="2"><p><code>?</code> (はてな)で、0個もしくは1個の文字を表します</p></td>
+	</tr>
+	<tr>
+		<th>一致例</th>
+		<td><p><code>aa</code></p></td>
+		<td><p><code>aba</code></p></td>
+	</tr>
+	<tr>
+		<th>不一致例</th>
+		<td><p><code>abba</code></p></td>
+		<td><p><code>aca</code></p></td>
+	</tr>
+	<tr>
+		<td colspan="3"></td>
+	</tr>
+	<tr>
+		<th>正規表現</th>
+		<td colspan="2"><p><code>ab{2}a</code></p></td>
+	</tr>
+	<tr>
+		<th>説明</th>
+		<td colspan="2"><p><code>{}</code> で、連続する同じ文字を表します。数字を1つだけ入れると、その個数ぴったりを表します。</p></td>
+	</tr>
+	<tr>
+		<th>一致例</th>
+		<td><p><code>abba</code></p></td>
+		<td></td>
+	</tr>
+	<tr>
+		<th>不一致例</th>
+		<td><p><code>aba</code></p></td>
+		<td><p><code>abbba</code></p></td>
+	</tr>
+	<tr>
+		<td colspan="3"></td>
+	</tr>
+	<tr>
+		<th>正規表現</th>
+		<td colspan="2"><p><code>ab{2,4}a</code></p></td>
+	</tr>
+	<tr>
+		<th>説明</th>
+		<td colspan="2"><p><code>{}</code> に、コンマで区切って2つの数字を入れると、最小と最大の数指定できます。</p></td>
+	</tr>
+	<tr>
+		<th>一致例</th>
+		<td><p><code>abba</code></p></td>
+		<td><p><code>abbbba</code></p></td>
+	</tr>
+	<tr>
+		<th>不一致例</th>
+		<td><p><code>aba</code></p></td>
+		<td><p><code>abbbbba</code></p></td>
+	</tr>
+</table>
+<p>通常、これらの数量指定は「最大一致」になります。一方、これらの記号の後ろに ? （はてな）をつけることで、「最小一致」パターンも作れます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> r1 = <span class="keyword">new</span> Regex(<span class="stringCSharpVerbatim">@&quot;.*,&quot;</span>);  <span class="comment">// 任意の文字の後ろにコンマ</span>
+<span class="keyword">var</span> r2 = <span class="keyword">new</span> Regex(<span class="stringCSharpVerbatim">@&quot;.*?,&quot;</span>); <span class="comment">// 同上。ただし、最小一致</span>
+<span class="keyword">var</span> str = <span class="string">&quot;aaa,aaa,aaa,&quot;</span>;
+
+Console.WriteLine(r1.Match(str)); <span class="comment">// aaa,aaa,aaa, まで拾われる</span>
+Console.WriteLine(r2.Match(str)); <span class="comment">// aaa, だけ拾われる</span></code></pre>
+<h2 id="section-4"><a id="sec-generated-title-5"></a> <a id="escape"></a>エスケープ</h2>
+<p>特殊な意味を持つ記号（<code>.</code> や <code>*</code>）自体を検索するためには、特殊記号の前に \ 記号（半角の円記号、フォントによっては逆スラッシュになります）をつけます。</p>
+<table summary="">
+
+	<tr>
+		<th>正規表現</th>
+		<td colspan="2"><p><code>\\\.\*</code></p></td>
+	</tr>
+	<tr>
+		<th>説明</th>
+		<td colspan="2"><p><code>\</code> の直後に特殊記号を書くことで、特殊記号自身を検索できます。</p></td>
+	</tr>
+	<tr>
+		<th>一致例</th>
+		<td><p><code>\.*</code></p></td>
+		<td></td>
+	</tr>
+	<tr>
+		<th>不一致例</th>
+		<td><p><code>\a*</code></p></td>
+		<td><p><code>\.</code></p></td>
+	</tr>
+</table>
+<p>また、普通は見えない文字（改行やタブ文字）も、\ 記号に続けて n や t などの文字を書くことで表現します。主要なものを書くと、以下の通りです。</p>
+<table summary="">
+
+	<tr>
+		<td><p><code>\t</code></p></td>
+		<td><p>タブ文字。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>\n</code></p></td>
+		<td><p>改行文字。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>\r</code></p></td>
+		<td><p>キャリッジ リターン（復帰）文字。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>\u</code><span style="font-style:italic; font-family:serif">nnnn</span></p></td>
+		<td><p>Unicodeを直接指定します。<span style="font-style:italic; font-family:serif">nnnn</span>のところに、Unicodeを16進数で記述します。</p></td>
+	</tr>
+</table>
+<p>このような、特殊記号/不可視文字を入力するための記法をエスケープ（escape: 逃げ道、避難）と呼びます。</p>
+<h2 id="section-5"><a id="sec-generated-title-6"></a> <a id="character-class"></a>文字クラス</h2>
+<p>特定の文字ではなく、ある範囲の文字（たとえば、算用数字全部など）と一致するようなパターンを作ることができます。</p>
+<p>エスケープ同様、\ 記号に続けて d や s などの文字を書くことで、文字クラスを表現します。また、<code>[]</code> （角括弧）中に複数の文字を入れることで、そのいずれかの文字に一致します。</p>
+<table summary="">
+
+	<tr>
+		<th>正規表現</th>
+		<td colspan="2"><p><code>\d+</code></p></td>
+	</tr>
+	<tr>
+		<th>説明</th>
+		<td colspan="2"><p><code>\</code> 記号は特別な意味を持ちます。<code>\d</code> や <code>\s</code> など、直後の文字によって意味が変わります。<code>\d</code> は任意の算用数字を表します。</p></td>
+	</tr>
+	<tr>
+		<th>一致例</th>
+		<td><p><code>1234</code></p></td>
+		<td><p><code>65536</code></p></td>
+	</tr>
+	<tr>
+		<th>不一致例</th>
+		<td><p><code>abc</code></p></td>
+		<td><p><code>----</code></p></td>
+	</tr>
+	<tr>
+		<td colspan="3"></td>
+	</tr>
+	<tr>
+		<th>正規表現</th>
+		<td colspan="2"><p><code>\sx+\s</code></p></td>
+	</tr>
+	<tr>
+		<th>説明</th>
+		<td colspan="2"><p><code>\s</code> は任意の空白文字を表します。</p></td>
+	</tr>
+	<tr>
+		<th>一致例</th>
+		<td><p><code>y x y</code></p></td>
+		<td><p><code>y xxx y</code></p></td>
+	</tr>
+	<tr>
+		<th>不一致例</th>
+		<td><p><code>yxy</code></p></td>
+		<td><p><code>yxxxxy</code></p></td>
+	</tr>
+	<tr>
+		<td colspan="3"></td>
+	</tr>
+	<tr>
+		<th>正規表現</th>
+		<td colspan="2"><p><code>\w+\s+\w+</code></p></td>
+	</tr>
+	<tr>
+		<th>説明</th>
+		<td colspan="2"><p><code>\w</code> は単語に使われる文字を表します。</p></td>
+	</tr>
+	<tr>
+		<th>一致例</th>
+		<td><p><code>abc xyz</code></p></td>
+		<td><p><code>あいう えお</code></p></td>
+	</tr>
+	<tr>
+		<th>不一致例</th>
+		<td><p><code>abcdef</code></p></td>
+		<td><p><code>あいうえお</code></p></td>
+	</tr>
+	<tr>
+		<td colspan="3"></td>
+	</tr>
+	<tr>
+		<th>正規表現</th>
+		<td colspan="2"><p><code>\p{Ps}\w+\p{Pe}</code></p></td>
+	</tr>
+	<tr>
+		<th>説明</th>
+		<td colspan="2"><p><code>\p{}</code> で特定の Unicode カテゴリーに一致します。Ps は開き括弧、Pe は閉じ括弧です。</p></td>
+	</tr>
+	<tr>
+		<th>一致例</th>
+		<td><p><code>(abc}</code></p></td>
+		<td><p><code>【abc]</code></p></td>
+	</tr>
+	<tr>
+		<th>不一致例</th>
+		<td><p><code>|abc|</code></p></td>
+		<td><p><code>.abc.</code></p></td>
+	</tr>
+	<tr>
+		<td colspan="3"></td>
+	</tr>
+	<tr>
+		<th>正規表現</th>
+		<td colspan="2"><p><code>a.*\.</code></p></td>
+	</tr>
+	<tr>
+		<th>説明</th>
+		<td colspan="2"><p><code>.</code> （ピリオド）は任意の1文字を表します。ピリオド自信を表すためには、<code>\.</code> と書きます。</p></td>
+	</tr>
+	<tr>
+		<th>一致例</th>
+		<td><p><code>abcd.</code></p></td>
+		<td><p><code>a(!#$%&amp;amp;'().</code></p></td>
+	</tr>
+	<tr>
+		<th>不一致例</th>
+		<td><p><code>abcd</code></p></td>
+		<td><p><code>a</code></p></td>
+	</tr>
+	<tr>
+		<td colspan="3"></td>
+	</tr>
+	<tr>
+		<th>正規表現</th>
+		<td colspan="2"><p><code>[,\d]+</code></p></td>
+	</tr>
+	<tr>
+		<th>説明</th>
+		<td colspan="2"><p><code>[]</code> （各括弧）中に含まれる任意の文字に一致します。</p></td>
+	</tr>
+	<tr>
+		<th>一致例</th>
+		<td><p><code>19,800</code></p></td>
+		<td><p><code>12,34,56</code></p></td>
+	</tr>
+	<tr>
+		<th>不一致例</th>
+		<td><p><code>abcd</code></p></td>
+		<td><p><code>あいうえ</code></p></td>
+	</tr>
+	<tr>
+		<td colspan="3"></td>
+	</tr>
+	<tr>
+		<th>正規表現</th>
+		<td colspan="2"><p><code>^[,\d]+$</code></p></td>
+	</tr>
+	<tr>
+		<th>説明</th>
+		<td colspan="2"><p><code>^</code> は文字列の先頭、<code>$</code> は末尾を意味します。</p></td>
+	</tr>
+	<tr>
+		<th>一致例</th>
+		<td><p><code>19,800</code></p></td>
+		<td><p><code>12,34,56</code></p></td>
+	</tr>
+	<tr>
+		<th>不一致例</th>
+		<td><p><code>-19,800</code></p></td>
+		<td><p><code>12,34.56</code></p></td>
+	</tr>
+</table>
+<h2 id="section-6"><a id="sec-generated-title-7"></a> <a id="grouping"></a>グループ化</h2>
+<p>パターンの一部分だけ取り出したり、置換したりするために、正規表現内にグループを作ることができます。<code>()</code> （丸括弧）でくくった部分がグループになります。</p>
+<p>例えば以下のようなコードを見てみましょう。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> r = <span class="keyword">new</span> Regex(<span class="stringCSharpVerbatim">@&quot;(\d{4})/(\d{2})/(\d{2})&quot;</span>);
+<span class="keyword">var</span> m = r.Match(<span class="string">&quot;2011/12/15&quot;</span>);
+ 
+<span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> m.Groups)
+{
+    Console.WriteLine(x);
+}</code></pre>
+<p><code>()</code>が3か所あります。マッチ結果（m）のGroupsには、マッチした全体と、<code>()</code> でくくった3か所の結果が格納されています。したがって、実行結果は以下の通りです。</p>
+<pre><code class="language-console">2011/12/15
+2011
+12
+15</code></pre>
+<p>グループには、名前を付けておくこともできます。<code>(?&lt;id&gt;パターン)</code> というように、<code>()</code> 内の先頭に <code>?&lt;&gt;</code> をつけます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> r = <span class="keyword">new</span> Regex(<span class="stringCSharpVerbatim">@&quot;(?&lt;y&gt;\d{4})/(?&lt;m&gt;\d{2})/(?&lt;d&gt;\d{2})&quot;</span>);
+<span class="keyword">var</span> m = r.Match(<span class="string">&quot;2011/12/15&quot;</span>);
+
+Console.WriteLine(m.Groups[<span class="string">&quot;y&quot;</span>]); <span class="comment">// 2011</span>
+Console.WriteLine(m.Groups[<span class="string">&quot;m&quot;</span>]); <span class="comment">// 12</span>
+Console.WriteLine(m.Groups[<span class="string">&quot;d&quot;</span>]); <span class="comment">// 15</span></code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/dotnet/bcl/">&#x57FA;&#x672C;&#x30AF;&#x30E9;&#x30B9;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li><li><a href="/study/dotnet/bcl/bcl_about/">&#x57FA;&#x672C;&#x30AF;&#x30E9;&#x30B9;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li><li><a href="/study/dotnet/bcl/bcl_format/">&#x6587;&#x5B57;&#x5217;&#x306E;&#x66F8;&#x5F0F;&#x8A2D;&#x5B9A;</a></li><li><a href="/study/dotnet/bcl/bcl_collection/">&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/study/dotnet/bcl/bcl_collection_algorithm/">&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x306E;&#x5185;&#x90E8;&#x5B9F;&#x88C5;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

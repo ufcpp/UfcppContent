@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x7279;&#x6B8A;&#x8A18;&#x53F7;&#x306E;&#x5165;&#x529B; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/misc/list/symbol/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">特殊記号の入力</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="d23e4"></a>特殊記号の入力</h2>
+<p>電磁理論のところとかで∫とか∂とか多用しています。
+JISコードにはこの手の記号がちゃんと用意されてますから、
+MS IME2000だと「いんてぐらる」とか「きごう」って入力して変換すればこの手の記号を書けるわけで、
+僕はそうやってこの手の記号を入力しています。</p>
+<p>このページの場合、どうせ全文日本語ですし、この手の記号もIME使って変換するのが一番手っ取り早いんですが、じゃあ、IMEなんて物使ってない国の人らはどうやって入力すればいいのかというと、
+<em>&amp;#****; (<strong><strong>のところにはUNICODEを10進数で書く)</em>
+か、もしくは
+<em>&amp;#x</strong></strong>; (<strong><strong>のところにはUNICODEを16進数で書く)</em>
+とすることで、UNICODEで定義されている文字なら何でも入力することが出来ます。
+特によく使う記号にはentity名が付いていて、
+<em>&amp;</strong></strong>; (****のところにはentity名を書く)</em>
+とすることで入力することも出来ます。
+(例えば、&amp;int;(∫)や&amp;minus;(−)(普通に-を書くとハイフンになる)や&amp;part;(∂)などがあります)</p>
+<p>いつつか例を挙げると、</p>
+<table summary="">
+
+	<tr>
+		<th>文字</th>
+		<th>10進</th>
+		<th>16進</th>
+		<th>entity名</th>
+	</tr>
+	<tr>
+		<td><p>∫</p></td>
+		<td><p>&amp;#8747;</p></td>
+		<td><p>&amp;#x222B;</p></td>
+		<td><p>&amp;int;</p></td>
+	</tr>
+	<tr>
+		<td><p>∂</p></td>
+		<td><p>&amp;#8706;</p></td>
+		<td><p>&amp;#x2202;</p></td>
+		<td><p>&amp;part;</p></td>
+	</tr>
+	<tr>
+		<td><p>∀</p></td>
+		<td><p>&amp;#8704;</p></td>
+		<td><p>&amp;#x2201;</p></td>
+		<td><p>&amp;forall;</p></td>
+	</tr>
+	<tr>
+		<td><p>∃</p></td>
+		<td><p>&amp;#8707;</p></td>
+		<td><p>&amp;#x2203;</p></td>
+		<td><p>&amp;exist;</p></td>
+	</tr>
+	<tr>
+		<td><p>∇</p></td>
+		<td><p>&amp;#8711;</p></td>
+		<td><p>&amp;#x2207;</p></td>
+		<td><p>&amp;nabla;</p></td>
+	</tr>
+</table>
+<p>といったものがあります。
+あと、同じ方法でアラビア文字とかハングル文字とかJISコードに含まれていない漢字も表示できたりもします。</p>
+<p>でも、こういう風に特殊文字をUNICODEで直接書くためにはUNICODEのコード番号を調べないと書けません。
+幸い、UNICODEの一覧を書いてくれているページもありますのでこちらを参照してください。
+<a href="http://www.alanwood.net/unicode/">Unicode and Multilingual Support in HTML, Fonts, Web Browsers and Other Applications</a></p>
+<p>余談なんですが、コード番号が分かっても即表示できるとは限りません。
+コード番号があっても、フォントが用意されていない記号が多々あるからです。
+例えば、&amp;#x22BB; ←XOR 記号とか、IE 5.0 では表示できません。
+「⊻」←多分、「□」とか「・」とか「?」が表示されてると思います。</p>
+<p>あと、限られた状況下でのみ表示できる文字なんかもあったりします。
+例えば、集合論でよく使われる記号「‭א」（アレフ、ヘブライ文字、アルファベットのAに相当、某真理教の改名後の名前の元になった記号）とか、
+IEで標準で使われている「MS P ゴシック」フォントでは表示できません。
+でも、文字コードがUNICODEのときには文字の言語/分類に応じて適切なフォントを自動選択してくれるようで、アレフを表示できるようです。
+（このHTMLファイルはUNICODEで書いているので、IEで見れば表示できているはず。）</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/misc/list/">&#x672A;&#x5206;&#x985E;</a></li><li><a href="/study/misc/list/latex/">&#x4ECA;&#x66F4;&#x306A;&#x304C;&#x3089; LaTeX</a></li><li><a href="/study/misc/list/lecture/">&#x8F2A;&#x8B1B;&#x767A;&#x8868;&#x8CC7;&#x6599;</a></li><li><a href="/study/misc/list/language/">&#x8A00;&#x8449;</a></li><li><a href="/study/misc/list/conlang/">&#x8A00;&#x8A9E;&#x9020;&#x308A;</a></li><li><a href="/study/misc/list/nikotouch/">&#x30CB;&#x30B3;&#x30BF;&#x30C3;&#x30C1;&#x65B9;&#x5F0F;</a></li><li><a href="/study/misc/list/test/">test</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

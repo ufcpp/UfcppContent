@@ -1,0 +1,305 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>bool &#x578B;&#x306E; false, true, &#x305D;&#x308C;&#x4EE5;&#x5916; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2019/1/falsetrueother/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2019-01-28T14:50:18">2019-01-28</time></span><span>更新: <time datetime="2019-01-28T15:02:17">2019-01-28</time></span></div><h1 id="bool-false-true">bool 型の false, true, それ以外</h1>
+<p>これまで(C# 7.3 まで)、C# の <code>switch</code> ステートメントで <code>bool</code> 型を使う場合、以下のように、<code>default</code> 句が必須になることが多々ありました。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">int</span> X(<span class="keyword">bool</span> b)
+{
+    <span class="keyword">switch</span> (b)
+    {
+        <span class="keyword">case</span> <span class="keyword">false</span>: <span class="keyword">return</span> <span class="number">0</span>;
+        <span class="keyword">case</span> <span class="keyword">true</span>: <span class="keyword">return</span> <span class="number">1</span>;
+        <span class="keyword">default</span>: <span class="keyword">return</span> -<span class="number">1</span>;
+    }
+}</code></pre>
+<p><code>bool</code> 型には <code>false</code> と <code>true</code> しかないはずなのにこれはおかしいと言われ続けていたんですが、C# 8.0 では <code>default</code> 句が要らなくなるというか、<code>default</code> 句を絶対に通らなくなるよう、コード生成の仕方を変更するみたいです。</p>
+<p>今日はこの辺りの、要するに「<code>false</code> でも <code>true</code> でもない <code>bool</code> 値」の話。</p>
+<p>サンプルコード: <a href="https://github.com/ufcpp/UfcppSample/tree/master/Demo/2019/BoolExhaustiveness">BoolExhaustiveness</a></p>
+<h2 id="bool">bool とは</h2>
+<h3 id="section">ドキュメント上</h3>
+<p>まず、ドキュメント上、<code>bool</code> がどうなっているかというと…</p>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/bool">C# Language Reference での <code>bool</code> の説明</a>
+<ul>
+<li><code>System.Boolean</code> 型のエイリアスで、真偽値、すなわち、<code>true</code> か <code>false</code> を格納できる</li>
+</ul>
+</li>
+<li><a href="https://docs.microsoft.com/en-us/dotnet/api/system.boolean"><code>Boolean</code> 構造体の説明</a>
+<ul>
+<li><code>true</code> か <code>false</code> のいずれかの2値を取れる型</li>
+</ul>
+</li>
+</ul>
+<p>大体は2つの値だけを取れる型として説明されています。</p>
+<h3 id="boolean">実装上: Boolean 構造体</h3>
+<p>その <code>Boolean</code> 構造体(<code>System</code> 名前空間)の内部実装がどうなっているかというと、</p>
+<ul>
+<li>1バイトの構造体</li>
+<li><code>true</code> の内部表現は 1</li>
+<li><code>false</code> の内部表現は 0</li>
+</ul>
+<p>です。
+1バイトだけども0と1しか必要としないので、残り254個の値は基本的には使われません。</p>
+<h2 id="bool-1">0 でも 1 でもない bool を作る</h2>
+<p>普通にリテラルの <code>true</code>, <code>false</code> や、<code>==</code> などの条件式から <code>bool</code> 値を得る限り、本当に0と1以外の値は発生しません。</p>
+<p>ただ、C# は unsafe な手段を使って任意に値を書き換えれちゃうので、無理やりやると 0 でも 1 でもない <code>bool</code> 値を作れます。</p>
+<p>具体的にはいくつか書き方があるんですが、1つ目は素直にポインターを使うもの。</p>
+<pre><code class="language-csharp"><span class="keyword">unsafe</span> <span class="keyword">bool</span> toBool(<span class="keyword">byte</span> b) =&gt; *((<span class="keyword">bool</span>*)&amp;b);
+Console.WriteLine(toBool(<span class="number">2</span>));</code></pre>
+<p>もう1つは、<a href="/blog/2018/12/unsafe/"><code>Unsafe</code> クラス</a>を使う書き方。
+これもまあ、書き方が違うだけでポインターと大差ないです。</p>
+<pre><code class="language-csharp"><span class="keyword">bool</span> toBool(<span class="keyword">byte</span> b) =&gt; Unsafe.As&lt;<span class="keyword">byte</span>, <span class="keyword">bool</span>&gt;(<span class="keyword">ref</span> b);
+Console.WriteLine(toBool(<span class="number">2</span>));</code></pre>
+<p>最後に、<code>StructLayout</code> を使う(C 言語の union 風な使い方する)方法。
+<code>LayoutKind.Explicit</code> は、ポインター並みに変なことができちゃう機能なので、
+そもそも unsafe コードなしで使えること自体が疑問視されていたりもします。
+要するに、実質 unsafe。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> Main()
+{
+    <span class="keyword">bool</span> toBool(<span class="keyword">byte</span> b)
+    {
+        Union u = <span class="keyword">default</span>;
+        u.Byte = b;
+        <span class="keyword">return</span> u.Boolean;
+    }
+
+    Console.WriteLine(toBool(<span class="number">2</span>));
+}
+
+[StructLayout(LayoutKind.Explicit)]
+<span class="keyword">private</span> <span class="keyword">struct</span> Union
+{
+    [FieldOffset(<span class="number">0</span>)]
+    <span class="keyword">public</span> <span class="keyword">byte</span> Byte;
+    [FieldOffset(<span class="number">0</span>)]
+    <span class="keyword">public</span> <span class="keyword">bool</span> Boolean;
+}</code></pre>
+<h2 id="bool-2">0 でも 1 でもない bool を使うとどうなるか</h2>
+<p>x86 などの CPU では、条件分岐命令が以下のような方法で実現されています。</p>
+<ul>
+<li>直前の命令の結果が 0 になったら立つフラグが CPU 内に存在する</li>
+<li>そのフラグを見て分岐する</li>
+</ul>
+<p>要するに、「0 かどうか」しか見ません。
+この意味では、「true とは 0 以外の全ての値を指す」と言えます。</p>
+<h3 id="c-if">C# の if ステートメント</h3>
+<p>.NET の中間言語もそういう挙動をします。
+<a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.reflection.emit.opcodes.brtrue">brtrue 命令</a>ってのを持ってるんですが、
+こいつは「value が 0 でなければ分岐」という挙動。</p>
+<p>C# の <code>if</code> ステートメントはこの命令(もしくはその逆の <a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.reflection.emit.opcodes.brfalse">brfalse</a>)に変換されるので、
+「0 以外の値」は全て <code>true</code> 扱いになります。
+実際、前述の方法で作った「中身が2の<code>bool</code>値」を <code>if</code> に渡すと <code>true</code> 側に分岐します。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Pointer
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">unsafe</span> <span class="keyword">bool</span> toBool(<span class="keyword">byte</span> b) =&gt; *((<span class="keyword">bool</span>*)&amp;b);
+
+        Branch(<span class="keyword">false</span>);     <span class="comment">// if (false)</span>
+        Branch(<span class="keyword">true</span>);      <span class="comment">// if (true)</span>
+        Branch(toBool(<span class="number">2</span>)); <span class="comment">// if (true)</span>
+    }
+
+    <span class="keyword">static</span> <span class="keyword">void</span> Branch(<span class="keyword">bool</span> b)
+    {
+        <span class="keyword">if</span> (b) Console.WriteLine(<span class="string">&quot;if (true)&quot;</span>);
+        <span class="keyword">else</span> Console.WriteLine(<span class="string">&quot;if (false)&quot;</span>);
+    }
+}</code></pre>
+<pre><code class="language-console">if (false)
+if (true)
+if (true)</code></pre>
+<h3 id="c-7.3-switch">C# 7.3 までの switch ステートメント</h3>
+<p>問題はここからなんですが…</p>
+<p><code>if</code> ステートメントとは違って、(C# 7.3 までの) <code>switch</code> ステートメントは中身の値を見ます。
+すなわち、普通の <code>true</code> と、「中身が2の<code>bool</code>値」は別の値という扱い。</p>
+<p>これが、冒頭のコードで <code>default</code> 句が必須になる理由です。
+<a href="https://github.com/ufcpp/UfcppSample/blob/master/Demo/2019/BoolExhaustiveness/BoolOtherThan01/Program.cs">実際、<code>case true</code> を通らないようなコード</a>を書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> Main()
+{
+    <span class="comment">// 0 → false</span>
+    <span class="comment">// 1 → true</span>
+    <span class="comment">// それ以外 → if (b) は通るんだけど、switch (b) { case true: } は通らない(C# 7.3 までは)変な値になる。</span>
+    <span class="keyword">for</span> (<span class="keyword">byte</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++)
+    {
+        Console.WriteLine($<span class="string">&quot;value = {i}&quot;</span>);
+        Branch(Pointer(i));
+        Branch(UnsafeAs(i));
+        Branch(UnionStruct(i));
+    }
+}
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> false (0) の時は何も表示されない。</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> true (1) の時は if(b) switch(b) の両方が表示される。</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 「それ以外の値」を作って渡すと、if(b) だけが表示される。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">static</span> <span class="keyword">void</span> Branch(<span class="keyword">bool</span> b)
+{
+    <span class="keyword">if</span> (b) Console.WriteLine(<span class="string">&quot;    if(b)&quot;</span>);
+    <span class="keyword">switch</span> (b) { <span class="keyword">case</span> <span class="keyword">true</span>: Console.WriteLine(<span class="string">&quot;    switch(b)&quot;</span>); <span class="keyword">break</span>; }
+}</code></pre>
+<h3 id="switch">型 switch</h3>
+<p>ちなみにこの「中身の値を見て分岐」挙動は、<code>case</code> が全部定数の場合(= 古き良き昔からある <code>switch</code>) の場合だけの挙動です。</p>
+<p>C# 7.0 から入った、<a href="/study/csharp/datatype/typeswitch/#switch">パターン マッチングを使った <code>switch</code></a>(いやゆる「型 switch」)の場合には brtrue 命令が使われるようになって、<a href="https://github.com/ufcpp/UfcppSample/blob/master/Demo/2019/BoolExhaustiveness/BoolOtherThan01/TypeSwitch.cs"><code>if</code> ステートメントと同じ挙動になります</a>。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> TypeSwitch
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        Branch(<span class="number">0</span>);
+        Branch(<span class="number">1</span>);
+        Branch(<span class="number">2</span>);
+    }
+
+    <span class="keyword">static</span> <span class="keyword">unsafe</span> <span class="keyword">void</span> Branch(<span class="keyword">byte</span> x)
+    {
+        <span class="keyword">var</span> b = *((<span class="keyword">bool</span>*)&amp;x);
+
+        Console.WriteLine($<span class="string">&quot;value = {x}&quot;</span>);
+        Console.Write(<span class="string">&quot;    traditional switch: &quot;</span>);
+        <span class="keyword">switch</span> (b)
+        {
+            <span class="keyword">case</span> <span class="keyword">false</span>:
+                Console.WriteLine(<span class="string">&quot;false&quot;</span>);
+                <span class="keyword">break</span>;
+            <span class="keyword">case</span> <span class="keyword">true</span>:
+                Console.WriteLine(<span class="string">&quot;true&quot;</span>);
+                <span class="keyword">break</span>;
+            <span class="keyword">default</span>:
+                <span class="comment">// 0でも1でもないbool値の時にここに来る</span>
+                Console.WriteLine(<span class="string">&quot;other&quot;</span>);
+                <span class="keyword">break</span>;
+        }
+
+        Console.Write(<span class="string">&quot;    type switch: &quot;</span>);
+        <span class="keyword">switch</span> (b)
+        {
+            <span class="keyword">case</span> <span class="keyword">false</span> when <span class="keyword">true</span>:
+                Console.WriteLine(<span class="string">&quot;false&quot;</span>);
+                <span class="keyword">break</span>;
+            <span class="keyword">case</span> <span class="keyword">true</span>:
+                Console.WriteLine(<span class="string">&quot;true&quot;</span>);
+                <span class="keyword">break</span>;
+            <span class="keyword">default</span>:
+                <span class="comment">// 絶対ここは通らない</span>
+                Console.WriteLine(<span class="string">&quot;other&quot;</span>);
+                <span class="keyword">break</span>;
+        }
+    }
+}</code></pre>
+<pre><code class="language-console">value = 0
+    traditional switch: false
+    type switch: false
+value = 1
+    traditional switch: true
+    type switch: true
+value = 2
+    traditional switch: other
+    type switch: true</code></pre>
+<h3 id="section-1">マーシャリング</h3>
+<p>ちなみに、<a href="/study/csharp/interop/sp_pinvoke/#pinvoke">P/Invoke</a>を使う際には、マーシャリング時に「0でも1でもない<code>bool</code>値」を<code>true</code>(内部的に1の<code>bool</code>値)に置き換える処理が掛かるみたいです。</p>
+<p>例えば、以下のような Rust コードを lib.dll 中で定義しておいて、</p>
+<pre><code class="language-rust">#[no_mangle]
+pub extern fn id(x: i8) -&gt; i8 { x }</code></pre>
+<p>これを C# 側から以下のように呼び出します。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Runtime.InteropServices;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+    {
+        <span class="comment">// 素通し。当然、2。</span>
+        <span class="keyword">byte</span> a = Id(<span class="number">2</span>);
+        Console.WriteLine(a);
+
+        <span class="comment">// 素通しじゃなくて、bool で値を受け取り。true。</span>
+        <span class="keyword">bool</span> b = ToBool(<span class="number">2</span>);
+        Console.WriteLine(b);
+
+        <span class="keyword">unsafe</span>
+        {
+            <span class="comment">// 内部表現を見てみると、1 になってる。</span>
+            <span class="keyword">byte</span> b1 = *(<span class="keyword">byte</span>*)&amp;b;
+            Console.WriteLine(b1);
+        }
+    }
+
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> rust 側の id 関数は i8 を素通しするだけ。</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> それを DllImport で呼んでるので、このメソッドも素通し。</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+    [DllImport(<span class="string">&quot;lib.dll&quot;</span>, EntryPoint = <span class="string">&quot;id&quot;</span>)]
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">byte</span> Id(<span class="keyword">byte</span> x);
+
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> マーシャリングで、byte な戻り値を bool で受け取ることができる。</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> ただ、この場合、素通しではなくて、ちゃんと 戻り値 != 0 で bool に変換されているみたい。</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+    [DllImport(<span class="string">&quot;lib.dll&quot;</span>, EntryPoint = <span class="string">&quot;id&quot;</span>)]
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">bool</span> ToBool(<span class="keyword">byte</span> x);
+}</code></pre>
+<p><code>id</code>関数の戻り値は <code>i8</code> (C# でいう <code>sbyte</code>)ですが、マーシャリング時に <code>bool</code> への変換をしてくれます。
+変換の仕方は、<code>!= 0</code> になっているみたいで、「0 でない値」だったら普通の <code>true</code> (内部的に1の<code>bool</code>値)が返ってきます。</p>
+<h3 id="c-8.0-switch">C# 8.0 での switch ステートメントの変更</h3>
+<p>まあ、要するに、<code>switch</code> ステートメントだけがきもいです。</p>
+<p>たびたび「<code>case false</code> と <code>case true</code> があれば <code>default</code> 要らないだろ」と言われ続け、
+そのたびに「内部的に <code>false</code> でも <code>true</code> でもない値があり得るから」という回答が返って来続けていたんですが。</p>
+<p>この度、「ドキュメント上も 『<code>true</code> と <code>false</code> の2値』と明記されているんだから、それ以外の値を想定して非効率なコードを生成するのはおかしいだろ」という突っ込みがあって、「それは確かに」的な空気になったみたいです。</p>
+<p>また、C# 8.0 では <a href="/blog/2018/12/cs8switchexpr/"><code>switch</code> 式</a>も入るので、網羅性のチェック(「<code>true</code> と <code>false</code> で全パターン網羅している」という判定)をしたい需要が高まったので、ついに折れて、<code>bool</code> に対する <code>switch</code> の挙動を変えることにしたみたいです。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        Console.WriteLine(X(<span class="keyword">false</span>)); <span class="comment">// -1</span>
+        Console.WriteLine(X(<span class="keyword">true</span>)); <span class="comment">// 1</span>
+
+        <span class="keyword">unsafe</span>
+        {
+            <span class="keyword">byte</span> x = <span class="number">2</span>;
+            <span class="keyword">bool</span> y = *(<span class="keyword">bool</span>*)&amp;x;
+            Console.WriteLine(X(y)); <span class="comment">// C# 7.0 までは 0 だった。C# 8.0 で 1 になるように。</span>
+        }
+    }
+
+    <span class="keyword">static</span> <span class="keyword">int</span> X(<span class="keyword">bool</span> b)
+    {
+        <span class="keyword">switch</span> (b)
+        {
+            <span class="keyword">case</span> <span class="keyword">false</span>: <span class="keyword">return</span> -<span class="number">1</span>;
+            <span class="keyword">case</span> <span class="keyword">true</span>: <span class="keyword">return</span> <span class="number">1</span>;
+            <span class="keyword">default</span>: <span class="keyword">return</span> <span class="number">0</span>;     <span class="comment">// C# 7.0 までは何も言われなかった。C# 8.0 で「到達できないコード」警告出るように。</span>
+        }
+    }
+}</code></pre>
+<p>内部的には <code>if</code> 相当のコードへの置き換えです。</p>
+<p>ちなみに、Visual Studio 2019 Preview 2だと、「<a href="https://github.com/dotnet/roslyn/issues/32806">LangVersion を 7.3 以下にしてても新しい方の挙動になってしまう</a>」というバグがあったりします。
+バグ認定はされていて、正式版までには「C# 8.0 以上にした場合だけ新しい挙動になる」に変更されるはずです。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2019/1/">1&#x6708;</a></li><li><a href="/blog/2019/1/fasternullchecks/">null &#x304B;&#x3069;&#x3046;&#x304B;&#x3092;&#x5224;&#x5B9A;</a></li><li><a href="/blog/2019/1/vs2019p2/">Visual Studio 2019 Preview 2</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

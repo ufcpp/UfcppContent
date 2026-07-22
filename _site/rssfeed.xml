@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>++C++; // 未確認飛行 C</title>
+    <link>https://ufcpp.net/blog/</link>
+    <description>C# を中心としたプログラミング・情報工学ブログ</description>
+    <language>ja</language>
+    <atom:link href="https://ufcpp.net/rssfeed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>「マクロ欲しい」→「Source Generator 使え」→「むずい」→「ほら、作ったよ」</title>
+      <link>https://ufcpp.net/blog/2026/3/sourcegeneratordemo/</link>
+      <guid>https://ufcpp.net/blog/2026/3/sourcegeneratordemo/</guid>
+      <pubDate>Sat, 07 Mar 2026 22:46:21 GMT</pubDate>
+    </item>
+    <item>
+      <title>C# 14 の破壊的変更点(First-class Span)</title>
+      <link>https://ufcpp.net/blog/2025/10/first-class-span-breaking-change/</link>
+      <guid>https://ufcpp.net/blog/2025/10/first-class-span-breaking-change/</guid>
+      <pubDate>Wed, 22 Oct 2025 21:33:30 GMT</pubDate>
+    </item>
+    <item>
+      <title>ファイナライザー</title>
+      <link>https://ufcpp.net/blog/2025/5/%E3%83%95%E3%82%A1%E3%82%A4%E3%83%8A%E3%83%A9%E3%82%A4%E3%82%B6%E3%83%BC/</link>
+      <guid>https://ufcpp.net/blog/2025/5/%E3%83%95%E3%82%A1%E3%82%A4%E3%83%8A%E3%83%A9%E3%82%A4%E3%82%B6%E3%83%BC/</guid>
+      <pubDate>Sat, 17 May 2025 17:19:14 GMT</pubDate>
+    </item>
+    <item>
+      <title>文字列リテラルを data セクションに UTF-8 で書き込む案</title>
+      <link>https://ufcpp.net/blog/2025/1/data-section-string/</link>
+      <guid>https://ufcpp.net/blog/2025/1/data-section-string/</guid>
+      <pubDate>Sun, 12 Jan 2025 00:16:03 GMT</pubDate>
+    </item>
+    <item>
+      <title>nameof(T&lt;&gt;)</title>
+      <link>https://ufcpp.net/blog/2025/1/nameof-unbound-generic-types/</link>
+      <guid>https://ufcpp.net/blog/2025/1/nameof-unbound-generic-types/</guid>
+      <pubDate>Sun, 05 Jan 2025 11:20:36 GMT</pubDate>
+    </item>
+    <item>
+      <title>First-class な Span 型</title>
+      <link>https://ufcpp.net/blog/2025/1/first-class-span/</link>
+      <guid>https://ufcpp.net/blog/2025/1/first-class-span/</guid>
+      <pubDate>Fri, 03 Jan 2025 21:01:48 GMT</pubDate>
+    </item>
+    <item>
+      <title>field キーワード</title>
+      <link>https://ufcpp.net/blog/2025/1/field-keyword/</link>
+      <guid>https://ufcpp.net/blog/2025/1/field-keyword/</guid>
+      <pubDate>Thu, 02 Jan 2025 22:47:21 GMT</pubDate>
+    </item>
+    <item>
+      <title>UTF8 か Utf8 か</title>
+      <link>https://ufcpp.net/blog/2025/1/pascalcase/</link>
+      <guid>https://ufcpp.net/blog/2025/1/pascalcase/</guid>
+      <pubDate>Wed, 01 Jan 2025 18:52:45 GMT</pubDate>
+    </item>
+    <item>
+      <title>(没) 数学準拠な剰余演算子</title>
+      <link>https://ufcpp.net/blog/2024/12/euclidean-mod/</link>
+      <guid>https://ufcpp.net/blog/2024/12/euclidean-mod/</guid>
+      <pubDate>Wed, 25 Dec 2024 21:02:17 GMT</pubDate>
+    </item>
+    <item>
+      <title>(没) UTF-8 文字列補間</title>
+      <link>https://ufcpp.net/blog/2024/12/u8-string-interpolation/</link>
+      <guid>https://ufcpp.net/blog/2024/12/u8-string-interpolation/</guid>
+      <pubDate>Thu, 19 Dec 2024 22:13:12 GMT</pubDate>
+    </item>
+    <item>
+      <title>.NET 9 の破壊的変更の1つを踏んだ話</title>
+      <link>https://ufcpp.net/blog/2024/12/satulating-float-to-int/</link>
+      <guid>https://ufcpp.net/blog/2024/12/satulating-float-to-int/</guid>
+      <pubDate>Wed, 18 Dec 2024 21:09:06 GMT</pubDate>
+    </item>
+    <item>
+      <title>ref/ref struct 変数を非同期メソッド中で使えるように</title>
+      <link>https://ufcpp.net/blog/2024/4/ref-in-async/</link>
+      <guid>https://ufcpp.net/blog/2024/4/ref-in-async/</guid>
+      <pubDate>Thu, 04 Apr 2024 23:30:21 GMT</pubDate>
+    </item>
+    <item>
+      <title>Lock クラス</title>
+      <link>https://ufcpp.net/blog/2024/4/lock-class/</link>
+      <guid>https://ufcpp.net/blog/2024/4/lock-class/</guid>
+      <pubDate>Thu, 04 Apr 2024 00:22:28 GMT</pubDate>
+    </item>
+    <item>
+      <title>Extensions (拡張型)</title>
+      <link>https://ufcpp.net/blog/2024/3/extensions/</link>
+      <guid>https://ufcpp.net/blog/2024/3/extensions/</guid>
+      <pubDate>Wed, 20 Mar 2024 19:51:16 GMT</pubDate>
+    </item>
+    <item>
+      <title>C# 13 でのコレクション式 - ディクショナリ式</title>
+      <link>https://ufcpp.net/blog/2024/3/dictionary-expressions/</link>
+      <guid>https://ufcpp.net/blog/2024/3/dictionary-expressions/</guid>
+      <pubDate>Sat, 16 Mar 2024 18:17:03 GMT</pubDate>
+    </item>
+    <item>
+      <title>C# 13 でのコレクション式 - 制限の緩和の話</title>
+      <link>https://ufcpp.net/blog/2024/3/colexpr13-relax-restriction/</link>
+      <guid>https://ufcpp.net/blog/2024/3/colexpr13-relax-restriction/</guid>
+      <pubDate>Sat, 09 Mar 2024 21:31:10 GMT</pubDate>
+    </item>
+    <item>
+      <title>IList とかを IReadOnlyList とかから派生させたい</title>
+      <link>https://ufcpp.net/blog/2024/3/ilist-inherites-from-ireadonlylist/</link>
+      <guid>https://ufcpp.net/blog/2024/3/ilist-inherites-from-ireadonlylist/</guid>
+      <pubDate>Sun, 03 Mar 2024 00:18:50 GMT</pubDate>
+    </item>
+    <item>
+      <title>params コレクション</title>
+      <link>https://ufcpp.net/blog/2024/3/params-collections/</link>
+      <guid>https://ufcpp.net/blog/2024/3/params-collections/</guid>
+      <pubDate>Sat, 02 Mar 2024 17:44:41 GMT</pubDate>
+    </item>
+    <item>
+      <title>ラムダ式の引数で、型名を省略して ref, out などだけを指定</title>
+      <link>https://ufcpp.net/blog/2024/2/ref-out-lambda-params/</link>
+      <guid>https://ufcpp.net/blog/2024/2/ref-out-lambda-params/</guid>
+      <pubDate>Sun, 25 Feb 2024 22:53:14 GMT</pubDate>
+    </item>
+    <item>
+      <title>field, value を文脈キーワード化</title>
+      <link>https://ufcpp.net/blog/2024/2/value-as-context-keyword/</link>
+      <guid>https://ufcpp.net/blog/2024/2/value-as-context-keyword/</guid>
+      <pubDate>Sat, 24 Feb 2024 22:20:18 GMT</pubDate>
+    </item>
+    <item>
+      <title>オーバーロード解決優先度</title>
+      <link>https://ufcpp.net/blog/2024/2/overload-resolution-priority/</link>
+      <guid>https://ufcpp.net/blog/2024/2/overload-resolution-priority/</guid>
+      <pubDate>Sun, 18 Feb 2024 17:56:51 GMT</pubDate>
+    </item>
+    <item>
+      <title>ジェネリック型引数の部分型推論</title>
+      <link>https://ufcpp.net/blog/2024/2/partial-inference/</link>
+      <guid>https://ufcpp.net/blog/2024/2/partial-inference/</guid>
+      <pubDate>Sat, 17 Feb 2024 15:43:51 GMT</pubDate>
+    </item>
+    <item>
+      <title>ファーストクラスな Span 型</title>
+      <link>https://ufcpp.net/blog/2024/2/first-class-span/</link>
+      <guid>https://ufcpp.net/blog/2024/2/first-class-span/</guid>
+      <pubDate>Tue, 13 Feb 2024 23:12:43 GMT</pubDate>
+    </item>
+    <item>
+      <title>インターセプター</title>
+      <link>https://ufcpp.net/blog/2024/2/interceptors/</link>
+      <guid>https://ufcpp.net/blog/2024/2/interceptors/</guid>
+      <pubDate>Sun, 11 Feb 2024 18:49:49 GMT</pubDate>
+    </item>
+    <item>
+      <title>ref 構造体のインターフェイス実装 / 型引数での使用</title>
+      <link>https://ufcpp.net/blog/2024/2/ref-struct-interface/</link>
+      <guid>https://ufcpp.net/blog/2024/2/ref-struct-interface/</guid>
+      <pubDate>Sun, 11 Feb 2024 11:53:20 GMT</pubDate>
+    </item>
+    <item>
+      <title>C# での破壊的変更の今後の扱い (続報)</title>
+      <link>https://ufcpp.net/blog/2024/2/breaking-changes/</link>
+      <guid>https://ufcpp.net/blog/2024/2/breaking-changes/</guid>
+      <pubDate>Sat, 10 Feb 2024 19:55:38 GMT</pubDate>
+    </item>
+    <item>
+      <title>オブジェクト初期化子中の ^ 演算子</title>
+      <link>https://ufcpp.net/blog/2024/2/hat-operator-in-object-initializer/</link>
+      <guid>https://ufcpp.net/blog/2024/2/hat-operator-in-object-initializer/</guid>
+      <pubDate>Thu, 08 Feb 2024 21:36:47 GMT</pubDate>
+    </item>
+    <item>
+      <title>\e (エスケープ文字のエスケープ シーケンス)</title>
+      <link>https://ufcpp.net/blog/2023/12/escape-escape/</link>
+      <guid>https://ufcpp.net/blog/2023/12/escape-escape/</guid>
+      <pubDate>Tue, 05 Dec 2023 22:42:39 GMT</pubDate>
+    </item>
+    <item>
+      <title>C# 13 向けトリアージ</title>
+      <link>https://ufcpp.net/blog/2023/10/triage2023/</link>
+      <guid>https://ufcpp.net/blog/2023/10/triage2023/</guid>
+      <pubDate>Wed, 18 Oct 2023 21:14:51 GMT</pubDate>
+    </item>
+    <item>
+      <title>Length-based switch dispatch</title>
+      <link>https://ufcpp.net/blog/2023/8/lengthbasedswitch/</link>
+      <guid>https://ufcpp.net/blog/2023/8/lengthbasedswitch/</guid>
+      <pubDate>Thu, 03 Aug 2023 22:36:41 GMT</pubDate>
+    </item>
+  </channel>
+</rss>

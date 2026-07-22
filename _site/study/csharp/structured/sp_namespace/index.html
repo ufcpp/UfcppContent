@@ -1,0 +1,770 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x540D;&#x524D;&#x7A7A;&#x9593; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/structured/sp_namespace/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">名前空間</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p><strong id="namespace" class="keyword">名前空間</strong>（name space）とは、
+ファイルを種類ごとにフォルダに分けて管理するのと同じように、
+クラスを種類ごとに分けて管理するための機構です。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>namespace キーワードで名前空間を定義します。</p>
+</li>
+<li><p>フォルダを掘ってファイルを整理するような感覚で、名前空間を作ってクラスを整理します。</p>
+</li>
+<li><p>例： namespace SampleNameSpace { class SampleClass  }</p>
+</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="about"></a>名前空間とは</h2>
+<p>名前空間は、ファイル整理のためにフォルダ分けすることに例えられます。</p>
+<p>例えば、ウェブページを作成する場合、コンテンツごとにフォルダに分けて管理すると、サイトの管理がしやすくなります。
+例えば、うちのサイトの場合、以下のようなフォルダ構成になっています。
+（注：今は構成が変わっています。昔はこういう構成でした。）</p>
+<pre><code class="language-csharp">/--+-- memo           (ブログ的な何か)
+   |
+   +-- csharp         (このコーナー)
+   |
+   +-- study-------+  (院試勉強まとめ用)
+                   |
+                   +-- em      (電磁理論)
+                   |
+                   +-- math    (数学)</code></pre>
+<p>そして各フォルダの中にhtmlや画像ファイルがあります。
+このようにコンテンツごとに分けることで、どこにどのファイルがあるのかが分かりやすくなりますし、
+それぞれのフォルダに同じ名前のファイル(例えばindex.htmlやback.png)があっても問題はおきません。</p>
+<p>プログラムを作成する場合でも、プログラムの規模が大きくなってきて、クラスの数が多くなってくると、
+クラスを関連性のあるもの同士まとめて管理するような仕組みが必要になってきます。
+そのような、クラスを階層的に分類するための機構が<em>名前空間</em>です。</p>
+<p>例として、.NET frameworkの標準クラスライブラリを見てみましょう。
+.NET frameworkの標準クラスライブラリ中のクラスの大半は<code>System</code>という名前空間に属しています。
+<code>System</code>名前空間の下に、<code>Text</code>、<code>IO</code>、<code>Drawing</code>などの名前空間があります。
+以下に、名前空間の階層構造と、各名前空間の説明および名前空間に属するクラスの一部を簡単に示します。</p>
+<pre><code class="language-csharp">System --+
+         |
+         +-- IO
+         |   (ファイル入出力。File や Directory などが属する。)
+         +-- Text -----+  (文章処理。Encoding などが属する。)
+         |             |
+         |             +-- RegularExpressions
+         |                 (正規表現。Regex や Match などが属する。)
+         |
+         +-- Drawing --+  (GUI処理。Image や Font や Icon などが属する。)
+                       |
+                       +-- Imaging
+                       |   (画像処理。ImageFormat や Encoder などが属する。)
+                       +-- Printing
+                           (印刷。PrintController などが属する。)</code></pre>
+<p>このように階層的に名前を管理することで、例えば、<code>System.Text.Encoding</code>クラス(Windowsのファイルシステムではフォルダの区切りに「 <code>\</code> 」を使いますが、C#の名前空間の区切りには「 <code>.</code> 」を使います)は画像や音声のエンコード形式ではなくテキストの文字コードだと容易に見当が付きます。</p>
+<p>C# では、名前空間の定義(= フォルダーを掘るようなものに) <code>namespace</code> キーワードを使います。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> MyNamespace <span class="comment">// ← MyNamespace という名前空間(フォルダーみたいなもの)を掘った状態</span>
+{
+    <span class="comment">// その中にクラスを置く</span>
+    <span class="keyword">class</span> X { }
+}</code></pre>
+<p>一方で、「パスを通す」(フルネームで書かなくても <code>File</code> や <code>Regex</code> だけでクラスなどを参照する)ための構文も持っていて、こちらには <code>using</code> キーワードを使います。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.IO;
+
+<span class="comment">// System.IO の中に Directory がある。</span>
+<span class="comment">// フルネームで書くなら System.IO.Directory.GetFiles()</span>
+<span class="keyword">var</span> count = Directory.GetFiles(<span class="string">&quot;.&quot;</span>).Length;
+
+<span class="comment">// System の中に Console がある。</span>
+<span class="comment">// フルネームで書くなら System.Console()</span>
+Console.WriteLine($<span class="string">&quot;フォルダーの下に {count} 個のファイルがあります&quot;</span>);</code></pre>
+<p>ちなみに、名前空間に含まれない部分、ソースコードの一番上の部分を<strong id="global-namespace" class="keyword">グローバル名前空間</strong>(global namespace)と呼びます。</p>
+<pre><code class="language-csharp"><span class="comment">// この辺りの事を「グローバル」(global)と呼ぶ。</span>
+
+<span class="keyword">namespace</span> MyNamespace
+{
+    <span class="comment">// この辺りは「名前空間の中」。</span>
+}</code></pre>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="use"></a>名前空間の使い方</h2>
+<p>具体的に名前空間を使う方法を見ていきましょう。
+ここでは例として、学校の課題で文字列クラス、リストクラス、可変長配列クラス、画像クラスを作れといわれたとします(これらのものは、標準ライブラリに初めから用意されていますが、プログラムの勉強のためにわざわざ自作してみることになった)。</p>
+<h3 id="namespace"><a id="sec-generated-title-5"></a> <a id="namespace-declaration"></a>namespace (名前空間の定義)</h3>
+<p>まず、課題を出された各人の作ったクラスの名前が重ならないように、それそれ自分の名前を使って名前空間を作ります。
+文字列クラス<code>String</code>はそのすぐ下に作りましょう。
+そして、リストクラス<code>List</code>と可変長配列クラス<code>Vector</code>は、名前空間<code>Collections</code>を作ってその下に、画像クラス<code>Image</code>は名前空間<code>Drawing</code>を作ってその下に作ることにします。
+階層構造は以下のようになります。</p>
+<pre><code class="language-csharp">Ufcpp --+-- String                    (文字列クラス)
+        |
+        +-- Collections --+-- List    (リストクラス)
+        |                 |
+        |                 +-- Vector  (可変長配列クラス)
+        |
+        +-- Drawing --------- Image   (画像クラス)</code></pre>
+<p>このような構造の名前空間を作るためには以下のように書きます。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> Ufcpp
+{
+  <span class="keyword">class</span> String{<span class="comment">// String の内容}</span>
+
+  <span class="keyword">namespace</span> Collections
+  {
+    <span class="keyword">class</span> List{<span class="comment">// List の内容}</span>
+
+    <span class="keyword">class</span> Vector{<span class="comment">// Vector の内容}</span>
+  }
+
+  <span class="keyword">namespace</span> Drawing
+  {
+    <span class="keyword">class</span> Image{<span class="comment">// Image の内容}</span>
+  }
+}</code></pre>
+<p>名前空間を定義するためには<em>
+<code>namespace</code>
+</em>というキーワードを使います。
+そしてその後に続く  の中で定義したクラスや名前空間はすべてその名前空間に属することになります。
+また、以下のように書いてもこれとまったく同じ意味になります。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> Ufcpp
+{
+  <span class="keyword">class</span> String{<span class="comment">// String の内容}</span>
+}
+
+<span class="keyword">namespace</span> Ufcpp.Collections
+{
+  <span class="keyword">class</span> List{<span class="comment">// List の内容}</span>
+}
+
+<span class="keyword">namespace</span> Ufcpp.Collections
+{
+  <span class="keyword">class</span> Vector{<span class="comment">// Vector の内容}</span>
+}
+
+<span class="keyword">namespace</span> Ufcpp.Drawing
+{
+  <span class="keyword">class</span> Image{<span class="comment">// Image の内容}</span>
+}</code></pre>
+<p>つまり、名前空間を2つ以上の場所に分けて書くこともできますし、
+「 <code>.</code> 」で区切ることで階層構造を指定できます。</p>
+<p>次に、名前空間中に定義したクラスを参照する方法を説明します。
+名前空間中に定義したクラスは、以下のように、階層構造を「 <code>.</code> 」で区切って指定することで参照できます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> NameSpaceTest
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    Ufcpp.String str = <span class="keyword">new</span> Ufcpp.String(<span class="string">&quot;test&quot;</span>);
+
+    Ufcpp.Collections.List list = <span class="keyword">new</span> Ufcpp.Collections.List();
+    Ufcpp.Collections.Vector vec = <span class="keyword">new</span> Ufcpp.Collections.Vector();
+
+    Ufcpp.Drawing.Image image = <span class="keyword">new</span> Ufcpp.Drawing.Image(<span class="string">&quot;back.png&quot;</span>);
+  }
+}</code></pre>
+<p><code>Ufcpp.Collections.Vector</code>というように、名前空間をすべて指定した形式の名前を<em>完全修飾名</em>(fully qualified name)と言います。</p>
+<h3 id="namespace-1"><a id="sec-generated-title-6"></a> <a id="file-scoped-namespace"></a>ファイル スコープ namespace</h3>
+<h5 class="version version10">Ver. 10</h5>
+<p>C# 10.0 から <code>{}</code> なしの以下のような書き方で名前空間を指定できるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> Namespace;
+
+<span class="keyword">class</span> A { }</code></pre>
+<p>これで以下のコードと同じ意味になります。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> Namespace
+{
+    <span class="keyword">class</span> A { }
+}</code></pre>
+<p>新しい <code>{}</code> なしで <code>;</code> を書いてしまう書き方はファイル全体を <code>namespace {}</code> でくくったのを同じ意味になります。
+そういう意味でこの書き方を<strong id="key-file-scoped-namespace" class="keyword">ファイル スコープ名前空間</strong>(file-scoped namespace)と言います。</p>
+<p>ファイル スコープ名前空間は1つの C# ファイルにつき1つだけ書けます。例えば以下のコードはコンパイル エラーになります。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> Ns1;
+<span class="keyword">namespace</span> Ns2;
+
+<span class="keyword">class</span> A { }</code></pre>
+<p>また、ファイル スコープ名前空間はファイルの「ほぼ先頭」に書く必要があります。
+ファイル スコープ名前空間よりも前に書けるものはかなり限られていて、</p>
+<ul>
+<li><a href="/study/csharp/start/st_comment/">コメント</a></li>
+<li><a href="/study/csharp/misc/sp_preprocess/#preprocess">プリプロセス命令</a></li>
+<li>次節で説明する<a href="#using-directive">using</a></li>
+<li><a href="#extern">外部エイリアス</a></li>
+<li><a href="/study/csharp/dynamic/sp_attribute/#target">assembly、module 対象の属性</a></li>
+</ul>
+<p>くらいです。このうち頻繁に利用するのはコメントと using くらいでしょう。</p>
+<pre><code class="language-csharp"><span class="comment">// コメントと using は namespace よりも前に書ける。</span>
+<span class="keyword">using</span> System.Text;
+
+<span class="keyword">namespace</span> Ns1;
+
+<span class="comment">// using は後にも書ける。</span>
+<span class="keyword">using</span> System.Text.Encodings;
+
+<span class="keyword">class</span> A { }</code></pre>
+<p>これで以下のコードと同じ意味になります。</p>
+<pre><code class="language-csharp"><span class="comment">// コメントと using は namespace よりも前に書ける。</span>
+<span class="keyword">using</span> System.Text;
+
+<span class="keyword">namespace</span> Ns1
+{
+    <span class="comment">// using は後にも書ける。</span>
+    <span class="keyword">using</span> System.Text.Encodings;
+
+    <span class="keyword">class</span> A { }
+}</code></pre>
+<p>「インデントが1段減る」程度の小さなメリットですが、
+一方でデメリットも「1ファイルに1つしか書けない」程度で、
+ほとんどの人は制限を掛けられなくても最初から「1ファイルに1つしか書かない」ので特に問題にはならないでしょう。</p>
+<h3 id="using"><a id="sec-generated-title-7"></a> <a id="using-directive"></a>using (名前空間の参照)</h3>
+<p>また、いちいち完全修飾名を書かなくても済むように、<strong id="using" class="keyword">using ディレクティブ</strong>というものが用意されています。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> Ufcpp; <span class="comment">// 名前空間 Ufcpp 内にあるクラスを修飾名なしで使えるようになる</span>
+
+<span class="keyword">class</span> NameSpaceTest
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    String str = <span class="keyword">new</span> String(<span class="string">&quot;test&quot;</span>); <span class="comment">// Ufcpp. が要らない</span>
+
+    Drawing.Image image = <span class="keyword">new</span> Drawing.Image(<span class="string">&quot;back.png&quot;</span>);
+  }
+}</code></pre>
+<pre><code class="language-csharp"><span class="keyword">using</span> Ufcpp;
+<span class="keyword">using</span> Ufcpp.Collections;
+<span class="keyword">using</span> Ufcpp.Drawing;
+
+<span class="keyword">class</span> NameSpaceTest
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    String str = <span class="keyword">new</span> String(<span class="string">&quot;test&quot;</span>);     <span class="comment">// Ufcpp. が要らない</span>
+
+    List list = <span class="keyword">new</span> List();              <span class="comment">// Ufcpp.Collections も要らない</span>
+    Vector vec = <span class="keyword">new</span> Vector();
+
+    Image image = <span class="keyword">new</span> Image(<span class="string">&quot;back.png&quot;</span>); <span class="comment">// Ufcpp.Drawing. も要らない</span>
+  }
+}</code></pre>
+<p>先頭の<em>
+<code>using</code>
+</em>から始まる行がusingディレクティブです。
+このように、usingディレクティブを使うことでコードの入力手間を省くことが出来ます。</p>
+<p>ちなみに、 using ディレクティブはほぼファイルの先頭、もしくは、名前空間内の先頭にしか書けません。
+(ファイルの先頭も「グローバル名前空間の先頭」という扱いなので、「名前空間内の先頭にだけ書ける」と考えて大丈夫です。)
+using ディレクティブよりも前に書けるのは、
+コメントや空白のようにプログラムに影響しないものか、
+<a href="/study/csharp/misc/sp_preprocess/">プリプロセッサー</a>や<a href="#extern">extern alias</a>などのめったに使わない構文だけです。</p>
+<pre><code class="language-csharp"><span class="comment">// (コメントを除いて) using より前にはほぼ何も書けない。</span>
+<span class="keyword">using</span> System;
+
+Console.WriteLine(); <span class="comment">// 何か書いてしまうと…</span>
+
+<span class="keyword">using</span> System.IO; <span class="comment">// この行はコンパイル エラー。</span></code></pre>
+<p>ただ、名前空間自体が入れ子に書けるので、「名前空間の先頭にしか書けない」といっても using ディレクティブも入れ子で書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">namespace</span> Ns1
+{
+    <span class="keyword">using</span> System.IO;
+
+    <span class="keyword">namespace</span> Ns2
+    {
+        <span class="keyword">using</span> System.Collections;
+    }
+}</code></pre>
+<p>また「using しすぎ」にはそこそこ注意が必要です。
+名前の衝突を避けるために名前空間を掘っているのに、using するとその「名前空間分け」をなくすことになります。
+例えば、以下のように「別名前空間の同名の型」を用意します。</p>
+<pre><code class="language-csharp"><span class="comment">// 名前空間違いで同じ名前のクラスを用意しておく。</span>
+<span class="keyword">namespace</span> A
+{
+    <span class="keyword">class</span> X { }
+}
+
+<span class="keyword">namespace</span> B
+{
+    <span class="keyword">class</span> X { }
+}</code></pre>
+<p>ここで、<code>using A</code> と <code>using B</code> を同時に書いてしまうと「どちらかわからない」というコンパイル エラーを起こします。
+(こういうエラーを「名前があいまい」(ambiguous)と言います。)</p>
+<pre><code class="language-csharp"><span class="comment">// A と B の using を同列に並べる。</span>
+<span class="keyword">using</span> A;
+<span class="keyword">using</span> B;
+
+<span class="keyword">class</span> C
+{
+    X x; <span class="comment">// A.X か B.X かわからないのでエラー。</span>
+}</code></pre>
+<p>ちなみに、<a href="#priority">後述しますが</a>、
+入れ子の場合は内側優先で名前解決します。</p>
+<h3 id="global-using"><a id="sec-generated-title-8"></a> <a id="global-using"></a>global using</h3>
+<h5 class="version version10">Ver. 10</h5>
+<p>C# 10.0 から <code>using</code> ディレクティブの前に <code>global</code> という修飾を付けることで、
+<a href="/study/csharp/package/project/#project">プロジェクト</a>内全域に対して影響を及ぼす <code>using</code> (名前空間の参照)ができるようになりました。
+(これを <strong id="key-global-using" class="keyword">global using ディレクティブ</strong>といいます。
+俗称としては単に「global using」。)</p>
+<p>例えば、プロジェクト内のどこか1つのファイルに以下のようなコードを書いたとします。</p>
+<pre><code class="language-csharp">global <span class="keyword">using</span> System.Text.RegularExpressions;</code></pre>
+<p>これで、このプロジェクト内のすべてのファイルで、ファイルの先頭に <code>using System.Text.RegularExpressions</code> を書いたのと同じ状態になります。</p>
+<p>例えば別のファイルに以下のようなコードを書いたとき、</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> line = Console.ReadLine();
+<span class="keyword">var</span> m = Regex.Match(line, <span class="stringCSharpVerbatim">@&quot;\d+&quot;</span>);
+<span class="keyword">if</span> (m.Success)
+    Console.WriteLine(m.Value);</code></pre>
+<p>以下のコードと同じ扱いでコンパイルされます。
+(この例の場合、<code>Regex</code> クラスが <code>System.Text.RegularExpressions</code> 名前空間内で定義されいているクラスなので、<code>using System.Text.RegularExpressions</code> が必要。)</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Text.RegularExpressions;
+
+<span class="keyword">var</span> line = Console.ReadLine();
+<span class="keyword">var</span> m = Regex.Match(line, <span class="stringCSharpVerbatim">@&quot;\d+&quot;</span>);
+<span class="keyword">if</span> (m.Success)
+    Console.WriteLine(m.Value);</code></pre>
+<p>同じキーワードを流用したため後述する <a href="#global">global エイリアス</a>と紛らわしいですが別物です。</p>
+<p>ちなみに、通常の using ディレクティブに加え、後述する <a href="#using-static">using static</a> や <a href="#alias">using エイリアス</a>に対しても同様に <code>global</code> 修飾を付けることでプロジェクト全域化できます。</p>
+<pre><code class="language-csharp">global <span class="keyword">using</span> System.Text.RegularExpressions;
+global <span class="keyword">using</span> <span class="keyword">static</span> System.Linq.Enumerable;
+global <span class="keyword">using</span> Date = System.DateOnly;</code></pre>
+<p>global using は通常の using ディレクティブの前にしか書けません。
+例えば以下のコードはコンパイル エラーになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+global <span class="keyword">using</span> System.Text.RegularExpressions;</code></pre>
+<p>using ディレクティブ自体が、ファイルの中でもかなり先頭の方にしか書けない構文なので、
+必然的に global using よりも前に書けるものはほとんどなくなります。
+<a href="#file-scoped-namespace">ファイル スコープ名前空間</a>よりもさらに厳しくて、</p>
+<ul>
+<li><a href="/study/csharp/start/st_comment/">コメント</a></li>
+<li><a href="/study/csharp/misc/sp_preprocess/#preprocess">プリプロセス命令</a></li>
+<li><a href="#extern">外部エイリアス</a></li>
+</ul>
+<p>しか書けません。</p>
+<h4 id="global-using-1"><a id="sec-generated-title-9"></a> <a id="usage-global-using"></a>global using の用途</h4>
+<p>前節で「using しすぎ」に注意を促しましたが、プロジェクト全域に影響を及ぼす global using ではなおの事注意が必要です。
+基本的には「むやみやたらと使うものではない」という認識でいいと思います。</p>
+<p>その一方で、<code>System</code> 名前空間(標準ライブラリの名前空間)のように、
+世の中の C# コードの過半数が using していて、
+「それはさすがに global using しても誰も困らないだろう」というものもあります。</p>
+<p>実際、例えば .NET 5 (Visual Studio 2019) 時点で、Visual Studio でテンプレート通りに C# のクラスを作ると、
+初期状態で以下のようなコードが作られます。
+<code>System</code>、<code>System.Collections.Generic</code> などの名前空間は「ほぼみんな使う」と判断されていて、初期状態で using が付いてきます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Collections.Generic;
+<span class="keyword">using</span> System.Linq;
+<span class="keyword">using</span> System.Text;
+<span class="keyword">using</span> System.Threading.Tasks;
+
+<span class="keyword">namespace</span> ConsoleApp1
+{
+    <span class="keyword">class</span> A
+    {
+    }
+}</code></pre>
+<p>これを、<a href="#file-scoped-namespace">ファイル スコープ名前空間</a>と併せて、
+以下のようなコードにまでテンプレートの行数を減らしたいというのが global using の主な目的になります。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> ConsoleApp1;
+
+<span class="keyword">class</span> A
+{
+}</code></pre>
+<p>この場合でも、開発者自らが global using を書くことは少なくて、
+実際には「自動的に生成されているもの」なことが多くなると思います。
+詳しくはブログの「<a href="/blog/2021/8/newprojecttemplate/">最初の C# プログラム</a>」で説明しています。</p>
+<h2 id="using-static"><a id="sec-generated-title-10"></a> <a id="using-static"></a>補足: using static</h2>
+<h5 class="version version6">Ver. 6</h5>
+<p>名前空間関連ではないんですが、名前空間の「<a href="#using">using ディレクティブ</a>」と似たものなのでここで紹介だけしておきたい機能が、
+静的メソッドに対する 「<a href="/study/csharp/oop/oo_static/#key-using-static">using static</a>」 です。
+以下のように、静的メソッドの呼び出しに対して、クラス名を省略できるようになる機能です(C# 6からの機能)。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> <span class="keyword">static</span> System.Math;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> pi = <span class="number">2</span> * Asin(<span class="number">1</span>);
+        Console.WriteLine(PI == pi);
+    }
+}</code></pre>
+<p>詳しくは、「<a href="/study/csharp/oop/oo_static/">静的メンバー</a>」で説明します。</p>
+<h2 id="using-1"><a id="sec-generated-title-11"></a> <a id="alias"></a>using エイリアス</h2>
+<p>先ほど自作した<code>String</code>のテストのために、比較対象として.NET frameworkに標準で用意されている<code>System.String</code>クラスを同時に使用したいとします。
+もちろん、<code>Ufcpp.String</code>というように完全修飾名を用いれば、<code>System.String</code>と共存可能なのですが、<strong id="alias" class="keyword">エイリアス</strong>（alias：別名付け）という機能を使うことでも共存させることが出来ます。</p>
+<p>エイリアスは以下のような書き方をします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> MyString = Ufcpp.String;</code></pre>
+<p>名前空間の先頭でこのような宣言をすることで、その名前空間中では<code>MyString</code>と書くことで<code>Ufcpp.String</code>を参照することが出来ます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> MyString = Ufcpp.String;           <span class="comment">// クラスのエイリアス</span>
+<span class="keyword">using</span> MyCollections = Ufcpp.Collections; <span class="comment">// 名前空間のエイリアスも作れる</span>
+
+<span class="keyword">class</span> NameSpaceTest
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    String str = <span class="keyword">new</span> String(<span class="string">&quot;test&quot;</span>);
+    <span class="comment">//↑ System.String が参照される</span>
+    MyString str = <span class="keyword">new</span> MyString(<span class="string">&quot;test&quot;</span>);
+    <span class="comment">//↑ Ufcpp.String が参照される</span>
+    MyCollections.List list = <span class="keyword">new</span> MyCollections.List();
+    <span class="comment">//↑ Ufcpp.Collections.List が参照される</span>
+  }
+}</code></pre>
+<h5 id="section-5"><a id="sec-generated-title-12"></a>サンプル</h5>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 自作クラス用の名前空間</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">namespace</span> Ufcpp
+{
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> 数学関数の自作</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+    <span class="keyword">public</span> <span class="keyword">class</span> Math
+    {
+        <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+        <span class="xmlDocTag">///</span><span class="xmlDocComment"> sin(x) の値を求める。</span>
+        <span class="xmlDocTag">///</span><span class="xmlDocComment"> この実装は甘い。</span>
+        <span class="xmlDocTag">///</span><span class="xmlDocComment"> 入力できる値は-0.1～0.1程度で、精度も4桁程度。</span>
+        <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">double</span> Sin(<span class="keyword">double</span> x)
+        {
+            <span class="keyword">double</span> xx = -x * x;
+            <span class="keyword">double</span> fact = <span class="number">1</span>;
+            <span class="keyword">double</span> sin = x;
+ 
+            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>; i &lt; <span class="number">100</span>;)
+            {
+                fact *= i; ++i; fact *= i; ++i;
+                x *= xx;
+                sin += x / fact;
+            }
+            <span class="keyword">return</span> sin;
+        }
+    }
+}
+ 
+<span class="keyword">namespace</span> Sample
+{
+    <span class="keyword">using</span> MyMath = Ufcpp.Math;
+ 
+    <span class="keyword">class</span> NameSpaceSample
+    {
+        <span class="keyword">static</span> <span class="keyword">void</span> Main()
+        {
+            Console.Write(<span class="string">&quot;   x, System.Math.Sin(x), Ufcpp.Math.Sin(x)\n&quot;</span>);
+            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; ++i)
+            {
+                <span class="keyword">double</span> x = <span class="number">0</span>.<span class="number">01</span> * i;
+ 
+                <span class="keyword">double</span> y = Math.Sin(x);   <span class="comment">// System.Math.Sin呼び出し</span>
+                <span class="keyword">double</span> z = MyMath.Sin(x); <span class="comment">// Ufcpp.Math.Sin呼び出し</span>
+ 
+                Console.Write(<span class="string">&quot;{0:f2},           {1:f6},            {2:f6}\n&quot;</span>, x, y, z);
+            }
+        }
+    }
+}</code></pre>
+<pre><code class="language-console">   x, System.Math.Sin(x), Ufcpp.Math.Sin(x)
+0.00,           0.000000,            0.000000
+0.01,           0.010000,            0.010000
+0.02,           0.019999,            0.019999
+0.03,           0.029996,            0.029996
+0.04,           0.039989,            0.039989
+0.05,           0.049979,            0.049979
+0.06,           0.059964,            0.059964
+0.07,           0.069943,            0.069943
+0.08,           0.079915,            0.079915
+0.09,           0.089879,            0.089879</code></pre>
+<h3 id="using-2"><a id="sec-generated-title-13"></a> <a id="using-any-type">任意の型に対する using エイリアス</a></h3>
+<h5 class="version version12">Ver. 12</h5>
+<p>C# 12 から以下のようなコードをコンパイルできるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> Primitive = <span class="keyword">int</span>;
+<span class="keyword">using</span> Array = <span class="keyword">int</span>[];
+<span class="keyword">using</span> Nullable = <span class="keyword">int</span>?;
+<span class="keyword">using</span> Tuple = (<span class="keyword">int</span>, <span class="keyword">int</span>);</code></pre>
+<p>要するに以下の2点が改善点です。</p>
+<ul>
+<li><code>int</code> みたいなキーワードをそのまま using エイリアスの右辺に書けるようになった</li>
+<li><a href="/study/csharp/structured/st_array/">配列</a>、<a href="/study/csharp/resource/sp2_nullable/">nullable 値型</a>、<a href="/study/csharp/datatype/tuples/">タプル</a>などを C# の専用構文を使って書けるようになった</li>
+</ul>
+<p>C# 11 以前でも以下のように、キーワード・専用構文を使わない書き方はできていました。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> Primitive = System.Int32;
+<span class="keyword">using</span> Nullable = System.Nullable&lt;System.Int32&gt;;
+<span class="keyword">using</span> Tuple = System.ValueTuple&lt;System.Int32, System.Int32&gt;;
+<span class="comment">//※ 配列を書く手段はなかった</span></code></pre>
+<p>また、少々不可解なことに、以下のようなコードも C# 11 以前から書けていました。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> Primitive = System.ValueTuple&lt;<span class="keyword">int</span>&gt;;
+<span class="keyword">using</span> Array = System.ValueTuple&lt;<span class="keyword">int</span>[]&gt;;
+<span class="keyword">using</span> Nullable = System.ValueTuple&lt;<span class="keyword">int</span>?&gt;;
+<span class="keyword">using</span> Tuple = System.ValueTuple&lt;(<span class="keyword">int</span>, <span class="keyword">int</span>)&gt;;</code></pre>
+<p>つまり、型引数(ジェネリック型 <code>X&lt;T&gt;</code> の <code>T</code> の部分)であればこれまでも <code>int</code> や <code>int[]</code> などが書けました。
+C# 12 では、なぜか最上位レベルの時にだけかかっていた謎の制限を取り払ったことになります。
+(実際、仕様書・実装ともに微々たる修正だったようです。)</p>
+<p>ちなみに、C# 12 ではポインターや関数ポインターに対しても using エイリアスを使えるようになりました。
+詳しくは「<a href="/study/csharp/interop/sp_unsafe/#unsafe-using">unsafe 型に対する using エイリアス</a>」で説明します。</p>
+<h2 id="section-6"><a id="sec-generated-title-14"></a> <a id="alias_sp"></a>エイリアス修飾子</h2>
+<h5 class="version version2">Ver. 2.0</h5>
+<p>前節で説明したとおり、
+名前空間にはエイリアス（別名）を付けられます。</p>
+<p>例えば、以下のように、ちょっと長めの名前空間名 Ufcpp.Test.Utilities に、
+短いエイリアス Util を付けたとします。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> Ufcpp.Test.Utilities
+{
+  <span class="keyword">class</span> Image {}
+}
+
+<span class="keyword">namespace</span> TestNamespace
+{
+  <span class="keyword">using</span> Util = Ufcpp.Test.Utilities; <span class="comment">// エイリアスをつける。</span>
+
+  <span class="keyword">class</span> Program
+  {
+    <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+    {
+      Util.Image img = <span class="keyword">new</span> Util.Image();
+    }
+  }
+}</code></pre>
+<p>このコード自体には特に問題もなく、ちゃんとコンパイルが通ります。
+ところが、このプログラムを修正していくうちに、ちょっとした問題が生じる可能性があります。
+例えば、複数人で開発しているものとして、
+自分以外の誰かが、TestNamespace 内に Util というクラスを作ってしまったとしましょう。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> Ufcpp.Test.Utilities
+{
+  <span class="keyword">class</span> Image {}
+}
+
+<span class="keyword">namespace</span> TestNamespace
+{
+  <span class="keyword">using</span> Util = Ufcpp.Test.Utilities;
+
+  <span class="keyword">class</span> Program
+  {
+    <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+    {
+      Util.Image img = <span class="keyword">new</span> Util.Image();
+    }
+  }
+
+  <span class="keyword">class</span> Util {} <span class="comment">// Util クラスを追加。エラーになる。</span>
+}</code></pre>
+<p>たったこれだけでこのコードはコンパイルエラーを起こします。
+（エイリアス Util がクラス Util と衝突しましたと怒られるか、
+Util と言う名前は既に存在しますと怒られるはず。）</p>
+<p>この問題を緩和するため、C# 2.0 では、エイリアス修飾子というものが追加されました。
+エイリアス修飾子は、<code>Alias.Class</code> という書き方の代わりに、
+<code>Alias<span>Class</code> と言うように、<code>:</code> を2つ付けます。
+このエイリアス修飾子 <code></span></code> は、基本的には <code>.</code> と同じ結果を生みますが、
+ただ、エイリアスの後ろにしか付けられないという制限があります。
+このため、<code>::</code> の付いている部分の直前はエイリアスであることが確定し、
+エイリアスと同名のクラスが追加されても混乱が起こりません。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> Ufcpp.Test.Utilities
+{
+  <span class="keyword">class</span> Image {}
+}
+
+<span class="keyword">namespace</span> TestNamespace
+{
+  <span class="keyword">using</span> Util = Ufcpp.Test.Utilities;
+
+  <span class="keyword">class</span> Program
+  {
+    <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+    {
+      Util::Image img = <span class="keyword">new</span> Util::Image();
+      <span class="comment">//↑ この Util はエイリアスの Util とみなされる。</span>
+    }
+  }
+
+  <span class="keyword">class</span> Util {} <span class="comment">// Util と同名のクラスがあっても OK。</span>
+}</code></pre>
+<h3 id="global"><a id="sec-generated-title-15"></a> <a id="global"></a>global 名前空間エイリアス</h3>
+<h5 class="version version2">Ver. 2.0</h5>
+<p>名前の付け方次第では、完全修飾名で書いても参照できない場合があります。
+以下のように、名前空間の階層に同名の識別子がある場合です。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> <span class="keyword">static</span> System.Console;
+
+<span class="keyword">namespace</span> X.Y
+{
+    <span class="keyword">class</span> Program
+    {
+        <span class="keyword">static</span> <span class="keyword">void</span> Main()
+        {
+            <span class="comment">// 単に Y って書くと、名前空間 X.Y の方の意味になる</span>
+            Y.F(); <span class="comment">// コンパイル エラー。名前空間 Y に F がいない</span>
+        }
+    }
+}
+
+<span class="keyword">class</span> Y { <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> F() =&gt; WriteLine(<span class="string">&quot;class Y&quot;</span>); }</code></pre>
+<p>階層違いで同名のものがあることが原因なので、必ず最上位(グローバル名前空間)からたどる手段があれば解決します。
+そのために使うのが、<code>global</code>名前空間エイリアスです。
+以下のように、<code>global::</code>から書き始めれば、最上位から名前をたどれます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> <span class="keyword">static</span> System.Console;
+
+<span class="keyword">namespace</span> X.Y
+{
+    <span class="keyword">class</span> Program
+    {
+        <span class="keyword">static</span> <span class="keyword">void</span> Main()
+        {
+            <span class="comment">// global エイリアスを使えば、最上位から名前をたどれる</span>
+            global::Y.F();
+        }
+    }
+}
+
+<span class="keyword">class</span> Y { <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> F() =&gt; WriteLine(<span class="string">&quot;class Y&quot;</span>); }</code></pre>
+<p><code>global</code>は、<code>::</code>の前でだけキーワード扱いされる文脈キーワードです。
+その他の場面では、<code>global</code>クラスを作ったり、<code>global</code>という名前の名前空間を作ったり、参照したりもできます。</p>
+<h2 id="section-7"><a id="sec-generated-title-16"></a> <a id="extern"></a>外部エイリアス</h2>
+<h5 class="version version2">Ver. 2.0</h5>
+<p>C# 2.0 では、using を使ってエイリアスを定義する代わりに、
+コンパイルオプションでエイリアスを付けることが可能になりました（外部エイリアス）。</p>
+<p>外部エイリアスを使うにはまず、
+ソースファイル中に extern alias という宣言を書きます。</p>
+<pre><code class="language-csharp"><span class="keyword">extern</span> alias X;
+
+<span class="keyword">class</span> Program
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+  {
+    X::A a = <span class="keyword">new</span> X::A();
+  }
+}</code></pre>
+<p>そして、ソースファイルのコンパイル時に、
+以下のようなオプションを追加します。</p>
+<pre><code class="language-console">csc /r:X=Ufcpp.dll Test.cs</code></pre>
+<p>これで、Ufcpp.dll というライブラリ中で定義された <code>A</code> というクラスを、
+<code>X::A</code> という名前で参照できるようになります。</p>
+<p>Visual Studio 上では、図1のように、参照しているライブラリのプロパティを開いて、エイリアス(aliases)の行を編集します。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/ExternAliasInVs.png"><img src="/assets/media/ufcpp2000/csharp/fig/ExternAliasInVs.png" alt="Visual Studio 上での外部エイリアス設定。" /></a></p>
+<figcaption>Visual Studio 上での外部エイリアス設定。</figcaption>
+</figure>
+<p>サンプル: <a href="https://github.com/ufcpp/UfcppSample/tree/master/Chapters/StructuredProgramming/ExternAliasConsoleApplication">ExternAliasConsoleApplication</a></p>
+<p>この外部エイリアスを使うと、2つの異なるライブラリに、完全に同名前空間・同名のクラスがあっても、参照し分けることができます。
+例えば、上記のサンプルは以下のようなシナリオを想定したものです。</p>
+<ul>
+<li><p>.NET 2.0 で LINQ を使うために、Enumerable クラスや Extension 属性を自作した(BackportEnumerable.dll)</p>
+</li>
+<li><p>その BackportEnumerable のテストのために、標準の LINQ と自作の LINQ を両方使って、実行結果を比べたい(ExternAliasConsoleApplication.exe)</p>
+</li>
+</ul>
+<p>以下のようなコードで呼び分けできます。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> UsingStandard
+{
+    <span class="keyword">using</span> System.Linq;
+
+    <span class="keyword">class</span> Sample
+    {
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Run()
+        {
+            <span class="keyword">var</span> x = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> };
+            <span class="keyword">var</span> y = x.Where(i =&gt; (i &amp; <span class="number">1</span>) != <span class="number">0</span>).Select(i =&gt; i * i); <span class="comment">// 標準の LINQ</span>
+            Console.WriteLine(<span class="keyword">string</span>.Join(<span class="string">&quot;, &quot;</span>, y));
+        }
+    }
+}
+
+<span class="keyword">namespace</span> UsingBackport
+{
+    <span class="keyword">extern</span> alias Backport; <span class="comment">// コンパイル オプションで BackportEnumerable.dll を指定</span>
+    <span class="keyword">using</span> Backport::System.Linq;
+
+    <span class="keyword">class</span> Sample
+    {
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Run()
+        {
+            <span class="keyword">var</span> x = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> };
+            <span class="keyword">var</span> y = x.Where(i =&gt; (i &amp; <span class="number">1</span>) != <span class="number">0</span>).Select(i =&gt; i * i); <span class="comment">// 自作のパックポート LINQ</span>
+            Console.WriteLine(<span class="keyword">string</span>.Join(<span class="string">&quot;, &quot;</span>, y));
+        }
+    }
+}</code></pre>
+<h2 id="section-8"><a id="sec-generated-title-17"></a> <a id="priority"></a>名前解決の優先度</h2>
+<p>名前空間によって、同じ名前のものを複数作れます。
+その同じ名前のものを使い分けたければ、ちゃんと完全修飾名を使う方のが一番ですが、
+一応、<code>using</code>を並べた場合の優先度についても説明しておきます。</p>
+<p>まず、<code>using</code>の使い過ぎなどでどちらか判別できない状況になると、コンパイル エラーになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> <span class="keyword">static</span> System.Console;
+<span class="keyword">using</span> A;
+<span class="keyword">using</span> B;
+
+<span class="keyword">namespace</span> MyApp
+{
+    <span class="keyword">class</span> Program
+    {
+        <span class="keyword">static</span> <span class="keyword">void</span> Main()
+        {
+            Lib.F(); <span class="comment">// コンパイル エラー。A, B 区別つかない</span>
+        }
+    }
+}
+
+<span class="keyword">namespace</span> A
+{
+    <span class="keyword">class</span> Lib { <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> F() =&gt; WriteLine(<span class="string">&quot;A&quot;</span>); }
+}
+<span class="keyword">namespace</span> B
+{
+    <span class="keyword">class</span> Lib { <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> F() =&gt; WriteLine(<span class="string">&quot;B&quot;</span>); }
+}</code></pre>
+<p><code>using</code>や型定義を書く場所によって優先度が付いています。
+優先度違いのものであれば、優先度が高い方が選ばれ、コンパイルできます。
+逆に、同優先度のものがあるとエラーになります。</p>
+<p>優先度ですが、以下のように、使う場所に近いほど優先、直接的なものほど優先です。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> <span class="keyword">static</span> System.Console;
+<span class="keyword">using</span> A;
+
+<span class="comment">// using よりは、直接定義されているものの方が優先 A &lt; C, global</span>
+<span class="comment">// エイリアスと型定義は同列 C = global</span>
+<span class="keyword">using</span> Lib = C.Lib;
+<span class="keyword">class</span> Lib { <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> F() =&gt; WriteLine(<span class="string">&quot;global&quot;</span>); }
+
+<span class="keyword">namespace</span> MyApp
+{
+    <span class="keyword">using</span> B; <span class="comment">// 内側に using を書くと、外より優先 A, C, global &lt; B</span>
+
+    <span class="comment">// 同一名前空間内にあるものは1番高い優先度 B &lt; MyApp</span>
+    <span class="keyword">class</span> Lib { <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> F() =&gt; WriteLine(<span class="string">&quot;MyApp&quot;</span>); }
+
+    <span class="keyword">class</span> Program
+    {
+        <span class="keyword">static</span> <span class="keyword">void</span> Main()
+        {
+            <span class="comment">// Lib は5つある</span>
+            <span class="comment">// この場合 MyApp.Lib が使われる</span>
+            <span class="comment">// 優先度 高 MyApp &gt; B &gt; global = C &gt; A 低</span>
+            Lib.F();
+
+            <span class="comment">// ちゃんと呼び分けたければフルネームで書く</span>
+            A.Lib.F();
+            B.Lib.F();
+            C.Lib.F();
+            MyApp.Lib.F();
+            global::Lib.F();
+        }
+    }
+}
+
+<span class="keyword">namespace</span> A
+{
+    <span class="keyword">class</span> Lib { <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> F() =&gt; WriteLine(<span class="string">&quot;A&quot;</span>); }
+}
+<span class="keyword">namespace</span> B
+{
+    <span class="keyword">class</span> Lib { <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> F() =&gt; WriteLine(<span class="string">&quot;B&quot;</span>); }
+}
+<span class="keyword">namespace</span> C
+{
+    <span class="keyword">class</span> Lib { <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> F() =&gt; WriteLine(<span class="string">&quot;C&quot;</span>); }
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/structured/">&#x69CB;&#x9020;&#x5316;</a></li><li><a href="/study/csharp/structured/st_structured/">&#x69CB;&#x9020;&#x5316;</a></li><li><a href="/study/csharp/structured/st_control/">&#x5236;&#x5FA1;&#x30D5;&#x30ED;&#x30FC;</a></li><li><a href="/study/csharp/structured/st_branch/">&#x6761;&#x4EF6;&#x5206;&#x5C90;</a></li><li><a href="/study/csharp/structured/st_loop/">&#x53CD;&#x5FA9;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/structured/st_array/">&#x914D;&#x5217;</a></li><li><a href="/study/csharp/structured/st_function/">&#x95A2;&#x6570;</a></li><li><a href="/study/csharp/structured/miscentrypoint/">[&#x96D1;&#x8A18;] &#x30A8;&#x30F3;&#x30C8;&#x30EA;&#x30FC;&#x30DD;&#x30A4;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/structured/miscinlining/">[&#x96D1;&#x8A18;] &#x30A4;&#x30F3;&#x30E9;&#x30A4;&#x30F3;&#x5316;</a></li><li><a href="/study/csharp/structured/miscoverloadresolution/">[&#x96D1;&#x8A18;] &#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30ED;&#x30FC;&#x30C9;&#x89E3;&#x6C7A;</a></li><li><a href="/study/csharp/structured/sp_params/">&#x53EF;&#x5909;&#x9577;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/sp4_optional/">&#x30AA;&#x30D7;&#x30B7;&#x30E7;&#x30F3;&#x5F15;&#x6570;&#x30FB;&#x540D;&#x524D;&#x4ED8;&#x304D;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/st_command/">&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x30E9;&#x30A4;&#x30F3;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/st_library/">&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li><li><a href="/study/csharp/structured/st_enum/">&#x5217;&#x6319;&#x578B;</a></li><li><a href="/study/csharp/structured/st_struct/">&#x30C7;&#x30FC;&#x30BF;&#x306E;&#x69CB;&#x9020;&#x5316;(&#x8907;&#x5408;&#x578B;)</a></li><li><a href="/study/csharp/structured/st_anonymoustype/">&#x540D;&#x524D;&#x306E;&#x306A;&#x3044;&#x8907;&#x5408;&#x578B;</a></li><li><a href="/study/csharp/structured/oo_exception/">&#x4F8B;&#x5916;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/structured/misc_exception/">[&#x96D1;&#x8A18;] &#x4F8B;&#x5916;&#x306E;&#x4F7F;&#x3044;&#x65B9;</a></li><li><a href="/study/csharp/structured/misc_stacktrace/">[&#x96D1;&#x8A18;] &#x4F8B;&#x5916;&#x306E;&#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x30C8;&#x30EC;&#x30FC;&#x30B9;</a></li><li><a href="/study/csharp/structured/miscexpressions/">[&#x96D1;&#x8A18;] &#x5F0F;&#x306B;&#x307E;&#x3064;&#x308F;&#x308B;&#x88DC;&#x8DB3;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

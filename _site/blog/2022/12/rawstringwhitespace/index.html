@@ -1,0 +1,212 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>raw string &#x306E;&#x7A7A;&#x767D;&#x6587;&#x5B57; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2022/12/rawstringwhitespace/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2022-12-01T23:40:04">2022-12-01</time></span><span>更新: <time datetime="2022-12-01T23:40:04">2022-12-01</time></span></div><h1 id="raw-string">raw string の空白文字</h1>
+<p>書き捨ててたコードの供養ブログ シリーズ。
+今日は、<a href="/study/csharp/cheatsheet/ap_ver11/#raw-string">C# 11 で入った生文字列(raw string literals)</a>は、C# には珍しく、空白文字の数や並び順に影響を受けるという話。</p>
+<h2 id="c"><a id="csharp-whitespace">C# と空白文字</a></h2>
+<p>C# は空白文字の影響を受けにくい言語仕様になっています。
+主に2点。</p>
+<ul>
+<li>空白の有無によって意味が変わる場所が極めて少ない</li>
+<li>全角スペースとかが混入していても ASCII のスペースと同じ扱いをする</li>
+</ul>
+<p>(C# に限らず、
+C 言語の影響を受けて作られた言語で、
+Unicode に対応している言語は結構こういう仕様のものが多いはず。)</p>
+<h3 id="section"><a id="existence">空白の有無</a></h3>
+<p>「空白の有無」は、<code>A B</code> と <code>AB</code> みたいな単語区切りを除けば、
+自分の思いつく限り、意味が変わるのは <code>x +++ y</code> くらいでした。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = <span class="number">1</span>;
+<span class="keyword">var</span> y = <span class="number">2</span>;
+
+<span class="keyword">var</span> z = x+++y; <span class="comment">// ここの +++</span>
+
+Console.WriteLine((x, y, z));</code></pre>
+<p>ちなみに、以下のような差。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> z1 = x++ + y; <span class="comment">// (x++) + y</span>
+<span class="keyword">var</span> z2 = x + ++y; <span class="comment">// x + (++y)</span>
+<span class="keyword">var</span> z3 = x + + +y; <span class="comment">// x + (+(+y))</span>
+<span class="comment">// +++ は ++ + の意味になる。</span></code></pre>
+<p>コメントまで含めると <code>//*/</code> と <code>//* /</code> とかも思いつきますが、
+すぐに思いついたのはこれだけでした。</p>
+<h3 id="ascii"><a id="whitespace-category">ASCII 以外の空白文字</a></h3>
+<p>C# は割かし全角スペース耐性があります。
+C# は「空白かどうか」を Unicode カテゴリーを見て判定しているので、
+スペースの半角・全角は問いませんし、なんだったら nbsp (HTML を書いてて時々出てくる「ここで改行しちゃだめ」スペース)とかが混入しても大丈夫です。</p>
+<p>正確に言うと、C# の文法では以下の文字が「空白」になっています。</p>
+<ul>
+<li>Unicode の文字カテゴリーが Zs (Space Separator)の文字</li>
+<li>水平タブ(U+0009)</li>
+<li>垂直タブ(U+000B)</li>
+<li>フォーム フィード(U+000C)</li>
+</ul>
+<p>ちなみに、Zs の文字は以下の通り。</p>
+<ul>
+<li>U+0020: space</li>
+<li>U+00A0: no-break space</li>
+<li>U+1680: ogham space mark (<a href="https://ja.wikipedia.org/wiki/%E3%82%AA%E3%82%AC%E3%83%A0%E6%96%87%E5%AD%97">オガム文字</a>)</li>
+<li>幅違い
+<ul>
+<li>U+2000: en quad</li>
+<li>U+2001: em quad</li>
+<li>U+2002: en space</li>
+<li>U+2003: em space</li>
+<li>U+2004: three-per-em space</li>
+<li>U+2005: four-per-em space</li>
+<li>U+2006: six-per-em space</li>
+<li>U+2007: figure space</li>
+<li>U+2008: punctuation space</li>
+<li>U+2009: thin space</li>
+<li>U+200A: hair space</li>
+</ul>
+</li>
+<li>幅違い no-break
+<ul>
+<li>U+202F: narrow no-break space</li>
+<li>U+205F: medium matematical space</li>
+</ul>
+</li>
+<li>U+3000: ideographic space (全角スペース)</li>
+</ul>
+<p>こんな文字は入力する方が大変なんですが…
+頑張って入力すると、<a href="https://gist.github.com/ufcpp/3eeebaf3c79c0af2f76336f8e38b3104">以下のようなソースコード</a>が書けたりします。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> a = <span class="keyword">new</span>[] {
+				<span class="number">0</span>,
+<span class="number">1</span>,
+<span class="number">2</span>,
+    <span class="number">3</span>,
+    <span class="number">4</span>,
+    <span class="number">5</span>,
+    <span class="number">6</span>,
+    <span class="number">7</span>,
+    <span class="number">8</span>,
+    <span class="number">9</span>,
+    <span class="number">10</span>,
+    <span class="number">11</span>,
+    <span class="number">12</span>,
+    <span class="number">13</span>,
+    <span class="number">14</span>,
+    <span class="number">15</span>,
+    <span class="number">16</span>,
+    <span class="number">17</span>,
+    <span class="number">18</span>,
+　　　　<span class="number">19</span>,
+};</code></pre>
+<p>入力も大変なら、Visual Studio みたいな IDE は自動整形機能でごっそり全部、消すか、通常のスペース(U+0020)に置き換えてくれるので、
+この変なソースコードを維持するのもそれなりに大変です。</p>
+<p>ちなみに今回は、以下のコードでコード生成しました。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> <span class="keyword">var</span> f = <span class="keyword">new</span> StreamWriter(<span class="string">&quot;a.cs&quot;</span>);
+
+<span class="keyword">var</span> ws = <span class="keyword">new</span>[] { 0x0009, 0x000B, 0x000C, 0x20, 0xA0, 0x1680, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006, 0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000 }.Select(i =&gt; (<span class="keyword">char</span>)i).ToArray();
+
+f.WriteLine(<span class="string">&quot;&quot;</span>&quot;
+    <span class="keyword">var</span> a = <span class="keyword">new</span>[] {
+    <span class="string">&quot;&quot;</span>&quot;);
+
+<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; ws.Length; i++)
+{
+    <span class="keyword">var</span> w = ws[i];
+    f.WriteLine($<span class="string">&quot;{w}{w}{w}{w}{i},&quot;</span>);
+}
+
+f.WriteLine(<span class="string">&quot;&quot;</span>&quot;
+    };
+    <span class="string">&quot;&quot;</span>&quot;);</code></pre>
+<h2 id="raw-string-1"><a id="raw-string">raw string と空白文字</a></h2>
+<p>C# についてまとめると以下の通り。</p>
+<ul>
+<li>空白文字の種類に影響を受けることはない</li>
+<li>空白文字の有無や個数、順序に影響を受けることもほとんどない</li>
+<li>Visual Studio が軒並み整形してしまうので、U+0020 (通常のスペース)以外の空白文字は維持するのも難しい</li>
+</ul>
+<p>ところで、C# 11 では以下のような「<a href="/study/csharp/start/st_string/#multiline-indent">複数行文字列リテラル</a>」を書けるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> raw = <span class="string">&quot;&quot;</span>&quot;
+    raw <span class="keyword">string</span> literals (生文字列リテラル)
+    | ← ここよりも左側にあるインデントは無視される。
+    ここまでがリテラル。
+    <span class="string">&quot;&quot;</span>&quot;; <span class="comment">// この「閉じ引用符」行のインデントが基準。</span>
+
+Console.WriteLine(raw); <span class="comment">// 「raw」から始まる。「    raw」にはならない。末尾も改行は入らない。</span></code></pre>
+<p>ここでちょっと好奇心を働かせます。
+空白文字を混在させたときの扱いはどうなるんだろう？</p>
+<p>試してみると、コンパイル エラーでした。
+CS9003「閉じ行と異なる空白を含んでいます」エラー。</p>
+<pre><code class="language-csharp">_ = <span class="string">&quot;&quot;</span>&quot;
+　　　　全角スペース4つ。
+    <span class="string">&quot;&quot;</span>&quot;; <span class="comment">// スペース4つ。</span></code></pre>
+<pre><code class="language-csharp">_ = <span class="string">&quot;&quot;</span>&quot;
+   　4つ中1個だけ全角。
+    <span class="string">&quot;&quot;</span>&quot;; <span class="comment">// スペース4つ。</span></code></pre>
+<p>おっ？異なる文字がダメということは？
+もしや？…</p>
+<pre><code class="language-csharp">_ = <span class="string">&quot;&quot;</span>&quot;
+　 	 　全角、半角、タブ、半角、全角。
+　 	 　<span class="string">&quot;&quot;</span>&quot;; <span class="comment">// 全角、半角、タブ、半角、全角。</span></code></pre>
+<p>混在していても、順序を含めて完全に一致していればコンパイルできるみたいです。</p>
+<p>じゃあ、こんな感じで…</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> <span class="keyword">var</span> f = <span class="keyword">new</span> StreamWriter(<span class="string">&quot;a.cs&quot;</span>);
+
+<span class="keyword">var</span> ws = <span class="keyword">new</span>[] { 0x0009, 0x000B, 0x000C, 0x20, 0xA0, 0x1680, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006, 0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000 }.Select(i =&gt; (<span class="keyword">char</span>)i).ToArray();
+<span class="keyword">var</span> w = <span class="keyword">string</span>.Join(<span class="string">&quot;&quot;</span>, ws);
+
+f.WriteLine($<span class="string">&quot;&quot;</span><span class="string">&quot;&quot;</span>
+    _ = <span class="string">&quot;&quot;</span>&quot;
+    {w}abc
+    {w}<span class="string">&quot;&quot;</span>&quot;;
+    <span class="string">&quot;&quot;</span><span class="string">&quot;&quot;</span>);</code></pre>
+<p>どうかな？</p>
+<pre><code class="language-csharp">_ = <span class="string">&quot;&quot;</span>&quot;
+	 &#160;              　abc
+	 &#160;              　<span class="string">&quot;&quot;</span>&quot;;</code></pre>
+<p>コンパイルできる！</p>
+<p>そして、どうも現状 (Visual Studio 17.5 時点) で、
+この raw string のインデント部分の自動整形はしないみたいです。
+(<a href="https://github.com/dotnet/roslyn/issues/64237">下手に整形するとさっきの CS9003 エラーの原因になる</a>ので。)</p>
+<p>まあ、こんなコード入力するの自体困難なコードで問題を起こす愉快犯もそうそういないと思いますが。</p>
+<p>C# らしからぬ、</p>
+<ul>
+<li>空白の順序に意味がある</li>
+<li>Visual Studio に自動整形されない</li>
+</ul>
+<p>というのが珍しかったという話になります。</p>
+<h2 id="section-1"><a id="symbol-font">余談: 謎の記号</a></h2>
+<p>ところで、先ほどのコード、Visual Studio で開くとこんな感じ:</p>
+<p><img src="/assets/media/1214/malefemale.png" alt="謎の♂♀" /></p>
+<p>なぜか♂♀記号が…</p>
+<p>気になっていろいろ試してみたところ、
+制御文字全般謎の記号に置き換わりました。
+0～0x20 までの文字を書き込んで Visual Studio で開くと以下のような感じ。</p>
+<p><img src="/assets/media/1215/controlecharinvs.png" alt="0～0x20" /></p>
+<p>以下のような話かも？</p>
+<ul>
+<li>「空白を表示」をオンにしたときに、スペースとタブの代わりに ‣ と • を表示している辺りのロジックが悪さをしている？</li>
+<li>一部は<a href="https://en.wikipedia.org/wiki/Code_page_437">CP437</a>の文字が表示されてる</li>
+</ul>
+<p>どうでもいいものの一応はバグ報告:</p>
+<ul>
+<li>Visual Studio Developer Community に: <a href="https://developercommunity.visualstudio.com/t/Visual-Studio-IDE-displays-ASCII-control/10156578">10156578</a></li>
+</ul>
+<p>まあ報告しておいてなんですけども、優先度付かないでしょうね、こんなの。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2022/12/">12&#x6708;</a></li><li><a href="/blog/2022/12/stackalloc-natural-type/">stackalloc &#x306E;&#x81EA;&#x7136;&#x306A;&#x578B;</a></li><li><a href="/blog/2022/12/extension-resolution/">&#x62E1;&#x5F35;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x306F;&#x6697;&#x9ED9;&#x578B;&#x5909;&#x63DB;&#x3092;&#x898B;&#x306A;&#x3044;</a></li><li><a href="/blog/2022/12/unused-generic-type-parameter/">&#x672A;&#x4F7F;&#x7528;&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30C3;&#x30AF;&#x578B;&#x5F15;&#x6570;&#x3067; TypeLoadException &#x304C;&#x8D77;&#x3053;&#x308B;&#x554F;&#x984C;</a></li><li><a href="/blog/2022/12/unsafer-unsafe/">Unsafe &#x30AF;&#x30E9;&#x30B9;&#x306E;&#x6557;&#x5317; (&#x95A2;&#x6570;&#x30DD;&#x30A4;&#x30F3;&#x30BF;&#x30FC;)</a></li><li><a href="/blog/2022/12/no-more-t4/">&#x5FC5;&#x305A;&#x3001;&#x304B;&#x306E;&#x90AA;&#x77E5;&#x66B4;&#x8650;&#x306E; T4 &#x3092;&#x9664;&#x304B;&#x306D;&#x3070;&#x306A;&#x3089;&#x306C;&#x3068;&#x6C7A;&#x610F;&#x3057;&#x305F;</a></li><li><a href="/blog/2022/12/binarytool/">JSON &#x3068;&#x304B;&#x306E;&#x4E2D;&#x8EAB;&#x78BA;&#x8A8D;&#x30C4;&#x30FC;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

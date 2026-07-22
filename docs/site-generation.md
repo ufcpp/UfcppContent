@@ -5,7 +5,7 @@
 ```
 content/*.md + assets/
     ↓ Ufcpp.SiteGenerator
-_site/**/*.html + _site/assets/ + sitemap.xml + rssfeed.xml + search-index.json
+_site/**/*.html + _site/assets/ + sitemap.xml + rssfeed.xml
 ```
 
 ## Prerequisites
@@ -33,8 +33,10 @@ After generation, the `_site/` directory contains:
 | `_site/assets/css/site.css` | Site stylesheet |
 | `_site/sitemap.xml` | XML sitemap |
 | `_site/rssfeed.xml` | RSS 2.0 feed (latest 30 blog entries) |
-| `_site/search-index.json` | Deterministic search data for generated content pages |
 | `_site/server.cs` | Optional .NET 10 file-based preview server |
+
+The Google site-search approach is described in
+[Static site search design](site-search.md).
 
 Alias pages (meta-refresh redirects) are written for every `aliases` entry in front matter.
 Rebuilding updates existing redirects while aliases that resolve to their own canonical
@@ -131,7 +133,6 @@ tools/Ufcpp.SiteGenerator/
 │   ├── RedirectWriter.cs      Generates meta-refresh redirect pages for aliases
 │   ├── SitemapWriter.cs       Writes sitemap.xml
 │   ├── RssWriter.cs           Writes rssfeed.xml
-│   ├── SearchIndexWriter.cs   Writes search-index.json
 │   └── PreviewServerWriter.cs Writes optional server.cs
 ├── Validation/
 │   └── OutputValidator.cs     Post-generation validation
@@ -203,7 +204,6 @@ The generator produces byte-identical output for identical input:
 - Pages are processed in case-insensitive alphabetical order of their relative path
 - Sitemap entries are ordered by canonical path
 - RSS feed entries are ordered by `published_at` descending and formatted in UTC
-- Search-index entries are ordered by canonical URL
 - Percent-encoded URL segments remain encoded in public URLs but are decoded and
   validated for portable filesystem output
 

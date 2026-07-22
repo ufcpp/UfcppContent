@@ -1,0 +1,253 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x540D;&#x306B;&#x4F7F;&#x3048;&#x308B;&#x6587;&#x5B57; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/start/misc_identifier/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">[雑記] 識別子名に使える文字</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>「<a href="/study/csharp/start/st_variable/#identifier">識別子名</a>」で説明したように、
+変数など、プログラマが自由に名前を付けることの出来るものを識別子（identifier）と呼びます。
+識別子の名前は以下のルールでつける必要があります。</p>
+<ul>
+<li><p>if や while などの C# のキーワードは利用できない。</p>
+</li>
+<li><p>先頭の文字は、<code>_</code>(下線)もしくは letter-character でなければならない。</p>
+</li>
+<li><p>先頭以外の文字は、letter-character、decimal-digit-character、connecting-character、combining-character、formatting-character のいずれかでなければならない。</p>
+</li>
+<li><p>変数名の前に<code>@</code>を付けるとキーワードも識別子名として使用できる。コンパイラには<code>@</code>は無視される(<code>x</code>という変数と<code>@x</code>は同じものとして扱われる)。</p>
+</li>
+<li><p>識別子名には Unicode エスケープシーケンス(<code>\uxxxx</code>という書式で4桁の Unicode を書いたもの)も利用できる。</p>
+</li>
+</ul>
+<p>ここでは、letter-character とかが何かというのを説明します。</p>
+<p>ちなみに、C# に限らず、識別子に Unicode を使える言語では、たいてい同じようなルールを採用しています。</p>
+<h2 id="unicode"><a id="sec-generated-title-2"></a> <a id="unicode"></a>Unicode の文字クラス</h2>
+<p>C# の識別子に利用可能な文字、letter-character などは、Unicode の文字クラスに基づいて以下のように定められています。</p>
+<p>（
+Unicode では、文字の持つ意味によって各文字をカテゴリーわけしています。
+このカテゴリーのことを文字クラスと呼びます。
+）</p>
+<ul>
+<li><p>letter-character: Lu、Ll、Lt、Lm、Lo、Nl</p>
+</li>
+<li><p>combining-character: Mn、Mc</p>
+</li>
+<li><p>decimal-digit-character: Nd</p>
+</li>
+<li><p>connecting-character: Pc</p>
+</li>
+<li><p>formatting-character: Cf</p>
+</li>
+</ul>
+<p>まあ、これだけで意味が分かったら苦労しません。
+普段からよっぽど Unicode とおつきあいのある人以外には、
+こんな文字クラスの記号を見せられても意味が分からないですよね。</p>
+<p>ということで、次節以降で簡単な説明をしていきます。</p>
+<h5 id="section-2"><a id="sec-generated-title-3"></a>参考</h5>
+<p>一応、参考までにリンクを2つほど：</p>
+<ul>
+<li><p><a href="http://www.atmarkit.co.jp/fxml/rensai/w3cread35/w3cread35_2.html">文字クラスのルール（第35回　要素や属性の名前に使用できる文字の規定） </a></p>
+</li>
+<li><p><a href="http://www.unicode.org/Public/3.1-Update/UnicodeData-3.1.0.txt">Unicode 表</a></p>
+</li>
+</ul>
+<p>ちなみに、C# が採用しているこの識別子のルールは C# が独自に定めたものではなく、
+Unicode が推奨しているルール(<a href="https://unicode.org/reports/tr31/">Unicode Standard Annex #31</a>)に則ったものです。</p>
+<h2 id="section-3"><a id="sec-generated-title-4"></a> <a id="initial"></a>識別子の1文字目から使える文字</h2>
+<p>識別子の1文字目には以下の文字が使えます。</p>
+<ul>
+<li>letter-character
+<ul>
+<li><p>Lu : 大文字。</p>
+</li>
+<li><p>Ll : 小文字。</p>
+</li>
+<li><p>Lt : 見出しにだけ使うような特殊なアルファベット。</p>
+</li>
+<li><p>Lm : 文字修飾子。</p>
+<ul>
+<li><p>日本語でいうと、長音記号とか繰り返し記号（ゝ）とか。</p>
+</li>
+<li><p>発音記号の長音を表す三角コロン（ː）なんかもこの文字クラス。</p>
+</li>
+</ul>
+</li>
+<li><p>Lo : その他の文字。大小の区別をもたないような言語の文字は全部この文字クラス。</p>
+<ul>
+<li><p>ひらがな、カタカナ、漢字はいずれもこれ。</p>
+</li>
+<li><p>というか、アジア諸国の文字は大概これ。</p>
+</li>
+<li><p>「ゆ」も「ゅ」も両方 Lo。</p>
+</li>
+</ul>
+</li>
+<li><p>Nl : letter-character 扱いされる数字。ローマ数字（Ⅰ、Ⅱ、Ⅲ、Ⅳ）とか。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>要するに、可読文字なら言語を問わずたいてい利用可能です。</p>
+<h2 id="section-4"><a id="sec-generated-title-5"></a> <a id="noninitial"></a>識別子の2文字目以降に使える文字</h2>
+<p>識別子の2文字目以降では、
+letter-character に加えて、
+以下の文字が使えます。</p>
+<ul>
+<li><p>combining-character</p>
+<ul>
+<li><p>Mn : アクセント記号など（â ←この a の上に載ってるような記号）。</p>
+<ul>
+<li><p>他の文字とくっついて、表示上は1文字に見えるもの。</p>
+</li>
+<li><p>例えば、HTML で「あ&amp;#x3099;か&amp;#x309A;」って書くことで、あ゙か゚ って表示される。</p>
+</li>
+</ul>
+</li>
+<li><p>Mc : 他の文字にくっついてしか現れない文字。</p>
+<ul>
+<li>ಹಾ ← カナダ先住民の文字らしいけど、2文字がくっついて1つになってる。これの2文字目が Mc クラス。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>connecting-character</p>
+<ul>
+<li>Pc : 単語をつなぐ文字。アンダーバー（_）とか。
+<ul>
+<li>a⁀b とか c‿d （tie 記号）とかも。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>decimal-digit-character</p>
+<ul>
+<li>Nd : 数字。算用数字だけじゃなくて、インドとかの数字もこのクラス。</li>
+</ul>
+</li>
+<li><p>formatting-character</p>
+<ul>
+<li>Cf : 書式指定。 zero width joiner とか left to right mark とか、見た目には表れない文字。</li>
+</ul>
+</li>
+</ul>
+<h2 id="section-5"><a id="sec-generated-title-6"></a> <a id="confusing"></a>紛らわしい文字</h2>
+<ul>
+<li><p>濁点・半濁点</p>
+<ul>
+<li><p>日本語の濁点・半濁点には、半角文字を除いても、 Mn クラスの combining voiced sound mark っていうのと、 Sk クラス（記号扱い）の voiced sound mark っていうのの2つある。</p>
+</li>
+<li><p>IME で「だくてん」の変換で出てくるのは Sk クラスの方なので、識別子には使えない。</p>
+</li>
+<li><p>あ゙か゚ とかは OK（Mn クラスの方の濁点・半濁点は、ほかのひらがな・カタカナと一体化して表示される）。</p>
+</li>
+<li><p>半角の濁点・半濁点（ﾞ と ﾟ）はなぜか Lm クラス。1文字目から識別子に使えたりする・・・。</p>
+</li>
+</ul>
+</li>
+<li><p>ドット</p>
+<ul>
+<li><p>ドット（·）やカタカナ中点（・）は  Po クラス（句読点扱い）で識別子に使えない。</p>
+</li>
+<li><p>同様に、数学で使うドット演算子（⋅）も Sm クラス（数学記号）で識別子に使えない。</p>
+</li>
+</ul>
+</li>
+<li><p>コロン</p>
+<ul>
+<li><p>半角のコロン（:）が識別子に使えないのはもちろん、全角のコロン（：）もダメ（Po クラス）。</p>
+</li>
+<li><p>でも、三角コロン（ː）は識別子に使える。 この文字は発音記号の長音に使うものなので、扱いが日本語の長音記号（ー）と同じ（Lm クラス）。</p>
+</li>
+</ul>
+</li>
+<li><p>長音記号っぽいもの</p>
+<ul>
+<li><p>カタカナの長音記号（ー）は識別子として使える。</p>
+</li>
+<li><p>見た目似てるけど、ダッシュ記号（― とか）は識別子に使えない。文の区切りに使うものなので（Pd クラス）。</p>
+</li>
+<li><p>～ 記号は、wave dash（ダッシュ記号扱い、Pd クラス）も、 fullwidh tilde（全角チルダ、数学記号扱い、Sm クラス）も識別子に使えない。</p>
+</li>
+</ul>
+</li>
+<li><p>￥（全角円記号）は Sc クラス（通貨記号扱い）で、識別子利用不可。</p>
+</li>
+</ul>
+<h5 id="section-6"><a id="sec-generated-title-7"></a>おまけ</h5>
+<p>案外、変な記号も識別子に使えちゃうんで、以下のようなまね可能。
+良い子は真似しちゃダメ。</p>
+<pre><code class="language-csharp">        <span class="keyword">var</span> ﾟあ゙か゚ː・ゝゞヽ⁀ヾ〱‿〲〳〴〵 = <span class="number">123</span>;</code></pre>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/OddIdentifier.png"><img src="/assets/media/ufcpp2000/csharp/fig/OddIdentifier.png" alt="変な記号" /></a></p>
+<figcaption>変な記号</figcaption>
+</figure>
+<h2 id="section-7"><a id="sec-generated-title-8"></a> <a id="supplementary"></a>追加面文字</h2>
+<p>C# は内部的に文字を UTF-16 (2バイト)で扱っています。
+C# は2002年のリリースですが、開発自体は1990年代から始まっていて、ちょっと90年代の名残が見られます。
+そのため、2バイトに収まらない文字(追加面文字、supplementary planes)の扱いが面倒だったりします。</p>
+<p><a href="https://github.com/dotnet/roslyn">現在の C# コンパイラー</a>は C# 自身を使って書かれていているので、識別子に使える文字にも影響があります。
+要するに、2バイトに収まらない文字は使えません。</p>
+<p>C# の仕様上は「2バイトに収まるかどうか」には触れておらず、単に「letter であれば使える」となっているので、実は現在の C# コンパイラーは仕様を満たしていない状態です。</p>
+<pre><code class="language-csharp"><span class="comment">// 以下の文字はカテゴリー的には Other Letter なので本来は識別子として使えるはず。</span>
+<span class="comment">// 以下のコードがコンパイル エラーを起こすのは、現在の C# コンパイラーが仕様を満たしていない。</span>
+<span class="keyword">var</span> &#77824; = <span class="number">1</span>; <span class="comment">// ヒエログリフ</span>
+<span class="keyword">var</span> &#171581; = <span class="number">2</span>; <span class="comment">// 漢字の一部は追加面文字</span>
+<span class="keyword">var</span> &#66176; = <span class="number">3</span>; <span class="comment">// 鉄器時代に使われていた古い文字</span>
+ 
+<span class="comment">// 以下の文字は Number なので、2文字目以降であれば使えたはず。</span>
+<span class="comment">// 現状はコンパイル エラー。</span>
+<span class="keyword">var</span> a&#74752; = <span class="number">4</span>; <span class="comment">// 楔形文字の数字</span>
+ 
+<span class="comment">// 絵文字とかは Symbol カテゴリーなので追加面かどうかにかかわらず、仕様的にダメ。</span>
+<span class="comment">// 以下のコードがコンパイル エラーになるのは仕様通り。</span>
+<span class="keyword">var</span> &#128522; = <span class="number">5</span>;
+<span class="keyword">var</span> &#126976; = <span class="number">6</span>;</code></pre>
+<p>ちなみに、これは C# コンパイラー開発チームも把握している既知の問題ですが、
+実際にこれで困ることが少なくて需要がないため、修正は先送りにされています。</p>
+<h2 id="section-8"><a id="sec-generated-title-9"></a> <a id="escape-sequence"></a>エスケープ シーケンス</h2>
+<p><a href="/study/csharp/start/st_embeddedtype/#escape-sequence">エスケープ シーケンス</a>のうち、<code>\u</code> と <code>\U</code> の2つは識別子としても使えます。
+例えば以下のコードは普通に有効な C# コードです。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> \u0061 = <span class="number">1</span>; <span class="comment">// var a = 1; と同じ意味</span>
+Console.WriteLine(a); <span class="comment">// 1</span>
+Console.WriteLine(\U00000061); <span class="comment">// 記法が違ってもやっぱり a の意味で解釈されるので 1 が表示される</span>
+Console.WriteLine(nameof(\u0061)); <span class="comment">// a と表示される</span></code></pre>
+<h2 id="formatting-character"><a id="sec-generated-title-10"></a> <a id="ignore-format"></a>formatting character の無視</h2>
+<p>これも<a href="https://unicode.org/reports/tr31/">Unicode Standard Annex #31</a>による推奨事項なんですが、
+C# では、識別子中に含まれる formatting character を完全に無視します。
+例えば<a href="https://ja.wikipedia.org/wiki/%E3%82%BC%E3%83%AD%E5%B9%85%E6%8E%A5%E5%90%88%E5%AD%90">zero width joiner</a>という文字(文字コード U+200D)が該当します。
+なので、<code>ab</code> と <code>a\u200Db</code> は同じ識別子として認識されて、
+以下のコードはコンパイル可能なコードになります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> ab = <span class="number">1</span>;
+Console.WriteLine(a\u200Db); <span class="comment">// 間に ZWJ が挟まっていても無視されて ab と同じ意味</span></code></pre>
+<p><a href="https://ja.wikipedia.org/wiki/%E5%8F%8C%E6%96%B9%E5%90%91%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88">双方向テキスト</a>がらみの formatting character を使うと、
+見た目がだいぶおかしいソースコードを書けたりもします。
+例えば以下のコードは、おそらく今見ているこのページ上では表示がおかしいと思います。
+(ちゃんとコンパイルできるコードです。)</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> a‮bcd‭e = <span class="number">1</span>;
+Console.WriteLine(abcde);</code></pre>
+<p>このソースコードは環境によって以下のように表示されます。</p>
+<p><img src="/assets/media/1175/bidi1.png" alt="RLO, LRO を無視する環境での表示" /></p>
+<p><img src="/assets/media/1176/bidi2.png" alt="RLO, LRO を受け付ける環境での表示" /></p>
+<p>(ちなみに、1枚目が Visual Studio 上での表示、
+2枚目が<a href="https://try.dot.net/">ブラウザー上での表示</a>です。)</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/start/">&#x57FA;&#x790E;</a></li><li><a href="/study/csharp/start/st_basis/">C#&#x306E;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x57FA;&#x672C;&#x69CB;&#x9020;</a></li><li><a href="/study/csharp/start/st_compile/">&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x4F5C;&#x6210;&#x30FB;&#x5B9F;&#x884C;</a></li><li><a href="/study/csharp/start/st_comment/">&#x30B3;&#x30E1;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/start/st_consoleio/">&#x5024;&#x306E;&#x5165;&#x51FA;&#x529B;</a></li><li><a href="/study/csharp/start/st_variable/">&#x5909;&#x6570;&#x3068;&#x5F0F;</a></li><li><a href="/study/csharp/start/misc_unicode/">[&#x96D1;&#x8A18;] C# &#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x3068; Unicode</a></li><li><a href="/study/csharp/start/st_embeddedtype/">&#x7D44;&#x8FBC;&#x307F;&#x578B;</a></li><li><a href="/study/csharp/start/stnumber/">&#x6570;&#x5024;</a></li><li><a href="/study/csharp/start/st_string/">&#x7279;&#x6B8A;&#x306A;&#x6587;&#x5B57;&#x5217;&#x30EA;&#x30C6;&#x30E9;&#x30EB;</a></li><li><a href="/study/csharp/start/improvedinterpolatedstring/">C# 10.0 &#x306E;&#x88DC;&#x9593;&#x6587;&#x5B57;&#x5217;&#x306E;&#x6539;&#x5584;</a></li><li><a href="/study/csharp/start/st_operator/">&#x7D44;&#x8FBC;&#x307F;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/study/csharp/start/st_cast/">&#x7D44;&#x8FBC;&#x307F;&#x578B;&#x5909;&#x63DB;</a></li><li><a href="/study/csharp/start/sp_checked/">&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30D5;&#x30ED;&#x30FC;&#x306E;&#x30C1;&#x30A7;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/start/sp_const/">&#x5B9A;&#x6570;</a></li><li><a href="/study/csharp/start/sp3_inference/">&#x578B;&#x63A8;&#x8AD6;(&#x6697;&#x9ED9;&#x7684;&#x578B;&#x4ED8;&#x3051;)&#x3068;&#x533F;&#x540D;&#x578B;</a></li><li><a href="/study/csharp/start/sp3_var/">[&#x96D1;&#x8A18;] &#x578B;&#x63A8;&#x8AD6;&#x306E;&#x662F;&#x975E;</a></li><li><a href="/study/csharp/start/st_scope/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x306E;&#x30B9;&#x30B3;&#x30FC;&#x30D7;&#x3068;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x5BFF;&#x547D;</a></li><li><a href="/study/csharp/start/misctyperesolution/">[&#x96D1;&#x8A18;] &#x578B;&#x306E;&#x6C7A;&#x5B9A;</a></li><li><a href="/study/csharp/start/miscreservedattribute/">[&#x96D1;&#x8A18;] &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x306B;&#x5F71;&#x97FF;&#x3092;&#x53CA;&#x307C;&#x3059;&#x5C5E;&#x6027;</a></li><li><a href="/study/csharp/start/definiteassignment/">[&#x96D1;&#x8A18;] &#x660E;&#x78BA;&#x306A;&#x4EE3;&#x5165;&#x30EB;&#x30FC;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

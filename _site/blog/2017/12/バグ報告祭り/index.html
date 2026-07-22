@@ -1,0 +1,118 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D0;&#x30B0;&#x5831;&#x544A;&#x796D;&#x308A; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2017/12/%E3%83%90%E3%82%B0%E5%A0%B1%E5%91%8A%E7%A5%AD%E3%82%8A/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2017-12-10T19:45:17">2017-12-10</time></span><span>更新: <time datetime="2017-12-10T19:52:35">2017-12-10</time></span></div><h1 id="section">バグ報告祭り</h1>
+<p>やっぱリリースするといろいろバグを見つけるよねと言う話
+(<a href="/blog/2017/12/vs15_5/">Visual Studio 15.5がリリース</a>されて以来バグ報告たくさん出してる)。</p>
+<p>twitter で見かけたのを代理で報告出したり、
+前々から気になってたのを改めて調べてみたらコンパイラーのバグだったり、
+リリースまでに直るだろうとか高をくくってたやつがまだ直ってなかったり。</p>
+<h2 id="safe-stackalloc">safe stackalloc のインテリセンスが効かない問題</h2>
+<p>報告先: <a href="https://github.com/dotnet/roslyn/issues/23584">#23584</a></p>
+<p><a href="/study/csharp/resource/span/#safe-stackalloc"><code>Span&lt;T&gt;</code>構造体で受け取れば、safe な文脈で <code>stackalloc</code>が使える</a>んですが、
+これがコード補完に出てこないという問題。</p>
+<p><img src="/assets/media/1156/stackalloc.png" alt="stackalloc の補完が出ない" /></p>
+<p>インテリセンスのみの問題で、コンパイルは問題なく通ります。</p>
+<p>まあ、<code>stackalloc</code>を必要とする人が少ない上に、
+この機能を使うには<a href="/study/csharp/resource/span/#fast-span">fast Span</a>が必須。
+これが入ってるのは .NET Core 2.1 (まだプレビュー)ということで、
+まず試してみてる人がかなり少なそう。</p>
+<p>.NET Core 2.1 の正式リリースまでに直ってればいいって感じなのかなぁとか思いつつ一応報告してみたら、
+報告した瞬間に修正してたのでやっぱ報告しないと行けなかった奴でした。</p>
+<h2 id="getset">式形式(=&gt;) get/set プロパティが、自動実装と誤認されてる問題</h2>
+<p>報告先: <a href="https://github.com/dotnet/roslyn/issues/23668">#23668</a></p>
+<p>以下のようなコードで警告が出るという問題。</p>
+<pre><code class="language-csharp"><span class="comment">// Warning CS0282</span>
+<span class="comment">// この警告は、partial で複数の場所にフィールドを書くと出る。</span>
+<span class="comment">// 自動実装プロパティも、自動でフィールドが作られるので partial を分けて書くと警告に。</span>
+<span class="keyword">partial</span> <span class="keyword">struct</span> X
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> A { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+}
+
+<span class="keyword">partial</span> <span class="keyword">struct</span> X
+{
+    <span class="comment">// こいつは自動実装じゃないのでフィールド作られないはずなんだけど…</span>
+    <span class="comment">// get =&gt;/set =&gt; 型のプロパティは、自動実装プロパティと誤判定するらしい。</span>
+    <span class="keyword">int</span> B { <span class="keyword">get</span> =&gt; A; <span class="keyword">set</span> =&gt; A = value; }
+}</code></pre>
+<p>職場のコードでずっと前から消えない警告があって気になってたんですけども…</p>
+<p>大々的にコード生成で作ってるところなので、実際はもっと複雑な partial の分かれ方になっていて、
+何が原因かわからず。
+時間が解決する(自分が報告しなくてもそのうち治る)かなぁ？とか思っていたものの、15.5でもまだ残っていたので本腰入れて調べたところ、やっと原因を特定したのがこれです。</p>
+<p>結局、どうも、プロパティの<a href="/study/csharp/oop/oo_property/#expression-bodied"><code>get</code>/<code>set</code>を<code>=&gt;</code>を使って書く</a>と、<a href="/study/csharp/oop/oo_property/#auto">自動実装プロパティ</a>と誤判定するみたいです。
+確か、<code>{}</code>で書いてる時と<code>=&gt;</code>で書いてる時、Roslynの抽象構文木が違うんですよねぇ。
+それで誤判定してるんじゃないかと。</p>
+<p>これも、報告入れた瞬間に修正入ってました。</p>
+<h2 id="section-1">リファクタリング機能が明示的実装を考慮していない</h2>
+<p>報告先: <a href="https://github.com/dotnet/roslyn/issues/23672">#23672</a></p>
+<p>明示的実装をしていて、インターフェイス越しにしかアクセスできないはずの<code>Add</code>に対して、
+「コレクション初期化子を使う」リファクタリングが効いてしまって、
+リファクタリング結果がコンパイル エラーになるという問題。</p>
+<p><img src="/assets/media/1157/ide0028.png" alt="IDE0028が不正な結果を作る" /></p>
+<p>該当のQuick Actionを掛けない限り問題はないやつです。</p>
+<p><a href="https://twitter.com/taiga_takahari/status/939053041898070016">これはtwitterで見かけたの</a>の代理報告。</p>
+<p>類似の報告(コレクション初期化子じゃなくてオブジェクト初期化子のもの)は元々バグ報告が出てたみたいです。
+Quick Action のID (IDE0028)で検索を掛けたので見つからず(コレクション初期化子のとオブジェクト初期化子のでIDが別)。
+どうも、もうバグ修正のプルリクは出てたみたいです。</p>
+<h2 id="in">in 引数がバグりまくり</h2>
+<p>報告先: <a href="https://github.com/dotnet/roslyn/issues/23636">#23636</a></p>
+<p>本日の一番やばいやつ。</p>
+<p><a href="/study/csharp/resource/sp_ref/#in"><code>in</code>引数</a>がかなりバグりまくり…</p>
+<p>これも<a href="https://twitter.com/Temarin_PITA/status/939732108326592512">twitterで見かけたの</a>の代理報告。
+<a href="https://qiita.com/Temarin/items/b21b2b8367d41c2bd34e">ご本人のブログあり</a>。</p>
+<p>こいつは、実行時エラーを起こすやつなので、踏むと結構デバッグが面倒な奴です…</p>
+<p><code>in</code>引数には、<code>ref</code>と違って</p>
+<ul>
+<li>呼び出し側には <code>in</code> を付けるのが必須じゃない</li>
+<li>リテラルを渡せる</li>
+<li>既定値を与えられる</li>
+</ul>
+<p>とかいう特徴があるわけですが、この辺りがちょうどバグりまくり。</p>
+<p>具体的には、参照で渡さないといけないのに、呼び出し側の命令が「値を読む命令」になってて、
+ただの値をポインターとして使ってしまって<code>NullReference</code>やら<code>AccessViolation</code>やら<code>ExecutionEngine</code>やらの例外が出まくり。</p>
+<p>起こる条件も複数あって、以下のようなものなどなど。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/23636#issuecomment-350258948">値渡しなデリゲートに対して、<code>in</code>引数なメソッドを渡す</a>(本来この時点でエラーになるべきが、渡せてしまう)</li>
+<li><a href="/study/csharp/structured/sp4_optional/#optional">オプション引数</a>をいくつか持ったメソッドに対して、<a href="https://github.com/dotnet/roslyn/issues/23636#issuecomment-350268710">一部分だけ引数を明示的に渡す</a>(後ろの方だけ既定値を使う)</li>
+<li><code>in</code>引数に対して<a href="https://github.com/dotnet/roslyn/issues/23636#issuecomment-350268710">参照型の<code>this</code>を渡す</a></li>
+</ul>
+<p>この2日くらいで別パターンが出るわ出るわ…</p>
+<p>まあ、<code>in</code>引数周りの仕様、
+つい最近までどこにもドキュメントがなかったんですよねぇ。
+<a href="https://github.com/dotnet/csharplang/pull/1165">最新の仕様に合わせてドキュメントを修正</a>し始めたのが9日前。
+マージされたのが3日前…</p>
+<p><a href="/study/csharp/cheatsheet/ap_ver7_2/">うちのサイト</a>は一通りちゃんと網羅してるものの、
+「確かプルリク出てたからもう実装されているはず」みたいな調べ方して書いてるものだったり。
+普通はドキュメントにないもの試さないですよねぇ。
+試されないものはそりゃバグが残る…</p>
+<h2 id="section-2">バグ報告祭りしてみて</h2>
+<p>その後の経過など:</p>
+<ul>
+<li>分かりやすい再現コードを付けて報告を出したら一瞬で修正入る。</li>
+<li>報告 issue に書いたコードが<a href="https://github.com/dotnet/roslyn/pull/23680/files/2d739d1d5266234a258103f90160066090d567d2..c59b4da22686f130ce7e18be18d0c5a5f32453a0">そのままテスト コードに入る</a>。</li>
+<li>リリース直前2週間程度で見つかったバグは普通にバグったままリリースされてる</li>
+<li>たぶん、15.6プレビューの次のやつでいろいろ直ってるはず</li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2017/12/">12&#x6708;</a></li><li><a href="/blog/2017/12/vs15_5/">Visual Studio 15.5 Release</a></li><li><a href="/blog/2017/12/fastutf8string/">Rune &#x3068; fast Utf8String</a></li><li><a href="/blog/2017/12/analyzerconvention/">&#x30A2;&#x30CA;&#x30E9;&#x30A4;&#x30B6;&#x30FC;&#x306E;&#x30D7;&#x30ED;&#x30B8;&#x30A7;&#x30AF;&#x30C8; &#x30C6;&#x30F3;&#x30D7;&#x30EC;&#x30FC;&#x30C8;&#x3068;&#x304B; dotnet new &#x306E;&#x30C6;&#x30F3;&#x30D7;&#x30EC;&#x30FC;&#x30C8;&#x306E;&#x8A71;</a></li><li><a href="/blog/2017/12/msnetcompilers/">&#x30D3;&#x30EB;&#x30C9;&#x3067;&#x4F7F;&#x3046; C# &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30E9;&#x30FC;&#x3092;&#x5DEE;&#x3057;&#x66FF;&#x3048;&#x308B;</a></li><li><a href="/blog/2017/12/noncopyable/">&#x30B3;&#x30D4;&#x30FC;&#x7981;&#x6B62;(non-copyable)&#x69CB;&#x9020;&#x4F53;&#x30A2;&#x30CA;&#x30E9;&#x30A4;&#x30B6;&#x30FC;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

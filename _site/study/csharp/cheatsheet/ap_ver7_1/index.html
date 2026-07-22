@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>C# 7.1 &#x306E;&#x65B0;&#x6A5F;&#x80FD; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/cheatsheet/ap_ver7_1/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="c-7.1">C# 7.1 の新機能</h1>
+<h2 id="c-7.1-1"><a id="sec-generated-title-1"></a> <a id="ver7_1"></a>C# 7.1</h2>
+<div class="version version7_1">Ver. 7.1</div>
+<table>
+<tr>
+<th>リリース時期</th>
+<td>2017/8</td>
+</tr>
+<tr>
+<th>同世代技術</th>
+<td>
+<ul>
+<li>Visual Studio 2017 Update 3 (15.3)</li>
+</td>
+</tr>
+<tr>
+<th>要約・目玉機能</ht>
+<td>
+<ul>
+<li>C# 7.0のちょっとした改善</li>
+</ul>
+</td>
+</tr>
+</table>
+<p>2017年8月、すなわち、C# 7.0のリリース(2017年2月)から半年足らずで C# 7.1 がリリースされました。</p>
+<p>C# 7.0の頃から、目標としては C# のリリース サイクルの短縮を考えていました。
+多くの機能を2・3年に1度一気にリリースするよりも、細かく出せるものに関しては短いリリース サイクルで出したいという意図です。
+今回、(実質的に<sup>※</sup>)初の「マイナー バージョンアップ」となる C# 7.1 が誕生しました。</p>
+<p>(<sup>※</sup> 一応、<a href="/study/csharp/cheatsheet/ap_ver1/#sec-generated-title-2">C# 1.1</a>があったんですが、ほとんど使われない機能が2つ追加されただけなので、1.1があったこと自体あまり認知されていないものです。)</p>
+<p>C# 7.1 は、Visual Studio 2017のリリース時期に間に合わなかった C# 7.0 の積み残しと言った感じの、小さい機能が4つほど追加されています。</p>
+<h2 id="main"><a id="sec-generated-title-2"></a> <a id="async-Main"></a>非同期Main</h2>
+<p><code>Main</code>メソッドの戻り値に<code>Task</code>クラス(<code>System.Threading.Tasks</code>名前空間)を使えるようになりました。
+以下のいずれかのオーバーロードであればエントリーポイントとして認識されます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> Task&lt;<span class="keyword">int</span>&gt; Main()
+<span class="keyword">static</span> Task&lt;<span class="keyword">int</span>&gt; Main(<span class="keyword">string</span>[] args)
+<span class="keyword">static</span> Task Main()
+<span class="keyword">static</span> Task Main(<span class="keyword">string</span>[] args)</code></pre>
+<p>詳しくは、「<a href="/study/csharp/structured/miscentrypoint/#async-main">非同期Main</a>」で説明します。</p>
+<h2 id="default"><a id="sec-generated-title-3"></a> <a id="default-expr"></a>default 式</h2>
+<p>これまでも<a href="/study/csharp/resource/rm_default/">既定値</a>を作るために、<code>default(T)</code>という構文がありましたが、
+型名<code>T</code>の指定が煩雑でした。
+特に、名前の長い型に対して<code>default(T)</code>を使うと、かなりのうっとおしさがあります。</p>
+<p>既定値を結構使って、かつ、名前が長い型というと、例えば<code>CancellationToken</code>構造体(<code>System.Threading</code>名前空間)とかです。
+以下のようなコードを書いたりします。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">async</span> Task DefaultExpression(CancellationToken c = <span class="keyword">default</span>(CancellationToken))
+{
+    <span class="keyword">while</span> (c != <span class="keyword">default</span>(CancellationToken) &amp;&amp; !c.IsCancellationRequested)
+    {
+        <span class="keyword">await</span> Task.Delay(<span class="number">1000</span>);
+        Console.WriteLine(<span class="string">&quot;.&quot;</span>);
+    }
+}</code></pre>
+<p>これに対して、C# 7.1では、左辺(代入先)から推論できる場合に、<code>(T)</code>を省略して<code>default</code>だけで既定値を作れるようになりました。
+例えば先ほどのコードは以下のように書き直せます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">async</span> Task DefaultExpression(CancellationToken c = <span class="keyword">default</span>)
+{
+    <span class="keyword">while</span> (c != <span class="keyword">default</span> &amp;&amp; !c.IsCancellationRequested)
+    {
+        <span class="keyword">await</span> Task.Delay(<span class="number">1000</span>);
+        Console.WriteLine(<span class="string">&quot;.&quot;</span>);
+    }
+}</code></pre>
+<p>既定値自体や、<code>default(T)</code>の説明は「<a href="/study/csharp/resource/rm_default/">既定値</a>」を参照してください。</p>
+<h2 id="section"><a id="sec-generated-title-4"></a> <a id="infer-tuple-name"></a>タプル要素名の推論</h2>
+<p>タプルの要素名が、タプル構築時に渡した変数から推論できるようになりました。
+例えば以下のように、<code>(x, y)</code> と書くだけで、1要素目に<code>x</code>、2要素目に <code>y</code> という名前が付きます。
+(これまでだと、<code>(x: x, y: y)</code> と書く必要があった。)</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = <span class="number">1</span>;
+<span class="keyword">var</span> y = <span class="number">2</span>;
+<span class="keyword">var</span> t = (x, y);
+
+<span class="comment">// C# 7.0。t の要素には名前が付かない</span>
+Console.WriteLine(t.Item1);
+Console.WriteLine(t.Item2);
+
+<span class="comment">// C# 7.1。(x, y) で (x: x, y: y) 扱い</span>
+<span class="comment">// t の要素に x, y という名前が付く</span>
+Console.WriteLine(t.x);
+Console.WriteLine(t.y);</code></pre>
+<p>詳しくは「<a href="/study/csharp/datatype/tuples/#infer-tuple-name">タプル</a>」で説明します。</p>
+<h2 id="section-1"><a id="sec-generated-title-5"></a> <a id="generic-type-switch"></a>ジェネリック型に対するパターン マッチング(型スイッチ)</h2>
+<p>C# 7.0で<a href="/study/csharp/datatype/typeswitch/"><code>is</code>や<code>switch</code>で型を見ての分岐</a>ができるようになりました。
+しかし、<a href="/study/csharp/oop/sp2_generics/">ジェネリクス</a>が絡む場合、
+例えば以下のようなコードはC# 7.0ではコンパイル エラーになっていました。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> M&lt;T&gt;(T x)
+{
+    <span class="keyword">switch</span> (x)
+    {
+        <span class="keyword">case</span> <span class="keyword">int</span> i:
+            <span class="keyword">break</span>;
+        <span class="keyword">case</span> <span class="keyword">string</span> s:
+            <span class="keyword">break</span>;
+    }
+}</code></pre>
+<p>「<code>T</code>を<code>int</code>や<code>string</code>として処理できない」と言った旨のコンパイル エラーが出ます。</p>
+<p>さらにいうと、以下のような需要が結構ありそうな場面でも、C# 7.0ではコンパイル エラーになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Base { }
+<span class="keyword">class</span> Derived1 : Base { }
+<span class="keyword">class</span> Derived2 : Base { }
+<span class="keyword">class</span> Derived3 : Base { }
+
+<span class="comment">// こういう、型制約付きのやつですら 7.0 ではダメだった</span>
+<span class="keyword">static</span> <span class="keyword">void</span> N&lt;T&gt;(T x)
+    <span class="keyword">where</span> T : Base
+{
+    <span class="keyword">switch</span> (x)
+    {
+        <span class="keyword">case</span> Derived1 d:
+            <span class="keyword">break</span>;
+        <span class="keyword">case</span> Derived2 d:
+            <span class="keyword">break</span>;
+        <span class="keyword">case</span> Derived3 d:
+            <span class="keyword">break</span>;
+    }
+}</code></pre>
+<p>C# 7.0でも、以下のように、<code>as</code>演算子を使った場合にはちゃんとコンパイルできます。
+型スイッチは、内部的には<code>as</code>演算子に展開される機能で、<code>as</code>演算子にできて型スイッチにできないことがあるのは不自然です。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> N&lt;T&gt;(T x)
+    <span class="keyword">where</span> T : Base
+{
+    { <span class="keyword">var</span> d = x <span class="keyword">as</span> Derived1; <span class="keyword">if</span> (d != <span class="keyword">null</span>) { <span class="keyword">return</span>; } }
+    { <span class="keyword">var</span> d = x <span class="keyword">as</span> Derived2; <span class="keyword">if</span> (d != <span class="keyword">null</span>) { <span class="keyword">return</span>; } }
+    { <span class="keyword">var</span> d = x <span class="keyword">as</span> Derived3; <span class="keyword">if</span> (d != <span class="keyword">null</span>) { <span class="keyword">return</span>; } }
+}</code></pre>
+<p>そこで、C# 7.1では、上記コードのような、ジェネリックな型に対する型スイッチを使えるようになりました。
+(新機能というよりは、仕様漏れ・バグ修正の類です。)</p>
+<p>パターンマッチング(型スイッチ)自体の説明に関しては「<a href="/study/csharp/datatype/typeswitch/">型スイッチ</a>」を参照してください。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/cheatsheet/">C# &#x306E;&#x6A5F;&#x80FD;&#x4E00;&#x89A7;&#xFF08;&#x7D22;&#x5F15;&#x7684;&#x306A;&#x3082;&#x306E;&#xFF09;</a></li><li><a href="/study/csharp/cheatsheet/list_expression/">C# &#x306E;&#x5F0F;&#x3068;&#x6587;&#x306E;&#x4E00;&#x89A7;</a></li><li><a href="/study/csharp/cheatsheet/list_type/">C# &#x306E;&#x578B;&#x3068;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/study/csharp/cheatsheet/list_versions/">&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver1/">C# 1.0</a></li><li><a href="/study/csharp/cheatsheet/ap_ver2/">C# 2.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver3/">C# 3.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver4/">C# 4.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver5/">C# 5.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver6/">C# 6 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7/">C# 7 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_2/">C# 7.2 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_3/">C# 7.3 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver8/">C# 8.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver9/">C# 9.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver10/">C# 10.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver11/">C# 11.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver12/">C# 12.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver13/">C# 13.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver14/">C# 14.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/langversionoption/">&#x8A00;&#x8A9E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x306E;&#x6307;&#x5B9A;</a></li><li><a href="/study/csharp/cheatsheet/listfxlangversion/">C#&#x306E;&#x8A00;&#x8A9E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x3068;.NET&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/cheatsheet/ap_modern/">&#x4F7F;&#x308F;&#x306A;&#x304F;&#x306A;&#x3063;&#x305F;&#x6A5F;&#x80FD;&#x30FB;&#x65B0;&#x3057;&#x3044;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/apscripting/">C#&#x30B9;&#x30AF;&#x30EA;&#x30D7;&#x30C8;&#x5B9F;&#x884C;</a></li><li><a href="/study/csharp/cheatsheet/file-based-app/">&#x30D5;&#x30A1;&#x30A4;&#x30EB; &#x30D9;&#x30FC;&#x30B9;&#x5B9F;&#x884C;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

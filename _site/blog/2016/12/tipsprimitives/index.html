@@ -1,0 +1,189 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5C0F;&#x30CD;&#x30BF; &#x30D7;&#x30EA;&#x30DF;&#x30C6;&#x30A3;&#x30D6;&#x578B; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/12/tipsprimitives/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-12-19T21:05:28">2016-12-19</time></span><span>更新: <time datetime="2016-12-22T13:29:56">2016-12-22</time></span></div><h1 id="section">小ネタ プリミティブ型</h1>
+<p>.NETには「プリミティブ型」とかいうものがあるんですが、
+何をもってプリミティブと言えるのか、
+どういう型がプリミティブ型なのかというと、
+なんかよくわからない存在です。</p>
+<p><code>Type</code>型に<code>IsPrimitive</code>というプロパティがあって、こいつが<code>true</code>を返すものがプリミティブ型なんですが。
+以下のコードを見ての通り、どういう基準なのかがパッと見でわからず。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> <span class="keyword">static</span> System.Console;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        WriteLine(<span class="keyword">typeof</span>(<span class="keyword">int</span>).IsPrimitive);     <span class="comment">// true</span>
+        WriteLine(<span class="keyword">typeof</span>(<span class="keyword">bool</span>).IsPrimitive);    <span class="comment">// true</span>
+        WriteLine(<span class="keyword">typeof</span>(<span class="keyword">double</span>).IsPrimitive);  <span class="comment">// true</span>
+        WriteLine(<span class="keyword">typeof</span>(<span class="keyword">object</span>).IsPrimitive);  <span class="comment">// false!</span>
+        WriteLine(<span class="keyword">typeof</span>(<span class="keyword">string</span>).IsPrimitive);  <span class="comment">// false!</span>
+        WriteLine(<span class="keyword">typeof</span>(<span class="keyword">decimal</span>).IsPrimitive); <span class="comment">// false!</span>
+        WriteLine(<span class="keyword">typeof</span>(System.IntPtr).IsPrimitive); <span class="comment">// true!</span>
+    }
+}</code></pre>
+<h2 id="primitive">primitive</h2>
+<p>primitiveという単語の意味は、原始的とか基本的とかそんな意味なわけですが。
+C#とかのプログラミング言語において「原始的」っていうのは、内部的に専用命令などを持っていて、
+ユーザー定義のクラスや構造体ではできない何らかの特別扱いを受けているという意味になります。</p>
+<p>特にC#の場合には、C#のレベルではなく、.NETランタイム的に、専用のIL (中間言語、Intermediate Language)命令を持っているかどうかが1つの基準なんですが…
+それにしても分類は結構あいまいで、よくわからなかったりします。</p>
+<h2 id="java">元々はJavaから</h2>
+<p>元々はJavaから来ているんですかね。Javaの場合は割かしプリミティブ型がはっきりしています。
+以下の3つが一致していて、これこそがプリミティブ型です。</p>
+<ul>
+<li><code>int</code>とか<code>boolean</code>みたいに、専用のキーワードがある</li>
+<li>言語的に許される唯一の値型</li>
+<li>中間言語(bytecode)的に専用命令を持ってる</li>
+</ul>
+<p>C#というか.NETでよくわからなくなる理由は、</p>
+<ul>
+<li><code>object</code>、<code>string</code>、<code>decimal</code>にも専用のキーワードがある</li>
+<li>構造体や列挙型があるのでいくらでも値型を作れる</li>
+<li>専用命令を持っているって意味では<code>string</code>もちょっとだけ命令を持っている</li>
+</ul>
+<p>というあたり。</p>
+<h2 id="net">.NETのプリミティブ事情</h2>
+<p>.NET だと、</p>
+<ul>
+<li><code>IsPrimitive</code>が<code>true</code>な型は以下の通り
+<ul>
+<li><code>Boolean</code>, <code>Byte</code>, <code>SByte</code>, <code>Int16</code>, <code>UInt16</code>, <code>Int32</code>, <code>UInt32</code>, <code>Int64</code>, <code>UInt64</code>, <code>IntPtr</code>, <code>UIntPtr</code>, <code>Char</code>, <code>Double</code>, <code>Single</code></li>
+<li>C#のキーワードになってる型から、
+<ul>
+<li><code>decimal</code>, <code>object</code>, <code>string</code>は除く</li>
+<li><code>IntPtr</code>, <code>UIntPtr</code>を加える</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>object</code>、<code>string</code>はキーワードになってるけど参照型</li>
+<li>構造体や列挙型があるので、いくらでも値型を作れる</li>
+<li><code>string</code>はプリミティブ型とかと比べると大して専用命令ない
+<ul>
+<li>けども、ないわけじゃない</li>
+<li>命令ではなくメモリの確保の仕方で言うと、<code>string</code>は他のクラスと比べて相当特殊
+<ul>
+<li>この意味で言うと配列もかなり特殊</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>decimal</code>に至っては全く専用命令ない
+<ul>
+<li><code>decimal</code>が特別なのはC#的にリテラルがあることくらい</li>
+<li>IL 的にはリテラルすらない、完全に普通の構造体</li>
+</ul>
+</li>
+</ul>
+<p>ということで、何が何やら。まあ大まかに言うと、プリミティブ型 = 「中間言語(IL)的に専用を持っていて、かつ、値型」ですかね。</p>
+<h2 id="il">IL的な扱い</h2>
+<p>せっかくなので、IL 的な扱いも見てみますか。
+以下のようなコードをコンパイルしてみます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        M(<span class="number">1</span>, <span class="number">2</span>);
+        M(<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>);
+        M(<span class="number">1</span>.23m, <span class="number">2</span>.71m);
+    }
+
+    <span class="keyword">static</span> <span class="keyword">int</span> M(<span class="keyword">int</span> x, <span class="keyword">int</span> y) =&gt; x + y;
+    <span class="keyword">static</span> <span class="keyword">decimal</span> M(<span class="keyword">decimal</span> x, <span class="keyword">decimal</span> y) =&gt; x + y;
+    <span class="keyword">static</span> <span class="keyword">string</span> M(<span class="keyword">string</span> x, <span class="keyword">string</span> y) =&gt; x + y;
+}</code></pre>
+<h3 id="int">int</h3>
+<p>まずは<code>int</code>の場合。
+メソッド<code>M(int, int)</code>の中身が</p>
+<pre><code class="language-cil">  IL_0000:  ldarg.0
+  IL_0001:  ldarg.1
+  IL_0002:  add</code></pre>
+<p><code>M(int, int)</code>を呼び出す側が</p>
+<pre><code class="language-cil">  IL_0000:  ldc.i4.1
+  IL_0001:  ldc.i4.2
+  IL_0002:  call       int32 Program::M(int32,
+                                        int32)</code></pre>
+<p>という感じです。
+足し算用に<code>add</code>という専用命令があったり、
+定数読み込みのために<code>ldc.i4.1</code> (load constant 4バイト整数の1という意味)という命令があったりします。</p>
+<h3 id="string">string</h3>
+<p>続いて<code>string</code>
+メソッド<code>M(string, string)</code>の中身が</p>
+<pre><code class="language-cil">  IL_0000:  ldarg.0
+  IL_0001:  ldarg.1
+  IL_0002:  call       string [mscorlib]System.String::Concat(string,
+                                                              string)</code></pre>
+<p><code>M(string, string)</code>を呼び出す側が</p>
+<pre><code class="language-cil">  IL_0008:  ldstr      &quot;a&quot;
+  IL_000d:  ldstr      &quot;b&quot;
+  IL_0012:  call       string Program::M(string,
+                                         string)</code></pre>
+<p>です。
+連結のためには特に命令を持っているわけではなく、<code>+</code>演算子は<code>Concat</code>メソッド呼び出しに置き換わります。
+一方で、値の読み込みのために<code>ldstr</code> (load stringの意味)命令は持っています。</p>
+<p>微妙なライン…
+C#的には組み込み型(<code>string</code>っていうキーワードがあり、リテラルとかが用意されてる特別な型)だし、
+IL的にはプリミティブ型ではない、という割には<code>ldstr</code>命令とか持ってる…</p>
+<h3 id="decimal">decimal</h3>
+<p>最後に<code>decimal</code>。
+メソッド<code>M(decimal, decimal)</code>の中身が</p>
+<pre><code class="language-cil">  IL_0000:  ldarg.0
+  IL_0001:  ldarg.1
+  IL_0002:  call       valuetype [mscorlib]System.Decimal [mscorlib]System.Decimal::op_Addition(valuetype [mscorlib]System.Decimal,
+                                                                                                valuetype [mscorlib]System.Decimal)</code></pre>
+<p><code>M(decimal, decimal)</code>を呼び出す側が</p>
+<pre><code class="language-cil">  IL_0018:  ldc.i4.s   123
+  IL_001a:  ldc.i4.0
+  IL_001b:  ldc.i4.0
+  IL_001c:  ldc.i4.0
+  IL_001d:  ldc.i4.2
+  IL_001e:  newobj     instance void [mscorlib]System.Decimal::.ctor(int32,
+                                                                     int32,
+                                                                     int32,
+                                                                     bool,
+                                                                     uint8)
+  IL_0023:  ldc.i4     0x10f
+  IL_0028:  ldc.i4.0
+  IL_0029:  ldc.i4.0
+  IL_002a:  ldc.i4.0
+  IL_002b:  ldc.i4.2
+  IL_002c:  newobj     instance void [mscorlib]System.Decimal::.ctor(int32,
+                                                                     int32,
+                                                                     int32,
+                                                                     bool,
+                                                                     uint8)
+  IL_0031:  call       valuetype [mscorlib]System.Decimal Program::M(valuetype [mscorlib]System.Decimal,
+                                                                     valuetype [mscorlib]System.Decimal)</code></pre>
+<p>です。
+どこにも専用命令がないどころか、リテラルの<code>1.23m</code>や<code>2.71m</code>すらも、
+<code>new decimal(123, 0, 0, false, 2)</code>の意味のコンストラクター呼び出しに置き換わっています。
+加算も、<code>op_Addition</code>メソッド呼び出しです。</p>
+<p>正直なところ、<code>decimal</code>がC#的に特別扱いを受ける理由はリテラルだけだったりします。
+あくまでC#上の特別扱いであって、IL上は他の構造体の扱いとまったく同じです。
+なので、<code>decimal</code>はプリミティブではない。</p>
+<p>もしかすると、C++みたいに<a href="http://cpprefjp.github.io/lang/cpp11/user_defined_literals.html">ユーザー定義リテラル</a>が書ければ、
+<code>decimal</code>なんていう組み込み型は要らなかったかもしれません。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/12/">2016/12</a></li><li><a href="/blog/2016/12/tipstryroslyn/">C#&#x5C0F;&#x30CD;&#x30BF;&#x96C6;: C#&#x3092;Web&#x4E0A;&#x3067;&#x8A66;&#x3059;</a></li><li><a href="/blog/2016/12/tipsildasm/">&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x3092;&#x8997;&#x3044;&#x3066;&#x307F;&#x3088;&#x3046;</a></li><li><a href="/blog/2016/12/tipscorefxlab/">&#x5C0F;&#x30CD;&#x30BF; corefxlab&#x3068;System.Memory</a></li><li><a href="/blog/2016/12/tipsevalorder/">&#x5C0F;&#x30CD;&#x30BF; &#x5F0F;&#x306E;&#x8A55;&#x4FA1;&#x9806;&#x5E8F;</a></li><li><a href="/blog/2016/12/tipsobjectinitializer/">&#x5C0F;&#x30CD;&#x30BF; &#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2016/12/tipscollectioninitializer/">&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2016/12/tipsindexedforeach/">&#x5C0F;&#x30CD;&#x30BF; &#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;&#x4ED8;&#x304D; foreach</a></li><li><a href="/blog/2016/12/tipsuniontypes/">&#x5C0F;&#x30CD;&#x30BF; &#x30C1;&#x30A7;&#x30C3;&#x30AF;&#x4F8B;&#x5916;&#x3068;Union&#x578B;</a></li><li><a href="/blog/2016/12/tipscontextfreetask/">&#x5C0F;&#x30CD;&#x30BF; &#x540C;&#x671F;&#x30B3;&#x30F3;&#x30C6;&#x30AD;&#x30B9;&#x30C8;&#x3092;&#x62FE;&#x308F;&#x306A;&#x3044;Task&#x578B;</a></li><li><a href="/blog/2016/12/tipsformattingcharacter/">&#x5C0F;&#x30CD;&#x30BF; &#x30D5;&#x30A9;&#x30FC;&#x30DE;&#x30C3;&#x30C8;&#x6587;&#x5B57;&#x8B58;&#x5225;&#x5B50;</a></li><li><a href="/blog/2016/12/tipsimplicitmembers/">&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/blog/2016/12/tipstadpoleoperator/">&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x6F14;&#x7B97;&#x5B50;(&#xFF1F;)</a></li><li><a href="/blog/2016/12/tipsnulloperation/">&#x5C0F;&#x30CD;&#x30BF; null&#x95A2;&#x4FC2;&#x306E;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/blog/2016/12/vs2017rc2/">Updating Visual Studio 2017 Release Candidate</a></li><li><a href="/blog/2016/12/patternmatching/">&#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30DE;&#x30C3;&#x30C1;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/pickuproslyn1214/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/14</a></li><li><a href="/blog/2016/12/tipsdeconstruct/">&#x5C0F;&#x30CD;&#x30BF; &#x300C;deconstruct&#x300D;&#x3068;&#x3044;&#x3046;&#x5358;&#x8A9E;</a></li><li><a href="/blog/2016/12/tipsgeneratedil/">&#x5C0F;&#x30CD;&#x30BF; &#x69CB;&#x6587;&#x7CD6;&#x8863;&#x3068;&#x3001;&#x305D;&#x3046;&#x3067;&#x306F;&#x306A;&#x3044;&#x69CB;&#x6587;&#x3068;</a></li><li><a href="/blog/2016/12/tipsapisurface/">&#x5C0F;&#x30CD;&#x30BF; private&#x30E1;&#x30F3;&#x30D0;&#x30FC;&#x306F;API&#x306E;&#x4E00;&#x90E8;&#x304B;</a></li><li><a href="/blog/2016/12/tipsstringmarshal/">&#x5C0F;&#x30CD;&#x30BF; string&#x578B;&#x306E;&#x30DE;&#x30FC;&#x30B7;&#x30E3;&#x30EA;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/tipsnumargs/">&#x5C0F;&#x30CD;&#x30BF; &#x5F15;&#x6570;&#x306E;&#x500B;&#x6570;&#x306E;&#x4E0A;&#x9650;</a></li><li><a href="/blog/2016/12/tipsotherlangs/">&#x5C0F;&#x30CD;&#x30BF; C# &#x3068;&#x4ED6;&#x306E;&#x8A00;&#x8A9E;&#x3068;&#x306E;&#x5DEE;&#x3068;&#x3044;&#x3046;&#x3068;</a></li><li><a href="/blog/2016/12/tipsconcurrentcollections/">&#x5C0F;&#x30CD;&#x30BF; Concurrent &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/blog/2016/12/discards/">discards</a></li><li><a href="/blog/2016/12/tipssmallheapallocation/">&#x5C0F;&#x30CD;&#x30BF; &#x5C0F;&#x3055;&#x306A;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x5272;&#x308A;&#x5F53;&#x3066;</a></li><li><a href="/blog/2016/12/tipsparallelism/">&#x5C0F;&#x30CD;&#x30BF; &#x4E26;&#x5217;&#x5316;</a></li><li><a href="/blog/2016/12/tipsdowhile/">&#x5C0F;&#x30CD;&#x30BF; do-while</a></li><li><a href="/blog/2016/12/tipsatan2/">&#x5C0F;&#x30CD;&#x30BF; atan2</a></li><li><a href="/blog/2016/12/tipsnormaldistribution/">&#x5C0F;&#x30CD;&#x30BF; &#x6B63;&#x898F;&#x5206;&#x5E03;&#x306E;&#x4E38;&#x307F;</a></li><li><a href="/blog/2016/12/lookbackattheyear/">&#x4ECA;&#x5E74;&#x306E;&#x632F;&#x308A;&#x8FD4;&#x308A;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,422 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x975E;&#x540C;&#x671F;&#x30E1;&#x30BD;&#x30C3;&#x30C9; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/async/sp5_async/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">非同期メソッド</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>注意： 2010年10月時点での CTP （community technology preview）版を元にした記事になっています。
+製品版までに変更の可能性があります。
+（async や await というキーワードも変更される可能性あり。）</p>
+<h5 class="version version5">Ver. 5.0</h5>
+<p>スレッドを使った非同期処理を行いたい動機としては、以下の2つが挙げられます。</p>
+<ul>
+<li><p>非ブロッキング処理: I/O 待ちとかで UI スレッドをフリーズさせないようにする</p>
+</li>
+<li><p>並列処理: マルチコアを活かした並列処理でパフォーマンス向上</p>
+</li>
+</ul>
+<p>このうち、並列処理に関しては、Parallel クラスや Parallel LINQ で簡単に対応可能
+（ラムダ式や LINQ を使えば、並列じゃない場合とほとんど変わらず書けます。
+参考： 「<a href="/study/csharp/async/misc_task/">[雑記] スレッド プールとタスク</a>」）。
+一方の、非ブロッキング処理は、今までは結構面倒だったものの、
+async/await の導入でかなり簡素化されることになります。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>サンプル</h5>
+<ul>
+<li><p><a href="http://code.msdn.microsoft.com/C-Async-3185c2e8">C# Async の例</a></p>
+</li>
+<li><p><a href="http://code.msdn.microsoft.com/EAPTAP-bb69ab56">EAPをTAP化するラッパー クラスの自動生成</a></p>
+</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="ppt_summary"></a>要約 スライド資料</h2>
+<div style="width: 352px; max-width: 100%; margin-bottom:5px;"><a href="https://docs.com/iwanaga-nobuyuk/7317/gui" title="GUIと非同期" target="_blank" style="font-family: 'Segoe UI'">GUIと非同期</a><span style="font-family: 'Segoe UI Light'">—</span><a href="https://docs.com/iwanaga-nobuyuk" target="_blank" style="font-family: 'Segoe UI'">Iwanaga Nobuyuki</a></div><iframe src="https://docs.com/d/embed/D25194461-3915-9236-8750-000130209706%7eMd2f0fde0-d68b-9095-2ec5-841305bd4fb1" frameborder="0" scrolling="no" width="352px" height="299px" style="max-width:100%" allowfullscreen="False"></iframe>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="old_style"></a>非ブロッキング処理、旧来的な書き方</h2>
+<p>URL 指定してダウンロードしてきた文字列をテキストボックスに表示という GUI アプリケーションを考えてみましょう。
+同期的に書くなら、ボタンに対して以下のようなイベント ハンドラーを登録します。</p>
+<pre><code class="language-csharp"><span class="keyword">private</span> <span class="keyword">void</span> Button_Click(<span class="keyword">object</span> sender, RoutedEventArgs e)
+{
+    <span class="keyword">var</span> client = <span class="keyword">new</span> WebClient();
+    <span class="keyword">var</span> html = client.DownloadString(<span class="keyword">this</span>.Url.Text);
+    <span class="keyword">this</span>.Output.Text = html;
+}</code></pre>
+<p>このように同期でダウンロードを行うと、図1に示すように、ネットワークの通信速度が遅い環境では GUI がフリーズしてしまいます。
+そこで、図2に示すように、非同期通信版を使って、UI スレッドをブロッキングしないようにします。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/eventblocking.png"><img src="/assets/media/ufcpp2000/csharp/fig/eventblocking.png" alt="同期実行によって UI スレッドがブロックされる" /></a></p>
+<figcaption>同期実行によって UI スレッドがブロックされる</figcaption>
+</figure>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/eventasync.png"><img src="/assets/media/ufcpp2000/csharp/fig/eventasync.png" alt="非同期実行によって UI スレッドがブロックされないようにする" /></a></p>
+<figcaption>非同期実行によって UI スレッドがブロックされないようにする</figcaption>
+</figure>
+<p>しかし、これまで、非同期呼び出しは少し面倒な書き方をする必要がありました。
+いくつかのパターンがありますが、例えば、イベント非同期パターン（EAP: Event-based Asynchronous Pattern）と呼ばれるものの場合、以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">private</span> <span class="keyword">void</span> Button_Click(<span class="keyword">object</span> sender_, RoutedEventArgs e_)
+{
+    <span class="keyword">var</span> client = <span class="keyword">new</span> WebClient();
+    client.DownloadStringCompleted += (sender, e) =&gt;
+    {
+        <span class="keyword">this</span>.Output.Text = e.Result;
+    };
+    client.DownloadStringAsync(<span class="keyword">new</span> Uri(<span class="keyword">this</span>.Url.Text));
+}</code></pre>
+<p>以下のような面倒事が出てきています。</p>
+<ul>
+<li><p>実行順序と、コードの順序が崩れて処理の流れを追いづらい。</p>
+</li>
+<li><p>コールバックやディスパッチャー呼び出しで階層が深くなりがち。</p>
+<ul>
+<li><p>参考1：「<a href="/study/csharp/functional/misc_delegate/#callback">コールバック： 非同期処理の終了通知</a>」</p>
+</li>
+<li><p>参考2：「<a href="/study/csharp/async/misc_uithread/">[雑記] GUI と非同期処理</a>」</p>
+</li>
+</ul>
+</li>
+<li><p>別スレッド側で起こった例外を処理しづらい。</p>
+</li>
+</ul>
+<p>ダウンロード先が1個ならまだましで、例えば、複数の URL からダウンロードしてくる場合にはもっと複雑になります。</p>
+<pre><code class="language-csharp"><span class="keyword">private</span> <span class="keyword">void</span> Button_Click(<span class="keyword">object</span> sender, RoutedEventArgs e)
+{
+    <span class="keyword">var</span> client = <span class="keyword">new</span> WebClient();
+    <span class="keyword">var</span> urlList = <span class="keyword">this</span>.Url.Text.Split(<span class="string">&#39;,&#39;</span>);
+
+    <span class="keyword">int</span> i = -<span class="number">1</span>;
+    Action&lt;DownloadStringCompletedEventArgs&gt; a = <span class="keyword">null</span>;
+
+    client.DownloadStringCompleted += (sender, e) =&gt;
+    {
+        <span class="keyword">var</span> continuation = e.UserState <span class="keyword">as</span> Action&lt;DownloadStringCompletedEventArgs&gt;;
+        continuation(e);
+    };
+
+    a = e =&gt;
+    {
+        <span class="keyword">if</span> (e != <span class="keyword">null</span>)
+        {
+            <span class="keyword">this</span>.Output.Text += e.Result;
+        }
+
+        ++i;
+        <span class="keyword">if</span> (i &gt;= urlList.Length)
+        {
+            <span class="keyword">return</span>;
+        }
+        client.DownloadStringAsync(<span class="keyword">new</span> Uri(urlList[i]), a);
+    };
+
+    <span class="keyword">this</span>.Output.Text = <span class="keyword">string</span>.Empty;
+    a(<span class="keyword">null</span>);
+}</code></pre>
+<p>何番目までダウンロード完了したかを自前で状態管理しています。
+やり方を知っていれば同期の場合のコードからこのような非同期コードを機械的な手順で書くこともできますが、
+手間はかなりかかりますし、可読性は大きく下がります。</p>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="async"></a>非同期メソッド</h2>
+<h5 class="version version5">Ver. 5.0</h5>
+<p>C# 5.0 の新機能で、この手の非ブロッキング処理が簡単になりました。</p>
+<p>以下のように、async キーワードや await キーワードを使うことで、
+同期っぽい書き方で非同期処理を記述できます。
+比較のために、同期版と並べてみましょう。
+（背景色を変えて強調表示している部分が同期版との差分です。
+この部分を削除すればそのまま同期処理として動きます。）</p>
+<pre><code class="language-csharp"><span class="keyword">private</span> <span class="keyword">void</span> Button_Click(<span class="keyword">object</span> sender_, RoutedEventArgs e_)
+{
+    <span class="keyword">var</span> client = <span class="keyword">new</span> WebClient();
+    <span class="keyword">var</span> html = client.DownloadString(<span class="keyword">this</span>.Url.Text);
+    <span class="keyword">this</span>.Output.Text = html;
+}</code></pre>
+<pre><code class="language-csharp"><span class="keyword">private</span> <span class="keyword">async</span> <span class="keyword">void</span> Button_Click(<span class="keyword">object</span> sender_, RoutedEventArgs e_)
+{
+    <span class="keyword">var</span> client = <span class="keyword">new</span> WebClient();
+    <span class="keyword">var</span> html = <span class="keyword">await</span> client.DownloadStringTaskAsync(<span class="keyword">this</span>.Url.Text);
+    <span class="keyword">this</span>.Output.Text = html;
+}</code></pre>
+<p>複雑な場合でも、ずいぶんと楽に書けるようになります。
+前節の最後で書いた、複数の URL からダウンロードしてくる処理は以下のように書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">private</span> <span class="keyword">async</span> <span class="keyword">void</span> Button_Click(<span class="keyword">object</span> sender_, RoutedEventArgs e_)
+{
+    <span class="keyword">var</span> client = <span class="keyword">new</span> WebClient();
+    <span class="keyword">var</span> urlList = <span class="keyword">this</span>.Url.Text.Split(<span class="string">&#39;,&#39;</span>);
+
+    <span class="keyword">this</span>.Output.Text = <span class="keyword">string</span>.Empty;
+
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> url <span class="keyword">in</span> urlList)
+    {
+        <span class="keyword">var</span> html = <span class="keyword">await</span> client.DownloadStringTaskAsync(url);
+        <span class="keyword">this</span>.Output.Text += html;
+    }
+}</code></pre>
+<p>同期処理とほとんど同じ書き方ができます。</p>
+<h5 id="section-6"><a id="sec-generated-title-6"></a>同期処理からの変更点</h5>
+<p>追加されたのは、async/await の2つのキーワードと、末尾に「TaskAsync」と付いた拡張メソッドです。</p>
+<ul>
+<li><p>async（asynchronous: 非同期 の略）</p>
+<ul>
+<li><p>メソッド内で await を使うために、メソッドを async キーワードで装飾します。</p>
+</li>
+<li><p>これ自体は単なる装飾で、コンパイル結果は通常のメソッドと変わりません。 （await という新キーワードが C# 4.0 以前のコードを破壊しないようにという意図のようです。）</p>
+</li>
+<li><p>async 修飾子の付いたメソッド（非同期メソッド）の戻り値の型は、 void、Task、Task&lt;T&gt; 、もしくは、後述する「<a href="#task-like">一般化非同期戻り値</a>」の条件を満たす型である必要があります。</p>
+</li>
+</ul>
+</li>
+<li><p>await（「待つ」という意味）</p>
+<ul>
+<li><p>await のところで、先物と継続（参考：「<a href="/study/csharp/async/misc_task/">[雑記] スレッド プールとタスク</a>」）を使って、 いったん別スレッドに制御を移した上で、タスク完了後に続きの処理を再開します。</p>
+</li>
+<li><p>await は「式」が書ける場所ならどこにでも書けます。 （<code>foreach (var item in await task)</code>とかも可能。）</p>
+</li>
+<li><p>await の直後には、Task クラス（もしくは、後述する“awaitable”なクラス）の値を与えます。</p>
+</li>
+</ul>
+</li>
+<li><p>TaskAsync 拡張メソッド</p>
+<ul>
+<li><p>await で非同期処理を行うためには、Task クラス（など）の値が必要なため、 WebClient などの既存のクラスに対する拡張メソッドとして、Task クラスを返すバージョンをライブラリ提供しています。</p>
+</li>
+<li><p>（CTP 版での情報。最終版では通常のメソッドとして追加される可能性もあります。）</p>
+</li>
+<li><p>通例では、Task を返す非同期メソッドの名前は「Async」という語尾にします。 ただ、既存のクラスに関しては、すでに Async と付いたメソッドが存在している場合があるので、 この場合は「TaskAsync」という語尾を付けます。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="section-7"><a id="sec-generated-title-7"></a>非同期メソッドの戻り値の型</h5>
+<p>C# 6まででは、非同期メソッドの戻り値の型は void、Task、もしくは、Task&lt;T&gt; のいずれかである必要があります。</p>
+<p>まず、非同期処理を、最終的に Task.Wait メソッドで完了待ちする必要があるかどうかで戻り値の型選びます。
+待つ必要があるなら Task もしくは Task&lt;T&gt; に、
+必要なければ void にします。</p>
+<p>（非同期でない）普通のメソッドから、（戻り値が Task 型の）非同期メソッドの完了を待つには以下のように書きます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+{
+    RunAsync().Wait();
+}
+
+<span class="keyword">static</span> <span class="keyword">async</span> Task RunAsync()
+{
+    <span class="keyword">await</span> TaskEx.Delay(<span class="number">1000</span>);
+}</code></pre>
+<p>ただし、即座に Wait で完了待ちしてしまうと非同期にした意味があまりないので、
+通常は、他の作業を並行して行ってから最後に Wait したり、
+複数のタスクを同時実行したりします。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> task = RunAsync();
+<span class="comment">// 並行して別の処理</span>
+DoSomeTask();
+task.Wait();</code></pre>
+<pre><code class="language-csharp"><span class="comment">// 複数の処理を並行に実行</span>
+TaskEx.WhenAll(
+    RunAsync(),
+    RunAsync(),
+    RunAsync()).Wait();</code></pre>
+<p>完了待ちが必要ない（戻り値が void）場合というのは、
+例えば、GUI アプリケーションのイベント ハンドラーなどで利用します。</p>
+<pre><code class="language-csharp"><span class="keyword">private</span> <span class="keyword">async</span> <span class="keyword">void</span> Button_Click(<span class="keyword">object</span> sender, RoutedEventArgs e)
+{
+    <span class="keyword">var</span> client = <span class="keyword">new</span> WebClient();
+    <span class="keyword">var</span> html = <span class="keyword">await</span> client.DownloadStringTaskAsync(<span class="keyword">this</span>.Url.Text);
+    <span class="keyword">this</span>.Output.Text = html;
+}</code></pre>
+<h3 id="task-like"><a id="sec-generated-title-8"></a> <a id="task-like"></a>一般化非同期戻り値(Task-like)</h3>
+<p>C# 5.0で非同期メソッドが導入された当初、非同期メソッドの戻り値は<code>Task</code>、<code>Task&lt;T&gt;</code>型である必要がありました。
+一方で、C# 7からは、特定の条件を満たす任意の型を非同期メソッドの戻り値として使えるようになりました。
+この機能を一般化非同期戻り値(generalized async return types)とよびます。</p>
+<p>ここで、この「特定の条件」についてですが、これまでの<code>Task</code>クラスと似た条件になります。
+<code>Task</code>に似た性質を持った型ということで「task-like」(Task風の)と呼んだりもします。</p>
+<p>Task-likeであるための条件は以下の通りです。</p>
+<ul>
+<li><code>AsyncMethodBuilder</code>属性(<code>System.Runtime.CompilerServices</code>名前空間)が付いている</li>
+<li><code>AsyncMethodBuilder</code>属性で指定した型が所定のメソッドを実装している</li>
+</ul>
+<p>最低限の条件を満たす型を書くと以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Runtime.CompilerServices;
+
+[AsyncMethodBuilder(<span class="keyword">typeof</span>(AsyncValueTaskMethodBuilder&lt;&gt;))]
+<span class="keyword">struct</span> TaskLike&lt;TResult&gt;
+{
+}
+
+<span class="keyword">struct</span> AsyncValueTaskMethodBuilder&lt;TResult&gt;
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> AsyncValueTaskMethodBuilder&lt;TResult&gt; Create() =&gt; <span class="keyword">default</span>(AsyncValueTaskMethodBuilder&lt;TResult&gt;);
+    <span class="keyword">public</span> <span class="keyword">void</span> Start&lt;TStateMachine&gt;(<span class="keyword">ref</span> TStateMachine stateMachine) <span class="keyword">where</span> TStateMachine : IAsyncStateMachine { }
+    <span class="keyword">public</span> <span class="keyword">void</span> SetStateMachine(IAsyncStateMachine stateMachine) { }
+    <span class="keyword">public</span> <span class="keyword">void</span> SetResult(TResult result) { }
+    <span class="keyword">public</span> <span class="keyword">void</span> SetException(Exception exception) { }
+    <span class="keyword">public</span> TaskLike&lt;TResult&gt; Task { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="keyword">void</span> AwaitOnCompleted&lt;TAwaiter, TStateMachine&gt;(<span class="keyword">ref</span> TAwaiter awaiter, <span class="keyword">ref</span> TStateMachine stateMachine)
+        <span class="keyword">where</span> TAwaiter : INotifyCompletion
+        <span class="keyword">where</span> TStateMachine : IAsyncStateMachine
+    { }
+    <span class="keyword">public</span> <span class="keyword">void</span> AwaitUnsafeOnCompleted&lt;TAwaiter, TStateMachine&gt;(<span class="keyword">ref</span> TAwaiter awaiter, <span class="keyword">ref</span> TStateMachine stateMachine)
+        <span class="keyword">where</span> TAwaiter : ICriticalNotifyCompletion
+        <span class="keyword">where</span> TStateMachine : IAsyncStateMachine
+    { }
+}</code></pre>
+<p>ちなみに、<code>AsyncMethodBuilder</code>属性は、フルネームさえ一致していればどこに定義されたものであっても構いません。
+最終的には標準ライブラリに含まれると思いますが、もし、標準化される前のバージョンで使いたい場合、自前で用意しても大丈夫です
+(この場合、<code>internal</code>でも構いません)。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> System.Runtime.CompilerServices
+{
+    <span class="keyword">sealed</span> <span class="keyword">class</span> AsyncMethodBuilderAttribute : Attribute
+    {
+        <span class="keyword">public</span> AsyncMethodBuilderAttribute(Type builderType)
+        {
+            BuilderType = builderType;
+        }
+
+        <span class="keyword">public</span> Type BuilderType { <span class="keyword">get</span>; }
+    }
+}</code></pre>
+<h4 id="valuetask"><a id="sec-generated-title-9"></a> <a id="valuetask"></a>ValueTask構造体</h4>
+<p>Task-likeを自作しようと思う場面はほとんどないでしょう。
+実質的には、この仕様はあるたった1つの型のために追加された構文です。
+その1つの型が<code>ValueTask&lt;TResult&gt;</code>構造体です。</p>
+<p><code>ValueTask&lt;TResult&gt;</code>は、名前通り、値型(構造体)版の<code>Task&lt;TResult&gt;</code>です。
+正確にいうと、<code>ValueTask&lt;TResult&gt;</code>は、<code>TResult</code>の値、もしくは、<code>Task&lt;TResult&gt;</code>のどちらかを持っています。</p>
+<p>どうしてそういう値の持ち方が必要かというと、
+非同期メソッドと言っても、実際に非同期が必要な場面が少なく、大半は同期処理になるといったことがあり得るからです。
+ごくごく少数の本当に非同期処理が必要な場面でだけ<code>Task&lt;TResult&gt;</code>を作り、
+大部分の非同期が必要ない場面では直接<code>TResult</code>を作ることで、パフォーマンスの改善が見込めます。
+例えば以下のようなコードです。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Threading.Tasks;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">async</span> ValueTask&lt;<span class="keyword">int</span>&gt; XAsync(Random r)
+    {
+        <span class="keyword">if</span> (r.NextDouble() &lt; <span class="number">0</span>.<span class="number">99</span>)
+        {
+            <span class="comment">// 99% ここを通る。</span>
+            <span class="comment">// この場合、await が1度もなく、非同期処理にならない。</span>
+            <span class="comment">// 非同期処理じゃないのに Task&lt;int&gt; のインスタンスが作られるのはもったいない</span>
+            <span class="keyword">return</span> <span class="number">1</span>;
+        }
+
+        <span class="comment">// こちら側は本当に非同期処理なので、Task&lt;int&gt; が必要。</span>
+        <span class="keyword">await</span> Task.Delay(<span class="number">100</span>);
+        <span class="keyword">return</span> <span class="number">0</span>;
+    }
+
+    <span class="keyword">static</span> Task&lt;<span class="keyword">int</span>&gt; _cache;
+
+    <span class="comment">// キャッシュしてるものなので、少し時間がたてば、確実に完了済みになる。</span>
+    <span class="keyword">static</span> Task&lt;<span class="keyword">int</span>&gt; CachedX =&gt; _cache ?? (_cache = Task.Run(() =&gt; <span class="number">1</span>));
+
+    <span class="comment">// 完了済みだと非同期処理にならない。</span>
+    <span class="comment">// 非同期処理じゃないのに Task&lt;int&gt; のインスタンスが作られるのはもったいない</span>
+    <span class="keyword">static</span> <span class="keyword">async</span> ValueTask&lt;<span class="keyword">int</span>&gt; Y() =&gt; <span class="keyword">await</span> CachedX;
+    <span class="keyword">static</span> <span class="keyword">async</span> ValueTask&lt;<span class="keyword">int</span>&gt; Z() =&gt; <span class="keyword">await</span> Y();
+}</code></pre>
+<p>この<code>ValueTask&lt;TResult&gt;</code>構造体は、いずれは標準ライブラリに入る予定です。
+.NET Framewor 4.6.2/.NET Standard 1.6以下で使いたい場合には、以下のパッケージの参照が必要です。</p>
+<ul>
+<li><a href="https://www.nuget.org/packages/System.Threading.Tasks.Extensions">System.Threading.Tasks.Extensions</a></li>
+</ul>
+<p>C# 6までこの仕組みがなかった理由など、背景説明をBuild Indsiderの記事に書いたことがあるので、詳細に興味あればこちらをご覧ください。</p>
+<ul>
+<li><a href="http://www.buildinsider.net/column/iwanaga-nobuyuki/009">C# 7、そしてその先へ： 非同期処理（前編） － Task-like</a></li>
+</ul>
+<h3 id="section-8"><a id="sec-generated-title-10"></a> <a id="misc0"></a>余談： 実は必ずしも非同期ではない</h3>
+<p>async（非同期）や await（待つ）という名前に反して、
+実は必ずしも非同期実行にはなりません。
+というのも、Task クラスの値を await する際、タスクがすでに完了済み（IsCompleted プロパティが true）の可能性もあります。
+この場合には、別にタスクを「待つ」必要はないので、
+そのまま同期的に処理が続行します。</p>
+<p>また、非同期であっても、必ずしもマルチスレッドで実行されるわけではありません。
+async/await が Task クラスの上に成り立っているため、
+可能な限り同じスレッドを使いまわそうとします。
+（参考： 「<a href="/study/csharp/async/misc_task/#thread_pool">スレッド プール</a>」）</p>
+<h3 id="task"><a id="sec-generated-title-11"></a> <a id="misc2"></a>余談2： 戻り値は Task</h3>
+<p>（書きかけ）</p>
+<p>ITask インターフェイスとかにはしなかった。
+Task 的なものの独自実装は結構危険。</p>
+<div style="width: 352px; max-width: 100%; margin-bottom:5px;"><a href="https://docs.com/iwanaga-nobuyuk/6288" title="非同期処理にあたって" target="_blank" style="font-family: 'Segoe UI'">非同期処理にあたって</a><span style="font-family: 'Segoe UI Light'">—</span><a href="https://docs.com/iwanaga-nobuyuk" target="_blank" style="font-family: 'Segoe UI'">Iwanaga Nobuyuki</a></div><iframe src="https://docs.com/d/embed/D25194461-4031-2633-3750-000873959935%7eMd2f0fde0-d68b-9095-2ec5-841305bd4fb1" frameborder="0" scrolling="no" width="352px" height="299px" style="max-width:100%" allowfullscreen="False"></iframe>
+<p>↑この資料の9ページ目みたいな問題が。</p>
+<p>なので、たぶん、インターフェイスや抽象クラスではなく、具象クラスである Task 固定に。</p>
+<h2 id="section-9"><a id="sec-generated-title-12"></a> <a id="restriction"></a>非同期メソッドの制限</h2>
+<p><code>await</code> 演算を書ける場所には、いくつか制限があります。</p>
+<p>まず、以下のような制限があります。</p>
+<ul>
+<li><a href="/study/csharp/interop/sp_unsafe/">unsafeコンテキスト</a>内にawaitは書けない。</li>
+<li>引数を<a href="/study/csharp/resource/sp_ref/">ref, out</a>にはできない。</li>
+<li><a href="/study/csharp/async/sp_thread/#lock">lock</a>ステートメント内に<code>await</code>は書けない。</li>
+<li><a href="/study/csharp/resource/sp_ref/#ref-returns">ref ローカル変数</a>を書けない<sup>※</sup></li>
+<li><a href="/study/csharp/resource/refstruct/">ref 構造体</a>の変数を書けない<sup>※</sup></li>
+</ul>
+<p>(<sup>※</sup> このうち下の2つは、<a href="/study/csharp/cheatsheet/ap_ver13/#ref-in-async">C# 13 で書けるように</a>なりました。)</p>
+<p>また、<a href="/study/csharp/functional/sp_delegate/#anonymous">匿名関数</a>を非同期にするかどうかは、その非同期メソッドに<code>async</code>修飾子がついているかどうかで決まります。非同期メソッドの中で定義した匿名関数でも、その匿名関数自体に<code>async</code>修飾子がない場合には、その中で<code>await</code>を使えません。</p>
+<p>そして、C# 5.0では、catch句、finally句内には<code>await</code>を書けませんでした。</p>
+<h5 class="version version6">Ver. 6</h5>
+<p>C# 6で、catch句、finally句内に<code>await</code>を書けるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">async</span> Task XAsync()
+{
+    <span class="keyword">try</span>
+    {
+        <span class="keyword">await</span> SomeAsyncMethod();
+    }
+    <span class="keyword">catch</span> (InvalidOperationException e)
+    {
+        <span class="keyword">using</span> (<span class="keyword">var</span> s = <span class="keyword">new</span> StreamWriter(<span class="string">&quot;error.txt&quot;</span>))
+            <span class="keyword">await</span> s.WriteAsync(e.ToString());
+    }
+    <span class="keyword">finally</span>
+    {
+        <span class="keyword">using</span> (<span class="keyword">var</span> s = <span class="keyword">new</span> StreamWriter(<span class="string">&quot;trace.txt&quot;</span>))
+            <span class="keyword">await</span> s.WriteAsync(<span class="string">&quot;XAsync done.&quot;</span>);
+    }</code></pre>
+<p>catch句内では、起きた例外の内容をログに記録する処理を書くことが結構ありますが、ログ記録は往々にして非同期処理になったりします。(例えば、Universal Windows アプリを作る場合、ファイルの読み書きもすべて非同期で行う必要があります。)</p>
+<p>また、finally句では主に<a href="/study/csharp/resource/oo_dispose/">リソースの破棄</a>を行いますが、破棄処理が非同期になる場面も結構あります。</p>
+<p>なので、C# 5.0にかかっていたこの制限は結構嫌な制限でした。C# 6ではその問題がなくなります。</p>
+<h4 id="section-10"><a id="sec-generated-title-13"></a>余談: 今後</h4>
+<p>unsafe コンテキスト内でも、ポインターを使わない限り(fixedステートメント以外では)<code>await</code>を書けるようにしようという案はあるようです。</p>
+<h2 id="section-11"><a id="sec-generated-title-14"></a> <a id="cancel"></a>進捗報告とキャンセル処理</h2>
+<p>（書きかけ）</p>
+<p>非同期メソッドの引数として、CancellationToke と IProgress を渡す。</p>
+<h5 id="section-12"><a id="sec-generated-title-15"></a>キャンセル</h5>
+<pre><code class="language-text">CancellationToken を利用。</code></pre>
+<h5 id="section-13"><a id="sec-generated-title-16"></a>進捗報告</h5>
+<p>（参考： <a href="http://code.msdn.microsoft.com/C-Async-3185c2e8/sourcecode?itemId=105652">サンプルの ProgressSample プロジェクト</a>。）</p>
+<pre><code class="language-text">IProgress インターフェイスと EventProgress クラス
+
+BackgroundWorker は、
+  1. 非同期処理
+  2. 進捗報告
+  3. 完了通知
+の3つの役目を1つのクラスで負ってて、機能の切り分けがあまりきれいじゃない。
+
+async/await では、
+  1. 非同期処理を同期っぽく書ける
+  2. 進捗報告は IProgress インターフェイスを通して行う
+  3. 完了通知は、同期っぽく、非同期メソッドの最後に書けばそれだけで OK。</code></pre>
+<h2 id="section-14"><a id="sec-generated-title-17"></a> <a id="async-stream"></a>非同期ストリーム</h2>
+<h5 class="version version8">Ver. 8.0</h5>
+<p>C# 8.0 では非同期メソッドが大幅に拡張されました。</p>
+<ul>
+<li>非同期<code>foreach</code>: <code>await foreach</code>という書き方で、非同期なデータ列挙ができる(<a href="/study/csharp/data/sp_foreach/"><code>foreach</code>ステートメント</a>の非同期版)</li>
+<li>非同期<code>using</code>: <code>await using</code>という書き方で、非同期なリソース破棄ができる(<a href="/study/csharp/resource/oo_dispose/#using"><code>using</code>ステートメント</a>の非同期版)</li>
+<li>非同期イテレーター: 非同期メソッド内に<code>yield</code>を書けるようになる(<a href="/study/csharp/data/sp2_iterator/">イテレーター</a>の非同期版)</li>
+</ul>
+<p>一連のデータ(data stream)を、非同期に生成(イテレーター)して非同期に消費(foreach)する機能なので、これらを合わせて非同期ストリーム(async stream)と呼ばれます。</p>
+<p>詳しくは「<a href="/study/csharp/async/asyncstream/">非同期ストリーム</a>」で説明します。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/async/">&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/async/sp_thread/">&#x30DE;&#x30EB;&#x30C1;&#x30B9;&#x30EC;&#x30C3;&#x30C9;</a></li><li><a href="/study/csharp/async/asyncvariation/">&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406;&#x306E;&#x7A2E;&#x985E;</a></li><li><a href="/study/csharp/async/asyncinside/">&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406;&#x3092;&#x652F;&#x3048;&#x308B;&#x30A4;&#x30F3;&#x30D5;&#x30E9;</a></li><li><a href="/study/csharp/async/asyncexecutioncontext/">&#x5B9F;&#x884C;&#x30B3;&#x30F3;&#x30C6;&#x30AD;&#x30B9;&#x30C8;</a></li><li><a href="/study/csharp/async/misc_synchronize/">[&#x96D1;&#x8A18;] &#x30B9;&#x30EC;&#x30C3;&#x30C9;&#x9593;&#x306E;&#x7AF6;&#x5408;&#x56DE;&#x907F;</a></li><li><a href="/study/csharp/async/misc_task/">[&#x96D1;&#x8A18;] &#x30B9;&#x30EC;&#x30C3;&#x30C9; &#x30D7;&#x30FC;&#x30EB;&#x3068;&#x30BF;&#x30B9;&#x30AF;</a></li><li><a href="/study/csharp/async/misc_asyncflow/">[&#x96D1;&#x8A18;] &#x975E;&#x540C;&#x671F;&#x5236;&#x5FA1;&#x30D5;&#x30ED;&#x30FC;</a></li><li><a href="/study/csharp/async/sp5_awaitable/">&#x975E;&#x540C;&#x671F;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x306E;&#x5185;&#x90E8;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/async/misc_continuation/">[&#x96D1;&#x8A18;] &#x7D99;&#x7D9A;&#x3068;&#x5148;&#x7269;</a></li><li><a href="/study/csharp/async/misc_uithread/">[&#x96D1;&#x8A18;] GUI &#x3068;&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/async/asyncstream/">&#x975E;&#x540C;&#x671F;&#x30B9;&#x30C8;&#x30EA;&#x30FC;&#x30E0;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

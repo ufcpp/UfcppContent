@@ -1,0 +1,180 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x7279;&#x6B8A;&#x306A;&#x5909;&#x6570;&#x5BA3;&#x8A00; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/datatype/declarationexpressions/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">特殊な変数宣言</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>C# 7.0～9.0 に掛けて、
+<a href="/study/csharp/datatype/patterns/">パターン マッチング</a>をはじめとして、
+<a href="/study/csharp/start/st_variable/#var-decl">変数宣言</a>を拡張するような機能が入っています。</p>
+<ul>
+<li><a href="/study/csharp/datatype/typeswitch/">型スイッチ</a>
+<ul>
+<li><a href="/study/csharp/datatype/typeswitch/#is">is演算子の拡張</a></li>
+<li><a href="/study/csharp/datatype/typeswitch/#switch">switchステートメントの拡張</a></li>
+</ul>
+</li>
+<li><a href="/study/csharp/resource/sp_ref/#out-var">出力変数宣言</a></li>
+<li><a href="/study/csharp/datatype/deconstruction/#deconstruction-assignment">分解代入</a></li>
+</ul>
+<p>C# 6.0 までの変数宣言と違って、以下のような性質があります。</p>
+<ul>
+<li>式の途中でも変数宣言できる</li>
+<li>複数の値のうち一部だけを受け取り、残りを破棄したいことがある</li>
+</ul>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="declaration-expression"></a>式中の変数宣言</h2>
+<p>C# 7.0 以降の構文に特有な点の1つとして、式の途中で変数を宣言できるようになるという点があります。</p>
+<pre><code class="language-csharp"><span class="comment">// C# 6.0 以前は、この x のように単独の変数宣言しかなかった。</span>
+<span class="keyword">object</span> x = <span class="number">1</span>;
+ 
+<span class="comment">// C# 7.0 以降、この y とか z とかのように式の途中で宣言される変数が増えた。</span>
+<span class="keyword">if</span> (x <span class="keyword">is</span> <span class="keyword">int</span> y) Console.WriteLine(y);
+<span class="keyword">if</span> (<span class="keyword">int</span>.TryParse(<span class="string">&quot;1&quot;</span>, <span class="keyword">out</span> <span class="keyword">var</span> z)) Console.WriteLine( z);</code></pre>
+<p>ちなみに、案としてはここからさらに発展して、任意の式の中で変数を宣言できるような話も出ています。
+この機能を<strong id="key-declaration-expression" class="keyword">変数宣言式</strong>(variable declaration expression)といいます。
+例えば以下のように書けるようになるかもしれません。
+(優先度低めとされていて、この機能が入る期待はそれほどしない方がいいです。
+代わりに、<a href="https://github.com/dotnet/csharplang/issues/3086">Expression blocks</a>のような機能が入るみたいな話もありますが、こちらもそれほど高い優先度は付いていません。)</p>
+<pre><code class="language-csharp"><span class="comment">// (草案。このままの文法が採用されるとは限らない) </span>
+<span class="keyword">static</span> <span class="keyword">int</span> X(<span class="keyword">string</span> s) =&gt; (<span class="keyword">int</span> x = <span class="keyword">int</span>.Parse(s)) * x;</code></pre>
+<p><code>(int x = int.Parse(s))</code> の部分の戻り値は、<code>x</code>に代入された値です。結局、以下のコードと同じ意味ですが、これが「式」として書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">int</span> X(<span class="keyword">string</span> s)
+{
+    <span class="keyword">int</span> x = <span class="keyword">int</span>.Parse(s);
+    <span class="keyword">return</span> x * x;
+}</code></pre>
+<p>式中で変数宣言があり得ることによって、
+変数のスコープに関するルールがいくつか追加されています。
+詳しくは「<a href="/study/csharp/start/st_scope/#csharp7">C# 7での新しいスコープ ルール</a>」で説明します。</p>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="discards"></a>値の破棄</h2>
+<p>型スイッチや分解では、変数を宣言しつつ何らかの値を受け取るわけですが、
+特に受け取る必要のない余剰の値が生まれたりします。</p>
+<p>例えば、分解の場合、複数の値のうち、1つだけを受け取りたい場合があったとします。
+そういう場面が複数並んでしまった場合、以下のようなコードになりがちです。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> Deconstruct()
+{
+    <span class="comment">// 商と余りを計算するメソッドがあるけども、ここでは商しか要らない</span>
+    <span class="comment">// 要らないので適当な変数 x とかで受ける</span>
+    <span class="keyword">var</span> (q, x) = DivRem(<span class="number">123</span>, <span class="number">11</span>);
+
+    <span class="comment">// 逆に、余りしか要らない</span>
+    <span class="comment">// 要らないから再び適当な変数 x で受けたいけども、x はもう使ってる</span>
+    <span class="comment">// しょうがないから x1 とかにしとくか…</span>
+    <span class="keyword">var</span> (x1, r) = DivRem(<span class="number">123</span>, <span class="number">11</span>);
+}
+
+<span class="keyword">static</span> (<span class="keyword">int</span> quotient, <span class="keyword">int</span> remainder) DivRem(<span class="keyword">int</span> dividend, <span class="keyword">int</span> divisor)
+    =&gt; (Math.DivRem(dividend, divisor, <span class="keyword">out</span> <span class="keyword">var</span> remainder), remainder);</code></pre>
+<p>「しょうがないから」感がひどく、どう見ても不格好です。</p>
+<p>こういう時に使うのが、値の<strong id="discard" class="keyword">破棄</strong>(discard)です。
+以下のように、<code>_</code>を書くことで値を無視できます。</p>
+<pre><code class="language-csharp">{
+    <span class="comment">// _ を書いたところでは、値を受け取らずに無視する</span>
+    <span class="keyword">var</span> (q, _) = DivRem(<span class="number">123</span>, <span class="number">11</span>);
+
+    <span class="comment">// _ は変数にはならないので、スコープを汚さない。別の場所でも再び _ を書ける</span>
+    <span class="comment">// また、本来「var x」とか変数宣言を書くべき場所にも _ だけを書ける</span>
+    (_, <span class="keyword">var</span> r) = DivRem(<span class="number">123</span>, <span class="number">11</span>);
+}</code></pre>
+<p>1つ目の例では一見、<code>_</code>という名前の変数を定義しているようにも見えますが、別の挙動になります。
+変数は作らず、スコープ内の別の場所でも再び<code>_</code>を使うことができます(先ほどの例みたいに<code>_1</code>みたいな変な名前を作らなくて済む)。</p>
+<p>また、2つ目の例のように、「型名 変数名」みたいに書くべき場所でも、<code>var _</code>ではなく、<code>_</code>だけでOKです。</p>
+<p>同様に、出力変数宣言でも<code>_</code>を破棄の意味で使えます。</p>
+<pre><code class="language-csharp"><span class="comment">// 欲しいのは戻り値だけであって、out 引数で受け取った値は要らない</span>
+<span class="keyword">static</span> <span class="keyword">bool</span> CanParse(<span class="keyword">string</span> s) =&gt; <span class="keyword">int</span>.TryParse(s, <span class="keyword">out</span> _);</code></pre>
+<p>型スイッチでも同様です。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">int</span> TypeSwitch(<span class="keyword">object</span> obj)
+{
+    <span class="keyword">switch</span> (obj)
+    {
+        <span class="keyword">case</span> <span class="keyword">int</span>[] x: <span class="keyword">return</span> x.Length;
+        <span class="keyword">case</span> <span class="keyword">long</span>[] x: <span class="keyword">return</span> <span class="number">2</span> * x.Length;
+        <span class="comment">// int でさえあれば値は問わない</span>
+        <span class="keyword">case</span> <span class="keyword">int</span> _: <span class="keyword">return</span> <span class="number">1</span>;
+        <span class="comment">// 同、long</span>
+        <span class="keyword">case</span> <span class="keyword">long</span> _: <span class="keyword">return</span> <span class="number">2</span>;
+        <span class="keyword">case</span> <span class="keyword">null</span>: <span class="keyword">return</span> <span class="number">0</span>;
+        <span class="comment">// 以下の行をコメントアウトするとエラーに</span>
+        <span class="comment">// 今のところ、case _ は未実装(将来的に予定はあり)</span>
+        <span class="comment">//case _:</span>
+        <span class="keyword">default</span>: <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentOutOfRangeException();
+    }
+}</code></pre>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="underscore"></a>_ が破棄の意味になる場合</h2>
+<p><code>_</code>という記号は、元々のC#では<a href="/study/csharp/start/misc_identifier/">識別子</a>として有効な名前です。
+すなわち、以下のコードは有効なC#コードです。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> _ = <span class="number">10</span>;
+Console.WriteLine(_); <span class="comment">// 10 が表示される</span></code></pre>
+<p><code>_</code>を破棄の意味で使うということは、<code>_</code>の使い方を変えるということになります。
+なので、以下のように、文脈によって <code>_</code> の意味が変わります。</p>
+<ul>
+<li>C# 7から導入される新しい構文の中では、<code>_</code>が常に破棄の意味になる</li>
+<li>それ以前の構文では、1つも参照がなかった場合だけ<code>_</code>を破棄の意味で扱う(予定)</li>
+</ul>
+<p>分解、出力引数宣言、型スイッチなど、C# 7から導入された構文の中では、
+<code>_</code>が常に破棄の意味になります。
+<code>_</code>という名前の変数は作られません。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> Deconstruct1()
+{
+    <span class="comment">// 要らないので適当な変数 x とかで受ける</span>
+    <span class="keyword">var</span> (q, x) = DivRem(<span class="number">123</span>, <span class="number">11</span>);
+
+    <span class="comment">// 要らないと言いつつ、参照できてしまう</span>
+    Console.WriteLine(x);
+
+    <span class="comment">// 要らないものは _ で破棄</span>
+    <span class="keyword">var</span> (_, r) = DivRem(<span class="number">123</span>, <span class="number">11</span>);
+
+    <span class="comment">// 分解の中に書いた _ は変数にはならない</span>
+    <span class="comment">// 以下の行でコンパイル エラーになる(_ は存在しない)</span>
+    Console.WriteLine(_);
+}</code></pre>
+<p>ちなみに、既存の構文に対しては破棄は使えません。
+<code>_</code>は普通に変数扱いされます。</p>
+<p>例えば、引数に対して <code>_</code> を使っても破棄の意味にはなりません。
+以下のコードはコンパイル エラーになります。
+(同名の引数が2つある状態。)</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">int</span> _, <span class="keyword">int</span> _)
+{
+}</code></pre>
+<h3 id="section-5"><a id="sec-generated-title-5"></a> <a id="lambda-discard"></a>ラムダ式の引数</h3>
+<h5 class="version version9">Ver. 9</h5>
+<p>既存の構文で破棄を使いたいものの代表例は、ラムダ式の引数でしょう。
+C# 8.0 までは破棄の意味で<code>_</code>を使えず、「<code>_1</code>」みたいな名前が必要でした。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> Subscribe(INotifyPropertyChanged source)
+{
+    <span class="comment">// C# 8.0 以前、2個目の _ が「同じ名前被ってる」エラーになる</span>
+    source.PropertyChanged += (_, _) =&gt; Console.WriteLine(<span class="string">&quot;property changed&quot;</span>);
+}</code></pre>
+<p>C# 9.0 でこの場合に対応しました。
+ただし、既存コードを壊さないように、2個以上の引数を <code>_</code> にした時だけ破棄の意味になるようにしています。</p>
+<p>すなわち、以下のようなコードが書ける予定です。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> Subscribe(INotifyPropertyChanged source)
+{
+    <span class="comment">// 2回以上 _ を使かったら破棄扱い</span>
+    source.PropertyChanged += (_, _) =&gt; { };
+
+    <span class="comment">// _ が1回だけの場合は引数扱い。この場合普通に変数参照できる</span>
+    source.PropertyChanged += (_, _1) =&gt; Console.WriteLine(_);
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/datatype/">&#x30C7;&#x30FC;&#x30BF;&#x578B;</a></li><li><a href="/study/csharp/datatype/tuples/">&#x30BF;&#x30D7;&#x30EB;</a></li><li><a href="/study/csharp/datatype/deconstruction/">&#x8907;&#x5408;&#x578B;&#x306E;&#x5206;&#x89E3;</a></li><li><a href="/study/csharp/datatype/typeswitch/">is&#x3001;switch &#x306E;&#x62E1;&#x5F35; (&#x578B;&#x30B9;&#x30A4;&#x30C3;&#x30C1;)</a></li><li><a href="/study/csharp/datatype/patterns/">&#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30DE;&#x30C3;&#x30C1;&#x30F3;&#x30B0;</a></li><li><a href="/study/csharp/datatype/record/">&#x30EC;&#x30B3;&#x30FC;&#x30C9;&#x578B;</a></li><li><a href="/study/csharp/datatype/collection-expression/">&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x5F0F;</a></li><li><a href="/study/csharp/datatype/inline-array/">[&#x96D1;&#x8A18;] InlineArray</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

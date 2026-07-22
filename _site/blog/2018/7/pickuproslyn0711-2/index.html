@@ -1,0 +1,118 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 7/11: Design Notes | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2018/7/pickuproslyn0711-2/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2018-07-11T23:26:30">2018-07-11</time></span><span>更新: <time datetime="2018-07-12T01:06:46">2018-07-12</time></span></div><h1 id="roslyn-711-design-notes">ピックアップRoslyn 7/11: Design Notes</h1>
+<p>6月くらいからの C# Design Notes 追加。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/pull/1705">https://github.com/dotnet/csharplang/pull/1705</a></li>
+</ul>
+<p>いくつかは、提案文書の方が先に出てたので、先にブログを書いてあるものの原案みたいなもの。</p>
+<ul>
+<li><a href="/blog/2018/6/pickuproslyn0630/">Working with Data</a></li>
+<li><a href="/blog/2018/7/pickuproslyn0711/">using patterns and declarations</a></li>
+</ul>
+<p>その他に関して。</p>
+<h2 id="nullable-reference-types">nullable reference types</h2>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2018/LDM-2018-05-30.md">May 30</a>
+<ul>
+<li>「アノテーションを何もつけていないと非 null 扱い」(unannotated reference types to be non-nullable; &quot;URTANN&quot;)に関して</li>
+<li>URTANN 動作の opt-out ができないと、C# 7.X 以前のコードが警告だらけになる
+<ul>
+<li>現状の Roslyn にそのまま適用すると2000個くらいの警告が出るらしい</li>
+</ul>
+</li>
+<li>デフォルト挙動は URTANN(true) にしたい</li>
+<li>細かい粒度(特定のファイルだけ、特定のクラスだけ、特定のメソッドだけ)で URTANN の opt-in/out 切り替えができるようにしたい</li>
+<li>切り替えはたぶん属性でやる。<code>NonNullTypesAttribute(bool)</code></li>
+</ul>
+</li>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2018/LDM-2018-06-04.md">Jun 4</a>
+<ul>
+<li>ラムダ式にキャプチャした変数の null フロー解析、ちょっと特殊になりそう</li>
+</ul>
+</li>
+</ul>
+<h2 id="section">式ツリー</h2>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2018/LDM-2018-06-06.md">Jun 6</a></li>
+</ul>
+<p>式ツリーで使える文法を増やしたいという話は前々からあるものの、やっと検討が始まったっぽい。</p>
+<p>前半は需要のあるシナリオについて。Big data に対するクエリを式ツリーで送りたいとか、機械学習ライブラリ方面で<a href="https://ja.wikipedia.org/wiki/%E8%87%AA%E5%8B%95%E5%BE%AE%E5%88%86">自動微分</a>とか GPU 上でのコード実行したいとか。</p>
+<p>後半は実現方法に関して。</p>
+<ul>
+<li>既存の、Entity Frameworkとかはノードを追加されても使えない。どのノードが使えるかはライブラリごとに異なる。どう制限するか
+<ul>
+<li>案1: <a href="/study/csharp/async/sp5_async/#task-like">非同期メソッドでやってるみたいに</a>、builder を介して任意の型でツリー構築できるようにする</li>
+<li>案2: アナライザーを使って制限する</li>
+</ul>
+</li>
+<li>reduction (await をその展開結果である AsyncStateMachine の行動に変換したりとか、そういうノード変形)はやるかどうか
+<ul>
+<li>あまりしない方がよさそう</li>
+</ul>
+</li>
+<li>C# の最新機能全部に、式ツリーが常に100%追従しようとは思っていない</li>
+</ul>
+<p>とか言う感じ。あと、一応、プロトタイプ実装あり。</p>
+<ul>
+<li><a href="https://github.com/bartdesmet/ExpressionFutures/">https://github.com/bartdesmet/ExpressionFutures/</a></li>
+</ul>
+<h2 id="target-typed-new">Target-typed new</h2>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2018/LDM-2018-06-25.md">Jun 25</a>
+<ul>
+<li>オーバーロード解決には寄与させないつもり</li>
+<li><code>S? s = new ();</code> みたいに書くとき、<code>new S()</code> の意味にする(<code>new Nullable&lt;S&gt;()</code>、つまり、null の意味にはしない)</li>
+<li><code>new ()</code> は型を持たない。<code>var x = new ();</code> みたいなのは型が確定しなくてエラー</li>
+<li><code>new ()</code> とか <code>new {}</code> とかは認めるけど、<code>new</code> 単体は認めないつもり</li>
+<li><code>dynamic</code>型がターゲットの<code>new ()</code>も認めない</li>
+</ul>
+</li>
+</ul>
+<p>オーバーロードに関しては、例えば以下のような話。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> S1 { <span class="keyword">public</span> <span class="keyword">int</span> x; }
+<span class="keyword">struct</span> S2 { }
+
+<span class="keyword">void</span> M(S1 s1) { }
+<span class="keyword">void</span> M(S2 s2) { }
+
+<span class="keyword">void</span> X()
+{
+    M(<span class="keyword">new</span>() { x = <span class="number">43</span> });
+    <span class="comment">//↑ x を持ってるのは S1 だけだから、S1 と推論できる</span>
+    <span class="comment">// でも、それをやっちゃうと、S2 に後から x を追加することで破壊的変更が起きちゃう</span>
+    <span class="comment">// なので、こういうオーバーロード解決はやらない</span>
+}</code></pre>
+<h2 id="null">null 条件演算</h2>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2018/LDM-2018-07-16.md">Jul 16</a></li>
+</ul>
+<p><code>?.</code> とか <code>??</code> 系統の機能をいくつか追加。</p>
+<ul>
+<li><code>x ??= y</code> で、<code>x = x ?? y;</code></li>
+<li><code>await? t</code> で、<code>if (t != null) await t;</code></li>
+<li>ポインターに対しても<code>p?[a]</code>、<code>p?-&gt;a</code>、<code>p ?? q</code></li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2018/7/">7&#x6708;</a></li><li><a href="/blog/2018/7/pickuproslyn0711/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 7/11: using patterns and declarations</a></li><li><a href="/blog/2018/7/pickuproslyn0714/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 7/14: Roles, extension interfaces, and static interface members</a></li><li><a href="/blog/2018/7/docsmistranslation/">&#x2713;DO&#x3001;X DO NOT &#x306E;&#x8AA4;&#x8A33;&#x4E8B;&#x6848;</a></li><li><a href="/blog/2018/7/docsmistranslation2/">&#x4F8B;&#x306E;&#x4E8B;&#x6848;(&#x2713;DO&#x3001;X DO NOT &#x306E;&#x8AA4;&#x8A33;)&#x3001;&#x8FFD;&#x8A18;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

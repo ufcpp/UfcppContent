@@ -1,0 +1,112 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>TargetFramework net5.0 &#x306A;&#x30B3;&#x30FC;&#x30C9;&#x3092; .NET 6 &#x30E9;&#x30F3;&#x30BF;&#x30A4;&#x30E0;&#x3067;&#x52D5;&#x304B;&#x3059; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2021/11/latestmajor/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2021-11-14T21:47:39">2021-11-14</time></span><span>更新: <time datetime="2021-11-14T21:47:39">2021-11-14</time></span></div><h1 id="targetframework-net5.0.net-6">TargetFramework net5.0 なコードを .NET 6 ランタイムで動かす</h1>
+<h2 id="net">.NET のアップデート</h2>
+<p>昔の C# アプリ (例えば去年作った TargetFramework net5.0 なアプリ)をそのまま最新のランタイム(例えば .NET 6 ランタイム)で動かすことを考えます。</p>
+<p>.NET は API レベルでの破壊的変更はめったにないので、
+「API が合わなくてロードできない」みたいな根本的な問題はほぼ起こりません。</p>
+<p>一方、挙動レベルでは時々破壊的変更があるんで、確実に動く保証はなかったりします。
+(それでも、体感、9割方は動きますが。)</p>
+<p>ここ数バージョンであった影響がありそうな変更でいうと、</p>
+<ul>
+<li>.NET Core 3.0 の頃同期 I/O が例外を出すようになったものがちらほらある
+<ul>
+<li>ネットワークなどを介する場合、非同期でないとパフォーマンスが出ないので</li>
+</ul>
+</li>
+<li>.NET 5 で、国際化対応に <a href="https://icu.unicode.org/">ICU</a> を使うようになった
+<ul>
+<li>文字列の紹介順や、<code>IndexOf</code> の挙動がちょっと変わった</li>
+</ul>
+</li>
+<li>.NET 6 で、<a href="https://docs.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/filestream-file-locks-unix"><code>FileStream</code></a> とか <a href="https://docs.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/partial-byte-reads-in-streams"><code>CryptoStream</code></a> の挙動がちょっと変わった</li>
+</ul>
+<p>とかがあって、時々、最新のランタイム上で動かそうとしてもうまくいかないことがあります。</p>
+<h2 id="section">アップデート手順</h2>
+<p>そういうのは「わかってる人だけやって欲しい」ということらしく、 .NET Core 3.1 以降の .NET は「バイナリは昔のままで最新のランタイム上で動かす」という操作に対してかなり保守的です。</p>
+<p>例えば、オプション指定なしだと、.NET 5 向けに作った C# アプリを .NET 6 ランタイム上で動かせません。</p>
+<p>手間をかけられるなら、</p>
+<ul>
+<li>プロジェクトの TargetFramwork を net6.0 に上げる</li>
+<li>SDK/ランタイムも .NET 6 に上げる</li>
+<li>その状態で単体テストが通るようにコードを書き換える</li>
+</ul>
+<p>という3つを同時にやってくれと言うことだと思います。
+(実際、挙動の破壊的変更がまれにある以上、そうするしかアップデート後の動作保証は取れないはずですが。)</p>
+<p>とはいえ、できることからコツコツやっていきたいことだってよくあるわけで、</p>
+<ul>
+<li>CI 環境の .NET SDK を先にバージョンアップしておく</li>
+<li>それに合わせてできるプロジェクトからちょっとずつ TargetFramework を変更していく</li>
+</ul>
+<p>みたいなことをしたい方も結構多いんじゃないかと思います。</p>
+<h2 id="roll-forward">Roll Forward</h2>
+<p>まあ、API レベルでの破壊的変更がほとんどなく、挙動レベルでも9割方は動くものに対して常に最近に追従する作業が必要かという話もあり。
+ちゃんと、「古いバイナリを最新のランタイムでそのまま動かす」というオプションがあります。</p>
+<p>正確に言うと、「バージョン不一致のどき、どのくらいずれてても OK か」を指定するためのオプションがあって、これを <a href="https://docs.microsoft.com/ja-jp/dotnet/core/whats-new/dotnet-core-3-0#major-version-runtime-roll-forward">roll forward</a> と言います。</p>
+<p>デフォルトが Minor で、これがなかなか厳しい…
+(メジャー バージョンが一致するものがないと実行できない。)</p>
+<p>こうことで、先ほどの「.NET SDK を先にバージョンアップしておく」シナリオをやるなら roll forward 設定の変更が必要になります。
+Major か LatestMajor なら動かせるはずですが、
+僕みたいな「常に最新の SDK/ランタイムに追従」ポリシーの人はとりあえず LatestMajor で大丈夫です。</p>
+<h3 id="roll-forward-1">Roll Forward オプションの指定方法</h3>
+<p>Roll Forward オプションの指定の仕方はいくつかあるみたいです。
+dotnet コマンドに<a href="https://docs.microsoft.com/ja-jp/dotnet/core/tools/dotnet#runtime-options">直接オプションを書く</a>方法もありますし、</p>
+<pre><code class="language-console">dotnet run --roll-forward LatestMajor</code></pre>
+<p>(ただ、<code>dotnet run</code> はこのオプションを受け付けるものの、<code>dotnet test</code> は受け付けないらしい？)</p>
+<p><a href="https://docs.microsoft.com/ja-jp/dotnet/core/tools/global-json?tabs=netcore3x#rollforward">global.json に書いておく</a>のでもいいそうですし、</p>
+<pre><code class="language-json">{
+  <span class="jsonKey">&quot;sdk&quot;</span>: {
+    <span class="jsonKey">&quot;version&quot;</span>: <span class="jsonString">&quot;6.0.100&quot;</span>,
+    <span class="jsonKey">&quot;rollForward&quot;</span>: <span class="jsonString">&quot;latestMajor&quot;</span>
+  }
+}</code></pre>
+<p><a href="https://docs.microsoft.com/ja-jp/dotnet/core/tools/dotnet-environment-variables#dotnet_roll_forward">環境変数で <code>DOTNET_ROLL_FORWARD</code> を設定しておく</a>のでもいいそうです。</p>
+<p>今回のシナリオ(CI)だと、たぶん環境変数を設定するのがよくて、
+例えば GitHub Actions の build.yml に以下の行を足せばいいということになります。</p>
+<pre><code class="language-csharp">env:
+  DOTNET_ROLL_FORWARD: latestMajor</code></pre>
+<h3 id="section-1">実例</h3>
+<p>昔、<a href="https://github.com/ufcpp/TryGithubActions">GitHub Actions を試してみるためだけに空っぽのライブラリに空っぽの単体テストを定義したリポジトリ</a>があったので、
+それを .NET 5 から .NET 6 にアップデートしてみました。</p>
+<p>CI が失敗:</p>
+<ul>
+<li><a href="https://github.com/ufcpp/TryGithubActions/pull/6">TargetFramework だけアップデート</a>
+<ul>
+<li>The current .NET SDK does not support targeting .NET 6.0.</li>
+</ul>
+</li>
+<li><a href="https://github.com/ufcpp/TryGithubActions/pull/5">CI 設定だけアップデート (Roll Forward なし)</a>
+<ul>
+<li>version '5.0.0' (x64) was not found.</li>
+<li>(今回のシナリオだとこれがつらい)</li>
+</ul>
+</li>
+</ul>
+<p>CI が成功:</p>
+<ul>
+<li><a href="https://github.com/ufcpp/TryGithubActions/pull/4">CI 設定と TargetFramework を同時にアップデート</a></li>
+<li><a href="https://github.com/ufcpp/TryGithubActions/pull/7">CI 設定だけアップデート (Roll Forward あり)</a></li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2021/11/">11&#x6708;</a></li><li><a href="/blog/2021/11/2022-ga-soon/">RC &#x51FA;&#x3066;&#x305F;&#x8A71;&#x304B;&#x3089;&#x306E;&#x3001;GA &#x8FEB;&#x3063;&#x3066;&#x305F;&#x308A;&#x3059;&#x308B;&#x8A71;</a></li><li><a href="/blog/2021/11/fix-all-file-scoped-namespace/">&#x3010;C# 10.0&#x3011;&#x30D5;&#x30A1;&#x30A4;&#x30EB; &#x30B9;&#x30B3;&#x30FC;&#x30D7;&#x540D;&#x524D;&#x7A7A;&#x9593; (&#x4E00;&#x6589;&#x7F6E;&#x63DB;&#x8A2D;&#x5B9A;)</a></li><li><a href="/blog/2021/11/implicitusings/">&#x3010;C# 10.0&#x3011; ImplicitUsings (&#x81EA;&#x52D5; global using)</a></li><li><a href="/blog/2021/11/appendliteral/">&#x3010;C# 10.0&#x3011; AppendLiteral(&quot; &quot;)</a></li><li><a href="/blog/2021/11/top-level-csharp10/">&#x3010;C# 10.0&#x3011; &#x30C8;&#x30C3;&#x30D7; &#x30EC;&#x30D9;&#x30EB; &#x30B9;&#x30C6;&#x30FC;&#x30C8;&#x30E1;&#x30F3;&#x30C8;&#x306E;&#x5909;&#x66F4;&#x70B9;</a></li><li><a href="/blog/2021/11/unicode-operator/">Unicode &#x6F14;&#x7B97;&#x5B50; (&#x2211;&#x3A3; &#x3068;&#x304B; &#x222B;&#x283; &#x3068;&#x304B;)</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,771 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x7D44;&#x8FBC;&#x307F;&#x6F14;&#x7B97;&#x5B50; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/start/st_operator/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">組込み演算子</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>＋、－、×、÷のように、
+いくつかの変数に対して何らかの処理を加えるもののことを<strong id="operator" class="keyword">演算子</strong>(operator)と呼びます。
+また、演算の対象となるもの(x+y の x や y)のことを<strong id="operand" class="keyword">オペランド</strong>(operand: 被演算子)と呼びます。</p>
+<p>-x のように、1つのオペランドを必要とする演算子のことを<em>単項演算子</em>(unary operator)、
+x+y のように、2つのオペランドを必要とする演算子のことを<em>2項演算子</em>(binary operator)と呼びます。
+また、2項演算において、
+演算子の左側にあるオペランドのことを<em>左オペランド</em>(left hand side operand)、
+演算子の右側にあるオペランドのことを<em>右オペランド</em>(right hand side operand)といいます。</p>
+<p>C# では、算術演算や論理演算を行うための演算子が用意されています。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>演算子: 加減乗除など、数学で出てくるような演算子がいろいろと。</p>
+</li>
+<li><p>x = y は、数学と違って代入なので注意。</p>
+<ul>
+<li><p>数学の場合: 「x は y と等しい」あるいは「x と y が等しくなるように値を決める」。</p>
+</li>
+<li><p>プログラミングの場合: 「x に y を代入する」あるいは「y の値を改めて x と書く」。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>ちなみに、いくつかの演算子は、組み込み型に対するものだけでなく、
+後述する「<a href="/study/csharp/oop/oo_class/#class">クラス</a>」や構造体などのユーザー定義型では自作することができます。
+（参考: 「<a href="/study/csharp/oop/oo_operator/">演算子のオーバーロード</a>」。）</p>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="arithmetic"></a>算術演算子</h2>
+<p><code>+, -, *, /</code> を用いて加減乗除算を行えます。
+また、<code>+, -</code> を用いて数値の符号を反転することが出来ます。</p>
+<p>整数型の除算は余り切り捨てとなります。剰余を求めたい場合は <code>%</code> 演算子を用います。</p>
+<p>これらの算術演算子はすべての数値型に対して利用できます。</p>
+<table summary="">
+
+	<tr>
+		<th>演算子</th>
+		<th>意味</th>
+		<th>例</th>
+	</tr>
+	<tr>
+		<td><p><code>x + y</code></p></td>
+		<td><p>x と y を足す</p></td>
+		<td><code>
+            <span class="reserved">byte</span> a = 11 + 92; <span class="comment">// a は 103 になる。</span>
+          </code></td>
+	</tr>
+	<tr>
+		<td><p><code>x - y</code></p></td>
+		<td><p>x から y を引く</p></td>
+		<td><code>
+            <span class="reserved">int</span> a = 9 - 4; <span class="comment">// a は 5 になる。</span>
+          </code></td>
+	</tr>
+	<tr>
+		<td><p><code>x * y</code></p></td>
+		<td><p>x と y を掛ける</p></td>
+		<td><code>
+            <span class="reserved">int</span> a = 3 * 7; <span class="comment">// a は 21 になる。</span>
+          </code></td>
+	</tr>
+	<tr>
+		<td><p><code>x / y</code></p></td>
+		<td><p>x を y で割る</p></td>
+		<td><code>
+            <span class="reserved">int</span> a = 9 / 2; <span class="comment">// 整数の場合、あまり切り捨て。 a は 4 になる。</span>
+          </code><br></br><code>
+            <span class="reserved">double</span> x = 9.0 / 2.0; <span class="comment">// a は 4.5 になる。</span>
+          </code></td>
+	</tr>
+	<tr>
+		<td><p><code>x % y</code></p></td>
+		<td><p>x を y で割った余り</p></td>
+		<td><code>
+            <span class="reserved">int</span> a = 9 % 2; <span class="comment">// a は 1 になる。</span>
+          </code></td>
+	</tr>
+	<tr>
+		<td><p><code>+x</code></p></td>
+		<td><p>x の値そのまま</p></td>
+		<td><code>
+            <span class="reserved">int</span> a = +1; <span class="comment">// a = 1 と同じ</span>
+          </code></td>
+	</tr>
+	<tr>
+		<td><p><code>-x</code></p></td>
+		<td><p>符号反転</p></td>
+		<td><code>
+            <span class="reserved">int</span> a = 1;
+          </code><br></br><code>
+            <span class="reserved">int</span> b = -a; <span class="comment">// b は -1 になる。</span>
+          </code></td>
+	</tr>
+</table>
+<p>注意1：
+整数の除算 <code>x / y</code> は、0 に向かって丸められます。
+すなわち、<code>x / y</code> の結果が正の場合は切捨て、
+負の場合は切上げになります。</p>
+<p>注意2：
+剰余演算 <code>x % y</code> は、
+整数の場合は <code>x - (x / y) * y</code>、
+浮動小数点数の場合は <code>x - Math.Truncate(x / y) * y</code> と同じ値になります。</p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="inc"></a>インクリメント・デクリメント</h2>
+<p><code>++, --</code> を用いてインクリメント、デクリメント演算を行うことが出来ます。
+インクリメント演算を行うとオペランドは 1 ずつ増加（<code>++x</code> は <code>x = x + 1</code> と同じ）し、
+デクリメント演算を行うとオペランドは 1 ずつ減少（<code>--x</code> は <code>x = x - 1</code> と同じ）します。</p>
+<p>インクリメント・デクリメント演算には前置き(<code>++x</code>という形式)と後置き(<code>x++</code>という形式)があります。
+前置き演算の演算結果は、インクリメント・デクリメントが行われた後のオペランドの値になり、
+後置き演算の演算結果は、インクリメント・デクリメントが行われる前のオペランドの値になります。</p>
+<p>これらの算術演算子はすべての数値型に対して利用できます。</p>
+<table summary="">
+
+	<tr>
+		<th>演算子</th>
+		<th>意味</th>
+		<th>例</th>
+	</tr>
+	<tr>
+		<td><p><code>++x</code></p></td>
+		<td><p>前置きインクリメント</p></td>
+		<td><code>
+            <span class="reserved">int</span> a = 5;
+          </code><br></br><code>
+            <span class="reserved">int</span> b = ++a; <span class="comment">// a も b も 6 になる。</span>
+          </code></td>
+	</tr>
+	<tr>
+		<td><p><code>x++</code></p></td>
+		<td><p>後置きインクリメント</p></td>
+		<td><code>
+            <span class="reserved">int</span> a = 5;
+          </code><br></br><code>
+            <span class="reserved">int</span> b = a++; <span class="comment">// a は 6 に、b は 5 になる。</span>
+          </code></td>
+	</tr>
+	<tr>
+		<td><p><code>--x</code></p></td>
+		<td><p>前置きデクリメント</p></td>
+		<td><code>
+            <span class="reserved">int</span> a = 5;
+          </code><br></br><code>
+            <span class="reserved">int</span> b = --a; <span class="comment">// a も b も 4 になる。</span>
+          </code></td>
+	</tr>
+	<tr>
+		<td><p><code>x--</code></p></td>
+		<td><p>後置きデクリメント</p></td>
+		<td><code>
+            <span class="reserved">int</span> a = 5;
+          </code><br></br><code>
+            <span class="reserved">int</span> b = a--; <span class="comment">// a は 4 に、b は 5 になる。</span>
+          </code></td>
+	</tr>
+</table>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="shift"></a>シフト</h2>
+<p><code>&lt;&lt;</code> は左シフトを、
+<code>&gt;&gt;</code> は右シフトを行う演算子です。</p>
+<p>シフト演算子は左側のオペランドを右側のオペランド分だけ左または右にシフトします。
+左オペランドには <code>int, uint, long, ulong</code> のみを、
+右オペランドには <code>int</code> のみを取ることが出来ます。</p>
+<p>左オペランドが符号付き整数の場合、右シフトは算術シフト演算になり、
+符号無し整数の場合、右シフトは論理シフト演算になります。</p>
+<table summary="">
+
+	<tr>
+		<th>演算子</th>
+		<th>意味</th>
+		<th>例</th>
+	</tr>
+	<tr>
+		<td><p><code>x&lt;&lt;i</code></p></td>
+		<td><p>左シフト</p></td>
+		<td><code>
+            <span class="reserved">int</span> a = 51 &lt;&lt; 2 ; <span class="comment">// a は 204 になる。</span>
+          </code><br></br>(0011 0011 &lt;&lt; 2 = 1100 1100)</td>
+	</tr>
+	<tr>
+		<td><p><code>x&gt;&gt;i</code></p></td>
+		<td><p>右シフト</p></td>
+		<td><code>
+            <span class="reserved">int</span> a = 51 &gt;&gt; 1 ; <span class="comment">// a は 25 になる。</span>
+          </code><br></br>(0011 0011 &gt;&gt; 1 = 0001 1001)</td>
+	</tr>
+</table>
+<h3 id="section-6"><a id="sec-generated-title-6"></a> <a id="unsigned-right-shift"></a>符号なし右シフト</h3>
+<h5 class="version version11*">Ver. 11</h5>
+<p>C# では長らく、</p>
+<ul>
+<li>符号<em>付き</em>整数の右シフトは符号<em>付き</em>右シフト(算術シフト)</li>
+<li>符号<em>なし</em>整数の右シフトは符号<em>なし</em>右シフト(論理シフト)</li>
+</ul>
+<p>という方式で右シフトの方式を切り替えていました。</p>
+<p>これに対して、C# 11 では、<code>&gt;&gt;&gt;</code> という演算子で「型によらず常に符号なし右シフト」ができるようになりました。</p>
+<p>詳しくは「<a href="/study/csharp/oop/generic-math-operators/#unsigned-right-shift">【Generic Math】 C# 11 での演算子の新機能</a>」で説明します。</p>
+<h2 id="section-7"><a id="sec-generated-title-7"></a> <a id="concat"></a>文字列連結</h2>
+<p>文字列に対して <code>+</code> 演算子を用いることで文字列の連結を行えます。</p>
+<table summary="">
+
+	<tr>
+		<th>演算子</th>
+		<th>意味</th>
+		<th>例</th>
+	</tr>
+	<tr>
+		<td><p><code>x+y</code></p></td>
+		<td><p>文字列連結</p></td>
+		<td><code>
+            <span class="reserved">string</span> s = <span class="string">"abc"</span> + <span class="string">"def"</span>; <span class="comment">// s は "abcdef" になる。</span>
+          </code></td>
+	</tr>
+</table>
+<h2 id="section-8"><a id="sec-generated-title-8"></a> <a id="logical"></a>論理演算子</h2>
+<p>AND, OR, XOR などの論理演算を行います。</p>
+<p><code>&amp;, |, ^</code> はそれぞれ AND, OR, XOR を行う演算子です。
+これらの演算子は整数型および <code>bool</code> 型に対して利用できます。
+整数型に対してこれらの演算子を用いた場合、ビットごとの論理演算を行います。</p>
+<p><code>!</code> は論理否定を行う演算子です。
+この演算子は <code>bool</code> 型に対してのみ利用できます。</p>
+<p><code>~</code> はビットごとの補数演算(各ビットの 0/1 を反転する)を行う演算子です。
+この演算子は <code>int, uint, long, ulong</code> に対してのみ利用できます。</p>
+<p><code>&amp;&amp;, ||</code> は条件 AND, OR 演算子で、
+その演算結果は <code>bool</code> に対する <code>&amp;, |</code> の演算結果と同じものになります。
+<code>&amp;, |</code> の演算との違いは、後述する「<a href="#shortcircuit">短絡評価</a>」を行うかどうかです。
+この短絡評価版の論理演算子は <code>bool</code> 型に対してのみ利用できます。</p>
+<table summary="">
+
+	<tr>
+		<th>演算子</th>
+		<th>意味</th>
+		<th>例</th>
+	</tr>
+	<tr>
+		<td><p><code>x &amp; y</code></p></td>
+		<td><p>x と y の論理積を計算</p></td>
+		<td><code>
+            <span class="reserved">bool</span> a = <span class="reserved">true</span> &amp; <span class="reserved">false</span>; <span class="comment">// a は false になる。</span>
+          </code><br></br><code>
+            <span class="reserved">byte</span> a = 201 &amp; 92; <span class="comment">// a は 72になる。</span>
+          </code><br></br>(1100 1001 AND 0101 1100 = 0100 1000)</td>
+	</tr>
+	<tr>
+		<td><p><code>x | y</code></p></td>
+		<td><p>x と y の論理和を計算</p></td>
+		<td><code>
+            <span class="reserved">bool</span> a = <span class="reserved">true</span> | <span class="reserved">false</span>; <span class="comment">// a は true になる。</span>
+          </code><br></br><code>
+            <span class="reserved">byte</span> a = 201 | 92; <span class="comment">// a は 221になる。</span>
+          </code><br></br>(1100 1001 OR 0101 1100 = 1101 1101)</td>
+	</tr>
+	<tr>
+		<td><p><code>x ^ y</code></p></td>
+		<td><p>x と y の排他的論理和を計算</p></td>
+		<td><code>
+            <span class="reserved">bool</span> a = <span class="reserved">true</span> ^ <span class="reserved">true</span>; <span class="comment">// a は falseになる。</span>
+          </code><br></br><code>
+            <span class="reserved">byte</span> a = 201 ^ 92; <span class="comment">// a は 149になる。</span>
+          </code><br></br>(1100 1001 XOR 0101 1100 = 1001 0101)</td>
+	</tr>
+	<tr>
+		<td><p><code>!x</code></p></td>
+		<td><p>x の論理否定を計算</p></td>
+		<td><code>
+            <span class="reserved">bool</span> a = !<span class="reserved">true</span>; <span class="comment">// a は false になる。</span>
+          </code><br></br></td>
+	</tr>
+	<tr>
+		<td><p><code>~x</code></p></td>
+		<td><p>x の補数を計算</p></td>
+		<td><code>
+            <span class="reserved">int</span> a = ~201; <span class="comment">// a は -202 になる。</span>
+          </code><br></br>~(0000 0000 1100 1001) = 1111 1111 0011 0110</td>
+	</tr>
+</table>
+<h2 id="section-9"><a id="sec-generated-title-9"></a> <a id="relation"></a>関係演算</h2>
+<p><code>==, !=</code> を用いてオペランドの等値性を判断できます。
+<code>==</code> は2つのオペランドが等しければ <code>true</code> を、
+<code>!=</code> は2つのオペランドが等しくなければ <code>true</code> を返します。
+これらの演算子はすべての組込み型に対して利用でき、
+数値型の場合はその値の比較、文字列型の場合はすべての文字が一致しているかどうか、
+オブジェクト型の場合はオブジェクトの参照先が同じかどうかを調べます。</p>
+<p><code>&lt;, &gt;, &lt;=, &gt;=</code> はオペランドの大小比較を行います。
+これらの演算子は数値型に対して利用できます。</p>
+<table summary="">
+
+	<tr>
+		<th>演算子</th>
+		<th>意味</th>
+		<th>例</th>
+	</tr>
+	<tr>
+		<td><p><code>x == y</code></p></td>
+		<td><p>x が y と等しいかどうか</p></td>
+		<td><code>
+            <span class="reserved">bool</span> a = "abc" == "abc"; <span class="comment">// a は true になる。</span>
+          </code><br></br><code>
+            <span class="reserved">bool</span> a = 1 == 0; <span class="comment">// a は false になる。</span>
+          </code></td>
+	</tr>
+	<tr>
+		<td><p><code>x != y</code></p></td>
+		<td><p>x が y と異なるかどうか</p></td>
+		<td><code>
+            <span class="reserved">bool</span> a = "abc" != "abc"; <span class="comment">// a は false になる。</span>
+          </code><br></br><code>
+            <span class="reserved">bool</span> a = 1 != 0; <span class="comment">// a は true になる。</span>
+          </code></td>
+	</tr>
+	<tr>
+		<td><p><code>x &lt; y</code></p></td>
+		<td><p>x が y より小さいかどうか</p></td>
+		<td><code>
+            <span class="reserved">bool</span> a = 1 &lt; 2; <span class="comment">// a は true になる。</span>
+          </code><br></br><code>
+            <span class="reserved">bool</span> a = 1 &lt; 1; <span class="comment">// a は false になる。</span>
+          </code><br></br><code>
+            <span class="reserved">bool</span> a = 1 &lt; 0; <span class="comment">// a は false になる。</span>
+          </code></td>
+	</tr>
+	<tr>
+		<td><p><code>x &gt; y</code></p></td>
+		<td><p>x が y より大さいかどうか</p></td>
+		<td><code>
+            <span class="reserved">bool</span> a = 1 &gt; 2; <span class="comment">// a は false になる。</span>
+          </code><br></br><code>
+            <span class="reserved">bool</span> a = 1 &gt; 1; <span class="comment">// a は false になる。</span>
+          </code><br></br><code>
+            <span class="reserved">bool</span> a = 1 &gt; 0; <span class="comment">// a は true になる。</span>
+          </code></td>
+	</tr>
+	<tr>
+		<td><p><code>x &lt;= y</code></p></td>
+		<td><p>x が y 以下かどうか</p></td>
+		<td><code>
+            <span class="reserved">bool</span> a = 1 &lt;= 2; <span class="comment">// a は true になる。</span>
+          </code><br></br><code>
+            <span class="reserved">bool</span> a = 1 &lt;= 1; <span class="comment">// a は true になる。</span>
+          </code><br></br><code>
+            <span class="reserved">bool</span> a = 1 &lt;= 0; <span class="comment">// a は false になる。</span>
+          </code></td>
+	</tr>
+	<tr>
+		<td><p><code>x &gt;= y</code></p></td>
+		<td><p>x が y 以上かどうか</p></td>
+		<td><code>
+            <span class="reserved">bool</span> a = 1 &gt;= 2; <span class="comment">// a は false になる。</span>
+          </code><br></br><code>
+            <span class="reserved">bool</span> a = 1 &gt;= 1; <span class="comment">// a は true になる。</span>
+          </code><br></br><code>
+            <span class="reserved">bool</span> a = 1 &gt;= 0; <span class="comment">// a は true になる。</span>
+          </code></td>
+	</tr>
+</table>
+<h2 id="section-10"><a id="sec-generated-title-10"></a> <a id="substitute"></a>代入演算</h2>
+<p><code>=</code> を用いて代入を行えます。<code>=</code> は、右オペランドの値を左オペランドに代入します。</p>
+<p>（
+数学の場合、<code>=</code> は比較演算（C# の場合、<code>==</code> 演算子を使う）ですが、
+C# では代入になります。
+）</p>
+<table summary="">
+
+	<tr>
+		<th>演算子</th>
+		<th>意味</th>
+		<th>例</th>
+	</tr>
+	<tr>
+		<td><p><code>x = y</code></p></td>
+		<td><p>x に y を代入します</p></td>
+		<td><code>
+            <span class="reserved">int</span> a = 5; <span class="comment">// a は 5 になる。</span>
+          </code></td>
+	</tr>
+</table>
+<h3 id="section-11"><a id="sec-generated-title-11"></a> <a id="compound-assignment"></a>複合代入演算子</h3>
+<p><code>+=, -=, *=, /=, %=, &amp;=, |=, ^=, &lt;&lt;=, &gt;&gt;=</code> など、
+2項演算子の後ろに <code>=</code> を付けることで複合代入(compound assignment)というものになります。</p>
+<p>例えば <code>a += b;</code> であれば <code>a = a + b;</code> と同じ意味になります。
+<code>-=, *=, /=, %=, &amp;=, |=, ^=, &lt;&lt;=, &gt;&gt;=</code> も同様です。</p>
+<table summary="">
+
+	<tr>
+		<th>演算子</th>
+		<th>意味</th>
+		<th>例</th>
+	</tr>
+	<tr>
+		<td><p><code>x += y</code></p></td>
+		<td><p><code>x = x + y</code>と同じ結果が得られる</p></td>
+		<td><code>
+            <span class="reserved">int</span> a = 5;
+          </code><br></br><code>
+            a += 10; <span class="comment">// a は 15 になる。</span>
+          </code></td>
+	</tr>
+</table>
+<h4 id="null"><a id="sec-generated-title-12"></a> <a id="null-coalescing-assignment"></a>null 合体代入</h4>
+<h5 class="version version8">Ver. 8.0</h5>
+<p>C# 8.0 では、<a href="/study/csharp/resource/sp2_nullable/#coalescing">null合体演算子</a> (<code>??</code>)も複合代入に使えるようになりました(<code>??=</code>)。</p>
+<p>例えば以下のような書き方ができます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">string</span> s = <span class="keyword">null</span>)
+{
+    s ??= <span class="string">&quot;default string&quot;</span>;
+    Console.WriteLine(s);
+}</code></pre>
+<p>意味としては、<code>if (s == null) s = ...;</code> と同じになります。</p>
+<h2 id="section-12"><a id="sec-generated-title-13"></a> <a id="condition"></a>条件演算子</h2>
+<p><code>?:</code> 演算子、は C# における唯一の3項演算子(trinary operator: オペランドが3つの演算子)で、
+1つ目のオペランドの結果に応じて2つ目か3つ目のどちらかのオペランドの値を返します。
+例えば、<code>cond ? x : y;</code> は
+<code>cond</code> が <code>true</code> ならば <code>x</code> を、
+<code>cond</code> が <code>false</code> ならば <code>y</code> を返します。</p>
+<p>1つ目のオペランドは <code>bool</code> 型でなければなりません。
+また、2つ目と3つ目のオペランドにはすべての型を利用できますが、
+両方が同じ型である必要があります。</p>
+<table summary="">
+
+	<tr>
+		<th>演算子</th>
+		<th>意味</th>
+		<th>例</th>
+	</tr>
+	<tr>
+		<td><p><code>c ? x : y</code></p></td>
+		<td><p>c が true ならば x を、<br></br>false ならば y を返します</p></td>
+		<td><code>
+            <span class="reserved">int</span> a = (x &gt; 5) ? 10 : 0;
+          </code><br></br><code>
+            <span class="comment">// a は、x が 5 より大きければ 10 に、</span>
+          </code><br></br><code>
+            <span class="comment">// さもなくば 0 になります。</span>
+          </code></td>
+	</tr>
+</table>
+<h2 id="null-1"><a id="sec-generated-title-14"></a> <a id="null"></a>null 合体演算子</h2>
+<h5 class="version version2">Ver. 2.0</h5>
+<p>無効な値（null）を許容する型（「<a href="/study/csharp/resource/oo_reference/#reftype">参照型</a>」 もしくは 「<a href="/study/csharp/resource/sp2_nullable/#nullableType">Nullable 型</a>」）に対して、
+「値が無効な時、デフォルト値を代入しなおしたい」ということが多々あります。
+すなわち、以下のような条件演算を結構よく利用します。</p>
+<pre><code class="language-csharp"><span class="keyword">string</span> str = <span class="keyword">null</span>;
+
+<span class="keyword">string</span> nonNullStr = str != <span class="keyword">null</span> ? str : <span class="string">&quot;default string&quot;</span>;</code></pre>
+<p>そこで、C# 2.0 では、この条件演算に相当する処理を簡潔に書くために、null 合体演算子（null coalescing operator） ?? というものが導入されました。
+上記の例は、以下の書くことができます。</p>
+<pre><code class="language-csharp"><span class="keyword">string</span> str = <span class="keyword">null</span>;
+
+<span class="keyword">string</span> nonNullStr = str ?? <span class="string">&quot;default string&quot;</span>;</code></pre>
+<h2 id="sizeof"><a id="sec-generated-title-15"></a> <a id="sizeof"></a>sizeof 演算子</h2>
+<p>sizeof 演算子は、他の演算子と比べると少し特殊で、
+以下のように、型に対して用います。</p>
+<pre><code class="language-csharp">Console.Write(<span class="string">&quot;{0}, {1}\n&quot;</span>, <span class="keyword">sizeof</span>(<span class="keyword">int</span>), <span class="keyword">sizeof</span>(<span class="keyword">byte</span>));</code></pre>
+<pre><code class="language-console">4, 1</code></pre>
+<p>sizeof 演算子は、その型が何バイトのメモリを占めるかを返します。
+int（32ビット整数）なら4バイト、
+byte（8ビット符号なし整数）なら1バイトなので、
+sizeof(int), sizeof(byte) はそれぞれ 4, 1 を返します。</p>
+<p>通常、sizeof 演算子の引数として与えられる型は、int や byte など、C# の規格上、サイズが決まっている数値型のみです。
+（unsafe コードと呼ばれる特殊な状況下でのみ、もう少し広い範囲の型のサイズを取得できます。参考: 「<a href="/study/csharp/interop/sp_unsafe/">unsafe</a>」。）</p>
+<h2 id="section-13"><a id="sec-generated-title-16"></a> <a id="short-circuit"></a>短絡評価</h2>
+<p>条件 AND <code>&amp;&amp;</code>、
+条件 OR <code>||</code>、
+条件演算子 <code>?:</code>、および、null 合体演算子 <code>??</code> は
+<strong id="shortcircuit" class="keyword">短絡評価</strong>（short circuit evaluation）と呼ばれる挙動をします。</p>
+<p>短絡評価は、左辺の結果によっては右辺が評価されない（関数などを呼ぼうとしても呼ばれない）というものです。</p>
+<table summary="">
+
+	<tr>
+		<th>演算子</th>
+		<th>挙動</th>
+	</tr>
+	<tr>
+		<td><p>条件 AND<code>&amp;&amp;</code></p></td>
+		<td><p>左オペランドが<code>false</code>の場合、右オペランドは評価されません。</p></td>
+	</tr>
+	<tr>
+		<td><p>条件 OR<code>||</code></p></td>
+		<td><p>左オペランドが<code>true</code>の場合、右オペランドは評価されません。</p></td>
+	</tr>
+	<tr>
+		<td><p>条件演算子<code>?:</code></p></td>
+		<td><p>第1項が<code>true</code>なら第2項のみ、<code>false</code>なら第3項のみが評価されます。</p></td>
+	</tr>
+	<tr>
+		<td><p>null 合体演算子<code>??</code></p></td>
+		<td><p>左オペランドが<code>null</code>ではない場合、右オペランドは評価されません。</p></td>
+	</tr>
+</table>
+<p>例えば、<code>|</code> 演算子と <code>||</code> 演算子の挙動の差を見てみましょう。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">string</span> Echo(<span class="keyword">string</span> message)
+    {
+        Console.WriteLine(message);
+        <span class="keyword">return</span> message;
+    }
+
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        Console.WriteLine(<span class="string">&quot;短絡評価なし&quot;</span>);
+        <span class="keyword">var</span> x = Echo(<span class="string">&quot;a&quot;</span>) == <span class="string">&quot;a&quot;</span> | Echo(<span class="string">&quot;b&quot;</span>) == <span class="string">&quot;b&quot;</span>; <span class="comment">// a、b 両方出力。</span>
+
+        Console.WriteLine(<span class="string">&quot;短絡評価あり&quot;</span>);
+        <span class="keyword">var</span> y = Echo(<span class="string">&quot;a&quot;</span>) == <span class="string">&quot;a&quot;</span> || Echo(<span class="string">&quot;b&quot;</span>) == <span class="string">&quot;b&quot;</span>; <span class="comment">// a のみ出力</span>
+    }
+}</code></pre>
+<pre><code class="language-console">短絡評価なし
+a
+b
+短絡評価あり
+a</code></pre>
+<p>また、条件演算子の短絡評価の例を示すと、以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">string</span> Echo(<span class="keyword">string</span> message)
+    {
+        Console.WriteLine(message);
+        <span class="keyword">return</span> message;
+    }
+
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> x = <span class="keyword">true</span> ? Echo(<span class="string">&quot;第2項&quot;</span>) : Echo(<span class="string">&quot;第3項&quot;</span>); <span class="comment">// 第2項だけ表示される</span>
+        <span class="keyword">var</span> y = <span class="keyword">false</span> ? Echo(<span class="string">&quot;第2項&quot;</span>) : Echo(<span class="string">&quot;第3項&quot;</span>); <span class="comment">// 第3項だけ表示される</span>
+    }
+}</code></pre>
+<pre><code class="language-console">第2項
+第3項</code></pre>
+<h2 id="section-14"><a id="sec-generated-title-17"></a> <a id="other"></a>その他の式</h2>
+<p>このページで紹介したような、数学でも出てくるような演算子は、
+C# の構文上は式（expression）と呼ばれるものの一種です。
+式には、その他にもいろいろな種類のものがあり、おいおい説明してくことになります。
+（参考: 「<a href="/study/csharp/cheatsheet/list_expression/">C# の式と文の一覧</a>」）</p>
+<h2 id="section-15"><a id="sec-generated-title-18"></a> <a id="priority"></a>演算子の優先順位</h2>
+<p>演算子には以下に示す優先順位があります。</p>
+<table summary="">
+
+	<tr>
+		<th>分類</th>
+		<th>式/演算子</th>
+	</tr>
+	<tr>
+		<td><p>基本式</p></td>
+		<td><p><code>x++,  x--</code></p></td>
+	</tr>
+	<tr>
+		<td><p>単項式</p></td>
+		<td><p><code>+,  -,  !,  ~,  ++x,  --x</code></p></td>
+	</tr>
+	<tr>
+		<td><p>乗法式</p></td>
+		<td><p><code>*,  /,  % </code></p></td>
+	</tr>
+	<tr>
+		<td><p>加法式</p></td>
+		<td><p><code>+,  - </code></p></td>
+	</tr>
+	<tr>
+		<td><p>シフト</p></td>
+		<td><p><code>&lt;&lt;,  &gt;&gt; </code></p></td>
+	</tr>
+	<tr>
+		<td><p>関係式</p></td>
+		<td><p><code>&lt;,  &gt;,  &lt;=,  &gt;=</code></p></td>
+	</tr>
+	<tr>
+		<td><p>等値式</p></td>
+		<td><p><code>==,  !=</code></p></td>
+	</tr>
+	<tr>
+		<td><p>論理 AND</p></td>
+		<td><p><code>&amp; </code></p></td>
+	</tr>
+	<tr>
+		<td><p>論理 XOR</p></td>
+		<td><p><code>^ </code></p></td>
+	</tr>
+	<tr>
+		<td><p>論理 OR</p></td>
+		<td><p><code>| </code></p></td>
+	</tr>
+	<tr>
+		<td><p>条件 AND</p></td>
+		<td><p><code>&amp;&amp; </code></p></td>
+	</tr>
+	<tr>
+		<td><p>条件 OR</p></td>
+		<td><p><code>|| </code></p></td>
+	</tr>
+	<tr>
+		<td><p>条件</p></td>
+		<td><p><code>?: </code></p></td>
+	</tr>
+	<tr>
+		<td><p>null 合体</p></td>
+		<td><p><code>?? </code></p></td>
+	</tr>
+	<tr>
+		<td><p>代入</p></td>
+		<td><p><code>=,  *=, /=, %=, +=, -=, &lt;&lt;=, &gt;&gt;=, &amp;=, ^=, |= </code></p></td>
+	</tr>
+</table>
+<p>優先順位の高いものから順番に計算が行われます。
+また、優先順位が同じ場合、代入演算では右から、それ以外の演算では左から順に計算が行われます。</p>
+<p>他の式も含めた全体の優先順位は「<a href="/study/csharp/cheatsheet/list_expression/">C# の式と文の一覧</a>」を参照ください。</p>
+<h2 id="section-16"><a id="exercise"></a>演習問題</h2>
+<h3 id="section-17"><a id="exercise-ope1"></a>問題 1</h3>
+<p>2つの整数を入力し、
+その整数の四則演算(＋, －, ×, ÷)結果を表示するプログラムを作成せよ。</p>
+<h4 id="section-18">解答例 1</h4>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Exercise
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    Console.Write(<span class="string">&quot;input a: &quot;</span>);
+    <span class="keyword">int</span> a = <span class="keyword">int</span>.Parse(Console.ReadLine());
+    Console.Write(<span class="string">&quot;input b: &quot;</span>);
+    <span class="keyword">int</span> b = <span class="keyword">int</span>.Parse(Console.ReadLine());
+
+    Console.Write(<span class="string">&quot;{0} + {1} = {2}\n&quot;</span>, a, b, a + b);
+    Console.Write(<span class="string">&quot;{0} - {1} = {2}\n&quot;</span>, a, b, a - b);
+    Console.Write(<span class="string">&quot;{0} * {1} = {2}\n&quot;</span>, a, b, a * b);
+    Console.Write(<span class="string">&quot;{0} / {1} = {2}\n&quot;</span>, a, b, a / b);
+  }
+}</code></pre>
+<h3 id="section-19"><a id="exercise-ope2"></a>問題 2</h3>
+<p>前問の「整数の四則演算」の、 double, short 等の他の型を用いた物を作成せよ。</p>
+<h4 id="section-20">解答例 1</h4>
+<p>例として double 版を掲載。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Exercise
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    Console.Write(<span class="string">&quot;input a: &quot;</span>);
+    <span class="keyword">double</span> a = <span class="keyword">double</span>.Parse(Console.ReadLine());
+    Console.Write(<span class="string">&quot;input b: &quot;</span>);
+    <span class="keyword">double</span> b = <span class="keyword">double</span>.Parse(Console.ReadLine());
+
+    Console.Write(<span class="string">&quot;{0} + {1} = {2}\n&quot;</span>, a, b, a + b);
+    Console.Write(<span class="string">&quot;{0} - {1} = {2}\n&quot;</span>, a, b, a - b);
+    Console.Write(<span class="string">&quot;{0} * {1} = {2}\n&quot;</span>, a, b, a * b);
+    Console.Write(<span class="string">&quot;{0} / {1} = {2}\n&quot;</span>, a, b, a / b);
+  }
+}</code></pre>
+<h3 id="section-21"><a id="exercise-ope3"></a>問題 3</h3>
+<p>複素数 x + iy の逆数を求めるプログラムを作成せよ。</p>
+<h4 id="section-22">解答例 1</h4>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Exercise
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    Console.Write(<span class="string">&quot;実部を入力してください: &quot;</span>);
+    <span class="keyword">double</span> x = <span class="keyword">double</span>.Parse(Console.ReadLine());
+    Console.Write(<span class="string">&quot;虚部を入力してください: &quot;</span>);
+    <span class="keyword">double</span> y = <span class="keyword">double</span>.Parse(Console.ReadLine());
+
+    <span class="keyword">double</span> norm = x * x + y * y;
+
+    Console.Write(<span class="string">&quot;{0} + i({1}) の逆数は {2} + i({3})\n)&quot;</span>,
+      x, y,
+      x / norm, -y / norm);
+  }
+}</code></pre>
+<h3 id="section-23"><a id="exercise-ope4"></a>問題 4</h3>
+<p>半径を入力し、その半径の円の面積を求めるプログラムを作成せよ。</p>
+<h4 id="section-24">解答例 1</h4>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Exercise
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="keyword">double</span> r; <span class="comment">// 半径</span>
+
+    Console.Write(<span class="string">&quot;半径を入力してください: &quot;</span>);
+    r = <span class="keyword">double</span>.Parse(Console.ReadLine());
+
+    <span class="keyword">double</span> area = r * r * <span class="number">3</span>.<span class="number">1415926535897932</span>;
+    Console.Write(<span class="string">&quot;面積 = {0}\n&quot;</span>, area);
+  }
+}</code></pre>
+<h3 id="section-25"><a id="exercise-ope5"></a>問題 5</h3>
+<p>体重と身長を入力し、BMIを求めるプログラムを作成せよ。</p>
+<blockquote><p>BMIは、WHO（世界保健機関）が推奨しているもので、Body Mass Indexの略称で、肥満度指数とも呼ばれています。 BMIは肥満度の基準として、広く使用されている測定方法です。
+計算式は、下記のとおりで比較的簡単に計算できることも特徴です。</p>
+<p>BMI = 体重(kg)÷{身長(m)×身長(m)}</p>
+<p>BMIの値が22のときに病気になる可能性が最も低く、BMIが26を超えると糖尿病など生活習慣病になるリスクが高まると言われています。</p>
+<table summary="">
+
+	<tr>
+		<td><p>BMI 値</p></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><p>19.8未満</p></td>
+		<td><p>やせ型</p></td>
+	</tr>
+	<tr>
+		<td><p>19.8～24.2未満</p></td>
+		<td><p>普通</p></td>
+	</tr>
+	<tr>
+		<td><p>24.2～26.4未満</p></td>
+		<td><p>やや肥満（過体重）</p></td>
+	</tr>
+	<tr>
+		<td><p>26.4～35.0未満</p></td>
+		<td><p>肥満</p></td>
+	</tr>
+	<tr>
+		<td><p>35.0以上</p></td>
+		<td><p>高度肥満（要治療）</p></td>
+	</tr>
+</table></blockquote>
+以下にプログラムの実行結果の例を示す。
+<pre><code class="language-console">身長[cm] = 175.5
+体重[kg] = 52.4
+BMI = 17.0128489216808</code></pre>
+<h4 id="section-26">解答例 1</h4>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Exercise
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="keyword">double</span> height; <span class="comment">// 身長[cm]</span>
+    <span class="keyword">double</span> weight; <span class="comment">// 体重[kg]</span>
+
+    Console.Write(<span class="string">&quot;身長[cm]: &quot;</span>);
+    height = <span class="keyword">double</span>.Parse(Console.ReadLine());
+    height *= <span class="number">0</span>.<span class="number">01</span>; <span class="comment">// cm → m</span>
+
+    Console.Write(<span class="string">&quot;体重[kg]: &quot;</span>);
+    weight = <span class="keyword">double</span>.Parse(Console.ReadLine());
+
+    <span class="keyword">double</span> bmi = weight / (height * height);
+    Console.Write(<span class="string">&quot;BMI = {0}\n&quot;</span>, bmi);
+  }
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/start/">&#x57FA;&#x790E;</a></li><li><a href="/study/csharp/start/st_basis/">C#&#x306E;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x57FA;&#x672C;&#x69CB;&#x9020;</a></li><li><a href="/study/csharp/start/st_compile/">&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x4F5C;&#x6210;&#x30FB;&#x5B9F;&#x884C;</a></li><li><a href="/study/csharp/start/st_comment/">&#x30B3;&#x30E1;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/start/st_consoleio/">&#x5024;&#x306E;&#x5165;&#x51FA;&#x529B;</a></li><li><a href="/study/csharp/start/st_variable/">&#x5909;&#x6570;&#x3068;&#x5F0F;</a></li><li><a href="/study/csharp/start/misc_identifier/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x540D;&#x306B;&#x4F7F;&#x3048;&#x308B;&#x6587;&#x5B57;</a></li><li><a href="/study/csharp/start/misc_unicode/">[&#x96D1;&#x8A18;] C# &#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x3068; Unicode</a></li><li><a href="/study/csharp/start/st_embeddedtype/">&#x7D44;&#x8FBC;&#x307F;&#x578B;</a></li><li><a href="/study/csharp/start/stnumber/">&#x6570;&#x5024;</a></li><li><a href="/study/csharp/start/st_string/">&#x7279;&#x6B8A;&#x306A;&#x6587;&#x5B57;&#x5217;&#x30EA;&#x30C6;&#x30E9;&#x30EB;</a></li><li><a href="/study/csharp/start/improvedinterpolatedstring/">C# 10.0 &#x306E;&#x88DC;&#x9593;&#x6587;&#x5B57;&#x5217;&#x306E;&#x6539;&#x5584;</a></li><li><a href="/study/csharp/start/st_cast/">&#x7D44;&#x8FBC;&#x307F;&#x578B;&#x5909;&#x63DB;</a></li><li><a href="/study/csharp/start/sp_checked/">&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30D5;&#x30ED;&#x30FC;&#x306E;&#x30C1;&#x30A7;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/start/sp_const/">&#x5B9A;&#x6570;</a></li><li><a href="/study/csharp/start/sp3_inference/">&#x578B;&#x63A8;&#x8AD6;(&#x6697;&#x9ED9;&#x7684;&#x578B;&#x4ED8;&#x3051;)&#x3068;&#x533F;&#x540D;&#x578B;</a></li><li><a href="/study/csharp/start/sp3_var/">[&#x96D1;&#x8A18;] &#x578B;&#x63A8;&#x8AD6;&#x306E;&#x662F;&#x975E;</a></li><li><a href="/study/csharp/start/st_scope/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x306E;&#x30B9;&#x30B3;&#x30FC;&#x30D7;&#x3068;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x5BFF;&#x547D;</a></li><li><a href="/study/csharp/start/misctyperesolution/">[&#x96D1;&#x8A18;] &#x578B;&#x306E;&#x6C7A;&#x5B9A;</a></li><li><a href="/study/csharp/start/miscreservedattribute/">[&#x96D1;&#x8A18;] &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x306B;&#x5F71;&#x97FF;&#x3092;&#x53CA;&#x307C;&#x3059;&#x5C5E;&#x6027;</a></li><li><a href="/study/csharp/start/definiteassignment/">[&#x96D1;&#x8A18;] &#x660E;&#x78BA;&#x306A;&#x4EE3;&#x5165;&#x30EB;&#x30FC;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

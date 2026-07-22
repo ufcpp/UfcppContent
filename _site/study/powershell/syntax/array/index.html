@@ -1,0 +1,284 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x914D;&#x5217; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/powershell/syntax/array/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">配列</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>ここでは、配列について説明します。</p>
+<p>PowerShell では、2つのコマンドをパイプラインで繋ぐと、
+オブジェクトの配列として入出力の受け渡しが行われます。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="array"></a>配列</h2>
+<p>PowerShell には , を使う方法と @ を使う方法、
+2種類の配列の作り方があります。
+（あと、整数限定で .. 演算子というのもあります。）</p>
+<h3 id="section-3"><a id="sec-generated-title-3"></a> <a id="array_comma"></a>, 演算子</h3>
+<p>まず、複数のオブジェクトを , を使って並べると、
+並べたオブジェクトを要素とする配列ができます。
+また、配列の要素には [] を使ってアクセスします（インデックスは 0 から始まる）。</p>
+<pre><code class="language-console">&gt;  $a = 1,2,3,4
+&gt;  $a
+1
+2
+3
+4
+&gt;  $a[0]
+# ↓ PowerShell の配列は 0 ベース
+1
+&gt;  $a.Length
+4</code></pre>
+<p>,1 というように、単項演算子的にも使えます。
+（長さ1の配列になる。）</p>
+<pre><code class="language-console">&gt;  $a = ,1
+&gt;  $a.Length
+1
+&gt;  $a[0]
+1</code></pre>
+<p>この , 演算子はかなり結合順位が高いので注意。</p>
+<pre><code class="language-console">&gt;  1, 1+1, 1
+# ↓ 要するに (1, 1) + (1, 1)
+1
+1
+1
+1</code></pre>
+<h3 id="section-4"><a id="sec-generated-title-4"></a> <a id="array_at"></a>@()</h3>
+<p>もう1つは @ を使う方法で、
+@(1, 2, 3) というように、@ に続けて () を書くと配列が作れます。
+こちらの場合、区切り文字は ; （要するに、コマンドの区切り）も使えます。
+あと、@() で空（長さ0）の配列も作れます。</p>
+<pre><code class="language-console">&gt;  @(1; 2; 3)
+1
+2
+3
+&gt;  $a = @()
+&gt;  $a.GetType().Name
+Object[]
+&gt;  $a.Length
+0</code></pre>
+<p>この記法では、複数のコマンドや式の出力・計算結果を繋いで配列にすることもできます。
+（この場合、区切り文字は ; でないと駄目。）</p>
+<pre><code class="language-console">&gt;  $a = @(pwd; 1 + 1)
+&gt;  $a[0]
+
+Path
+----
+C:\Users\Public
+
+&gt;  $a[1]
+2</code></pre>
+<h3 id="section-5"><a id="sec-generated-title-5"></a> <a id="array_range"></a>.. 演算子</h3>
+<p>あと、整数に限れば、1..3 （1, 2, 3 と同じ意味）というように、
+.. を使って一定範囲の連続した数値列を作ることができます。</p>
+<pre><code class="language-console">&gt; 1..3
+1
+2
+3</code></pre>
+<p>結合の優先順位が , 演算子より下なようで、
+「1..3, 5」と言うような書き方はエラーになります。
+（@ を使って、@(1..3; 5) という書き方なら OK。）</p>
+<pre><code class="language-console">&gt; 1..3,5
+&quot;System.Object[]&quot; を &quot;System.Int32&quot; に変換できません。
+&gt; @(1..3; 5)
+1
+2
+3
+5</code></pre>
+<p>.. を使った配列と , を使った配列を併用したければ、
+後述する配列結合の + 演算子を使う手もあります。</p>
+<pre><code class="language-console">&gt; 1..3 + 5, 7
+1
+2
+3
+5
+7</code></pre>
+<h3 id="section-6"><a id="sec-generated-title-6"></a> <a id="minus"></a>末尾からのアクセス</h3>
+<p>配列のインデックスに負の数 <span class="math">
+<span class="normal">−</span>i
+</span> を指定すると、
+配列の末尾から <span class="math">i</span> 番目の要素にアクセスできます。</p>
+<pre><code class="language-console">&gt; $a = 1,2,3
+&gt; $a[-1]
+3
+&gt; $a[-2]
+2
+&gt; $a[-3]
+1</code></pre>
+<h3 id="section-7"><a id="sec-generated-title-7"></a> <a id="out_of_range"></a>範囲外へのアクセス</h3>
+<p>配列に対して、範囲外にアクセスした場合、
+読み出しなら null 値を返すだけで、
+書き込みはエラーになります。</p>
+<pre><code class="language-console">&gt;  $a = @()
+&gt;  $a[0]
+# ↓ null を返すだけ
+&gt;  $a[0] = 1
+インデックス '0' が範囲外のため、配列の代入が失敗しました。</code></pre>
+<h3 id="section-8"><a id="sec-generated-title-8"></a> <a id="concat"></a>配列の連結</h3>
+<p>配列は + 演算子で連結することができます。</p>
+<pre><code class="language-console">&gt;  $a = 1,2
+&gt;  $b = 3,4
+&gt;  $c = $a + $b
+&gt;  $c.Length
+4
+&gt;  $c
+1
+2
+3
+4</code></pre>
+<ul>
+<li>が配列の結合なので、
++= は要素の追加になります。</li>
+</ul>
+<pre><code class="language-console">&gt; $a = 1,2,3
+&gt; $a += 10
+&gt; $a
+1
+2
+3
+10</code></pre>
+<p>, 演算子でも連結されたように見えたりしますが、
+実際には多次元配列になります。</p>
+<pre><code class="language-console">&gt;  $a = 1,2
+&gt;  $b = 3,4
+&gt;  $c = $a, $b
+&gt;  $c
+1
+2
+3
+4
+&gt;  $c[0]
+1
+2
+&gt;  $c[1]
+3
+4
+&gt;  $c.Length
+2</code></pre>
+<h3 id="section-9"><a id="sec-generated-title-9"></a> <a id="subarray"></a>部分取得</h3>
+<p>以下のような記法で、
+配列の一部分を抜き出すことができます。</p>
+<pre><code class="language-console">&gt;  $a = 1,2,3,4,5,6
+&gt;  $a[1,3,5]
+2
+4
+6
+&gt;  $a[0..2]
+1
+2
+3
+&gt; $a[0..2 + 4]
+1
+2
+3
+5</code></pre>
+<h3 id="section-10"><a id="sec-generated-title-10"></a> <a id="cond"></a>条件演算子</h3>
+<p>-contains 演算子で、配列の中に要素が含まれているかどうかを調べることができます。</p>
+<pre><code class="language-console">&gt;  $a = 1,3,5
+&gt;  $a -contains 1
+True
+&gt;  $a -contains 2
+False</code></pre>
+<p>また、
+配列に対して、-eq や -lt などの比較演算子を使うことで、
+特定条件を満たす要素だけを抜き出すことができます。</p>
+<pre><code class="language-console">&gt;  $a = 1,2,3,9,8,7,4,5,6
+&gt;  $a -lt 5
+1
+2
+3
+4
+&gt;  $a -gt 5
+9
+8
+7
+6</code></pre>
+<h3 id="section-11"><a id="sec-generated-title-11"></a> <a id="assign"></a>複数の変数の同時代入</h3>
+<p>$a, $b, $c = 1, 2, 3 というように、
+左辺も , で繋ぐことで、複数の変数に同時に値を代入することができます。
+左右で要素の数が違う場合、
+最後の1変数が配列になったり、
+足りない分が null 値になったりします。</p>
+<pre><code class="language-console">&gt;  $a, $b, $c = 1,2,3,4,5
+&gt;  $a
+1
+&gt;  $b
+2
+&gt;  $c
+3
+4
+5
+&gt;  $a, $b, $c = 1,2
+&gt;  $a
+1
+&gt;  $b
+2
+&gt;  $c</code></pre>
+<h2 id="section-12"><a id="sec-generated-title-12"></a> <a id="hash"></a>連想配列</h2>
+<p>@() で普通の配列を作るのに対して、
+@ で連想配列を作れます。
+（型は System.Collections.Hashtable になります。）</p>
+<p>（連想配列は、
+Perl でいうところのハッシュ、
+C++ の map、
+C# の Hashtable や Dictionary のことで、
+a[&quot;test&quot;] = 1 とかいうように、
+数字以外のインデックスを持てる配列です。）</p>
+<p x="1">$a = @ という風にして空の連想配列を作って、
+後から要素を作ることもできますし、
+$a = @ というように初期化のときに要素を作ることもできます。</p>
+<p>要素へのアクセスには2通りの方法があります。
+1つは、配列らしく、$a[&quot;x&quot;] と書く記法で、
+もう1つは $a.x というようにあたかもメンバー変数にアクセスするかのような記法です。</p>
+<pre><code class="language-console">&gt;  $a = @{}
+&gt;  $a.x = 1
+&gt;  $a.x
+1</code></pre>
+<pre><code class="language-console">&gt;  $a = @{x = 1; y = 2; z = 3}
+&gt;  $a.x
+1
+&gt;  $a.y
+2
+&gt;  $a.z
+3</code></pre>
+<pre><code class="language-console">&gt;  $a[&quot;x&quot;] = 1
+&gt;  $a[&quot;x&quot;]
+1</code></pre>
+<p>ちなみに、連想配列のキーは、別に文字列である必要はありません。</p>
+<pre><code class="language-console">&gt;  $a[1.234] = 1
+&gt;  $a[ [DateTime]::Now ] = 2
+&gt;  $a[1024] = 3
+&gt;  $a[ [int] ] = 4</code></pre>
+<p>すごく気持ち悪いですけど、
+. を使う方でも任意の型のキーを参照できます。</p>
+<pre><code class="language-console">&gt;  $a[[int]] = 2
+&gt;  $a.[int]
+2
+&gt;  $b = [DateTime]::Now
+&gt;  $a[$b] = 6
+&gt;  $a.$b
+6
+&gt;  $a[2] = 3
+&gt;  $a.(1 + 1)
+3
+&gt;  $a.x = 9
+&gt;  $a.&quot;x&quot;
+9</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/powershell/syntax/">PowerShel &#x306E;&#x69CB;&#x6587;</a></li><li><a href="/study/powershell/syntax/basic/">&#x57FA;&#x790E;&#x77E5;&#x8B58;</a></li><li><a href="/study/powershell/syntax/variable/">&#x5909;&#x6570;</a></li><li><a href="/study/powershell/syntax/dotnet/">.NET Framework &#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;</a></li><li><a href="/study/powershell/syntax/valuetype/">&#x5024;&#x578B;</a></li><li><a href="/study/powershell/syntax/string/">&#x6587;&#x5B57;&#x5217;</a></li><li><a href="/study/powershell/syntax/xml/">XML</a></li><li><a href="/study/powershell/syntax/flow/">&#x5236;&#x5FA1;&#x69CB;&#x6587;</a></li><li><a href="/study/powershell/syntax/function/">&#x95A2;&#x6570;&#x3001;&#x30D5;&#x30A3;&#x30EB;&#x30BF;&#x3001;&#x30B9;&#x30AF;&#x30EA;&#x30D7;&#x30C8;</a></li><li><a href="/study/powershell/syntax/exception/">&#x4F8B;&#x5916;&#x51E6;&#x7406;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

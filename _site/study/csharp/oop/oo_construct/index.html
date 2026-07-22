@@ -1,0 +1,762 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/oop/oo_construct/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">コンストラクター</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>オブジェクトを作成するためには、オブジェクトを正しく初期化してやる必要があります。
+そのために、オブジェクトの構築のためのコンストラクターと呼ばれる特殊なメソッドが用意されています。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li>コンストラクターで初期化
+<ul>
+<li>new したときに呼び出される特殊なメソッド。</li>
+<li>型名と同じ名前で定義する。</li>
+</ul>
+</li>
+<li>例えば、class Person { public Person(string name)  ... }</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="ctor"></a>コンストラクター</h2>
+<p>コンストラクターはインスタンスを正しく初期化するための特別なメソッドです。
+コンストラクターは以下のように、型名と同じ名前のメソッドを書くことで定義できます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> SampleClass
+{
+  <span class="comment">// ↓これがコンストラクター</span>
+  SampleClass()
+  {
+    <span class="comment">// インスタンスの初期化用のコードを書く</span>
+  }
+}</code></pre>
+<p>他のメソッドと異なり、戻り値の型は書きません(コンストラクターは戻り値を返すことは出来ません)。</p>
+<p>例えば、名簿作成のために個人情報を表す <code>Person</code> というクラスを作ったとします。
+説明を簡単にするために、この名簿では名前と年齢だけを管理することにします。
+そのため、<code>Person</code> は <code>name</code> と <code>age</code> という2つのメンバーのみを定義します。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Person
+{
+  <span class="keyword">public</span> <span class="keyword">string</span> name; <span class="comment">// 名前</span>
+  <span class="keyword">public</span> <span class="keyword">int</span> age;     <span class="comment">// 年齢</span>
+}</code></pre>
+<p>ここで、<code>Person</code>クラスのインスタンスを生成する際、
+名前を <code>&quot;&quot;</code> (空の文字列)で、年齢を <code>0</code> で初期化したいとします。
+そのためには以下のようなコンストラクターを作成します。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Person
+{
+  <span class="keyword">public</span> <span class="keyword">string</span> name; <span class="comment">// 名前</span>
+  <span class="keyword">public</span> <span class="keyword">int</span> age;     <span class="comment">// 年齢</span>
+
+  <span class="comment">// ↓これが Person クラスのコンストラクター</span>
+  <span class="keyword">public</span> Person()
+  {
+    name = <span class="string">&quot;&quot;</span>;
+    age  = <span class="number">0</span>;
+  }
+}</code></pre>
+<p>コンストラクターは <code>new</code> を用いてインスタンスを作成する際に呼び出されます。
+例えば、下記のようなコードを実行した場合、</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Test
+{
+  <span class="keyword">public</span> Test()
+  {
+    Console.Write(<span class="string">&quot;Test クラスのコンストラクターが呼ばれました\n&quot;</span>);
+  }
+}
+
+<span class="keyword">class</span> ConstructorSample
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    Console.Write(<span class="string">&quot;Main の先頭\n&quot;</span>);
+
+    Test t = <span class="keyword">new</span> Test(); <span class="comment">// ここで Test のコンストラクターが呼ばれる</span>
+
+    Console.Write(<span class="string">&quot;Main の末尾\n&quot;</span>);
+  }
+}</code></pre>
+<p>以下のような出力が得られます。</p>
+<pre><code class="language-console">Main の先頭
+Sample クラスのコンストラクターが呼ばれました
+Main の末尾</code></pre>
+<p>また、コンストラクターには引数を与えることもできます。
+例えば、先ほどの <code>Person</code> クラスで、
+インスタンスの作成時に名前と年齢の値を設定したい場合、
+以下のようなコンストラクターを作成します。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Person
+{
+  <span class="keyword">public</span> <span class="keyword">string</span> name; <span class="comment">// 名前</span>
+  <span class="keyword">public</span> <span class="keyword">int</span> age;     <span class="comment">// 年齢</span>
+
+  <span class="comment">// ↓引数つきの Person クラスのコンストラクター</span>
+  <span class="keyword">public</span> Person(<span class="keyword">string</span> name, <span class="keyword">int</span> age)
+  {
+    <span class="keyword">this</span>.name = name;
+    <span class="keyword">this</span>.age  = age;
+  }
+}</code></pre>
+<p>この例で使われている <em>
+<code>this</code>
+</em> というキーワードは、
+作成するインスタンス自身を格納する特別な変数です。
+そのため、この例では <code>this.name</code> は <code>Person</code> クラス内で定義された <code>name</code> のことになります。
+一方、<code>this</code> の付いていない方の <code>name</code> は、コンストラクターの引数として定義した <code>name</code> のことです。</p>
+<p>引数つきのコンストラクターを呼び出すためには、<code>new</code> を使ってインスタンスを生成する際に、以下のようにして引数を渡します。</p>
+<pre><code class="language-csharp">型名 変数名 = <span class="keyword">new</span> 型名(引数リスト);</code></pre>
+<p>(後述しますが、<a href="#target-typed-new">C# 9.0 からは <code>new</code> の後ろの型名を省略できることがあります</a>。)</p>
+<p>例えば、先ほど定義した<code>Person</code>クラスのコンストラクターを呼び出すためには以下のようにします。</p>
+<pre><code class="language-csharp">Person p = <span class="keyword">new</span> Person(<span class="string">&quot;ビスケット・クルーガー&quot;</span>, <span class="number">57</span>);
+Console.Write(p.age); <span class="comment">// 57 と表示される</span></code></pre>
+<p>また、コンストラクターはオーバーロードすることができます。
+例えば、<code>Person</code> クラスに、名前と年齢を引数として与えるコンストラクターと、何も引数を与えないコンストラクターの両方を定義することができます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Person
+{
+  <span class="keyword">public</span> <span class="keyword">string</span> name; <span class="comment">// 名前</span>
+  <span class="keyword">public</span> <span class="keyword">int</span> age;     <span class="comment">// 年齢</span>
+
+  <span class="comment">// ↓引数なしの Person クラスのコンストラクター</span>
+  <span class="keyword">public</span> Person()
+  {
+    <span class="keyword">this</span>.name = <span class="string">&quot;&quot;</span>;
+    <span class="keyword">this</span>.age  = <span class="number">0</span>;
+  }
+
+  <span class="comment">// ↓引数つきの Person クラスのコンストラクター</span>
+  <span class="keyword">public</span> Person(<span class="keyword">string</span> name, <span class="keyword">int</span> age)
+  {
+    <span class="keyword">this</span>.name = name;
+    <span class="keyword">this</span>.age  = age;
+  }
+}</code></pre>
+<h5 id="section-4"><a id="sec-generated-title-4"></a>サンプル</h5>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 名簿用の個人情報記録用のクラス。</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> とりあえず、名前と年齢のみ。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">class</span> Person
+{
+  <span class="comment">// public なフィールド</span>
+  <span class="keyword">public</span> <span class="keyword">string</span> name; <span class="comment">// 氏名</span>
+  <span class="keyword">public</span> <span class="keyword">int</span>    age;  <span class="comment">// 年齢</span>
+
+  <span class="comment">// 定数</span>
+  <span class="keyword">const</span> <span class="keyword">int</span> UNKNOWN = -<span class="number">1</span>;
+  <span class="keyword">const</span> <span class="keyword">string</span> DEFAULT_NAME = <span class="string">&quot;デフォルトの名無しさん&quot;</span>;
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 名前と年齢を初期化</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 与えられた年齢が負のときは年齢不詳とみなす</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;name&quot;&gt;</span><span class="xmlDocComment">氏名&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;age&quot;&gt;</span><span class="xmlDocComment">年齢&lt;/param&gt;</span>
+  <span class="keyword">public</span> Person(<span class="keyword">string</span> name, <span class="keyword">int</span> age)
+  {
+    <span class="keyword">this</span>.name = name;
+    <span class="keyword">this</span>.age  = age &gt; <span class="number">0</span> ? age : UNKNOWN;
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 名前のみを初期化</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 年齢は不詳とする</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;name&quot;&gt;</span><span class="xmlDocComment">氏名&lt;/param&gt;</span>
+  <span class="keyword">public</span> Person(<span class="keyword">string</span> name) : <span class="keyword">this</span>(name, UNKNOWN)
+  {
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> デフォルトコンストラクター</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 氏名・年齢ともに不詳</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="keyword">public</span> Person() : <span class="keyword">this</span>(<span class="keyword">null</span>, UNKNOWN)
+  {
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 文字列化</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 氏名が不詳のときには NONAME に設定された名前を返す</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 年齢が不詳の時には名前のみを返す</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 氏名・年齢が分かっているときには「名前(xx歳)」という形の文字列を返す</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString()
+  {
+    <span class="keyword">if</span>(name == <span class="keyword">null</span>)
+      <span class="keyword">return</span> DEFAULT_NAME;
+
+    <span class="keyword">if</span>(age == UNKNOWN)
+      <span class="keyword">return</span> name;
+
+    <span class="keyword">return</span> name + <span class="string">&quot;(&quot;</span> + age + <span class="string">&quot;歳)&quot;</span>;
+  }
+}<span class="comment">//class Person</span>
+
+<span class="comment">//----------------------------------------------------</span>
+<span class="comment">// メインプログラム</span>
+<span class="keyword">class</span> ConstructorSample
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    Person p1 = <span class="keyword">new</span> Person(<span class="string">&quot;ちゆ&quot;</span>, <span class="number">12</span>);
+    Person p2 = <span class="keyword">new</span> Person(<span class="string">&quot;澪&quot;</span>);
+    Person p3 = <span class="keyword">new</span> Person();
+
+    Console.Write(<span class="string">&quot;{0}\n{1}\n{2}\n&quot;</span>, p1, p2, p3);
+  }
+}</code></pre>
+<pre><code class="language-console">ちゆ(12歳)
+澪
+デフォルトの名無しさん</code></pre>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="variable-initializer"></a>フィールド初期化子</h2>
+<p>フィールドに初期値を与えるだけなら、
+コンストラクターを使わなくても、以下の様な書き方で初期化できます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Person
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> name = <span class="string">&quot;&quot;</span>;
+    <span class="keyword">public</span> <span class="keyword">int</span> age = <span class="number">0</span>;
+}</code></pre>
+<p>こういう書き方をフィールド初期化子（variable initializer）と言います。フィールド初期化子は、フィールドと定数に対して付けることができます。</p>
+<p>説明は後程になりますが、<a href="/study/csharp/oop/oo_property/#get-only">プロパティ</a>に対しても同様の初期化を行うことができ、こちらは「プロパティ初期化子」と呼びます。
+(初期化する対象の名前が違うだけで、ほぼ同じものです。)</p>
+<h2 id="section-6"><a id="sec-generated-title-6"></a> <a id="initializer"></a>コンストラクター初期化子</h2>
+<p>場合によっては、あるコンストラクターから別のコンストラクターを呼びだしたいことがあります。
+このような場合に、以下のような書き方で、別のコンストラクターを呼び出すことができます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Person
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> name;
+    <span class="keyword">public</span> <span class="keyword">int</span> age;
+
+    <span class="keyword">public</span> Person()
+        : <span class="keyword">this</span>(<span class="string">&quot;&quot;</span>, <span class="number">0</span>) <span class="comment">// ↓のPerson(string, int) が呼ばれる。</span>
+    {
+    }
+
+    <span class="keyword">public</span> Person(<span class="keyword">string</span> name, <span class="keyword">int</span> age)
+    {
+        <span class="keyword">this</span>.name = name;
+        <span class="keyword">this</span>.age = age;
+    }
+}</code></pre>
+<p>この書き方をコンストラクター初期化子（constructor initializer）と言います。
+（<a href="/study/csharp/oop/oo_inherit/#base_ctor">別項</a>で説明する<code>base</code>と区別してthis初期化子と言うこともあります。）</p>
+<h3 id="section-7"><a id="sec-generated-title-7"></a> <a id="initializer-order">初期化子の呼ばれる順序</a></h3>
+<p>ちなみに、フィールド初期化子やコンストラクターの実行順序は以下のようになります。</p>
+<ol>
+<li>コンストラクター初期化子に渡す引数の評価</li>
+<li>フィールド初期化子
+<ul>
+<li>フィールドが複数ある場合、上から順</li>
+</ul>
+</li>
+<li>呼び先のコンストラクター</li>
+<li>呼び元のコンストラクター</li>
+</ol>
+<pre><code class="language-csharp"><span class="comment">// コンストラクターを空呼び。</span>
+_ = <span class="keyword">new</span> A();
+
+<span class="keyword">class</span> A
+{
+    <span class="comment">// 呼び出される順序を確認するために呼ぶメソッド。</span>
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> M(<span class="keyword">string</span> message)
+    {
+        Console.WriteLine(message);
+        <span class="keyword">return</span> <span class="number">0</span>;
+    }
+
+    <span class="keyword">private</span> <span class="keyword">int</span> _member1 = M(<span class="string">&quot;フィールド初期化子 1&quot;</span>);
+    <span class="keyword">private</span> <span class="keyword">int</span> _member2 = M(<span class="string">&quot;フィールド初期化子 2&quot;</span>);
+
+    <span class="keyword">public</span> A() : <span class="keyword">this</span>(M(<span class="string">&quot;コンストラクター初期化子引数&quot;</span>))
+    {
+        M(<span class="string">&quot;コンストラクター()&quot;</span>);
+    }
+
+    <span class="keyword">public</span> A(<span class="keyword">int</span> _)
+    {
+        M(<span class="string">&quot;コンストラクター(int)&quot;</span>);
+    }
+}</code></pre>
+<pre><code class="language-console">コンストラクター初期化子引数
+フィールド初期化子 1
+フィールド初期化子 2
+コンストラクター(int)
+コンストラクター()</code></pre>
+<p>この初期化の順序との兼ね合いで、フィールド初期化子ではインスタンス メソッドを呼ぶことができません。
+例えば以下のようなコードを認めてしまうと、「まだ初期化していないフィールドを読んでしまう」問題が起きます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> C
+{
+    <span class="comment">// ここで M を呼べてしまうと、未初期化の _otherField を読んでしまう。</span>
+    <span class="keyword">private</span> <span class="keyword">int</span> _someField = M();
+
+    <span class="keyword">private</span> <span class="keyword">int</span> _otherField;
+    <span class="keyword">private</span> <span class="keyword">int</span> M() =&gt; _otherField;
+}</code></pre>
+<h2 id="section-8"><a id="sec-generated-title-8"></a> <a id="member_initializer"></a>オブジェクト初期化子</h2>
+<h5 class="version version3">Ver. 3.0</h5>
+<p>C# 3.0 から、以下のような記法でメンバーを初期化できるようになりました。</p>
+<pre><code class="language-csharp">Point p = <span class="keyword">new</span> Point{ X = <span class="number">0</span>, Y = <span class="number">1</span> };</code></pre>
+<p>ちなみに、このコードの実行結果は以下のようなコードと等価です。</p>
+<pre><code class="language-csharp">Point p = <span class="keyword">new</span> Point();
+p.X = <span class="number">0</span>;
+p.Y = <span class="number">1</span>;</code></pre>
+<p>詳細は「<a href="/study/csharp/functional/sp3_lambda/#init">初期化子</a>」で説明します。</p>
+<h2 id="section-9"><a id="sec-generated-title-9"></a> <a id="dtor"></a>コンストラクターの逆操作</h2>
+<p>詳しくは後々説明していきますが、コンストラクターと逆の操作を行うものが2つあります。</p>
+<p>1つは、ファイナライザー(destructor)です。
+プログラムを書く上で、「確保したら必ず後片付けが必要なリソース」と言うものが存在します。
+コンストラクターでリソースを確保したら、セットで後片付けを書く場所がファイナライザーです。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Buffers;
+
+<span class="keyword">class</span> Resource
+{
+    <span class="keyword">private</span> <span class="keyword">byte</span>[] _rentalArray;
+
+    <span class="comment">// コンストラクターで「借りてくる」</span>
+    <span class="keyword">public</span> Resource() =&gt; _rentalArray = ArrayPool&lt;<span class="keyword">byte</span>&gt;.Shared.Rent(<span class="number">100</span>);
+
+    <span class="comment">// 借りたものは返さないといけない。そのために使うのがファイナライザー</span>
+    ~Resource() =&gt; ArrayPool&lt;<span class="keyword">byte</span>&gt;.Shared.Return(_rentalArray);
+}</code></pre>
+<p>詳しくは「<a href="/study/csharp/resource/rm_destructor/">ファイナライザー</a>」で説明します。</p>
+<p>もう1つは、分解(deconstruct)です。
+コンストラクターは複数の値を1つの複合型にまとめる操作でもあります。
+この意味でのコンストラクターにあたるのが分解処理です。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Point
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X;
+    <span class="keyword">public</span> <span class="keyword">int</span> Y;
+
+    <span class="comment">// 複数の値を組み合わせる</span>
+    <span class="keyword">public</span> Point(<span class="keyword">int</span> x, <span class="keyword">int</span> y) =&gt; (X, Y) = (x, y);
+
+    <span class="comment">// 複数の値にばらす</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> Deconstruct(<span class="keyword">out</span> <span class="keyword">int</span> x, <span class="keyword">out</span> <span class="keyword">int</span> y) =&gt; (x, y) = (X, Y);
+}
+
+<span class="keyword">static</span> <span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// 組み合わせる</span>
+        <span class="keyword">var</span> p = <span class="keyword">new</span> Point(<span class="number">1</span>, <span class="number">2</span>);
+
+        <span class="comment">// ばらす</span>
+        <span class="keyword">var</span> (x, y) = p;
+    }
+}</code></pre>
+<p>詳しくは「<a href="/study/csharp/datatype/deconstruction/">複合型の分解</a>」で説明します。</p>
+<h2 id="new"><a id="sec-generated-title-10"></a> <a id="target-typed-new"></a>ターゲットからの new 型推論</h2>
+<h5 class="version version9">Ver. 9.0</h5>
+<p>C# 9.0 から、状況によっては <code>new 型名()</code> の <code>型名</code> の部分を省略できるようになりました。
+<a href="/study/csharp/start/misctyperesolution/#target-type">ターゲット型</a>からの推論が効くことが条件で、
+例えば、以下のような書き方をできます。
+(この機能を target-typed new と呼んだりします)。</p>
+<pre><code class="language-csharp"><span class="comment">// new Person(17, new DateTime(1964, 9, 25)) と同じ意味</span>
+Person p = <span class="keyword">new</span>(<span class="number">17</span>, <span class="keyword">new</span>(<span class="number">1964</span>, <span class="number">9</span>, <span class="number">25</span>));
+ 
+record Person(<span class="keyword">int</span> Age, DateTime Birthday);</code></pre>
+<p>1つ目の <code>new</code> は左辺の <code>Person p</code> から、2つ目の <code>new</code> はコンストラクター引数の <code>DateTime Birthday</code> から型を推論できるので、自動的に <code>Person</code>、<code>DateTime</code> に型を決定します。</p>
+<p>ローカル変数の場合には <a href="/study/csharp/start/sp3_inference/#type-inference"><code>var</code></a> が使えるのでそれほど便利ではないんですが、<a href="#variable-initializer">フィールド初期化子</a>やメソッドの引数などでは便利です。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Collections.Generic;
+ 
+<span class="keyword">class</span> Sample
+{
+    <span class="comment">// フィールドに対しては var が使えない。</span>
+    <span class="comment">// 代わりに new 型推論を使うと便利なことがある(特に、型名が長い時)。</span>
+    Dictionary&lt;<span class="keyword">string</span>, List&lt;(<span class="keyword">int</span> x, <span class="keyword">int</span> y)&gt;&gt; _cache = <span class="keyword">new</span>();
+}</code></pre>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Collections.Generic;
+ 
+<span class="keyword">static</span> <span class="keyword">void</span> m(Dictionary&lt;<span class="keyword">string</span>, <span class="keyword">string</span>&gt; options) { }
+ 
+m(<span class="keyword">new</span>()
+{
+    { <span class="string">&quot;define&quot;</span>, <span class="string">&quot;DEBUG&quot;</span> },
+    { <span class="string">&quot;o&quot;</span>, <span class="string">&quot;true&quot;</span> },
+    { <span class="string">&quot;w&quot;</span>, <span class="string">&quot;4&quot;</span> },
+});</code></pre>
+<p>型名の省略をできるだけの機能で、
+元々 <code>new T(a, b, ...)</code> みたいに書けて、型 <code>T</code> を推論できるのであれば、<code>new(a, b, ...)</code> と書くことができます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Globalization;
+ 
+<span class="comment">// new UnicodeCategory() とは元々書けるので、new() と省略可能。</span>
+UnicodeCategory c1 = <span class="keyword">new</span>();
+ 
+<span class="comment">// new UnicodeCategory(1) とは元々書けないので、new(1) もダメ。</span>
+UnicodeCategory c2 = <span class="keyword">new</span>(<span class="number">1</span>);
+ 
+<span class="comment">// new (int x, int y)(1, 2) とは書けないんだけど、</span>
+<span class="comment">// new ValueTuple&lt;int, int&gt;(1, 2) とは書けて、new(1, 2) はこの意味になる。</span>
+(<span class="keyword">int</span> x, <span class="keyword">int</span> y) t = <span class="keyword">new</span>(<span class="number">1</span>, <span class="number">2</span>);
+ 
+<span class="comment">// 配列とか dynamic は元々 new int[]() とか new dynamic() と書けないので、new() もダメ</span>
+<span class="keyword">int</span>[] a = <span class="keyword">new</span>();
+<span class="keyword">dynamic</span> d = <span class="keyword">new</span>();</code></pre>
+<p>ちなみに、<a href="/study/csharp/resource/sp2_nullable/">null 許容型</a> に対する <code>new()</code> は、元となる型(<code>T?</code> に対する <code>T</code> 型) の方の意味になります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">void</span> m(DateTime? d) =&gt; Console.WriteLine(d);
+ 
+m(<span class="keyword">default</span>); <span class="comment">// これは null の意味になる。何も表示されない。</span>
+m(<span class="keyword">new</span>()); <span class="comment">// これは new DateTime() の意味になる。 0001/01/01/ 0:00:00</span></code></pre>
+<p>また、<code>throw new()</code> は <code>throw new Exception()</code> の意味になったりします。</p>
+<h2 id="section-10"><a id="sec-generated-title-11"></a> <a id="primary-constructor">プライマリ コンストラクター</a></h2>
+<h5 class="version version12">Ver. 12</h5>
+<p>C# 12 から、クラス名の直後に <code>()</code> を付けることでコンストラクターを簡素に書けるようになりました。
+これを<strong id="key-primary-constructor" class="keyword">プライマリ コンストラクター</strong>(primary constructor: 主要な、第1のコンストラクター)と言います。</p>
+<p>例えば、これまで以下のように書いていたコードがあったとします。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Person
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> Name;
+    <span class="keyword">public</span> <span class="keyword">int</span> Age;
+
+    <span class="keyword">public</span> Person(<span class="keyword">string</span> name, <span class="keyword">int</span> age)
+    {
+        Name = name;
+        Age = age;
+    }
+}</code></pre>
+<p>これをプライマリ コンストラクターを使って書きなおすと以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Person(<span class="keyword">string</span> name, <span class="keyword">int</span> age)
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> Name = name;
+    <span class="keyword">public</span> <span class="keyword">int</span> Age = age;
+}</code></pre>
+<p>プライマリ コンストラクターは、
+名前にプライマリ(主要、第1)と付く程度には特別な地位にあります。
+構文的に1つしか持てないのはもちろんのこと、
+他のコンストラクターから必ず呼び出す必要があります。</p>
+<p>例えば以下のコードはコンパイル エラーになりますが、</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Person(<span class="keyword">string</span> name, <span class="keyword">int</span> age)
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> Name = name;
+    <span class="keyword">public</span> <span class="keyword">int</span> Age = age;
+
+    <span class="comment">// プライマリ コンストラクター以外にもコンストラクターを書けるものの、</span>
+    <span class="comment">// : this(...) でプライマリ コンストラクターを呼び出す必要がある。</span>
+    <span class="keyword">public</span> Person() { } <span class="comment">// このコードでは呼んでいないのでコンパイル エラーを起こす。</span>
+}</code></pre>
+<p>以下のようなコードなら大丈夫です。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Person(<span class="keyword">string</span> name, <span class="keyword">int</span> age)
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> Name = name;
+    <span class="keyword">public</span> <span class="keyword">int</span> Age = age;
+
+    <span class="keyword">const</span> <span class="keyword">int</span> UNKNOWN = -<span class="number">1</span>;
+    <span class="keyword">const</span> <span class="keyword">string</span> DEFAULT_NAME = <span class="string">&quot;デフォルトの名無しさん&quot;</span>;
+
+    <span class="keyword">public</span> Person() : <span class="keyword">this</span>(DEFAULT_NAME, UNKNOWN) { }
+    <span class="keyword">public</span> Person(<span class="keyword">string</span> name) : <span class="keyword">this</span>(name, UNKNOWN) { }
+}</code></pre>
+<h3 id="section-11"><a id="sec-generated-title-12"></a> <a id="vs-record">補足: レコード型との差</a></h3>
+<p>C# 9 で<a href="/study/csharp/datatype/record/">レコード型</a>が導入された際、
+普通のクラスや構造体よりも先にレコード型に対してだけプライマリ コンストラクターが書けました。
+順序的に紛らわしくなっていますが、
+プロパティの自動生成をしてくれるのはレコード型だけです。</p>
+<p>例えば以下のような(通常の)クラスとレコードがあったとして、</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Class(<span class="keyword">int</span> X, <span class="keyword">int</span> Y);
+
+record Record(<span class="keyword">int</span> X, <span class="keyword">int</span> Y);</code></pre>
+<p>これらの型は以下のような感じに展開されます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Class
+{
+    <span class="comment">// 空っぽのコンストラクターができるだけ(引数未使用)。</span>
+    <span class="keyword">public</span> Class(<span class="keyword">int</span> X, <span class="keyword">int</span> Y) { }
+}
+
+<span class="keyword">class</span> Record
+{
+    <span class="comment">// レコード型の場合はコンパイラーがいろいろと生成する。</span>
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; init; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; init; }
+
+    <span class="keyword">public</span> Record(<span class="keyword">int</span> X, <span class="keyword">int</span> Y)
+    {
+        <span class="keyword">this</span>.X = X;
+        <span class="keyword">this</span>.Y = Y;
+    }
+
+    <span class="comment">// その他、Equals などもコンパイラーが生成。</span>
+}</code></pre>
+<h3 id="section-12"><a id="sec-generated-title-13"></a> <a id="empty-body">括弧省略</a></h3>
+<p>レコード型では、以下のように <code>{}</code> を省略可能でした。
+(ただし、その場合、<code>;</code> を付ける必要があります。)</p>
+<pre><code class="language-csharp"><span class="comment">// プライマリ コンストラクターだけ持つレコード。</span>
+<span class="comment">// 「X 以外にメンバーは不要」みたいなことは多々あり、{} 省略にはそれなりの需要あり。</span>
+record R1(<span class="keyword">int</span> X);
+
+<span class="comment">// プライマリ コンストラクターは引数なしでも OK。</span>
+<span class="comment">// なんならプライマリ コンストラクターすらなくても {} 省略可能。</span>
+<span class="comment">// あんまり使わないとしても、わざわざ禁止する理由もないので。</span>
+record R2();
+record R3;</code></pre>
+<p>C# 12 で、普通のクラスに対してもプライマリ コンストラクターを書けるようにするにあたって、
+この <code>{}</code> を省略できる仕様も引き継がれました。
+そして、コンストラクターを必要とするクラスと構造体だけではなく、
+インターフェイスと列挙型に対しても同様に <code>{}</code> 省略を認めることになりました。
+(<code>{}</code> が <code>;</code> に変わるだけなのでたかだか1文字差ですが。)</p>
+<pre><code class="language-csharp"><span class="comment">// クラス、構造体、インターフェイス、列挙型で {} 省略が可能に。</span>
+<span class="keyword">class</span> C;
+<span class="keyword">struct</span> S;
+<span class="keyword">interface</span> I;
+<span class="keyword">enum</span> E;</code></pre>
+<p>レコード型と比べると用途は少ないですが、例えば、
+コード生成前提で「手書きでは何も書くものがない」というような場合に使えなくもないです。
+実際例えば、<a href="https://learn.microsoft.com/ja-jp/dotnet/api/system.text.json.serialization.jsonserializableattribute"><code>JsonSerializable</code> 属性</a>を使うときにそういうコードになったりします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Text.Json.Serialization;
+
+<span class="comment">// JsonSerializable 属性を付けていると、シリアライズ処理に必要なメンバーをコード生成する。</span>
+<span class="comment">// 手書きでは何もする必要がないので空っぽ。</span>
+[JsonSerializable(<span class="keyword">typeof</span>(Person))]
+<span class="keyword">partial</span> <span class="keyword">class</span> MyJsonContext : JsonSerializerContext;
+
+record Person(<span class="keyword">string</span> FirstName, <span class="keyword">string</span> LastName);</code></pre>
+<h3 id="section-13"><a id="sec-generated-title-14"></a> <a id="pc-paramter">プライマリ コンストラクター引数</a></h3>
+<p>プライマリ コンストラクターの引数は、クラス内の全域で参照できます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> C(<span class="keyword">int</span> x)
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> Fiedl = x; <span class="comment">// フィールド初期化子で使う。</span>
+    <span class="keyword">public</span> <span class="keyword">int</span> Property { <span class="keyword">get</span>; } = x; <span class="comment">// プロパティ初期化子で使う。</span>
+
+    <span class="comment">// どこでも、何度でも使える。</span>
+    <span class="keyword">public</span> <span class="keyword">int</span> X2 = x * x;
+    <span class="keyword">public</span> <span class="keyword">int</span> X3 = x * x * x;
+}</code></pre>
+<p>なんなら <a href="/study/csharp/oop/oo_class/#partial"><code>partial</code></a>で複数のファイルに分割されていても参照できます。</p>
+<pre><code class="language-csharp"><span class="comment">// C1.cs</span>
+<span class="keyword">partial</span> <span class="keyword">class</span> C(<span class="keyword">int</span> x)
+{
+}
+
+<span class="comment">// C2.cs</span>
+<span class="keyword">partial</span> <span class="keyword">class</span> C
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X = x; <span class="comment">// OK</span>
+}</code></pre>
+<p>プライマリ コンストラクターの引数を初期化にだけ使っている分には、
+通常のコンストラクター引数とほぼ同じです。</p>
+<p>例えば、以下のコードの <code>C1</code> と <code>C2</code> には差がありません。
+(クラスの継承が絡まない限りは同じで、<a href="/study/csharp/oop/misc_construct/#primary-constructor">継承があった場合でも初期化の実行順</a>にちょっと影響があるだけです。)</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> C1(<span class="keyword">int</span> x)
+{
+    <span class="keyword">private</span> <span class="keyword">readonly</span> <span class="keyword">int</span> _x = x;
+}
+
+<span class="keyword">class</span> C2
+{
+    <span class="keyword">private</span> <span class="keyword">readonly</span> <span class="keyword">int</span> _x;
+
+    <span class="keyword">public</span> C2(<span class="keyword">int</span> x)
+    {
+        _x = x;
+    }
+}</code></pre>
+<h4 id="section-14"><a id="sec-generated-title-15"></a> <a id="capture">キャプチャ</a></h4>
+<p>プライマリ コンストラクター引数を初期化時以外でも使う場合には少し事情が変わってきます。</p>
+<p>例えば以下のように、メソッドや<a href="/study/csharp/oop/oo_property/">プロパティ</a>の中で参照した場合、
+コンパイラーがフィールドを生成します。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> C(<span class="keyword">int</span> x)
+{
+    <span class="comment">// = (代入)じゃなくて =&gt; (式形式のプロパティ)。</span>
+    <span class="keyword">public</span> <span class="keyword">int</span> Count =&gt; x;
+
+    <span class="comment">// 他に、メソッドの中でも参照。</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> Increment() =&gt; ++x;
+}</code></pre>
+<p>こういう操作をキャプチャ(capture: 捕獲)と言います。
+「<code>Count</code> プロパティや <code>Increment</code> メソッドに引数 <code>x</code> が捕まる」という意味です。</p>
+<p>この例の場合、以下のようなコードと同じ意味になります。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> C
+{
+    <span class="comment">// コンパイラー生成のフィールドは実際には &lt;x&gt;P みたいな、通常の C# では書けない名前になる。</span>
+    <span class="comment">// かつ、この名前はコンパイラーのバージョンによって変わる可能性あり。</span>
+    <span class="keyword">private</span> <span class="keyword">int</span> _x;
+
+    <span class="keyword">public</span> C(<span class="keyword">int</span> x) =&gt; _x = x;
+
+    <span class="keyword">public</span> <span class="keyword">int</span> Count =&gt; _x;
+
+    <span class="keyword">public</span> <span class="keyword">void</span> Increment() =&gt; ++_x;
+}</code></pre>
+<h4 id="section-15"><a id="sec-generated-title-16"></a> <a id="double-field">注意: 2重フィールド生成</a></h4>
+<p>ちょっと注意が必要なのは、以下のようなコードを書いてしまうと(おそらく意図せず)フィールドが2重に生成されることがあるという点です。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> C(<span class="keyword">int</span> x)
+{
+    <span class="comment">// こちらは「キャプチャ」。</span>
+    <span class="keyword">public</span> <span class="keyword">int</span> X1 =&gt; x;
+
+    <span class="comment">// こちらは自動プロパティの初期化。</span>
+    <span class="keyword">public</span> <span class="keyword">int</span> X2 { <span class="keyword">get</span>; } = x;
+}</code></pre>
+<p>(ちゃんと警告が出るようになっています。<code>X2</code> の行の <code>= x</code> のところに警告が出ます。)</p>
+<p>このコードはおおむね以下のような意味になります。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> C
+{
+    <span class="comment">// キャプチャに対応するため、「引数 x に対応するフィールド」を生成。</span>
+    <span class="keyword">private</span> <span class="keyword">int</span> _x;
+
+    <span class="comment">// 自動プロパティに対応するため、「プロパティ X2 に対応するフィールド」を生成。</span>
+    <span class="keyword">private</span> <span class="keyword">int</span> _x2;
+
+    <span class="keyword">public</span> C(<span class="keyword">int</span> x)
+    {
+        _x = x;
+        _x2 = x;
+    }
+
+    <span class="comment">// 「キャプチャ」だったもの。</span>
+    <span class="keyword">public</span> <span class="keyword">int</span> X1 =&gt; _x;
+
+    <span class="comment">// 「自動プロパティ」だったもの。</span>
+    <span class="keyword">public</span> <span class="keyword">int</span> X2 { <span class="keyword">get</span> =&gt; _x2; <span class="keyword">set</span> =&gt; _x2 = value; }
+}</code></pre>
+<p>こんな風にフィールドが2個できることは望ましくないので、ちゃんと警告は取りましょう。</p>
+<h4 id="section-16"><a id="sec-generated-title-17"></a> <a id="mutable">注意: 書き換え可能</a></h4>
+<p>プライマリ コンストラクターの引数は、
+あくまで引数です。
+キャプチャが発生すると実質的にはフィールドみたいなものですが、
+それでも扱いとしては引数です。</p>
+<p>現状、C# には引数を<a href="/study/csharp/start/sp_const/#readonly">readonly</a>にする手段がないので、
+プライマリ コンストラクター引数は常に書き換え可能です。</p>
+<pre><code class="language-csharp"><span class="keyword">partial</span> <span class="keyword">class</span> C(<span class="keyword">int</span> x)
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X =&gt; ++x; <span class="comment">// x を書き換え放題。</span>
+}
+
+<span class="comment">// 別ファイル</span>
+<span class="keyword">partial</span> <span class="keyword">class</span> C
+{
+    <span class="keyword">public</span> <span class="keyword">void</span> M() =&gt; x = <span class="number">0</span>; <span class="comment">// 何だったらだいぶ遠い場所で書き換え可能。</span>
+}</code></pre>
+<p>これが嫌なら、一度 readonly フィールドで受けましょう。</p>
+<pre><code class="language-csharp"><span class="keyword">partial</span> <span class="keyword">class</span> C(<span class="keyword">int</span> x)
+{
+    <span class="comment">// フィールドで受け取る。</span>
+    <span class="keyword">private</span> <span class="keyword">readonly</span> <span class="keyword">int</span> _x = x;
+}
+
+<span class="comment">// 別ファイル</span>
+<span class="keyword">partial</span> <span class="keyword">class</span> C
+{
+    <span class="keyword">public</span> <span class="keyword">void</span> M1() =&gt; x = <span class="number">0</span>; <span class="comment">// これは「2重フィールド警告」が出る(警告を取れば問題を避けれる)。</span>
+
+    <span class="keyword">public</span> <span class="keyword">void</span> M2() =&gt; _x = <span class="number">0</span>; <span class="comment">// これは「readonly フィールドを書き換えちゃダメ」エラーになる。</span>
+}</code></pre>
+<h2 id="section-17"><a id="exercise"></a>演習問題</h2>
+<h3 id="section-18"><a id="exercise-str1"></a>問題 1</h3>
+<p>前節<a href="/study/csharp/oop/oo_class/">クラス</a>の<a href="/study/csharp/oop/oo_class/#exercise-str1">問題 1</a>の <code>Point</code> 構造体および <code>Triangle</code> クラスに、
+以下のようなコンストラクターを追加せよ。</p>
+<pre><code class="language-csharp"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 座標値 (x, y) を与えて初期化。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;x&quot;&gt;</span><span class="xmlDocComment">x 座標値&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;y&quot;&gt;</span><span class="xmlDocComment">y 座標値&lt;/param&gt;</span>
+<span class="keyword">public</span> Point(<span class="keyword">double</span> x, <span class="keyword">double</span> y)</code></pre>
+<pre><code class="language-csharp"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 3つの頂点の座標を与えて初期化。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;a&quot;&gt;</span><span class="xmlDocComment">頂点A&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;b&quot;&gt;</span><span class="xmlDocComment">頂点B&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;c&quot;&gt;</span><span class="xmlDocComment">頂点C&lt;/param&gt;</span>
+<span class="keyword">public</span> Triangle(Point a, Point b, Point c)</code></pre>
+<h4 id="section-19">解答例 1</h4>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 2次元の点をあらわす構造体</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">struct</span> Point
+{
+  <span class="keyword">public</span> <span class="keyword">double</span> x; <span class="comment">// x 座標</span>
+  <span class="keyword">public</span> <span class="keyword">double</span> y; <span class="comment">// y 座標</span>
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 座標値 (x, y) を与えて初期化。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;x&quot;&gt;</span><span class="xmlDocComment">x 座標値&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;y&quot;&gt;</span><span class="xmlDocComment">y 座標値&lt;/param&gt;</span>
+  <span class="keyword">public</span> Point(<span class="keyword">double</span> x, <span class="keyword">double</span> y)
+  {
+    <span class="keyword">this</span>.x = x;
+    <span class="keyword">this</span>.y = y;
+  }
+
+  <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString()
+  {
+    <span class="keyword">return</span> <span class="string">&quot;(&quot;</span> + x + <span class="string">&quot;, &quot;</span> + y + <span class="string">&quot;)&quot;</span>;
+  }
+}
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 2次元空間上の三角形をあらわす構造体</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">class</span> Triangle
+{
+  <span class="keyword">public</span> Point a;
+  <span class="keyword">public</span> Point b;
+  <span class="keyword">public</span> Point c;
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 3つの頂点の座標を与えて初期化。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;a&quot;&gt;</span><span class="xmlDocComment">頂点A&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;b&quot;&gt;</span><span class="xmlDocComment">頂点B&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;c&quot;&gt;</span><span class="xmlDocComment">頂点C&lt;/param&gt;</span>
+  <span class="keyword">public</span> Triangle(Point a, Point b, Point c)
+  {
+    <span class="keyword">this</span>.a = a;
+    <span class="keyword">this</span>.b = b;
+    <span class="keyword">this</span>.c = c;
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 三角形の面積を求める。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">面積&lt;/returns&gt;</span>
+  <span class="keyword">public</span> <span class="keyword">double</span> GetArea()
+  {
+    <span class="keyword">double</span> abx, aby, acx, acy;
+    abx = b.x - a.x;
+    aby = b.y - a.y;
+    acx = c.x - a.x;
+    acy = c.y - a.y;
+    <span class="keyword">return</span> <span class="number">0</span>.<span class="number">5</span> * Math.Abs(abx * acy - acx * aby);
+  }
+}
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> Class1 の概要の説明です。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">class</span> Class1
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    Triangle t = <span class="keyword">new</span> Triangle(
+      <span class="keyword">new</span> Point(<span class="number">0</span>, <span class="number">0</span>),
+      <span class="keyword">new</span> Point(<span class="number">3</span>, <span class="number">4</span>),
+      <span class="keyword">new</span> Point(<span class="number">4</span>, <span class="number">3</span>));
+
+    Console.Write(<span class="string">&quot;{0}\n&quot;</span>, t.GetArea());
+  }
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/oop/">&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x6307;&#x5411;</a></li><li><a href="/study/csharp/oop/oo_about/">&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x6307;&#x5411;&#x3068;&#x306F;</a></li><li><a href="/study/csharp/oop/oo_class/">&#x30AF;&#x30E9;&#x30B9;</a></li><li><a href="/study/csharp/oop/oo_conceal/">&#x5B9F;&#x88C5;&#x306E;&#x96A0;&#x853D;</a></li><li><a href="/study/csharp/oop/oo_property/">&#x30D7;&#x30ED;&#x30D1;&#x30C6;&#x30A3;</a></li><li><a href="/study/csharp/oop/oo_static/">&#x9759;&#x7684;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/study/csharp/oop/moduleinitializer/">&#x30E2;&#x30B8;&#x30E5;&#x30FC;&#x30EB;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/study/csharp/oop/oo_operator/">&#x6F14;&#x7B97;&#x5B50;&#x306E;&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30ED;&#x30FC;&#x30C9;</a></li><li><a href="/study/csharp/oop/oo_indexer/">&#x30A4;&#x30F3;&#x30C7;&#x30AF;&#x30B5;&#x30FC;</a></li><li><a href="/study/csharp/oop/oo_inherit/">&#x7D99;&#x627F;</a></li><li><a href="/study/csharp/oop/miscimplictinherit/">[&#x4F59;&#x8AC7;] &#x6697;&#x9ED9;&#x7684;&#x306A;&#x6D3E;&#x751F;</a></li><li><a href="/study/csharp/oop/oo_multipleinheritance/">[&#x96D1;&#x8A18;] &#x591A;&#x91CD;&#x7D99;&#x627F;&#x3067;&#x304D;&#x306A;&#x3044;&#x7406;&#x7531;</a></li><li><a href="/study/csharp/oop/oo_polymorphism/">&#x591A;&#x614B;&#x6027;</a></li><li><a href="/study/csharp/oop/misc_as/">[&#x96D1;&#x8A18;] &#x30AD;&#x30E3;&#x30B9;&#x30C8;&#x3068; as</a></li><li><a href="/study/csharp/oop/misc_construct/">[&#x96D1;&#x8A18;] &#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;&#x5185;&#x306E;&#x4EEE;&#x60F3;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x547C;&#x3073;&#x51FA;&#x3057;</a></li><li><a href="/study/csharp/oop/oo_abstract/">&#x62BD;&#x8C61;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x3001;&#x62BD;&#x8C61;&#x30AF;&#x30E9;&#x30B9;</a></li><li><a href="/study/csharp/oop/oo_interface/">&#x30A4;&#x30F3;&#x30BF;&#x30FC;&#x30D5;&#x30A7;&#x30FC;&#x30B9;</a></li><li><a href="/study/csharp/oop/misc_autoimpl/">[&#x96D1;&#x8A18;] &#x62BD;&#x8C61;&#x5B9A;&#x7FA9;&#x3068;&#x81EA;&#x52D5;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/oop/oo_vftable/">[&#x96D1;&#x8A18;] &#x4EEE;&#x60F3;&#x95A2;&#x6570;&#x30C6;&#x30FC;&#x30D6;&#x30EB;</a></li><li><a href="/study/csharp/oop/sp2_generics/">&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/oop/sp4_variance/">&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30AF;&#x30B9;&#x306E;&#x5171;&#x5909;&#x6027;&#x30FB;&#x53CD;&#x5909;&#x6027;</a></li><li><a href="/study/csharp/oop/generic-math-operators/">&#x3010;Generic Math&#x3011; C# 11 &#x3067;&#x306E;&#x6F14;&#x7B97;&#x5B50;&#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

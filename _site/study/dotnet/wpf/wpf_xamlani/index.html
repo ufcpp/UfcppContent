@@ -1,0 +1,739 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30A2;&#x30CB;&#x30E1;&#x30FC;&#x30B7;&#x30E7;&#x30F3;&#xFF08;WPF&#xFF09; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/dotnet/wpf/wpf_xamlani/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="wpf">アニメーション（WPF）</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>「<a href="/study/dotnet/wpf/wpf_xamlcode/">XAML とプログラムコード（WPF）</a>」では、
+<code>x:Code</code> タグかコードビハインド中にイベントハンドラを記述することで、
+イベント処理を行っていました。
+これとは別に、イベントトリガやストーリーボードという仕組みを使って、
+（コードを含まない）XAML だけでもかなり多彩なイベント処理が可能です。</p>
+<h2 id="section-1"><a id="sec-generated-title-2"></a> <a id="review"></a>おさらい</h2>
+<p>本題のアニメーションの話に入る前に、
+「<a href="/study/dotnet/wpf/wpf_xamladv/#style">スタイル</a>」とか「<a href="/study/dotnet/wpf/wpf_uielement/#Media">メディア</a>」辺りの話を復習。</p>
+<h3 id="style"><a id="sec-generated-title-3"></a> <a id="Style"></a>Style</h3>
+<p>複数の要素に一律同じ見た目を適用したい場合、
+スタイルというものを使います。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">WrapPanel</span>
+  <span class="xmlAttribute">xmlns</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml/presentation</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns:x</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">Width</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">200</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Height</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">200</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Background</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#cccccc</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">WrapPanel.Resources</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Style</span> <span class="xmlAttribute">TargetType</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">{x:Type Rectangle}</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Width</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">80</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Height</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">80</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Margin</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">10</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Fill</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#8080ff</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Style</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">WrapPanel.Resources</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle</span> <span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle</span> <span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle</span> <span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle</span> <span class="xmlDelimiter">/&gt;</span>
+
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">WrapPanel</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<h3 id="brush"><a id="sec-generated-title-4"></a> <a id="Brush"></a>Brush</h3>
+<p>Shapes なら Fill 属性、
+Controls なら Background 属性で、
+背景色を指定できるわけですが
+（参考:
+「<a href="/study/dotnet/wpf/wpf_uielement/#Shapes">図形</a>」、
+「<a href="/study/dotnet/wpf/wpf_uielement/#Controls">コントロール</a>」）、
+これらには Brush を指定します。</p>
+<p>Brush には、
+単色塗りつぶしの SolidColorBrush、
+グラデーションをかける
+LinearGradientBrush, RadialGradientBrush などがあります。
+その他にも、
+背景に画像や図形などのパターンを表示する
+ImageBrush や DrawingBrush などもあります。</p>
+<p>ここでは、主に
+SolidColorBrush, LinearGradientBrush, RadialGradientBrush を使って説明するので、
+この3つに関して例を挙げておきます。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">WrapPanel</span>
+  <span class="xmlAttribute">xmlns</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml/presentation</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns:x</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">Width</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">200</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Height</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">200</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Background</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#cccccc</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">WrapPanel.Resources</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Style</span> <span class="xmlAttribute">TargetType</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">{x:Type Rectangle}</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Width</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">90</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Height</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">90</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Margin</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">5</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Style</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">WrapPanel.Resources</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="htmlComment">&lt;!-- 単色塗りつぶし --&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle</span> <span class="xmlAttribute">Fill</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">MistyRose</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+
+  <span class="htmlComment">&lt;!-- ↑を Property Element Syntax で書いたもの --&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle.Fill</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">SolidColorBrush</span> <span class="xmlAttribute">Color</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">MistyRose</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Rectangle.Fill</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="htmlComment">&lt;!-- 放射状グラデーション（白黒） --&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle.Fill</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">RadialGradientBrush</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">GradientStop</span> <span class="xmlAttribute">Color</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#ffffff</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Offset</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">GradientStop</span> <span class="xmlAttribute">Color</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#000000</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Offset</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">1</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;/</span><span class="xmlName">RadialGradientBrush</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Rectangle.Fill</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="htmlComment">&lt;!-- 線形グラデーション（虹色） --&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle.Fill</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">LinearGradientBrush</span> <span class="xmlAttribute">StartPoint</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0,0</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">EndPoint</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">1,0</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">GradientStop</span> <span class="xmlAttribute">Color</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#ff8080</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Offset</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">GradientStop</span> <span class="xmlAttribute">Color</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#ffc080</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Offset</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0.125</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">GradientStop</span> <span class="xmlAttribute">Color</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#ffff80</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Offset</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0.25</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">GradientStop</span> <span class="xmlAttribute">Color</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#c0ff80</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Offset</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0.375</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">GradientStop</span> <span class="xmlAttribute">Color</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#80ff80</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Offset</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0.5</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">GradientStop</span> <span class="xmlAttribute">Color</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#80ffc0</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Offset</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0.625</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">GradientStop</span> <span class="xmlAttribute">Color</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#80ffff</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Offset</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0.75</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">GradientStop</span> <span class="xmlAttribute">Color</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#80c0ff</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Offset</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0.875</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">GradientStop</span> <span class="xmlAttribute">Color</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#8080ff</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Offset</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">1</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;/</span><span class="xmlName">LinearGradientBrush</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Rectangle.Fill</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">&gt;</span>
+
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">WrapPanel</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<h3 id="transform"><a id="sec-generated-title-5"></a> <a id="Transform"></a>Transform</h3>
+<p>「<a href="/study/dotnet/wpf/wpf_uielement/#Media">メディア</a>」で説明したように、
+WPF の GUI 要素は、
+RenderTransform 属性によって、
+拡大・回転などの変形を施すことができます。</p>
+<p>x 軸, y 軸方向の拡大を表す ScaleTransform、
+軸沿いに斜めに崩すような SkewTransform、
+回転を表す RotateTransform、
+平行移動を表す TranslateTransform などがあります。
+また、MatrixTransform では、行列を使った線形変換もできます
+（回転・拡大などと行列の関係は、
+「<a href="/study/math/linear/eigen/">固有値</a>」を参照）。</p>
+<p>さらに、TransformGroup を使って複数の変形を一度にかけることもできます。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">WrapPanel</span>
+  <span class="xmlAttribute">xmlns</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml/presentation</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns:x</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">Width</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">200</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Height</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">200</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Background</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#cccccc</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">WrapPanel.Resources</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Style</span> <span class="xmlAttribute">TargetType</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">{x:Type Rectangle}</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Width</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">80</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Height</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">80</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Margin</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">10</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Fill</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#8080ff</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Style</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">WrapPanel.Resources</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="htmlComment">&lt;!-- 縦横拡大 --&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle.RenderTransform</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">ScaleTransform</span> <span class="xmlAttribute">CenterX</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">CenterY</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">ScaleX</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0.5</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">ScaleY</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0.5</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Rectangle.RenderTransform</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="htmlComment">&lt;!-- 回転 --&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle.RenderTransform</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">RotateTransform</span> <span class="xmlAttribute">CenterX</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">CenterY</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Angle</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">10</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Rectangle.RenderTransform</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="htmlComment">&lt;!-- 拡大＋傾斜＋回転 --&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle.RenderTransform</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">TransformGroup</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">ScaleTransform</span> <span class="xmlAttribute">CenterX</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">CenterY</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">ScaleX</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">1.5</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">ScaleY</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0.5</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">SkewTransform</span> <span class="xmlAttribute">CenterX</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">100</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">CenterY</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">100</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">AngleX</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">-20</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">RotateTransform</span> <span class="xmlAttribute">CenterX</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">CenterY</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Angle</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">10</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;/</span><span class="xmlName">TransformGroup</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Rectangle.RenderTransform</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">&gt;</span>
+
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">WrapPanel</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<h2 id="section-2"><a id="sec-generated-title-6"></a> <a id="animation"></a>アニメーション</h2>
+<p>WPF のアニメーションには、
+大まかに分けて以下の三つのものがあります。</p>
+<ul>
+<li><p>「イベントトリガ ＋ ストーリーボード」を XAML 中に書く</p>
+</li>
+<li><p>コードビハインド中で、BeginAnimation メソッドを呼び出す</p>
+</li>
+<li><p>CompositionTarget.Rendering イベントを使う</p>
+</li>
+</ul>
+<p>このうち、ここでは、
+XAML だけで書くことのできるイベントリガ ＋ ストーリーボードを中心に説明したいと思います。</p>
+<p>XAML のアニメーションはいろいろ複雑ではあるんですが、
+概ね、以下の3点を把握すれば大丈夫だと思います。</p>
+<ol>
+<li><p>イベントトリガ … 処理を始めるきっかけ。 「イベントが発生した」とか。</p>
+</li>
+<li><p>トリガアクション … 処理の内容。 「アニメーションを開始・一時停止・再開する」など。</p>
+</li>
+<li><p>ストーリーボード … アニメーションの具体的な中身。 コントロールや図形などの変化のさせ方の台本。</p>
+</li>
+</ol>
+<h2 id="section-3"><a id="sec-generated-title-7"></a> <a id="trigger"></a>イベントトリガ</h2>
+<p><strong id="trigger" class="keyword">トリガ</strong>というのは、
+「プロパティの値が変わった瞬間」とか、
+「イベントが発生した瞬間」とかの、
+処理を始めるきっかけのことです。</p>
+<p>WPF の FrameworkElement（コントロールも図形も、大半、この FrameworkElement のサブクラス）には、
+Triggers という名前のプロパティがあります。
+この Triggers に対して、
+Trigger または EventTrigger を子要素として追加することで、
+トリガの設定ができます。</p>
+<p>「プロパティの値が変わった瞬間」に処理を行うのが
+Trigger なんですが、
+こちらはいまいちできることが限られるので、ここでは説明を割愛。</p>
+<p>「イベントが発生した瞬間」に処理を行うのが
+EventTrigger です。
+例えば、「表示された瞬間からアニメーションを開始」（Loaded イベントをトリガにする）ということをしたければ、
+以下のようにします。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">WrapPanel</span>
+  <span class="xmlAttribute">xmlns</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml/presentation</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns:x</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">Width</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">200</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Height</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">200</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Background</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#cccccc</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">WrapPanel.Resources</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Style</span> <span class="xmlAttribute">TargetType</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">{x:Type Rectangle}</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Width</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Height</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Margin</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">25</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Fill</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#8080ff</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Style</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">WrapPanel.Resources</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle.Triggers</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">EventTrigger</span>  <span class="xmlAttribute">RoutedEvent</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Rectangle.Loaded</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">BeginStoryboard</span><span class="xmlDelimiter">&gt;</span>
+          <span class="xmlDelimiter">&lt;</span><span class="xmlName">Storyboard</span><span class="xmlDelimiter">&gt;</span>
+            <span class="xmlDelimiter">&lt;</span><span class="xmlName">DoubleAnimation</span>
+              <span class="xmlAttribute">Storyboard.TargetProperty</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Opacity</span><span class="xmlAttributeQuotes">&quot;</span>
+              <span class="xmlAttribute">From</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">1</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">To</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0.2</span><span class="xmlAttributeQuotes">&quot;</span>
+              <span class="xmlAttribute">RepeatBehavior</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Forever</span><span class="xmlAttributeQuotes">&quot;</span>
+              <span class="xmlAttribute">AutoReverse</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">true</span><span class="xmlAttributeQuotes">&quot;</span>
+              <span class="xmlAttribute">Duration</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0:0:1</span><span class="xmlAttributeQuotes">&quot;</span>
+              <span class="xmlDelimiter">/&gt;</span>
+          <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Storyboard</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;/</span><span class="xmlName">BeginStoryboard</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;/</span><span class="xmlName">EventTrigger</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Rectangle.Triggers</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">&gt;</span>
+
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">WrapPanel</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>EventTrigger の子要素 BeginStoryboard に関しては後ほど説明します。
+（この例では、表示された瞬間からずっと、
+四角形の透明度が薄くなったり濃くなったり点滅し続けます。）</p>
+<p>ちなみに、Trigger, EventTrigger の他にも、
+Binding で設定した値をトリガにする DataTrigger や、
+複数の条件がそろったときに初めてトリガする MultiTrigger などもあります。</p>
+<h2 id="section-4"><a id="sec-generated-title-8"></a> <a id="triggerInStyle"></a>スタイル中のイベントトリガ</h2>
+<p>イベントトリガはスタイル中にも記述できます。</p>
+<p>例えば、以下のようにすると、
+全ての四角形が同じように点滅し始めます。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">WrapPanel</span>
+  <span class="xmlAttribute">xmlns</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml/presentation</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns:x</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">Width</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">200</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Height</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">200</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Background</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#cccccc</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">WrapPanel.Resources</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Style</span> <span class="xmlAttribute">TargetType</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">{x:Type Rectangle}</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Width</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Height</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Margin</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">25</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Fill</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#8080ff</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Style.Triggers</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">EventTrigger</span>  <span class="xmlAttribute">RoutedEvent</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Rectangle.Loaded</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+          <span class="xmlDelimiter">&lt;</span><span class="xmlName">BeginStoryboard</span><span class="xmlDelimiter">&gt;</span>
+            <span class="xmlDelimiter">&lt;</span><span class="xmlName">Storyboard</span><span class="xmlDelimiter">&gt;</span>
+              <span class="xmlDelimiter">&lt;</span><span class="xmlName">DoubleAnimation</span>
+                <span class="xmlAttribute">Storyboard.TargetProperty</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Opacity</span><span class="xmlAttributeQuotes">&quot;</span>
+                <span class="xmlAttribute">From</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">1</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">To</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0.2</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Duration</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0:0:1</span><span class="xmlAttributeQuotes">&quot;</span>
+                <span class="xmlAttribute">RepeatBehavior</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Forever</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">AutoReverse</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">true</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+            <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Storyboard</span><span class="xmlDelimiter">&gt;</span>
+          <span class="xmlDelimiter">&lt;/</span><span class="xmlName">BeginStoryboard</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;/</span><span class="xmlName">EventTrigger</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Style.Triggers</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Style</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">WrapPanel.Resources</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">/&gt;</span>
+
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">WrapPanel</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<h2 id="section-5"><a id="sec-generated-title-9"></a> <a id="action"></a>トリガアクション</h2>
+<p>「処理開始のきっかけ」である EventTrigger の中身には、
+「処理の内容」である <strong id="TriggerAction" class="keyword">TriggerAction</strong> というものを指定します。</p>
+<p>TriggerAction には、音声データの再生（SoundPlayerAction）などもありますが、
+ここでは、
+ストーリーボードがらみのものを中心に説明します。</p>
+<p>詳しくは次節で説明しますが、
+XAML では、ストーリーボードというものを使ってアニメーションを行います。
+で、TriggerAction としては、
+ストーリーボードの開始（BeginStoryBoard）、
+停止（StopStoryBoard）、
+一時停止（PauseStoryBoard）、
+再開（ResumeStoryBoard）などがあります。</p>
+<p>例えば、
+以下のようにすると、
+表示と同時に点滅を開始して、
+マウスが上に乗った瞬間に点滅を一時停止、
+マウスが離れた瞬間に点滅を再開できます。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">WrapPanel</span>
+  <span class="xmlAttribute">xmlns</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml/presentation</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns:x</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">Width</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">200</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Height</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">200</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Background</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#cccccc</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">WrapPanel.Resources</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Style</span> <span class="xmlAttribute">TargetType</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">{x:Type Rectangle}</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Width</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Height</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Margin</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">25</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Fill</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#8080ff</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Style</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">WrapPanel.Resources</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle.Triggers</span><span class="xmlDelimiter">&gt;</span>
+
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">EventTrigger</span> <span class="xmlAttribute">RoutedEvent</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Rectangle.Loaded</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">BeginStoryboard</span> <span class="xmlAttribute">Name</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">BlinkBegin</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+          <span class="xmlDelimiter">&lt;</span><span class="xmlName">Storyboard</span><span class="xmlDelimiter">&gt;</span>
+            <span class="xmlDelimiter">&lt;</span><span class="xmlName">DoubleAnimation</span>
+              <span class="xmlAttribute">Storyboard.TargetProperty</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Opacity</span><span class="xmlAttributeQuotes">&quot;</span>
+              <span class="xmlAttribute">From</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">1</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">To</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0.2</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Duration</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0:0:1</span><span class="xmlAttributeQuotes">&quot;</span>
+              <span class="xmlAttribute">RepeatBehavior</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Forever</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">AutoReverse</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">true</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+          <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Storyboard</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;/</span><span class="xmlName">BeginStoryboard</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;/</span><span class="xmlName">EventTrigger</span><span class="xmlDelimiter">&gt;</span>
+
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">EventTrigger</span> <span class="xmlAttribute">RoutedEvent</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Mouse.MouseEnter</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">PauseStoryboard</span> <span class="xmlAttribute">BeginStoryboardName</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">BlinkBegin</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;/</span><span class="xmlName">EventTrigger</span><span class="xmlDelimiter">&gt;</span>
+
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">EventTrigger</span> <span class="xmlAttribute">RoutedEvent</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Mouse.MouseLeave</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">ResumeStoryboard</span> <span class="xmlAttribute">BeginStoryboardName</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">BlinkBegin</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;/</span><span class="xmlName">EventTrigger</span><span class="xmlDelimiter">&gt;</span>
+
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Rectangle.Triggers</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">&gt;</span>
+
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">WrapPanel</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<h2 id="section-6"><a id="sec-generated-title-10"></a> <a id="storyboard"></a>ストーリーボード</h2>
+<p>さて、ようやくアニメーション本体であるストーリーボードの話になります。
+ちなみに、<strong id="storyboard" class="keyword">ストーリーボード</strong>（story board）という単語は、
+映画やアニメの画コンテ・絵コンテのことです。
+要するに、いつ、何を動かすかとか、アニメーションの脚本を描く物。</p>
+<p>XAML のストーリーボード（Storyboard）ですが、
+DoubleAnimation や ColorAnimation という子要素を複数並べて、
+いつ、何の値を、どう変化させるかを指定します。</p>
+<p>具体的な説明のために、
+先ほどまでにたびたび例示してきた「透明・不透明の点滅」のストーリーボードの部分を抜き出してきてみましょう。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">Storyboard</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">DoubleAnimation</span>
+    <span class="xmlAttribute">Storyboard.TargetProperty</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Opacity</span><span class="xmlAttributeQuotes">&quot;</span>
+    <span class="xmlAttribute">From</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">1</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">To</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0.2</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Duration</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0:0:1</span><span class="xmlAttributeQuotes">&quot;</span>
+    <span class="xmlAttribute">RepeatBehavior</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Forever</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">AutoReverse</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">true</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Storyboard</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>DoubleAnimation というのは、名前どおり、
+double 型の値を変化させるものです。
+DoubleAnimation の他にも、「型名 ＋ Animation」という名前のクラスがいくつかあって、
+いずれもその型の値を変化させるためのものです。
+（例えば、ColorAnimation、CharAnimation、PointAnimation などがあります。）</p>
+<p>何の値を変えるかは Storyboard.TargetProperty 属性で指定します。
+この例の場合、Rectangle の中にこのストーリーボードが書かれているので、
+Rectangle の Opacity（透明度）プロパティの値が変化します。</p>
+<p>値を何から何に変化させるかは、From, To 属性で指定します。
+「どこからどこまで」ではなくて、
+「変化量」を指定したい場合には By 属性を使います。</p>
+<p>From から To の値まで、どのくらいの時間かけて変化させるかは Duration で指定します。
+Duration の中身には、この例の場合「0:0:1」と書かれていますが、
+これは「0時間0分1秒」という意味です。
+要するに、「時:分:秒」という形式で指定します。</p>
+<p>その他、この例では、To の値に達した後、逆に From の値に戻るのかどうかを表す AutoReverse=&quot;true&quot; と、
+その後さらに、永久ループするかどうかを表す RepeatBehavior=&quot;Forever&quot; が指定されています。</p>
+<p>また、この例の場合、
+イベントがトリガされた瞬間からアニメーションを開始しているので省略されていますが、
+開始時間を遅らせたい場合、
+BeginTime 属性を指定します。</p>
+<h5 id="targetname"><a id="sec-generated-title-11"></a>TargetName</h5>
+<p>上記の場合、
+Rectangle 内でトリガしたイベント内で、
+Rectangle のプロパティの値を変更していますが、
+「ボタンを押したときに Rectangle の背景色を変える」というように、
+トリガ主とアニメーションのターゲットを別にすることもできます。
+これには、以下のように、Storyboard.TargetName 属性を使います。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">WrapPanel</span>
+  <span class="xmlAttribute">xmlns</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml/presentation</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns:x</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">Width</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">200</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Height</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">200</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Background</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#cccccc</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">WrapPanel.Resources</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Style</span> <span class="xmlAttribute">TargetType</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">{x:Type Rectangle}</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Width</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Height</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Margin</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">25</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Fill</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#8080ff</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Style</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">WrapPanel.Resources</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle</span> <span class="xmlAttribute">Name</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">rect</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Button</span> <span class="xmlAttribute">Content</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Click Me</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Width</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">80</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Height</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">30</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Button.Triggers</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">EventTrigger</span> <span class="xmlAttribute">RoutedEvent</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Button.Click</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">BeginStoryboard</span><span class="xmlDelimiter">&gt;</span>
+          <span class="xmlDelimiter">&lt;</span><span class="xmlName">Storyboard</span><span class="xmlDelimiter">&gt;</span>
+            <span class="xmlDelimiter">&lt;</span><span class="xmlName">ColorAnimation</span>
+              <span class="xmlAttribute">Storyboard.TargetName</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">rect</span><span class="xmlAttributeQuotes">&quot;</span>
+              <span class="xmlAttribute">Storyboard.TargetProperty</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Fill.Color</span><span class="xmlAttributeQuotes">&quot;</span>
+              <span class="xmlAttribute">To</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#ff8080</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Duration</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0:0:0</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+          <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Storyboard</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;/</span><span class="xmlName">BeginStoryboard</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;/</span><span class="xmlName">EventTrigger</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Button.Triggers</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Button</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">WrapPanel</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>サンプル→</p>
+<p><a href="/assets/media/ufcpp2000/dotnet/sample/ButtonClick.xaml">ButtonClick.xaml</a>
+。
+4色版。</p>
+<h5 id="tergetproperty"><a id="sec-generated-title-12"></a>TergetProperty を階層的に指定</h5>
+<p>この例では、
+ボタンクリック後の Rectangle の色を、
+Storyboard.TargetProperty=&quot;Fill.Color&quot;
+で指定しています。
+これは、省略せずにきちんと書くなら、
+Storyboard.TargetProperty=&quot;(Shape.Fill).(SolidColorBrush.Color)&quot;
+となります。
+このように、TargetProperty には、階層的なプロパティの指定の仕方ができます。</p>
+<p>ところで、
+Shape クラスの Fill プロパティは、
+実際には Brush クラス（「<a href="/study/csharp/oop/oo_abstract/#abclass">抽象クラス</a>」）です。
+Shape.Fill に 「<a href="/study/dotnet/wpf/wpf_xamlbasic/#attribute">Attribute Syntax</a>」 で色を設定すると、
+自動的に SolidColorBrush に変換されるので、
+この例の場合はこれでうまくいきます。
+対して、Fill に LinearGradientBrush などを設定しているとうまく動作しません。
+（エラーになったりはしないけども、何も起きない。）</p>
+<h5 id="section-7"><a id="sec-generated-title-13"></a>複数のアニメーションを設定</h5>
+<p>ストーリーボード内には、複数のアニメーションを同時に指定できます。</p>
+<p>以下の例では、色の変化と回転を同時に行っています。
+この例では、Rectangle の上にマウスを乗せると、
+Rectangle の色が変わって回転し始めます（3秒間）。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">WrapPanel</span>
+  <span class="xmlAttribute">xmlns</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml/presentation</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns:x</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">Width</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">200</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Height</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">200</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+  
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">WrapPanel.Resources</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Style</span> <span class="xmlAttribute">TargetType</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">{x:Type Rectangle}</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Width</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Height</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Margin</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">25</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Fill</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#8080ff</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">RenderTransform</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter.Value</span><span class="xmlDelimiter">&gt;</span>
+          <span class="xmlDelimiter">&lt;</span><span class="xmlName">RotateTransform</span> <span class="xmlAttribute">CenterX</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">25</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">CenterY</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">25</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Angle</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+        <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Setter.Value</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Setter</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Style</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">WrapPanel.Resources</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle.Triggers</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">EventTrigger</span> <span class="xmlAttribute">RoutedEvent</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Mouse.MouseEnter</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">BeginStoryboard</span><span class="xmlDelimiter">&gt;</span>
+          <span class="xmlDelimiter">&lt;</span><span class="xmlName">Storyboard</span><span class="xmlDelimiter">&gt;</span>
+            <span class="xmlDelimiter">&lt;</span><span class="xmlName">ColorAnimation</span>
+              <span class="xmlAttribute">Storyboard.TargetProperty</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Fill.Color</span><span class="xmlAttributeQuotes">&quot;</span>
+              <span class="xmlAttribute">To</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#ff8080</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Duration</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0:0:0</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+            <span class="xmlDelimiter">&lt;</span><span class="xmlName">DoubleAnimation</span>
+              <span class="xmlAttribute">Storyboard.TargetProperty</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">RenderTransform.Angle</span><span class="xmlAttributeQuotes">&quot;</span>
+              <span class="xmlAttribute">To</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Duration</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0:0:0</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+          <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Storyboard</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;/</span><span class="xmlName">BeginStoryboard</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;/</span><span class="xmlName">EventTrigger</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">EventTrigger</span> <span class="xmlAttribute">RoutedEvent</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Mouse.MouseLeave</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">BeginStoryboard</span><span class="xmlDelimiter">&gt;</span>
+          <span class="xmlDelimiter">&lt;</span><span class="xmlName">Storyboard</span><span class="xmlDelimiter">&gt;</span>
+            <span class="xmlDelimiter">&lt;</span><span class="xmlName">ColorAnimation</span>
+              <span class="xmlAttribute">Storyboard.TargetProperty</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Fill.Color</span><span class="xmlAttributeQuotes">&quot;</span>
+              <span class="xmlAttribute">To</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#8080ff</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Duration</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0:0:3</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+            <span class="xmlDelimiter">&lt;</span><span class="xmlName">DoubleAnimation</span>
+              <span class="xmlAttribute">Storyboard.TargetProperty</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">RenderTransform.Angle</span><span class="xmlAttributeQuotes">&quot;</span>
+              <span class="xmlAttribute">To</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">360</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Duration</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0:0:3</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+          <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Storyboard</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;/</span><span class="xmlName">BeginStoryboard</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;/</span><span class="xmlName">EventTrigger</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Rectangle.Triggers</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">&gt;</span>
+
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">WrapPanel</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>サンプル→</p>
+<p><a href="/assets/media/ufcpp2000/dotnet/sample/MouseEnter.xaml">MouseEnter.xaml</a>
+。
+Rectangle を4×4で並べたらちょっと面白かった。</p>
+<h5 id="tergetproperty-1"><a id="sec-generated-title-14"></a>TergetProperty で配列的にアクセス</h5>
+<p>RenderTransform 属性で、拡大・傾斜・回転などの変形をかけたい場合、
+TransformGroup 内に ScaleTransform や RotateTransform などを複数並べることになります。</p>
+<p>こういう場合、以下のように、配列的に [0] とか [1] とかを使って TergetProperty を設定することができます。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">WrapPanel</span>
+  <span class="xmlAttribute">xmlns</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml/presentation</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns:x</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">Width</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">200</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Height</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">200</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Background</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#cccccc</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">WrapPanel.Resources</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Style</span> <span class="xmlAttribute">TargetType</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">{x:Type Rectangle}</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Width</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Height</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Margin</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">25</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Fill</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#8080ff</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">RenderTransform</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter.Value</span><span class="xmlDelimiter">&gt;</span>
+          <span class="xmlDelimiter">&lt;</span><span class="xmlName">TransformGroup</span><span class="xmlDelimiter">&gt;</span>
+            <span class="xmlDelimiter">&lt;</span><span class="xmlName">RotateTransform</span> <span class="xmlAttribute">CenterX</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">25</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">CenterY</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">25</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Angle</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+            <span class="xmlDelimiter">&lt;</span><span class="xmlName">TranslateTransform</span> <span class="xmlAttribute">X</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Y</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+          <span class="xmlDelimiter">&lt;/</span><span class="xmlName">TransformGroup</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Setter.Value</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Setter</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Style</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">WrapPanel.Resources</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle.Triggers</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">EventTrigger</span> <span class="xmlAttribute">RoutedEvent</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Rectangle.Loaded</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">BeginStoryboard</span> <span class="xmlAttribute">Name</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">BlinkBegin</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+          <span class="xmlDelimiter">&lt;</span><span class="xmlName">Storyboard</span><span class="xmlDelimiter">&gt;</span>
+            <span class="xmlDelimiter">&lt;</span><span class="xmlName">DoubleAnimation</span>
+              <span class="xmlAttribute">Storyboard.TargetProperty</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">RenderTransform.Children[0].Angle</span><span class="xmlAttributeQuotes">&quot;</span>
+              <span class="xmlAttribute">From</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">To</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">360</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Duration</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0:0:3</span><span class="xmlAttributeQuotes">&quot;</span>
+              <span class="xmlAttribute">RepeatBehavior</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Forever</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+            <span class="xmlDelimiter">&lt;</span><span class="xmlName">DoubleAnimation</span>
+              <span class="xmlAttribute">Storyboard.TargetProperty</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">RenderTransform.Children[1].X</span><span class="xmlAttributeQuotes">&quot;</span>
+              <span class="xmlAttribute">From</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">To</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">20</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Duration</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0:0:0.1212</span><span class="xmlAttributeQuotes">&quot;</span>
+              <span class="xmlAttribute">RepeatBehavior</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Forever</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">AutoReverse</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">true</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+            <span class="xmlDelimiter">&lt;</span><span class="xmlName">DoubleAnimation</span>
+              <span class="xmlAttribute">Storyboard.TargetProperty</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">RenderTransform.Children[1].Y</span><span class="xmlAttributeQuotes">&quot;</span>
+              <span class="xmlAttribute">From</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">To</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">20</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Duration</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">0:0:0.1413</span><span class="xmlAttributeQuotes">&quot;</span>
+              <span class="xmlAttribute">RepeatBehavior</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Forever</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">AutoReverse</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">true</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+          <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Storyboard</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;/</span><span class="xmlName">BeginStoryboard</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;/</span><span class="xmlName">EventTrigger</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Rectangle.Triggers</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Rectangle</span><span class="xmlDelimiter">&gt;</span>
+
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">WrapPanel</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>サンプル→</p>
+<p><a href="/assets/media/ufcpp2000/dotnet/sample/Gradation.xaml">Gradation.xaml</a>
+。
+LinearGradientBrush の GradientStops なんかも配列的にアクセス。
+グラデーションの色をアニメーションして、回転・拡大・平行移動を同時にかけたら、
+なかなか気持ち悪いのができた。</p>
+<h5 id="section-8"><a id="sec-generated-title-15"></a>その他のアニメーション方式</h5>
+<p>DoubleAnimation などを使うと、
+From から To の値に線形に値が変化します。
+これに対して、もう少し凝った値の変化のさせ方もできます。</p>
+<p>例えば、
+DoubleAnimationUsingKeyFrame
+を使えば、
+「時刻 xx に値 XX に、
+時刻 yy に値 YY に、・・・」
+というように、「いつ何の値にするか」を複数並べてアニメーションを作ることができます。</p>
+<p>また、
+DoubleAnimationUsingPath
+を使えば、
+パス（複数の点をベジエ補間やスプライン補間で滑らかにつないだもの）に沿って値を変化させることができます。</p>
+<h2 id="beginanimation"><a id="sec-generated-title-16"></a> <a id="beginanimation"></a>BeginAnimation</h2>
+<p>XAML だけでアニメーション設定を完結させるには、
+これまでに説明したような、イベントトリガ→イベントアクション→ストーリーボードという手順を踏む必要がありますが、
+コードビハインド中では、BeginAnimation メソッドを呼び出してアニメーションを開始させることもできます。</p>
+<p>（BeginAnimation は Animatable クラスのメソッド。
+Contorol や Shape などは Animatable のサブクラス。）</p>
+<p>例えば、「<a href="#trigger">イベントトリガ</a>」節で例に挙げた、
+四角形を点滅表示させるものを BeginAnimation を使って書き直すと以下のようになります
+（XAML ＋ コードビハインドの C# ファイル）。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">Window</span> <span class="xmlAttribute">x:Class</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">WPFApplication1.Window1</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml/presentation</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns:x</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns:c</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">clr-namespace:WPFApplication1</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">Title</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Window1</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Height</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">200</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Width</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">200</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Rectangle</span> <span class="xmlAttribute">Name</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">rect1</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Width</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Height</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Fill</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#8080ff</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Window</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<pre><code class="language-xml">using System;
+using System.Windows;
+using System.Windows.Media.Animation;
+
+namespace WPFApplication1
+{
+  public partial class Window1 : System.Windows.Window
+  {
+    public Window1()
+    {
+      InitializeComponent();
+
+      DoubleAnimation ani = new DoubleAnimation(
+        1, 0.2, new TimeSpan(0, 0, 1));
+      ani.RepeatBehavior = RepeatBehavior.Forever;
+      ani.AutoReverse = true;
+      this.rect1.BeginAnimation(UIElement.OpacityProperty, ani);
+    }
+  }
+}</code></pre>
+<h2 id="compositiontarget.rendering"><a id="sec-generated-title-17"></a> <a id="CompositionTarget"></a>CompositionTarget.Rendering</h2>
+<p>ストーリーボードや BeginAnimation によるアニメーションは、
+「タイムラインベース」です。</p>
+<p>コンピュータ上のアニメーションというのは、連続的に動いているように見えて、
+実はパラパラ漫画のような離散的なものです。
+人間の目をごまかせるくらい高速に絵を切り替えることで、
+動いている用に見えています。</p>
+<p>で、タイムラインベースのアニメーションでは、
+「時刻 <span class="math">
+t<sub><span class="normal">1</span></sub>
+</span> に位置 <span class="math">
+x<sub><span class="normal">1</span></sub>
+</span>、
+時刻 <span class="math">
+t<sub><span class="normal">2</span></sub>
+</span> に位置 <span class="math">
+x<sub><span class="normal">2</span></sub>
+</span> にある」
+というような情報を基にして、
+「じゃあ、時刻 <span class="math">t</span>
+（<span class="math">
+t<sub><span class="normal">1</span></sub><span class="normal">&lt;</span> t <span class="normal">&lt;</span> t<sub><span class="normal">2</span></sub>
+</span>）では位置 <span class="math">x</span> にいるはずだ」
+という値を計算して、その位置に物体を表示させます。</p>
+<p>このような方式とは別に、
+物理シミュレーションなんかでは、
+「1フレームごとに逐次的に値を更新」とかいう方式で値を計算したい場合があります。
+（加速度 <span class="math">a</span> を与えて、
+毎時刻 <span class="math">
+x <span class="normal">=</span> x <span class="normal">+</span> v
+</span>, <span class="math">
+v <span class="normal">=</span> v <span class="normal">+</span> a
+</span> という更新式にしたがって値を更新したり。）</p>
+<p>こういう「1フレームごとに処理」という処理を実現するために、
+「画面がレンダリングされるタイミングを拾えるイベント」が用意されています。
+それが System.Windows.Media.CompositionTarget クラスの Rendering イベント（静的イベント）です。</p>
+<p>例として、距離に反比例する引力が働く3つの物体の運動のシミュレーションを示します。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">Window</span> <span class="xmlAttribute">x:Class</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">WPFApplication1.Window1</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml/presentation</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns:x</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://schemas.microsoft.com/winfx/2006/xaml</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">xmlns:c</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">clr-namespace:WPFApplication1</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">Title</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Window1</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Height</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">300</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Width</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">300</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">Canvas</span> <span class="xmlAttribute">Height</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">200</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Width</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">200</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Canvas.Resources</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">Style</span> <span class="xmlAttribute">TargetType</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Ellipse</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Width</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">10</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Height</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">10</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">Setter</span> <span class="xmlAttribute">Property</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Fill</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Value</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">#8080ff</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Style</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Canvas.Resources</span><span class="xmlDelimiter">&gt;</span>
+    
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Ellipse</span> <span class="xmlAttribute">Name</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">obj1</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Canvas.Left</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">30</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Canvas.Top</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">30</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Ellipse</span> <span class="xmlAttribute">Name</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">obj2</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Canvas.Left</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">140</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Canvas.Top</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Ellipse</span> <span class="xmlAttribute">Name</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">obj3</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Canvas.Left</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">50</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Canvas.Top</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">140</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">Canvas</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Window</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<pre><code class="language-xml">using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Shapes;
+using System.Windows.Media;
+
+namespace WPFApplication1
+{
+  public partial class Window1 : System.Windows.Window
+  {
+    Point[] x = new Point[3];
+    Vector[] v = new Vector[3];
+    Shape[] obj = new Shape[3];
+
+    public Window1()
+    {
+      InitializeComponent();
+
+      this.obj[0] = this.obj1;
+      this.obj[1] = this.obj2;
+      this.obj[2] = this.obj3;
+
+      for (int i = 0; i &lt; this.obj.Length; ++i)
+      {
+        x[i] = new Point();
+        x[i].X = (double)this.obj[i].GetValue(Canvas.LeftProperty);
+        x[i].Y = (double)this.obj[i].GetValue(Canvas.TopProperty);
+        v[i] = new Vector();
+      }
+
+      CompositionTarget.Rendering +=
+        new EventHandler(CompositionTarget_Rendering);
+    }
+
+    void CompositionTarget_Rendering(object sender, EventArgs e)
+    {
+      Vector a01 = x[0] - x[1];
+      Vector a12 = x[1] - x[2];
+      Vector a20 = x[2] - x[0];
+
+      double abs01 = a01.Length;
+      double abs12 = a12.Length;
+      double abs20 = a20.Length;
+
+      if (abs01 &lt; 10) abs01 = 10;
+      if (abs12 &lt; 10) abs12 = 10;
+      if (abs20 &lt; 10) abs20 = 10;
+
+      a01 /= abs01 * abs01;
+      a12 /= abs12 * abs12;
+      a20 /= abs20 * abs20;
+
+      v[0] += a20 - a01;
+      v[1] += a01 - a12;
+      v[2] += a12 - a20;
+
+      for (int i = 0; i &lt; this.obj.Length; ++i)
+      {
+        x[i] += v[i];
+        this.obj[i].SetValue(Canvas.LeftProperty, x[i].X);
+        this.obj[i].SetValue(Canvas.TopProperty, x[i].Y);
+      }
+    }
+  }
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/dotnet/wpf/">Windows Presentation Foundation</a></li><li><a href="/study/dotnet/wpf/wpf_abst/">Windows Presentation Foundation &#x6982;&#x8981;&#xFF08;WPF&#xFF09;</a></li><li><a href="/study/dotnet/wpf/wpf_xaml/">XAML &#x6982;&#x8981;&#xFF08;WPF&#xFF09;</a></li><li><a href="/study/dotnet/wpf/wpf_xamlbasic/">XAML &#x306E;&#x57FA;&#x672C;&#x69CB;&#x9020;&#xFF08;WPF&#xFF09;</a></li><li><a href="/study/dotnet/wpf/wpf_xamladv/">XAML &#x306E;&#x9AD8;&#x5EA6;&#x306A;&#x6A5F;&#x80FD;&#xFF08;WPF&#xFF09;</a></li><li><a href="/study/dotnet/wpf/wpf_container/">WPF &#x306E;&#x30B3;&#x30F3;&#x30C6;&#x30CA;&#xFF08;WPF&#xFF09;</a></li><li><a href="/study/dotnet/wpf/wpf_uielement/">WPF &#x306E; GUI &#x8981;&#x7D20;&#xFF08;WPF&#xFF09;</a></li><li><a href="/study/dotnet/wpf/wpf_xamlcode/">XAML &#x3068;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x30B3;&#x30FC;&#x30C9;&#xFF08;WPF&#xFF09;</a></li><li><a href="/study/dotnet/wpf/wpf_binding/">&#x30C7;&#x30FC;&#x30BF;&#x30D0;&#x30A4;&#x30F3;&#x30C7;&#x30A3;&#x30F3;&#x30B0;&#xFF08;WPF&#xFF09;</a></li><li><a href="/study/dotnet/wpf/wpf_template/">&#x30C6;&#x30F3;&#x30D7;&#x30EC;&#x30FC;&#x30C8;&#xFF08;WPF&#xFF09;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x5B9F;&#x884C; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/powershell/cmdlet/cmdlet/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">コマンド実行</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>（書きかけ）</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="param"></a>パラメータ</h2>
+<p>パラメータの渡し方</p>
+<p>「位置パラメータ」と「名前付きパラメータ」</p>
+<p>例: ls。
+「ls .」← . は位置パラメータ。
+「ls -Path .」← Path という名前の付いたパラメータ</p>
+<p>パイプラインを通して値を渡す。
+Where-Object とか ForEach-Object の -InputObject パラメータなんかはどの受け取り方もできる。</p>
+<p>必須
+位置
+既定値
+パイプライン入力を許可する
+ワイルドカード文字を許可する</p>
+<p>Parameter required?true
+Parameter position?1
+Parameter type        String
+Default value
+Accept multiple values?false
+Accepts pipeline input?true
+Accepts wildcard characters?true</p>
+<h2 id="common-parameter"><a id="sec-generated-title-3"></a> <a id="commonparam"></a>common parameter</h2>
+<p>common parameter
+man about_commonparameters
+Verbose
+Debug
+ErrorAction
+ErrorVariable
+OutVariable
+OutBuffer
+共通パラメータに加えて、システムの状態を変更するコマンドレットがサポート
+しているパラメータが 2 つあります。
+WhatIf
+Confirm</p>
+<h2 id="cmdlet"><a id="sec-generated-title-4"></a> <a id="CmdletClass"></a>Cmdlet の実体</h2>
+<p>実体は Cmdlet クラスを継承したクラス</p>
+<p>引数はプロパティで受け取る</p>
+<p>名前付きパラメータの場合、プロパティ名がそのままパラメータ名に。
+位置パラメータの場合、
+PositionAttribute 属性を付けて位置を指定。</p>
+<p>begin, process, end</p>
+<h2 id="section-3"><a id="sec-generated-title-5"></a> <a id="pipeline"></a>パイプライン</h2>
+<p>パイプラインの挙動</p>
+<pre><code class="language-console">&gt; 1,2,3,4 |
+  %{Start-Sleep 0.3; Write-Warning 1; $_ } |
+  %{Start-Sleep 0.5; Write-Warning 2; $_ } |
+  %{Start-Sleep 0.7; Write-Warning 3; $_ }
+
+警告: 1
+警告: 2
+警告: 3
+1
+警告: 1
+警告: 2
+警告: 3
+2
+警告: 1
+警告: 2
+警告: 3
+3
+警告: 1
+警告: 2
+警告: 3
+4</code></pre>
+<p>↑きっちりこの順で出るってことは、
+各 Cmdlet が Enumerator みたいな挙動してるはず。
+感覚的にはほんと、LINQ だわ。</p>
+<h2 id="snapin"><a id="sec-generated-title-6"></a> <a id="snapin"></a>SnapIn</h2>
+<p>SnapIn</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/powershell/cmdlet/">Cmdlet</a></li><li><a href="/study/powershell/cmdlet/cmd_variable/">&#x5909;&#x6570;&#x64CD;&#x4F5C;&#x95A2;&#x9023;&#x306E; Cmdlet</a></li><li><a href="/study/powershell/cmdlet/cmd_object/">&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x64CD;&#x4F5C; Cmdlet</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

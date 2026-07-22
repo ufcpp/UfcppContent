@@ -1,0 +1,201 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5C0F;&#x30CD;&#x30BF; Concurrent &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/12/tipsconcurrentcollections/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-12-24T00:23:54">2016-12-24</time></span><span>更新: <time datetime="2016-12-30T00:45:45">2016-12-30</time></span></div><h1 id="concurrent">小ネタ Concurrent コレクション</h1>
+<p>.NET 4以来、<a href="https://msdn.microsoft.com/ja-jp/library/system.collections.concurrent.aspx"><code>System.Collections.Concurrent</code></a>以下に、
+Concurrentなコレクションがいくつか追加されました。</p>
+<p>Concurrent、英単語の意味としては「同時に起こる」という意味の形容詞。
+プログラミングにおいては、「複数のプログラムやスレッドから同時にアクセスされる」という意味で使われ、
+「並行」とか「同時実行」とか訳されます。
+たいてい、「Concurrentなんとか」みたいな名前のものは「同時実行があっても問題が起きない」という意味になります。</p>
+<p>ただし、「問題を起こさない」って言ってもいろいろな意味があって、それぞれのコレクションの性質をちゃんとわかっておかないと困ったりします。
+(.NET の<code>System.Collections.Concurrent</code>に限らず、たいていのプログラミング言語のたいていのライブラリで、Concurrentと名の付くものは同様の注意が必要です。)</p>
+<p>ということで、今日は<a href="https://msdn.microsoft.com/ja-jp/library/dd287191.aspx"><code>ConcurrentDictionary</code></a>の<code>GetOrAdd</code>メソッドを例にとって挙動をちょっと説明。</p>
+<h2 id="getoradd">GetOrAdd</h2>
+<p>こいつ: <a href="https://msdn.microsoft.com/ja-jp/library/ee378677.aspx"><code>GetOrAdd(TKey key, Func&lt;TKey, TValue&gt; valueFactory)</code></a></p>
+<p>名前通り、キーに応じた値がすでにあればその値を返し、なければ <code>valueFactory</code> を呼んで、新しい値を作って辞書に登録しつつ、その作った値を返します。</p>
+<p>話を簡単にするために、まずちょっと、同時実行が必要ない状況で例を出しますが、以下のような挙動になります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Collections.Concurrent;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+    {
+        <span class="keyword">const</span> <span class="keyword">int</span> theKey = <span class="number">1</span>;
+        <span class="keyword">var</span> d = <span class="keyword">new</span> ConcurrentDictionary&lt;<span class="keyword">int</span>, <span class="keyword">string</span>&gt;();
+
+        <span class="comment">// まず、GetOrAdd の同時実行が起こらない場合を見てみる</span>
+        <span class="comment">// 普通の逐次実行なので、同時実行にはならない</span>
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">4</span>; i++)
+        {
+            <span class="keyword">var</span> item = d.GetOrAdd(theKey, key =&gt;
+            {
+                <span class="comment">// インスタンス新規作成</span>
+                <span class="comment">// 単一のキーでアクセスしているので1回限り</span>
+                Console.WriteLine($<span class="string">&quot;Add: {i}&quot;</span>);
+                <span class="keyword">return</span> i.ToString();
+            });
+
+            <span class="comment">// 同じインスタンスが返ってきているか確認</span>
+            Console.WriteLine($<span class="string">&quot;Get: {item}&quot;</span>);
+        }
+    }
+}</code></pre>
+<pre><code class="language-csharp">Add: <span class="number">0</span>
+Get: <span class="number">0</span>
+Get: <span class="number">0</span>
+Get: <span class="number">0</span>
+Get: <span class="number">0</span></code></pre>
+<p>この例では、同じキーで何度も <code>GetOrAdd</code> を呼んでいます。
+値の生成(<code>$&quot;Add: {i}&quot;</code>と表示される部分)は最初の1回でしか通りません。</p>
+<h2 id="section">並列動作</h2>
+<p>この<code>for</code>ループを並列化することを考えます。</p>
+<h3 id="concurrentdictionary">ConcurrentDictionary の必要性</h3>
+<p>単に同時実行で問題を起こさないようにするなら、わざわざ<code>ConcurrentDictionary</code>なんていう新しいクラスを作らなくても、
+<code>lock</code>ステートメントを掛ければ済む話です。</p>
+<p>Concurrentを名乗らない普通の<code>Dictionary</code>を使って、
+自前で<code>lock</code>を掛けるのであれば、例えば以下のように書けばいいでしょう。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">class</span> DictionaryExtensions
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> TValue GetOrAdd&lt;TKey, TValue&gt;(<span class="keyword">this</span> IDictionary&lt;TKey, TValue&gt; d, TKey key, Func&lt;TKey, TValue&gt; valueFactory)
+    {
+        <span class="keyword">lock</span> (d)
+        {
+            TValue value;
+            <span class="keyword">if</span> (!d.TryGetValue(key, <span class="keyword">out</span> value))
+            {
+                value = valueFactory(key);
+                d[key] = value;
+            }
+            <span class="keyword">return</span> value;
+        }
+    }
+}</code></pre>
+<p>このコードの何が嫌かというと、<code>lock</code>範囲が広すぎること。</p>
+<ul>
+<li>Getにも<code>lock</code>が掛かる。新規追加(Add)の頻度が低い時に完全に無駄</li>
+<li>Add のときに、<code>valueFactory</code>呼び出し中にもずっと<code>lock</code>が掛かっていて、<code>valueFactory</code>の中身次第では<code>lock</code>時間が長くなりすぎる</li>
+</ul>
+<p><code>lock</code>は、意外と重たい処理です。可能な限り避けて、可能な限り短くする必要があります。</p>
+<p><code>ConcurrentDictionary</code>は、<code>lock</code>範囲を極力小さくすることで、パフォーマンス向上を図っているクラスです。</p>
+<h3 id="concurrentdictionary-1">ConcurrentDictionaryの癖</h3>
+<p>ただし、<code>ConcurrentDictionary</code>の<code>GetOrAdd</code>には少々癖があります。</p>
+<p><a href="https://msdn.microsoft.com/ja-jp/library/ee378677.aspx">ドキュメント</a>をちゃんと読むと書いてあるんですが、</p>
+<ul>
+<li><code>valueFactory</code>は複数回呼ばれる可能性があります</li>
+<li>返す値・辞書内に格納する値は必ず1つであることが保証されています</li>
+</ul>
+<p>という挙動。</p>
+<p>その結果、最初にあげた例で、<code>for</code>ループを<code>Parallel.For</code>に変えて並列化すると、以下のような挙動をします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Collections.Concurrent;
+<span class="keyword">using</span> System.Threading.Tasks;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+    {
+        <span class="keyword">const</span> <span class="keyword">int</span> theKey = <span class="number">1</span>;
+        <span class="keyword">var</span> d = <span class="keyword">new</span> ConcurrentDictionary&lt;<span class="keyword">int</span>, <span class="keyword">string</span>&gt;();
+
+        <span class="comment">// 並列動作</span>
+        <span class="comment">// 並列なので、ループの中身が複数のスレッドで同時に動くことがある</span>
+        Parallel.For(<span class="number">0</span>, <span class="number">4</span>, i =&gt;
+        {
+            <span class="keyword">var</span> item = d.GetOrAdd(theKey, key =&gt;
+            {
+                <span class="comment">// 同時に来られると、ここは複数回動く可能性がある</span>
+                Console.WriteLine($<span class="string">&quot;Add: {i}&quot;</span>);
+                <span class="keyword">return</span> i.ToString();
+            });
+
+            <span class="comment">// Add が複数回動いても、Get で帰ってくる値は必ず単一の保証あり</span>
+            Console.WriteLine($<span class="string">&quot;Get: {item}&quot;</span>);
+        });
+    }
+}</code></pre>
+<p>実行する環境によって/実行するたびに結果は異なりますが、一例としては以下のような実行結果になります。</p>
+<pre><code class="language-csharp">Add: <span class="number">0</span>
+Add: <span class="number">3</span>
+Get: <span class="number">0</span>
+Add: <span class="number">1</span>
+Get: <span class="number">0</span>
+Add: <span class="number">2</span>
+Get: <span class="number">0</span>
+Get: <span class="number">0</span></code></pre>
+<p>(この環境では)Addは4回動いています。
+しかし、戻り値として返っているのはそのうち1つだけで、Getのところに表示されている値は全部同じです。</p>
+<h3 id="lazy">癖の回避: Lazyとの組み合わせ</h3>
+<p><code>lock</code>を減らすためとはいえ、ちょっと癖のある挙動です。この癖を回避したければ一工夫要ります。
+その工夫として、別途、<a href="https://msdn.microsoft.com/ja-jp/library/dd642331.aspx"><code>Lazy</code>クラス</a>(<code>System</code>名前空間)と組み合わせる方法があります。</p>
+<p>以下のような書き方をします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Collections.Concurrent;
+<span class="keyword">using</span> System.Threading.Tasks;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+    {
+        <span class="keyword">const</span> <span class="keyword">int</span> theKey = <span class="number">1</span>;
+        <span class="keyword">var</span> d = <span class="keyword">new</span> ConcurrentDictionary&lt;<span class="keyword">int</span>, Lazy&lt;<span class="keyword">string</span>&gt;&gt;(); <span class="comment">// 値を Lazy&lt;string&gt; に変える</span>
+
+        <span class="comment">// 並列動作</span>
+        <span class="comment">// 並列なので、ループの中身が複数のスレッドで同時に動くことがある</span>
+        Parallel.For(<span class="number">0</span>, <span class="number">4</span>, i =&gt;
+        {
+            <span class="keyword">var</span> lazy = d.GetOrAdd(theKey, key =&gt; <span class="keyword">new</span> Lazy&lt;<span class="keyword">string</span>&gt;(() =&gt;
+            {
+                <span class="comment">// 複数個の Lazy インスタンスが作られることはあるけども、</span>
+                <span class="comment">// Lazy が作られただけでは valueFactory は呼ばれない</span>
+                Console.WriteLine($<span class="string">&quot;Add: {i}&quot;</span>);
+                <span class="keyword">return</span> i.ToString();
+            }));
+
+            <span class="comment">// lazy 自体は単一のインスタンスが返る保証あり</span>
+
+            <span class="comment">// この時点で初めて Add: の行が呼ばれる</span>
+            <span class="comment">// Lazy のデフォルトの挙動では、valueFactory が呼ばれるのは1回限りの保証あり</span>
+            <span class="keyword">var</span> item = lazy.Value;
+
+            Console.WriteLine($<span class="string">&quot;Get: {item}&quot;</span>);
+        });
+    }
+}</code></pre>
+<p>結果は以下のようになります。</p>
+<pre><code class="language-csharp">Add: <span class="number">0</span>
+Get: <span class="number">0</span>
+Get: <span class="number">0</span>
+Get: <span class="number">0</span>
+Get: <span class="number">0</span></code></pre>
+<p>値は0である保証はなくて、<code>Add: 1</code>とか<code>Add: 2</code>が表示されることもありますが、少なくとも</p>
+<ul>
+<li><code>Add:</code>の行が表示されるのは1回限り</li>
+<li><code>Add:</code>の行と<code>Get:</code>の行で表示されている値は同じ</li>
+</ul>
+<p>という保証はされています。</p>
+<p>これで、<code>GetOrAdd</code>全体を<code>lock</code>するよりはだいぶパフォーマンスのよいコードになります。
+特に、Addがほとんどなく、Get頻度が高い場合にはかなり顕著な差になるでしょう。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/12/">2016/12</a></li><li><a href="/blog/2016/12/tipstryroslyn/">C#&#x5C0F;&#x30CD;&#x30BF;&#x96C6;: C#&#x3092;Web&#x4E0A;&#x3067;&#x8A66;&#x3059;</a></li><li><a href="/blog/2016/12/tipsildasm/">&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x3092;&#x8997;&#x3044;&#x3066;&#x307F;&#x3088;&#x3046;</a></li><li><a href="/blog/2016/12/tipscorefxlab/">&#x5C0F;&#x30CD;&#x30BF; corefxlab&#x3068;System.Memory</a></li><li><a href="/blog/2016/12/tipsevalorder/">&#x5C0F;&#x30CD;&#x30BF; &#x5F0F;&#x306E;&#x8A55;&#x4FA1;&#x9806;&#x5E8F;</a></li><li><a href="/blog/2016/12/tipsobjectinitializer/">&#x5C0F;&#x30CD;&#x30BF; &#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2016/12/tipscollectioninitializer/">&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2016/12/tipsindexedforeach/">&#x5C0F;&#x30CD;&#x30BF; &#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;&#x4ED8;&#x304D; foreach</a></li><li><a href="/blog/2016/12/tipsuniontypes/">&#x5C0F;&#x30CD;&#x30BF; &#x30C1;&#x30A7;&#x30C3;&#x30AF;&#x4F8B;&#x5916;&#x3068;Union&#x578B;</a></li><li><a href="/blog/2016/12/tipscontextfreetask/">&#x5C0F;&#x30CD;&#x30BF; &#x540C;&#x671F;&#x30B3;&#x30F3;&#x30C6;&#x30AD;&#x30B9;&#x30C8;&#x3092;&#x62FE;&#x308F;&#x306A;&#x3044;Task&#x578B;</a></li><li><a href="/blog/2016/12/tipsformattingcharacter/">&#x5C0F;&#x30CD;&#x30BF; &#x30D5;&#x30A9;&#x30FC;&#x30DE;&#x30C3;&#x30C8;&#x6587;&#x5B57;&#x8B58;&#x5225;&#x5B50;</a></li><li><a href="/blog/2016/12/tipsimplicitmembers/">&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/blog/2016/12/tipstadpoleoperator/">&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x6F14;&#x7B97;&#x5B50;(&#xFF1F;)</a></li><li><a href="/blog/2016/12/tipsnulloperation/">&#x5C0F;&#x30CD;&#x30BF; null&#x95A2;&#x4FC2;&#x306E;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/blog/2016/12/vs2017rc2/">Updating Visual Studio 2017 Release Candidate</a></li><li><a href="/blog/2016/12/patternmatching/">&#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30DE;&#x30C3;&#x30C1;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/pickuproslyn1214/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/14</a></li><li><a href="/blog/2016/12/tipsdeconstruct/">&#x5C0F;&#x30CD;&#x30BF; &#x300C;deconstruct&#x300D;&#x3068;&#x3044;&#x3046;&#x5358;&#x8A9E;</a></li><li><a href="/blog/2016/12/tipsgeneratedil/">&#x5C0F;&#x30CD;&#x30BF; &#x69CB;&#x6587;&#x7CD6;&#x8863;&#x3068;&#x3001;&#x305D;&#x3046;&#x3067;&#x306F;&#x306A;&#x3044;&#x69CB;&#x6587;&#x3068;</a></li><li><a href="/blog/2016/12/tipsprimitives/">&#x5C0F;&#x30CD;&#x30BF; &#x30D7;&#x30EA;&#x30DF;&#x30C6;&#x30A3;&#x30D6;&#x578B;</a></li><li><a href="/blog/2016/12/tipsapisurface/">&#x5C0F;&#x30CD;&#x30BF; private&#x30E1;&#x30F3;&#x30D0;&#x30FC;&#x306F;API&#x306E;&#x4E00;&#x90E8;&#x304B;</a></li><li><a href="/blog/2016/12/tipsstringmarshal/">&#x5C0F;&#x30CD;&#x30BF; string&#x578B;&#x306E;&#x30DE;&#x30FC;&#x30B7;&#x30E3;&#x30EA;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/tipsnumargs/">&#x5C0F;&#x30CD;&#x30BF; &#x5F15;&#x6570;&#x306E;&#x500B;&#x6570;&#x306E;&#x4E0A;&#x9650;</a></li><li><a href="/blog/2016/12/tipsotherlangs/">&#x5C0F;&#x30CD;&#x30BF; C# &#x3068;&#x4ED6;&#x306E;&#x8A00;&#x8A9E;&#x3068;&#x306E;&#x5DEE;&#x3068;&#x3044;&#x3046;&#x3068;</a></li><li><a href="/blog/2016/12/discards/">discards</a></li><li><a href="/blog/2016/12/tipssmallheapallocation/">&#x5C0F;&#x30CD;&#x30BF; &#x5C0F;&#x3055;&#x306A;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x5272;&#x308A;&#x5F53;&#x3066;</a></li><li><a href="/blog/2016/12/tipsparallelism/">&#x5C0F;&#x30CD;&#x30BF; &#x4E26;&#x5217;&#x5316;</a></li><li><a href="/blog/2016/12/tipsdowhile/">&#x5C0F;&#x30CD;&#x30BF; do-while</a></li><li><a href="/blog/2016/12/tipsatan2/">&#x5C0F;&#x30CD;&#x30BF; atan2</a></li><li><a href="/blog/2016/12/tipsnormaldistribution/">&#x5C0F;&#x30CD;&#x30BF; &#x6B63;&#x898F;&#x5206;&#x5E03;&#x306E;&#x4E38;&#x307F;</a></li><li><a href="/blog/2016/12/lookbackattheyear/">&#x4ECA;&#x5E74;&#x306E;&#x632F;&#x308A;&#x8FD4;&#x308A;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

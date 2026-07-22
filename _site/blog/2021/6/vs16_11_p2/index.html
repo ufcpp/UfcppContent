@@ -1,0 +1,155 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Visual Studio 16.11 Preview 2: record struct &#x3068; global using | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2021/6/vs16_11_p2/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2021-06-16T22:10:57">2021-06-16</time></span><span>更新: <time datetime="2021-06-16T22:10:57">2021-06-16</time></span></div><h1 id="visual-studio-16.11-preview-2-record-struct-global-using">Visual Studio 16.11 Preview 2: record struct と global using</h1>
+<p><a href="https://docs.microsoft.com/en-us/visualstudio/releases/2019/release-notes-preview#16.11.0.pre.2.0">Visual Studio 16.11 Preview 2</a> が来ていて、これに C# 10.0 の新機能が2つほど merge されています。
+(いつも通り、<a href="/study/csharp/cheatsheet/langversionoption/#new-options">LangVersion preview</a> を入れれば利用可能になっています。)</p>
+<ul>
+<li><a href="/study/csharp/datatype/record/#record-struct">record struct</a></li>
+<li><a href="/blog/2021/3/usingimprovements/">global using</a></li>
+</ul>
+<p>ちなみに本当は <a href="https://github.com/ufcpp-live/UfcppLiveAgenda/issues/34">16.10 Preview 3 のとき</a>に sealed record ToString って機能もひっそりと入ってるんですが、
+まあ下手すると誰も気づかないレベルの修正なので説明省略…
+(先月全然ブログを書いてないことへの言い訳。)</p>
+<h2 id="record-struct"><a id="record-struct">record struct</a></h2>
+<p>はい。<a href="/study/csharp/datatype/record/">レコード型</a>を<a href="/study/csharp/resource/oo_reference/#valtype">値型</a>(構造体)でも作れるようになりました。
+C# 9.0 時点で、単に <code>record</code> キーワードを使って型定義すると必ず<a href="/study/csharp/resource/oo_reference/#reftype">参照型</a>(クラス)になっていたんですが、C# 10.0 では <code>record struct</code> と <code>record class</code> で値型・参照型を選べるようになりました。</p>
+<pre><code class="language-csharp"><span class="comment">// こっちは構造体なのでヒープ アロケーション起きない。</span>
+<span class="comment">// あんまりでかいデータを持たせるとコピーのコストが結構でかい。</span>
+<span class="keyword">var</span> s = <span class="keyword">new</span> S(<span class="number">1</span>, <span class="number">2</span>);
+
+<span class="comment">// こっちはクラスなのでアロケーション発生。</span>
+<span class="keyword">var</span> c = <span class="keyword">new</span> C(<span class="number">1</span>, <span class="number">2</span>);
+
+record <span class="keyword">struct</span> S(<span class="keyword">int</span> X, <span class="keyword">int</span> Y);
+record <span class="keyword">class</span> C(<span class="keyword">int</span> X, <span class="keyword">int</span> Y);</code></pre>
+<p>ちなみに、単なる <code>record</code> はこれまで通りクラスです。
+<code>record</code> と <code>record class</code> は完全に同じ意味。</p>
+<h3 id="struct-record-struct">struct と record struct</h3>
+<p>レコード型は元々「構造体的な扱いができる参照型」でした。
+構造体みたいに、メンバーごとのクローン、メンバーごとの値比較ができるクラスみたいなものです。</p>
+<p>じゃあ、<code>record struct</code> は普通の <code>struct</code> と何が違うかと言うと、以下のような点。</p>
+<ul>
+<li>プライマリ コンストラクターを持てる</li>
+<li>プライマリ コンストラクターの引数からプロパティが自動生成される</li>
+<li>以下のメソッドが自動的に作られる
+<ul>
+<li><a href="/study/csharp/datatype/deconstruction/"><code>Deconstruct</code> メソッド</a></li>
+<li><code>ToString</code></li>
+<li><code>Equals</code>, <code>GetHashCode</code> (<code>IEqualtable&lt;T&gt;</code> インターフェイスの実装)</li>
+<li><code>==</code>, <code>!=</code> 演算子</li>
+</ul>
+</li>
+</ul>
+<h3 id="struct-with">struct と with</h3>
+<p>あと、今回一緒に、普通の構造体に対しても <a href="/study/csharp/datatype/record/#with"><code>with</code> 式</a>が使えるようになっています。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> s1 = <span class="keyword">new</span> S { X = <span class="number">1</span>, Y = <span class="number">2</span> };
+<span class="keyword">var</span> s2 = s1 with { X = <span class="number">3</span> };
+
+Console.WriteLine(s2); <span class="comment">// (3, 2)</span>
+
+<span class="keyword">struct</span> S
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; init; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; init; }
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString() =&gt; (X, Y).ToString();
+}</code></pre>
+<p>構造体では、ある変数から別の変数に代入したとき、元から自動的にコピーを作っていたので、それをそのまま使っています。</p>
+<h2 id="global-using">global using</h2>
+<p><code>global using</code> を使うと、プロジェクト全体に対して有効な <a href="/study/csharp/structured/sp_namespace/#using">using ディレクティブ</a>を書けます。</p>
+<p>例えば、ある1ファイルに以下のようなコードを書いたとします。</p>
+<pre><code class="language-csharp">global <span class="keyword">using</span> <span class="keyword">static</span> System.Console;
+global <span class="keyword">using</span> System.Linq;
+global <span class="keyword">using</span> System.Collections.Generic;</code></pre>
+<p>そのプロジェクト内では、以下のようなコードが普通に書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = <span class="keyword">new</span> List&lt;<span class="keyword">int</span>&gt; { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span> };
+<span class="keyword">var</span> y = x.Select(i =&gt; i * i);
+<span class="keyword">foreach</span> (<span class="keyword">var</span> i <span class="keyword">in</span> y) WriteLine(i);</code></pre>
+<p><a href="/study/csharp/misc/miscentrypoint/#top-level-statements">トップ レベル ステートメント</a>と合わせると、本当にこの3行だけで「コンパイルできて実行できるコード」になります。
+「ネットで見かけたサンプル コードをコピペしたら動かない」というクレームが減るかと思われます。
+(これが一番のメリット。)</p>
+<p>あと、「<a href="https://devblogs.microsoft.com/dotnet/date-time-and-time-zone-enhancements-in-net-6/"><code>DateOnly</code> なんて名前</a>嫌だーーー」という方は以下のように書いておけます。一応。(別に推奨はしない。)</p>
+<pre><code class="language-csharp">global <span class="keyword">using</span> Date = System.DateOnly;</code></pre>
+<h3 id="using">通常 using と同列</h3>
+<p><code>global using</code> は、「そのプロジェクト内のすべてのファイルの先頭に <code>using</code> があるのと一緒」みたいな挙動をします。
+つまり、「通常 <code>using</code> よりも外側のスコープ」みたいなことにはなりません。
+あくまで「通常 <code>using</code> と同列」です。</p>
+<p>例えばどこかのファイルに以下のような <code>System</code> への <code>global using</code> があったとします。</p>
+<pre><code class="language-csharp">global <span class="keyword">using</span> System;</code></pre>
+<p>で、これと同じプロジェクト内で通常の <code>using</code> を書く場合、以下のような挙動をします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System; <span class="comment">// すでに global using System; があるので「重複」警告あり</span>
+
+<span class="keyword">using</span> X = DateTime; <span class="comment">// この行はコンパイル エラー。ここでは using System; ありきにはならない。</span>
+<span class="keyword">using</span> Y = System.DateTime; <span class="comment">// こっちは OK</span>
+
+<span class="keyword">namespace</span> A
+{
+    <span class="keyword">using</span> X = DateTime; <span class="comment">// これも OK。A の外に using System; があるので。</span>
+}</code></pre>
+<h3 id="using-1">知らないところで using されてる問題</h3>
+<p>別に <code>global</code> かどうか以前の問題なんですが、「<code>using</code> しすぎ」は問題を起こすことがあります。
+まず、同じ名前の型があった場合に「どっちかわからない」エラーを起こします。
+単純に IDE 上での補完候補が増えすぎてうざいとかもあります。
+それに、C# の場合、<a href="/study/csharp/functional/sp3_extension/#problem">拡張メソッド</a>という、<code>using</code> の有無で挙動が変わる機能があったりもします。</p>
+<p><code>global using</code> ではそれをプロジェクト全体にわたってできるわけですから、
+嫌がらせしようと思えばいくらでも嫌がらせができます。
+とりあえず名前被りの例:</p>
+<pre><code class="language-csharp"><span class="comment">// JsonSerializer クラスがどれにもあるので、フルネームで書かないと弁別不能になる。</span>
+global <span class="keyword">using</span> Newtonsoft.Json;
+global <span class="keyword">using</span> Utf8Json;
+global <span class="keyword">using</span> System.Text.Json;</code></pre>
+<p>ちなみに、<code>global using</code> は複数のファイルに書けます。
+上記嫌がらせの3行を、それぞれ全く別のファイルに書いておくということもできます。</p>
+<p>一方で、一応、<em>ファイルの先頭にしか書けない</em>という縛りはあります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// 超絶長い Main 処理を延々と書いたりもありえなくはない</span>
+    }
+}
+
+global <span class="keyword">using</span> System.Linq; <span class="comment">// さすがにこの行はコンパイル エラー</span></code></pre>
+<h4 id="section">問題を起こせる範囲</h4>
+<p>ただまあ、<code>global using</code> の影響範囲はプロジェクト内に限られるので、
+嫌がらせができるとすれば基本的に「内部犯」になります。</p>
+<p>「<a href="https://github.com/ufcpp-live/UfcppLiveAgenda/issues/36">global using で一番邪悪なことやった人が優勝</a>」とかいうひどいタイトルで配信してアイディアを募ろうとしていたり。</p>
+<p>それで例として「<code>Where</code> 拡張メソッドの乗っ取り」を挙げてはいるんですが…
+拡張メソッドで悪さをしたければ、トップ レベルのクラス(名前空間なしのグローバルなクラス)に拡張メソッドを書く方がはるかにたちが悪いです。</p>
+<p>で、内部犯であれば、レビューや単体テストをちゃんとしていればある程度は防げるはずです。
+悪意を持って攻めるなら「数千行のコミットにしれっと混ぜ込む」とかも考えられますけども。</p>
+<p>たいてい以下のような <a href="/study/csharp/misc/analyzer-generator/#analyzer">Analyzer</a> を書いてしまえば対処できちゃいそうなんですよねぇ…</p>
+<ul>
+<li>複数のファイルに <code>global using</code> を書けなくする</li>
+<li>拡張メソッドを含む名前空間を <code>global using</code> できなくする</li>
+<li><code>global using</code> した名前空間中の型名の被りに対して警告を出す</li>
+</ul>
+<p>あと、<code>global using</code> は <a href="/study/csharp/misc/analyzer-generator/#analyzer">Source Generator</a> で生成することもできます。
+これが唯一の「プロジェクト外に影響を及ぼせる <code>global using</code>」になるんですが…
+こちらはこちらで、「信用ならないパッケージを参照するのが怖いのは元から」ですし、
+Source Generator を書ける人自体が割合そんなに多くないですし。</p>
+<p>なんかこう、レビューをうまくすり抜けたり、「嫌な予感しかしないんだけどメリットもありそうでやむなく使う」みたいな邪悪さを出せないものかと悩み中…</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2021/6/">6&#x6708;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

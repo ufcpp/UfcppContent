@@ -1,0 +1,177 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Unity&#x4E0A;&#x3067;async/await: &#x73FE;&#x72B6; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2015/12/unityasync2currentstatus/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2015-11-30T15:01:57">2015-11-30</time></span><span>更新: <time datetime="2015-11-30T15:01:57">2015-11-30</time></span></div><h1 id="unityasyncawait">Unity上でasync/await: 現状</h1>
+<p><a href="https://github.com/OrangeCube/MinimumAsyncBridge">MinimumAsyncBridge</a>の現状について。
+どのくらい真っ当に動いているか。</p>
+<p>ちなみに、<a href="/blog/2015/07/unityasyncbridge/">7月に書いたとき</a>には自分の個人アカウントのリポジトリにコードを置いていましたが、
+今は、<a href="https://github.com/OrangeCube/">会社アカウント</a>の方に移っています。</p>
+<h2 id="section">実装状況</h2>
+<p><a href="/blog/2015/12/unityasync1background/">背景</a>でも説明した通り、<code>Run</code>メソッド(別スレッドで処理を開始する)は実装していません。
+ここはUnityコルーチンとかRxとつないで使う想定です。</p>
+<p>一方で、Minimumと言いつつ、<code>Delay</code>、<code>WhenAll</code>、<code>WhenAny</code>は実装しました。</p>
+<p>これで、実プロジェクトに組み込んで使っていますが、ほぼ要件足りています。
+async/awaitを使いたい動機が主にサーバーとの通信(I/O非同期)で、スレッド処理(CPU非同期)をあまり必要としていないという背景はありますが。</p>
+<p>4か月使ってみて、MinimumAsyncBridge由来の問題に当たって困ったことはほぼないですし、
+困ったのはだいたい実装ミスで、現在では修正済みです。</p>
+<h2 id="iteratortasks">IteratorTasksからの移行</h2>
+<p>今開発中のプロジェクト、7月までは非同期処理に<a href="https://github.com/OrangeCube/IteratorTasks">IteratorTasks</a>を使っていました。</p>
+<p>IteratorTasksも「<code>Task</code>もどき」なので、この移行作業もそこまでは苦労しませんでした。必要なのは、</p>
+<ul>
+<li>名前空間を <code>IteratorTasks</code> から <code>System.Threading.Tasks</code> に変える</li>
+<li><code>IEnumerator</code>、<code>yield return</code> を <code>Task</code>、<code>await</code> に変えて回る</li>
+</ul>
+<p>を地道にやること。それなりに地道な作業なんですが… MinimumAsyncBridgeの移植やらバグ修正をしながらの同時作業で1・2週間ほどで完了。</p>
+<p>もし、IteratorTasksを使っていただけてる方で、この地道な作業をするほどの時間は取れないという場合があれば、
+IteratorTasksに対するawaiter実装もあるので、これが使えるかも。</p>
+<ul>
+<li><a href="https://github.com/OrangeCube/MinimumAsyncBridge/tree/master/src/IteratorTasks.AsyncBridge">IteratorTasks.AsyncBridge</a></li>
+</ul>
+<h2 id="task">本家 Task の完全下位互換</h2>
+<p><code>Run</code>メソッドみたいに意図して実装していないものを除いて、
+本家<code>Task</code>クラスと互換性があります。</p>
+<p>要するに、完全下位互換。
+<a href="https://github.com/OrangeCube/MinimumAsyncBridge">MinimumAsyncBridge</a>を使って動けば、
+.NET 4.6以降では本家<code>Task</code>を使って100%動きます
+(逆は、実装していないメソッドを避けないとダメ)。
+<a href="https://msdn.microsoft.com/ja-jp/library/system.threading.tasks.task.completedtask.aspx"><code>CompletedTask</code></a>とか、.NET 4.6での追加分も実装してあるのでこの辺りを使うと.NET 4.5では動かなくなりますが、それを避ければ.NET 4.5でも動きます。</p>
+<p>ちなみに、<a href="/study/csharp/package/typeforwarding/#backporting">型フォワーディング</a>という仕組みを使っていて、</p>
+<ul>
+<li>.NET 3.5 (Unity)向けライブラリで<a href="https://github.com/OrangeCube/MinimumAsyncBridge">MinimumAsyncBridge</a>を使う</li>
+<li>.NET 4.5向けライブラリで本家<code>Task</code>クラスを使う</li>
+<li>これらのライブラリを混在させて、.NET 4.5向けアプリを書く</li>
+</ul>
+<p>というようなこともできます。.NET 4.5向けアプリから<a href="https://github.com/OrangeCube/MinimumAsyncBridge">MinimumAsyncBridge</a>を使うと、
+本家<code>Task</code>クラスに転送されます。</p>
+<p>実際、今作っているゲームは.NET 3.5と4.5混在です。</p>
+<ul>
+<li>ちょっとしたデバッグをコンソール アプリで</li>
+<li>ボット使った動作テストしたいときにボットをコンソール アプリで</li>
+<li>可視化したいデータがあったときにWPFでGUIをちょろっと</li>
+<li>データの編集ツールはWPF製</li>
+<li>(基本、サーバー側は外注なので他社、かつ、PHPなものの)一部、CPU酷使しそうな機能はC#で実装</li>
+</ul>
+<p>これらのプログラムは全部、Unity上で動かすゲームのロジックを共有しています(ソースコード レベルでの共有じゃなくて、同じDLLを参照)。</p>
+<p>ちなみに、現在は、これら全部を.NET 4.6にバージョンアップ済みです。</p>
+<h3 id="net-4">既知の制限: .NET 4では使えない</h3>
+<p>.NET 3.5と4.5以上では問題なく動きますが、.NET 4では動きません。</p>
+<p>おそらくピンポイントに.NET 4が必要になる(.NET 4は使えるけど4.5以上へのアップグレードはできない)場面は少ないと思いますが、一応ご注意を。</p>
+<p>これは、.NET 4に、async/awaitはできない中途半端なバージョンの<code>Task</code>クラスが存在するため、
+型フォワーディングしづらいせいです
+(新規クラスを足すのは簡単。既存クラスにインスタンス メソッドを追加するのは無理)。</p>
+<h3 id="nuget">NuGetパッケージ</h3>
+<p><a href="https://www.nuget.org/packages/MinimumAsyncBridge/">NuGetパッケージ化</a>してあって、</p>
+<ul>
+<li>.NET 3.5 のプロジェクトからこのNuGe パッケージを参照すると、バックポーティング実装が参照される</li>
+<li>.NET 4.5 のプロジェクトからだと、型フォワーディング実装が参照される</li>
+</ul>
+<p>という挙動をします。とりあえず、NuGet経由で参照するとわずらわしい設定不要で、.NET 3.5と4.5の混在ができます。</p>
+<h3 id="unirx">UniRx向け型フォワーディング</h3>
+<p>同じような仕組み、<a href="https://github.com/neuecc/UniRx">UniRx</a>に対しても使えます。つまり、</p>
+<ul>
+<li>Unity向けライブラリではUniRx使う</li>
+<li>.NET 4.5向けライブラリでは<a href="https://www.nuget.org/packages/Rx-Main/">本家Rx</a>を使う</li>
+<li>これらのライブラリを混在させて使う</li>
+</ul>
+<p>とか。とりあえずこの作業やって、Pull Request は出してあったりします。</p>
+<ul>
+<li><a href="https://github.com/neuecc/UniRx/pull/88">https://github.com/neuecc/UniRx/pull/88</a></li>
+</ul>
+<p>やったことは、</p>
+<ul>
+<li>名前空間が <code>UniRx</code> になっているところを<code>System.Reactive</code>に戻す</li>
+<li>意図して本家Rxとは実装変えていた部分を元に戻す(<code>FirstAsync</code>→<code>First</code>とか)</li>
+<li>別途、型フォワーディング用のライブラリを実装</li>
+<li>元々のUniRx利用者に影響が出ないように、<code>#if</code>分岐</li>
+</ul>
+<p>とかです。</p>
+<h3 id="c-6.0">既知の制限: C# 6.0 がらみ</h3>
+<p><a href="https://github.com/OrangeCube/MinimumAsyncBridge">MinimumAsyncBridge</a>というかIL2CPP側の問題なんですが、
+IL2CPPを使う場合(つまり、iOSで実行する場合)、ちょっとだけC# 6.0で使えない構文があります。</p>
+<p>現状、以下の構文はIL2CPPでのビルドに失敗、あるいは、iOS実行時に実行時例外を起こします。
+async/awaitの問題というか、だいたいは例外処理がらみの問題です。</p>
+<ul>
+<li><a href="/study/csharp/cheatsheet/ap_ver6/#await-in-catch">catch、finally 内での await</a> は使えない</li>
+<li><a href="/study/csharp/structured/misc_stacktrace/#rethrow">catch句内での再スロー</a>ができない</li>
+<li><a href="/study/csharp/structured/oo_exception/#exception-filter">例外フィルター</a>が使えない</li>
+</ul>
+<h2 id="iosandroid">iOS実行・Android実行</h2>
+<p>iOSでの実行は、IL2CPPを使えば動きます。</p>
+<p>IL2CPPのバグをいくつか踏み抜いて、Unity 5.2.2では動かなくなっていたりしましたが、
+Unityへのフィードバックの結果、Unity 5.2.3では直っています。</p>
+<p>(Unity 5.2.2の時は、ビルドで失敗していました。
+ビルドまで成功したら、実行時エラーが出たことはこれまでどのバージョンでもありませんでした。)</p>
+<p>ちなみに、Android実行では1度も問題は出ていません。</p>
+<h2 id="task-1">本家Taskクラスらの劣化</h2>
+<p><code>Run</code>メソッドを実装していないなど、意図的にそうした部分の他に、いくらか残念な部分があります。</p>
+<ul>
+<li>一部、多少効率悪いはず</li>
+<li>例外のスタックトレース紛失</li>
+</ul>
+<h3 id="section-1">効率</h3>
+<p><code>TaskCompletionSource</code>クラスとかawaiterの実装などはほぼベタに本家からの移植なので、そんなに差はないはずです。</p>
+<p>問題は<code>Delay</code>、<code>WhenAll</code>、<code>WhenAny</code>の実装。
+本家はこの辺りを結構大掛かりな実装をしていて移植する気になれなかったので、
+<a href="https://github.com/OrangeCube/MinimumAsyncBridge">MinimumAsyncBridge</a>では別実装しました。
+この辺りは、本家ほど最適な実装はできないんで、さすがに効率ちょっと悪いはず。</p>
+<ul>
+<li><code>Delay</code>: <code>System.Threading.Timer</code>で実装</li>
+<li><code>WhenAll</code>/<code>WhenAny</code>: 複数の<code>Task</code>をリスト管理
+<ul>
+<li>本家実装だと同時実行するタスク数がむちゃくちゃ多くてもメモリ食わない実装になってるらしいけど、こっちはしっかりタスク数分のメモリを食う。</li>
+</ul>
+</li>
+</ul>
+<h3 id="section-2">スタックトレース</h3>
+<p>本家<code>Task</code>を使ったasync/awaitの何がすごいって、
+スレッド間でスタックトレース情報を伝搬させて、スタックトレースを追えるようにしていることなんですが。</p>
+<p>ここはさすがに移植できなかったというか、移植が不可能だったりします。
+この機能の実現には.NET 4.5で追加された<code>System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture</code>が必須です。
+.NET 3.5向けのバックポーティングはできません。</p>
+<p>なので、デバッグは本家<code>Task</code>よりも少し大変になります(非同期メソッドの呼び出し元が分からなくなったりする)。</p>
+<h2 id="section-3">まとめ</h2>
+<p><a href="https://github.com/OrangeCube/MinimumAsyncBridge">MinimumAsyncBridge</a>、
+実装し始めた当初の予想よりもだいぶあっさりと完成。</p>
+<ul>
+<li>.NET 3.5/4.5混在でも使えます
+<ul>
+<li>.NET 4では使えません</li>
+</ul>
+</li>
+<li>ほとんど問題起きず、少ない修正で安定してしまいました</li>
+<li>iOS(IL2CPP)でも動きます
+<ul>
+<li>Unity 5.2.2でIL2CPPのバグで一瞬動かなくなっていたものの、5.2.3で修正されました</li>
+</ul>
+</li>
+<li>Androidは余裕で動きます</li>
+<li>本家<code>Task</code>の完全下位互換です
+<ul>
+<li><a href="https://github.com/OrangeCube/MinimumAsyncBridge">MinimumAsyncBridge</a>で動けば、本家では100%動く</li>
+<li>一部、多少性能的に劣る</li>
+<li>スタックトレース紛失で少しデバッグが大変</li>
+</ul>
+</li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2015/12/">12&#x6708;</a></li><li><a href="/blog/2015/12/unityasync0introduction/">Unity&#x4E0A;&#x3067;async/await: &#x306F;&#x3058;&#x3081;&#x306B;</a></li><li><a href="/blog/2015/12/unityasync1background/">Unity&#x4E0A;&#x3067;async/await: &#x80CC;&#x666F;</a></li><li><a href="/blog/2015/12/unityasync3retrospective/">Unity&#x4E0A;&#x3067;async/await: &#x8AB2;&#x984C;&#x3068;&#x611F;&#x60F3;</a></li><li><a href="/blog/2015/12/asyncawaitpost/">async/await &#x305D;&#x306E;&#x5F8C;/&#x8FFD;&#x8A18;</a></li><li><a href="/blog/2015/12/csprojprojectjson/">.csproj &#x2B; project.json</a></li><li><a href="/blog/2015/12/systemormicrosoft/">System&#x304B;Microsoft&#x304B;&#x3001;&#x516C;&#x5F0F;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;&#x306E;&#x540D;&#x524D;</a></li><li><a href="/blog/2015/12/pickuproslyn1218/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/18</a></li><li><a href="/blog/2015/12/roommetrotokyo10/">&#x3081;&#x3068;&#x3079;&#x3084;&#x6771;&#x4EAC; #10 &#x306B;&#x3066;&#x767B;&#x58C7;</a></li><li><a href="/blog/2015/12/continuum/">Windows 10 Mobile&#x4EBA;&#x67F1;&#x4E2D;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

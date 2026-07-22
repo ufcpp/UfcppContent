@@ -1,0 +1,1643 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30A4;&#x30F3;&#x30BF;&#x30FC;&#x30D5;&#x30A7;&#x30FC;&#x30B9; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/oop/oo_interface/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">インターフェース</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>インターフェース(interface)という言葉の意味は直訳すると「境界面」になります。
+すなわち、物と物との間の仲介をする部分のことです。</p>
+<p>例えば、PC と周辺機器をつなぐ場合、
+どのような物理媒体を用いて、どういう信号を送るかといった規約を定める必要があります。
+このような約束事に基づいて作られたケーブルやコネクタのことをインターフェースと呼ぶわけです。</p>
+<p>オブジェクト指向プログラミングの世界においては、
+インターフェースとはクラスが実装すべき規約（どういうメソッドにどういう引数を渡すかなど）を定めるものです。
+すなわち、クラス設計者とクラス利用者の間の仲介役を担うのがインターフェースです。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>インターフェース: クラス外部からみた規約だけを定めるもの。「クラスの内外の境界」という意味。</p>
+</li>
+<li><p>public な抽象メソッドだけを持つクラスのようなもの。</p>
+<ul>
+<li>C# 8.0 で緩和されて、「フィールドを持てない代わりに多重継承できる」くらいの差に縮まっています</li>
+</ul>
+</li>
+<li><p>抽象クラスと違って、複数のインターフェースを継承できる。</p>
+</li>
+<li><p>class キーワードの代わりに interface キーワードを使う。</p>
+</li>
+</ul>
+<h5 id="section-3"><a id="sec-generated-title-3"></a>サンプル</h5>
+<p>-<a href="https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Oop/InterfaceSample">https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Oop/InterfaceSample</a></p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="contract"></a>メソッドの規約と実装</h2>
+<p>メソッドを設計する場合、規約の決定と実装という2つの段階を経ることになります。</p>
+<p><strong id="contract" class="keyword">規約</strong>あるいは<em>契約</em>（contract）とは、
+クラス外部からみたクラス・メソッドの仕様のことで、
+メソッドを設計する際、まずは規約を定める必要があります。
+すなわち、規約とは「そのメソッドが何を出来るのか」、
+「そのメソッドを呼び出すことで何が起こるのか」ということです。</p>
+<p>そしてその後、定まった規約を満たすようにメソッド内部の<strong id="implementation" class="keyword">実装</strong>（implementation）を行います。
+通常、規約と実装は切り離して考えるべきです。
+クラス利用側からすると、
+実際にメソッドの内部実装がどうなっているかはどうでもよくて、
+外部仕様さえ分かればクラスを利用できるからです。</p>
+<p>通常のメソッドは規約と実装を同時に定めますが、
+「<a href="/study/csharp/oop/oo_abstract/#abmethod">抽象メソッド</a>」抽象メソッドは規約のみを定め、実装は派生クラスで行うことになります。</p>
+<p>ここで注意しなければいけないのは、複数のクラスが同じ規約を満たす場合もあるということです。
+また、同じ規約であっても、クラスが異なればその実装方法も異なります。
+抽象メソッドの実装は派生クラスで行いますが、
+派生クラスごとに実装方法が異なります。</p>
+<p>例えば、
+「<a href="/study/csharp/oop/oo_abstract/">抽象メソッド、抽象クラス</a>」で説明した <code>Person</code> クラスでは、
+「<code>Age</code> プロパティが呼ばれたら年齢を答える」という規約を定めています。
+<code>Person</code> の派生クラスではこの規約に従って <code>Age</code> プロパティを実装します。
+クラスによって正直に答えたり、鯖を読んだりと、その実装方法は異なりますが、
+「年齢を答える」という規約は満たされています。</p>
+<h2 id="c"><a id="sec-generated-title-5"></a> <a id="interface"></a>C# のインターフェース</h2>
+<p>インターフェースとは、規約のみを定めるものです。
+上述したように、C# では抽象メソッドを用いることでメソッドの規約のみを定めることが出来ます。
+つまり、C# の<strong id="interface" class="keyword">インターフェース</strong>（interface）とは、抽象メソッドのみを持つ抽象クラスだと考えることが出来ます。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/if0.png"><img src="/assets/media/ufcpp2000/csharp/fig/if0.png" alt="インターフェース" /></a></p>
+<figcaption>インターフェース</figcaption>
+</figure>
+<p>C# のインターフェースの定義は以下のようにして行います。</p>
+<pre><code class="language-csharp"><span class="keyword">interface</span> インターフェース名
+{
+  メソッド・プロパティの宣言
+}</code></pre>
+<p>インターフェースの実装はクラスの継承と同じ構文で行います。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> クラス名 : インターフェース名
+{
+  クラスの定義
+}</code></pre>
+<p>クラスとよく似ていますが、インターフェースには以下に挙げるような特徴があります。</p>
+<ul>
+<li><p>メンバー変数(フィールド)を持つことが出来ない。</p>
+</li>
+<li><p>static メソッドを持つことが出来ない。</p>
+</li>
+<li><p>宣言したメソッド・プロパティはすべて<code>public abstract</code>になる。</p>
+</li>
+<li><p>1つのクラスが複数のインターフェースを実装(多重継承)できる。</p>
+</li>
+</ul>
+<h5 class="version version8">Ver. 8.0</h5>
+<p>C# 8.0 では、制限がいくつか緩和されています。
+<a href="#dim">後述</a>しますが、機能面で言うと、クラス(特に抽象クラス)との差は「フィールドを持てない代わりに多重継承できる」くらいの差になっています。</p>
+<!-- original-page-break -->
+<h2 id="section-5"><a id="sec-generated-title-6"></a> <a id="lib"></a>標準クラスライブラリ中のインターフェース</h2>
+<p>.NET Framework の標準クラスライブラリでは、汎用性の高いいくつかのインターフェースを標準で用意しています。
+ここでは、そのうちのいくつかを紹介します。</p>
+<h3 id="icomparable"><a id="sec-generated-title-7"></a> <a id="IComparable"></a>IComparable</h3>
+<p><code>IComparable&lt;T&gt;</code>インターフェイス(<code>System</code>名前空間)は、順序比較ができるものを表します。
+配列の整列などに使います。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Linq;
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 2次元上の点。</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> &lt;see cref=&quot;IComparable{T}&quot;/&gt; を実装している = 順序をつけられる。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">class</span> Point2D : IComparable&lt;Point2D&gt;
+{
+    <span class="keyword">public</span> <span class="keyword">double</span> X { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="keyword">double</span> Y { <span class="keyword">get</span>; }
+
+    <span class="keyword">public</span> Point2D(<span class="keyword">double</span> x, <span class="keyword">double</span> y)
+    {
+        X = x;
+        Y = y;
+    }
+
+    <span class="keyword">public</span> <span class="keyword">double</span> Radius =&gt; Math.Sqrt(X * X + Y * Y);
+    <span class="keyword">public</span> <span class="keyword">double</span> Angle =&gt; Math.Atan2(Y, X);
+
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> 距離で順序を決める。</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> 距離が全く同じなら偏角で順序付け。</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;other&quot;&gt;</span><span class="xmlDocTag">&lt;/param&gt;</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocTag">&lt;/returns&gt;</span>
+    <span class="keyword">public</span> <span class="keyword">int</span> CompareTo(Point2D other)
+    {
+        <span class="keyword">var</span> r = Radius.CompareTo(other.Radius);
+        <span class="keyword">if</span> (r != <span class="number">0</span>) <span class="keyword">return</span> r;
+        <span class="keyword">return</span> Angle.CompareTo(other.Angle);
+    }
+}
+
+
+<span class="keyword">class</span> IComparableSample
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">5</span>;
+        <span class="keyword">var</span> rand = <span class="keyword">new</span> Random();
+        <span class="keyword">var</span> data = Enumerable.Range(<span class="number">0</span>, N).Select(_ =&gt; <span class="keyword">new</span> Point2D(rand.NextDouble(), rand.NextDouble())).ToArray();
+
+        Console.WriteLine(<span class="string">&quot;元:&quot;</span>);
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> p <span class="keyword">in</span> data) WriteLine(p);
+
+        <span class="comment">// 並べ替えの順序に使える</span>
+        Console.WriteLine(<span class="string">&quot;整列済み:&quot;</span>);
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> p <span class="keyword">in</span> data.OrderBy(x =&gt; x)) WriteLine(p);
+    }
+
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> WriteLine(Point2D p)
+    {
+        Console.WriteLine($<span class="string">&quot;({p.X:N3}, {p.Y:N3}), radius = {p.Radius:N3}, angle = {p.Angle:N3}&quot;</span>);
+    }
+}</code></pre>
+<h3 id="section-6"><a id="sec-generated-title-8"></a> <a id="collection"></a>コレクション</h3>
+<p>コレクション(参考: 「<a href="/study/algorithm/collection/collection/">コレクション概要</a>」)には、
+同じ操作ができる様々な実装方法があります(それぞれにメリット・デメリット、適切な利用場面があります)。</p>
+<p>そして、C#では、操作の種類ごとにインターフェイスが標準で用意されていて、コレクションはそれらのインターフェイスを実装します。
+以下の表示いくつか例を挙げます(いずれも<code>System.Collections.Generic</code>名前空間)。
+(詳しくは<a href="https://msdn.microsoft.com/ja-jp/library/system.collections.generic.aspx">MSDN</a>をご覧ください。)</p>
+<table>
+<tr>
+<th>インターフェイス</th>
+<th>説明</th>
+</tr>
+<tr>
+<td><p><code>IEnumerable&lt;T&gt;</code></p></td>
+<td><p>要素の列挙ができる。<code>foreach</code>ステートメントや、<a href="/study/csharp/data/sp3_linq/#linq">LINQ</a> to Objects で使える。</p></td>
+</tr>
+<tr>
+<td><p><code>ICollection&lt;T&gt;</code></p></td>
+<td><p><code>IEnumerable&lt;T&gt;</code>に加えて、要素の追加(<code>Add</code>)、削除(<code>Remove</code>)などができたり、要素の個数が取れる。</p></td>
+</tr>
+<tr>
+<td><p><code>IList&lt;T&gt;</code></p></td>
+<td><p><code>ICollection&lt;T&gt;</code>に加えて、<a href="/study/csharp/oop/oo_indexer/">インデクサー</a>を使った要素の読み書きができる。</p></td>
+</tr>
+<tr>
+<td><p><code>IDictionary&lt;TKey, TValue&gt; </code></p></td>
+<td><p>辞書アクセス(キーを使った値の検索)しての値の読み書きができる。</p></td>
+</tr>
+<tr>
+<td><p><code>IReadOnlyCollection&lt;T&gt;</code><sup>※</sup></p></td>
+<td><p><code>IEnumerable&lt;T&gt;</code>に加えて、要素の個数が取れる。読み取り専用なので<a href="/study/csharp/oop/sp4_variance/#covariance">共変</a>。</p></td>
+</tr>
+<tr>
+<td><p><code>IReadOnlyList&lt;T&gt;</code><sup>※</sup></p></td>
+<td><p><code>IReadOnlyCollection&lt;T&gt;</code>に加えて、<a href="/study/csharp/oop/oo_indexer/">インデクサー</a>を使った要素の読み取りができる。読み取り専用なので<a href="/study/csharp/oop/sp4_variance/#covariance">共変</a>。</p></td>
+</tr>
+<tr>
+<td><p><code>IReadOnlyDictionary&lt;TKey, TValue&gt;</code><sup>※</sup></p></td>
+<td><p>辞書アクセス(キーを使った値の検索)しての値の読み取りができる。</p></td>
+</tr>
+</table>
+<h5 class="version version5">Ver. 5.0</h5>
+<sup>※</sup> 読み取り専用系のインターフェイスは .NET Framework 4.5 (C# 5.0と同時期)で追加されました。
+<p>このうち、<code>IEnumerable</code>と<code>IReadIReadOnlyList</code>の例を挙げておきます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Collections;
+<span class="keyword">using</span> System.Collections.Generic;
+<span class="keyword">using</span> System.Linq;
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 連結リスト。</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> &lt;see cref=&quot;IEnumerable{T}&quot;/&gt; を実装している = データの列挙ができる。複数のデータを束ねてる。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;typeparam name=&quot;T&quot;&gt;</span><span class="xmlDocTag">&lt;/typeparam&gt;</span>
+<span class="keyword">class</span> LinkedList&lt;T&gt; : IEnumerable&lt;T&gt;
+{
+    <span class="keyword">public</span> T Value { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> LinkedList&lt;T&gt; Next { <span class="keyword">get</span>; }
+
+    <span class="keyword">public</span> LinkedList(T value) : <span class="keyword">this</span>(value, <span class="keyword">null</span>) { }
+    <span class="keyword">private</span> LinkedList(T value, LinkedList&lt;T&gt; next) { Value = value; Next = next; }
+
+    <span class="keyword">public</span> LinkedList&lt;T&gt; Add(T value) =&gt; <span class="keyword">new</span> LinkedList&lt;T&gt;(value, <span class="keyword">this</span>);
+
+    <span class="keyword">public</span> IEnumerator&lt;T&gt; GetEnumerator()
+    {
+        <span class="keyword">if</span>(Next != <span class="keyword">null</span>)
+            <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> Next)
+                <span class="keyword">yield</span> <span class="keyword">return</span> x;
+        <span class="keyword">yield</span> <span class="keyword">return</span> Value;
+    }
+
+    IEnumerator IEnumerable.GetEnumerator() =&gt; GetEnumerator();
+}
+
+<span class="keyword">class</span> IEnumerableSample
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> a = <span class="keyword">new</span> LinkedList&lt;<span class="keyword">int</span>&gt;(<span class="number">1</span>);
+        <span class="keyword">var</span> b = a.Add(<span class="number">2</span>).Add(<span class="number">3</span>).Add(<span class="number">4</span>);
+
+        <span class="comment">// foreach で使える(これは IEnumerable 必須ではない)</span>
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> b)
+            Console.WriteLine(x);
+
+        <span class="comment">// string.Join で使える</span>
+        Console.WriteLine(<span class="keyword">string</span>.Join(<span class="string">&quot;, &quot;</span>, b));
+
+        <span class="comment">// LINQ で使える</span>
+        Console.WriteLine(b.Sum());
+    }
+}</code></pre>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Collections;
+<span class="keyword">using</span> System.Collections.Generic;
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 4次元上の点。</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> &lt;see cref=&quot;IReadOnlyList{T}&quot;/&gt; を実装している = &lt;see cref=&quot;IEnumerable{T}&quot;/&gt;に加えて、インデックス指定で値を読める。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">class</span> Point4D : IReadOnlyList&lt;<span class="keyword">double</span>&gt;
+{
+    <span class="keyword">public</span> <span class="keyword">double</span> X { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="keyword">double</span> Y { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="keyword">double</span> Z { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="keyword">double</span> W { <span class="keyword">get</span>; }
+
+    <span class="keyword">public</span> Point4D(<span class="keyword">double</span> x, <span class="keyword">double</span> y, <span class="keyword">double</span> z, <span class="keyword">double</span> w) { X = x; Y = y; Z = z; W = w; }
+
+    <span class="keyword">public</span> <span class="keyword">double</span> <span class="keyword">this</span>[<span class="keyword">int</span> index]
+    {
+        <span class="keyword">get</span>
+        {
+            <span class="keyword">switch</span> (index)
+            {
+                <span class="keyword">default</span>:
+                <span class="keyword">case</span> <span class="number">0</span>: <span class="keyword">return</span> X;
+                <span class="keyword">case</span> <span class="number">1</span>: <span class="keyword">return</span> Y;
+                <span class="keyword">case</span> <span class="number">2</span>: <span class="keyword">return</span> Z;
+                <span class="keyword">case</span> <span class="number">3</span>: <span class="keyword">return</span> W;
+            }
+        }
+    }
+
+    <span class="keyword">public</span> <span class="keyword">int</span> Count =&gt; <span class="number">4</span>;
+
+    <span class="keyword">public</span> IEnumerator&lt;<span class="keyword">double</span>&gt; GetEnumerator()
+    {
+        <span class="keyword">yield</span> <span class="keyword">return</span> X;
+        <span class="keyword">yield</span> <span class="keyword">return</span> Y;
+        <span class="keyword">yield</span> <span class="keyword">return</span> Z;
+        <span class="keyword">yield</span> <span class="keyword">return</span> W;
+    }
+
+    IEnumerator IEnumerable.GetEnumerator() =&gt; GetEnumerator();
+}
+
+<span class="keyword">class</span> IReadOnlyListSample
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> p1 = <span class="keyword">new</span> Point4D(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>);
+        <span class="keyword">var</span> p2 = <span class="keyword">new</span> Point4D(<span class="number">3</span>, <span class="number">7</span>, <span class="number">5</span>, <span class="number">11</span>);
+
+        <span class="comment">// X, Y, Z, W の代わりに 0, 1, 2, 3 のインデックスで値を読み出し</span>
+        <span class="keyword">var</span> innerProduct = <span class="number">0</span>.<span class="number">0</span>;
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">4</span>; i++)
+            innerProduct += p1[i] * p2[i];
+
+        Console.WriteLine(innerProduct);
+    }
+}</code></pre>
+<h3 id="idisposable"><a id="sec-generated-title-9"></a> <a id="IDisposable"></a>IDisposable</h3>
+<p><code>IDisposable</code>インターフェイス(<code>System</code>名前空間)は、<a href="/study/csharp/resource/rm_gc/#garbage-collection">ガベージ コレクション</a>任せではなく、
+明示的なタイミングで破棄処理を行いたいものに使います。詳細は「<a href="/study/csharp/resource/oo_dispose/">リソースの破棄</a>」で説明します。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;see cref=&quot;IDisposable&quot;/&gt;</span><span class="xmlDocComment"> を実装している = 使い終わったら明示的に Dispose を呼ぶ必要がある。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">class</span> Stopwatch : IDisposable
+{
+    System.Diagnostics.Stopwatch _s = <span class="keyword">new</span> System.Diagnostics.Stopwatch();
+
+    <span class="keyword">public</span> Stopwatch() { _s.Start(); }
+
+    <span class="keyword">public</span> <span class="keyword">void</span> Dispose()
+    {
+        _s.Stop();
+        Console.WriteLine(_s.Elapsed);
+    }
+}
+
+<span class="keyword">class</span> IDisposableSample
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// using ブロックを抜けたら自動的に Dispose が呼ばれる</span>
+        <span class="keyword">using</span> (<span class="keyword">new</span> Stopwatch())
+        {
+            <span class="keyword">var</span> t = T(<span class="number">12</span>, <span class="number">6</span>, <span class="number">0</span>);
+        }
+    }
+
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> T(<span class="keyword">int</span> x, <span class="keyword">int</span> y, <span class="keyword">int</span> z) =&gt; x &lt;= y ? y : T(T(x - <span class="number">1</span>, y, z), T(y - <span class="number">1</span>, z, x), T(z - <span class="number">1</span>, x, y));
+}</code></pre>
+<!-- original-page-break -->
+<h2 id="section-7"><a id="sec-generated-title-10"></a> <a id="multiple"></a>複数のインターフェイスを実装</h2>
+<p>C#は多重継承を認めていません(1つのクラスしか<a href="/study/csharp/oop/oo_inherit/">継承</a>できない)。この制約はクラスに対してのみかかります。すなわち、インターフェイスは複数実装できます。</p>
+<p>例えば、以下のような型を作れます。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> Id : IComparable&lt;Id&gt;, IEquatable&lt;Id&gt;
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> Value { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+    <span class="keyword">public</span> <span class="keyword">int</span> CompareTo(Id other) =&gt; Value.CompareTo(other.Value);
+
+    <span class="keyword">public</span> <span class="keyword">bool</span> Equals(Id other) =&gt; Value == other.Value;
+}</code></pre>
+<h2 id="section-8"><a id="sec-generated-title-11"></a> <a id="orverload"></a>型引数違いのジェネリック インターフェイス</h2>
+<p>C#では、<a href="/study/csharp/structured/st_function/#overload">オーバーロード</a>解決ができる限り、同名のメンバーを持つインターフェイスを複数、普通に実装することができます(オーバーロード解決できない場合には、次節の<a href="#explicit-impl">明示的実装</a>が必要になります)。</p>
+<p>これは特に、<a href="/study/csharp/oop/sp2_generics/#generics">ジェネリック</a>なインターフェイスを、型引数違いで複数実装する際に有効です。</p>
+<p>例えば、標準ライブラリの<code>IEquatable&lt;T&gt;</code>インターフェイス(<code>System</code>名前空間)について、異なる型引数で複数実装できます。
+<code>A</code>と<code>B</code>という2つのクラスがあったとして、<code>IEquatable&lt;A&gt;</code>と<code>IEquatable&lt;B&gt;</code>という2つの実装を持てます。</p>
+<p>具体的な用途としては、例えば、以下のような場面で有効です。</p>
+<ul>
+<li>図形全般を表す<code>Shape</code>型がある</li>
+<li><code>Shape</code>から派生した、矩形型<code>Rectangle</code>がある
+<ul>
+<li><code>Rectangle</code>は、幅と高さの両方の比較で等値判定する</li>
+</ul>
+</li>
+<li><code>Shape</code>から派生した、円型<code>Circle</code>がある
+<ul>
+<li><code>Circle</code>は、半径の比較で等値判定する</li>
+</ul>
+</li>
+<li><code>Shape</code>は、矩形同士、円同士でだけ等値判定をする。型が違う場合はその時点で不一致</li>
+</ul>
+<p>この条件下では、それぞれのクラスに以下のようにインターフェイスを持てます。</p>
+<ul>
+<li><code>Shape</code>は他の<code>Shape</code>と比較できるので、<code>IEquatable&lt;Shape&gt;</code>を実装できる</li>
+<li><code>Rectangle</code>は他の<code>Rectangle</code>と比較できるので、<code>IEquatable&lt;Rectangle&gt;</code>を実装できる
+<ul>
+<li><code>Rectangle</code>は<code>Shape</code>から派生しているので、<code>IEquatable&lt;Shape&gt;</code>でもある</li>
+</ul>
+</li>
+<li><code>Circle</code>は他の<code>Circle</code>と比較できるので、<code>IEquatable&lt;Circle&gt;</code>を実装できる
+<ul>
+<li><code>Circle</code>は<code>Shape</code>から派生しているので、<code>IEquatable&lt;Shape&gt;</code>でもある</li>
+</ul>
+</li>
+</ul>
+<p>これを、以下のようなコードで実装できます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">abstract</span> <span class="keyword">class</span> Shape : IEquatable&lt;Shape&gt;
+{
+    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">bool</span> Equals(Shape other);
+}
+
+<span class="keyword">class</span> Rectangle : Shape, IEquatable&lt;Rectangle&gt;
+{
+    <span class="keyword">public</span> <span class="keyword">double</span> Width { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">double</span> Height { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">bool</span> Equals(Shape other) =&gt; Equals(other <span class="keyword">as</span> Rectangle);
+
+    <span class="keyword">public</span> <span class="keyword">bool</span> Equals(Rectangle other)
+        =&gt; other != <span class="keyword">null</span> &amp;&amp; Width == other.Width &amp;&amp; Height == other.Height;
+}
+
+<span class="keyword">class</span> Circle : Shape, IEquatable&lt;Circle&gt;
+{
+    <span class="keyword">public</span> <span class="keyword">double</span> Radius { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">bool</span> Equals(Shape other) =&gt; Equals(other <span class="keyword">as</span> Circle);
+
+    <span class="keyword">public</span> <span class="keyword">bool</span> Equals(Circle other)
+        =&gt; other != <span class="keyword">null</span> &amp;&amp; Radius == other.Radius;
+}</code></pre>
+<h2 id="section-9"><a id="sec-generated-title-12"></a> <a id="explicit-impl"></a>明示的実装</h2>
+<p>インターフェイスの場合、1つのクラスで複数のインターフェイスを実装することができます。
+このとき、複数のインターフェイスに同名・同引数のメソッドがあった場合、衝突が起こりえます。</p>
+<p>例えば以下の例を見てください。<code>IAccumulator</code>インターフェイスと<code>IGroup&lt;T&gt;</code>インターフェイスがどちらも<code>Add</code>メソッドを持っていて、それを両方実装している<code>ImplicitImplementation</code>クラスは、1つの<code>Add</code>メソッドが2つの役割を兼ねることになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Collections.Generic;
+
+<span class="keyword">interface</span> IAccumulator
+{
+    <span class="keyword">void</span> Add(<span class="keyword">int</span> value);
+    <span class="keyword">int</span> Sum { <span class="keyword">get</span>; }
+}
+
+<span class="keyword">interface</span> IGroup&lt;T&gt;
+{
+    <span class="keyword">void</span> Add(T item);
+    IEnumerable&lt;T&gt; Items { <span class="keyword">get</span>; }
+}
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 1つの&lt;see cref=&quot;Add(int)&quot;/&gt;で、2つのインターフェイスの実装を担うんであれば特に問題は出ない。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">class</span> ImplicitImplementation : IAccumulator, IGroup&lt;<span class="keyword">int</span>&gt;
+{
+    <span class="keyword">public</span> <span class="keyword">void</span> Add(<span class="keyword">int</span> x)
+    {
+        Sum += x;
+        _items.Add(x);
+    }
+
+    <span class="keyword">public</span> IEnumerable&lt;<span class="keyword">int</span>&gt; Items =&gt; _items;
+    <span class="keyword">private</span> List&lt;<span class="keyword">int</span>&gt; _items = <span class="keyword">new</span> List&lt;<span class="keyword">int</span>&gt;();
+
+    <span class="keyword">public</span> <span class="keyword">int</span> Sum { <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; }
+}</code></pre>
+<p>元々役割を兼ねたい場合はこれでいいんですが、そうでないこともあります。
+こういう時に使うのが、<strong id="explicit-interface-method" class="keyword">インターフェイスの明示的実装</strong>です。
+メンバーを定義する際に、メンバー名の前に「インターフェイス名 + <code>.</code>」を加えます。
+例えば、メソッドの場合は以下のように書きます。</p>
+<pre><code class="language-csharp">戻り値の型 インターフェイス名.メソッド名(引数一覧)
+{
+    メソッド本体(具体的な処理)
+}</code></pre>
+<p>この場合、アクセス修飾子(<code>public</code>や<code>private</code>などは付けれません。)</p>
+<p>これを使って、先ほどの2つのインターフェイスの<code>Add</code>メソッドに対して別実装を与えてみましょう。
+以下のようになります。</p>
+<pre><code class="language-csharp"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> &lt;see cref=&quot;IAccumulator.Add(int)&quot;/&gt;と、&lt;see cref=&quot;IGroup{int}.Add(int)&quot;/&gt;が完全に被るので、</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 別の実装を与えたければ明示的実装が必要。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">class</span> ExplicitImplementation : IAccumulator, IGroup&lt;<span class="keyword">int</span>&gt;
+{
+    <span class="keyword">void</span> IAccumulator.Add(<span class="keyword">int</span> value) =&gt; Sum += value;
+
+    <span class="keyword">void</span> IGroup&lt;<span class="keyword">int</span>&gt;.Add(<span class="keyword">int</span> item) =&gt; _items.Add(item);
+
+    <span class="keyword">public</span> IEnumerable&lt;<span class="keyword">int</span>&gt; Items =&gt; _items;
+    <span class="keyword">private</span> List&lt;<span class="keyword">int</span>&gt; _items = <span class="keyword">new</span> List&lt;<span class="keyword">int</span>&gt;();
+
+    <span class="keyword">public</span> <span class="keyword">int</span> Sum { <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; }
+}</code></pre>
+<p>この例のように、明示的実装はメンバー単位で切り替えれます。
+この例の場合は、<code>Add</code>だけが明示的実装で、残りの<code>Sum</code>や<code>Items</code>は通常の(暗黙的な)実装です。</p>
+<p>ちなみに、明示的実装をしたメンバーは、そのクラスの変数から直接は利用できなくなります。
+一度インターフェイスのキャストしてから呼び出すことになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> ExpliciteImplementationSample
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// 1つのAddで両方の債務を担ってるので2重集計される</span>
+        <span class="keyword">var</span> a = <span class="keyword">new</span> ImplicitImplementation();
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++)
+        {
+            Accumulate(a, i);
+            AddItem(a, i);
+
+            <span class="comment">// 通常の実装なので、普通に Add(i) を呼ぶことも可能</span>
+            <span class="comment">//a.Add(i);</span>
+        }
+        Console.WriteLine($<span class="string">&quot;sum = {a.Sum}, items = {string.Join(&quot;</span>, <span class="string">&quot;, a.Items)}&quot;</span>);
+
+        <span class="comment">// 明示的実装を使って2つのAddを別実装したので個別集計される。</span>
+        <span class="keyword">var</span> b = <span class="keyword">new</span> ExplicitImplementation();
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++)
+        {
+            Accumulate(b, i);
+            AddItem(b, i);
+
+            <span class="comment">// 明示的実装の場合、一度インターフェイスにキャストしてからでないと Add(i) は呼べない。</span>
+            <span class="comment">// 例えば以下のコメントを外すとコンパイル エラー。</span>
+            <span class="comment">//b.Add(i);</span>
+        }
+        Console.WriteLine($<span class="string">&quot;sum = {b.Sum}, items = {string.Join(&quot;</span>, <span class="string">&quot;, b.Items)}&quot;</span>);
+    }
+
+    <span class="keyword">static</span> <span class="keyword">void</span> Accumulate(IAccumulator x, <span class="keyword">int</span> value) =&gt; x.Add(value);
+
+    <span class="keyword">static</span> <span class="keyword">void</span> AddItem&lt;T&gt;(IGroup&lt;T&gt; g, T item) =&gt; g.Add(item);
+}</code></pre>
+<p>まとめると、インターフェイスの明示的実装を使うと、以下のような状態になります。</p>
+<ul>
+<li>同じ名前のメンバーを持ったインターフェイスを複数同時に実装できる</li>
+<li>明示的実装したメンバーは、いったんインターフェイス型にキャストしてからでないと呼べなくなる</li>
+</ul>
+<!-- original-page-break -->
+<h2 id="section-10"><a id="sec-generated-title-13"></a> <a id="usage"></a>インターフェイスの明示的実装の用途</h2>
+<p>もう少し具体的に、インターフェイスの明示的実装の用途をいくつか紹介しましょう。</p>
+<p>インターフェイスの明示的実装は、同じ名前のメンバーを持ったインターフェイスを複数同時に実装できるようにするための機能です。
+では、それが必要になる場面というのは具体的にはどういう状況でしょう。
+また、メンバーをいったんインターフェイス型にキャストしてからでないと呼べなくなるという性質も、有効に使える場面があります。</p>
+<h3 id="section-11"><a id="sec-generated-title-14"></a> <a id="legacy-member"></a>消したいけど消せないメソッドを隠す</h3>
+<p>まず一般論として、public なものは、足すより消す方が難しいです。他人の作ったライブラリを使っていて、ある日突然、自分の使っているメソッドが消えたらどうでしょう。自分は何もしていないのに、自分の書いたコードがコンパイルできなくなります。</p>
+<p>この問題はライブラリが広く使われれば使われるほど影響範囲が広がります。標準ライブラリに至っては、まず削除はできないものだと思ってください。</p>
+<p>その結果、.NETの標準ライブラリには、いくつか、消したくても消せないものがあります。代表例として、以下のようなものがあります。</p>
+<ul>
+<li>非ジェネリック版の<code>IEnumerable</code>インターフェイス(<code>System.Collections</code>名前空間)
+<ul>
+<li>ジェネリック版の<code>IEnumerable&lt;T&gt;</code>(<code>System.Collections.Generic</code>名前空間)が、この非ジェネリック版から派生している</li>
+</ul>
+</li>
+<li><code>ICollection&lt;T&gt;</code>インターフェイス(<code>System.Collections.Generic</code>名前空間)の<code>IsReadOnly</code></li>
+</ul>
+<p>これらを「消したい」理由については後で補足しますが、とりあえず、消したくても消してはいけません。</p>
+<p>これらのインターフェイスを実装する際、その消したいけど消せないメソッドも一緒に実装させられるという苦行が待っています。
+せめて、そんなもうあまり使わなくなったメンバーはpublicにしたくないわけです。
+そこで、明示的実装の、メンバーを隠せる性質が使えます。</p>
+<p>例として<code>IEnumerable</code>インターフェイスを隠す方法を示しましょう。というか、すでに<a href="#collection">前述</a>の例で使っていたりします。再掲すると以下の通りです。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Collections;
+<span class="keyword">using</span> System.Collections.Generic;
+
+<span class="keyword">class</span> LinkedList&lt;T&gt; : IEnumerable&lt;T&gt;
+{
+    <span class="keyword">public</span> T Value { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> LinkedList&lt;T&gt; Next { <span class="keyword">get</span>; }
+
+    <span class="keyword">public</span> LinkedList(T value) : <span class="keyword">this</span>(value, <span class="keyword">null</span>) { }
+    <span class="keyword">private</span> LinkedList(T value, LinkedList&lt;T&gt; next) { Value = value; Next = next; }
+
+    <span class="keyword">public</span> LinkedList&lt;T&gt; Add(T value) =&gt; <span class="keyword">new</span> LinkedList&lt;T&gt;(value, <span class="keyword">this</span>);
+
+    <span class="keyword">public</span> IEnumerator&lt;T&gt; GetEnumerator()
+    {
+        <span class="keyword">if</span>(Next != <span class="keyword">null</span>)
+            <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> Next)
+                <span class="keyword">yield</span> <span class="keyword">return</span> x;
+        <span class="keyword">yield</span> <span class="keyword">return</span> Value;
+    }
+
+    <span class="comment">// 明示的実装。こいつは、IEnumerableを介さない限り見えなくなる</span>
+    IEnumerator IEnumerable.GetEnumerator() =&gt; GetEnumerator();
+}</code></pre>
+<h4 id="section-12"><a id="sec-generated-title-15"></a> <a id="legacy-nongeneric"></a>補足1： 非ジェネリック インターフェイス</h4>
+<p>特に、<a href="/study/csharp/oop/sp2_generics/#generics">ジェネリック</a>関連に多いです。
+ジェネリックが.NET 1.0には間に合わず、2.0からの追加だったので、多くのインターフェイスで非ジェネリック版と、ジェネリック版が2重保守されています。</p>
+<p><code>IEnumerable</code>もその例の1つで、.NET 1.0時代に非ジェネリック版が、2.0でジェネリック版が入りました。2.0で入ったジェネリック版は、1.0時代のコードとの互換性のために非ジェネリック版から派生しています。もし、最初から.NETにジェネリックがあれば、非ジェネリック版の機能は不要でした。</p>
+<h4 id="isreadonly"><a id="sec-generated-title-16"></a> <a id="legacy-isreadonly"></a>補足2: IsReadOnly</h4>
+<p>インターフェイスが増えるというのはそれなりのコストがかかるそうで、.NETリリース初期の頃は、インターフェイスを減らす方向で設計を進めたそうです。<code>ICollection&lt;T&gt;</code>インターフェイスが<code>IsReadOnly</code>というプロパティを持っているのはその頃の名残です。しかし今となっては、インターフェイスが増えてもいいからちゃんと「読み取り専用なコレクション」と「書き換え可能なコレクション」は別インターフェイスに分けるべきだということになっています(そのため、.NET 4.5で、<code>IReadOnlyCollection&lt;T&gt;</code>インターフェイスが(<code>System.Collections.Generic</code>名前空間)が追加されました)。</p>
+<p>つまり、今と昔で以下のような思想の差があります。</p>
+<ul>
+<li>昔: インターフェイスを増やしたくないので、コレクションが読み取り専用か書き換え可能かはプロパティで返していた</li>
+<li>今: 読み取り専用なら<code>IReadOnlyCollection&lt;T&gt;</code>インターフェイスを、書き換え可能なら<code>ICollection&lt;T&gt;</code>インターフェイスを使う</li>
+</ul>
+<p>こうなると、<code>IsReadOnly</code>プロパティははっきり言って邪魔です。<code>ICollection&lt;T&gt;</code>を選んだ時点で書き換え可能にしたいんだから、おそらくは常にtrueを返すだけになるでしょう。</p>
+<h3 id="section-13"><a id="sec-generated-title-17"></a> <a id="access-restriction"></a>メンバーのアクセスを制限する</h3>
+<p>(書きかけ)</p>
+<ul>
+<li>internal set 隠し</li>
+<li>internal interface 実装できるのとの組み合わせ</li>
+</ul>
+<h3 id="object"><a id="sec-generated-title-18"></a>ジェネリック版とobject版</h3>
+<p>(書きかけ)</p>
+<p>ときどき、「特定のインターフェイスを実装している時だけ特別な動作を挟む」みたいな処理を書きたい場合があります。</p>
+<ul>
+<li>この as 判定用に <code>interface IX { object X { get; } }</code></li>
+<li>でも、人手で使うとき用にジェネリック版を用意して <code>interface IX&lt;T&gt; : IX { new T X { get; } }</code></li>
+</ul>
+<!-- original-page-break -->
+<h2 id="section-14"><a id="sec-generated-title-19"></a> <a id="dim"></a>インターフェイスのデフォルト実装</h2>
+<h5 class="version version8">Ver. 8.0</h5>
+<p>C# 8.0 (.NET Core 3.0)で、インターフェイスの制限が緩和されました。
+以下のようになります。</p>
+<ul>
+<li>メソッド、<a href="/study/csharp/oop/oo_property/">プロパティ</a>、<a href="/study/csharp/oop/oo_indexer/">インデクサー</a>、<a href="/study/csharp/functional/sp_event/">イベント</a>のアクセサーの実装を持てるようになった</li>
+<li><a href="/study/csharp/oop/oo_conceal/#level">アクセシビリティ</a>を明示的に指定できるようになった</li>
+<li><a href="/study/csharp/oop/oo_static/">静的メンバー</a>を持てるようになった
+<ul>
+<li><a href="/study/csharp/package/toplevelaccessibility/#key-nested">入れ子</a>の型も含む</li>
+</ul>
+</li>
+</ul>
+<p>これら指して「インターフェイスのデフォルト実装」(default implementations of interfaces)と呼びます<sup>※</sup>。
+(1番目の「インターフェイスが関数メンバーの実装を持てる」というのを主目的に検討されたもので、
+言葉の意味だけからすると、狭義にはこの1番目の機能こそが「デフォルト実装」です。
+ただ、これのついでに実装されたものなので2番目、3番目には具体的な名前がついていません。)</p>
+<p>このようにインターフェイスに対する制限を減らすのであれば、
+「クラス(特に<a href="/study/csharp/oop/oo_abstract/#abclass">抽象クラス</a>)との区別が今でも必要なのかどうか」
+というような議論もありました。
+今、1から文法を決めれるとしても残したい区別は、
+「フィールドを持てない代わりに多重継承できる」という点くらいで、
+他の差は「歴史的経緯に由来するもの」という側面が強いです。
+(インターフェイスでのフィールド定義は、多重継承、特に、<a href="https://ja.wikipedia.org/wiki/%E8%8F%B1%E5%BD%A2%E7%B6%99%E6%89%BF%E5%95%8F%E9%A1%8C">ひし形継承</a>との相性が悪く、複雑度のわりにメリットが少ないです。)</p>
+<p>歴史的経緯に由来して、以下のような挙動はクラスと揃えることができませんでした。</p>
+<ul>
+<li>アクセシビリティ未指定のときなど、既定の挙動が違う</li>
+<li>派生インターフェイスでの<a href="/study/csharp/oop/oo_polymorphism/#override">オーバーライド</a>は明示的実装が必須</li>
+<li>デフォルト実装を持っているメンバーは、派生クラス・派生インターフェイスからは直接呼べない(親へのキャストが必要)</li>
+</ul>
+<p>ここでいう「歴史的経緯」は、
+既存機能・既存コードへの影響を最小限にとどめるためや、
+.NET ランタイム側の修正が簡単な範囲に収めるために残ってしまった差です。</p>
+<p><sup>※</sup> Java 由来で、「インターフェイスのデフォルト メソッド」(default interface method、略して DIM)と呼ばれたりもします。</p>
+<h3 id="section-15"><a id="sec-generated-title-20"></a> <a id="runtime-feature"></a>ランタイム側の修正</h3>
+<p>インターフェイスのデフォルト実装は C# コンパイラー上のトリックだけでは実装できず、 .NET ランタイム側の対応が必要な機能です。
+C# 8.0 以降を使っていても、ターゲットとなるランタイム(TargetFramework)が古いと使えません。
+.NET Core 3.0 (かそれと同世代)以降のランタイムである必要があります。
+.NET Framework 側では対応予定はない(.NET Core 3.0 と同世代な .NET Framework 4.8 でも未対応)です。</p>
+<p>詳しくは以前書いたブログ「<a href="/blog/2018/12/runtimefeature/">RuntimeFeature クラス</a>」で説明しています。</p>
+<h3 id="section-16"><a id="sec-generated-title-21"></a> <a id="dim-motivation"></a>導入の動機</h3>
+<p>この制限緩和には、以下のような動機ががあります。</p>
+<ul>
+<li>既存のインターフェイスにメンバーを追加しても破壊的変更にならない</li>
+<li>同様の機能を持っている Android (Java (8以降))や iOS (Swift)との相互運用</li>
+<li><a href="https://ja.wikipedia.org/wiki/%E3%83%88%E3%83%AC%E3%82%A4%E3%83%88">トレイト</a>的にも使える</li>
+</ul>
+<h4 id="section-17"><a id="sec-generated-title-22"></a> <a id="breaking-change"></a>メンバー追加による破壊的変更</h4>
+<p>最大の動機は1番目の「破壊的変更にならない」という部分です。
+抽象メンバーは派生クラスでの実装が必須で、実装しなければコンパイル エラーを起こします。
+その結果、「後から追加したら派生クラスがコンパイル エラーを起こす」という状態になります。</p>
+<pre><code class="language-csharp"><span class="keyword">interface</span> I
+{
+    <span class="keyword">void</span> X();
+ 
+    <span class="comment">// 後から追加したものとする</span>
+    <span class="keyword">void</span> Y();
+}
+ 
+<span class="keyword">class</span> C : I
+{
+    <span class="comment">// X は実装してある</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> X() { }
+ 
+    <span class="comment">// C が I を実装するコードを書いたころには Y がなかったので OK。</span>
+    <span class="comment">// Y を追加したことでコンパイル エラーに。</span>
+}</code></pre>
+<p>この問題を回避するには、これまでは抽象クラスを使うしかありませんでした。
+抽象クラスは抽象クラスで、多重継承ができないという別の制限があるので完全な回避策にはなりません。</p>
+<p>(あるいは、語尾にExとか2とか3とかが付いた新しいインターフェイスを作ったり、
+ユーザーに破壊的変更を受け入れてもらうという手もありますが、
+どちらもかなり最終手段です。)</p>
+<p>そこで、C# 8.0 ではインターフェイスも実装を持てるようにしました。
+Java 8 の同様の機能も同じ動機に基づいています。
+機能名が「デフォルト実装」(default = de(脱) + fault(不備))なのもこのためです。
+「本来なくてはならない実装がない」という状態(fault)に対して既定動作を与えることで、エラーを回避します。</p>
+<p>「規約だけを定める」というクリーンさを犠牲にしてでも、このメリットは大きいです。</p>
+<p>この観点で言うと、インターフェイスのデフォルト実装はライブラリ作者のための機能になります。
+特に、広く使われているライブラリほど破壊的変更はできないものなので、
+一番恩恵を受けるのは<a href="https://github.com/dotnet/corefx/">corefx</a> (.NET Core の標準ライブラリ部分)チームだったりします。</p>
+<p>(小さい規模だと、自分たちで作ったインターフェイスを自分たちで使うということが多くなりますし、
+その場合は別に破壊的変更が気になること自体あまりありません。)</p>
+<h4 id="section-18"><a id="sec-generated-title-23"></a> <a id="trait"></a>トレイト用途</h4>
+<p><a href="https://ja.wikipedia.org/wiki/%E3%83%88%E3%83%AC%E3%82%A4%E3%83%88">トレイト</a>的な用途としては、フィールドを持てないなどの制限があるので、恩恵は限定的です。
+C# の場合には<a href="/study/csharp/functional/sp3_extension/">拡張メソッド</a>でも似たようなことができるので、特に恩恵は少なめです。</p>
+<p>「拡張メソッドでもできなくはないけども、<a href="/study/csharp/oop/oo_polymorphism/#virtual_method">virtual</a> な実装方法を取りたい」みたいな場合に使います。</p>
+<p>よく例に上がるのが <a href="/study/csharp/data/sp3_linq/">LINQ</a> to Object の <code>Count</code> メソッドです。
+<code>IEnumerable&lt;T&gt;</code>(<code>System.Collections.Generic</code>名前空間) に対する <code>Count</code>(含まれている要素数を数える)は、汎用的に書くなら以下のように書くしかありません。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">int</span> Count&lt;T&gt;(IEnumerable&lt;T&gt; source)
+{
+    <span class="keyword">var</span> count = <span class="number">0</span>;
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> _ <span class="keyword">in</span> source) ++count;
+    <span class="keyword">return</span> count;
+}</code></pre>
+<p>ただ、配列や<code>List&lt;T&gt;</code>など、元々長さを持っている型であれば、この <code>foreach</code> は全くの無駄で、できれば元々フィールドとして持っている長さを直接返したいです。
+そのため、<a href="https://source.dot.net/#System.Linq/System/Linq/Count.cs">実際の <code>Count</code> の実装</a>には <code>is</code> 演算子による分岐が挟まっています。
+この分岐をするくらいなら、拡張メソッドではなく、インターフェイスのデフォルト実装としてトレイト的に実装する方が素直(virtual なので <code>ICollection</code> 側でオーバーライドできる)です。</p>
+<h3 id="section-19"><a id="sec-generated-title-24"></a> <a id="function-implementation"></a>実装を持つ関数メンバー</h3>
+<p>ということで、インターフェイスが実装を持てるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">interface</span> I
+{
+    <span class="keyword">void</span> X();
+ 
+    <span class="comment">// 後から追加しても、デフォルト実装を持っているので平気</span>
+    <span class="keyword">void</span> Y() { }
+}
+ 
+<span class="keyword">class</span> A : I
+{
+    <span class="comment">// X だけ実装していればとりあえず大丈夫</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> X() { }
+}
+ 
+<span class="keyword">class</span> B : I
+{
+    <span class="keyword">public</span> <span class="keyword">void</span> X() { }
+ 
+    <span class="comment">// Y も実装。I 越しでもちゃんとこれが呼ばれる。</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> Y() =&gt; Console.WriteLine(<span class="string">&quot;B&quot;</span>);
+}
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main() =&gt; M(<span class="keyword">new</span> B());
+    <span class="keyword">static</span> <span class="keyword">void</span> M(I i) =&gt; i.Y();
+}</code></pre>
+<pre><code class="language-console">B</code></pre>
+<p>ただし、以下の制限は残っています。</p>
+<ul>
+<li>インスタンス <a href="/study/csharp/structured/st_struct/#field">フィールド</a> は持てない</li>
+<li>インスタンス <a href="/study/csharp/oop/oo_construct/">コンストラクター</a>、<a href="/study/csharp/resource/rm_destructor/">ファイナライザー</a>は持てない</li>
+</ul>
+<p>主目的(新規メンバー追加での破壊的変更の回避)のためにはインスタンス メンバーだけ実装を持てればいいわけですが、ついでにいろいろと緩和されています。</p>
+<h4 id="section-20"><a id="sec-generated-title-25"></a> <a id="static-member"></a>静的メンバー</h4>
+<p>静的メンバーも持てるようになりました。
+インスタンス メンバーと違って、静的コンストラクターや静的フィールドは持てます。
+<a href="/study/csharp/start/sp_const/">定数</a>や、<a href="/study/csharp/oop/oo_operator/">演算子</a>、<a href="/study/csharp/package/toplevelaccessibility/#key-nested">入れ子</a>の型も持てます。</p>
+<pre><code class="language-csharp"></code></pre>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">interface</span> I
+{
+    <span class="keyword">static</span> I() { }
+    <span class="keyword">static</span> <span class="keyword">int</span> _field;
+    <span class="keyword">static</span> <span class="keyword">int</span> Method() =&gt; ++_field;
+    <span class="keyword">const</span> <span class="keyword">int</span> Constant = <span class="number">1</span>;
+    <span class="keyword">public</span> <span class="keyword">static</span> I <span class="keyword">operator</span> +(I x) =&gt; x;
+    <span class="keyword">class</span> Inner { }
+}
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        Console.WriteLine(I.Method());
+        I.Inner inner;
+    }
+}</code></pre>
+<p>次節で説明する通り、アクセシビリティは特に指定しなければ <code>public</code> です。
+明示すれば <code>protected</code> や <code>private</code> にすることもできます。</p>
+<h4 id="section-21"><a id="sec-generated-title-26"></a> <a id="accessibility"></a>アクセシビリティ</h4>
+<p>C# 7.3 までは、インターフェイスのメンバーは常に <code>public</code> で <code>virtual</code> でした。
+C# 8.0 からは、明示的に指定することでクラスと同じく、<code>protected</code> などのアクセシビリティを指定できます。</p>
+<pre><code class="language-csharp"><span class="keyword">interface</span> I
+{
+    <span class="comment">// 未指定の挙動は今まで通り、public virtual。</span>
+    <span class="keyword">void</span> Public()
+    {
+        Private();
+    }
+ 
+    <span class="comment">// 明示することでそれ以外のアクセシビリティを指定できるように。</span>
+    <span class="comment">// protected なら派生クラス・派生インターフェイスから、</span>
+    <span class="comment">// private なら自分自身からのみ呼び出し可能。</span>
+    <span class="keyword">protected</span> <span class="keyword">void</span> Protected() { }
+    <span class="keyword">private</span> <span class="keyword">void</span> Private() { }
+}
+ 
+<span class="keyword">interface</span> IDerived : I
+{
+    <span class="keyword">void</span> M()
+    {
+        Public();
+        Protected();
+        <span class="comment">// Private(); はダメ</span>
+    }
+}</code></pre>
+<p>ちなみに、省略時の挙動は今まで通り <code>public virtual</code> です。
+クラスの場合の省略時は <code>private</code> なので、クラスとは挙動が異なります。</p>
+<p>また、<a href="#mics-restriction">後述しますが</a>、<code>protected</code> なメンバーにアクセスできるのは派生インターフェイスからだけです。
+クラスの場合、派生(実装)しているクラスであっても <code>protected</code> メンバーは見えません。</p>
+<h4 id="section-22"><a id="sec-generated-title-27"></a> <a id="default-virtual"></a>既定で仮想</h4>
+<p>アクセシビリティを明示して <code>protected</code> や <code>internal</code> などを付けても、<code>protected virtual</code> や <code>internal virtual</code> の意味になります。
+仮想呼び出しになる方が既定動作です。
+これも、クラスとは既定動作が違います。
+C# のクラスは何も指定しなければ仮想関数にはなりません。</p>
+<p><code>private</code> か、あるいは明示的に <code>sealed</code> を指定した時だけ、非仮想になります。</p>
+<pre><code class="language-csharp"><span class="keyword">interface</span> I
+{
+    <span class="comment">// 未指定の挙動は今まで通り、public virtual。</span>
+    <span class="keyword">void</span> Public() { }
+ 
+    <span class="comment">// これも実際には protected virtual。</span>
+    <span class="keyword">protected</span> <span class="keyword">void</span> Protected() { }
+ 
+    <span class="comment">// private メンバーは派生側から呼ばれないので virtual である必要がない。</span>
+    <span class="keyword">private</span> <span class="keyword">void</span> Private() { }
+ 
+    <span class="comment">// sealed を明示すれば virtual ではなくせる。</span>
+    <span class="keyword">sealed</span> <span class="keyword">void</span> Sealed() { }
+}</code></pre>
+<p>ちなみに、派生インターフェイスで基底インターフェイスの <code>virtual</code> なメンバーに <code>sealed</code> を付けることはできません。
+一度 <code>virtual</code> になったものはずっと <code>virtual</code> です。</p>
+<pre><code class="language-csharp"><span class="keyword">interface</span> IDerived : I
+{
+    <span class="comment">// 基底側で virtual なものを派生側で sealed に変えることはできない。</span>
+    <span class="comment">// コンパイル エラーになる。</span>
+    <span class="keyword">sealed</span> <span class="keyword">void</span> I.Protected() { }
+}</code></pre>
+<p>(多重継承があり得るインターフェイスでは、ある経路で <code>sealed</code> を付けてオーバーライドを禁止しても、別のある経路では <code>sealed</code> が付いていないなど、不整合があるため認められません。)</p>
+<h4 id="section-23"><a id="sec-generated-title-28"></a> <a id="multiple-inheritance"></a>多重継承</h4>
+<p>クラスとの最大の差は多重継承ができる点です。</p>
+<p>デフォルト実装があっても、
+フィールドさえ持たなければ多重継承の実装はそれほど難しいものではないので、
+パフォーマンスなどへの悪影響はありません。
+(参考: <a href="https://www.buildinsider.net/column/iwanaga-nobuyuki/013">「インターフェースのデフォルト実装」の導入（前編）</a>)</p>
+<p>ただ、「別経路で同じメソッドに別実装が与えられている」という場合があって、
+そこでの呼び分けが問題になることがあります。</p>
+<p>例えば以下のようなコードでは、どの実装を使いたいのか不明瞭なので、コンパイル エラーを起こします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">interface</span> IA
+{
+    <span class="keyword">void</span> M() =&gt; Console.WriteLine(<span class="string">&quot;A.M&quot;</span>);
+}
+ 
+<span class="keyword">interface</span> IB : IA
+{
+    <span class="keyword">void</span> IA.M() =&gt; Console.WriteLine(<span class="string">&quot;B.M&quot;</span>);
+}
+ 
+<span class="keyword">interface</span> IC : IA
+{
+    <span class="keyword">void</span> IA.M() =&gt; Console.WriteLine(<span class="string">&quot;C.M&quot;</span>);
+}
+ 
+<span class="comment">// IB にも IC にも M の実装があって、どちらを使いたいのか不明瞭(コンパイル エラー)。</span>
+<span class="keyword">class</span> C : IB, IC
+{
+}</code></pre>
+<p>ちなみに、「コンパイルするときには <code>IB</code> にしか <code>M</code> の実装がなかったからコンパイルできたけど、後から <code>IC</code> に <code>M</code> を追加した状態のライブラリに差し替えた」というような状況もあり得て、この場合は実行時エラーになります。
+<code>AmbiguousImplementationException</code>(<code>System.Runtime</code> 名前空間)が throw されます。</p>
+<p>もちろん、自分自身が実装を持てばそれが優先されるので、この「不明瞭」エラーは起きません。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> C : IB, IC
+{
+    <span class="comment">// これなら IB.M でも IC.M でもなく、この M が呼ばれるので明瞭</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> M() =&gt; Console.WriteLine(<span class="string">&quot;new implementation&quot;</span>);
+}</code></pre>
+<p>「どうしても <code>IB.M</code> を呼びたい」というように、特定の実装を明示的に呼び出したい場合もあるかと思います。
+そういうときのために、<a href="/study/csharp/oop/oo_inherit/#base-access"><code>base</code> キーワード</a>に特定の型を指定できる機能も追加される予定<sup>※</sup>です。
+<code>base(T)</code> というように書きます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> C : IB, IC
+{
+    <span class="comment">// これなら IB.M を明示的に呼べる。</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> M() =&gt; <span class="keyword">base</span>(IB).M();
+}</code></pre>
+<p><sup>※</sup> 元々 C# 8.0 に入る予定で一時的には実装されていましたが、
+最終的には 8.0 から外れて、9.0 で取り組みなおすことになりました。</p>
+<p>ちなみに、将来的にはこの書き方も認めたいという計画はあります
+(参考: 「<a href="/study/csharp/oop/oo_inherit/#non-virtual-base-access">base(T) アクセス</a>」)。</p>
+<h3 id="section-24"><a id="sec-generated-title-29"></a>#<a id="reabstraction"></a>再抽象化</h3>
+<p>デフォルト実装を持つメンバーを、派生インターフェイス側で再び抽象メンバーに戻すこともできます。
+以下のように、明示的実装っぽい書き方の前に <code>abstract</code> 修飾を付けます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">interface</span> A
+{
+    <span class="keyword">void</span> M() =&gt; Console.WriteLine(<span class="string">&quot;default implementation&quot;</span>);
+}
+ 
+<span class="keyword">interface</span> B : A
+{
+    <span class="comment">// 実装を持っているメソッドを abstract に変更。</span>
+    <span class="keyword">abstract</span> <span class="keyword">void</span> A.M();
+}
+ 
+<span class="comment">// M の実装が必須になる(コンパイル エラー)。</span>
+<span class="keyword">class</span> C : B
+{
+}</code></pre>
+<p>メソッド <code>M</code> が抽象メンバーになったので、インターフェイス<code>B</code>を実装するクラスには <code>M</code> の実装が必須になります。</p>
+<p>この機能を再抽象化(re-abstraction)と言います。</p>
+<h4 id="section-25"><a id="sec-generated-title-30"></a> <a id="mics-restriction"></a>その他の制限</h4>
+<p>主に既存の(C# 7.3 以前の)コードを壊さないようにするためですが、
+その他にもいくつか制限が掛かっています。
+派生クラスと派生インターフェイスで挙動が変わったりもするので注意が必要です。</p>
+<p>まず、派生インターフェイスでは、オーバーライドは常に<a href="#explicit-impl">明示的実装</a>が必要です。</p>
+<pre><code class="language-csharp"><span class="keyword">interface</span> I
+{
+    <span class="keyword">void</span> M() { }
+}
+ 
+<span class="keyword">interface</span> IDerived : I
+{
+    <span class="comment">// オーバーライドには明示的実装が必須。</span>
+    <span class="keyword">void</span> I.M() { }
+ 
+    <span class="comment">// 単に M と書くと、別物になる。</span>
+    <span class="comment">// 「別物で基底の M を隠したければ new 修飾を付けろ」と警告が出る。</span>
+    <span class="keyword">void</span> M() { }
+}
+
+<span class="keyword">class</span> C : I
+{
+    <span class="comment">// クラスの場合は別にそんな制限はなくて、public な同名のメソッドを書けば I.M として使える。</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> M() { }
+}</code></pre>
+<p>基底インターフェイスのメンバーの呼び出しは、
+派生側もインターフェイスの場合にはクラス → クラスの時と同じような感覚です。
+普通に呼べるし、<code>proteted</code> なものに触れます。</p>
+<p>一方、派生側がクラスの場合、デフォルト実装しかない(自分自身はオーバーライドしていない)時にはそのメンバーを直接呼べません。
+また、<code>protected</code> なものには触れません。</p>
+<pre><code class="language-csharp"><span class="keyword">interface</span> I
+{
+    <span class="keyword">void</span> Abstract();
+    <span class="keyword">void</span> Default() { }
+ 
+    <span class="keyword">protected</span> <span class="keyword">void</span> Protected() { }
+}
+ 
+<span class="keyword">interface</span> IDerived : I
+{
+    <span class="keyword">void</span> M()
+    {
+        <span class="comment">// クラス → クラスの派生と同じ感覚。</span>
+        <span class="comment">// public, protected メソッドを呼べるし、デフォルト実装の有無も関係なく呼べる。</span>
+        Abstract();
+        Default();
+        Protected();
+    }
+}
+ 
+<span class="keyword">class</span> C : I
+{
+    <span class="comment">// デフォルト実装がないものは実装が必須</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> Abstract() { }
+ 
+    <span class="keyword">public</span> <span class="keyword">void</span> M()
+    {
+        <span class="comment">// これは、自身も実装を持っているので呼べる。</span>
+        Abstract();
+ 
+        <span class="comment">// これはコンパイル エラーになる。</span>
+        Default();
+ 
+        <span class="comment">// 呼びたければ1段キャストが必要。</span>
+        ((I)<span class="keyword">this</span>).Default();
+ 
+        <span class="comment">// protected なものは呼べない。コンパイル エラーに。</span>
+        ((I)<span class="keyword">this</span>).Protected();
+    }
+}</code></pre>
+<!-- original-page-break -->
+<h2 id="section-26"><a id="sec-generated-title-31"></a> <a id="static-abstract"></a>インターフェイスの静的抽象メンバー</h2>
+<h5 class="version version11">Ver. 11.0</h5>
+<p>C# 11 (.NET 7) で、インターフェイスの静的メンバーを abstract/virtual にできるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Buffers.Text;
+<span class="keyword">using</span> System.Text;
+
+<span class="keyword">interface</span> IUtf8Parsable&lt;T&gt;
+    <span class="keyword">where</span> T : IUtf8Parsable&lt;T&gt;
+{
+    <span class="comment">// 静的メンバーにしたいもの筆頭が、ファクトリメソッドの類。</span>
+    <span class="comment">// この例では Parse (文字列から T のインスタンスを作る)にしているものの、</span>
+    <span class="comment">// 例えば static T Create(); みたいなものの需要も結構高いはず。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">abstract</span> T Parse(ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; utf8);
+
+    <span class="comment">// virtual にもできる。</span>
+    <span class="comment">// デフォルト実装を持ちつつ、必要であればクラス側で別実装を書ける。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">virtual</span> T Parse(<span class="keyword">string</span> s)
+    {
+        <span class="keyword">var</span> buffer = (<span class="keyword">stackalloc</span> <span class="keyword">byte</span>[s.Length]);
+        <span class="keyword">var</span> read = Encoding.ASCII.GetBytes(s, buffer);
+        <span class="keyword">return</span> T.Parse(buffer[..read]);
+    }
+}
+
+<span class="comment">// 実装例:</span>
+record <span class="keyword">struct</span> Point(<span class="keyword">int</span> X, <span class="keyword">int</span> Y) : IUtf8Parsable&lt;Point&gt;
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> Point Parse(ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; utf8)
+    {
+        <span class="keyword">var</span> i = utf8.IndexOf((<span class="keyword">byte</span>)<span class="string">&#39;,&#39;</span>);
+        <span class="keyword">var</span> xs = utf8[..i];
+        <span class="keyword">var</span> ys = utf8[(i + <span class="number">1</span>)..];
+
+        Utf8Parser.TryParse(xs, <span class="keyword">out</span> <span class="keyword">int</span> x, <span class="keyword">out</span> _);
+        Utf8Parser.TryParse(ys, <span class="keyword">out</span> <span class="keyword">int</span> y, <span class="keyword">out</span> _);
+
+        <span class="keyword">return</span> <span class="keyword">new</span>(x, y);
+    }
+}</code></pre>
+<p><a href="#dim">C# 8 のときのデフォルト実装</a>と同じく、ランタイム側の修正が必要な機能で、C# バージョンだけを 11 に上げても、古い .NET をターゲットにしていると利用できません。</p>
+<h3 id="section-27"><a id="sec-generated-title-32"></a> <a id="static-abstract-declaration">静的抽象メンバーの宣言</a></h3>
+<p>文法的には割かし素直で、 <code>abstract</code>/<code>virtual</code> と <code>static</code> を併用できるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">interface</span> IA
+{
+    <span class="keyword">static</span> <span class="keyword">abstract</span> <span class="keyword">void</span> StaticAbstract();
+    <span class="keyword">static</span> <span class="keyword">virtual</span> <span class="keyword">void</span> StaticVirtual() { }
+}</code></pre>
+<p>このまま「<code>abstract</code>/<code>virtual</code> と <code>static</code> を同時に指定できるようになっただけです」と簡単に済ませられればいいんですが、C# 11 にもなって後付けしている経緯から、
+ちょっと他の文法との整合性が悪かったりします。</p>
+<p>以下のように、インスタンス メンバーと静的メンバーで、何も修飾子を付けないときの挙動が異なります。</p>
+<pre><code class="language-csharp"><span class="keyword">interface</span> IA
+{
+    <span class="comment">// インスタンス メンバーの場合、abstract 修飾を付けなくても元から abstract。</span>
+    <span class="keyword">void</span> Instance();
+
+    <span class="comment">// C# 8</span>
+    <span class="keyword">abstract</span> <span class="keyword">void</span> InstanceAbstract();
+    <span class="keyword">virtual</span> <span class="keyword">void</span> InstanceVirtual() { }
+
+    <span class="comment">// C# 8</span>
+    <span class="comment">// 静的メンバーの場合、何も修飾しないときは non-virtual。</span>
+    <span class="keyword">static</span> <span class="keyword">void</span> Static() { }
+
+    <span class="comment">// C# 11</span>
+    <span class="keyword">static</span> <span class="keyword">abstract</span> <span class="keyword">void</span> StaticAbstract();
+    <span class="keyword">static</span> <span class="keyword">virtual</span> <span class="keyword">void</span> StaticVirtual() { }
+}</code></pre>
+<p>ちなみに、この C# 8 の頃からの「何も付けないと non-virtual」の仕様があるのでわざわざ付ける意味はないんですが、一応、<code>sealed</code> 修飾子を付けれるようになっています。</p>
+<pre><code class="language-csharp"><span class="keyword">interface</span> IA
+{
+    <span class="comment">// 何もつけない = non-virtual。</span>
+    <span class="keyword">void</span> Static() { }
+
+    <span class="comment">// わざわざつける意味はない(元から sealed)けども、一応、明示的に sealed を付けることは認められてる。</span>
+    <span class="keyword">sealed</span> <span class="keyword">void</span> StaticSealed() { }
+}</code></pre>
+<h3 id="section-28"><a id="sec-generated-title-33"></a> <a id="static-abstract-implementation">静的抽象メンバーの実装</a></h3>
+<p>インターフェイスの静的メンバーの実装方法はインスタンス メンバーの場合とそれほど変わりません。
+以下のように、<code>public</code> で同名のメソッドを定義する(暗黙的実装)か、
+<code>インターフェイス名.</code> で実装する(明示的実装)かです。</p>
+<pre><code class="language-csharp"><span class="keyword">interface</span> IA
+{
+    <span class="keyword">abstract</span> <span class="keyword">void</span> Instance();
+    <span class="keyword">static</span> <span class="keyword">abstract</span> <span class="keyword">void</span> Static();
+}
+
+<span class="keyword">class</span> Implicit : IA
+{
+    <span class="comment">// 暗黙的実装。</span>
+    <span class="comment">// public にする必要あり。</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> Instance() { }
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Static() { }
+}
+
+<span class="keyword">class</span> Explicit : IA
+{
+    <span class="comment">// 明示的実装。</span>
+    <span class="comment">// アクセシビリティは書けない(public と付けちゃダメ)。</span>
+    <span class="keyword">void</span> IA.Instance() { }
+    <span class="keyword">static</span> <span class="keyword">void</span> IA.Static() { }
+}</code></pre>
+<p>ただ、静的メンバーを <code>virtual</code> / <code>abstract</code> にできるのはインターフェイスだけなので、
+この点はインスタンス メンバーと同じというわけにはいきません。
+以下のようなコードはエラーになります。</p>
+<pre><code class="language-csharp"><span class="keyword">interface</span> IA
+{
+    <span class="keyword">abstract</span> <span class="keyword">void</span> Instance();
+    <span class="keyword">static</span> <span class="keyword">abstract</span> <span class="keyword">void</span> Static();
+}
+
+<span class="keyword">class</span> Virtual : IA
+{
+    <span class="comment">// これは書ける(元々)。</span>
+    <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="keyword">void</span> Instance() { }
+
+    <span class="comment">// こうは書けない。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">virtual</span> <span class="keyword">void</span> Static() { }
+}</code></pre>
+<h3 id="section-29"><a id="sec-generated-title-34"></a> <a id="static-abstract-invocation">静的抽象メンバーの呼び出し</a></h3>
+<p>インターフェイスの静的抽象メンバーは、<a href="/study/csharp/oop/sp2_generics/#typeparam">ジェネリック型引数</a>越しにしか呼べません。</p>
+<p>例えば前節で例に挙げた <code>IA</code> インターフェイスの場合、以下のような呼び出し方になります。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> M&lt;T&gt;()
+    <span class="keyword">where</span> T : IA
+{
+    <span class="comment">// non-virtual の場合、インターフェイス名. 開始。</span>
+    <span class="comment">// T.Static(); とは書けない。</span>
+    IA.Static();
+
+    <span class="comment">// virtual/abstract の場合、型引数. 開始。</span>
+    <span class="comment">// IA.StaticAbstract(); IA.StaticVirtual(); とは書けない。</span>
+    T.StaticAbstract();
+    T.StaticVirtual();
+}
+
+<span class="keyword">interface</span> IA
+{
+    <span class="comment">// non-virtual。</span>
+    <span class="keyword">static</span> <span class="keyword">void</span> Static() { }
+
+    <span class="comment">// virtual/abstract</span>
+    <span class="keyword">static</span> <span class="keyword">abstract</span> <span class="keyword">void</span> StaticAbstract();
+    <span class="keyword">static</span> <span class="keyword">virtual</span> <span class="keyword">void</span> StaticVirtual() { }
+}</code></pre>
+<h4 id="section-30"><a id="sec-generated-title-35"></a> <a id="type-class">注意: 静的抽象メンバー呼び出しは静的な型に紐づく</a></h4>
+<p>インスタンス メンバーと違って、
+静的抽象メンバーの呼び出しは静的な型に紐づきます。</p>
+<p>以下のように、<code>M&lt;T&gt;()</code> 内で <code>T.Static()</code> と呼び出したとき、
+メソッド <code>M</code> を <code>M&lt;A&gt;()</code> で呼び出した場合に常に <code>A.Static</code> が呼ばれます。</p>
+<pre><code class="language-csharp"><span class="comment">// 静的な型(変数/引数の型)とインスタンスの型(変数に格納した値の型)が一致してるときはそんなに変な挙動はしない。</span>
+
+M(<span class="keyword">new</span> ABase()); <span class="comment">// Base Instance / Base Static</span>
+M(<span class="keyword">new</span> ADerived()); <span class="comment">// Derived Instance / Derived Static</span>
+
+<span class="comment">// 問題は、それが違うとき。</span>
+
+ABase a = <span class="keyword">new</span> ADerived();
+M(a); <span class="comment">// Derived Instance / Base Static</span>
+
+M&lt;ABase&gt;(<span class="keyword">new</span> ADerived()); <span class="comment">// Derived Instance / Base Static</span>
+
+<span class="keyword">static</span> <span class="keyword">void</span> M&lt;T&gt;(T x)
+    <span class="keyword">where</span> T : IA
+{
+    x.Instance();
+    T.Static();
+}
+ 
+<span class="comment">// static abstract (実装を持っていない)メンバーがあるとと M&lt;IA&gt;() と書けなくなる。</span>
+<span class="keyword">interface</span> IA
+{
+    <span class="keyword">abstract</span> <span class="keyword">void</span> Instance();
+    <span class="keyword">static</span> <span class="keyword">abstract</span> <span class="keyword">void</span> Static();
+}
+
+<span class="keyword">class</span> ABase : IA
+{
+    <span class="keyword">void</span> IA.Instance() =&gt; Console.WriteLine(<span class="string">&quot;Base Instance&quot;</span>);
+    <span class="keyword">static</span> <span class="keyword">void</span> IA.Static() =&gt; Console.WriteLine(<span class="string">&quot;Base Static&quot;</span>);
+}
+
+<span class="keyword">class</span> ADerived : ABase, IA
+{
+    <span class="keyword">void</span> IA.Instance() =&gt; Console.WriteLine(<span class="string">&quot;Derived Instance&quot;</span>);
+    <span class="keyword">static</span> <span class="keyword">void</span> IA.Static() =&gt; Console.WriteLine(<span class="string">&quot;Derived Static&quot;</span>);
+}</code></pre>
+<p>これまでのインターフェイスの「インスタンスの型に紐づいて動的な呼び出しが行われる」という感覚とずれるので注意が必要です。</p>
+<p>このことを指して、他のプログラミングの機能名と照らし合わせて、
+「インターフェイスの静的抽象メンバーは、インターフェイスというよりも型クラス(type class)だ」と説明する人もいるくらいです。</p>
+<h4 id="section-31"><a id="sec-generated-title-36"></a> <a id="type-argument">注意: 静的抽象メンバーを持っていると型実引数に渡せない</a></h4>
+<p>前節で説明したように、静的な型に紐づく以上、
+<code>abstract</code> な(実装を持っていない)型を型引数にすることはできません。</p>
+<p>以下のように、<code>virtual</code> (実装を持っている)であれば問題ありません。</p>
+<pre><code class="language-csharp">M&lt;IA&gt;();
+
+<span class="keyword">static</span> <span class="keyword">void</span> M&lt;T&gt;()
+    <span class="keyword">where</span> T : IA
+    =&gt; T.M();
+
+<span class="comment">// static abstract (実装を持っていない)メンバーがいないときは、M&lt;IA&gt;() と書ける。</span>
+<span class="keyword">interface</span> IA
+{
+    <span class="keyword">static</span> <span class="keyword">virtual</span> <span class="keyword">void</span> M() =&gt; Console.WriteLine(<span class="string">&quot;IA.M&quot;</span>);
+}</code></pre>
+<p>一方で、以下のように <code>abstract</code> (実装を持っていない)だとコンパイル エラーになります。</p>
+<pre><code class="language-csharp">M&lt;IA&gt;(); <span class="comment">// ここでエラーに。</span>
+
+M&lt;A&gt;(); <span class="comment">// これ(実装クラス)ならOK。</span>
+
+<span class="keyword">static</span> <span class="keyword">void</span> M&lt;T&gt;()
+    <span class="keyword">where</span> T : IA
+    =&gt; T.M();
+
+<span class="comment">// static abstract (実装を持っていない)メンバーがあると M&lt;IA&gt;() と書けなくなる。</span>
+<span class="keyword">interface</span> IA
+{
+    <span class="keyword">static</span> <span class="keyword">abstract</span> <span class="keyword">void</span> M();
+}
+
+<span class="keyword">class</span> A : IA
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M() { }
+}</code></pre>
+<h3 id="section-32"><a id="sec-generated-title-37"></a> <a id="interface-operator">演算子</a></h3>
+<p>静的メンバーを <code>virtual</code> / <code>abstract</code> にできて一番うれしいのは、
+演算子を定義できることでしょう。</p>
+<p>例えばこれまで、以下のようなメソッドすらジェネリックな実装を持てませんでした。</p>
+<pre><code class="language-csharp">Console.WriteLine(Sum(<span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span> }));
+
+Console.WriteLine(Sum(<span class="keyword">new</span> <span class="keyword">float</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span> })); <span class="comment">// こう書きたいのにエラーに…</span>
+
+<span class="keyword">static</span> <span class="keyword">int</span> Sum(<span class="keyword">int</span>[] items) <span class="comment">// Sum&lt;T&gt;(T[]) にしてしまうと += が書けない。</span>
+{
+    <span class="keyword">var</span> sum = <span class="number">0</span>;
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> items) sum += x;
+    <span class="keyword">return</span> sum;
+}</code></pre>
+<p>C# 11 でインターフェイスに <code>virtual</code> / <code>abstract</code> な演算子を持てるようになったことに伴って、
+.NET 7 で標準ライブラリに以下のようなインターフェイスが用意されました。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> System.Numerics;
+
+<span class="keyword">public</span> <span class="keyword">interface</span> IAdditionOperators&lt;TSelf, TOther, TResult&gt;
+    <span class="keyword">where</span> TSelf : IAdditionOperators&lt;TSelf, TOther, TResult&gt;?
+{
+    <span class="keyword">static</span> <span class="keyword">abstract</span> TResult <span class="keyword">operator</span> +(TSelf left, TOther right);
+    <span class="keyword">static</span> <span class="keyword">virtual</span> TResult <span class="keyword">operator</span> <span class="keyword">checked</span> +(TSelf left, TOther right) =&gt; left + right;
+}</code></pre>
+<p><code>int</code> や <code>float</code> などの組み込みの数値型は一通りこのインターフェイスを実装しています。
+(さらにいうと、この手のインターフェイスをまとめた <code>INumeber&lt;T&gt;</code> というインターフェイスを実装しています。)
+その結果、本節冒頭で挙げたような <code>Sum</code> メソッドをジェネリックに書けるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Numerics;
+
+<span class="comment">// よくある「和を取るコード」なものですら、これまでだとジェネリックに書く手段がなかった。</span>
+<span class="comment">// C# 11 で可能に。</span>
+<span class="keyword">static</span> T Sum&lt;T&gt;(IEnumerable&lt;T&gt; items)
+    <span class="keyword">where</span> T : INumber&lt;T&gt;
+{
+    <span class="keyword">var</span> sum = T.Zero;
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> items) sum += x;
+    <span class="keyword">return</span> sum;
+}
+
+<span class="comment">// いろんな型に対して sum&lt;T&gt; を呼ぶ。</span>
+Console.WriteLine(Sum(<span class="keyword">new</span> <span class="keyword">byte</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }));
+Console.WriteLine(Sum(<span class="keyword">new</span> <span class="keyword">int</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }));
+Console.WriteLine(Sum(<span class="keyword">new</span> <span class="keyword">float</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }));
+Console.WriteLine(Sum(<span class="keyword">new</span> <span class="keyword">double</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }));
+Console.WriteLine(Sum(<span class="keyword">new</span> <span class="keyword">decimal</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }));</code></pre>
+<h4 id="generic-math"><a id="sec-generated-title-38"></a> <a id="generic-math">Generic Math</a></h4>
+<p>加減乗除や論理演算はもちろん、<code>float</code>, <code>double</code> などの一部の型は <code>Math.Sin</code> などの数学関数も使えます。
+コンセプト的に、この新機能を使ったジェネリックな数値処理の事を通称 Generic Math と呼んでいたりします。</p>
+<p>また、 .NET 5 以降、数値関連の型がいくつか追加されています。</p>
+<ul>
+<li><a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.half?WT.mc_id=DT-MVP-4028921"><code>Half</code></a>: 16ビット浮動小数点数</li>
+<li><a href="https://github.com/dotnet/runtime/issues/67151"><code>Int128</code>, <code>UInt128</code></a>: 128ビットの整数</li>
+<li><a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.runtime.interopservices.clong?WT.mc_id=DT-MVP-4028921"><code>CLong</code></a>, <a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.runtime.interopservices.culong?WT.mc_id=DT-MVP-4028921"><code>CULong</code></a>: C/C++ との相互運用のために使う、環境によってビット幅が違う整数</li>
+<li><a href="/study/csharp/cheatsheet/ap_ver9/#nint"><code>nint</code>, <code>nuint</code></a>: CPU 依存幅の整数</li>
+</ul>
+<p>これらの新しい数値型も、Generic Math の対象で、<code>INumber&lt;T&gt;</code> などのインターフェイスを実装しています。</p>
+<h2 id="section-33"><a id="exercise"></a>演習問題</h2>
+<h3 id="section-34"><a id="exercise-if1"></a>問題 1</h3>
+<p><a href="/study/csharp/oop/oo_polymorphism/">多態性</a>の<a href="/study/csharp/oop/oo_polymorphism/#exercise-polim1">問題 1</a>の <code>Shape</code> クラスをインターフェース化せよ。</p>
+<p><code>Triangle</code> や <code>Shape</code> 関係の例題は一応、これで完成形。</p>
+<p>余力があれば、楕円、長方形、平行四辺形、（任意の頂点の）多角形等、さまざまな図形クラスを作成せよ。
+また、これらの図形の面積と周の比を計算するプログラムを作成せよ。</p>
+<h4 id="section-35">解答例 1</h4>
+<p>三角形、円に加え、多角形を実装した物を示します。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 2次元の点をあらわす構造体</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">struct</span> Point
+{
+  <span class="keyword">double</span> x; <span class="comment">// x 座標</span>
+  <span class="keyword">double</span> y; <span class="comment">// y 座標</span>
+
+  <span class="preprocessorKeyword">#region</span> 初期化
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 座標値 (x, y) を与えて初期化。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;x&quot;&gt;</span><span class="xmlDocComment">x 座標値&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;y&quot;&gt;</span><span class="xmlDocComment">y 座標値&lt;/param&gt;</span>
+  <span class="keyword">public</span> Point(<span class="keyword">double</span> x, <span class="keyword">double</span> y)
+  {
+    <span class="keyword">this</span>.x = x;
+    <span class="keyword">this</span>.y = y;
+  }
+
+  <span class="preprocessorKeyword">#endregion</span>
+  <span class="preprocessorKeyword">#region</span> プロパティ
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> x 座標。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="keyword">public</span> <span class="keyword">double</span> X
+  {
+    <span class="keyword">get</span> { <span class="keyword">return</span> <span class="keyword">this</span>.x; }
+    <span class="keyword">set</span> { <span class="keyword">this</span>.x = value; }
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> y 座標。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="keyword">public</span> <span class="keyword">double</span> Y
+  {
+    <span class="keyword">get</span> { <span class="keyword">return</span> <span class="keyword">this</span>.y; }
+    <span class="keyword">set</span> { <span class="keyword">this</span>.y = value; }
+  }
+
+  <span class="preprocessorKeyword">#endregion</span>
+  <span class="preprocessorKeyword">#region</span> 演算子
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> ベクトル和</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;a&quot;&gt;</span><span class="xmlDocComment">点A&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;b&quot;&gt;</span><span class="xmlDocComment">点B&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">和&lt;/returns&gt;</span>
+  <span class="keyword">public</span> <span class="keyword">static</span> Point <span class="keyword">operator</span> +(Point a, Point b)
+  {
+    <span class="keyword">return</span> <span class="keyword">new</span> Point(a.x + b.x, a.y + b.y);
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> ベクトル差</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;a&quot;&gt;</span><span class="xmlDocComment">点A&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;b&quot;&gt;</span><span class="xmlDocComment">点B&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">和&lt;/returns&gt;</span>
+  <span class="keyword">public</span> <span class="keyword">static</span> Point <span class="keyword">operator</span> -(Point a, Point b)
+  {
+    <span class="keyword">return</span> <span class="keyword">new</span> Point(a.x - b.x, a.y - b.y);
+  }
+
+  <span class="preprocessorKeyword">#endregion</span>
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> A-B 間の距離を求める。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;a&quot;&gt;</span><span class="xmlDocComment">点A&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;b&quot;&gt;</span><span class="xmlDocComment">点B&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">距離AB&lt;/returns&gt;</span>
+  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">double</span> GetDistance(Point a, Point b)
+  {
+    <span class="keyword">double</span> x = a.x - b.x;
+    <span class="keyword">double</span> y = a.y - b.y;
+    <span class="keyword">return</span> Math.Sqrt(x * x + y * y);
+  }
+
+  <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString()
+  {
+    <span class="keyword">return</span> <span class="string">&quot;(&quot;</span> + x + <span class="string">&quot;, &quot;</span> + y + <span class="string">&quot;)&quot;</span>;
+  }
+}
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 2次元空間上の図形を表すクラス。</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 三角形や円等の共通の抽象基底クラス。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">interface</span> Shape
+{
+  <span class="keyword">double</span> GetArea();
+  <span class="keyword">double</span> GetPerimeter();
+}
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 2次元空間上の円をあらわすクラス</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">class</span> Circle : Shape
+{
+  Point center;
+  <span class="keyword">double</span> radius;
+
+  <span class="preprocessorKeyword">#region</span> 初期化
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 半径を指定して初期化。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;r&quot;&gt;</span><span class="xmlDocComment">半径。&lt;/param&gt;</span>
+  <span class="keyword">public</span> Circle(Point center, <span class="keyword">double</span> r)
+  {
+    <span class="keyword">this</span>.center = center;
+    <span class="keyword">this</span>.radius = r;
+  }
+
+  <span class="preprocessorKeyword">#endregion</span>
+  <span class="preprocessorKeyword">#region</span> プロパティ
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 円の中心。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="keyword">public</span> Point Center
+  {
+    <span class="keyword">get</span> { <span class="keyword">return</span> <span class="keyword">this</span>.center; }
+    <span class="keyword">set</span> { <span class="keyword">this</span>.center = value; }
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 円の半径。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="keyword">public</span> <span class="keyword">double</span> Radius
+  {
+    <span class="keyword">get</span> { <span class="keyword">return</span> <span class="keyword">this</span>.radius; }
+    <span class="keyword">set</span> { <span class="keyword">this</span>.radius = value; }
+  }
+
+  <span class="preprocessorKeyword">#endregion</span>
+  <span class="preprocessorKeyword">#region</span> 面積・周
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 円の面積を求める。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">面積&lt;/returns&gt;</span>
+  <span class="keyword">public</span> <span class="keyword">double</span> GetArea()
+  {
+    <span class="keyword">return</span> Math.PI * <span class="keyword">this</span>.radius * <span class="keyword">this</span>.radius;
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 円の周の長さを求める。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">周&lt;/returns&gt;</span>
+  <span class="keyword">public</span> <span class="keyword">double</span> GetPerimeter()
+  {
+    <span class="keyword">return</span> <span class="number">2</span> * Math.PI * <span class="keyword">this</span>.radius;
+  }
+
+  <span class="preprocessorKeyword">#endregion</span>
+
+  <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString()
+  {
+    <span class="keyword">return</span> <span class="keyword">string</span>.Format(
+      <span class="string">&quot;Circle (c = {0}, r = {1})&quot;</span>,
+      <span class="keyword">this</span>.center, <span class="keyword">this</span>.radius);
+  }
+}
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 2次元空間上の三角形をあらわすクラス</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">class</span> Triangle : Shape
+{
+  Point a;
+  Point b;
+  Point c;
+
+  <span class="preprocessorKeyword">#region</span> 初期化
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 3つの頂点の座標を与えて初期化。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;a&quot;&gt;</span><span class="xmlDocComment">頂点A&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;b&quot;&gt;</span><span class="xmlDocComment">頂点B&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;c&quot;&gt;</span><span class="xmlDocComment">頂点C&lt;/param&gt;</span>
+  <span class="keyword">public</span> Triangle(Point a, Point b, Point c)
+  {
+    <span class="keyword">this</span>.a = a;
+    <span class="keyword">this</span>.b = b;
+    <span class="keyword">this</span>.c = c;
+  }
+
+  <span class="preprocessorKeyword">#endregion</span>
+  <span class="preprocessorKeyword">#region</span> プロパティ
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 頂点A。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="keyword">public</span> Point A
+  {
+    <span class="keyword">get</span> { <span class="keyword">return</span> a; }
+    <span class="keyword">set</span> { a = value; }
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 頂点B。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="keyword">public</span> Point B
+  {
+    <span class="keyword">get</span> { <span class="keyword">return</span> b; }
+    <span class="keyword">set</span> { b = value; }
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 頂点C。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="keyword">public</span> Point C
+  {
+    <span class="keyword">get</span> { <span class="keyword">return</span> c; }
+    <span class="keyword">set</span> { c = value; }
+  }
+
+  <span class="preprocessorKeyword">#endregion</span>
+  <span class="preprocessorKeyword">#region</span> 面積・周
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 三角形の面積を求める。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">面積&lt;/returns&gt;</span>
+  <span class="keyword">public</span> <span class="keyword">double</span> GetArea()
+  {
+    Point ab = b - a;
+    Point ac = c - a;
+    <span class="keyword">return</span> <span class="number">0</span>.<span class="number">5</span> * Math.Abs(ab.X * ac.Y - ac.X * ab.Y);
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 三角形の周の長さを求める。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">周&lt;/returns&gt;</span>
+  <span class="keyword">public</span> <span class="keyword">double</span> GetPerimeter()
+  {
+    <span class="keyword">double</span> l = Point.GetDistance(<span class="keyword">this</span>.a, <span class="keyword">this</span>.b);
+    l += Point.GetDistance(<span class="keyword">this</span>.a, <span class="keyword">this</span>.c);
+    l += Point.GetDistance(<span class="keyword">this</span>.b, <span class="keyword">this</span>.c);
+    <span class="keyword">return</span> l;
+  }
+
+  <span class="preprocessorKeyword">#endregion</span>
+
+  <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString()
+  {
+    <span class="keyword">return</span> <span class="keyword">string</span>.Format(
+      <span class="string">&quot;Circle (a = {0}, b = {1}, c = {2})&quot;</span>,
+      <span class="keyword">this</span>.a, <span class="keyword">this</span>.b, <span class="keyword">this</span>.c);
+  }
+}
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 自由多角形をあらわすクラス</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">class</span> Polygon : Shape
+{
+  Point[] verteces; <span class="comment">// 頂点</span>
+
+  <span class="preprocessorKeyword">#region</span> 初期化
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 座標を与えて初期化。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;verteces&quot;&gt;</span><span class="xmlDocComment">頂点の座標の入った配列&lt;/param&gt;</span>
+  <span class="keyword">public</span> Polygon(<span class="keyword">params</span> Point[] verteces)
+  {
+    <span class="keyword">this</span>.verteces = verteces;
+  }
+
+  <span class="preprocessorKeyword">#endregion</span>
+  <span class="preprocessorKeyword">#region</span> プロパティ
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 頂点の集合。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="keyword">public</span> Point[] Verteces
+  {
+    <span class="keyword">get</span> { <span class="keyword">return</span> <span class="keyword">this</span>.verteces; }
+    <span class="keyword">set</span> { <span class="keyword">this</span>.verteces = value; }
+  }
+
+  <span class="preprocessorKeyword">#endregion</span>
+  <span class="preprocessorKeyword">#region</span> 面積・周
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 三角形の面積を求める。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">面積&lt;/returns&gt;</span>
+  <span class="keyword">public</span> <span class="keyword">double</span> GetArea()
+  {
+    <span class="keyword">double</span> area = <span class="number">0</span>;
+    Point p = <span class="keyword">this</span>.verteces[<span class="keyword">this</span>.verteces.Length - <span class="number">1</span>];
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="keyword">this</span>.verteces.Length; ++i)
+    {
+      Point q = <span class="keyword">this</span>.verteces[i];
+      area += p.X * q.Y - q.X * p.Y;
+      p = q;
+    }
+    <span class="keyword">return</span> <span class="number">0</span>.<span class="number">5</span> * Math.Abs(area);
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 三角形の周の長さを求める。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">周&lt;/returns&gt;</span>
+  <span class="keyword">public</span> <span class="keyword">double</span> GetPerimeter()
+  {
+    <span class="keyword">double</span> perimeter = <span class="number">0</span>;
+    Point p = <span class="keyword">this</span>.verteces[<span class="keyword">this</span>.verteces.Length - <span class="number">1</span>];
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="keyword">this</span>.verteces.Length; ++i)
+    {
+      Point q = <span class="keyword">this</span>.verteces[i];
+      perimeter += Point.GetDistance(p, q);
+      p = q;
+    }
+    <span class="keyword">return</span> perimeter;
+  }
+
+  <span class="preprocessorKeyword">#endregion</span>
+
+  <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString()
+  {
+    System.Text.StringBuilder sb = <span class="keyword">new</span> System.Text.StringBuilder();
+    sb.AppendFormat(<span class="string">&quot;Polygon ({0}&quot;</span>, <span class="keyword">this</span>.verteces[<span class="number">0</span>]);
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; <span class="keyword">this</span>.verteces.Length; ++i)
+    {
+      sb.AppendFormat(<span class="string">&quot;, {0}&quot;</span>, <span class="keyword">this</span>.verteces[i]);
+    }
+    sb.Append(<span class="string">&quot;)&quot;</span>);
+
+    <span class="keyword">return</span> sb.ToString();
+  }
+}
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> Class1 の概要の説明です。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">class</span> Class1
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    Triangle t = <span class="keyword">new</span> Triangle(
+      <span class="keyword">new</span> Point(<span class="number">0</span>, <span class="number">0</span>),
+      <span class="keyword">new</span> Point(<span class="number">3</span>, <span class="number">4</span>),
+      <span class="keyword">new</span> Point(<span class="number">4</span>, <span class="number">3</span>));
+
+    Circle c = <span class="keyword">new</span> Circle(
+      <span class="keyword">new</span> Point(<span class="number">0</span>, <span class="number">0</span>), <span class="number">3</span>);
+
+    Polygon p1 = <span class="keyword">new</span> Polygon(
+      <span class="keyword">new</span> Point(<span class="number">0</span>, <span class="number">0</span>),
+      <span class="keyword">new</span> Point(<span class="number">3</span>, <span class="number">4</span>),
+      <span class="keyword">new</span> Point(<span class="number">4</span>, <span class="number">3</span>));
+
+    Polygon p2 = <span class="keyword">new</span> Polygon(
+      <span class="keyword">new</span> Point(<span class="number">0</span>, <span class="number">0</span>),
+      <span class="keyword">new</span> Point(<span class="number">0</span>, <span class="number">2</span>),
+      <span class="keyword">new</span> Point(<span class="number">2</span>, <span class="number">2</span>),
+      <span class="keyword">new</span> Point(<span class="number">2</span>, <span class="number">0</span>));
+
+    Show(t);
+    Show(c);
+    Show(p1);
+    Show(p2);
+  }
+
+  <span class="keyword">static</span> <span class="keyword">void</span> Show(Shape f)
+  {
+    Console.Write(<span class="string">&quot;図形 {0}\n&quot;</span>, f);
+    Console.Write(<span class="string">&quot;面積/周 = {0}\n&quot;</span>, f.GetArea() / f.GetPerimeter());
+  }
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/oop/">&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x6307;&#x5411;</a></li><li><a href="/study/csharp/oop/oo_about/">&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x6307;&#x5411;&#x3068;&#x306F;</a></li><li><a href="/study/csharp/oop/oo_class/">&#x30AF;&#x30E9;&#x30B9;</a></li><li><a href="/study/csharp/oop/oo_construct/">&#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;</a></li><li><a href="/study/csharp/oop/oo_conceal/">&#x5B9F;&#x88C5;&#x306E;&#x96A0;&#x853D;</a></li><li><a href="/study/csharp/oop/oo_property/">&#x30D7;&#x30ED;&#x30D1;&#x30C6;&#x30A3;</a></li><li><a href="/study/csharp/oop/oo_static/">&#x9759;&#x7684;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/study/csharp/oop/moduleinitializer/">&#x30E2;&#x30B8;&#x30E5;&#x30FC;&#x30EB;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/study/csharp/oop/oo_operator/">&#x6F14;&#x7B97;&#x5B50;&#x306E;&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30ED;&#x30FC;&#x30C9;</a></li><li><a href="/study/csharp/oop/oo_indexer/">&#x30A4;&#x30F3;&#x30C7;&#x30AF;&#x30B5;&#x30FC;</a></li><li><a href="/study/csharp/oop/oo_inherit/">&#x7D99;&#x627F;</a></li><li><a href="/study/csharp/oop/miscimplictinherit/">[&#x4F59;&#x8AC7;] &#x6697;&#x9ED9;&#x7684;&#x306A;&#x6D3E;&#x751F;</a></li><li><a href="/study/csharp/oop/oo_multipleinheritance/">[&#x96D1;&#x8A18;] &#x591A;&#x91CD;&#x7D99;&#x627F;&#x3067;&#x304D;&#x306A;&#x3044;&#x7406;&#x7531;</a></li><li><a href="/study/csharp/oop/oo_polymorphism/">&#x591A;&#x614B;&#x6027;</a></li><li><a href="/study/csharp/oop/misc_as/">[&#x96D1;&#x8A18;] &#x30AD;&#x30E3;&#x30B9;&#x30C8;&#x3068; as</a></li><li><a href="/study/csharp/oop/misc_construct/">[&#x96D1;&#x8A18;] &#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;&#x5185;&#x306E;&#x4EEE;&#x60F3;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x547C;&#x3073;&#x51FA;&#x3057;</a></li><li><a href="/study/csharp/oop/oo_abstract/">&#x62BD;&#x8C61;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x3001;&#x62BD;&#x8C61;&#x30AF;&#x30E9;&#x30B9;</a></li><li><a href="/study/csharp/oop/misc_autoimpl/">[&#x96D1;&#x8A18;] &#x62BD;&#x8C61;&#x5B9A;&#x7FA9;&#x3068;&#x81EA;&#x52D5;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/oop/oo_vftable/">[&#x96D1;&#x8A18;] &#x4EEE;&#x60F3;&#x95A2;&#x6570;&#x30C6;&#x30FC;&#x30D6;&#x30EB;</a></li><li><a href="/study/csharp/oop/sp2_generics/">&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/oop/sp4_variance/">&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30AF;&#x30B9;&#x306E;&#x5171;&#x5909;&#x6027;&#x30FB;&#x53CD;&#x5909;&#x6027;</a></li><li><a href="/study/csharp/oop/generic-math-operators/">&#x3010;Generic Math&#x3011; C# 11 &#x3067;&#x306E;&#x6F14;&#x7B97;&#x5B50;&#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

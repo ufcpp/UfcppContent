@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x3010;C# 12 &#x5019;&#x88DC;&#x3011;&#x30E9;&#x30E0;&#x30C0;&#x5F0F;&#x306E;&#x30C7;&#x30D5;&#x30A9;&#x30EB;&#x30C8;&#x5F15;&#x6570;&#x3068; params &#x5F15;&#x6570; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2023/1/lambda-default/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2023-01-11T22:10:34">2023-01-11</time></span><span>更新: <time datetime="2023-02-09T21:04:22">2023-02-09</time></span></div><h1 id="c-12-params">【C# 12 候補】ラムダ式のデフォルト引数と params 引数</h1>
+<p>そろそろ、C# vNext 候補で上がってるものをちらほら紹介していこうかと。</p>
+<p>今日は割かし確度高そうなものとして、ラムダ式がらみの話。
+ラムダ式でもデフォルト引数と params への対応を考えているそうです。</p>
+<p>提案ドキュメント:</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/blob/main/proposals/lambda-method-group-defaults.md">Optional and parameter array parameters for lambdas and method groups</a></li>
+</ul>
+<p>※追記: 後から気づきましたが、この機能は Visual Studio 17.5 Preview 2 (2022年12月中旬)の時点ですでに使えてたっぽいです。
+(未確認。少なくとも Preview 3 (2023年1月中旬) では使えます。<a href="/study/csharp/cheatsheet/langversionoption/#langversion">LangVersion</a> preview 必要。)</p>
+<h2 id="c-10">C# 10 のときの話</h2>
+<p><a href="/study/csharp/cheatsheet/ap_ver10/#lambda-improvement">C# 10 のときにラムダ式の改善</a>がいくつか入りました。
+以下のように、Web アプリがシンプルに書けるようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> builder = WebApplication.CreateBuilder(args);
+<span class="keyword">var</span> app = builder.Build();
+
+<span class="comment">// MapGet の引数は System.Delegate 型。</span>
+<span class="comment">// Delegate に対してラムダ式が使える。</span>
+<span class="comment">// 自然な型決定が働いて、この場合は Func&lt;string&gt; になる。</span>
+app.MapGet(<span class="string">&quot;/&quot;</span>, () =&gt; <span class="string">&quot;Hello World!&quot;</span>);
+
+app.Run();</code></pre>
+<p>この機能の延長で、</p>
+<ul>
+<li>ラムダ式の引数にデフォルト値を与えられるように</li>
+<li>ラムダ式の引数を params にできるように</li>
+</ul>
+<p>の2つが追加で提案されています。</p>
+<h2 id="section">これまでのラムダ式の引数</h2>
+<p>C# 9 までの状態だと、
+ラムダ式にデフォルト引数/params 引数が書けても役に立ちませんでした。</p>
+<p>メソッドを使った例で説明すると、
+以下のように、デフォルト引数/params 引数はデリゲート化する際に一切紛失します。</p>
+<pre><code class="language-csharp">m();
+
+<span class="comment">// m() と呼べるのに、 Action には代入できない。</span>
+Action a1 = m;
+
+<span class="comment">// Action&lt;int, int[]&gt; には代入できるけど、</span>
+Action&lt;<span class="keyword">int</span>, <span class="keyword">int</span>[]&gt; a2 = m;
+
+<span class="comment">// Action&lt;int, int[]&gt; 越しには () では呼べない。</span>
+a2();
+
+<span class="keyword">static</span> <span class="keyword">void</span> m(<span class="keyword">int</span> x = <span class="number">1</span>, <span class="keyword">params</span> <span class="keyword">int</span>[] y) { }</code></pre>
+<p>デリゲートに代入して使うことが前提のラムダ式では、
+そもそもデフォルト引数/params 引数を書けても全く役に立たないということになります。</p>
+<p>そんな中、<a href="/study/csharp/functional/fun_localfunctions/#lambda-csharp10">C# 10 ではラムダ式への属性指定ができるようになった</a>わけですが、静的な型情報からは消えるという意味ではこの属性も同様だったりします。
+ただ、属性は、静的な情報としては紛失したとしても、
+リフレクションを使って属性を取る前提であれば意味があります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Reflection;
+<span class="keyword">using</span> Microsoft.AspNetCore.Mvc;
+
+<span class="comment">// f の型 (Func&lt;string, string&gt;) に FromBody 属性が反映されるわけではな。</span>
+Func&lt;<span class="keyword">string</span>, <span class="keyword">string</span>&gt; f = ([FromBody] <span class="keyword">string</span> name) =&gt; <span class="string">&quot;Hello World!&quot;</span>;
+
+<span class="comment">// リフレクションで MethodInfo から引数や戻り値を取れば、それについてる属性を調べられる。</span>
+<span class="keyword">var</span> p = f.Method.GetParameters()[<span class="number">0</span>];
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> a <span class="keyword">in</span> p.GetCustomAttributes())
+{
+    <span class="comment">// FromBodyAttribute</span>
+    Console.WriteLine(a.GetType().Name);
+}</code></pre>
+<p>「リフレクションで」というのであれば、
+デフォルト引数と params 引数も同様のはずです。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Reflection;
+<span class="keyword">using</span> System.Runtime.InteropServices;
+
+Delegate f = C.M;
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> p <span class="keyword">in</span> f.Method.GetParameters())
+{
+    Console.WriteLine(p.Name);
+    Console.WriteLine(p.GetCustomAttribute&lt;OptionalAttribute&gt;());   <span class="comment">// x のときに取れる</span>
+    Console.WriteLine(p.GetCustomAttribute&lt;ParamArrayAttribute&gt;()); <span class="comment">// y のときに取れる</span>
+}
+
+<span class="keyword">class</span> C
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">int</span> x = <span class="number">1</span>, <span class="keyword">params</span> <span class="keyword">int</span>[] y) { }
+}</code></pre>
+<h2 id="params">ラムダ式のデフォルト引数/params 引数を認める</h2>
+<p>ということで、C# 10 の時に属性を認めたのと同じく、
+ラムダ式のデフォルト引数/params 引数を認めたいという話になりました。</p>
+<p>そこから、もう1歩進めた提案もあって、
+自然な型決定で、デフォルト引数/params 引数付きのデリゲートを作るという話もあります。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> m(<span class="keyword">int</span> x = <span class="number">1</span>, <span class="keyword">params</span> <span class="keyword">int</span>[] y) { }
+
+<span class="comment">// 今までだったら Action&lt;int, int[]&gt; になってた。</span>
+<span class="comment">// これを、 delegate void Anonymous(int x = 1, params int[] y) で生成したい。</span>
+<span class="keyword">var</span> f = m;
+
+<span class="comment">// 今まででも、↓なら呼べる。</span>
+f(<span class="number">1</span>, <span class="keyword">new</span>[] { <span class="number">2</span> });
+
+m(<span class="number">1</span>, <span class="number">2</span>);
+m(x: <span class="number">1</span>);
+m(y: <span class="number">2</span>);
+
+<span class="comment">// ↓はこれまではダメで、C# 12 でできるようにしたい。</span>
+f(<span class="number">1</span>, <span class="number">2</span>);
+f(x: <span class="number">1</span>);
+f(y: <span class="number">2</span>);
+
+Console.WriteLine(f.GetType());</code></pre>
+<p>割かし実装も進んでいるはずなので、これは近いうちにプレビューが来ると思われます。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2023/1/">1&#x6708;</a></li><li><a href="/blog/2023/1/list-pattern-enumerable/">&#x3010;C# 12 &#x5019;&#x88DC;&#x3011;IEnumerable &#x5411;&#x3051;&#x30EA;&#x30B9;&#x30C8; &#x30D1;&#x30BF;&#x30FC;&#x30F3;</a></li><li><a href="/blog/2023/1/semi-auto-property/">&#x3010;C# 12 &#x5019;&#x88DC;&#x3011;&#x534A;&#x81EA;&#x52D5;&#x30D7;&#x30ED;&#x30D1;&#x30C6;&#x30A3;</a></li><li><a href="/blog/2023/1/using-alias-any-types/">using alias &#x3092;&#x4EFB;&#x610F;&#x306E;&#x578B;&#x306B;&#x5BFE;&#x5FDC;</a></li><li><a href="/blog/2023/1/collection-literal/">&#x3010;C# 12 &#x5019;&#x88DC;&#x3011;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3; &#x30EA;&#x30C6;&#x30E9;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

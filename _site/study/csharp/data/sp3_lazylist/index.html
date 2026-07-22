@@ -1,0 +1,305 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>[&#x96D1;&#x8A18;] LINQ &#x3068;&#x9045;&#x5EF6;&#x8A55;&#x4FA1; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/data/sp3_lazylist/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="linq">[雑記] LINQ と遅延評価</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>C# 2.0 の「<a href="/study/csharp/data/sp2_iterator/#iterator">イテレーター</a>」や、
+C# 3.0 の「<a href="/study/csharp/cheatsheet/ap_ver3/#linq">LINQ</a>」を使うと、lazy list のようなことが実現可能。</p>
+<h2 id="linq-1"><a id="sec-generated-title-2"></a> <a id="linq"></a>LINQ の動作概要</h2>
+<p>例えば、以下のようなコードを見てみましょう。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span>[] x = {-<span class="number">15</span>, -<span class="number">10</span>, -<span class="number">5</span>, <span class="number">0</span>, <span class="number">5</span>, <span class="number">10</span>, <span class="number">15</span>};
+<span class="keyword">int</span> min = -<span class="number">10</span>;
+<span class="keyword">int</span> max = <span class="number">10</span>;
+<span class="keyword">var</span> y =
+  <span class="keyword">from</span> p <span class="keyword">in</span> x
+  <span class="keyword">where</span> min &lt;= p &amp;&amp; p &lt;= max
+  <span class="keyword">select</span> p * p;
+
+<span class="keyword">foreach</span>(<span class="keyword">var</span> p <span class="keyword">in</span> y)
+{
+  Console.Write(<span class="string">&quot;{0}\n&quot;</span>, p);
+}</code></pre>
+<p>int の配列 x から、
+<span class="math">
+<span class="paren" style="font-size:em;">[</span>
+<span class="normal">−</span><span class="normal">10</span>, <span class="normal">10</span>
+<span class="paren" style="font-size:em;">]</span>
+</span> の範囲に入っている物だけを取り出し、
+さらに、値の2乗を返しています。</p>
+<pre><code class="language-console">100
+25
+0
+25
+100</code></pre>
+<p>非常に抽象度の高いコードですが、
+これが具体的にどういうことをしているのかを考えてみましょう。
+実は、このコードの from, where, select の部分は以下のように展開されます。</p>
+<pre><code class="language-csharp">  <span class="keyword">var</span> y = x.Where(p =&gt; min &lt;= p &amp;&amp; p &lt;= max)
+    .Select(q =&gt; q * q);</code></pre>
+<p>これなら、多少は C# 2.0 の頃に見慣れたコードに近づきました。
+Where や Select に引数として与えている部分は、
+「<a href="/study/csharp/functional/sp3_lambda/#lambda">ラムダ式</a>」という機能で、
+まあ、「<a href="/study/csharp/functional/sp_delegate/#anonymous">匿名メソッド式</a>」を簡素化したようなものです。</p>
+<p>また、var キーワードは、右辺値の型から左辺の変数の型を推論してくれる機能です。
+（参考： 「<a href="/study/csharp/start/sp3_inference/#implicit">型推論</a>」。）</p>
+<p>ところで、int[] に Where や Select という名前のメソッドはありましたっけ？
+実はこれらは、
+「<a href="/study/csharp/functional/sp3_extension/#exmethod">拡張メソッド</a>」という機能を使って、
+int[]に（正確に言うと、IEnumerable&lt;int&gt; に）“追加した”メソッドです。
+（定義場所は System.Query.Sequence クラス内。）</p>
+<h2 id="section-1"><a id="sec-generated-title-3"></a> <a id="list"></a>リスト → リスト</h2>
+<p>前節の Where や Select はリストを変形して別のリストを得るメソッドと考えることができます。
+Where は特定の条件を満たす要素だけを取り出したリストを、
+Select はリスト内の各要素にある操作を施したリストを作るメソッドです。</p>
+<p>で、実際の LINQ の実装（System.Query.Sequence クラス内の実装）では、
+Where や Select は IEnumerable → IEnumerable を得るメソッドなんですが、
+ここでは、
+比較のために、IList で同等の機能を実装してみましょう。</p>
+<p>以下のような感じになります。
+（第1引数の前に this とか付いてるのが「<a href="/study/csharp/functional/sp3_extension/#exmethod">拡張メソッド</a>」です。）</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> Extensions
+{
+  <span class="keyword">public</span> <span class="keyword">static</span> IList&lt;<span class="keyword">int</span>&gt; Where(
+    <span class="keyword">this</span> IList&lt;<span class="keyword">int</span>&gt; x,
+    Func&lt;<span class="keyword">int</span>, <span class="keyword">bool</span>&gt; f)
+  {
+    List&lt;<span class="keyword">int</span>&gt; y = <span class="keyword">new</span> List&lt;<span class="keyword">int</span>&gt;();
+    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;x.Count; ++i)
+      <span class="keyword">if</span> (f(x[i]))
+        y.Add(x[i]);
+    <span class="keyword">return</span> y;
+  }
+
+  <span class="keyword">public</span> <span class="keyword">static</span> IList&lt;<span class="keyword">int</span>&gt; Select(
+    <span class="keyword">this</span> IList&lt;<span class="keyword">int</span>&gt; x,
+    Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; f)
+  {
+    List&lt;<span class="keyword">int</span>&gt; y = <span class="keyword">new</span> List&lt;<span class="keyword">int</span>&gt;();
+    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;x.Count; ++i)
+      y.Add(f(x[i]));
+    <span class="keyword">return</span> y;
+  }
+}</code></pre>
+<p>で、これの動作を見るために、
+以下のようなテストコードを書いてみます。
+まあ、先ほどと同じ処理内容なんですが、
+select の所に“重たい処理”を挟んだ上で、
+実行時間を計測しています。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Collections.Generic;
+<span class="keyword">using</span> System.Query;
+
+<span class="keyword">class</span> Program
+{
+  <span class="keyword">static</span> <span class="keyword">int</span> HeavyFunction(<span class="keyword">int</span> p)
+  {
+    <span class="comment">// 非常に重たい処理を装うために、スリープを挟んでみる</span>
+    System.Threading.Thread.Sleep(<span class="number">100</span>);
+    <span class="keyword">return</span> p * p;
+  }
+
+  <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+  {
+    <span class="keyword">int</span>[] x = {-<span class="number">15</span>, -<span class="number">10</span>, -<span class="number">5</span>, <span class="number">0</span>, <span class="number">5</span>, <span class="number">10</span>, <span class="number">15</span>};
+    <span class="keyword">int</span> min = -<span class="number">10</span>;
+    <span class="keyword">int</span> max = <span class="number">10</span>;
+    DateTime t = DateTime.Now;
+
+    <span class="keyword">var</span> y =
+      <span class="keyword">from</span> p <span class="keyword">in</span> x
+      <span class="keyword">where</span> min &lt;= p &amp;&amp; p &lt;= max
+      <span class="keyword">select</span> HeavyFunction(p);
+
+    TimeSpan ts = DateTime.Now - t;
+    Console.Write(<span class="string">&quot;{0}\n&quot;</span>, ts.Ticks);
+    t = DateTime.Now;
+
+    <span class="keyword">foreach</span>(<span class="keyword">var</span> p <span class="keyword">in</span> y)
+    {
+      ts = DateTime.Now - t;
+      Console.Write(<span class="string">&quot;{0}: {1}\n&quot;</span>, ts.Ticks, p);
+      t = DateTime.Now;
+    }
+  }
+}
+
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> Extensions
+{
+  <span class="keyword">public</span> <span class="keyword">static</span> IList&lt;<span class="keyword">int</span>&gt; Where(
+    <span class="keyword">this</span> IList&lt;<span class="keyword">int</span>&gt; x,
+    Func&lt;<span class="keyword">int</span>, <span class="keyword">bool</span>&gt; f)
+  {
+    List&lt;<span class="keyword">int</span>&gt; y = <span class="keyword">new</span> List&lt;<span class="keyword">int</span>&gt;();
+    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;x.Count; ++i)
+      <span class="keyword">if</span> (f(x[i]))
+        y.Add(x[i]);
+    <span class="keyword">return</span> y;
+  }
+
+  <span class="keyword">public</span> <span class="keyword">static</span> IList&lt;<span class="keyword">int</span>&gt; Select(
+    <span class="keyword">this</span> IList&lt;<span class="keyword">int</span>&gt; x,
+    Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; f)
+  {
+    List&lt;<span class="keyword">int</span>&gt; y = <span class="keyword">new</span> List&lt;<span class="keyword">int</span>&gt;();
+    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;x.Count; ++i)
+      y.Add(f(x[i]));
+    <span class="keyword">return</span> y;
+  }
+}</code></pre>
+<p>Extensions クラスで Where や Select を自前で定義したので、
+LINQ 標準で用意されている System.Query.Sequence 内の方ではなく、
+Extensions の方の Where, Select が呼び出されます。</p>
+<p>実行結果は以下の通りです。</p>
+<pre><code class="language-console">5468750
+0: 100
+0: 25
+0: 0
+0: 25
+0: 100</code></pre>
+<p>リスト処理なんで当たり前なんですが、
+最初のリスト x から別のリスト y を得る部分で実行時間の大部分を占めています。</p>
+<h2 id="section-2"><a id="sec-generated-title-4"></a> <a id="delay"></a>遅延評価</h2>
+<p>前節では、IList を使って Where および Select を実装してみました。
+その結果は、元のリスト x から変形後のリスト y を得る部分で一気に処理をしていて、
+残りの foreach の部分ではほとんど何もしていないという状態になりました。</p>
+<p>これではあんまり好ましくない場合があります。
+まず、この方式では、無限に続くシーケンスは処理できません。
+無限に続くシーケンスというのは、IEnumerable と、
+C# 2.0 の「<a href="/study/csharp/data/sp2_iterator/#iterator">イテレーター</a>」機能を用いて、
+例えば以下のようにして実現できる物です。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">static</span> IEnumerable&lt;<span class="keyword">int</span>&gt; CountUp()
+{
+  <span class="keyword">for</span>(<span class="keyword">long</span> i = <span class="number">0</span>; ; ++i)
+    <span class="keyword">yield</span> <span class="keyword">return</span> i;
+}</code></pre>
+<p>これで、<code>foreach(var i in CountUp())</code> とかやった日には、
+冗談抜きで永久ループになります。
+（foreach 中で break を入れて使えば、適当な所で処理を止めれる。）</p>
+<p>もう1つは、
+foreach で IEnumerator の MoveNext が呼ばれるたびに処理をすることで負荷を分散したい場合もあって、
+これは IList 版の実装では実現できません。
+IEnumerable を用いた実装が必要となります。</p>
+<p>このことを示すために、IEnumerable 版の Where, Select を実装して、
+先ほどと同様に処理の実行時間を測ってみましょう。
+この IEnumerable 版実装ですが、以下のようになります。
+（ちなみに、System.Query.Sequence クラス内の実装もこんな感じのはず。）</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> Extensions
+{
+  <span class="keyword">public</span> <span class="keyword">static</span> IEnumerable&lt;<span class="keyword">int</span>&gt; Where(
+    <span class="keyword">this</span> IEnumerable&lt;<span class="keyword">int</span>&gt; x,
+    Func&lt;<span class="keyword">int</span>, <span class="keyword">bool</span>&gt; f)
+  {
+    <span class="keyword">foreach</span> (<span class="keyword">int</span> p <span class="keyword">in</span> x)
+      <span class="keyword">if</span> (f(p))
+        <span class="keyword">yield</span> <span class="keyword">return</span> p;
+  }
+
+  <span class="keyword">public</span> <span class="keyword">static</span> IEnumerable&lt;<span class="keyword">int</span>&gt; Select(
+    <span class="keyword">this</span> IEnumerable&lt;<span class="keyword">int</span>&gt; x,
+    Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; f)
+  {
+    <span class="keyword">foreach</span> (<span class="keyword">int</span> p <span class="keyword">in</span> x)
+      <span class="keyword">yield</span> <span class="keyword">return</span> f(p);
+  }
+}</code></pre>
+<p>先ほどの IList 版とほとんど変わりませんね。
+いかに「<a href="/study/csharp/data/sp2_iterator/#iterator">イテレーター</a>」が便利な機能なのかが分かります。
+イテレータなしだと、結構面倒な記述が必要になります。</p>
+<p>で、早速実行時間を測ってみましょう。
+測定用のテストコードは、Extensions クラスの中身を差し替えるだけで OK なので、
+コード全体の再掲は割愛します。
+実行結果は以下の通り。</p>
+<pre><code class="language-console">0
+1093750: 100
+1093750: 25
+1093750: 0
+1093750: 25
+1093750: 100</code></pre>
+<p>この通り、見事に負荷が分散してますね。
+ちゃんと、IEnumerator の MoveNext が呼ばれるたびに HeavyFunction メソッドが実行されている証拠です。
+（実行時間も見事に5分の1。DateTime.Ticks ごときの精度では差が出ないみたい。）</p>
+<p>さて、こういう風に、
+必要になった要素から、必要になった分だけ計算する方法を、
+<strong id="delayed" class="keyword">遅延評価</strong>（delayed evaluation）もしくは lazy な評価（lazy evaluation）といいます。
+lazy というのは、不精・怠惰という意味で、
+「必要になるまでやらない」という姿勢を例えたものです。</p>
+<p>そして、遅延評価機能を持ったリストのことを lazy list （そのまま横文字で読むか、遅延リストと訳す場合が多い）と呼びます。
+C# では、IEnumerable インターフェースと「<a href="/study/csharp/data/sp2_iterator/#iterator">イテレーター</a>」を使って、
+lazy list に似たような機能が実現できるわけです。
+そして、C# 3.0 では、
+「<a href="/study/csharp/functional/sp3_extension/#exmethod">拡張メソッド</a>」や「<a href="/study/csharp/data/sp3_linq/#query">クエリ式</a>」を用いることで、
+lazy list 風の操作がより簡便に行えるようになりました。</p>
+<h3 id="section-3"><a id="sec-generated-title-5"></a> <a id="side_effect"></a>おまけ：値のキャッシュ</h3>
+<p>一般に、関数型言語などの言語で実装されている遅延評価機能は、
+「必要になるまで計算を実行しない」というのに加えて、
+「1度計算したら計算結果をキャッシュする」というような機構も持っていることが多いです。</p>
+<p>このページで説明したような、IEnumerator を使った操作は、
+「必要になるまで計算を実行しない」という意味では遅延評価的な動作になるんですが、
+キャッシュ機構までは持っていません。</p>
+<p>具体的にどういうことかというと、
+2度 foreach すると2度実行されます。
+特に、クエリ式中で副作用のあるコードを書く場合にはちょっと注意が必要です。
+例えば、以下のようなコードを書いたとします。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+{
+  <span class="keyword">var</span> a =
+    <span class="keyword">from</span> n <span class="keyword">in</span> Enumerable.Range(<span class="number">0</span>, <span class="number">3</span>)
+    <span class="keyword">select</span> SideEffect(n);
+
+  <span class="keyword">foreach</span> (<span class="keyword">var</span> n <span class="keyword">in</span> a) ;
+  <span class="keyword">foreach</span> (<span class="keyword">var</span> n <span class="keyword">in</span> a) ;
+}
+
+<span class="keyword">static</span> <span class="keyword">int</span> SideEffect(<span class="keyword">int</span> n)
+{
+  Console.Write(n);
+  <span class="keyword">return</span> n;
+}</code></pre>
+<pre><code class="language-console">012012</code></pre>
+<p>foreach 1回につき 012 が1回表示されます。</p>
+<p>2度も同じことが実行されるのがいやなら、
+以下のようにすればいいんですが、
+ToList() が呼ばれた時点で処理が実行され、
+「必要になるまで計算を実行しない」というのはできなくなります。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+{
+  <span class="keyword">var</span> a =
+    <span class="keyword">from</span> n <span class="keyword">in</span> Enumerable.Range(<span class="number">0</span>, <span class="number">3</span>)
+    <span class="keyword">select</span> SideEffect(n);
+  <span class="keyword">var</span> b = a.ToList();
+
+  <span class="keyword">foreach</span> (<span class="keyword">var</span> n <span class="keyword">in</span> b) ;
+  <span class="keyword">foreach</span> (<span class="keyword">var</span> n <span class="keyword">in</span> b) ;
+}
+
+<span class="keyword">static</span> <span class="keyword">int</span> SideEffect(<span class="keyword">int</span> n)
+{
+  Console.Write(n);
+  <span class="keyword">return</span> n;
+}</code></pre>
+<pre><code class="language-console">012</code></pre>
+<p>C# で、キャッシュ機構まで持つ遅延評価がしたければ、
+以下のページで紹介されているようなクラスを書く必要があります。</p>
+<p><a href="http://msdn2.microsoft.com/ja-jp/vcsharp/bb870976.aspx">Lazy Computation in C#</a>（英語）。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/data/">&#x30C7;&#x30FC;&#x30BF;&#x5217;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/data/sp_foreach/">foreach</a></li><li><a href="/study/csharp/data/sp2_iterator/">&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;&#x30FC;</a></li><li><a href="/study/csharp/data/sp2_itpattern/">[&#x96D1;&#x8A18;] &#x5185;&#x90E8;&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;&#x3068;&#x5916;&#x90E8;&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;</a></li><li><a href="/study/csharp/data/da_about/">&#x30C7;&#x30FC;&#x30BF;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/data/sp3_linq/">LINQ</a></li><li><a href="/study/csharp/data/sp3_stdquery/">&#x6A19;&#x6E96;&#x30AF;&#x30A8;&#x30EA;&#x6F14;&#x7B97;&#x5B50;&#xFF08;&#x30AF;&#x30A8;&#x30EA;&#x5F0F;&#x95A2;&#x4FC2;&#xFF09;</a></li><li><a href="/study/csharp/data/sp3_stdqueryo/">&#x6A19;&#x6E96;&#x30AF;&#x30A8;&#x30EA;&#x6F14;&#x7B97;&#x5B50;&#xFF08;&#x305D;&#x306E;&#x4ED6;&#xFF09;</a></li><li><a href="/study/csharp/data/datamodulararchitecture/">[&#x96D1;&#x8A18;] &#x5C0F;&#x3055;&#x306A;&#x6A5F;&#x80FD;&#x306E;&#x7D44;&#x307F;&#x5408;&#x308F;&#x305B;</a></li><li><a href="/study/csharp/data/sp3_ormismatch/">[&#x96D1;&#x8A18;] O/R &#x30A4;&#x30F3;&#x30D4;&#x30FC;&#x30C0;&#x30F3;&#x30B9;&#x30DF;&#x30B9;&#x30DE;&#x30C3;&#x30C1;</a></li><li><a href="/study/csharp/data/sp3_ormismatch2/">[&#x96D1;&#x8A18;] O/R &#x30A4;&#x30F3;&#x30D4;&#x30FC;&#x30C0;&#x30F3;&#x30B9;&#x30DF;&#x30B9;&#x30DE;&#x30C3;&#x30C1;&#xFF08;&#x30AF;&#x30E9;&#x30B9;&#x306E;&#x7D99;&#x627F;&#xFF09;</a></li><li><a href="/study/csharp/data/sp3_linqtosql/">[&#x96D1;&#x8A18;] LINQ to SQL &#x5B9F;&#x8DF5;&#x7DE8;</a></li><li><a href="/study/csharp/data/sp3_iqueryable/">[&#x96D1;&#x8A18;] IQueryable &#x306E;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/data/misc_immutabledata/">&#x4E0D;&#x5909;(immutable)&#x306A;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/data/dataranges/">&#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;/&#x7BC4;&#x56F2;&#x51E6;&#x7406;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

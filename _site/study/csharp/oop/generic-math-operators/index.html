@@ -1,0 +1,368 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x3010;Generic Math&#x3011; C# 11 &#x3067;&#x306E;&#x6F14;&#x7B97;&#x5B50;&#x306E;&#x65B0;&#x6A5F;&#x80FD; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/oop/generic-math-operators/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="generic-math-c-11">【Generic Math】 C# 11 での演算子の新機能</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abstract">概要</a></h2>
+<h5 class="version version11">Ver. 11</h5>
+<p>C# 11 で、数値型の演算子関連で3つ新機能が追加されています。</p>
+<ul>
+<li><a href="#unsigned-right-shift">符号なし右シフト</a></li>
+<li><a href="#checked-operator-overload">checked 演算子オーバーロード</a></li>
+<li><a href="#relaxing-shift">シフト演算子の右オペランドの制限撤廃</a></li>
+</ul>
+<h2 id="generic-math"><a id="sec-generated-title-2"></a> <a id="generic-math">背景: Generic Math</a></h2>
+<p>C# 11 / .NET 7 でインターフェイスの静的メンバーを仮想・抽象にできる (static abstract members in interfaces)ようになります。
+(この機能自体については「<a href="/study/csharp/oop/oo_interface/#static-abstract">インターフェイスの静的抽象メンバー</a>」で説明しています。)</p>
+<p>この機能の一番の用途は、数値型(<code>int</code> や <code>float</code> など)に対するアルゴリズムを<a href="/study/csharp/oop/sp2_generics/">ジェネリクス</a>を使って書けるようにすることです。
+例えば、以下のようなコードが書けるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Numerics;
+
+<span class="comment">// よくある「和を取るコード」なものの、</span>
+<span class="comment">// これまでだとジェネリックに書く手段がなかった。</span>
+<span class="comment">// C# 11 で可能に。</span>
+<span class="comment">// (T.Zero や、T に対する + 演算子の定義ができるように)</span>
+<span class="keyword">static</span> T sum&lt;T&gt;(IEnumerable&lt;T&gt; items)
+    <span class="keyword">where</span> T : INumber&lt;T&gt;
+{
+    <span class="keyword">var</span> sum = T.Zero;
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> items) sum += x;
+    <span class="keyword">return</span> sum;
+}
+
+<span class="comment">// いろんな型に対して sum&lt;T&gt; を呼ぶ。</span>
+Console.WriteLine(sum(<span class="keyword">new</span> <span class="keyword">byte</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }));
+Console.WriteLine(sum(<span class="keyword">new</span> <span class="keyword">int</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }));
+Console.WriteLine(sum(<span class="keyword">new</span> <span class="keyword">float</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }));
+Console.WriteLine(sum(<span class="keyword">new</span> <span class="keyword">double</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }));
+Console.WriteLine(sum(<span class="keyword">new</span> <span class="keyword">decimal</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }));</code></pre>
+<p>加減乗除や論理演算はもちろん、<code>float</code> などの一部の型は <code>Math.Sin</code> などの数学関数も使えます。
+コンセプト的に、この新機能を使ったジェネリックな数値処理の事を Generic Math と呼んでいたりします。</p>
+<p>また、 .NET 5 以降、数値関連の型がいくつか追加されています。</p>
+<ul>
+<li><a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.half?WT.mc_id=DT-MVP-4028921"><code>Half</code></a>: 16ビット浮動小数点数</li>
+<li><a href="https://github.com/dotnet/runtime/issues/67151"><code>Int128</code>, <code>UInt128</code></a>: 128ビットの整数</li>
+<li><a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.runtime.interopservices.clong?WT.mc_id=DT-MVP-4028921"><code>CLong</code></a>, <a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.runtime.interopservices.culong?WT.mc_id=DT-MVP-4028921"><code>CULong</code></a>: C/C++ との相互運用のために使う、環境によってビット幅が違う整数</li>
+<li><a href="/study/csharp/cheatsheet/ap_ver9/#nint"><code>nint</code>, <code>nuint</code></a>: CPU 依存幅の整数</li>
+</ul>
+<p>これらの新しい数値型も、Generic Math の対象で、<code>INumber&lt;T&gt;</code> などのインターフェイスを実装しています。</p>
+<p>この Generic Math と関連して、数値型の演算子関連で細々とした機能がいくつか追加されています。</p>
+<ul>
+<li>符号なし右シフト</li>
+<li>checked 演算子オーバーロード</li>
+<li>シフト演算子の右オペランドの制限撤廃</li>
+</ul>
+<h2 id="section-1"><a id="sec-generated-title-3"></a> <a id="unsigned-right-shift">符号なし右シフト</a></h2>
+<p>右シフト演算には符号付き右シフト(算術シフト)と符号なし右シフト(論理シフト)があって、
+右シフトしたときに、最上位ビットの 1 が残るかどうかの差になります。</p>
+<p>C# の場合、基本的に、</p>
+<ul>
+<li>符号<em>付き</em>整数の右シフトは符号<em>付き</em>右シフト(算術シフト)</li>
+<li>符号<em>なし</em>整数の右シフトは符号<em>なし</em>右シフト(論理シフト)</li>
+</ul>
+<p>という方式で右シフトの方式を切り替えます。</p>
+<pre><code class="language-csharp"><span class="comment">// 符号なし (unsigned) の 0xFF = 255</span>
+<span class="keyword">byte</span> u = 0xFF;
+
+<span class="comment">// 符号付き (signed) の 0xFF = -1</span>
+<span class="keyword">sbyte</span> s = (<span class="keyword">sbyte</span>)u;
+
+<span class="comment">// 符号なしを右シフトすると、左端には 0 が入る。</span>
+<span class="comment">// FF → 7F → 3F → 1F → F → 7 → 3 → 1</span>
+<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">8</span>; i++)
+{
+    Console.WriteLine($<span class="string">&quot;{u:X}&quot;</span>);
+    u &gt;&gt;= <span class="number">1</span>;
+}
+
+<span class="comment">// 符号なしを右シフトすると、左端のビットが残る。</span>
+<span class="comment">// 元が FF だとずっと FF。</span>
+<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">8</span>; i++)
+{
+    Console.WriteLine($<span class="string">&quot;{s:X}&quot;</span>);
+    s &gt;&gt;= <span class="number">1</span>;
+}</code></pre>
+<p>右シフトの符号あり/なしを切り替えたい場合、キャストが必要でした。</p>
+<pre><code class="language-csharp"><span class="keyword">sbyte</span> s = -<span class="number">1</span>;
+
+<span class="comment">// LogicalRightShift を呼んでいるので、符号なし右シフトになる。</span>
+<span class="comment">// FF → 7F → 3F → 1F → F → 7 → 3 → 1</span>
+<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">8</span>; i++)
+{
+    Console.WriteLine($<span class="string">&quot;{s:X}&quot;</span>);
+    s = LogicalRightShift(s, <span class="number">1</span>);
+}
+
+<span class="comment">// 右シフトの符号のあり/なしを切り替えたい場合、キャストを挟む。</span>
+<span class="keyword">static</span> <span class="keyword">sbyte</span> LogicalRightShift(<span class="keyword">sbyte</span> s, <span class="keyword">int</span> bits)
+    =&gt; (<span class="keyword">sbyte</span>)((<span class="keyword">byte</span>)s &gt;&gt; bits);</code></pre>
+<p>この方式は、Generic Math の導入に伴って1つ問題がありました。
+「型引数 <code>T</code> に対応する符号なしな型」を取得する手段がありません。</p>
+<pre><code class="language-csharp"><span class="comment">// 符号なしシフトにしたかったらどうすれば？？？</span>
+<span class="keyword">static</span> T LogicalRightShift&lt;T&gt;(T s, <span class="keyword">int</span> bits)
+    <span class="keyword">where</span> T : IShiftOperators&lt;T,T&gt;
+    =&gt; (T)((<span class="comment">/* unsigned T を取得したいけど手段がない */</span>)s &gt;&gt; bits);</code></pre>
+<p>そこで、C# 11 では普通に「符号なし右シフト演算子」の <code>&gt;&gt;&gt;</code> (<code>&gt;</code> 3つ)を導入することにしました。
+(Java にあるやつです。Java の場合は <code>uint</code> などの符号なし整数型がなくて、<code>&gt;&gt;</code> か <code>&gt;&gt;&gt;</code> で右シフトを切り替えます。)</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Numerics;
+
+<span class="keyword">sbyte</span> s = -<span class="number">1</span>;
+
+<span class="comment">// ちゃんと符号なし右シフトに。</span>
+<span class="comment">// FF → 7F → 3F → 1F → F → 7 → 3 → 1</span>
+<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">8</span>; i++)
+{
+    Console.WriteLine($<span class="string">&quot;{s:X}&quot;</span>);
+    s = LogicalRightShift(s, <span class="number">1</span>);
+}
+
+<span class="comment">// &gt;&gt;&gt; でどの型に対しても符号なし右シフト。</span>
+<span class="keyword">static</span> T LogicalRightShift&lt;T&gt;(T s, <span class="keyword">int</span> bits)
+    <span class="keyword">where</span> T : IShiftOperators&lt;T,T&gt;
+    =&gt; s &gt;&gt;&gt; bits;</code></pre>
+<p>ちなみに、演算子オーバーロードもできます。</p>
+<pre><code class="language-csharp"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">4</span>; i++)
+{
+    <span class="keyword">var</span> x = <span class="keyword">new</span> Int2Bit(i);
+
+    Console.WriteLine($<span class="string">&quot;for {x}&quot;</span>);
+
+    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt;= <span class="number">2</span>; j++)
+    {
+        Console.WriteLine($<span class="string">&quot;{j} bit signed: {x &gt;&gt; j}, unsigned: {x &gt;&gt;&gt; j}&quot;</span>);
+    }
+}
+
+<span class="keyword">readonly</span> <span class="keyword">struct</span> Int2Bit
+{
+    <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">byte</span> Value;
+    <span class="keyword">public</span> Int2Bit(<span class="keyword">int</span> value) =&gt; Value = (<span class="keyword">byte</span>)(value &amp; 0b11);
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString() =&gt; Value.ToString();
+
+    <span class="keyword">public</span> <span class="keyword">static</span> Int2Bit <span class="keyword">operator</span> &gt;&gt;(Int2Bit x, <span class="keyword">int</span> y) =&gt; <span class="keyword">new</span>(x.Value &gt;&gt; y);
+    <span class="keyword">public</span> <span class="keyword">static</span> Int2Bit <span class="keyword">operator</span> &gt;&gt;&gt;(Int2Bit x, <span class="keyword">int</span> y) =&gt; <span class="keyword">new</span>(ExtendSign(x.Value) &gt;&gt; y);
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> ExtendSign(<span class="keyword">int</span> x) =&gt; x <span class="keyword">is</span> &gt;= 0b10 ? (-<span class="number">4</span> | x) : x;
+}</code></pre>
+<h2 id="checked"><a id="sec-generated-title-4"></a> <a id="checked-operator-overload">checked 演算子オーバーロード</a></h2>
+<p>C# では、<a href="/study/csharp/start/sp_checked/">整数演算のオーバーフロー時に何もしないか、それとも例外を投げるかを選べる機能</a>があります。</p>
+<ul>
+<li><code>checked</code> コンパイラー オプション: プログラム全域でオーバーフローを例外にする</li>
+<li><code>checked</code> ブロック: ブロック中のオーバーフローを例外にする</li>
+<li><code>checked</code> 式: <code>checked()</code> の <code>()</code> の中に書いた式でオーバーフローを例外にする</li>
+</ul>
+<p>いずれにせよ <code>checked</code> というオプション名/キーワードを使います。
+これが付いている状況を「<code>checked</code> コンテキスト」と言い、
+<code>checked</code> コンテキストでの演算(要するに例外が出る演算)を 「<code>checked</code> 演算」と言います。</p>
+<p>逆に、<code>unchecked</code> というキーワードで、
+「例外を出さない」状態に戻せて、これを「<code>unchecked</code> コンテキスト」、「<code>unchecked</code> 演算」と言います。
+(何も指定がない場合の既定動作は <code>unchecked</code> コンテキストになります。)</p>
+<p>ちなみに、投げられる例外は <code>OverflowException</code> 型です。</p>
+<pre><code class="language-csharp"><span class="keyword">byte</span> x = <span class="number">128</span>;
+<span class="keyword">byte</span> y = <span class="number">128</span>;
+
+<span class="comment">// unchecked 演算。</span>
+<span class="comment">// (特にオプション指定がない場合、x + y はこの意味。)</span>
+<span class="comment">// 128 + 128 = 256 なものの、オーバーフローして 0 に。</span>
+<span class="keyword">var</span> z = <span class="keyword">unchecked</span>(x + y);
+
+<span class="comment">// checked 演算。</span>
+<span class="comment">// Overflow 例外が出る。</span>
+<span class="keyword">var</span> w = <span class="keyword">checked</span>(x + y);
+
+Console.WriteLine((w, z));</code></pre>
+<p>C# 10 以前では、<code>checked</code> な演算ができるのは組み込み整数だけでした。
+ユーザー定義で <code>int</code> などに準ずる型を作ろうとしても、<code>cheched</code>/<code>unchecked</code> の切り替えはできません。</p>
+<p>「<code>int</code> などに準ずる型」をどのくらいの頻度で作るかと言われるとあまりなかったりはするんですが…
+ちょうど最近(.NET 7 で)、<code>Int128</code>/<code>UInt128</code> という型が標準ライブラリに追加されています。</p>
+<p>また、generic math でも <code>checked</code> を使えるようにしたいしたいです。</p>
+<pre><code class="language-csharp"><span class="comment">// 例外が出るべき。</span>
+CheckedAdd&lt;<span class="keyword">byte</span>&gt;(<span class="number">128</span>, <span class="number">128</span>);
+
+<span class="keyword">static</span> T CheckedAdd&lt;T&gt;(T x, T y)
+    <span class="keyword">where</span> T : <span class="keyword">struct</span>, System.Numerics.IAdditionOperators&lt;T, T, T&gt;
+{
+    <span class="comment">// 例外を出したい。</span>
+    <span class="keyword">return</span> <span class="keyword">checked</span>(x + y);
+}</code></pre>
+<p>これまでのように、組み込み型でだけ例外を出せるということになってしまうと、</p>
+<ul>
+<li>generic に書き換える手段がなくなる</li>
+<li>「今現在ライブラリ実装なもの(例えば <code>Int128</code>)が将来的に組み込み型になる」みたいなことをやりにくくなる</li>
+</ul>
+<p>ということになります。</p>
+<p>そこで、C# 11 ではユーザー定義の <code>checked</code> 演算子オーバーロードを書けるようにしました。
+構文としては、</p>
+<ul>
+<li><code>operator</code> キーワードの<em>後ろ</em>に <code>checked</code> を付ける
+<ul>
+<li><code>checked</code> コンテキストで演算子を書いた時に呼ばれる</li>
+<li>これを便宜上、「checked 演算子」と呼ぶ</li>
+</ul>
+</li>
+<li><code>unchecked</code> コンテキストで呼ばれて欲しい方には今まで通り何も付けない(<code>operator</code> だけ)
+<ul>
+<li>「<code>checked</code> 演算子」との区別が必要な場合はわざわざ「普通の(regular)演算子」と呼ぶ</li>
+</ul>
+</li>
+</ul>
+<p>となります。</p>
+<p>例えば、前節の符号なし右シフトでも使った「2ビット整数」を例に、とりあえず加算演算を書くなら以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">readonly</span> <span class="keyword">struct</span> Int2Bit
+{
+    <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">byte</span> Value;
+    <span class="keyword">public</span> Int2Bit(<span class="keyword">int</span> value) =&gt; Value = (<span class="keyword">byte</span>)(value &amp; 0b11);
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString() =&gt; Value.ToString();
+
+    <span class="keyword">public</span> <span class="keyword">static</span> Int2Bit Checked(<span class="keyword">int</span> value) =&gt; value <span class="keyword">is</span> &lt; <span class="number">2</span> and &gt;= <span class="number">0</span> ? <span class="keyword">new</span>(value) : <span class="keyword">throw</span> <span class="keyword">new</span> OverflowException();
+
+    <span class="keyword">public</span> <span class="keyword">static</span> Int2Bit <span class="keyword">operator</span> +(Int2Bit x, Int2Bit y) =&gt; <span class="keyword">new</span>(x.Value + y.Value);
+    <span class="keyword">public</span> <span class="keyword">static</span> Int2Bit <span class="keyword">operator</span> <span class="keyword">checked</span> +(Int2Bit x, Int2Bit y) =&gt; Checked(x.Value + y.Value);
+}</code></pre>
+<p><code>checked</code> 演算子を定義できるのは算術演算系の演算子だけです。
+例えば <code>+</code> や <code>-</code> は <code>checked</code> にできますが、<code>&amp;</code> や <code>!</code> はできません。</p>
+<p>「<code>checked</code> だけでなく <code>unchecked</code> も明示的に書けるようにするかどうか」みたいなことも検討されたんですが、経験上「ほとんどの人が <code>unchecked</code> なコードしか書かない」という事がわかっているので、
+「<code>checked</code> だけ追加して、何も書かない場合(regular)を <code>unchecked</code> 扱い」ということになっています。</p>
+<h3 id="checked-1"><a id="sec-generated-title-5"></a> <a id="checked-only">注意: checked 演算子のみの定義はエラー</a></h3>
+<p>ちなみに、通常演算子なしで <code>checked</code> 演算子だけを定義することはできません。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> A
+{
+    <span class="comment">// OK: 通常演算子のみ</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> A <span class="keyword">operator</span> +(A x, A y) =&gt; <span class="keyword">default</span>;
+
+    <span class="comment">// OK: 通常演算子、checked 演算子両方</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> A <span class="keyword">operator</span> -(A x, A y) =&gt; <span class="keyword">default</span>;
+    <span class="keyword">public</span> <span class="keyword">static</span> A <span class="keyword">operator</span> <span class="keyword">checked</span> -(A x, A y) =&gt; <span class="keyword">default</span>;
+
+    <span class="comment">// コンパイル エラー: checked 演算子のみ</span>
+    <span class="comment">// public static A operator *(A x, A y) =&gt; default; // この行もあれば OK。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> A <span class="keyword">operator</span> <span class="keyword">checked</span> *(A x, A y) =&gt; <span class="keyword">default</span>;
+}</code></pre>
+<h3 id="section-2"><a id="sec-generated-title-6"></a> <a id="checked-cast">注意: キャスト演算</a></h3>
+<p><a href="/study/csharp/oop/oo_operator/#cast">キャスト</a>も <code>checked</code> にできます。
+ただし、<code>explicit</code> (明示的型変換)のみ OK で、<code>implicit</code> (暗黙的型変換)には <code>checked</code> は使えません。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> A
+{
+    <span class="comment">// OK: explicit キャスト</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">explicit</span> <span class="keyword">operator</span> A(<span class="keyword">int</span> x) =&gt; <span class="keyword">default</span>;
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">explicit</span> <span class="keyword">operator</span> <span class="keyword">checked</span> A(<span class="keyword">int</span> x) =&gt; <span class="keyword">default</span>;
+
+    <span class="comment">// OK: 通常演算子、checked 演算子両方</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">implicit</span> <span class="keyword">operator</span> A(<span class="keyword">float</span> x) =&gt; <span class="keyword">default</span>; <span class="comment">// これは大丈夫</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">implicit</span> <span class="keyword">operator</span> <span class="keyword">checked</span> A(<span class="keyword">float</span> x) =&gt; <span class="keyword">default</span>; <span class="comment">// これはダメ</span>
+}</code></pre>
+<h3 id="section-3"><a id="sec-generated-title-7"></a> <a id="checked-responsibility">注意: あくまでユーザー裁量</a></h3>
+<p>あくまでユーザー定義なので、悪意を持って実装すれば「通常演算子で例外を投げて、checked 演算子で投げない」みたいなこともできてしまいます。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> A
+{
+    <span class="comment">// なぜかこっちが例外を出して</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">explicit</span> <span class="keyword">operator</span> A(<span class="keyword">int</span> x) =&gt; <span class="keyword">throw</span> <span class="keyword">new</span> OverflowException();
+
+    <span class="comment">// こっちが出さない実装をしても別に怒られない…</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">explicit</span> <span class="keyword">operator</span> <span class="keyword">checked</span> A(<span class="keyword">int</span> x) =&gt; <span class="keyword">default</span>;
+}</code></pre>
+<p>そこの禁止まではしてないので注意してください。</p>
+<h3 id="section-4"><a id="sec-generated-title-8"></a>コンパイル結果</h3>
+<p>(<code>&gt;&gt;&gt;</code> のとこにも同様の話を)</p>
+<p>通常演算子は <code>op_Addition</code> みたいな名前のメソッドになってる。</p>
+<p>checked 演算子は <code>op_AdditionChecked</code> みたいに、通常演算子の後ろに <code>Checked</code> が付いた名前に</p>
+<h2 id="section-5"><a id="sec-generated-title-9"></a> <a id="relaxing-shift">シフト演算子の右オペランドの制限撤廃</a></h2>
+<p>C# ではこれまで、シフト演算子の右オペランド(何ビットシフトするかを決める方)には <code>int</code> しか使えないという制限がありました。
+<code>&lt;&lt;</code> や <code>&gt;&gt;</code> という記号をシフト以外の意味で使わせるつもりはないのと、
+であれば、シフトの右オペランドに <code>int</code> 以外のものを使いたい場面がほとんどないためです。</p>
+<p>例えば、以下のコードはコンパイル エラーになります。
+「1.1 ビットのシフト」とか言われても意味が解らないので、まあこれは妥当な制限でしょう。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = <span class="number">1</span> &lt;&lt; <span class="number">1</span>.<span class="number">1</span>;</code></pre>
+<p>ただ、以下のようなコードもコンパイル エラーになります。
+右オペランドが <code>uint</code> や <code>long</code> の場合ですら制限されていて、
+ちょっと厳しい感じがします。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = <span class="number">1</span> &lt;&lt; 1U;
+<span class="keyword">var</span> y = <span class="number">1</span> &lt;&lt; 1L;</code></pre>
+<p>必要かと言われると別に要らないので、厳しかろうと誰も文句は言わなかったんですが。</p>
+<p>ところがここに来て、generic math が入りました。
+generic math で使えるメソッドの中にはシフト演算の右オペランドで使えそうなものがいくつかあったりします。
+例えば、<code>LeadingZeroCount</code> や <code>TrailingZeroCount</code> などが代表例でが、
+これらの戻り値は <code>int</code> ではなく、<code>TSelf</code> (型引数になっている型)です。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Numerics;
+
+M&lt;<span class="keyword">byte</span>&gt;(0x8);
+M&lt;<span class="keyword">byte</span>&gt;(0xF);
+M&lt;<span class="keyword">byte</span>&gt;(0x10);
+M&lt;<span class="keyword">byte</span>&gt;(0x30);
+
+<span class="keyword">static</span> <span class="keyword">void</span> M&lt;T&gt;(T x)
+    <span class="keyword">where</span> T : IBinaryInteger&lt;T&gt;
+{
+    <span class="comment">// pop count = 1 になっているビットの個数を求める関数。</span>
+    T count = T.PopCount(x);
+
+    <span class="comment">// leading zero count = 上位ビットに 0 が何個並んでいるか。</span>
+    T leading = T.LeadingZeroCount(x);
+
+    <span class="comment">// trailing zero count = 下位ビットに 0 が何個並んでいるか。</span>
+    T trailing = T.TrailingZeroCount(x);
+
+    <span class="comment">// これらの戻り値が int ではなく T (ジェネリック)。</span>
+    <span class="comment">// こういう「ビット数」系の値はシフト演算の右オペランドで使うことがある。</span>
+
+    Console.WriteLine((count, leading, trailing));
+}</code></pre>
+<p>これにより、「シフト演算の右オペランドは <code>int</code> だけでいい」という前提が崩れました。</p>
+<p>まあ、元が厳しすぎたという話なので、C# 11 で制限を撤廃することになりました。
+以下のようなコードが認められるようになっています。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> A
+{
+    <span class="comment">// C# 10 以前でも書けるオーバーロード。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> A <span class="keyword">operator</span> &lt;&lt;(A x, <span class="keyword">int</span> y) =&gt; <span class="keyword">default</span>;
+
+    <span class="comment">// C# 11 以降でだけ書けるオーバーロード。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> A <span class="keyword">operator</span> &lt;&lt;(A x, A y) =&gt; <span class="keyword">default</span>;
+}</code></pre>
+<h3 id="section-6"><a id="sec-generated-title-10"></a> <a id="shift-guideline">注意: シフト以外の用途で &lt;&lt; を使わせたくはない</a></h3>
+<p>思想的な話でいうと、
+「<code>&lt;&lt;</code> や <code>&gt;&gt;</code> という記号をシフト以外の意味で使わせるつもりはない」という方針はこれまで通りです。</p>
+<p>ただ、構文的な制限はなくなったので、
+思想に反するコードも書けるようになっています。
+例えば以下のように、悪名高い「<code>&lt;&lt;</code> を &quot;write&quot; とか &quot;append&quot; 的な意味で使う」みたいなこともできます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> <span class="keyword">static</span> Iostream;
+
+<span class="comment">// C# の思想的には書かせたくないコードの例。</span>
+<span class="comment">// 書けてしまうように。</span>
+_ = cout &lt;&lt; <span class="string">&quot;Hellow World!&quot;</span> &lt;&lt; endl;
+
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> Iostream
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">readonly</span> ConsoleOut cout = <span class="keyword">new</span>();
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">readonly</span> ConsoleEndLine endl = <span class="keyword">new</span>();
+
+    <span class="keyword">public</span> <span class="keyword">struct</span> ConsoleOut
+    {
+        <span class="keyword">public</span> <span class="keyword">static</span> ConsoleOut <span class="keyword">operator</span> &lt;&lt;(ConsoleOut x, <span class="keyword">string</span> value) { Console.Write(value); <span class="keyword">return</span> x; }
+        <span class="keyword">public</span> <span class="keyword">static</span> ConsoleOut <span class="keyword">operator</span> &lt;&lt;(ConsoleOut x, ConsoleEndLine _) { Console.WriteLine(); <span class="keyword">return</span> x; }
+    }
+
+    <span class="keyword">public</span> <span class="keyword">struct</span> ConsoleEndLine { }
+}</code></pre>
+<p>ただ、まあこういうコードは推奨されていないというのは今となっては割と有名な話ですし、
+いわゆるガイドラインとかベストプラクティス集みたいなドキュメントで「やるべきではない」と書いておけば十分だろいうという判断が下されました。</p>
+<p>なので、今回のシフト演算子の制限緩和でも、「<code>INumber&lt;T&gt;</code> インターフェイスを実装した型に限る」みたいな制限は掛けない(緩めるのであれば一切の制限をしない)ことになりました。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/oop/">&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x6307;&#x5411;</a></li><li><a href="/study/csharp/oop/oo_about/">&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x6307;&#x5411;&#x3068;&#x306F;</a></li><li><a href="/study/csharp/oop/oo_class/">&#x30AF;&#x30E9;&#x30B9;</a></li><li><a href="/study/csharp/oop/oo_construct/">&#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;</a></li><li><a href="/study/csharp/oop/oo_conceal/">&#x5B9F;&#x88C5;&#x306E;&#x96A0;&#x853D;</a></li><li><a href="/study/csharp/oop/oo_property/">&#x30D7;&#x30ED;&#x30D1;&#x30C6;&#x30A3;</a></li><li><a href="/study/csharp/oop/oo_static/">&#x9759;&#x7684;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/study/csharp/oop/moduleinitializer/">&#x30E2;&#x30B8;&#x30E5;&#x30FC;&#x30EB;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/study/csharp/oop/oo_operator/">&#x6F14;&#x7B97;&#x5B50;&#x306E;&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30ED;&#x30FC;&#x30C9;</a></li><li><a href="/study/csharp/oop/oo_indexer/">&#x30A4;&#x30F3;&#x30C7;&#x30AF;&#x30B5;&#x30FC;</a></li><li><a href="/study/csharp/oop/oo_inherit/">&#x7D99;&#x627F;</a></li><li><a href="/study/csharp/oop/miscimplictinherit/">[&#x4F59;&#x8AC7;] &#x6697;&#x9ED9;&#x7684;&#x306A;&#x6D3E;&#x751F;</a></li><li><a href="/study/csharp/oop/oo_multipleinheritance/">[&#x96D1;&#x8A18;] &#x591A;&#x91CD;&#x7D99;&#x627F;&#x3067;&#x304D;&#x306A;&#x3044;&#x7406;&#x7531;</a></li><li><a href="/study/csharp/oop/oo_polymorphism/">&#x591A;&#x614B;&#x6027;</a></li><li><a href="/study/csharp/oop/misc_as/">[&#x96D1;&#x8A18;] &#x30AD;&#x30E3;&#x30B9;&#x30C8;&#x3068; as</a></li><li><a href="/study/csharp/oop/misc_construct/">[&#x96D1;&#x8A18;] &#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;&#x5185;&#x306E;&#x4EEE;&#x60F3;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x547C;&#x3073;&#x51FA;&#x3057;</a></li><li><a href="/study/csharp/oop/oo_abstract/">&#x62BD;&#x8C61;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x3001;&#x62BD;&#x8C61;&#x30AF;&#x30E9;&#x30B9;</a></li><li><a href="/study/csharp/oop/oo_interface/">&#x30A4;&#x30F3;&#x30BF;&#x30FC;&#x30D5;&#x30A7;&#x30FC;&#x30B9;</a></li><li><a href="/study/csharp/oop/misc_autoimpl/">[&#x96D1;&#x8A18;] &#x62BD;&#x8C61;&#x5B9A;&#x7FA9;&#x3068;&#x81EA;&#x52D5;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/oop/oo_vftable/">[&#x96D1;&#x8A18;] &#x4EEE;&#x60F3;&#x95A2;&#x6570;&#x30C6;&#x30FC;&#x30D6;&#x30EB;</a></li><li><a href="/study/csharp/oop/sp2_generics/">&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/oop/sp4_variance/">&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30AF;&#x30B9;&#x306E;&#x5171;&#x5909;&#x6027;&#x30FB;&#x53CD;&#x5909;&#x6027;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

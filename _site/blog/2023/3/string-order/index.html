@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5FD8;&#x308C;&#x304C;&#x3061;&#x306A;&#x30AB;&#x30EB;&#x30C1;&#x30E3;&#x30FC;&#x4F9D;&#x5B58;&#x554F;&#x984C; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2023/3/string-order/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2023-03-18T17:35:11">2023-03-18</time></span><span>更新: <time datetime="2023-03-18T17:35:11">2023-03-18</time></span></div><h1 id="section">忘れがちなカルチャー依存問題</h1>
+<p>今日は、「<a href="https://github.com/dotnet/runtime/blob/main/docs/design/features/globalization-invariant-mode.md">Globalization Invariant Mode</a>」に変更したら、意外と忘れがちなところで差が出たみたいな話。</p>
+<h2 id="globalization-invariant-mode">Globalization Invariant Mode</h2>
+<p><a href="/blog/2021/8/invariantculture/">以前に1回ブログに書いてる</a>んですが、 .NET の文字列 API にはカルチャー依存なものが多くて、
+例えば <code>1.2.ToString()</code> すらカルチャー依存です。
+大陸ヨーロッパだと小数点を <code>,</code> にすることが多く、そのあたりの OS でこの <code>ToString</code> を実行すると <code>&quot;1,2&quot;</code> になります。</p>
+<p>一方で、カルチャーごとの書式情報みたいなのは結構データ量が多いので、
+WebAssembly みたいなフットプリントを小さくしたい環境では「そのデータを除外したい」要件があったりします。</p>
+<p>そこで導入されたのが<a href="https://github.com/dotnet/runtime/blob/main/docs/design/features/globalization-invariant-mode.md">Globalization Invariant Mode</a>。
+<code>CultureInfo.CurrentCulture</code> を呼んでも、<code>InvariantCulture</code> が返ってくるというモードです。
+<code>1.2.ToString()</code> も常に <code>&quot;1.2&quot;</code> に。</p>
+<h2 id="section-1">文字列比較</h2>
+<p>日本 (<code>ja-JP</code> カルチャー)の場合、<code>InvariantCulture</code> (実質 <code>en-US</code> カルチャー)との差は日付がらみ(米国は <code>MM/dd/yyyy</code>)くらいなので、
+大した影響もないはず(フォーマット未指定で日付系の型を <code>ToString</code> することがあんまりない)なので早々に Globalization Invariant Mode を有効化しようとしたところ、
+<code>Order</code>/<code>OrderBy</code> が影響を受けていました。</p>
+<p><a href="https://github.com/dotnet/runtime/blob/main/docs/design/features/globalization-invariant-mode.md">Globalization Invariant Mode の解説</a>をよく見てみれば原因は明白で、</p>
+<blockquote>
+<p>String operations like Compare, IndexOf and LastIndexOf are always performed as ordinal and not linguistic operations regardless of the string comparing options passed to the APIs.</p>
+</blockquote>
+<blockquote>
+<p>文字列操作、例えば Compare, IndexOf, LastIndesOf などは常に ordinal で実行され、言語的な操作はしません。文字列比較のオプションに何を渡しても関係なく。</p>
+</blockquote>
+<p>とのこと。</p>
+<p><code>CurrentCulture</code> が <code>InvariantCulture</code> に化ける他に、
+文字列比較が常に ordinal (文字コード順)になるそうです。</p>
+<p>例えば以下のようなコードを実行すると、</p>
+<pre><code class="language-csharp">Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+<span class="comment">// InvariantGlobalization true のときはこの行が例外になるのでコメントアウトして実行。</span>
+Thread.CurrentThread.CurrentCulture = <span class="keyword">new</span> System.Globalization.CultureInfo(<span class="string">&quot;tr-TR&quot;</span>);
+
+<span class="keyword">var</span> data = <span class="keyword">new</span>[]
+{
+    <span class="comment">// だいたいのカルチャーで、大文字・小文字、アクセント記号違いの文字が並ぶようにソートされる。</span>
+    <span class="string">&quot;a&quot;</span>,
+    <span class="string">&quot;A&quot;</span>,
+    <span class="string">&quot;b&quot;</span>,
+    <span class="string">&quot;B&quot;</span>,
+    <span class="string">&quot;&#192;&quot;</span>,
+    <span class="comment">// トルコ語の時に順序変わるやつ</span>
+    <span class="string">&quot;i&quot;</span>,
+    <span class="string">&quot;I&quot;</span>,
+    <span class="string">&quot;ı&quot;</span>,
+    <span class="string">&quot;İ&quot;</span>,
+};
+
+<span class="keyword">var</span> @<span class="keyword">default</span> = data.Order().ToArray(); <span class="comment">// 実行結果を見ればわかるものの、未指定は CurrentCulture。</span>
+<span class="keyword">var</span> current = data.Order(StringComparer.CurrentCulture).ToArray();
+<span class="keyword">var</span> invariant = data.Order(StringComparer.InvariantCulture).ToArray();
+<span class="keyword">var</span> ordinal = data.Order(StringComparer.Ordinal).ToArray();
+
+<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; @<span class="keyword">default</span>.Length; i++)
+{
+    Console.WriteLine($<span class="string">&quot;{@default[i]} {current[i]} {invariant[i]} {ordinal[i]}&quot;</span>);
+}</code></pre>
+<p>InvariantGlobalization が false なら以下のような結果になります。
+無指定が <code>CurrentCulture</code> と一緒。
+<code>CurrentCulture</code> と <code>InvariantCulture</code> では一部の並びに変化がありますが、
+「大文字・小文字が並ぶ」くらいはどのカルチャーでも共通です。</p>
+<pre><code class="language-console">a a a A
+A A A B
+À À À I
+b b b a
+B B B b
+ı ı i i
+I I I À
+i i İ İ
+İ İ ı ı</code></pre>
+<p>そして、InvariantGlobalization を true 以下のような結果に変化します。
+無指定と <code>CurrentCulture</code> の列だけが変わるかと思いきや、
+<code>InvariantCulture</code> の列も含めて全部が <code>Ordinal</code> とそろいます。
+完全に文字コード順なので、ASCII アルファベットは大文字が先で、小文字がまとめて後ろに。
+<code>À</code> は non-ASCII の文字なのでさらに後ろ。</p>
+<pre><code class="language-console">A A A A
+B B B B
+I I I I
+a a a a
+b b b b
+i i i i
+À À À À
+İ İ İ İ
+ı ı ı ı</code></pre>
+<p>ちなみに、日本語でもひらがな・カタカナの並びが変わります。
+(カルチャーあり: あ、ア、い、イ。
+Ordinal: あ、い、ア、イ。)</p>
+<h2 id="order">実は遅い Order()</h2>
+<p>カルチャー依存のテーブルを引いて順序を決めるのと、
+単に文字コードの数値を見てソートするのとではどちらが高速か明白です。</p>
+<p><code>Order</code>/<code>OrderBy</code> もカルチャー依存ということは…
+ベンチマークを取ってみましょう…</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> BenchmarkDotNet.Attributes;
+<span class="keyword">using</span> BenchmarkDotNet.Running;
+
+BenchmarkRunner.Run&lt;StringCompareBenchmark&gt;();
+
+<span class="keyword">public</span> <span class="keyword">class</span> StringCompareBenchmark
+{
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">readonly</span> <span class="keyword">string</span>[] _data = <span class="string">&quot;&quot;</span>&quot;
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed <span class="keyword">do</span> eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor <span class="keyword">in</span> reprehenderit <span class="keyword">in</span> voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt <span class="keyword">in</span> culpa qui officia deserunt mollit anim id est laborum.
+        <span class="string">&quot;&quot;</span>&quot;.Split(<span class="string">&#39; &#39;</span>);
+
+    [Benchmark]
+    <span class="keyword">public</span> <span class="keyword">string</span>[] Order() =&gt; _data.Order().ToArray();
+
+    [Benchmark]
+    <span class="keyword">public</span> <span class="keyword">string</span>[] OrderCurrent() =&gt; _data.Order(StringComparer.CurrentCulture).ToArray();
+
+    [Benchmark]
+    <span class="keyword">public</span> <span class="keyword">string</span>[] OrderInvariant() =&gt; _data.Order(StringComparer.InvariantCulture).ToArray();
+
+    [Benchmark]
+    <span class="keyword">public</span> <span class="keyword">string</span>[] OrderOrdinal() =&gt; _data.Order(StringComparer.Ordinal).ToArray();
+}</code></pre>
+<p>結果、うちの環境だと以下のような感じでした。</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th style="text-align: right;">Mean</th>
+<th style="text-align: right;">Error</th>
+<th style="text-align: right;">StdDev</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Order</td>
+<td style="text-align: right;">8.348 us</td>
+<td style="text-align: right;">0.0778 us</td>
+<td style="text-align: right;">0.0727 us</td>
+</tr>
+<tr>
+<td>OrderCurrent</td>
+<td style="text-align: right;">8.399 us</td>
+<td style="text-align: right;">0.0313 us</td>
+<td style="text-align: right;">0.0277 us</td>
+</tr>
+<tr>
+<td>OrderInvariant</td>
+<td style="text-align: right;">8.453 us</td>
+<td style="text-align: right;">0.0569 us</td>
+<td style="text-align: right;">0.0532 us</td>
+</tr>
+<tr>
+<td>OrderOrdinal</td>
+<td style="text-align: right;">2.593 us</td>
+<td style="text-align: right;">0.0125 us</td>
+<td style="text-align: right;">0.0111 us</td>
+</tr>
+</tbody>
+</table>
+<p>Ordinal 指定すると3倍以上速くなります。</p>
+<p>ちなみに、自分の用途ではどこで何度実行しようと同じ順になりさえすればよくて、
+順序は a A b B でも A B a b でもどちらでもよかったので、
+もっと早くから Ordinal 指定しておくべき事案でした。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2023/3/">3&#x6708;</a></li><li><a href="/blog/2023/3/extensions/">&#x3010;C# 12 &#x5019;&#x88DC;&#x3011; Extensions</a></li><li><a href="/blog/2023/3/csharp-breaking-change/">C# &#x3067;&#x306E;&#x7834;&#x58CA;&#x7684;&#x5909;&#x66F4;&#x306E;&#x4ECA;&#x5F8C;&#x306E;&#x6271;&#x3044;(&#x6848;)</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,230 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>DSL &#x304C;&#x3089;&#x307F;&#x306E;&#x305D;&#x306E;&#x4ED6;&#x8AF8;&#x3005; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/dsl/dsl-1/dslother/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="dsl">DSL がらみのその他諸々</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>執筆途中。</p>
+<p>その他、直接的ではないにしても DSL とも関連しそうな話題。</p>
+<p>ビジュアル言語と言語ワークベンチ。</p>
+<p>汎用言語＋DSL 混在開発すると面白そうなもの。</p>
+<h2 id="section-1"><a id="sec-generated-title-2"></a> <a id="offline"></a>オフライン処理</h2>
+<p>設定ファイルや画像・音声などのリソースファイルの形式には、
+「編集しやすい形式」と「プログラムから読み込みやすい形式」があります。
+また、編集時にのみ必要になる</p>
+<p>で、実行時のパフォーマンスの観点から、
+プログラムのビルド時に「編集しやすい形式」→「読み込みやすい形式」の変換したり、
+編集時にのみ必要な情報を削除する場合があります。</p>
+<p>このとき、
+ビルド時にやってしまう処理をオフライン処理、
+プログラム実行時行う部分をオンライン処理と呼びます。</p>
+<p>DSL ベース開発においても、
+前節の「<a href="/study/dsl/dsl-1/dslapproacho/#method">方式</a>」で言うところの動的ローディングするタイプの DSL の場合、
+オフライン処理による実行時のパフォーマンス向上を考えたりすることがあります。
+（実際、「<a href="/study/dotnet/dotnet3/abstract/#wpf">WPF</a>」 の 「<a href="/study/dotnet/wpf/wpf_xaml/#xaml">XAML</a>」 がこういう処理をしています。）</p>
+<h3 id="section-2"><a id="sec-generated-title-3"></a> <a id="offline_demand"></a>オフライン処理の必要性</h3>
+<p>「<a href="/study/dsl/dsl-1/dsl/#abstraction">抽象定義と具象定義</a>」で説明したように、
+持ってる情報としてはまったく同じ（抽象形式的には同じ）でも、
+具体的な表現方法（具象形式）は変えることができます。</p>
+<p>で、
+抽象形式（どういう情報を持ちたいか）は決まっていて、
+具象形式をどうするかをこれから決めるとき、
+「作成・編集しやすい形式」と「プログラムから読みやすい形式」という2つの選択肢があります。</p>
+<p>もちろん、その中間というか、折中案・妥協案として、
+「人手の編集もそこそこしやすいし、プログラムからの読み込みもそこそこしやすい」というような形式を考えることもできます。
+XML なんかは、理念的にはこの折中案。</p>
+<p>でも、分野によっては、
+こういう折中案すら取りたくないくらいパフォーマンスにシビアなものもあります。
+その場合、
+「編集しやすい形式」と「読み込みやすい形式」の両方を決めておいて、
+開発時には前者で書いて、
+後者に変換してから使うというような方式を取ります。</p>
+<p>また、往々にして、編集時に必要な情報というのは、
+実行時に必要な情報と比べると多くなります。
+例えば、編集用 GUI のレイアウト情報などは、実行時には必要ない場合が多いです。
+こういう場合には、プログラムのビルド時に、
+編集時にしか必要ない情報を削除してしまうのが普通です。</p>
+<h3 id="section-3"><a id="sec-generated-title-4"></a> <a id="offline_sample"></a>オフライン処理の例</h3>
+<p>いくつか、オフライン処理の例を挙げてみます。</p>
+<h5 id="section-4"><a id="sec-generated-title-5"></a>テキスト → バイナリ</h5>
+<p>まあ、わかりやすい例で言うと、
+テキスト形式で書いて、バイナリ形式に変換しておくというのがあります。</p>
+<p>例えば、何らかの数値を設定ファイルに記録してあったとします。
+テキスト形式の場合、読み出しは以下のような感じになります。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> x = <span class="keyword">int</span>.Parse(reader.ReadLine());</code></pre>
+<p>これでも簡単な例（1つの行に1つの数値しかかかれてないという前提）なんですが、
+それでも、
+ReadLine では「改行文字を探して、改行文字までの文字列を取り出す」、
+Parse では「文字列を解析して数値に変換」というような処理をしています。</p>
+<p>一方、バイナリ形式で保存するなら、以下のような感じ。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> x = reader.ReadInt32();</code></pre>
+<p>こちらは、4バイト読み出すだけ。
+複雑な処理は一切ありません。</p>
+<p>「<a href="/study/dotnet/dotnet3/abstract/#wpf">WPF</a>」 の 「<a href="/study/dotnet/wpf/wpf_xaml/#xaml">XAML</a>」 がこういう処理をしています。
+編集時には、XML 形式である XAML になっていて、
+ビルド時にバイナリ形式である BAML に変換して、
+プログラムの実行時には BAML をロードして使います。</p>
+<h5 id="section-5"><a id="sec-generated-title-6"></a>編集用のメタデータ</h5>
+<p>データには、編集するときにはあった方がいいけど、
+実行時には不要になるデータというのもあります。</p>
+<p>例えば、「<a href="/study/dotnet/dotnet3/abstract/#wf">WF</a>」 のワークフローを Visual Studio を使って作るとすると GUI ツールでアシストをしてもらえるわけですが、
+「どのアクティビティを GUI ツール上のどこに置くか」というようなレイアウト情報は、
+開発時には必要ですが実行時には必要ありません。</p>
+<p>こういう開発時にしか使わない情報は、実行時には残すだけ無駄です。
+なので、オフライン処理で削除してしまおうというのも自然な発想です。</p>
+<p>例えば、Visual Studio での WF 開発の場合、
+ワークフローの情報は、
+実行時に必要な情報は .xoml ファイル、
+レイアウト情報は .layout という別ファイルに持っておいて、
+プログラムのビルドには .xoml だけを使います。
+（この場合、オフライン処理で不要な情報を削除してるというか、
+はなっから別ファイルに分離されていますが。）</p>
+<h5 id="section-6"><a id="sec-generated-title-7"></a>ロスレス → 準ロスレス</h5>
+<p>ゲームなどでは、画像や音声データをよく使います。
+で、この手のデータは、編集時には、編集のたびにデータが劣化していては話にならないので、
+ロスレス（完全に可逆な）データ形式で保存します。</p>
+<p>一方で、画像などの場合、
+ロスレスデータはファイルサイズが非常に大きくなりますので、
+視覚上・聴覚上わからない程度の劣化を許すことでサイズを大幅に圧縮します（準ロスレス圧縮）。
+（
+画像も音声も、
+完全なロスレスの場合、1/2 程度に圧縮できればいい方。
+準ロスレスなら、10～20分の1程度まで圧縮できます。
+）</p>
+<h3 id="section-7"><a id="sec-generated-title-8"></a> <a id="content_pipeline"></a>コンテントパイプライン</h3>
+<p>Microsoft のゲーム開発環境 <a href="http://www.microsoft.com/japan/msdn/xna/">XNA</a> は、
+コンテントパイプラインという仕組みを持っています。</p>
+<pre><code class="language-text">      （書きかけ）
+      - XNA の Content Pipeline
+
+      3D モデル、画像、音などを、
+
+      1. Contents（人間の編集しやすい形式）ファイル
+      ↓importer（ファイルIO）
+      2. Contents の中身
+      ↓processor（変換）
+      3. Assets（コンピュータの読み出しやすい形式）
+      ↓manager（ロード）
+      4. 実行・表示・再生
+
+      1 → 2 → 3 をオフライン処理
+      3 → 4 をオンライン処理
+
+      XNA 開発の便利なところは、1, 2 のところを作って、
+      Visual Studio のプロパティウィンドから作ったモジュールが登録できて、
+      特に Makefile の類を書かなくても1→3の処理ができること。
+    </code></pre>
+<h2 id="section-8"><a id="sec-generated-title-9"></a> <a id="language_workbench"></a>言語ワークベンチ</h2>
+<pre><code class="language-text">      （書きかけ）
+
+      ・ビジュアル言語 VS テキスト言語
+      （「[ドメイン特化型モデル駆動開発](/study/dsl//dsltools)」の方に書いた方がいいのかも。）
+      - DSL は、1度覚えたら楽、でも、毎度毎度覚えなおす必要があって大変
+      - ビジュアルノーテーション＆ツールアシスト
+      ↓
+      DSL 作るなら graphical 言語がいいんじゃないか
+      ↓
+      ビジュアルノーテーションや、GUI ツール込みで言語と考える
+
+
+      汎用のテキスト言語 ＋ ビジュアル DSL の混在開発
+    </code></pre>
+<p>言語ワークベンチ …
+intentional programming。
+テキスト形式のソースファイルを基本とするんじゃなくて、
+抽象形のコードを基本に。
+用途に合わせてテキストあるいは図にして可視化。</p>
+<p>やっぱ、ソースがテキストじゃないと気持ち悪いという人もいるかも。
+ツールに依存するのがいやって人もいまだ多いし。
+あと、抽象形 → テキスト化って、それは逆コンパイル？
+抽象度の高い言語の場合はテキスト化しずらそう。</p>
+<p>(例)
+ステートマシンは、
+ダイアグラムで書きたいときもあれば、表にしたいときもある。</p>
+<ul>
+<li><p>図</p>
+<ul>
+<li><p>ダイアグラム</p>
+</li>
+<li><p>表</p>
+</li>
+</ul>
+</li>
+<li><p>テキスト</p>
+<ul>
+<li><p>ハッシュテーブル</p>
+</li>
+<li><p>switch 文</p>
+</li>
+</ul>
+</li>
+</ul>
+<figure>
+<p><a href="/assets/media/ufcpp2000/dsl/fig/fsmdiagram.png"><img src="/assets/media/ufcpp2000/dsl/fig/fsmdiagram.png" alt="ダイアグラムでステートマシンを表現" /></a></p>
+<figcaption>ダイアグラムでステートマシンを表現</figcaption>
+</figure>
+<figure>
+<p><a href="/assets/media/ufcpp2000/dsl/fig/fsmtable.png"><img src="/assets/media/ufcpp2000/dsl/fig/fsmtable.png" alt="ダイアグラムでステートマシンを表現" /></a></p>
+<figcaption>ダイアグラムでステートマシンを表現</figcaption>
+</figure>
+<p>ハッシュテーブルによる表現</p>
+<pre><code class="language-csharp">fsm[<span class="keyword">new</span> Pair(State.A, Event.a)] = <span class="keyword">new</span> Pair(State.A, x);
+fsm[<span class="keyword">new</span> Pair(State.A, Event.b)] = <span class="keyword">new</span> Pair(State.B, y);
+fsm[<span class="keyword">new</span> Pair(State.A, Event.d)] = <span class="keyword">new</span> Pair(State.C, u);
+
+fsm[<span class="keyword">new</span> Pair(State.B, Event.a)] = <span class="keyword">new</span> Pair(State.A, w);
+fsm[<span class="keyword">new</span> Pair(State.B, Event.b)] = <span class="keyword">new</span> Pair(State.B, x);
+fsm[<span class="keyword">new</span> Pair(State.B, Event.c)] = <span class="keyword">new</span> Pair(State.C, z);
+
+fsm[<span class="keyword">new</span> Pair(State.C, Event.b)] = <span class="keyword">new</span> Pair(State.A, u);
+fsm[<span class="keyword">new</span> Pair(State.C, Event.c)] = <span class="keyword">new</span> Pair(State.C, z);
+fsm[<span class="keyword">new</span> Pair(State.C, Event.d)] = <span class="keyword">new</span> Pair(State.B, u);</code></pre>
+<p>switch 文による表現</p>
+<pre><code class="language-csharp"><span class="keyword">switch</span>(currentState)
+{
+<span class="keyword">case</span> State.A:
+  <span class="keyword">switch</span>(<span class="keyword">event</span>)
+  {
+  <span class="keyword">case</span> Event.a: x(); currentState = State.A; <span class="keyword">break</span>;
+  <span class="keyword">case</span> Event.b: y(); currentState = State.B; <span class="keyword">break</span>;
+  <span class="keyword">case</span> Event.d: u(); currentState = State.C; <span class="keyword">break</span>;
+  }
+  <span class="keyword">break</span>;
+<span class="keyword">case</span> State.B:
+  <span class="keyword">switch</span>(<span class="keyword">event</span>)
+  {
+  <span class="keyword">case</span> Event.a: w(); currentState = State.A; <span class="keyword">break</span>;
+  <span class="keyword">case</span> Event.b: x(); currentState = State.B; <span class="keyword">break</span>;
+  <span class="keyword">case</span> Event.c: z(); currentState = State.C; <span class="keyword">break</span>;
+  }
+  <span class="keyword">break</span>;
+<span class="keyword">case</span> State.C:
+  <span class="keyword">switch</span>(<span class="keyword">event</span>)
+  {
+  <span class="keyword">case</span> Event.b: u(); currentState = State.A; <span class="keyword">break</span>;
+  <span class="keyword">case</span> Event.c: z(); currentState = State.C; <span class="keyword">break</span>;
+  <span class="keyword">case</span> Event.d: u(); currentState = State.B; <span class="keyword">break</span>;
+  }
+  <span class="keyword">break</span>;
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/dsl/dsl-1/">DSL (Domain Specific Language)</a></li><li><a href="/study/dsl/dsl-1/dsl/">DSL &#x6982;&#x8981;</a></li><li><a href="/study/dsl/dsl-1/dslapproachi/">DSL &#x3078;&#x306E;&#x30A2;&#x30D7;&#x30ED;&#x30FC;&#x30C1;&#xFF08;&#x5185;&#x90E8;&#x8A00;&#x8A9E;&#xFF09;</a></li><li><a href="/study/dsl/dsl-1/dslapproacho/">DSL &#x3078;&#x306E;&#x30A2;&#x30D7;&#x30ED;&#x30FC;&#x30C1;&#xFF08;&#x5916;&#x90E8;&#x8A00;&#x8A9E;&#xFF09;</a></li><li><a href="/study/dsl/dsl-1/general/">&#x6C4E;&#x7528;&#x8A00;&#x8A9E;&#x306E;&#x9032;&#x5316;</a></li><li><a href="/study/dsl/dsl-1/dslconclusion/">DSL &#x3092;&#x53D6;&#x308A;&#x5DFB;&#x304F;&#x72B6;&#x6CC1;&#x3068;&#x3053;&#x308C;&#x304B;&#x3089;</a></li><li><a href="/study/dsl/dsl-1/model/">&#x30C9;&#x30E1;&#x30A4;&#x30F3;&#x7279;&#x5316;&#x30E2;&#x30C7;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

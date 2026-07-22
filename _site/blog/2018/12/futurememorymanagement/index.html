@@ -1,0 +1,118 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5C06;&#x6765;&#x306E;&#x30E1;&#x30E2;&#x30EA;&#x7BA1;&#x7406; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2018/12/futurememorymanagement/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2018-12-26T09:39:07">2018-12-26</time></span><span>更新: <time datetime="2018-12-26T09:47:46">2018-12-26</time></span></div><h1 id="section">将来のメモリ管理</h1>
+<p>今日はまたちょっと将来の話。
+リリース時期・本当にリリースされるか未定の機能で、メモリ管理がらみの話をまとめて。</p>
+<h2 id="section-1">ヒープ確保の負担を減らしたい</h2>
+<p>メモリの管理方法には<a href="/study/computer/essential-software/memorymanagement/#stack">スタック</a>と<a href="/study/computer/essential-software/memorymanagement/#heap">ヒープ</a>があって、
+一般的にはスタックの方が高速です。
+スタックの方が制限がきついので、遅くてもしょうがなくヒープを使う場面がでてきます。</p>
+<p>ヒープ管理は結構大きな負担なので、これを減らせば結構なパフォーマンス改善になります。
+いくつか方向性があって、以下のような最適化が考えられます。</p>
+<ul>
+<li>ヒープ管理自体を賢くする
+<ul>
+<li>→ <a href="/study/computer/essential-software/memorymanagement/#garbage-collection">ガベージ コレクション</a></li>
+<li>→ Arena Allocation (後述)</li>
+</ul>
+</li>
+<li>ヒープを避ける
+<ul>
+<li>手作業でヒープを避ける
+<ul>
+<li>C# が構造体とかの「<a href="/study/csharp/resource/oo_reference/">値型</a>」を持っているのはこのため</li>
+<li>→ 先日書いた「<a href="/blog/2018/12/spanify/"><code>Span&lt;T&gt;</code> 利用による最適化</a>」とかもまさにこれ</li>
+</ul>
+</li>
+<li>自動でヒープを避ける
+<ul>
+<li>→ Object Stack Allocation (後述)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="section-2">ガベージ コレクション</h2>
+<p>一般的に、こまごまと個別に処理をするよりも、ある程度まとまった単位でごっそり処理する方が効率がよかったりします。
+<a href="/study/computer/essential-software/memorymanagement/#garbage-collection">ガベージ コレクション</a>というメモリ管理手法はまさにそんな感じで、
+「ごみはしばらくほったらかし」→「定期的にごっそりまとめてゴミ集め」とかやっていて、
+これがスループット的には結構有利だったりします。
+「まとめてゴミ集め」の瞬間に負荷が集中するという問題はあるものの、
+トータルでみると低負荷なメモリ管理手法です。</p>
+<p>メモリ管理が手動(<code>alloc</code> したものは開発者が責任をもって <code>free</code> しないといけない)な言語でも、内部的にガベージ コレクション的な挙動をしているものがあるくらいです。
+<a href="https://github.com/gperftools/gperftools">gperftools</a>の tcmalloc なんかはそうみたいです。
+小さいオブジェクトの場合だけですが、<code>free</code>した瞬間に即座にその領域を解放するのではなくて、
+メモリが足りなくなってきたときにまとめて解放処理をします。</p>
+<p>ガベージ コレクション以外のヒープ管理手法は、
+たびたび提案されては、
+そのたび「<a href="/study/computer/essential-software/memorymanagement/#generational">世代別 GC</a>に性能で勝てなかった」的な結論に達したりします。
+.NET でも、<a href="https://www.infoq.com/jp/news/2017/10/snowflake">Project Snowflake</a>という研究プロジェクトがありました
+(<a href="https://www.rust-lang.org/">Rust</a>みたいに、メモリの所有権をはっきりさせればヒープ管理が速くなるんじゃないかという原理に基づく提案)。
+結構賢そうなことをやっているんですが、それでも結論は「<a href="https://github.com/dotnet/coreclr/issues/20074#issuecomment-423199088">利益がコストに見合わない</a>」でした。</p>
+<h2 id="arena-allocation">Arena Allocation</h2>
+<p>Project Snowflake に代わって1つ有望視されているのは、
+Arena Allocation という手法です。</p>
+<p><a href="https://developers.google.com/protocol-buffers/docs/reference/arenas">Protocol Buffers の C++ 版</a>がこの手法によるメモリ管理を提供しているんですが、それを .NET にも導入できないかという調査をしているみたいです。
+まだあんまりドキュメントがなく、<a href="https://qconsf.com/">QConSF</a>の登壇で軽く紹介された程度ですが。</p>
+<ul>
+<li><a href="https://qconsf.com/sf2018/presentation/clrcoreclr-how-we-got-here-where-were-going">CLR/CoreCLR: How We Got Here &amp; Where We're Going</a> (<a href="https://qconsf.com/system/files/presentation-slides/coreclr_today_tomorrow.pptx">ppt</a>)</li>
+</ul>
+<p>これも、「ある程度まとまった単位でごっそり処理する方が高効率」という原理に則ったものです。
+以下のように、「ごっそり消す」タイミングを明示するような方式。
+メモリ放棄のまとまった単位を指して arena (舞台、競技場、界)と呼んでいます。</p>
+<pre><code class="language-csharp">Arena arena = <span class="keyword">new</span> Arena();
+<span class="keyword">using</span> (arena.Activate())
+{
+    <span class="comment">// この内側で new したものは「arena」内に確保される</span>
+}
+<span class="comment">// arena 内のオブジェクトは arena の Dispose 時にまとめて解放</span>
+arena.Dispose();</code></pre>
+<p>この方式はトランザクションのスコープがはっきりしているものに対して有効です。
+Protocol Buffers が採用していることからわかるように、シリアライズ・デシリアライズが好例です。
+シリアライズの途中でしか使わない一時的なバッファーを Arena 中に確保して、
+シリアライズ完了時にまとめて解放すれば効率よくゴミを片付けられます。</p>
+<h2 id="object-stack-allocation">Object Stack Allocation</h2>
+<p>クラスのインスタンスは基本的にはヒープ上に確保するものなんですが、
+「メソッド内で完結している」(引数にも渡さないし、戻り値にも返さない)という状況に限って、
+スタック上に領域確保しても問題なく動いたりします。</p>
+<p>そこで、JITコンパイラーが「メソッド内で完結している」かどうかを判定して、
+完結していればクラスのインスタンスであってもスタック上に確保する最適化手法(Object Stack Allocation)があります。
+「メソッド内から逃げ出していないかを解析する」という意味で、Escape Analysis と呼ばれたりもします。</p>
+<p>Java SE では Java SE 6 の頃から Escape Analysis を実装しています。
+Go なんかは最初から Escape Analysis ありきで作られています。
+(要するに、結構昔からある最適化手法。)
+それがこの度、.NET にも入りそうです。</p>
+<ul>
+<li><a href="https://github.com/dotnet/coreclr/pull/20814">Initial implementation of object stack allocation #20814</a></li>
+</ul>
+<p>Java と比べてずいぶん採用が遅いですが、
+要は、C# は値型を持っているのでそもそも手作業でヒープを避ける手段があるからです。
+挙句、「<a href="/blog/2018/12/spanify/"><code>Span&lt;T&gt;</code> 利用による最適化</a>」で説明したような手動最適化がの方が断然効果的なので、そっちの方が優先されています。
+(Escape Analysis は「メソッド内から逃げ出していない」という条件が思いのほか厳しいので、適用できる割合はそんなに高くない。)</p>
+<p>「コンパイラーとかランタイムが頑張るよりも手作業の方がまだまだ高効率」という話なので、
+あんまり夢はない感じ…
+(<code>Span&lt;T&gt;</code>も、「<a href="/study/computer/essential-software/memorymanagement/#garbage-collection">ガベコレ</a>で追えるものを増やす」という作業は必要だったので、
+ランタイムが何もしていないわけではないんですが。)</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2018/12/">12&#x6708;</a></li><li><a href="/blog/2018/12/pickuproslyn1201/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/1</a></li><li><a href="/blog/2018/12/tupleelementcase/">&#x30BF;&#x30D7;&#x30EB;&#x8981;&#x7D20;&#x540D;&#x306E;&#x5927;&#x6587;&#x5B57;&#x30FB;&#x5C0F;&#x6587;&#x5B57;</a></li><li><a href="/blog/2018/12/directorybuild/">Directory.Build.*</a></li><li><a href="/blog/2018/12/runtimefeature/">RuntimeFeature &#x30AF;&#x30E9;&#x30B9;</a></li><li><a href="/blog/2018/12/vs2019p1/">Visual Studio 2019 Preview 1</a></li><li><a href="/blog/2018/12/cs8misc/">C# 8.0 &#x5C0F;&#x3055;&#x306A;&#x4FEE;&#x6B63;</a></li><li><a href="/blog/2018/12/cs8ranges/">C# 8.0 Ranges</a></li><li><a href="/blog/2018/12/cs8nrt/">C# 8.0 null&#x8A31;&#x5BB9;&#x53C2;&#x7167;&#x578B;</a></li><li><a href="/blog/2018/12/cs8switchexpr/">C# 8.0 switch &#x5F0F;</a></li><li><a href="/blog/2018/12/cs8patterns/">C# 8.0 &#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30DE;&#x30C3;&#x30C1;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2018/12/cs8asyncstreams/">C# 8.0 Async streams</a></li><li><a href="/blog/2018/12/cs8notyet/">C# 8.0 &#x305D;&#x306E;&#x4ED6; (Preview 1&#x3067;&#x306E;&#x672A;&#x5B9F;&#x88C5;&#x6A5F;&#x80FD;)</a></li><li><a href="/blog/2018/12/arrayindexer/">&#x914D;&#x5217;&#x306E;&#x30A4;&#x30F3;&#x30C7;&#x30AF;&#x30B5;&#x30FC;</a></li><li><a href="/blog/2018/12/unsafe/">System.Runtime.CompilerServices.Unsafe</a></li><li><a href="/blog/2018/12/arraydowncast/">&#x914D;&#x5217;&#x306E;&#x30C0;&#x30A6;&#x30F3;&#x30AD;&#x30E3;&#x30B9;&#x30C8;</a></li><li><a href="/blog/2018/12/staticdatareadonlyspan/">&#x9759;&#x7684;&#x306A;&#x30C7;&#x30FC;&#x30BF;&#x306E; ReadOnlySpan &#x6700;&#x9069;&#x5316;</a></li><li><a href="/blog/2018/12/devirtualization/">Devirtualization (&#x8131;&#x4EEE;&#x60F3;&#x5316;)</a></li><li><a href="/blog/2018/12/guardeddevirtualization/">Guarded Devirtualization</a></li><li><a href="/blog/2018/12/fastenumerator/">IEnumerator &#x306E;&#x5225;&#x5B9F;&#x88C5;</a></li><li><a href="/blog/2018/12/howtoenumerate/">foreach &#x306E;&#x639B;&#x3051;&#x65B9;&#x3044;&#x308D;&#x3044;&#x308D;</a></li><li><a href="/blog/2018/12/pickuproslyn1221/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/21 &amp; Connect() Japan &#x30D5;&#x30A9;&#x30ED;&#x30FC;&#x30A2;&#x30C3;&#x30D7;</a></li><li><a href="/blog/2018/12/arrayindex/">&#x914D;&#x5217;&#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;&#x306F;0&#x4EE5;&#x4E0A;</a></li><li><a href="/blog/2018/12/jitintrinsics/">JIT Intrinsics</a></li><li><a href="/blog/2018/12/statictypeof/">&#x9759;&#x7684;&#x306A; typeof/sizeof</a></li><li><a href="/blog/2018/12/unicodecategory/">&#x66F8;&#x8A18;&#x7D20;&#x5206;&#x5272;/Unicode &#x30AB;&#x30C6;&#x30B4;&#x30EA;&#x30FC;&#x5224;&#x5B9A;</a></li><li><a href="/blog/2018/12/spanify/">Span&lt;T&gt; &#x5229;&#x7528;&#x306B;&#x3088;&#x308B;&#x6700;&#x9069;&#x5316;</a></li><li><a href="/blog/2018/12/unsafenogarantee/">Unsafe &#x30AF;&#x30E9;&#x30B9;(&#x4FDD;&#x8A3C;&#x5916;)</a></li><li><a href="/blog/2018/12/unsafegarantee/">Unsafe &#x30AF;&#x30E9;&#x30B9;(&#x4FDD;&#x8A3C;&#x306E;&#x3042;&#x308B;&#x5229;&#x7528;&#x4F8B;)</a></li><li><a href="/blog/2018/12/unsaferuntime/">&#x4EEE;&#x60F3;&#x30C6;&#x30FC;&#x30D6;&#x30EB;&#x306E;&#x4E2D;&#x8EAB;&#x3092;&#x306E;&#x305E;&#x304D;&#x898B;</a></li><li><a href="/blog/2018/12/tieredcompilation/">&#x6BB5;&#x968E;&#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB; (Tiered Compilation)</a></li><li><a href="/blog/2018/12/hdintrinsic/">Hardware Intrinsics</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

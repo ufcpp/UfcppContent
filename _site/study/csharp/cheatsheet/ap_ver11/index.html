@@ -1,0 +1,385 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>C# 11.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/cheatsheet/ap_ver11/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="c-11.0">C# 11.0 の新機能</h1>
+<div class="version version11">Ver. 11.0</div>
+<table>
+<tr>
+<th>リリース時期</th>
+<td>2022/11</td>
+</tr>
+<tr>
+<th>同世代技術</th>
+<td>
+<ul>
+<li>.NET 7.0</li>
+<li>Visual Studio 2022 17.4</li>
+</td>
+</tr>
+</table>
+<p>執筆予定: <a href="https://github.com/ufcpp/UfcppSample/issues/387">C# 11.0 トラッキング issue</a></p>
+<h2 id="utf-8"><a id="sec-generated-title-1"></a> <a id="utf8-literal"></a>UTF-8 リテラル</h2>
+<p><code>&quot;abc&quot;u8</code> みたいに、文字列リテラルの後ろに u8 接尾辞を付けることで、UTF-8 な byte 列を文字列リテラルの形で書けるようになりました。</p>
+<pre><code class="language-csharp">ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; hex = <span class="string">&quot;0123456789ABCDEF&quot;</span>u8;</code></pre>
+<p>以下のような byte 列とほぼ同じ意味になります。</p>
+<pre><code class="language-csharp">ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; s = <span class="keyword">new</span> <span class="keyword">byte</span>[] { <span class="number">97</span>, <span class="number">98</span>, <span class="number">99</span> };</code></pre>
+<p>詳しくは「<a href="/study/csharp/start/st_string/#utf8-literal">UTF-8 リテラル</a>」で説明します。</p>
+<h2 id="section"><a id="sec-generated-title-2"></a> <a id="raw-string">生文字列リテラル</a></h2>
+<p>C# 11 で、3つ以上の連続した <code>&quot;</code> を使うことで、「一切エスケープが必要ない文字列リテラル」を書けるようになりました。</p>
+<pre><code class="language-csharp"><span class="comment">// &quot;&quot;&quot; から始まる文字列リテラル(raw string, 生文字列)。</span>
+<span class="keyword">var</span> quote = <span class="string">&quot;&quot;</span>&quot;
+    <span class="string">&quot; はそのまま &quot;</span> として使われて、
+    \ も \ のままの意味。
+    \\ は \ が2個。
+    {} とかも特別な解釈はされない。
+    <span class="string">&quot;&quot;</span>&quot;;</code></pre>
+<p>この <code>&quot;&quot;&quot;</code> を使った書き方で、さらに文字列補間をすることもできます。</p>
+<pre><code class="language-csharp">Console.WriteLine(format(<span class="number">123</span>, <span class="string">&quot;abc&quot;</span>));
+
+<span class="keyword">static</span> <span class="keyword">string</span> format(<span class="keyword">int</span> id, <span class="keyword">string</span> name) =&gt; $$<span class="string">&quot;&quot;</span>&quot;
+    {
+      <span class="string">&quot;id&quot;</span>: {{id <span class="comment">/* ここは補間 */</span> }},
+      <span class="string">&quot;name&quot;</span>: <span class="string">&quot;{{name /* ここも補間 */}}&quot;</span>
+    }
+    <span class="string">&quot;&quot;</span>&quot;;</code></pre>
+<p>詳しくは「<a href="/study/csharp/start/st_string/#raw-string">生文字列リテラル</a>」で説明します。</p>
+<h2 id="required"><a id="sec-generated-title-3"></a> <a id="required">required メンバー</a></h2>
+<p>プロパティとフィールドに対する <code>required</code> 修飾子というものが追加されました。
+これを使うと、<a href="/study/csharp/oop/oo_construct/#member_initializer">オブジェクト初期化子</a>で何らかの値を代入することを義務付けられます。
+例えば以下のようなコードを書いたとき、<code>a1</code> 以外の <code>new A</code> はエラーになります。
+(警告ではなくエラーにします。)</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> a1 = <span class="keyword">new</span> A { X = <span class="string">&quot;abc&quot;</span>, Y = <span class="number">123</span> };
+
+<span class="keyword">var</span> a2 = <span class="keyword">new</span> A { X = <span class="string">&quot;abc&quot;</span> }; <span class="comment">// Y を代入していないのでエラー。</span>
+<span class="keyword">var</span> a3 = <span class="keyword">new</span> A { Y = <span class="number">123</span> };   <span class="comment">// X を代入していないのでエラー。</span>
+<span class="keyword">var</span> a4 = <span class="keyword">new</span> A();             <span class="comment">// X も Y も代入していないのでエラー。</span>
+
+<span class="keyword">class</span> A
+{
+    <span class="keyword">public</span> required <span class="keyword">string</span> X { <span class="keyword">get</span>; init; }
+    <span class="keyword">public</span> required <span class="keyword">int</span> Y;
+}</code></pre>
+<p>詳しくは「<a href="/study/csharp/oop/oo_property/#required">required メンバー</a>」で説明します。</p>
+<h2 id="section-1"><a id="sec-generated-title-4"></a> <a id="list">リスト パターン</a></h2>
+<p>C# 11で、<code>[]</code> を使ってリスト(配列や <code>List&lt;T&gt;</code> など)に対するパターン マッチングができるようになりました。
+例えば以下のような <code>switch</code> を書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; removeBom(ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; utf8)
+    =&gt; utf8 <span class="keyword">is</span> [0xEF, 0xBB, 0xBF, .. <span class="keyword">var</span> noBom] ? noBom : utf8;
+
+<span class="keyword">static</span> <span class="keyword">bool</span> palindrome(ReadOnlySpan&lt;<span class="keyword">int</span>&gt; list) =&gt; list <span class="keyword">switch</span>
+{
+    [] or [_] =&gt; <span class="keyword">true</span>,
+    [<span class="keyword">var</span> first, .. <span class="keyword">var</span> rest, <span class="keyword">var</span> last] =&gt; first == last &amp;&amp; palindrome(rest),
+};</code></pre>
+<p>詳しくは「<a href="/study/csharp/datatype/patterns/#list">リスト パターン</a>」で説明します。</p>
+<h2 id="generic-math"><a id="sec-generated-title-5"></a> <a id="generic-math">Generic Math</a></h2>
+<p>インターフェイスの静的メンバーを仮想・抽象にできるようになりました。</p>
+<p>この機能の一番の用途は、数値型(<code>int</code> や <code>float</code> など)に対するアルゴリズムを<a href="/study/csharp/oop/sp2_generics/">ジェネリクス</a>を使って書けるようにすることです。
+この最大用途にちなんで、
+インターフェイスの静的メンバーなどを含む一連の機能を「generic math」と呼んだりしていました。
+(コンセプト的な呼び名で、具体的に generic math という名前の文法やライブラリが追加されたわけではありません。)</p>
+<p>generic math 関連で、数値型の演算子関連で3つ新機能が追加されています。</p>
+<ul>
+<li><a href="#unsigned-right-shift">符号なし右シフト</a></li>
+<li><a href="#checked-operator-overload">checked 演算子オーバーロード</a></li>
+<li><a href="#relaxing-shift">シフト演算子の右オペランドの制限撤廃</a></li>
+</ul>
+<h3 id="section-2"><a id="sec-generated-title-6"></a> <a id="static-abstract">インターフェイスの静的抽象メンバー</a></h3>
+<p>まず、インターフェイスの静的メンバーについてですが、
+例えば以下のようなコードが書けるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Numerics;
+
+<span class="comment">// よくある「和を取るコード」なものですら、これまでだとジェネリックに書く手段がなかった。</span>
+<span class="comment">// C# 11 で可能に。</span>
+<span class="keyword">static</span> T Sum&lt;T&gt;(IEnumerable&lt;T&gt; items)
+    <span class="keyword">where</span> T : INumber&lt;T&gt;
+{
+    <span class="keyword">var</span> sum = T.Zero;
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> items) sum += x;
+    <span class="keyword">return</span> sum;
+}
+
+<span class="comment">// いろんな型に対して sum&lt;T&gt; を呼ぶ。</span>
+Console.WriteLine(Sum(<span class="keyword">new</span> <span class="keyword">byte</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }));
+Console.WriteLine(Sum(<span class="keyword">new</span> <span class="keyword">int</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }));
+Console.WriteLine(Sum(<span class="keyword">new</span> <span class="keyword">float</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }));
+Console.WriteLine(Sum(<span class="keyword">new</span> <span class="keyword">double</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }));
+Console.WriteLine(Sum(<span class="keyword">new</span> <span class="keyword">decimal</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }));</code></pre>
+<p>(詳しくは「<a href="/study/csharp/oop/oo_interface/#static-abstract">インターフェイスの静的抽象メンバー</a>」で説明します。)</p>
+<h3 id="section-3"><a id="sec-generated-title-7"></a> <a id="unsigned-right-shift">符号なし右シフト</a></h3>
+<p>符号付き整数(<code>int</code> とか <code>sbyte</code> とか)でも符号なし整数(<code>uint</code> とか <code>byte</code> とか)でも無関係に、
+常に「符号なし右シフト(論理シフト)」をするための <code>&gt;&gt;&gt;</code>演算子 (<code>&gt;</code> の数が3つ)が追加されました。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Numerics;
+
+<span class="keyword">sbyte</span> s = -<span class="number">1</span>;
+
+<span class="comment">// ちゃんと符号なし右シフトに。</span>
+<span class="comment">// FF → 7F → 3F → 1F → F → 7 → 3 → 1</span>
+<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">8</span>; i++)
+{
+    Console.WriteLine($<span class="string">&quot;{s:X}&quot;</span>);
+    s = LogicalRightShift(s, <span class="number">1</span>);
+}
+
+<span class="comment">// &gt;&gt;&gt; でどの型に対しても符号なし右シフト。</span>
+<span class="keyword">static</span> T LogicalRightShift&lt;T&gt;(T s, <span class="keyword">int</span> bits)
+    <span class="keyword">where</span> T : IShiftOperators&lt;T,T&gt;
+    =&gt; s &gt;&gt;&gt; bits;</code></pre>
+<p>詳しくは「<a href="/study/csharp/oop/generic-math-operators/#unsigned-right-shift">【Generic Math】 C# 11 での演算子の新機能</a>」で説明します。</p>
+<h3 id="checked"><a id="sec-generated-title-8"></a> <a id="checked-operator-overload">checked 演算子オーバーロード</a></h3>
+<p><code>operator</code> キーワードの後ろに <code>checked</code> を付けることで、
+「<code>checked</code> 演算子」を定義できるようになりました。
+これにより、ユーザー定義の演算子オーバーロードでも <code>checked</code>(オーバーフロー時に例外を投げる)と <code>unchecked</code> (オーバーフローしても例外を投げない)を切り替えられるようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">readonly</span> <span class="keyword">struct</span> Int2Bit
+{
+    <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">byte</span> Value;
+    <span class="keyword">public</span> Int2Bit(<span class="keyword">int</span> value) =&gt; Value = (<span class="keyword">byte</span>)(value &amp; 0b11);
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString() =&gt; Value.ToString();
+
+    <span class="keyword">public</span> <span class="keyword">static</span> Int2Bit Checked(<span class="keyword">int</span> value) =&gt; value <span class="keyword">is</span> &lt; <span class="number">2</span> and &gt;= <span class="number">0</span> ? <span class="keyword">new</span>(value) : <span class="keyword">throw</span> <span class="keyword">new</span> OverflowException();
+
+    <span class="keyword">public</span> <span class="keyword">static</span> Int2Bit <span class="keyword">operator</span> +(Int2Bit x, Int2Bit y) =&gt; <span class="keyword">new</span>(x.Value + y.Value);
+    <span class="keyword">public</span> <span class="keyword">static</span> Int2Bit <span class="keyword">operator</span> <span class="keyword">checked</span> +(Int2Bit x, Int2Bit y) =&gt; Checked(x.Value + y.Value);
+}</code></pre>
+<p>詳しくは「<a href="/study/csharp/oop/generic-math-operators/#checked-operator-overload">【Generic Math】 C# 11 での演算子の新機能</a>」で説明します。</p>
+<h3 id="section-4"><a id="sec-generated-title-9"></a> <a id="relaxing-shift">シフト演算子の右オペランドの制限撤廃</a></h3>
+<p>シフト演算子の右オペランドに <code>int</code> 以外の型を使えるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> A
+{
+    <span class="comment">// C# 10 以前でも書けるオーバーロード。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> A <span class="keyword">operator</span> &lt;&lt;(A x, <span class="keyword">int</span> y) =&gt; <span class="keyword">default</span>;
+
+    <span class="comment">// C# 11 以降でだけ書けるオーバーロード。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> A <span class="keyword">operator</span> &lt;&lt;(A x, A y) =&gt; <span class="keyword">default</span>;
+}</code></pre>
+<p>詳しくは「<a href="/study/csharp/oop/generic-math-operators/#relaxing-shift">【Generic Math】 C# 11 での演算子の新機能</a>」で説明します。</p>
+<h2 id="file"><a id="sec-generated-title-10"></a> <a id="file-local"></a>file ローカル型</h2>
+<p><code>file</code> という修飾子を使って「書いたファイル内からだけアクセスできる型」を作れるようになりました。</p>
+<pre><code class="language-csharp"><span class="number">1</span>.M();
+
+file <span class="keyword">static</span> <span class="keyword">class</span> Extensions
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">this</span> <span class="keyword">int</span> x) =&gt; Console.WriteLine(x);
+}</code></pre>
+<p>これと同じプロジェクト内の別のファイルに以下のようなコードを書いてもエラーにはなりません。</p>
+<pre><code class="language-csharp">file <span class="keyword">static</span> <span class="keyword">class</span> Extensions
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">this</span> <span class="keyword">int</span> x) =&gt; Console.WriteLine(<span class="string">&quot;別ファイルの file-local Extensions&quot;</span>);
+}</code></pre>
+<p>詳しくは「<a href="/study/csharp/misc/file-local/">file ローカル型</a>」で説明します。</p>
+<h2 id="ref"><a id="sec-generated-title-11"></a> <a id="ref-field">ref フィールド</a></h2>
+<p><a href="/study/csharp/resource/refstruct/#key-refstruct">ref 構造体</a>のフィールドを <a href="/study/csharp/resource/sp_ref/#byref"><code>ref</code> (参照渡し)</a>で持てるようになりました。</p>
+<p>ref フィールドの書き方は参照引数や参照戻り値と同じく、型の前に <code>ref</code> 修飾を付けます。</p>
+<pre><code class="language-csharp"><span class="keyword">ref</span> <span class="keyword">struct</span> ByReference&lt;T&gt;
+{
+    <span class="keyword">public</span> <span class="keyword">ref</span> T Value;
+}</code></pre>
+<p>詳しくは「<a href="/study/csharp/resource/refstruct/#ref-field">ref フィールド</a>」で説明します。</p>
+<h2 id="section-5"><a id="sec-generated-title-12"></a> <a id="others">その他</a></h2>
+<h3 id="readonlyspan"><a id="sec-generated-title-13"></a> <a id="span">ReadOnlySpan に対するパターンマッチ</a></h3>
+<p>C# 11 で、<code>ReadOnlySpan&lt;char&gt;</code> に対して<a href="/study/csharp/datatype/patterns/#span">文字列リテラルによる定数パターン</a>が使えるようになりました。</p>
+<pre><code class="language-csharp"><span class="comment">// string を渡せたところには ReadOnlySpan&lt;char&gt; を渡せるように。</span>
+ReadOnlySpan&lt;<span class="keyword">char</span>&gt; s = Console.ReadLine();
+
+<span class="comment">// is も</span>
+<span class="keyword">if</span> (s <span class="keyword">is</span> <span class="string">&quot;a&quot;</span>) { }
+
+<span class="comment">// switch ステートメントも</span>
+<span class="keyword">switch</span> (s)
+{
+    <span class="keyword">case</span> <span class="string">&quot;b&quot;</span>:
+        <span class="keyword">break</span>;
+}
+
+<span class="comment">// switch 式も OK。</span>
+<span class="keyword">var</span> x = s <span class="keyword">switch</span>
+{
+    <span class="string">&quot;c&quot;</span> =&gt; <span class="number">1</span>,
+    _ =&gt; <span class="number">2</span>,
+};</code></pre>
+<h3 id="nameof"><a id="sec-generated-title-14"></a> <a id="nameof-parameter"></a>nameof(引数) のスコープ変更</h3>
+<p><a href="/study/csharp/start/st_string/#nameof-parameter"><code>nameof</code></a> にちょっとだけ変更が掛かりました。
+以下のように、メソッドに対する属性の中で、そのメソッドの引数の名前が参照できるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Diagnostics.CodeAnalysis;
+
+<span class="comment">// C# 10 までこの属性、 NotNullIfNotNull(&quot;x&quot;) と書かないといけなくて割かしつらかった。</span>
+[<span class="keyword">return</span>: NotNullIfNotNull(nameof(x))]
+<span class="keyword">static</span> <span class="keyword">string</span>? m(<span class="keyword">string</span>? x) =&gt; x;</code></pre>
+<h3 id="section-6"><a id="sec-generated-title-15"></a> <a id="auto-default">構造体のフィールドの既定値初期化</a></h3>
+<p>C# 11 では、構造体でもフィールドの明示的な初期化が不要になりました。
+クラスと同じく、明示的に代入しなかったフィールド・自動プロパティには既定値が入ります。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> Sample
+{
+    <span class="keyword">int</span> _x;
+    <span class="keyword">int</span> _y;
+    <span class="keyword">int</span> _z;
+
+    <span class="keyword">public</span> Sample(<span class="keyword">int</span> x, <span class="keyword">int</span> y)
+    {
+        M(); <span class="comment">// C# 11 では初期化よりも先に読んでも平気。_x, _y にもこの時点でいったん 0 が入ってる。</span>
+
+        _x = x;
+        _y = y;
+        <span class="comment">// C# 11 では _z に 0 が自動で入る。</span>
+    }
+
+    <span class="keyword">void</span> M() =&gt; Console.WriteLine($<span class="string">&quot;{_x}, {_y}, {_z}&quot;</span>);
+}</code></pre>
+<p>詳しくは「<a href="/study/csharp/resource/rm_struct/#auto-default">構造体</a>」や「<a href="/study/csharp/resource/rm_default/#auto-default">既定値</a>」で説明します。</p>
+<h3 id="section-7"><a id="sec-generated-title-16"></a> <a id="generic-attribute">ジェネリックな属性</a></h3>
+<p><a href="/study/csharp/dynamic/sp_attribute/#generic-attribute">属性をジェネリック クラスにできるようになりました</a>。</p>
+<pre><code class="language-csharp"><span class="comment">// 属性クラスをジェネリックにできるように。</span>
+<span class="keyword">class</span> TypeConverter&lt;T&gt; : Attribute { }
+
+<span class="comment">// &lt;&gt; で型引数を指定できる。</span>
+[TypeConverter&lt;MyConverter&gt;]
+<span class="keyword">class</span> MyClass { }</code></pre>
+<h3 id="section-8"><a id="sec-generated-title-17"></a> <a id="newline-in-interpolation">文字列補間中の改行</a></h3>
+<p><a href="/study/csharp/start/st_string/#string-interpolation">文字列補間</a>で、以下のようなコードが書けるようになりました
+(<code>{}</code> の中で改行を入れれるようになりました)。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> a = <span class="number">1</span>;
+<span class="keyword">var</span> b = <span class="number">2</span>;
+<span class="keyword">var</span> s = $&quot;a: {
+    a <span class="comment">// ここで改行できるのは C# 11 から</span>
+    }, b: {b}&quot;;</code></pre>
+<p>ちなみに、以下のように、<code>$@</code> (文字列補間、かつ、逐語的文字列リテラル)を使う場合には C# 10.0 以前でも以下のようなコードが普通に書けました。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> a = <span class="number">1</span>;
+<span class="keyword">var</span> b = <span class="number">2</span>;
+<span class="keyword">var</span> s = $<span class="stringCSharpVerbatim">@&quot;a: {
+    a // $@ の場合は C# 10.0 以前でも OK
+    }, b: {b}&quot;</span>;</code></pre>
+<p>「<code>$&quot;&quot;</code> の場合だけダメだった理由は今となっては思い出せない」というレベルだそうで、
+仕様漏れ・バグ修正の類にギリギリの「新機能」になります。</p>
+<h3 id="numeric-intptr"><a id="sec-generated-title-18"></a> <a id="numeric-intptr">Numeric IntPtr</a></h3>
+<p>「C# の新機能」と言っていいのかどうか微妙なラインですが、
+<a href="/study/csharp/cheatsheet/ap_ver9/#nint"><code>nint</code></a> に関してちょっとした変更がありました。</p>
+<p>C# 9.0 の頃には、<code>IntPtr</code>、<code>UIntPtr</code> 型に算術演算子の定義がなく、
+<code>nint</code>、<code>nuint</code> に対する演算は C# コンパイラーが特別扱いすることで実装していました。
+そのため、
+「<code>nint</code>、<code>nuint</code> は内部的には <code>IntPtr</code>、<code>UIntPtr</code> としてコンパイルするけども、
+<code>NativeInteger</code> 属性を付けて <code>nint</code>、<code>nuint</code> か <code>IntPtr</code>、<code>UIntPtr</code> を区別する」
+みたいなことをしていました。</p>
+<p>ところが、 .NET 7 (C# 11 と同世代)では、<a href="#generic-math">generic math</a> 導入に伴って、
+<code>IntPtr</code>、<code>UIntPtr</code> にも算術演算子が導入されました。
+その結果、C# 9.0 時代のような「特別扱い」が不要になったそうです。
+そこで C# 11 では、</p>
+<ul>
+<li>.NET 7 移行をターゲットにした場合、<code>NativeInteger</code> 属性を付けない
+<ul>
+<li>正確に言うと、<a href="/blog/2018/12/runtimefeature/"><code>RuntimeFeature</code> クラス</a>を見て分岐</li>
+</ul>
+</li>
+<li><code>NativeInteger</code> 属性がなくても <code>nint</code>、<code>nuint</code> と同じ扱いをする</li>
+</ul>
+<p>みたいな変更が掛かっています。</p>
+<p>一応これが既存のコードに対する破壊的変更になる可能性があって、
+例えば、以下のようなコードはこれまで例外が絶対に出なかったのが、C# 11 以降は例外が出る可能性があります。</p>
+<pre><code class="language-csharp"><span class="keyword">unsafe</span> <span class="keyword">void</span> M(<span class="keyword">void</span>* x, <span class="keyword">int</span> y)
+{
+    <span class="keyword">var</span> p = <span class="keyword">checked</span>((IntPtr)x); <span class="comment">// unsigned → singed 変換扱い</span>
+    <span class="keyword">var</span> z = <span class="keyword">checked</span>(p + y);
+}</code></pre>
+<h3 id="section-9"><a id="sec-generated-title-19"></a> <a id="cache-static-method-group">静的メソッドをデリゲート化するときのキャッシュ化</a></h3>
+<p><a href="#numeric-intptr">Numeric IntPtr</a> の話以上に「C# の新機能と言っていいのかどうか微妙」な話(文法的には何も変わっていないし、挙動も大差ない)ですが、
+<code>Func&lt;int, int&gt; f = Method;</code> みたいな書き方をしたときに、デリゲートのインスタンスをキャッシュするようになりました。</p>
+<p>例えば以下のようなコードを考えます。</p>
+<pre><code class="language-csharp"><span class="comment">// この X と</span>
+<span class="keyword">int</span> X(<span class="keyword">int</span>[] data) =&gt; data.Sum(x =&gt; x * x);
+
+<span class="comment">// この Y、やってることは一緒。</span>
+<span class="keyword">int</span> Y(<span class="keyword">int</span>[] data) =&gt; data.Sum(square);
+<span class="keyword">static</span> <span class="keyword">int</span> square(<span class="keyword">int</span> x) =&gt; x * x;</code></pre>
+<p>C# 10 までは、おおむね以下のようなコードに展開されていました。</p>
+<pre><code class="language-csharp"><span class="comment">// ラムダ式だと導入当初からキャッシュが効いてた。</span>
+Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;? _anonymous1 = <span class="keyword">null</span>;
+
+<span class="keyword">int</span> X(<span class="keyword">int</span>[] data)
+{
+    <span class="comment">// こんな感じのコードに展開されてて、 new Func&lt;int, int&gt;() のアロケーションは1回限り。</span>
+    _anonymous1 ??= <span class="keyword">new</span> Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;(x =&gt; x * x);
+    <span class="keyword">return</span> data.Sum(_anonymous1);
+}
+
+<span class="comment">// ところが、メソッド グループを直接渡した場合、都度 new Func&lt;int, int&gt;() してた(C# 10 まで)。</span>
+<span class="keyword">int</span> Y(<span class="keyword">int</span>[] data)
+{
+    <span class="comment">// おおむねこういうコードと同じ。</span>
+    <span class="keyword">var</span> f = <span class="keyword">new</span> Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;(square);
+    <span class="keyword">return</span> data.Sum(f);
+}
+<span class="keyword">static</span> <span class="keyword">int</span> square(<span class="keyword">int</span> x) =&gt; x * x;</code></pre>
+<p>メソッド グループをデリゲート化するとき(<code>Y</code> の側)、常に <code>new Func&lt;int, int&gt;()</code> のコストがかかっていました。
+これが、C# 11 からは以下のような感じのコードに展開されます。</p>
+<pre><code class="language-csharp"><span class="comment">// C# 11 で、メソッド グループの場合でも、static なものはキャッシュするようになった。</span>
+Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;? _square = <span class="keyword">null</span>;
+
+<span class="keyword">int</span> Y(<span class="keyword">int</span>[] data)
+{
+    <span class="comment">// この類のコードになった。ラムダ式の場合のものと一緒。</span>
+    _square ??= <span class="keyword">new</span> Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;(square);
+    <span class="keyword">return</span> data.Sum(_square);
+}
+<span class="keyword">static</span> <span class="keyword">int</span> square(<span class="keyword">int</span> x) =&gt; x * x;</code></pre>
+<h3 id="required-scoped-file"><a id="sec-generated-title-20"></a> <a id="CS9029">補足: required, scoped, file キーワードと型名</a></h3>
+<p>これまでずっと、C# に新しいキーワードを足したいときには、文脈キーワード(特定の状況下でだけキーワード扱いを受ける)にしてきました。</p>
+<p>C# 11 で追加される <code>required</code>, <code>scoped</code>, <code>file</code> の3つも文脈キーワードです。
+ただ、これらのキーワードは型名と競合しやすい位置に書くことになるので、
+型名として使えてしまうと文脈からの弁別が難しくなるようで、
+型名として使えなくしたようです。
+以下のようにコンパイル エラーになります。</p>
+<pre><code class="language-csharp"><span class="comment">// 古めの文脈キーワードはクラス名にしても警告にしかならない。</span>
+<span class="comment">// 警告の出方も、古いやつは「小文字始まり ASCII のみの型名はやめて欲しい」の CS8981</span>
+<span class="keyword">class</span> <span class="keyword">async</span> { }
+<span class="keyword">class</span> <span class="keyword">await</span> { }
+<span class="keyword">class</span> <span class="keyword">dynamic</span> { }
+
+<span class="comment">// record に関しては専用の警告。CS8860。</span>
+<span class="comment">// 今となっては、これもエラーでよかった説はある。</span>
+<span class="keyword">class</span> record { }
+
+<span class="comment">// 最近の文脈キーワードはクラス名にするとエラーにするようにしたみたい。</span>
+<span class="keyword">class</span> required { }
+<span class="keyword">class</span> scoped { }
+<span class="keyword">class</span> file { }
+
+<span class="comment">// ちなみに、この辺りのクラス名をあえて使いたいときは @ を付けとけば OK。</span>
+<span class="comment">// (警告にもならない。)</span>
+<span class="keyword">class</span> @required { }
+
+<span class="comment">// まあ、@ を付ければ、文脈によらない通常キーワードですら名前に使えるので。</span>
+<span class="keyword">class</span> @<span class="keyword">class</span> { }</code></pre>
+<h3 id="section-10"><a id="sec-generated-title-21"></a> <a id="pointer-of-managed-types">マネージ型のポインター</a></h3>
+<p>C# 11 から、マネージ型のポインターを使えるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">unsafe</span>
+{
+    <span class="keyword">string</span> s = <span class="string">&quot;&quot;</span>;
+    Span&lt;<span class="keyword">byte</span>&gt; x = <span class="keyword">stackalloc</span> <span class="keyword">byte</span>[<span class="number">4</span>];
+
+    <span class="comment">// 以下のような型、アドレス取得はこれまではエラーになっていた。</span>
+    <span class="comment">// (C# 11 以降も警告にはなる。多少の緩和があった。)</span>
+    <span class="keyword">string</span>* ps = &amp;s;
+    Span&lt;<span class="keyword">byte</span>&gt;* px = &amp;x;
+}</code></pre>
+<p>詳しくは「<a href="/study/csharp/interop/sp_unsafe/#pointer-of-managed-types">unsafe</a>」で説明します。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/cheatsheet/">C# &#x306E;&#x6A5F;&#x80FD;&#x4E00;&#x89A7;&#xFF08;&#x7D22;&#x5F15;&#x7684;&#x306A;&#x3082;&#x306E;&#xFF09;</a></li><li><a href="/study/csharp/cheatsheet/list_expression/">C# &#x306E;&#x5F0F;&#x3068;&#x6587;&#x306E;&#x4E00;&#x89A7;</a></li><li><a href="/study/csharp/cheatsheet/list_type/">C# &#x306E;&#x578B;&#x3068;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/study/csharp/cheatsheet/list_versions/">&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver1/">C# 1.0</a></li><li><a href="/study/csharp/cheatsheet/ap_ver2/">C# 2.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver3/">C# 3.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver4/">C# 4.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver5/">C# 5.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver6/">C# 6 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7/">C# 7 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_1/">C# 7.1 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_2/">C# 7.2 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_3/">C# 7.3 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver8/">C# 8.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver9/">C# 9.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver10/">C# 10.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver12/">C# 12.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver13/">C# 13.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver14/">C# 14.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/langversionoption/">&#x8A00;&#x8A9E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x306E;&#x6307;&#x5B9A;</a></li><li><a href="/study/csharp/cheatsheet/listfxlangversion/">C#&#x306E;&#x8A00;&#x8A9E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x3068;.NET&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/cheatsheet/ap_modern/">&#x4F7F;&#x308F;&#x306A;&#x304F;&#x306A;&#x3063;&#x305F;&#x6A5F;&#x80FD;&#x30FB;&#x65B0;&#x3057;&#x3044;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/apscripting/">C#&#x30B9;&#x30AF;&#x30EA;&#x30D7;&#x30C8;&#x5B9F;&#x884C;</a></li><li><a href="/study/csharp/cheatsheet/file-based-app/">&#x30D5;&#x30A1;&#x30A4;&#x30EB; &#x30D9;&#x30FC;&#x30B9;&#x5B9F;&#x884C;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

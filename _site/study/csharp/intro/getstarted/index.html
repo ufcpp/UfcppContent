@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x306F;&#x3058;&#x3081;&#x3066;&#x306E;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30DF;&#x30F3;&#x30B0; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/intro/getstarted/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">はじめてのプログラミング</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>まず、初心者の人向けに、プログラミングの勉強の仕方について、
+個人的に思うところを書いてみようかと。</p>
+<h2 id="c"><a id="sec-generated-title-2"></a> <a id="fist"></a>はじめから C</h2>
+<p><span style="color:red;font-size:large;">Q.</span>
+はじめから C# でいいの？
+<br></br>
+<span style="color:blue;font-size:large;">A.</span>
+何の言語使ってもいいって言うなら、むしろ C# はよい選択肢になりうる。</p>
+<p>理由は以下の通り。</p>
+<ul>
+<li><p>言語仕様が非常に洗練されている。</p>
+<ul>
+<li><p>C# には Microsoft の長年のノウハウや、 Microsoft に寄せられる膨大な量の開発者フィードバックの結果が詰まっている。</p>
+</li>
+<li><p>比較的新しくて、過去のしがらみ・悪習が少ない。 古い言語ほど、プログラミングと関係ないところでの苦労が多い。</p>
+</li>
+</ul>
+</li>
+<li><p>ツールがしっかりしている。 Visual Studio の出来の良さはかなりのもの。</p>
+</li>
+<li><p>標準ライブラリが充実。標準ライブラリだけの状態でかなりのことができる。</p>
+</li>
+<li><p>C# / .NET （と、その他関連する Microsoft 技術）は非常に広範囲な用途をカバー。 これだけなんでも簡単にできる言語は他にない。</p>
+<ul>
+<li>スマホ アプリ（Xamarin）</li>
+<li>ゲーム（Unity）</li>
+<li>Windows クライアント（WPF）</li>
+<li>ウェブサイト（ASP.NET）</li>
+<li>データベース（SQL Server, LINQ）</li>
+<li>クラウド（Microsoft Azure）</li>
+</ul>
+</li>
+</ul>
+<h5 id="section-2"><a id="sec-generated-title-3"></a>注意:</h5>
+<p>とはいえ、C# だけ覚えていればすべてが片付くというものでもありません。</p>
+<p>OS レベルやハードウェア レベルに近い低水準機能に触れたいとき、
+特に、特定の CPU や GPU に特化した最適化により実行速度を上げたい場合には C# は使えません。
+C 言語や C++ などの言語を学ぶことになるでしょう。</p>
+<p>それでも、最初に古い悪習を身に着けない、まず蓄積されたノウハウに触れるという意味で、
+最近の洗練された言語から学習を初めて、徐々に過去の言語に触れるという順序は悪くないです。</p>
+<h2 id="section-3"><a id="sec-generated-title-4"></a> <a id="tool"></a>ツールに頼ろう</h2>
+<p>C# を学び始めるなら、まず最初にやることは以下の通り。</p>
+<ol>
+<li><p>何よりも先に<a href="/study/csharp/devenv/ab_devenv/">Visual Studio や Visual Studio Code</a>などの開発環境をインストールする。</p>
+</li>
+<li><p><em>テンプレート通りに</em>プロジェクトを作る。 もしくは、サンプルを開く。</p>
+</li>
+<li><p><em>文字が青くなってる部分</em>は C# のキーワード。 気になったら、このキーワードで検索してみる。</p>
+</li>
+<li><p>何しようか迷ったら、<em>Ctrl + [Space]</em>を押すか、<em>右クリック</em>。 Visual Studio なら、ツールの補助だけでかなりのことができます。</p>
+</li>
+<li><p>[F1] キー（ヘルプボタン）を押すのは、気になる位置にカーソルを乗せてから。 カーソルが乗ってる場所に関するヘルプが出ます。 ただし、いまどきは付属のヘルプよりも、ネットで検索した方がいい情報が出てきたりもする。</p>
+</li>
+</ol>
+<p>これだけでそれなりに勉強できたりする。</p>
+<p>Visual Studio は、プロ用の開発ツールとしてだけでなく、
+初心者用の学習ツールとしても超優秀だと思う。</p>
+<p>ポイントは、</p>
+<ul>
+<li><p>ツールには頼れる限り頼る。</p>
+</li>
+<li><p>とりあえず、目の前に何もないところで迷うより、意味不明でもいいから何か現物見ながら悩む。</p>
+</li>
+</ul>
+<p>というあたり。</p>
+<p><span style="color:red;font-size:large;">Q.</span>
+プログラミング言語だけじゃなくて、ツールの使い方も覚えなきゃいけないからかえって大変なんじゃないの？
+<br></br>
+<span style="color:blue;font-size:large;">A.</span>
+確実にそのコストの何倍も何十倍もメリットを享受できます。
+というか、この手のツールは開発ツールであるとともに、学習ツールとしても見ても優秀です。</p>
+<p><span style="color:red;font-size:large;">Q.</span>
+初めからツールに頼ると、ツールなしでコード書けなくなるからダメだって言われた。
+<br></br>
+<span style="color:blue;font-size:large;">A.</span>
+いまどき、ツールに頼らないと生産性低すぎて仕事になりません。</p>
+<p><span style="color:red;font-size:large;">Q.</span>
+Visual Studio をインストールしたはいいけど、テンプレートとかプロジェクトとか言われてもよくわからない・・・
+<br></br>
+<span style="color:blue;font-size:large;">A.</span>
+下図参照。
+赤線の入ってるところをクリック。
+（画像は 2008 バージョンのもの。他のバージョンでも、見た目はだいぶ変わりますが、大まかな流れは同じです）</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/ProjectTemplate.png"><img src="/assets/media/ufcpp2000/csharp/fig/ProjectTemplate.png" alt="" /></a></p>
+</figure>
+<p><span style="color:red;font-size:large;">Q.</span>
+サンプルを取ってきたけど、どうやって見ればいいの？
+<br></br>
+<span style="color:blue;font-size:large;">A.</span>
+C# ソースファイル（拡張子 .cs）しかないならそれをクリック。
+ソリューションファイル（拡張子 .sln）が付いてるならそっちをクリック。</p>
+<h2 id="section-4"><a id="sec-generated-title-5"></a> <a id="public"></a>人に見せることを意識しよう</h2>
+<p>プログラミングに限った話でもないんですが、
+何かを学ぶ時は、人に見せることを意識して勉強する方がいいです。</p>
+<p>いまどきなら、ブログでも立ち上げて実際に公の場で人に見せるのも効果的でしょう。
+そうでなくても、「いつ見られてもいいように」という心掛けは学習を促進します。</p>
+<p>独学でなく、頼れる友人や先輩でもいるなら、恥ずかしがらずに全部見てもらうべき。
+日報や進捗報告には書いたソース（の置き場所等）も含めましょう。
+校正の赤ペンで真っ赤にされるのは、恥ではなくて貴重な経験。</p>
+<p>「ただ見てもらう」よりは、「誰かに教える」方がより効果的です。
+一方的に教えられるような立場でなくても、互いに教えあいましょう。
+「自分では書けるようになった」はまだ「わかったつもり」、半人前です。
+人に教えられるようになって初めて一人前です。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/intro/">&#x307E;&#x3048;&#x304C;&#x304D;</a></li><li><a href="/study/csharp/intro/introduction/">&#x306F;&#x3058;&#x3081;&#x306B;</a></li><li><a href="/study/csharp/intro/howeasy/">[&#x96D1;&#x8A18;] &#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30DF;&#x30F3;&#x30B0;&#x8A00;&#x8A9E;&#x306E;&#x7C21;&#x5358;&#x3055;&#x30FB;&#x96E3;&#x3057;&#x3055;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

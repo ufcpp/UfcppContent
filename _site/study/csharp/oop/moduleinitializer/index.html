@@ -1,0 +1,238 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30E2;&#x30B8;&#x30E5;&#x30FC;&#x30EB;&#x521D;&#x671F;&#x5316;&#x5B50; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/oop/moduleinitializer/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">モジュール初期化子</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract">概要</a></h2>
+<h5 class="version version9">Ver. 9</h5>
+<p>プログラムの実行時、最初に1回だけ呼び出したい処理が必要になることがあります。
+「<a href="/study/csharp/oop/oo_static/#ctor">静的コンストラクター</a>」で説明しているように、この静的コンストラクターという機能を使っても「最初に1回だけ呼ばれる」ということができますが、C# 9.0 ではモジュール初期化子という書き方もできるようになりました。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="module-initializer">モジュール初期化子</a></h2>
+<p>「<a href="/study/csharp/oop/oo_static/#ctor">静的コンストラクター</a>」を使うとプログラム中で1回だけ呼び出される処理を書くことができます。
+静的コンストラクターが呼び出されるタイミングは、そのクラスのなんらかのメンバーに初めてアクセスしたときです。</p>
+<p>C# 9.0 では、もう1種類、「最初に1回だけ呼ばれる」という性質の処理の書き方ができるようになりました。
+以下のように、<code>ModuleInitilizer</code> 属性(<code>System.Runtime.CompilerServices</code> 名前空間)を付けた<a href="/study/csharp/oop/oo_static/#stmethod">静的メソッド</a>を書くと、それが必ず1回呼び出されるようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Runtime.CompilerServices;
+ 
+<span class="keyword">class</span> Sample
+{
+    [ModuleInitializer]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Init()
+    {
+        Console.WriteLine(<span class="string">&quot;必ず1回だけ呼ばれる&quot;</span>);
+    }
+}</code></pre>
+<p>これを<strong id="key-module-initializer" class="keyword">モジュール初期化子</strong>(module initializer)と呼びます。</p>
+<p>静的コンストラクターとの差は以下の通りです。</p>
+<ul>
+<li>1つのクラスに複数のモジュール初期化子を書ける
+<ul>
+<li><a href="/study/csharp/oop/oo_class/#partial"><code>partial</code></a> を使って複数のファイルに分かれていても全部呼ばれる</li>
+</ul>
+</li>
+<li>そのクラスを含んでいるモジュールを読み込んだ時点で呼ばれる</li>
+</ul>
+<p>静的コンストラクターの呼び出しには「そのクラスのなんらかのメンバーにアクセス」という条件が付くので、確実に呼び出される保証が実はなかったりします。
+モジュール初期化子の呼び出しも「モジュールを読み込む」(モジュールに含まれているなんらかの型に触れる)という条件は付くんですが、静的コンストラクターと比べればだいぶ確実に呼ばれます。
+(一切何の型も使わないモジュールを参照すること自体がほとんどないので、実質的には「確実」と行ってしまっても構わないと思います。)</p>
+<h3 id="section-3"><a id="sec-generated-title-3"></a> <a id="module-initializer-impl">モジュール初期化子の実装方法</a></h3>
+<p>「モジュール読み込み時に必ず呼ばれる」というもの自体は .NET Framework 1.0 の頃から実はありました(単に C# から使う手段がなかっただけ)。
+当初から、「<code>&lt;Module&gt;</code> という特殊な名前のクラスの静的コンストラクターは、モジュール読み込み時に必ず1回呼ばれる」という仕様があります。
+<code>&lt;&gt;</code> を含む名前なので通常の C# コードで書くことはできませんし、C# 8.0 まではこの型の静的コンストラクターを書き出す手段もありませんでした。</p>
+<p>C# 9.0 のモジュール初期化子がやっていることはこの「<code>&lt;Module&gt;</code> クラスの静的コンストラクターの生成」です。
+例えば以下のようなコードを書いたとすると、</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+ 
+<span class="keyword">class</span> C1
+{
+    [ModuleInitializer]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Init1() { }
+ 
+    [ModuleInitializer]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Init2() { }
+}
+ 
+<span class="keyword">class</span> C2
+{
+    [ModuleInitializer]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Init1() { }
+ 
+}</code></pre>
+<p>以下のようなコードに相当するものがコンパイラーによって追加されます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> &lt;Module&gt;
+{
+    <span class="keyword">static</span> &lt;Module&gt;()
+    {
+        C1.Init1();
+        C1.Init2();
+        C2.Init1();
+    }
+}</code></pre>
+<p>1つの静的コンストラクターの中に単なるメソッド呼び出しが並べられているだけの状態になります。
+したがって、以下のような性質があります。</p>
+<ul>
+<li>トータルでの呼び出しコストは静的コンストラクターをたくさん並べるよりも軽い
+<ul>
+<li>(静的コンストラクターは「<a href="/study/csharp/async/sp_thread/">マルチスレッド</a>実行時でも1回限り呼ぶ」という処理が必要で、通常のメソッド呼び出しよりも少し負担が大きい。モジュール初期化子はその負担が1回だけで済む)</li>
+</ul>
+</li>
+<li>(意図せずコードを残してしまうと)本当は不要であっても必ず呼ばれる</li>
+<li>呼び出しの負荷がモジュール読み込み時に集中する</li>
+</ul>
+<h3 id="section-4"><a id="sec-generated-title-4"></a> <a id="module-initialize-usage">モジュール初期化子の用途</a></h3>
+<p>.NET 6.0 では iOS や <a href="https://ja.wikipedia.org/wiki/WebAssembly">WebAssembly</a> 上での実行のサポートが入ります。
+(iOS や WebAssembly 上で C# が動くという状況はもっと前からあったんですが、
+Windows で動いていた .NET とは別系統で保守されていました。
+それが、 .NET 6.0 で統合されて1つの「.NET」になりました。)</p>
+<p>用途が増えると、これまでの用途では動いていたものが新しい用途では動かせない・動いても効率が悪いということがあります。
+実際、iOS や WebAssembly 環境では<a href="/study/csharp/dynamic/sp_reflection/">リフレクション</a>を使いづらいです。</p>
+<p>例えば以下のように、文字列で型名を指定して、その型のインスタンスを生成するということを考えてみます。
+(こういうコードをそのまま書くことはないですが、JSON などにシリアライズ・デシリアライズしたりするときにこれに類する処理が内部的に行われたりします。)</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Reflection;
+ 
+<span class="comment">// リフレクションを使えば文字列からその名前の型のインスタンスを作れる。</span>
+<span class="comment">// ただ、パフォーマンスはあんまりよくない。</span>
+<span class="keyword">object</span>? CreateInstance(<span class="keyword">string</span> typeName)
+{
+    <span class="keyword">if</span> (Assembly.GetExecutingAssembly().GetType(typeName) <span class="keyword">is</span> { } t) <span class="keyword">return</span> Activator.CreateInstance(t);
+    <span class="keyword">else</span> <span class="keyword">return</span> <span class="keyword">null</span>;
+}
+ 
+<span class="comment">// ただ、 &quot;A&quot;, &quot;B&quot; という文字列が型名を指しているかどうかはコンパイラーが関知することではなく、</span>
+<span class="comment">// 「クラス A, B は誰も使っていない」誤判定を受けることがある。</span>
+<span class="comment">// AOT (事前ネイティブコード化)実行環境だと A, B が消し去られて、上記 GetType に失敗しうる。</span>
+Console.WriteLine(CreateInstance(<span class="string">&quot;A&quot;</span>));
+Console.WriteLine(CreateInstance(<span class="string">&quot;B&quot;</span>));
+ 
+<span class="keyword">class</span> A
+{
+}
+ 
+<span class="keyword">class</span> B
+{
+}</code></pre>
+<p>このコードは直接的にクラス <code>A</code>、<code>B</code> を使っているコードがどこにもありません。
+かなり頑張ってコードを追えば、<code>&quot;A&quot;</code> という文字列が <code>A</code> というクラスを指していて、
+それをリフレクション(<code>Activator.CreateInstance</code>)越しに使っていることがわからなくはないんですが、コンパイラーが機械的に判定すると「<code>A</code> も <code>B</code> も使われていない」という判定を受けます。</p>
+<p>一方で、C# 9.0 の世代では <a href="/study/csharp/misc/analyzer-generator/">source generator</a> (ソースコード生成)の仕組みが導入されました。
+source generator 導入の動機の1つに「これまでリフレクションでやっていたような処理をコンパイル時にやりたい」というものがあります。
+先ほどの <code>Activator.CreateInstance</code> を使っていた処理も、source generator を使って、「最初に1回どこかで初期化処理をする」みたいなものに置き換えることが考えられます。
+例えば、以下のように、<code>CreateInstance</code> 的な処理を自前管理することを考えます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Collections.Generic;
+ 
+<span class="comment">// どこか必ず1回呼ばれる保証のあるものを使って、事前に string → Func&lt;object&gt; な辞書を作っておくという発想。</span>
+<span class="keyword">static</span> <span class="keyword">class</span> TypeRepository
+{
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">readonly</span> Dictionary&lt;<span class="keyword">string</span>, Func&lt;<span class="keyword">object</span>&gt;&gt; _factories = <span class="keyword">new</span>();
+ 
+    <span class="comment">// 型名からインスタンスを作る。Register がどこかで呼ばれる前提。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">object</span>? CreateInstance(<span class="keyword">string</span> typeName) =&gt; _factories.TryGetValue(typeName, <span class="keyword">out</span> <span class="keyword">var</span> f) ? f() : <span class="keyword">null</span>;
+ 
+    <span class="comment">// 型名 → インスタンス生成デリゲートを登録。</span>
+    <span class="comment">// 静的コンストラクターで呼んでもらう想定だと破綻気味だったけど、モジュール初期化子なら割と成立する。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Register(<span class="keyword">string</span> typeName, Func&lt;<span class="keyword">object</span>&gt; factory) =&gt; _factories.Add(typeName, factory);
+}</code></pre>
+<p>ここで静的コンストラクターだと「呼ばれる保証がない」という点が問題になります。
+例えば以下のコードのように変な挙動をしたりします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Collections.Generic;
+ 
+<span class="comment">// 後述するように、静的コンストラクターはこの用途だと呼ばれない。</span>
+<span class="comment">// なので、Register が呼ばれてなくて、CreateInstance が null を返す。</span>
+Console.WriteLine(TypeRepository.CreateInstance(<span class="string">&quot;A&quot;</span>)); <span class="comment">// null</span>
+Console.WriteLine(TypeRepository.CreateInstance(<span class="string">&quot;B&quot;</span>)); <span class="comment">// null</span>
+ 
+<span class="comment">// これが例えば、どこでもいいから1度 A のメンバーを空呼びすると上記コードがちゃんと new A(), new B() を返すようになる。</span>
+<span class="comment">// 静的コンストラクターが呼ばれるタイミングは「その型のメンバーを最初に使った直後」</span>
+_ = <span class="keyword">new</span> A(); <span class="comment">// このタイミングで A の静的コンストラクターが呼ばれる</span>
+_ = <span class="keyword">new</span> B(); <span class="comment">// このタイミングで B の静的コンストラクターが呼ばれる</span>
+Console.WriteLine(TypeRepository.CreateInstance(<span class="string">&quot;A&quot;</span>)); <span class="comment">// A</span>
+Console.WriteLine(TypeRepository.CreateInstance(<span class="string">&quot;B&quot;</span>)); <span class="comment">// B</span>
+ 
+<span class="comment">// 手書きはあまりしたくないものの、Source Generator がある今、</span>
+<span class="comment">// 必要な型に対して以下のようなコード生成をするのは十分現実的。</span>
+<span class="comment">// ただ、静的コンストラクターは呼ばれるタイミングに問題があって…</span>
+<span class="keyword">class</span> A
+{
+    <span class="keyword">static</span> A() =&gt; TypeRepository.Register(nameof(A), () =&gt; <span class="keyword">new</span> A());
+}
+ 
+<span class="keyword">class</span> B
+{
+    <span class="keyword">static</span> B() =&gt; TypeRepository.Register(nameof(B), () =&gt; <span class="keyword">new</span> B());
+}</code></pre>
+<p>モジュール初期化子なら確実に呼ばれる保証が強いのでこの問題を解決できます。
+以下のコードであれば意図した挙動になります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Runtime.CompilerServices;
+ 
+<span class="comment">// モジュール初期化子の場合、その型を含むモジュール(dll とか exe とか)がロードされた直後に必ず呼ばれる。</span>
+<span class="comment">// 静的コンストラクターの「型に触れた瞬間」よりは確実に呼ばれる保証あり。</span>
+Console.WriteLine(TypeRepository.CreateInstance(<span class="string">&quot;A&quot;</span>)); <span class="comment">// A</span>
+Console.WriteLine(TypeRepository.CreateInstance(<span class="string">&quot;B&quot;</span>)); <span class="comment">// B</span>
+ 
+<span class="comment">// 静的コンストラクターだと呼ばれるタイミングが不定で問題があったけど、モジュール初期化子なら大丈夫。</span>
+<span class="keyword">class</span> A
+{
+    [ModuleInitializer]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Init() =&gt; TypeRepository.Register(nameof(A), () =&gt; <span class="keyword">new</span> A());
+}
+ 
+<span class="keyword">class</span> B
+{
+    [ModuleInitializer]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Init() =&gt; TypeRepository.Register(nameof(B), () =&gt; <span class="keyword">new</span> B());
+}</code></pre>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="generics"></a>ジェネリックな型</h2>
+<p>逆に静的コンストラクターでないと書けないものもあります。
+ジェネリックな型に対してはモジュール初期化子を定義できません。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> Generic&lt;T&gt;
+{
+    <span class="comment">// これはコンパイル エラー。</span>
+    <span class="comment">// 静的コンストラクターなら、 Generic&lt;int&gt; みたいな具象化した型ごとに呼ばれるけど、</span>
+    <span class="comment">// モジュール初期化のタイミングでは何の型で具象化されるかわからなくて呼びようがない。</span>
+    [ModuleInitializer]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Init1() { }
+}</code></pre>
+<p><a href="#module-initialize-usage">前節</a>で書いたような用途でモジュール初期化をジェネリック型に対して使いたい場合、
+以下のように、非ジェネリックな型を1つ用意して、その中で想定しうるすべての型を列挙するなどの対処が必要になります。</p>
+<pre><code class="language-csharp"><span class="comment">// 前節のようなことをジェネリックな型に対してしようとすると…</span>
+<span class="keyword">class</span> Generic&lt;T&gt;
+{
+}
+ 
+<span class="comment">// 非ジェネリックなものを1個用意して、</span>
+<span class="keyword">class</span> Generic
+{
+    [ModuleInitializer]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Init()
+    {
+        TypeRepository.Register(<span class="keyword">typeof</span>(Generic&lt;&gt;) + <span class="string">&quot;&lt;int&gt;&quot;</span>, () =&gt; <span class="keyword">new</span> Generic&lt;<span class="keyword">int</span>&gt;());
+        TypeRepository.Register(<span class="keyword">typeof</span>(Generic&lt;&gt;) + <span class="string">&quot;&lt;string&gt;&quot;</span>, () =&gt; <span class="keyword">new</span> Generic&lt;<span class="keyword">string</span>&gt;());
+        <span class="comment">// 以下、使うことがわかっている限りの具象型を並べる必要がある。</span>
+    }
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/oop/">&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x6307;&#x5411;</a></li><li><a href="/study/csharp/oop/oo_about/">&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x6307;&#x5411;&#x3068;&#x306F;</a></li><li><a href="/study/csharp/oop/oo_class/">&#x30AF;&#x30E9;&#x30B9;</a></li><li><a href="/study/csharp/oop/oo_construct/">&#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;</a></li><li><a href="/study/csharp/oop/oo_conceal/">&#x5B9F;&#x88C5;&#x306E;&#x96A0;&#x853D;</a></li><li><a href="/study/csharp/oop/oo_property/">&#x30D7;&#x30ED;&#x30D1;&#x30C6;&#x30A3;</a></li><li><a href="/study/csharp/oop/oo_static/">&#x9759;&#x7684;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/study/csharp/oop/oo_operator/">&#x6F14;&#x7B97;&#x5B50;&#x306E;&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30ED;&#x30FC;&#x30C9;</a></li><li><a href="/study/csharp/oop/oo_indexer/">&#x30A4;&#x30F3;&#x30C7;&#x30AF;&#x30B5;&#x30FC;</a></li><li><a href="/study/csharp/oop/oo_inherit/">&#x7D99;&#x627F;</a></li><li><a href="/study/csharp/oop/miscimplictinherit/">[&#x4F59;&#x8AC7;] &#x6697;&#x9ED9;&#x7684;&#x306A;&#x6D3E;&#x751F;</a></li><li><a href="/study/csharp/oop/oo_multipleinheritance/">[&#x96D1;&#x8A18;] &#x591A;&#x91CD;&#x7D99;&#x627F;&#x3067;&#x304D;&#x306A;&#x3044;&#x7406;&#x7531;</a></li><li><a href="/study/csharp/oop/oo_polymorphism/">&#x591A;&#x614B;&#x6027;</a></li><li><a href="/study/csharp/oop/misc_as/">[&#x96D1;&#x8A18;] &#x30AD;&#x30E3;&#x30B9;&#x30C8;&#x3068; as</a></li><li><a href="/study/csharp/oop/misc_construct/">[&#x96D1;&#x8A18;] &#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;&#x5185;&#x306E;&#x4EEE;&#x60F3;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x547C;&#x3073;&#x51FA;&#x3057;</a></li><li><a href="/study/csharp/oop/oo_abstract/">&#x62BD;&#x8C61;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x3001;&#x62BD;&#x8C61;&#x30AF;&#x30E9;&#x30B9;</a></li><li><a href="/study/csharp/oop/oo_interface/">&#x30A4;&#x30F3;&#x30BF;&#x30FC;&#x30D5;&#x30A7;&#x30FC;&#x30B9;</a></li><li><a href="/study/csharp/oop/misc_autoimpl/">[&#x96D1;&#x8A18;] &#x62BD;&#x8C61;&#x5B9A;&#x7FA9;&#x3068;&#x81EA;&#x52D5;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/oop/oo_vftable/">[&#x96D1;&#x8A18;] &#x4EEE;&#x60F3;&#x95A2;&#x6570;&#x30C6;&#x30FC;&#x30D6;&#x30EB;</a></li><li><a href="/study/csharp/oop/sp2_generics/">&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/oop/sp4_variance/">&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30AF;&#x30B9;&#x306E;&#x5171;&#x5909;&#x6027;&#x30FB;&#x53CD;&#x5909;&#x6027;</a></li><li><a href="/study/csharp/oop/generic-math-operators/">&#x3010;Generic Math&#x3011; C# 11 &#x3067;&#x306E;&#x6F14;&#x7B97;&#x5B50;&#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

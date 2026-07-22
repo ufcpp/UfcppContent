@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>.NET Framework 4.7 | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2017/4/net47update/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2017-04-06T16:42:04">2017-04-06</time></span><span>更新: <time datetime="2017-04-06T16:42:04">2017-04-06</time></span></div><h1 id="net-framework-4.7">.NET Framework 4.7</h1>
+<p>.NET Framework 4.7がリリースされたみたいですね。</p>
+<ul>
+<li><a href="https://blogs.msdn.microsoft.com/dotnet/2017/04/05/announcing-the-net-framework-4-7/">Announcing the .NET Framework 4.7</a></li>
+</ul>
+<h2 id="section">更新内容</h2>
+<p>.NET Framework 自体よりも、ドキュメントとかのシステム更新の方が目立つかも。</p>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/dotnet/api/">API ドキュメントが docs に移行</a></li>
+<li><a href="https://github.com/Microsoft/dotnet/blob/master/releases/net47/dotnet47-api-changes.md">API の更新履歴が GitHub 上に</a></li>
+</ul>
+<p>自分が直接関係しそうなのは、<code>ValueTuple</code>構造体の追加くらいかなぁ。</p>
+<h2 id="valuetuple">ValueTuple</h2>
+<p><a href="/study/csharp/datatype/tuples/">C# 7.0のタプル</a>を使うには、<code>ValueTuple</code>構造体が必要なわけですが。</p>
+<p>.NET Framework 4.7は、標準で<code>ValueTuple</code>構造体を含む初のバージョンになりました。
+(.NET Framework 4.7以外では<a href="https://www.nuget.org/packages/System.ValueTuple/"><code>System.ValueTuple</code>パッケージ</a>の参照が必要。)
+後述の通り、今日のリリースだとWindows 10にしか.NET Framework 4.7が来ていないので、あまりまだ選べる選択肢ではなさそうな気もします。
+まあそれに、PCLとかNetStandardなライブラリ、.NET Coreでもまだ<a href="https://www.nuget.org/packages/System.ValueTuple/"><code>System.ValueTuple</code>パッケージ</a>が必要です。</p>
+<h2 id="windows-10-creators-update">Windows 10 Creators Update</h2>
+<p>というか、単体インストーラーはなくて、Windows 10の<a href="http://internet.watch.impress.co.jp/docs/news/1051787.html">Creators Update</a>とともにアナウンス。</p>
+<p>Visual Studio 2017も同時に更新されましたけども、.NET Framework 4.7をターゲットにするためには、現状だと、</p>
+<ul>
+<li>Windows 自体にCreators Updateを掛ける</li>
+<li>Visual Studio 2017を更新する</li>
+<li>更新の際に、[変更] → [コンポーネント] → .NET Framework 4.7 SDK、.NET Framework 4.7 Targeting Pack にチェックを入れる</li>
+</ul>
+<p>ってやらないとダメみたい。</p>
+<p><img src="/assets/media/1128/vs2017net47.png" alt="Visual Studio 2017に.NET Framework 4.7 SDKを追加" /></p>
+<h2 id="section-1">リリース順</h2>
+<p>リリース順、これまでだと、</p>
+<ol>
+<li>.NET Framework の更新/単体インストーラー配布</li>
+<li>Visual Studio/C# のリリース = Windows のリリース</li>
+</ol>
+<p>みたいな順が多かったんですけどね。今回、</p>
+<ol>
+<li>Visual Studio/C# のリリース</li>
+<li>Windows のリリース/.NET Framework の更新</li>
+<li>.NET Framework 単体インストーラー配布(まだない)</li>
+</ol>
+<p>っぽい。
+「C# 7.0がリリースされたのに、<code>ValueTuple</code>を標準で含んだバージョンの.NET Frameworkはまだ出ないんだ」とか、
+これまでのリリース順からすると不思議な感じでしたけども、Windowsのリリース スケジュールのせいでしたか。
+(てっきり、.NET Core辺りのリリース遅れが犯人かと思ってました。)</p>
+<h2 id="net">.NETランタイム更新</h2>
+<p>.NETランタイムの配布方法を、以下のようにしていきたいのかなぁとか思ったり。</p>
+<ul>
+<li>スマホ: AOT(Ahead of Time: 事前コンパイル)でアプリ単一バイナリにコンパイル</li>
+<li>サーバー: .NET CoreでNuGetベースの更新</li>
+<li>デスクトップ: Windowsの自動アップデートに同梱</li>
+</ul>
+<p>C# にもそろそろ、ランタイムへの機能追加が必要な構文を追加したいみたいな動き出てきてますしね。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/251">Places where runtime bugs interfere with compiler or language evolution #251</a></li>
+<li><a href="https://github.com/dotnet/csharplang/issues/288">A Tour of Default Interface Methods for C# (&quot;traits&quot;) #288</a></li>
+</ul>
+<p>古いランタイムが残りにくい仕組みにしたがっていそう。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2017/4/">4&#x6708;</a></li><li><a href="/blog/2017/4/pickuproslyn0416/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 4/16</a></li><li><a href="/blog/2017/4/bitfields/">C# &#x3067;&#x30D3;&#x30C3;&#x30C8;&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;</a></li><li><a href="/blog/2017/4/intgenericparamter/">int &#x578B;&#x306E;&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30C3;&#x30AF;&#x578B;&#x5F15;&#x6570;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

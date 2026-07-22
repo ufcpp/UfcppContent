@@ -1,0 +1,185 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>C# 12.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/cheatsheet/ap_ver12/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="c-12.0">C# 12.0 の新機能</h1>
+<div class="version version12">Ver. 12.0</div>
+<table>
+<tr>
+<th>リリース時期</th>
+<td>2023/11</td>
+</tr>
+<tr>
+<th>同世代技術</th>
+<td>
+<ul>
+<li>.NET 8.0</li>
+</td>
+</tr>
+</table>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="collection-expression">コレクション式</a></h2>
+<p><code>[]</code> 記号を使って配列などの初期化ができるようになりました。
+配列だけではなく、コレクション(<code>List&lt;T&gt;</code> 型など)、<code>Span&lt;T&gt;</code> なども全く同じ書き方で初期化できます。
+これをコレクション式(collection expression)と言います。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Collections.Immutable;
+
+<span class="keyword">int</span>[] array = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
+List&lt;<span class="keyword">int</span>&gt; list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
+Span&lt;<span class="keyword">int</span>&gt; span = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
+ReadOnlySpan&lt;<span class="keyword">int</span>&gt; ros = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
+ImmutableArray&lt;<span class="keyword">int</span>&gt; immutable = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</code></pre>
+<p>また、コレクション式中では、<code>..</code> を使うことで「別のコレクションの中身の展開」ができます。
+これを スプレッド (spread)演算子と言います。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span>[] array1 = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
+<span class="keyword">int</span>[] array2 = [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>];
+
+<span class="comment">// 0, 1, 2, 3, 4, 5, 6, 7</span>
+<span class="keyword">int</span>[] combined = [<span class="number">0</span>, ..array1, ..array2, <span class="number">7</span>];</code></pre>
+<p>詳しくは「<a href="/study/csharp/datatype/collection-expression/">コレクション式</a>」で説明します。</p>
+<h2 id="section-1"><a id="sec-generated-title-2"></a> <a id="primary-constructor">プライマリ コンストラクター</a></h2>
+<p>通常のクラス、構造体に対してプライマリ コンストラクターが使えるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> A(<span class="keyword">int</span> x)
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; } = x;
+}</code></pre>
+<p>レコード型の方を先に実装してしまったがために混乱があるんですが、
+通常クラス・構造体の場合はプライマリ コンストラクター引数からプロパティを自動生成する機能はありません。</p>
+<p>また、これに伴い、<code>class C;</code> というように、メンバーを1つも持たないでいい場合に <code>{}</code> を書く必要がなくなりました。</p>
+<p>詳しくは「<a href="/study/csharp/oop/oo_construct/#primary-constructor">プライマリ コンストラクター</a>」で説明します。</p>
+<h2 id="using"><a id="sec-generated-title-3"></a> <a id="using-any-type">using エイリアスに任意の型を書けるように</a></h2>
+<p>C# 11 ではエラーになっていた以下のようなコードをコンパイルできるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> Primitive = <span class="keyword">int</span>;
+<span class="keyword">using</span> Array = <span class="keyword">int</span>[];
+<span class="keyword">using</span> Nullable = <span class="keyword">int</span>?;
+<span class="keyword">using</span> Tuple = (<span class="keyword">int</span>, <span class="keyword">int</span>);</code></pre>
+<p>詳しくは「<a href="/study/csharp/structured/sp_namespace/#using-any-type">任意の型に対する using エイリアス</a>」で説明します。</p>
+<h2 id="section-2"><a id="sec-generated-title-4"></a> <a id="lambda-default">ラムダ式のデフォルト引数</a></h2>
+<p>ラムダ式の引数に<a href="/study/csharp/structured/sp4_optional/#optional">オプション引数</a>にできる(既定値を与えられる)ようになりました。
+また、<a href="/study/csharp/structured/sp_params/">params 引数</a>も使えるようになりました。</p>
+<pre><code class="language-csharp"><span class="comment">// オプション引数(既定値値指定)。</span>
+<span class="keyword">var</span> f1 = (<span class="keyword">int</span> x = <span class="number">1</span>) =&gt; <span class="number">0</span>;
+
+<span class="comment">// params 引数。</span>
+<span class="keyword">var</span> f2 = (<span class="keyword">params</span> <span class="keyword">int</span>[] x) =&gt; <span class="number">0</span>;
+
+<span class="comment">// 混在も OK。</span>
+<span class="keyword">var</span> f3 = (<span class="keyword">int</span> x = <span class="number">1</span>, <span class="keyword">params</span> <span class="keyword">int</span>[] y) =&gt; <span class="number">0</span>;</code></pre>
+<p>詳しくは「<a href="/study/csharp/functional/fun_localfunctions/#lambda-default">ラムダ式のオプション引数(既定値)と params 引数</a>」で説明します。</p>
+<h2 id="ref-readonly"><a id="sec-generated-title-5"></a> <a id="ref-readonly-param">ref readonly 引数</a></h2>
+<p>ref 引数、in 引数の亜種として、
+「書き換えはしないけども、右辺値は受け付けたくない」ということを表す ref readonly 引数というものを導入しました。</p>
+<pre><code class="language-csharp"><span class="comment">// in 引数の代わりに ref readonly 引数。</span>
+<span class="keyword">void</span> m(<span class="keyword">ref</span> <span class="keyword">readonly</span> <span class="keyword">int</span> x) { }
+
+m(<span class="number">10</span>); <span class="comment">// リテラルは警告に。</span>
+
+<span class="keyword">var</span> a = <span class="number">1</span>;
+<span class="keyword">var</span> b = <span class="number">2</span>;
+m(a + b); <span class="comment">// 式も警告に。</span>
+
+<span class="comment">// in や ref を付けないのも警告。</span>
+m(a);
+
+<span class="comment">// in を付けると警告が出ない。</span>
+m(<span class="keyword">in</span> a);
+
+<span class="comment">// in 引数と違って、ref 修飾でも OK。</span>
+m(<span class="keyword">ref</span> a);</code></pre>
+<p>ちなみに、呼び出し側の書き方が変わる以外に差はなく、コンパイル結果の挙動は in 引数と全く同じです。
+呼び出し側の差は以下の通りです。</p>
+<table>
+<thead>
+<tr>
+<th>呼び方</th>
+<th>in</th>
+<th>ref readonly</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>m(ref x)</code></td>
+<td>警告</td>
+<td>OK</td>
+</tr>
+<tr>
+<td><code>m(in x)</code></td>
+<td>OK</td>
+<td>OK</td>
+</tr>
+<tr>
+<td><code>m(x)</code>, <code>m(x + y)</code>, <code>m(123)</code></td>
+<td>OK</td>
+<td>警告</td>
+</tr>
+</tbody>
+</table>
+<p>詳しくは「<a href="/study/csharp/resource/sp_ref/#ref-readonly-param">ref readonly 引数</a>」で説明します。</p>
+<h2 id="section-3"><a id="sec-generated-title-6"></a> <a id="other"></a>その他</h2>
+<h3 id="inlinearray"><a id="sec-generated-title-7"></a> <a id="inline-array">InlineArray</a></h3>
+<p>.NET 8 で、<a href="https://learn.microsoft.com/ja-jp/dotnet/api/system.runtime.compilerservices.inlinearrayattribute"><code>InlineArray</code> 属性</a> (<code>System.Runtime.CompilerServices</code> 名前空間) というものが入って、「値型の固定長配列」みたいなものを作れるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="comment">// この属性を付けると、 .NET ランタイムが特別扱いして、構造体のサイズを拡大する。</span>
+<span class="comment">// (コンストラクター引数で Length 指定。)</span>
+[InlineArray(<span class="number">3</span>)]
+<span class="keyword">struct</span> FixedBuffer&lt;T&gt;
+{
+    <span class="keyword">private</span> T _value;
+}</code></pre>
+<p>基本的には .NET ランタイム側の機能ですが、
+いくつか、C# 側にもこの <code>InlineArray</code> 向けの特殊対応が入っています。</p>
+<pre><code class="language-csharp">FixedBuffer&lt;<span class="keyword">string</span>&gt; buffer = <span class="keyword">new</span>();
+
+<span class="comment">// InlineArray に対して直接インデクサーを書ける。</span>
+buffer[<span class="number">0</span>] = <span class="string">&quot;zero&quot;</span>;
+buffer[<span class="number">1</span>] = <span class="string">&quot;one&quot;</span>;
+
+<span class="comment">// Span/ReadOnlySpan に暗黙的に変換できる。</span>
+Span&lt;<span class="keyword">string</span>&gt; span = buffer;
+span[<span class="number">2</span>] = <span class="string">&quot;two&quot;</span>;
+
+<span class="comment">// foreach で列挙できる。</span>
+<span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> buffer)
+{
+    Console.WriteLine(x);
+}</code></pre>
+<p>詳しくは「<a href="/study/csharp/datatype/inline-array/">[雑記] InlineArray</a>」で説明します。</p>
+<h3 id="nameof"><a id="sec-generated-title-8"></a> <a id="nameof-instance-menbers"></a>nameof の微修正</h3>
+<p><a href="/study/csharp/start/st_string/#nameof-operator"><code>nameof</code> 演算子</a>にちょっとした修正が入りました。</p>
+<p>C# 11 以前だと、以下の例の最後の行のように、
+静的メンバー内から「インスタンス メンバーのインスタンス メンバー」みたいな名前の参照ができなかったようです。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+    <span class="keyword">public</span> <span class="keyword">string</span>? Instance { <span class="keyword">get</span>; }
+
+    <span class="comment">// これは元から行けた。</span>
+    <span class="keyword">public</span> <span class="keyword">string</span> InstanceM() =&gt; nameof(Instance.Length);
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">string</span> StaticM1() =&gt; nameof(<span class="keyword">string</span>.Length);
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">string</span> StaticM2() =&gt; nameof(Instance);
+
+    <span class="comment">// これが今までダメだったらしい。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">string</span> StaticM() =&gt; nameof(Instance.Length);
+}</code></pre>
+<p>これが、C# 12 ではコンパイルできるようになりました。</p>
+<p>正直、バグ修正扱い(最新コンパイラーを使うと C# 11 以下でもコンパイルが通るようになる)でもいいレベルだとは思いますが、一応は C# 12 以上限定です。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/cheatsheet/">C# &#x306E;&#x6A5F;&#x80FD;&#x4E00;&#x89A7;&#xFF08;&#x7D22;&#x5F15;&#x7684;&#x306A;&#x3082;&#x306E;&#xFF09;</a></li><li><a href="/study/csharp/cheatsheet/list_expression/">C# &#x306E;&#x5F0F;&#x3068;&#x6587;&#x306E;&#x4E00;&#x89A7;</a></li><li><a href="/study/csharp/cheatsheet/list_type/">C# &#x306E;&#x578B;&#x3068;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/study/csharp/cheatsheet/list_versions/">&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver1/">C# 1.0</a></li><li><a href="/study/csharp/cheatsheet/ap_ver2/">C# 2.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver3/">C# 3.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver4/">C# 4.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver5/">C# 5.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver6/">C# 6 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7/">C# 7 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_1/">C# 7.1 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_2/">C# 7.2 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_3/">C# 7.3 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver8/">C# 8.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver9/">C# 9.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver10/">C# 10.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver11/">C# 11.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver13/">C# 13.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver14/">C# 14.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/langversionoption/">&#x8A00;&#x8A9E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x306E;&#x6307;&#x5B9A;</a></li><li><a href="/study/csharp/cheatsheet/listfxlangversion/">C#&#x306E;&#x8A00;&#x8A9E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x3068;.NET&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/cheatsheet/ap_modern/">&#x4F7F;&#x308F;&#x306A;&#x304F;&#x306A;&#x3063;&#x305F;&#x6A5F;&#x80FD;&#x30FB;&#x65B0;&#x3057;&#x3044;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/apscripting/">C#&#x30B9;&#x30AF;&#x30EA;&#x30D7;&#x30C8;&#x5B9F;&#x884C;</a></li><li><a href="/study/csharp/cheatsheet/file-based-app/">&#x30D5;&#x30A1;&#x30A4;&#x30EB; &#x30D9;&#x30FC;&#x30B9;&#x5B9F;&#x884C;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

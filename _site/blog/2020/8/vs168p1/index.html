@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Visual Studio 16.7 &amp; 16.8 Preview 1 &#x30EA;&#x30EA;&#x30FC;&#x30B9; / C# 9.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;3&#x3064;(module initializers, static lambda, target-typed conditional) | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2020/8/vs168p1/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2020-08-10T21:02:46">2020-08-10</time></span><span>更新: <time datetime="2020-08-10T21:39:50">2020-08-10</time></span></div><h1 id="visual-studio-16.7-16.8-preview-1-c-9.0-3module-initializers-static-lambda-target-typed-conditional">Visual Studio 16.7 &amp; 16.8 Preview 1 リリース / C# 9.0 の新機能3つ(module initializers, static lambda, target-typed conditional)</h1>
+<p>5日に、Visual Studio 2019 の 16.7 と、16.8 Preview 1 がリリースされました。</p>
+<ul>
+<li><a href="https://devblogs.microsoft.com/visualstudio/visual-studio-2019-v16-7-releases/">Visual Studio 2019 v16.7 and v16.8 Preview 1 Release Today!</a></li>
+</ul>
+<p>ということで、先週、ライブ配信もしていました。</p>
+<div>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/-_QGGvT5FEw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+<p>16.7 が正式リリースになった記念に、Preview の頃に触れてた話題を改めてちょこっと振り返ったのと、16.8 Preview 1 で新たに追加された C# 9.0 の3つの機能の話でした。</p>
+<p>C# 9.0 に今回追加されたのは以下の3つです。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/proposals/csharp-9.0/module-initializers.md">Module Initializers</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/proposals/csharp-9.0/static-anonymous-functions.md">Static anonymous functions</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/proposals/csharp-9.0/target-typed-conditional-expression.md">Target-Typed Conditional Expression</a></li>
+</ul>
+<p>今日は主にこの3つについて説明。</p>
+<h2 id="module-initializers">Module Initializers</h2>
+<p>モジュール(exe (アプリ)や dll (ライブラリ))が読み込まれた時点で必ず1回呼ばれるメソッドを書けるようになりました。</p>
+<p>以下のように、<code>ModuleInitializer</code> 属性を付けた静的メソッドが、モジュール読み込み時に呼ばれます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">class</span> Init
+{
+    [ModuleInitializer]
+    <span class="keyword">internal</span> <span class="keyword">static</span> <span class="keyword">void</span> M1() =&gt; Console.WriteLine(<span class="string">&quot;Init.M1&quot;</span>);
+
+    [ModuleInitializer]
+    <span class="keyword">internal</span> <span class="keyword">static</span> <span class="keyword">void</span> M2() =&gt; Console.WriteLine(<span class="string">&quot;Init.M2&quot;</span>);
+}</code></pre>
+<p><a href="/study/csharp/oop/oo_static/#ctor">静的コンストラクター</a>でも近いことができるんですが、</p>
+<ul>
+<li>静的コンストラクター
+<ul>
+<li>そのクラスのメンバーに触れた時点で初めて呼ばれる
+‐ 1度も使っていないクラスの静的コンストラクターは結局呼ばれない</li>
+<li>1つのクラスに1つ限り</li>
+</ul>
+</li>
+<li>Module Initializers
+‐ クラスのメンバーを使っていようが使っていまいが、モジュール読み込み時に必ず呼ばれる
+‐ 1クラスに複数持てる</li>
+</ul>
+<p>みたいな差があります。
+確実に、確定タイミングで呼ばれるというのもメリットですし、個別に静的コンストラクターを持つよりはちょっとだけパフォーマンス的にも都合がいいみたいです。</p>
+<p>今、<a href="/blog/2020/5/sourcegenerator/">Source Generator</a>って機能の実装も進められていて、これが入ると、たぶん「各クラスについて1回限り走らせたい処理」みたいなものは結構あると思います。
+例えば自分が必要に迫られているものだと、<a href="https://github.com/ufcpp-live/UfcppLiveAgenda/issues/12#issuecomment-669958700">リフレクションが使えない環境で自前でリフレクションに代わる型情報を持つ</a>みたいなコードなんですけども、
+これが「確実に、確定タイミング」になってくれるのは結構ありがたかったりします。</p>
+<h2 id="static-anonymous-functions">Static anonymous functions</h2>
+<p><a href="/study/csharp/functional/fun_localfunctions/#anonymous-function">匿名関数</a> (<a href="/study/csharp/functional/sp_delegate/#lambda">ラムダ式</a>と<a href="/study/csharp/functional/sp_delegate/#anonymous-method">匿名メソッド式</a>)に対して <code>static</code> 修飾を付けて、<a href="/study/csharp/functional/sp2_anonymousmethod/#closure">キャプチャ</a>の抑止ができるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="comment">// OK</span>
+Action staticLambda = <span class="keyword">static</span> () =&gt; { };
+Action staticAnonymousMethod = <span class="keyword">static</span> <span class="keyword">delegate</span> () { };
+
+<span class="comment">// コンパイル エラー</span>
+<span class="keyword">int</span> local = <span class="number">1</span>;
+Action badStaticLambda = <span class="keyword">static</span> () =&gt; Console.WriteLine(local);
+Action badStaticAnonymousMethod = <span class="keyword">static</span> <span class="keyword">delegate</span> () { Console.WriteLine(local); };</code></pre>
+<p>これは割かし、「工数的な問題で 8.0 に入らなかっただけ」系の機能です。
+C# 8.0 時点で<a href="/study/csharp/functional/fun_localfunctions/#static-local-function">ローカル関数に関しては同様の機能</a>が入っていて、
+匿名関数でも同様の需要があることはわかっていましたが、
+文法的にちょっとめんどくさいので後回しになっていたものです。</p>
+<h2 id="target-typed-conditional-expression">Target-Typed Conditional Expression</h2>
+<p>条件演算子 (<code>? :</code>)で、第2項と第3項で共通の型を決められないときに、<a href="/study/csharp/start/misctyperesolution/#target-type">ターゲット型</a>を見て型を決定できるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> targetTypedConditional(<span class="keyword">bool</span> x)
+{
+    <span class="comment">// target-typed で、1 : null の部分がちゃんと int? になる。</span>
+    <span class="keyword">int</span>? v1 = x ? <span class="number">1</span> : <span class="keyword">null</span>;
+
+    <span class="comment">// あくまで target-typed で判定してるので、以下のような推論は働かない(コンパイル エラー)。</span>
+    <span class="comment">// 1 と null の「共通型」は確定できない。</span>
+    <span class="comment">//var v2 = x ? 1 : null;</span>
+}</code></pre>
+<p><a href="/study/csharp/datatype/typeswitch/#switch-expression"><code>switch</code> 式</a>の場合には C# 8.0 時点であった機能です。新しい文法である <code>switch</code> 式と違って、既存の文法に手を入れるのはリスクもある(というか、実際、ちょっと破壊的変更を起こしてる)ので 8.0 には間に合わなかった機能です。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2020/8/">8&#x6708;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x8AD6;&#x7406;&#x30DE;&#x30FC;&#x30AF;&#x30A2;&#x30C3;&#x30D7;&#x3068;&#x30C7;&#x30B6;&#x30A4;&#x30F3;&#x306E;&#x5909;&#x66F4; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/xml/xslsummary/logical/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">論理マークアップとデザインの変更</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>HTML を直接書くのではなく、
+一度 XML で書いてから XSL で変換をかける利点の1つは、
+論理マークアップと視覚デザインを分離できることです。</p>
+<p>論理と視覚が分離されているので、視覚デザインの変更も容易です。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="separation"></a>論理と視覚の分離</h2>
+<p>例として更新履歴を見てみましょう。</p>
+<p>勉強ページの更新履歴の元データは以下のような XML になっています。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">whatsnew</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;</span><span class="xmlName">new</span> <span class="xmlAttribute">year</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">2000</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">month</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">12</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">day</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">24</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">url</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">../csharp/index.html</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+  C#の解説ページ作りました
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">new</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;</span><span class="xmlName">new</span> <span class="xmlAttribute">year</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">2000</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">month</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">12</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">day</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">23&quot; url=&quot;</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+  ホームページ開設
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">new</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">whatsnew</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>更新履歴に必要な情報というと、更新日時と更新したページのURLと更新内容だけあれば十分なわけです。</p>
+<p>こういう情報をブラウザで表示したい場合、テーブルか何かを使って一覧表示したいですよね。
+こんな感じで↓</p>
+<blockquote><table summary="">
+
+	<tr>
+		<td><p>2000年12月24日</p></td>
+		<td><p><a href="/study/csharp/">C#の解説ページ作りました</a></p></td>
+	</tr>
+	<tr>
+		<td><p>2000年12月23日</p></td>
+		<td><p>ホームページ開設</p></td>
+	</tr>
+</table></blockquote>
+HTMLのソースはこんな感じです↓
+<pre><code class="language-html"><span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">table</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">tr</span><span class="htmlTagDelimiter">&gt;</span>
+ <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">td</span><span class="htmlTagDelimiter">&gt;</span>2000年12月24日<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">td</span><span class="htmlTagDelimiter">&gt;</span>
+ <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">td</span><span class="htmlTagDelimiter">&gt;</span>
+ <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">a</span> <span class="htmlAttributeName">href</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;../programming/csharp/index.html&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+   C#の解説ページ作りました
+ <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">a</span><span class="htmlTagDelimiter">&gt;</span>
+ <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">td</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">tr</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">tr</span><span class="htmlTagDelimiter">&gt;</span>
+ <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">td</span><span class="htmlTagDelimiter">&gt;</span>2000年12月23日<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">td</span><span class="htmlTagDelimiter">&gt;</span>
+ <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">td</span><span class="htmlTagDelimiter">&gt;</span>ホームページ開設<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">td</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">tr</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">table</span><span class="htmlTagDelimiter">&gt;</span></code></pre>
+<p>元の XML と変換後の HTML には以下のような決定的な違いがあります。</p>
+<ul>
+<li><p>元の XML:</p>
+<ul>
+<li><p>データの意味（この数字は日付だとか、この項目は URL だとか）がわかる。</p>
+</li>
+<li><p>視覚的な配置情報は一切ない。</p>
+</li>
+</ul>
+</li>
+<li><p>変換後の HTML:</p>
+<ul>
+<li><p>意味は失われている。</p>
+</li>
+<li><p>視覚的な情報（どこに何を配置するか）が含まれている。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>この「データの意味」の方を<strong id="logic" class="keyword">論理デザイン</strong>（logical design）、
+「視覚的な配置情報」の方を<strong id="visual" class="keyword">視覚デザイン</strong>（visual design）と言います。</p>
+<p>要するに、XML の方では論理的なタグの中に情報がありますが、
+HTML の方では視覚的なタグの中に情報が埋まっています。</p>
+<p>「別に HTML で視覚デザイン中に直接データを埋め込んじゃってもいいじゃないか」と思うかもしれませんが、
+そうすると、デザインを変更したいときにかなり大変になります。
+例えば、テーブルを使うのをやめて、</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">p</span><span class="xmlDelimiter">&gt;</span>
+2000年12月24日 <span class="xmlDelimiter">&lt;</span><span class="xmlName">a</span> <span class="xmlAttribute">target</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">_top</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttribute">href</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">../csharp/index.html</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+  C#の解説ページ作りました
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">a</span><span class="xmlDelimiter">&gt;</span><span class="xmlDelimiter">&lt;</span><span class="xmlName">br</span><span class="xmlDelimiter">&gt;</span>
+2000年12月23日 ホームページ開設<span class="xmlDelimiter">&lt;</span><span class="xmlName">br</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">p</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>こんな感じ↑に変更したくなったときに、いちいち更新履歴全体を書き換えるのはかなり面倒なわけで、
+こういう視覚デザイン的な情報は更新履歴という論理的な情報とは分離しておいた方が変更作業が楽になるわけです。</p>
+<h2 id="xsl"><a id="sec-generated-title-3"></a> <a id="xsl"></a>XSL による論理と視覚の分離</h2>
+<p>XSL というのは、まさに「論理と視覚の分離」のためにあります。
+XML には論理的な情報を書き、
+XSL によって視覚的な情報を持たせます。</p>
+<p>具体的な例をあげると、
+更新履歴の XML からテーブルを生成するには以下のような XSL を書きます。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;?</span><span class="xmlName">xml</span> <span class="xmlAttribute">version</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">1.0</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">encoding</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Shift_JIS</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">?&gt;</span>
+<span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">stylesheet</span> <span class="xmlAttribute">xmlns:xsl</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://www.w3.org/1999/XSL/Transform</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">version</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">2.0</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">output</span> <span class="xmlAttribute">method</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">html</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">encoding</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Shift_JIS</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">/&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">template</span> <span class="xmlAttribute">match</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">/</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+
+    <span class="htmlComment">&lt;!-- 中略 --&gt;</span>
+
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">table</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">for-each</span> <span class="xmlAttribute">select</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">whatsnew/new</span><span class="xmlAttributeQuotes">&quot;</span>
+        <span class="xmlAttribute">order-by</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">-number(@year);-number(@month);-number(@day)</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">tr</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">td</span><span class="xmlDelimiter">&gt;</span>
+          <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">value-of</span> <span class="xmlAttribute">select</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">@year</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>年
+          <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">value-of</span> <span class="xmlAttribute">select</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">@month</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>月
+          <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">value-of</span> <span class="xmlAttribute">select</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">@day</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>日
+        <span class="xmlDelimiter">&lt;/</span><span class="xmlName">td</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">td</span><span class="xmlDelimiter">&gt;</span>
+          <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">choose</span><span class="xmlDelimiter">&gt;</span>
+            <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">when</span> <span class="xmlAttribute">test</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">.[@url!=&#39;&#39;]</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+              <span class="xmlDelimiter">&lt;</span><span class="xmlName">a</span> <span class="xmlAttribute">target</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">_top</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+              <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">attribute</span> <span class="xmlAttribute">name</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">href</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+                <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">value-of</span> <span class="xmlAttribute">select</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">@url</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+                <span class="xmlDelimiter">&lt;/</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">attribute</span><span class="xmlDelimiter">&gt;</span>
+              <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">value-of</span> <span class="xmlAttribute">select</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">.</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+              <span class="xmlDelimiter">&lt;/</span><span class="xmlName">a</span><span class="xmlDelimiter">&gt;</span>
+            <span class="xmlDelimiter">&lt;/</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">when</span><span class="xmlDelimiter">&gt;</span>
+            <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">otherwise</span><span class="xmlDelimiter">&gt;</span>
+              <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">value-of</span> <span class="xmlAttribute">select</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">.</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+            <span class="xmlDelimiter">&lt;/</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">otherwise</span><span class="xmlDelimiter">&gt;</span>
+          <span class="xmlDelimiter">&lt;/</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">choose</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;/</span><span class="xmlName">td</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;/</span><span class="xmlName">tr</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;/</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">for-each</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">table</span><span class="xmlDelimiter">&gt;</span>
+
+    <span class="htmlComment">&lt;!-- 中略 --&gt;</span>
+
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">template</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">stylesheet</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>こうすることで、ページのデザインを変えたくなったときにはこのXSLを修正するだけですむようになるわけです。
+例えば、先ほどのようにテーブルを使うのをやめたくなったときには、
+XSL の table の部分を以下のように修正するだけでデザインの変更が出来ます。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">p</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">for-each</span> <span class="xmlAttribute">select</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">whatsnew/new</span><span class="xmlAttributeQuotes">&quot;</span>
+    <span class="xmlAttribute">order-by</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">-number(@year);-number(@month);-number(@day)</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">value-of</span> <span class="xmlAttribute">select</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">@year</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>年
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">value-of</span> <span class="xmlAttribute">select</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">@month</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>月
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">value-of</span> <span class="xmlAttribute">select</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">@day</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>日
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">choose</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">when</span> <span class="xmlAttribute">test</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">.[@url!=&#39;&#39;]</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">a</span> <span class="xmlAttribute">target</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">_top</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">attribute</span> <span class="xmlAttribute">name</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">href</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+        <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">value-of</span> <span class="xmlAttribute">select</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">@url</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;/</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">attribute</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">value-of</span> <span class="xmlAttribute">select</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">.</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+      <span class="xmlDelimiter">&lt;/</span><span class="xmlName">a</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">when</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">otherwise</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">value-of</span> <span class="xmlAttribute">select</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">.</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">otherwise</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">choose</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">br</span> <span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">xsl</span><span class="xmlDelimiter">:</span><span class="xmlName">for-each</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">p</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>ちなみにこの XSL では、ついでだから更新日時でソートして、URLが指定されているときに限って&lt;a&gt;タグをつけるように条件分岐するようにしています。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/xml/xslsummary/">XSL&#x6982;&#x8981;</a></li><li><a href="/study/xml/xslsummary/about/">&#x6982;&#x8981;</a></li><li><a href="/study/xml/xslsummary/math/">XML &#x3067;&#x6570;&#x5F0F;&#x3092;&#x66F8;&#x3053;&#x3046;</a></li><li><a href="/study/xml/xslsummary/xsd/">XSD</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

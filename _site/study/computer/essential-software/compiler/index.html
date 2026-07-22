@@ -1,0 +1,405 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30E9;&#x30FC; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/computer/essential-software/compiler/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">コンパイラー</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>高級言語を使ってプログラムを作るためには、高級言語から、CPUが実行できる「<a href="/study/computer/general/cpu/#machine-language">機械語</a>」への変換作業が必要になります。
+この変換作業のことをコンパイル（compile： 編纂する）と呼びます。
+そして、コンパイルを行うためのプログラムを<strong id="compiler" class="keyword">コンパイラー</strong>（compiler）と呼びます。</p>
+<p>ここでは、コンパイラーが内部でどういう作業をしているのかについて説明していきます。</p>
+<p>高級言語のコンパイラーを作るということは、人が読みやすい形式の文字列を機械語に変換していく作業を行うことになります。
+変換作業は、途中、以下のような手順を通ります（図1）。</p>
+<ul>
+<li><p><strong id="lexical" class="keyword">字句解析</strong>（lexical analysis）： 文字列を単語に切り分ける作業。</p>
+</li>
+<li><p><strong id="syntactic" class="keyword">構文解析</strong>（syntactic analysis）： 単語と単語がどういうつながりを持つのかを表す木構造の情報を得る作業。</p>
+</li>
+</ul>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Essential/CompilationFlow.png"><img src="/assets/media/ufcpp2000/computer/fig/Essential/CompilationFlow.png" alt="字句解析と構文解析" /></a></p>
+<figcaption>字句解析と構文解析</figcaption>
+</figure>
+<p>最終的に、構文解析で得た木構造から機械語を作ります。
+本項では、木構造からの変換が容易なスタック・マシン（stack machine）と呼ばれるタイプの機械語を用いて説明を行っていきます。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="interpreter"></a>注: コンパイラーとインタープリター</h2>
+<p>元々、コンパイルという言葉は「ソース・コードを事前に全て実行可能ファイルに変えておく」ということを指していました。
+これに対して、「ソース・コードのままで配布して、逐次的に機械語に翻訳して実行する」という方式もあり、
+逐次翻訳作業のことをインタープリット（interpret： 翻訳する）、逐次実行するためのプログラムを<strong id="interpreter" class="keyword">インタープリター</strong>（interpreter）と呼びます。</p>
+<p>最近では、コンパイラーを使う場合でも、直接CPU依存な機械語を作るのではなく、
+いったんCPU非依存な中間言語（intermediate language）に変換する場合もあります。
+また、インタープリターを使う場合にも、厳密に逐次翻訳されているわけではなく、
+プログラム起動時に機械語に翻訳してから実行するようなタイプのプログラミング言語もあります。
+そのため、コンパイラーとインタープリターの区別はあいまいになっています。</p>
+<p>コンパイラーとインタープリターのいずれにしても、
+本項で説明するような字句解析、構文解析、機械語化などの過程が必要になります。</p>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="regular-expression"></a>正規表現</h2>
+<p>まずは、字句解析から見ていくわけですが、その前に、正規表現というものの説明が必要になります。</p>
+<p>前節では、字句解析を「文字列を単語に切り分ける処理」と言いましたが、
+正確には、「プログラムとして意味のある最小単位に切り分ける処理」になります。
+この「意味のある最小単位」のことをトークン（token： 本来は、通行証として使われる小さなコインなどをさす言葉）と呼びます。</p>
+<p>字句解析には<strong id="regex" class="keyword">正規表現</strong>（regular expression）と呼ばれるパターン・マッチング（特定の文字パターンの検出）手法がよく使われます。
+正規表現では、以下のような記法で文字列のパターン・マッチングを行います。</p>
+<ul>
+<li><p><code>abc</code>というように、文字列をそのまま書くと、これと同じ文字列とマッチします。</p>
+</li>
+<li><p><code>a|b</code>というように、|（縦棒）記号を用いることで、「aまたはb」というように2つのうちどちらか一方とマッチします。</p>
+<ul>
+<li>例えば、<code>gr(e|a)y</code>でgreyまたはgrayとマッチします。</li>
+</ul>
+</li>
+<li><p>文字クラス:</p>
+<ul>
+<li><p><code>\w</code>（アルファベットなど、単語に使われる文字）や<code>\s</code>（空白やタブ、改行などの空白文字）というように、<code>\</code>から始まる記号で、特定のカテゴリーに含まれる文字とマッチします。</p>
+</li>
+<li><p><code>.</code>（ドット）記号で、任意の1文字とマッチします。</p>
+</li>
+</ul>
+</li>
+<li><p><code>()</code>でグループ化することができます:</p>
+<ul>
+<li>例えば、<code>(abc)|(def)</code>で、<code>abc</code>または<code>def</code>のどちらかにマッチします。</li>
+</ul>
+</li>
+<li><p>量指定:</p>
+<ul>
+<li><p><code>?</code>記号で「0個または1個」を表します。</p>
+<ul>
+<li>例えば<code>ab?</code>でaまたはabとマッチします。</li>
+</ul>
+</li>
+<li><p><code>*</code>記号で「0個以上」を表します。</p>
+<ul>
+<li><code>ab*</code>でa, ab, abb, abbbなどとマッチします。</li>
+</ul>
+</li>
+<li><p><code>+</code>記号で「1個以上」を表します。</p>
+<ul>
+<li><code>ab+</code>でab, abb, abbbなどとマッチします。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>正規表現にはその他にもさまざまな記法があります。
+また、結構「方言」があり、ひとくちに正規表現と言ってもいろいろな種類のものがあります
+（上述の例のような基本的な部分に関しては、どの方言でもほぼ同じ記法です）。</p>
+<h5 id="section-4"><a id="sec-generated-title-4"></a>注意: 名前の由来</h5>
+<p>言語学などの分野で、言語の文法を形式的に（機械的な一定のルール（format）に沿った表現で）表そうという学問があって、
+これを形式言語（formal language）と呼びます。
+正規表現という言葉は、元々この分野の用語です。</p>
+<p>ここでは正確な定義は割愛しますが、（言語の文法としては割とシンプルな類の）あるルールで生成できるような文字列のことを正規言語（regular language）と呼びます。
+本来の意味の正規表現は、正規言語を表すためのルールのことを指します（逆に、正規表現で生成できる文字列のことを正規言語と言っても構いません）。</p>
+<p>ただし、現在、コンピューター関連の分野で正規表現というと、文字列のパターン・マッチングのための文法のことを指します。
+パターン・マッチングのための便利な記法を色々取り入れて拡張されていて、
+本来の意味での正規表現（＝ 正規言語を表すのに必要十分なルール）ではなくなっています。</p>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="lexical"></a>字句解析</h2>
+<p>正規表現について簡単に説明したところで、具体的に例を挙げながら字句解析について説明していきましょう。
+例として、以下のようなソース・コードを考えましょう。</p>
+<pre><code class="language-csharp">x = <span class="number">123</span>;
+y = <span class="number">456</span>;
+sum = x + y;</code></pre>
+<p>字句解析は、このようなコードの中から、<code>x</code> や <code>123</code> といった部分（これを「字句」といいます）を抜き出す作業です。
+そのための正規表現として、表1のようなものを使います。</p>
+<table summary="字句解析用の正規表現の例">
+	<caption>
+		字句解析用の正規表現の例
+	</caption>
+	<tr>
+		<th>トークンのタイプ</th>
+		<th>正規表現</th>
+		<th>補足説明</th>
+	</tr>
+	<tr>
+		<td><p><code>Identifier</code></p></td>
+		<td><p><code>\w+</code></p></td>
+		<td><p>識別子： 1文字以上の単語文字（アルファベットなど）</p></td>
+	</tr>
+	<tr>
+		<td><p><code>Digits</code></p></td>
+		<td><p><code>\d+</code></p></td>
+		<td><p>数： 1文字以上の数字</p></td>
+	</tr>
+	<tr>
+		<td><p><code>AssignOperator</code></p></td>
+		<td><p><code>=</code></p></td>
+		<td><p>代入演算子</p></td>
+	</tr>
+	<tr>
+		<td><p><code>AdditiveOperator</code></p></td>
+		<td><p><code>+|-</code></p></td>
+		<td><p>加法演算子： +または-</p></td>
+	</tr>
+	<tr>
+		<td><p><code> Delimiter</code></p></td>
+		<td><p><code>;</code></p></td>
+		<td><p>区切り</p></td>
+	</tr>
+	<tr>
+		<td><p><code>WhiteSpace</code></p></td>
+		<td><p><code>\s+</code></p></td>
+		<td><p>空白： 1個以上の空白文字</p></td>
+	</tr>
+</table>
+<p>どの正規表現パターンにマッチしたかによって、字句を分類します。
+どの分類かを表すのが、表中左側の「トークンのタイプ」です。</p>
+<p>表1の正規表現を使って、先ほどのソースコードを字句解析した結果を表2に示します。
+（空白文字（トークン・タイプが WhiteSpace のもの）は無視します。C言語など、多くのプログラミング言語で空白文字は無視されます。）</p>
+<table summary="字句解析の結果の例">
+	<caption>
+		字句解析の結果の例
+	</caption>
+	<tr>
+		<th>マッチした文字列</th>
+		<th>トークンのタイプ</th>
+	</tr>
+	<tr>
+		<td><p><code>x</code></p></td>
+		<td><p><code>Identifier</code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>=</code></p></td>
+		<td><p><code>AssignOperator</code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>123</code></p></td>
+		<td><p><code>Digits</code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>;</code></p></td>
+		<td><p><code>Delimiter</code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>y</code></p></td>
+		<td><p><code>Identifier</code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>=</code></p></td>
+		<td><p><code>AssignOperator</code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>456</code></p></td>
+		<td><p><code>Digits</code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>;</code></p></td>
+		<td><p><code>Delimiter</code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>sum</code></p></td>
+		<td><p><code>Identifier</code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>=</code></p></td>
+		<td><p><code>AssignOperator</code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>x</code></p></td>
+		<td><p><code>Identifier</code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>+</code></p></td>
+		<td><p><code>AdditiveOperator</code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>y</code></p></td>
+		<td><p><code>Identifier</code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>;</code></p></td>
+		<td><p><code>Delimiter</code></p></td>
+	</tr>
+</table>
+<h2 id="section-6"><a id="sec-generated-title-6"></a> <a id="syntactic"></a>構文解析</h2>
+<p>続いて、構文解析を行います。</p>
+<p>ちゃんとしたプログラミング言語であるためには、
+字句解析で作ったトークンの列が不規則に並んでいてはだめで、
+一定のルールに沿って並ぶ必要があります。
+そのルールに沿いながら、トークン列がどういう意味を持っているかを調べるのが構文解析です。</p>
+<p>ここでは例として、表3に示すような構文規則（syntax rule）に基づいて、トークン列を解析していきます。
+この構文規則内では、表1で定義したトークン・タイプも出てきます。
+規則内で定義した記号や、字句解析結果のトークンがどう並ぶべきかを規則化したものになります。</p>
+<table summary="構文規則の例">
+	<caption>
+		構文規則の例
+	</caption>
+	<tr>
+		<th>記号</th>
+		<th>構文規則</th>
+		<th>補足説明</th>
+	</tr>
+	<tr>
+		<td><p><code>Block</code></p></td>
+		<td><p><code>Statement*</code></p></td>
+		<td><p>プログラムには複数の「文」を並べられる</p></td>
+	</tr>
+	<tr>
+		<td><p><code>Statement</code></p></td>
+		<td><p><code>AssingmentDelemeter</code></p></td>
+		<td><p>代入の後ろに区切り文字（;）を付けたものを「文」と呼ぶ</p></td>
+	</tr>
+	<tr>
+		<td><p><code>Assingment</code></p></td>
+		<td><p><code>Identifier AssignOperator Expression</code></p></td>
+		<td><p>代入演算子（=）の左側に「識別子」、右側に「式」を置いたものを「代入」と呼ぶ</p></td>
+	</tr>
+	<tr>
+		<td><p><code>Expression</code></p></td>
+		<td><p><code>Identifier  | (Identifier AdditiveOperator Expression)</code></p></td>
+		<td><p>「識別子」単体、もしくは、加法演算子（+か-）の左側に「識別子」、右側に再度「式」を置いたものを「式」と呼ぶ</p></td>
+	</tr>
+</table>
+<p>構文解析では、このルールにマッチした部分を徐々に抜き出していきます。
+例えば、先ほどのソース・コードの3行目を再度見てみましょう。</p>
+<pre><code class="language-csharp">sum = x + y;</code></pre>
+<p>このコードを表3の構文規則にそって解析する過程は、図2に示すようになります。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Essential/SyntacticAnalysis.png"><img src="/assets/media/ufcpp2000/computer/fig/Essential/SyntacticAnalysis.png" alt="構文解析の過程" /></a></p>
+<figcaption>構文解析の過程</figcaption>
+</figure>
+<p>図中には「入れ子の箱」が表れていますが、これは図3に示すような木構造データになっています。
+これを構文木（syntax tree）と呼びます。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Essential/SyntaxTree.png"><img src="/assets/media/ufcpp2000/computer/fig/Essential/SyntaxTree.png" alt="構文木" /></a></p>
+<figcaption>構文木</figcaption>
+</figure>
+<p>この構文木には、機械語の生成に特に必要のないものも含まれているので、
+不要な部分を省略するような処理も加えることで、図4に示すような木構造が得られます。
+このような木構造を抽象構文木（abstract syntax tree）と呼びます
+（「抽象」と付くのは、機械語生成に必要ない部分をそぎ落としていることを指します）。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Essential/AbstractSyntaxTree.png"><img src="/assets/media/ufcpp2000/computer/fig/Essential/AbstractSyntaxTree.png" alt="抽象構文木" /></a></p>
+<figcaption>抽象構文木</figcaption>
+</figure>
+<p>もう1つ別の例になりますが、
+最後に、2 * 3 + 4 * 5というコードを (2×3)+(4×5) という意味で解釈できる構文を紹介しておきましょう。
+表4に示すようになります。</p>
+<table summary="2 * 3 + 4 * 5を解釈するための構文規則">
+	<caption>
+		2 * 3 + 4 * 5を解釈するための構文規則
+	</caption>
+	<tr>
+		<th>記号 / トークン・タイプ</th>
+		<th>構文規則 / 正規表現</th>
+		<th>補足説明</th>
+	</tr>
+	<tr>
+		<td><p><code>Identifier</code></p></td>
+		<td><p><code>\w+</code></p></td>
+		<td><p>識別子： 1文字以上の単語文字（アルファベットなど）</p></td>
+	</tr>
+	<tr>
+		<td><p><code>AdditiveOperator</code></p></td>
+		<td><p><code>+|-</code></p></td>
+		<td><p>加法演算子： +または-</p></td>
+	</tr>
+	<tr>
+		<td><p><code>MultiplicativeOperator</code></p></td>
+		<td><p><code>*|/</code></p></td>
+		<td><p>乗法演算子： *または/</p></td>
+	</tr>
+	<tr>
+		<td><p><code>Multiplication</code></p></td>
+		<td><p><code>Identifier
+|
+(Identifier
+MutiplicativeOperator Identifier)</code></p></td>
+		<td><p>積項： x * y とか</p></td>
+	</tr>
+	<tr>
+		<td><p><code>Expression</code></p></td>
+		<td><p><code>Multiplication |
+(Multiplication AdditiveOperator Multiplication)</code></p></td>
+		<td><p>式： 積項 + 積項 とか</p></td>
+	</tr>
+</table>
+<p>この構文を用いて2 * 3 + 4 * 5を解釈し、
+図4の例と同様に機械語の生成に特に必要のない部分を省略すると、図5に示す抽象構文木が得られるはずです。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Essential/AST2x3_4x5.png"><img src="/assets/media/ufcpp2000/computer/fig/Essential/AST2x3_4x5.png" alt="2 * 3 + 4 * 5から得られる抽象構文木" /></a></p>
+<figcaption>2 * 3 + 4 * 5から得られる抽象構文木</figcaption>
+</figure>
+<h2 id="section-7"><a id="sec-generated-title-7"></a> <a id="stack-machine"></a>スタック・マシン</h2>
+<p>抽象構文木からの機械語生成の説明に入る前に、<strong id="stack-machine" class="keyword">スタック・マシン</strong>（stack machine）というものについて説明します。
+スタック・マシンと呼ばれるタイプのCPUでは、抽象構文木からの機械語生成が容易です。
+そこで、スタック・マシン型の仮想的なCPUを考えて、その機械語コードを生成することを考えます。</p>
+<p>スタック・マシンとは、図6に示すように、レジスターを持たず、
+全てのデータをメイン・メモリ上のスタック領域（「<a href="/study/computer/essential-software/memorymanagement/#stack">スタック</a>」参照）に置いて演算を行うCPU構造です
+（逆に、レジスターを持つCPU構造をレジスター・マシン（register machine）と呼びます）。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Essential/StackMachine.png"><img src="/assets/media/ufcpp2000/computer/fig/Essential/StackMachine.png" alt="スタック・マシン型のCPU構造" /></a></p>
+<figcaption>スタック・マシン型のCPU構造</figcaption>
+</figure>
+<p>いくつのレジスターを持つかというのはCPUの種類に依存します。
+このため、レジスターを前提とした機械語の生成は、CPUごとに異なる処理が必要になります。
+一方で、スタックはメイン・メモリ上の領域をソフトウェアで管理するものなので、どんな種類のCPUでも利用できます。</p>
+<p>複数種のCPU向けに使えるコンパイラー（クロス・コンパイラー（cross compiler）と呼んだりします）を作る場合などにおいて、
+一度スタック・マシン型の擬似的な機械語を生成して、それを各CPUの実際の機械語に変換するといった手法を取ることがあります。</p>
+<p>また、「仮想機械」と呼ばれる仕組みでもスタック・マシン型の機械語が使われます。
+例えば、JavaやC#などの言語では、CPU依存の機械語を直接生成するのではなく、CPU非依存の中間言語を生成します。
+中間言語化されたプログラムは、仮想機械（virtual machine）と呼ばれるプログラムが解釈し、実際のCPUの機械語に変換しながら実行されます。
+このような、CPU非依存の中間言語を考える場合にもスタック・マシンは便利で、JavaでもC#でも、中間言語はスタック・マシン型の機械語になっています。</p>
+<h2 id="section-8"><a id="sec-generated-title-8"></a> <a id="stack-operation"></a>スタック・マシンの動作</h2>
+<p>スタック機械では、オペランドが常にスタックの1番上に積まれている前提で、以下のような命令実行の仕方をします。</p>
+<ul>
+<li><p>push： スタックの1番上に新しい値を積む。</p>
+</li>
+<li><p>pop： スタックの1番上の値を消す。</p>
+</li>
+<li><p>オペランドを1つだけ使う演算（単項のマイナスや、論理否定演算）は、スタックの1番上の値に対して演算を行う。</p>
+</li>
+<li><p>オペランドが2つの演算（加減乗除など）は、スタックの1番上と2番目の値を使って演算を行う。</p>
+</li>
+<li><p>演算で使ったオペランドはスタックから消し、代わりに演算結果をスタックの1番上に積む。</p>
+</li>
+</ul>
+<p>例えば、3+5 という演算を考えてみましょう。
+図7に示すように、3, 5という値を1つずつスタックに積んだ後、add命令によってその2つの値を消費し、加算結果の8をスタックに積みなおします。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Essential/StackOperation1.png"><img src="/assets/media/ufcpp2000/computer/fig/Essential/StackOperation1.png" alt="スタック機械の動作例（3+5）" /></a></p>
+<figcaption>スタック機械の動作例（3+5）</figcaption>
+</figure>
+<p>この例では、結局、push 3, push 5, addというような命令列を実行しているわけですが、これを単に、</p>
+<pre><code class="language-csharp"><span class="number">3</span> <span class="number">5</span> +</code></pre>
+<p>と書き表すこともあります。
+3+5 という数式の演算子の位置を真ん中から後ろに移動させたように見えます。
+このような演算子の後置き記法を逆ポーランド記法と呼びますが、すなわち、スタック・マシン型の機械語命令は逆ポーランド記法の数式と同じ並びになります。</p>
+<p>同様のことを、もう少し複雑な式でもやってみましょう。
+今度は 2×3+4×5 という演算を考えてみます。
+まず、この数式を逆ポーランド記法で書きなおしてみましょう（これがそのままスタック機械に与える命令列になります）。
+ただし、×記号の代わりに * 記号を用います（キーボードから直接打てるため、掛け算には * 記号がよく利用されます）。</p>
+<pre><code class="language-csharp"><span class="number">2</span> <span class="number">3</span> * <span class="number">4</span> <span class="number">5</span> * +</code></pre>
+<p>この例の場合、スタック・マシンの動作は図8に示すようになります。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Essential/StackOperation2.png"><img src="/assets/media/ufcpp2000/computer/fig/Essential/StackOperation2.png" alt="スタック機械の動作例（2×3+4×5）" /></a></p>
+<figcaption>スタック機械の動作例（2×3+4×5）</figcaption>
+</figure>
+<h2 id="section-9"><a id="sec-generated-title-9"></a> <a id="assemble"></a>機械語の生成</h2>
+<p>さて、それでは抽象構文木からスタック機械型の機械語生成について説明して行きましょう。
+スタック・マシン型の機械語は、逆ポーランド記法的な順序でオペランド（を求める命令列）と演算子（に相当する演算命令）を並べることで生成できます。
+この性質から、図9に示すように、木構造を子要素側から逐次機械語化していけば、最終的に抽象構文木全体を機械語化できます。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Essential/EmitMachineLanguage.png"><img src="/assets/media/ufcpp2000/computer/fig/Essential/EmitMachineLanguage.png" alt="抽象構文木からの機械語生成" /></a></p>
+<figcaption>抽象構文木からの機械語生成</figcaption>
+</figure>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/computer/essential-software/">&#x57FA;&#x790E;&#x7684;&#x306A;&#x30BD;&#x30D5;&#x30C8;&#x30A6;&#x30A7;&#x30A2;</a></li><li><a href="/study/computer/essential-software/essentialsoftware/">&#x57FA;&#x790E;&#x7684;&#x306A;&#x30BD;&#x30D5;&#x30C8;&#x30A6;&#x30A7;&#x30A2;</a></li><li><a href="/study/computer/essential-software/operatingsystem/">&#x30AA;&#x30DA;&#x30EC;&#x30FC;&#x30C6;&#x30A3;&#x30F3;&#x30B0;&#x30FB;&#x30B7;&#x30B9;&#x30C6;&#x30E0;</a></li><li><a href="/study/computer/essential-software/memorymanagement/">&#x30E1;&#x30E2;&#x30EA;&#x7BA1;&#x7406;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

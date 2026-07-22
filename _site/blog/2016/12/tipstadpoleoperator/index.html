@@ -1,0 +1,222 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x6F14;&#x7B97;&#x5B50;(&#xFF1F;) | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/12/tipstadpoleoperator/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-12-12T00:02:56">2016-12-12</time></span><span>更新: <time datetime="2016-12-27T14:33:29">2016-12-27</time></span></div><h1 id="section">小ネタ 隠し演算子(？)</h1>
+<p>C#には隠しキーワードとして<a href="/study/csharp/interop/sp_makeref/"><code>__makeref</code>などの見慣れないキーワードがある</a>という話はたまに話題に出てきますが、実は隠し演算子もあります。</p>
+<table>
+<thead>
+<tr>
+<th>演算子</th>
+<th>同じ結果の式</th>
+<th>意味合い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-~x</code></td>
+<td><code>x + 1</code></td>
+<td><code>x</code>に向かって値が入っているイメージ</td>
+</tr>
+<tr>
+<td><code>~-x</code></td>
+<td><code>x - 1</code></td>
+<td><code>x</code>から値が出ていくイメージ</td>
+</tr>
+</tbody>
+</table>
+<p>副作用を起こさない(非変)インクリメント、デクリメント(non-modified increment/decrement)です。
+実際、以下のようなコードを実行することができます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> a = <span class="number">10</span>;
+Console.WriteLine(-~a); <span class="comment">// 11</span>
+Console.WriteLine(~-a); <span class="comment">// 9</span></code></pre>
+<p><a href="http://ideone.com/SSnP7U">ideone</a>とかでも実行できます。
+ideoneは確かMonoで動いているはずで、MonoのC#コンパイラーもひそかに対応しているということですね。</p>
+<p>こいつは、演算子の形状からtadpole (オタマジャクシ)とか言われたりもします。
+(<code>?.</code> なんかもエルビス プレスリーの髪型っぽく見えるという話からelvis演算子とか呼ばれたりもします。それと同種の愛称です。)</p>
+<p><code>x + 1</code>でいいじゃないかと思うかもしれませんが、
+単項演算子なので優先度が高いという利点があります。
+<code>(x + 1) * (y - 1)</code>というような式が、`-~x*~-y'となります。</p>
+<p>一方で、単項演算子の±1であれば、<code>++</code> (インクリメント)と<code>--</code> (デクリメント)もあります。
+しかし、これらは副作用を伴っていて、<code>x</code>の値を書き換えてしまいます。</p>
+<table>
+<thead>
+<tr>
+<th>演算子</th>
+<th>同じ結果の式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>++x</code></td>
+<td><code>x += 1</code></td>
+</tr>
+<tr>
+<td><code>--x</code></td>
+<td><code>x -= 1</code></td>
+</tr>
+</tbody>
+</table>
+<p>副作用を伴う式というはあまり行儀がいいものではないので、その副作用なし版がこっそり用意されているというのが<code>-~</code>と<code>~-</code>です。</p>
+<p>まあ、利点と言っても微々たるものですし、どっちがプラスでどっちがマイナスかわかりにくいですから、正式採用とはならず、仕様書等には載っていません。</p>
+<br/>
+<br/>
+<br/>
+<br/>
+<h2 id="section-1">種明かし</h2>
+<p>さて、まあ、嘘なわけですが。
+実行できる嘘。</p>
+<p>昔同じネタをちょっと取り上げたことはあるんで覚えてらっしゃる方もいらっしゃいますかね。</p>
+<ul>
+<li><a href="/blog/2015/5/pickuproslyn27/">ピックアップRoslyn 5/27: Support the tadpole operators</a></li>
+</ul>
+<p>要するに、</p>
+<ul>
+<li><a href="https://blogs.msdn.microsoft.com/oldnewthing/20150525-00/?p=45044/">The Old New Thingの冗談</a>を真に受ける人が結構いた</li>
+<li><a href="https://github.com/dotnet/roslyn/issues/3072">真に受けて「C# にも入れない？」とか言い出す人までいた</a></li>
+<li>エイプリルフールにでもやれよ…</li>
+</ul>
+<p>という話だったんですが…</p>
+<p>真に受ける人が多いということは、ちゃんとした解説書かなきゃダメなのかなというのが、今回の本当の主題。</p>
+<p>実際、つい最近も、2の補数表現の話とかを知らない人にこの話を説明したりしたんですよね。ピックアップRoslynのついででさらっと流すのはもったいなかったかなぁと。</p>
+<h3 id="section-2">本当は <code>-</code> と <code>~</code> の組み合わせ</h3>
+<p>これ、要するに、以下の意味です。</p>
+<table>
+<thead>
+<tr>
+<th>元</th>
+<th>括弧で整理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-~x</code></td>
+<td><code>-(~x)</code></td>
+</tr>
+<tr>
+<td><code>~-x</code></td>
+<td><code>~(-x)</code></td>
+</tr>
+</tbody>
+</table>
+<p>単項演算子が2個並んでいるだけ。</p>
+<p>たぶん、3つのはまりどころがあります。</p>
+<ul>
+<li><code>~</code>演算子とかめったに使わない</li>
+<li>ビット反転とマイナスの関係を知らない人がそこそこいる</li>
+<li>単項演算子をくっつけて書くのはどうなのよ</li>
+</ul>
+<h3 id="section-3">ビット反転</h3>
+<p>真に受ける人が多かった理由の1つは、<code>~</code>演算子とかめったに使わないからでしょうね。
+そもそも<code>~</code>がC++とかC#で有効な演算子なことを知らない/忘れている人がそれなりにいるんでしょう。
+というか、ビット操作とか2進数での数値表現がまず苦手って人も見ますもんねぇ、ちらほら。</p>
+<p><code>~</code>はビット反転の意味です。以下の例のように、すべてのビットの0と1を逆にします。</p>
+<p><img src="/assets/media/1107/bitflip.png" alt="ビット反転" /></p>
+<h3 id="section-4">ビット反転とマイナスの関係</h3>
+<p>次に必要な説明は、ビット反転とマイナスの組み合わせでどうして±1になるのかです。
+ビット反転<code>~</code>とマイナス<code>-</code>は、常に以下の式を満たします。</p>
+<p><code>~x + 1 == -x</code></p>
+<p>例えば、以下のようなコードを書くと、<code>throw</code>の行は通らずプログラムが正常終了します。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">for</span> (<span class="keyword">int</span> x = <span class="number">0</span>; x &lt; <span class="number">256</span>; x++)
+        {
+            <span class="keyword">if</span> (~x + <span class="number">1</span> == -x) <span class="keyword">continue</span>;
+
+            <span class="keyword">throw</span> <span class="keyword">new</span> InvalidOperationException();
+        }
+    }
+}</code></pre>
+<p>これは、以下の図のように考えれば説明が付きます。</p>
+<p><img src="/assets/media/1108/complement.png" alt="ビット反転 + 1" /></p>
+<ol>
+<li>元の数字と、ビット反転した数字を足すと、全ての桁で 1 + 0 が起きるわけで、
+結果は全桁1になります</li>
+<li>これに1を足すと、桁上がりによって0が並びます</li>
+<li>オーバーフロー(桁上がりしてしまった最上位桁)を無視すると、完全に0になります</li>
+<li>すなわち、<code>x</code>と<code>~x + 1</code>を足すと0になります</li>
+<li><code>-x</code>というのは「<code>x</code>と足して0になる数」のことを指すわけで、<code>~x + 1</code>は<code>-x</code>と等しいはずです。</li>
+</ol>
+<p>実際、符号付き(この例で言うと8 bitなので<code>sbyte</code>)の-123と、
+符号なし(<code>byte</code>)の133 = 256 - 123は、ビット表現としては全く同じ<code>1000 0101</code>になります(123のビット反転は132です。132 + 1 = 133 = -123)。</p>
+<p>この考え方は、コンピューターのハードウェアを作る上で非常に便利です。</p>
+<ol>
+<li>負の数を「ビット反転 + 1」で表すものとする</li>
+<li>この場合、<code>a - b</code>は<code>a + ~b + 1</code>となる</li>
+<li>つまり、加算回路をそのまま流用して減算回路を作れる</li>
+</ol>
+<p>ということで、だいたいのハードウェアでこの「ビット反転 + 1」で負の数を表現する方式が採用されています。
+この表現形式を「2の補数(two's complement)表現」と言います。
+わざわざ「2の」とかいう名前が付いているのは、他の方式もあったからなんですが、まあ、現存していません。</p>
+<h3 id="section-5">単項演算子をくっつけて書く</h3>
+<p>あとは、演算子をくっつける書き方自体がどうなのか、という話はあります。</p>
+<p>だって、識別子(変数名とか)の場合、<code>ab</code>と<code>a b</code>は違う意味になるじゃないですか。
+前者は「ab」という名前の1つの識別子、後者「a」と「b」が並んでる。
+なのに、<code>~-</code>と<code>~ -</code>は同じ意味で、<code>~</code>と<code>-</code>に分解される。</p>
+<p><code>~-</code>みたいな、複数文字で1つの演算子にできれば、演算子オーバーロードに幅ができて便利かもしれません。
+実際、F#なんかはそれを認めています。</p>
+<ul>
+<li><a href="https://docs.microsoft.com/ja-jp/dotnet/articles/fsharp/language-reference/operator-overloading">F# Operator Overloading</a></li>
+</ul>
+<p>C#でも、<code>~-</code>みたいに書かれると、一瞬それを期待しちゃうのかもしれません。
+でも、実際には、<code>~-</code>は2つに分解されて、複数文字1演算子はできません。</p>
+<h4 id="section-6">おまけ: くっつけて書けるとそれはそれでひどい</h4>
+<p>常に一貫して「演算子は1文字1文字全部区切る」ってルールならまだしも、いくつか例外が存在しているのがまた面倒です。
+<code>++</code> (インクリメント)とか<code>&gt;=</code> (大なりイコール)とか<code>=&gt;</code> (ラムダ式の矢印)とかは2文字で1演算子。だったら、「<code>~-</code>で1演算子」も期待しかねない。</p>
+<p>インクリメントなんて、<code>+</code>と<code>++</code>がそれぞれ別の意味になるもんだから本当にひどくて。
+<code>a+++b</code>って式はC#などでは有効な式なんですが、どういう意味になるかぱっと見ではわからない。なんせ、以下の3つの式、どれも有効で、それぞれ違う結果になります。</p>
+<ul>
+<li><code>a++ +b</code></li>
+<li><code>a+ ++b</code></li>
+<li><code>a+ + +b</code></li>
+</ul>
+<pre><code class="language-csharp"><span class="keyword">using</span> <span class="keyword">static</span> System.Console;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">int</span> a, b;
+
+        a = <span class="number">1</span>; b = <span class="number">1</span>;
+        WriteLine($<span class="string">&quot;{a++ +b}, {a}, {b}&quot;</span>); <span class="comment">// 2, 2, 1: (a++) + b</span>
+        a = <span class="number">1</span>; b = <span class="number">1</span>;
+        WriteLine($<span class="string">&quot;{a+ ++b}, {a}, {b}&quot;</span>); <span class="comment">// 3, 1, 2: a + (++b)</span>
+        a = <span class="number">1</span>; b = <span class="number">1</span>;
+        WriteLine($<span class="string">&quot;{a+ + +b}, {a}, {b}&quot;</span>); <span class="comment">// 2, 1, 1: a + (+(+b))</span>
+        a = <span class="number">1</span>; b = <span class="number">1</span>;
+        WriteLine($<span class="string">&quot;{a+++b}, {a}, {b}&quot;</span>); <span class="comment">// 2, 2, 1: つまり、a+++b は a++ +b 扱い</span>
+    }
+}</code></pre>
+<p>Swiftなんかだと、単項演算子を隣接させるのを禁止してるみたいですね。
+<code>-~x</code>はエラーになります。</p>
+<p>かつ、単項演算子とオペランドの間は逆にスペースを挟むのを禁止しているようで。
+<code>- ~x</code>という書き方もエラー。
+括弧を使って<code>-(~x)</code>と書くのを義務付けているようです。</p>
+<p>まあ、確かに括弧が付いている方が見やすくて人的ミスは起こしにくいでしょう。
+一方で、関数適用は<code>f  (x)</code>とか書けるのに、単項演算子は<code>~ (x)</code>とは書けないっていうちょっと気持ち悪い状態ではあります。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/12/">2016/12</a></li><li><a href="/blog/2016/12/tipstryroslyn/">C#&#x5C0F;&#x30CD;&#x30BF;&#x96C6;: C#&#x3092;Web&#x4E0A;&#x3067;&#x8A66;&#x3059;</a></li><li><a href="/blog/2016/12/tipsildasm/">&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x3092;&#x8997;&#x3044;&#x3066;&#x307F;&#x3088;&#x3046;</a></li><li><a href="/blog/2016/12/tipscorefxlab/">&#x5C0F;&#x30CD;&#x30BF; corefxlab&#x3068;System.Memory</a></li><li><a href="/blog/2016/12/tipsevalorder/">&#x5C0F;&#x30CD;&#x30BF; &#x5F0F;&#x306E;&#x8A55;&#x4FA1;&#x9806;&#x5E8F;</a></li><li><a href="/blog/2016/12/tipsobjectinitializer/">&#x5C0F;&#x30CD;&#x30BF; &#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2016/12/tipscollectioninitializer/">&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2016/12/tipsindexedforeach/">&#x5C0F;&#x30CD;&#x30BF; &#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;&#x4ED8;&#x304D; foreach</a></li><li><a href="/blog/2016/12/tipsuniontypes/">&#x5C0F;&#x30CD;&#x30BF; &#x30C1;&#x30A7;&#x30C3;&#x30AF;&#x4F8B;&#x5916;&#x3068;Union&#x578B;</a></li><li><a href="/blog/2016/12/tipscontextfreetask/">&#x5C0F;&#x30CD;&#x30BF; &#x540C;&#x671F;&#x30B3;&#x30F3;&#x30C6;&#x30AD;&#x30B9;&#x30C8;&#x3092;&#x62FE;&#x308F;&#x306A;&#x3044;Task&#x578B;</a></li><li><a href="/blog/2016/12/tipsformattingcharacter/">&#x5C0F;&#x30CD;&#x30BF; &#x30D5;&#x30A9;&#x30FC;&#x30DE;&#x30C3;&#x30C8;&#x6587;&#x5B57;&#x8B58;&#x5225;&#x5B50;</a></li><li><a href="/blog/2016/12/tipsimplicitmembers/">&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/blog/2016/12/tipsnulloperation/">&#x5C0F;&#x30CD;&#x30BF; null&#x95A2;&#x4FC2;&#x306E;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/blog/2016/12/vs2017rc2/">Updating Visual Studio 2017 Release Candidate</a></li><li><a href="/blog/2016/12/patternmatching/">&#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30DE;&#x30C3;&#x30C1;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/pickuproslyn1214/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/14</a></li><li><a href="/blog/2016/12/tipsdeconstruct/">&#x5C0F;&#x30CD;&#x30BF; &#x300C;deconstruct&#x300D;&#x3068;&#x3044;&#x3046;&#x5358;&#x8A9E;</a></li><li><a href="/blog/2016/12/tipsgeneratedil/">&#x5C0F;&#x30CD;&#x30BF; &#x69CB;&#x6587;&#x7CD6;&#x8863;&#x3068;&#x3001;&#x305D;&#x3046;&#x3067;&#x306F;&#x306A;&#x3044;&#x69CB;&#x6587;&#x3068;</a></li><li><a href="/blog/2016/12/tipsprimitives/">&#x5C0F;&#x30CD;&#x30BF; &#x30D7;&#x30EA;&#x30DF;&#x30C6;&#x30A3;&#x30D6;&#x578B;</a></li><li><a href="/blog/2016/12/tipsapisurface/">&#x5C0F;&#x30CD;&#x30BF; private&#x30E1;&#x30F3;&#x30D0;&#x30FC;&#x306F;API&#x306E;&#x4E00;&#x90E8;&#x304B;</a></li><li><a href="/blog/2016/12/tipsstringmarshal/">&#x5C0F;&#x30CD;&#x30BF; string&#x578B;&#x306E;&#x30DE;&#x30FC;&#x30B7;&#x30E3;&#x30EA;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/tipsnumargs/">&#x5C0F;&#x30CD;&#x30BF; &#x5F15;&#x6570;&#x306E;&#x500B;&#x6570;&#x306E;&#x4E0A;&#x9650;</a></li><li><a href="/blog/2016/12/tipsotherlangs/">&#x5C0F;&#x30CD;&#x30BF; C# &#x3068;&#x4ED6;&#x306E;&#x8A00;&#x8A9E;&#x3068;&#x306E;&#x5DEE;&#x3068;&#x3044;&#x3046;&#x3068;</a></li><li><a href="/blog/2016/12/tipsconcurrentcollections/">&#x5C0F;&#x30CD;&#x30BF; Concurrent &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/blog/2016/12/discards/">discards</a></li><li><a href="/blog/2016/12/tipssmallheapallocation/">&#x5C0F;&#x30CD;&#x30BF; &#x5C0F;&#x3055;&#x306A;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x5272;&#x308A;&#x5F53;&#x3066;</a></li><li><a href="/blog/2016/12/tipsparallelism/">&#x5C0F;&#x30CD;&#x30BF; &#x4E26;&#x5217;&#x5316;</a></li><li><a href="/blog/2016/12/tipsdowhile/">&#x5C0F;&#x30CD;&#x30BF; do-while</a></li><li><a href="/blog/2016/12/tipsatan2/">&#x5C0F;&#x30CD;&#x30BF; atan2</a></li><li><a href="/blog/2016/12/tipsnormaldistribution/">&#x5C0F;&#x30CD;&#x30BF; &#x6B63;&#x898F;&#x5206;&#x5E03;&#x306E;&#x4E38;&#x307F;</a></li><li><a href="/blog/2016/12/lookbackattheyear/">&#x4ECA;&#x5E74;&#x306E;&#x632F;&#x308A;&#x8FD4;&#x308A;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

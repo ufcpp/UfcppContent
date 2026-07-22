@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>COM &#x76F8;&#x4E92;&#x904B;&#x7528;&#x6642;&#x306E;&#x7279;&#x5225;&#x51E6;&#x7406; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/interop/sp4_cominterop/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="com">COM 相互運用時の特別処理</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<h5 class="version version4">Ver. 4.0</h5>
+<p>.NET Framework には COM 相互運用機能があって、COM のクラスをあたかも .NET のクラスであるかのように扱うことができます。
+ただ、COM が主流だった時代と今とでは大分設計思想に差があって、
+.NET 的には不要だけども、COM 相互運用をする上では欲しい機能というのがいくつかあります。</p>
+<p>そこで、C# 4.0 では、COM 相互運用用のクラス
+（RCW（Runtime Callable Wrapper）といいます。.NET ランタイムから COM を呼び出せるようにしたラッパークラス）に対してだけ特別な処理をするようになりました。
+COM への特別処理は以下の2点。</p>
+<ul>
+<li><p>ref 引数（「<a href="/study/csharp/resource/sp_ref/">引数の参照渡し</a>」参照）に対して、ref キーワードを付けなくても呼び出せるようになった。</p>
+</li>
+<li><p><code>get_X(index)</code>、<code>set_X(index, value)</code>というメソッドに対して、 インデックス付きプロパティ構文（<code>X[index]</code>という書き方）が使えるようになった。</p>
+</li>
+</ul>
+<h2 id="ref"><a id="sec-generated-title-2"></a> <a id="refomit"></a>ref 省略</h2>
+<p>本来、「引数の参照渡しでは、呼び出し側からも参照渡しであることが一目でわかるべき」
+というのが C# の流儀なので、ref キーワードの省略はあまりいい構文ではありません。
+（なので、通常は「<a href="/study/csharp/resource/sp_ref/#byref">参照渡し</a>」では ref を省略できない。）</p>
+<p>ですが、COM の場合、参照渡しにする必要のないようなものにまでやたらと ref が付きまくるので、
+やむなく ref キーワードの省略を認めるようです。
+（あくまで RCW （COM 相互運用クラス）に対してだけこの機構が働く。）</p>
+<p>例えば、悪名高い Word の Document.SaveAs メソッドを見てみましょう。
+C# 3.0 までは以下のような書き方をする必要がありました。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> word = <span class="keyword">new</span> Microsoft.Office.Interop.Word.Application();
+
+<span class="keyword">object</span> missing = Type.Missing;
+<span class="keyword">object</span> filename = <span class="string">&quot;sample.docx&quot;</span>;
+word.ActiveDocument.SaveAs2(<span class="keyword">ref</span> filename,
+    <span class="keyword">ref</span> missing, <span class="keyword">ref</span> missing, <span class="keyword">ref</span> missing, <span class="keyword">ref</span> missing,
+    <span class="keyword">ref</span> missing, <span class="keyword">ref</span> missing, <span class="keyword">ref</span> missing, <span class="keyword">ref</span> missing,
+    <span class="keyword">ref</span> missing, <span class="keyword">ref</span> missing, <span class="keyword">ref</span> missing, <span class="keyword">ref</span> missing,
+    <span class="keyword">ref</span> missing, <span class="keyword">ref</span> missing, <span class="keyword">ref</span> missing, <span class="keyword">ref</span> missing);</code></pre>
+<p>これが、C# 4.0 なら以下のように書けたりもします。</p>
+<pre><code class="language-csharp"><span class="keyword">object</span> missing = Type.Missing;
+<span class="keyword">string</span> filename = <span class="string">&quot;sample.docx&quot;</span>;
+word.ActiveDocument.SaveAs2(filename,
+    missing, missing, missing, missing,
+    missing, missing, missing, missing,
+    missing, missing, missing, missing,
+    missing, missing, missing, missing);</code></pre>
+<p>まあ、この場合、ref 省略よりも、オプション引数（「<a href="/study/csharp/structured/sp4_optional/">オプション引数・名前付き引数</a>」参照）が追加されたことの方がインパクトが大きいですが↓。</p>
+<pre><code class="language-csharp"><span class="keyword">string</span> filename = <span class="string">&quot;sample.docx&quot;</span>;
+word.ActiveDocument.SaveAs2(filename);</code></pre>
+<p>ただし、これも COM 特別処理のおかげです。
+C# 的には本来、ref 引数に対して規定値は定義できないんですが、
+RCW の場合には ref がついてても規定値が設定されるようになっています。</p>
+<h2 id="section-1"><a id="sec-generated-title-3"></a> <a id="indexed"></a>インデックス付きプロパティ</h2>
+<p>C# は「インデックス付きプロパティじゃなくて、インデクサー持ちの型のプロパティを作れ」という設計思想です。
+（あるいは、「<a href="/study/csharp/data/sp2_iterator/#iterator">イテレーター</a>」を使って IEnumerable を返すか。）
+でも、COM の時代にはそういう思想がなくて、インデックス付きプロパティだらけなので、これもやむなく認めるようになりました。</p>
+<p>例えば、Excel の Application.Range がインデックス付きプロパティになっています。
+C# 3.0 までは、以下のようにアクセスする必要がありました。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> excel = <span class="keyword">new</span> Microsoft.Office.Interop.Excel.Application();
+<span class="keyword">var</span> range = excel.get_Range(<span class="string">&quot;A1&quot;</span>, <span class="string">&quot;A2&quot;</span>);</code></pre>
+<p>これが、C# 4.0 では以下のように書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> excel = <span class="keyword">new</span> Microsoft.Office.Interop.Excel.Application();
+<span class="keyword">var</span> range = excel.Range[<span class="string">&quot;A1&quot;</span>, <span class="string">&quot;A2&quot;</span>];</code></pre>
+<p>また、対 COM 限定で、インデクサーやインデックス付きプロパティに対する引数の省略（「<a href="/study/csharp/structured/sp4_optional/#optional">オプション引数</a>」参照）が可能です。
+すなわち、以下のような記述が許されます。</p>
+<pre><code class="language-csharp">obj[];</code></pre>
+<p>これらの処理は本当に対 RCW （COM 相互運用）専用です。
+C# でインデックス付きプロパティが定義できるようになるわけではないです。</p>
+<p>それどころか、VB.NET で作ったインデックス付きプロパティにすら、
+C# からはインデックス付きプロパティ構文でアクセスできません。
+（今まで通り get_X という書き方をする必要があります。）
+例えば、VB で以下のように書いたとしても、</p>
+<pre><code class="language-vbnet"><span class="keyword">Public</span> <span class="keyword">Class</span> Class1
+
+    <span class="keyword">Dim</span> x_ <span class="keyword">As</span> Dictionary(Of <span class="keyword">String</span>, <span class="keyword">Integer</span>)
+
+    <span class="keyword">Public</span> <span class="keyword">Property</span> X(<span class="keyword">ByVal</span> i <span class="keyword">As</span> <span class="keyword">String</span>) <span class="keyword">As</span> <span class="keyword">Integer</span>
+        <span class="keyword">Get</span>
+            <span class="keyword">Return</span> x_(i)
+        <span class="keyword">End</span> <span class="keyword">Get</span>
+        <span class="keyword">Set</span>(<span class="keyword">ByVal</span> value <span class="keyword">As</span> <span class="keyword">Integer</span>)
+            x_(i) = value
+        <span class="keyword">End</span> <span class="keyword">Set</span>
+    <span class="keyword">End</span> <span class="keyword">Property</span>
+
+<span class="keyword">End</span> <span class="keyword">Class</span></code></pre>
+<p>C# 側からは get_X でしか参照できません。（下図参照。）</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/get_x.png"><img src="/assets/media/ufcpp2000/csharp/fig/get_x.png" alt="C# から見たインデックス付きプロパティ" /></a></p>
+<figcaption>C# から見たインデックス付きプロパティ</figcaption>
+</figure>
+<h2 id="no-pia"><a id="sec-generated-title-4"></a> <a id="no-pia"></a>No PIA</h2>
+<p>C# の機能ではなく、.NET Framework 4 の新機能ですが、No PIA と呼ばれる機能も追加されました。</p>
+<p>詳しくは「<a href="/study/csharp/interop/sp_pinvoke/#no-pia">プラットフォーム呼び出し</a>」で説明します。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/interop/">&#x76F8;&#x4E92;&#x904B;&#x7528;</a></li><li><a href="/study/csharp/interop/sp_unsafe/">unsafe</a></li><li><a href="/study/csharp/interop/sp_makeref/">&#x578B;&#x4ED8;&#x304D;&#x53C2;&#x7167;</a></li><li><a href="/study/csharp/interop/sp_pinvoke/">&#x30D7;&#x30E9;&#x30C3;&#x30C8;&#x30D5;&#x30A9;&#x30FC;&#x30E0;&#x547C;&#x3073;&#x51FA;&#x3057;</a></li><li><a href="/study/csharp/interop/memorylayout/">&#x8907;&#x5408;&#x578B;&#x306E;&#x30EC;&#x30A4;&#x30A2;&#x30A6;&#x30C8;</a></li><li><a href="/study/csharp/interop/functionpointer/">&#x95A2;&#x6570;&#x30DD;&#x30A4;&#x30F3;&#x30BF;&#x30FC;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

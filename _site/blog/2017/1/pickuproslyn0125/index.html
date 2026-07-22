@@ -1,0 +1,215 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 1/25: Design Notes &#x6570;&#x304B;&#x6708;&#x5206; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2017/1/pickuproslyn0125/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2017-01-24T21:12:30">2017-01-24</time></span><span>更新: <time datetime="2017-01-24T21:12:30">2017-01-24</time></span></div><h1 id="roslyn-125-design-notes">ピックアップRoslyn 1/25: Design Notes 数か月分</h1>
+<p>Mads (C# コンパイラーのPM)が、去年8月辺りからの C# Language Design Notes がまとめて投稿されました。
+たぶん、C# 7の作業が一段落したのかな(最近のC#チームは、実装作業が落ち着くまでドキュメントの類が放置されがち)。</p>
+<p>ちなみに内容的には、個別のトピック用のissueページが別にあって、そっちで一通り公開済み。
+当然、特に目新しい情報はなくて、まとめと履歴的な状態になっています。</p>
+<p>かなりの分量一気に来たのであんまりしっかり読む気にもなれないけども、軽く紹介：</p>
+<h2 id="section">2016/8/24</h2>
+<p>-<a href="https://github.com/dotnet/roslyn/issues/16476">C# Language Design Meeting, Aug 24, 2016</a></p>
+<ul>
+<li>Task-likeに対して、どうやってmethod builderを取るか決めた</li>
+<li>フィールド初期化子やコンストラクター初期化子内でのout varを認めたらこんな問題が出るみたいな検討したみたい
+<ul>
+<li>※結局、初期化子でのout varの利用自体、今のところは禁止してる</li>
+</ul>
+</li>
+</ul>
+<h2 id="section-1">2016/9/6</h2>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/16477">C# Design Notes for Sep 6, 2016 #16477</a></li>
+</ul>
+<p>引数の数が同じ<code>Deconstruct</code>メソッドがあるときに<a href="/study/csharp/datatype/deconstruction/">分解</a>できないの不便だなぁとは思ってたけども。
+タプル間の変換を想定してのことらしい。</p>
+<h2 id="section-2">2016/10/18</h2>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/16482">C# Design Notes for Oct 18, 2016 #16482</a></li>
+</ul>
+<p>C# 7に入れる機能の最終確認をしていたのはこの次期みたい。</p>
+<ul>
+<li>discardsがC# 7に入るかどうかまだ怪しい時期だったものの、分解とかout varとか、今後追加する文法では<code>_</code>を予約しておこうとはしていたみたい
+<ul>
+<li>※ 結局discardsの実装、C# 7に間に合ってる</li>
+</ul>
+</li>
+<li><code>case (int, int) x:</code>みたいなタプルへの型スイッチは認めていない。将来「再帰パターン」って構文が入る予定で、その構文に近くなっちゃうんでその時まで保留</li>
+<li>ローカル関数では、理想としてはその外でできることは全部ローカル関数内でもできるようにしたかったけど、2点ほど無理なものがあった:
+<ul>
+<li>コンストラクター内のローカル関数内での readonly field への書き込み</li>
+<li>非同期メソッドとイテレーターになっているローカル変数内で、その外の変数の「確実な初期化」保証ができない
+<ul>
+<li><a href="https://gist.github.com/ufcpp/ad84a38cd8b5e324245bda1472de4679">https://gist.github.com/ufcpp/ad84a38cd8b5e324245bda1472de4679</a> ←たぶんこういう話</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>_</code>を使った<a href="/study/csharp/start/stnumber/#digit-separator">数字区切り</a>、数字の間でだけ認める
+<ul>
+<li><code>0x1a_2b</code>はOKだけど、<code>0x_1a2b</code>はダメ。先頭と末尾を認めない</li>
+<li>「区切り」なんだから、数字の間だけであるべき</li>
+</ul>
+</li>
+<li>throw式は、<code>??</code>と<code>?:</code>でだけ使えるように制限した。<code>&amp;&amp;</code>とか<code>||</code>の後ろとか<code>()</code>の中はダメ。</li>
+<li>タプルの名前の順序間違い、例えば<code>var (first, last) = (last, first);</code>みたいなの、事故りそうな予感があって警告は出したい
+<ul>
+<li>※結局は「工数の問題でC# 7の時点ではできない」「後からWarning Wave追加する」ってなってる(11/15のNotes参照)</li>
+</ul>
+</li>
+<li>タプルに対して<code>new (int x, int y)()</code>は認めないことにしたけども、配列とかnullableはどうか<code>new (int x, int y)[10]</code>と<code>new (int x, int y)?()</code>は認めたい
+<ul>
+<li>※結局認めたみたい</li>
+</ul>
+</li>
+</ul>
+<h2 id="section-3">2016/10/25</h2>
+<ul>
+<li><p><a href="https://github.com/dotnet/roslyn/issues/16640">C# Language Design Notes for Oct 25 and 26, 2016</a></p>
+</li>
+<li><p>C# 6の時に一度は検討して、最終的には入れれなかった「変数宣言式」について</p>
+<ul>
+<li>宣言式自体は問題あって、提案当時のままというわけにはいかない</li>
+<li>宣言式から派生した、分解とout varはC# 7に入った</li>
+<li>分解とout varは、再び統一的に扱った方がよさそう(C# 7では間に合わないけど、将来の予定として)
+<ul>
+<li>分解代入と分解宣言を混ぜたり: <code>(x, int y) = e</code></li>
+<li>out引数のところに分解を書いたり: <code>M(out (x, y))</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>パターン マッチングでは、いくらか、絶対に成功するパターン(irrefutable(反論の余地がない)パターンって呼んでる)がある</p>
+<ul>
+<li>今は、絶対に成功していることを前提としたフロー解析(確実な初期化とか、null解析とか)をまだあまりやっていないけど、将来的には役立ちそう</li>
+</ul>
+</li>
+<li><p>分解のために使う<code>Deconstruct</code>メソッド、out引数を使ったもの(<code>Deconstruct(out int x, out int y)</code>)じゃなくてタプルを返す(&quot;(int x, int y)Deconstruct()&quot;)のはどうかというのを検討</p>
+<ul>
+<li>計測してみたけども、どっちが効率的かみたいな差は出なかった</li>
+<li>あんまりやる価値はなさそう</li>
+</ul>
+</li>
+<li><p><code>if (int.TryParse(s1, out var i)) { ... i ... }</code> みたいな書き方で、Tryの成功時も失敗時も必ず<code>i</code>が初期化されちゃうがために、<code>if</code>の外でも<code>i</code>が使えてしまうのは問題じゃないか</p>
+<ul>
+<li><code>if</code>の外に変数が漏れる設計にした以上これを防ぐ手立てはないんだけど</li>
+<li>「Tryパターンなメソッドのout varの場合は<code>if</code>の外で使うと警告」みたいなことができるAnalyzerは用意した方がいいかも</li>
+</ul>
+</li>
+<li><p>discards に<code>_</code>を使うことにしたけども…</p>
+<ul>
+<li>分解とかout varとか、これから足す構文については常にdiscards扱いしたい</li>
+<li>既存構文の場合、<code>_</code>を2個以上宣言していたらdiscards扱い、1つも読み出ししてないならdiscards扱い、みたいなルールでやる予定</li>
+</ul>
+</li>
+</ul>
+<h2 id="section-4">2016/11/15</h2>
+<ul>
+<li><p><a href="https://github.com/dotnet/roslyn/issues/16674">C# Design Notes for Nov 15, 2016 #16674</a></p>
+</li>
+<li><p>要素の名前違いのタプルに関して警告を出すべき状況がある</p>
+<ul>
+<li>今は実装していないけど、将来的にはWarning Wavesで警告を追加したい</li>
+</ul>
+</li>
+<li><p>Wildcardsって呼び名をDiscardsに改めたのはこの辺り</p>
+<ul>
+<li>MVP Summitで、MVPからこの案が出てた</li>
+<li><code>*</code>よりも<code>_</code>がいいだろうという感触もここで得た
+<ul>
+<li>現状、<code>_</code>が有効な識別子だと言っても、それを「値の無視」以外の目的で使っている人は少なそう</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="section-5">2016/11/30</h2>
+<ul>
+<li><p><a href="https://github.com/dotnet/roslyn/issues/16694">C# Language Design Notes for Nov 30, 2016</a></p>
+</li>
+<li><p><code>while</code>の条件式内のout varで宣言された変数は、<code>while</code>の外に漏れないようにした</p>
+</li>
+<li><p><code>for</code>の更新式の中で定義した変数は、<code>for</code>の内側にも漏れないようにした</p>
+</li>
+<li><p>10/25のNotesで検討していた「分解から宣言式への統一化」、自信をもってできそう</p>
+</li>
+<li><p>式中で宣言した変数をどこでも使わなかった場合は「未使用変数警告」を出すべきか？</p>
+<ul>
+<li>そういう変数はたいてい無視するためのダミー変数で、discards機能が入ったら要らなくなるはず</li>
+<li>でも、警告にまではせずとも、サジェストとして「discardsへの変更」機能を提供することもできる</li>
+<li>結局、後者(警告にはしない)を選択</li>
+</ul>
+</li>
+<li><p>C#では、embedded ステートメント(<code>if</code>とかの後ろ)の中で宣言ステートメントを書くとエラーになるけど、同様の文脈で、今後、分解とかout varとかを使って変数宣言できるようになる。これはエラーにすべきか？</p>
+<ul>
+<li>しない。むしろ既存の制限の方を緩める可能性すらある(と言ってもC# 7ではやらない)</li>
+</ul>
+</li>
+<li><p>nullでないことを調べるだけのパターンが欲しいって案が出てた</p>
+<ul>
+<li>やりたい。C# 7までには時間がないけど、アイディアとしてはいい</li>
+</ul>
+</li>
+</ul>
+<h2 id="section-6">2016/12/7と12/14</h2>
+<ul>
+<li><p><a href="https://github.com/dotnet/roslyn/issues/16709">C# Design Notes for Dec 7 and Dec 14, 2016 #16709</a></p>
+</li>
+<li><p>クエリ式中で(out varとかで)宣言された変数は、式中ずっと使えるべきかも</p>
+<ul>
+<li><code>where int.TryParse(s, out int i)</code> とかで宣言された<code>i</code>は、その後ろのselect句とかでも使えるようにする</li>
+<li>そうなると、単純に<code>Where(x =&gt; int.TryParse(x.s, out int i))</code>みたいな展開はできない。透過識別子が追加される</li>
+<li><code>let</code>句での分解(<code>let (dx, dy) = (x - x0, y - y0)</code>みたいなの)でも同様に透過識別子が増える</li>
+<li>とりあえずC# 7までに実装できる時間はないんで、C# 7時点ではコンパイル エラーにしてある。将来的にはできる余地だけ残してある</li>
+</ul>
+</li>
+<li><p>10/25で出てた「絶対に成功するパターン(irrefutableパターン)」は、到達可能かどうか(<code>return</code>や<code>throw</code>、永久ループの後ろに何か書くと警告を出して呉れるやつ)の判定にも使うべきか</p>
+<ul>
+<li>やってもそこまで価値はなさそうで、既存のセマンティクスを変えるほどのコストは見合わなさそう</li>
+</ul>
+</li>
+<li><p>11/30で、<code>while</code>の条件式と、<code>for</code>の更新式中で宣言した変数のスコープを縮めるって話は書いたけど、言い忘れてただけで、<code>do-while</code>も同様</p>
+</li>
+</ul>
+<h2 id="section-7">2017/1/17</h2>
+<ul>
+<li><p><a href="https://github.com/dotnet/roslyn/issues/16710">C# Design Notes for Jan 17, 2017 #16710</a></p>
+</li>
+<li><p>定数パターン(<code>e is 42</code>みたいなの)の展開結果をちょっと変更</p>
+<ul>
+<li>これまで<code>object.Equals(e, 42)</code></li>
+<li>これから<code>object.Equals(42, e)</code></li>
+<li><code>object.Equals</code>の中で、第1引数のインスタンス メソッドの<code>Equals</code>に処理を丸投げしているらしくて、第1引数が定数な(かつ、nullじゃない)保証がある方がちょっとだけパフォーマンスがいいらしい</li>
+</ul>
+</li>
+<li><p>タプルに対する拡張メソッドで、型変換が効くように</p>
+<ul>
+<li>配列に対して<code>IEnumerable&lt;T&gt;</code>の拡張メソッドが呼べるんだから、<code>(T[], U[])</code>に対して<code>(IEnumerable&lt;T&gt;, IEnumerable&lt;U&gt;)</code>の拡張メソッドを呼べるべきだろうという提案があった</li>
+<li>通常、明示的な型変換が必要な場合に拡張メソッドは呼ばれない。で、<code>ValueTuple</code>間には暗黙的型変換が働かないので、上記拡張メソッドを呼べない</li>
+<li>でも、全要素がそれぞれ暗黙的に変換できる場合にコンパイラーがタプル間の変換をするんだから、拡張メソッド呼び出しの時にもこの変換を認めるべき</li>
+<li>これ、「今やる」か「今後もうできないか」の2択なので、もう時間も限られているけど頑張って今やってみる</li>
+</ul>
+</li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2017/1/">1&#x6708;</a></li><li><a href="/blog/2017/1/nullref/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 1/24: null&#x53C2;&#x7167;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

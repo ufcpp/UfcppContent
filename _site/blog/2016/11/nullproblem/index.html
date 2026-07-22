@@ -1,0 +1,172 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Roslyn&#x306B;&#x63D0;&#x6848;issue&#x3092;&#x7ACB;&#x3066;&#x305F;&#x8A71;: null&#x306E;&#x6271;&#x3044;&#x306B;&#x95A2;&#x3057;&#x3066; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/11/nullproblem/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-11-12T10:30:15">2016-11-12</time></span><span>更新: <time datetime="2016-11-12T15:40:51">2016-11-12</time></span></div><h1 id="roslynissue-null">Roslynに提案issueを立てた話: nullの扱いに関して</h1>
+<p>MVP Global Summit (グロサミ)に行ってきてたわけですが。</p>
+<p>なんか、行きの飛行機内で思いついてしまって、そのまま向こうで頑張って issue 投稿、
+せっかくだからグロサミ中に <a href="https://github.com/MadsTorgersen">Mads</a> (C# のPM)を捕まえて「こんな問題見つけちゃって、昨日ちょうどissue立てたんだけどどうしよう？」みたいな話を振ってきたり。</p>
+<p>(先に具体例を書いておけば、どれだけ英語がつたなくても結構意図は伝えられる。)</p>
+<p>(ちなみに、元々は帰国後にゆっくりページ書くつもりだったんだけど、なんかグロサミ参加の妙なテンションに任せて、
+<a href="https://twitter.com/kekyo2">kekyoさん</a>、<a href="https://twitter.com/yfakariya">藤原さん</a>、<a href="https://twitter.com/RyotaMurohoshi">室星さん</a>とかと部屋の飲みの最中にこの方々も巻き込んでissue書きました。)</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/15108">Proposal: user-defined null/default check (non-defaultable value types / nullable-like types) #15108</a></li>
+</ul>
+<p>勢いで立てたものなので整理できてないんですが… たぶん2パートに分けた方が良さそう。
+以下、改めて要約した内容(英語に訳して再投稿予定)。</p>
+<h2 id="section">2つの提案</h2>
+<p>nullの取り扱いと関連して、以下の2つを提案する。</p>
+<ul>
+<li>非default値型: <code>default(T)</code>の状態を認めない値型が必要ではないか</li>
+<li>nullable-like型: 参照型と<code>Nullable&lt;T&gt;</code>以外にも、<code>?.</code>や<code>??</code>が使える型をユーザー定義できるようにすべきではないか</li>
+</ul>
+<h2 id="default">非default値型</h2>
+<p><a href="https://github.com/dotnet/roslyn/issues/119">Method Contracts</a>、特に<a href="https://github.com/dotnet/roslyn/issues/5032">参照型の非null保証</a>を入れようと思うと、確実な初期化処理が必須になる。</p>
+<p>しかし、構造体の場合、<code>defautl(T)</code>など、既定値によって初期化処理を通らない「0/nullクリア」が発生する。
+既定値の「0/nullクリア」のせいで、Contractsや非null保証のフロー解析が狂う可能性がある。</p>
+<h3 id="null">例1: 非null保証</h3>
+<p>パフォーマンスのために、参照型を1つだけ持つようなラッパーを構造体で作ることがある。
+(例: <a href="https://github.com/dotnet/corefx/blob/master/src/System.Collections.Immutable/src/System/Collections/Immutable/ImmutableArray_1.cs">ImmutableArray</a>、)
+今、パフォーマンスはC#の1つの大きなテーマであり、こういうケースは今後より一層増えるだろう。</p>
+<p>例として以下のような構造体を考える。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> Wrapper&lt;T&gt; <span class="keyword">where</span> T : <span class="keyword">class</span>
+{
+    <span class="keyword">public</span> T Value { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> Wrapper(T value)
+    {
+        Value = value ?? <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(value));
+    }
+}</code></pre>
+<p><a href="https://github.com/dotnet/roslyn/blob/master/docs/features/records.md">レコード型</a>や<a href="https://github.com/dotnet/roslyn/issues/5032">非null保証</a>が入れば、単に以下のように書けるだろう。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> Wrapper&lt;T&gt;(T Value) whereT : <span class="keyword">class</span></code></pre>
+<p>単に<code>T</code>と書けば非nullとなり、nullを受け付けたければ<code>T?</code>と書くようになる。
+問題は、この構造体を<code>default(Wrapper&lt;T&gt;)</code>で作ると、<code>T Value</code> (本来は非nullであるはず)がnullになってしまうことである。</p>
+<h3 id="section-1">例2: 値の制約付きの構造体</h3>
+<p>以下のような、値に制約の入った構造体を考える。この例は、正の数しか受け取れない数値型である。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> PositiveInt
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> Value { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> PositiveInt(<span class="keyword">int</span> value)
+    {
+        <span class="keyword">if</span> (value &lt;= <span class="number">0</span>) <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentOutOfRangeException(nameof(value));
+        Value = value;
+    }
+}</code></pre>
+<p>C#に<a href="https://github.com/dotnet/roslyn/blob/master/docs/features/records.md">レコード型</a>や<a href="https://github.com/dotnet/roslyn/issues/119">Method Contracts</a>が入ると、この構造体はおそらく以下のように書ける。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> PositiveInt(<span class="keyword">int</span> Value) requires Value &gt; <span class="number">0</span>;</code></pre>
+<p>これで<code>Value</code>プロパティが常に0より大きいことが保証できているように見えるが、<code>default(PositiveInt)</code>のせいで、<code>Value</code>に0が入ることがあり得る。この値は無効なはずである。</p>
+<h3 id="default-1">提案: 非defaultフロー解析</h3>
+<p>現在提案されている参照型の<a href="https://github.com/dotnet/roslyn/issues/5032">非null保証</a>は、フロー解析に基づいている。
+値型が既定値でないことも、同じフロー解析で行えるはずである。</p>
+<p>そこで、non-nullable reference typesに対して、non-defaultable value typesを提案したい。
+何らかのアノテーション、例えば<code>[NonDefault]</code>属性を付けた構造体は既定値を取ってはいけないとするのはどうだろうか。</p>
+<pre><code class="language-csharp">[NonDefault]
+<span class="keyword">struct</span> Wrapper&lt;T&gt;(T Value) whereT : <span class="keyword">class</span>
+
+[NonDefault]
+<span class="keyword">struct</span> PositiveInt(<span class="keyword">int</span> Value) requires Value &gt; <span class="number">0</span>;</code></pre>
+<p>このとき、non-nullable reference typesに倣って、以下のように警告を出す。</p>
+<pre><code class="language-csharp">PositiveInt x = <span class="keyword">default</span>(PositiveInt); <span class="comment">// warning</span>
+PositiveInt? y = <span class="keyword">default</span>(PositiveInt); <span class="comment">// OK</span>
+PositiveInt z = y; <span class="comment">// warning</span>
+PositiveInt w = y ?? <span class="keyword">new</span> PositiveInt(<span class="number">1</span>); <span class="comment">// OK</span></code></pre>
+<p>non-defaultable value typesに対する<code>T?</code>は<code>Nullable&lt;T&gt;</code>を必要としない。
+何故なら、<code>default(T)</code>は無効であり、<code>x.HasValue</code>を確かめなくても、<code>x == default(T)</code>で値を持っていないことが確認できるからである。
+non-defaultable value typesに対しては<code>null</code>を<code>default(T)</code>と同一視してもいいかもしれない。</p>
+<p>また、通常の構造体の中では、non-nullable reference typesのメンバーを持てないようにすべきだろう。
+non-nullable reference typesを持てるのは、参照型か、non-defaultable value typesのみである。</p>
+<h2 id="nullable-like">nullable-like型</h2>
+<p>現在、参照型と<code>Nullable&lt;T&gt;</code>構造体はC#コンパイラーによって特別な地位を与えられている。
+すなわち、null条件演算子(<code>?.</code>)とnull合体演算子(<code>??</code>)の利用である。</p>
+<p>しかし、これらの型以外にも、無効なインスタンスを<code>?.</code>や<code>??</code>で伝搬/差し替えしたいことがある。</p>
+<p>この挙動はmonad的であり、<a href="http://mikehadlow.blogspot.jp/2011/01/monads-in-c-5-maybe.html">LINQ</a>や<a href="https://github.com/ckimes89/arbitrary-async-return-nullable/">Task-like</a>を使って無理やり解決しようとしている例もある。
+しかし、悪用・乱用の類であり、決して読みやすいコードにはならないだろう。
+無効なインスタンスの伝搬/差し替えは、やはり、<code>?.</code>や<code>??</code>を使うべきである。</p>
+<h3 id="unityengine.object">例1: UnityEngine.Object</h3>
+<p><a href="http://japan.unity3d.com/">Unity</a>のゲーム中のオブジェクトの共通基底クラスとなる<code>UnityEngine.Object</code>は<code>operator ==</code>をオーバーロードしていて、オブジェクトが持っているネイティブ リソースがすでに破棄されているとき、オブジェクトをnull扱いする(<code>x == null</code>が真になる)。</p>
+<p>しかし、参照型に対する<code>?.</code>や<code>??</code>では、オーバーロードした<code>==</code>は呼ばれない(<code>brtrue</code>命令によるnullチェックに展開される)。
+そのため、以下のように、<code>?.</code>を使ったコードが正しく動かない。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span>? X(UnityEngine.Object obj)
+{
+    <span class="comment">// OK</span>
+    <span class="keyword">if</span> (obj == <span class="keyword">null</span>) <span class="keyword">return</span> <span class="keyword">null</span>;
+    <span class="keyword">return</span> obj.GetInstanceID();
+}
+
+<span class="comment">// runtime exception</span>
+<span class="keyword">int</span>? Y(UnityEngine.Object obj) =&gt; obj?.GetInstanceID();</code></pre>
+<p>これまではUnityがC# 3.0にしか対応していなかったので問題にならなかったが、
+Unity 5.5でC# 6.0に対応しようとしている。
+この<code>?.</code>の挙動がはまるポイントになるだろう。</p>
+<h3 id="expected">例2: Expected</h3>
+<p>無効な値としてnullを使うことを嫌う人が一定数いるが、その理由の1つが、「なぜ無効な値を返す必要があったのか」という原因に関する情報が消えることである。
+そのため、<code>Nullable&lt;T&gt;</code>の代わりに、<code>T</code>と例外のunion型にあたる<code>Expected&lt;T&gt;</code>のような型を作って使おうとする人がいる。
+例えば、<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4015.pdf">C++でそういう動きがみられる</a>。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> Expected&lt;T&gt;
+{
+    <span class="keyword">public</span> T Value { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> Exception Exception { <span class="keyword">get</span>; }
+}</code></pre>
+<p>もしC#でもそういう型を作るのであれば、<code>?.</code>を使った例外の伝搬や、<code>??</code>を使った例外からの復帰があってもいいのではないだろうか。</p>
+<pre><code class="language-csharp">Expected&lt;<span class="keyword">string</span>&gt; x = <span class="keyword">new</span> Expected&lt;<span class="keyword">string</span>&gt;(<span class="keyword">new</span> Exception());
+Expected&lt;<span class="keyword">int</span>&gt; y = x?.Length;
+<span class="keyword">string</span> z = x ?? <span class="string">&quot;&quot;</span>;</code></pre>
+<h3 id="nullable-like-1">提案: ユーザー定義のnullable-like型</h3>
+<p>所定のパターンを実装した型であれば<code>?.</code>および<code>??</code>を使えるようにすることを提案する。
+<a href="https://github.com/dotnet/roslyn/issues/7169">Task-like</a>に倣ってこれをnullable-likeと呼ぼう。</p>
+<p>例えば、以下のようなパターンはどうだろうか。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> NullableLike&lt;T&gt;
+{
+    <span class="keyword">public</span> T Value { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="keyword">bool</span> HasValue { <span class="keyword">get</span>; }
+    <span class="comment">// propagate a valid value</span>
+    <span class="keyword">public</span> NullableLike&lt;U&gt; Propagate&lt;U&gt;(U value);
+    <span class="comment">// propagate an invalid value</span>
+    <span class="keyword">public</span> NullableLike&lt;T&gt; Propagate();
+}</code></pre>
+<p>これで、先ほどの<code>Expected&lt;T&gt;</code>の例であれば、以下のように展開する。</p>
+<pre><code class="language-csharp">Expected&lt;<span class="keyword">string</span>&gt; x = <span class="keyword">new</span> Expected&lt;<span class="keyword">string</span>&gt;(<span class="keyword">new</span> Exception());
+Expected&lt;<span class="keyword">int</span>&gt; y = x.HasValue ? x.Propagate(x.Value.Length) : x.Propagate&lt;<span class="keyword">int</span>&gt;();
+<span class="keyword">string</span> z = x.HasValue ? x.Value : <span class="string">&quot;&quot;</span>;</code></pre>
+<p>ちなみに、このパターンに沿った<code>Expected&lt;T&gt;</code>の実装は以下のようになる。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> Expected&lt;T&gt;
+{
+    <span class="keyword">public</span> T Value { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> Exception Exception { <span class="keyword">get</span>; }
+
+    <span class="keyword">public</span> Expected(T value)
+    {
+        Value = value;
+        Exception = <span class="keyword">null</span>;
+    }
+    <span class="keyword">public</span> Expected(Exception exception)
+    {
+        Value = <span class="keyword">default</span>(T);
+        Exception = exception;
+    }
+
+    <span class="keyword">public</span> <span class="keyword">bool</span> HasValue =&gt; Exception == <span class="keyword">null</span>;
+    <span class="keyword">public</span> Expected&lt;U&gt; Propagate&lt;U&gt;() =&gt; <span class="keyword">new</span> Expected&lt;U&gt;(Exception);
+    <span class="keyword">public</span> Expected&lt;U&gt; Propagate&lt;U&gt;(U value) =&gt; <span class="keyword">new</span> Expected&lt;U&gt;(value);
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/11/">2016/11</a></li><li><a href="/blog/2016/11/vs2017rc/">Visual Studio 2017 Release Candidate</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5C0F;&#x30CD;&#x30BF; do-while | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/12/tipsdowhile/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-12-28T00:00:53">2016-12-28</time></span><span>更新: <time datetime="2016-12-28T00:03:38">2016-12-28</time></span></div><h1 id="do-while">小ネタ do-while</h1>
+<p><a href="/study/csharp/structured/st_loop/#dowhile">do-whileステートメント</a>とか使っていますか？</p>
+<p>あんまり実際に使われているコードを実務で見たことはなく。
+<a href="http://blog.modd.com/entry/2016/09/21/120442">使われていないキーワードランキング</a>的にも<code>do</code>は使われてない方から数えて27位。
+もしかしたら使われないどころか存在を忘れてる人すらいるんじゃないかというこの文法。</p>
+<p>「使ってる？」とか人に聞いてみたところ、
+「初心者の頃にちょっと」「もしかしたら初心者ほど使ってるかも」とかいう回答も得られたり。
+確かに、入門書とか(<a href="/study/csharp/">うちのサイト</a>含めて)には書かれてますもんね。書かれてば使うか。</p>
+<p>たぶん、徐々に、以下のように <code>while (true)</code> になっていくのかなぁとか。
+まあ、そもそも、ループの大半が <code>foreach</code> ですけど。<code>do-while</code> どころか <code>while</code> もそこそこレア。</p>
+<pre><code class="language-csharp"><span class="keyword">while</span> (<span class="keyword">true</span>)
+{
+    <span class="comment">// 前にも書きたいことあるし、</span>
+    <span class="keyword">if</span> (条件) <span class="keyword">break</span>;
+    <span class="comment">// 後ろにも書きたいことある</span>
+}
+<span class="keyword">while</span> (<span class="keyword">true</span>)
+{
+    <span class="comment">// というか、メソッド抽出して return する方が多いかも</span>
+    <span class="keyword">if</span> (条件) <span class="keyword">return</span> ...;
+}</code></pre>
+<p>さて、そんな<code>do-while</code>がなぜあるか、ですが。
+確かに<code>do-while</code>の「最低1回は実行したい」という要件はそもそも出番が少ない上に、やろうと思えば<code>while</code>だけで書けます。
+要するに、レアケースのために専用構文がある意味はあったのかという問題が。</p>
+<p>ご存知の通り、この構文はC言語からあります。
+「その当時ならば使ったのか」と言われると、やっぱりそんなに使いはしなかったと思うんですけど…</p>
+<p>実は、生成されるコードが<code>while</code>よりも<code>do-while</code>の方が短いんですよね。
+ということで、おそらく、<code>do-while</code>があるのは、そういうパフォーマンス上の理由かなぁと思います。</p>
+<p>どういうことかというと、例えば、<code>do-while</code>は以下のように展開されます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> DoWhile(<span class="keyword">int</span> x)
+{
+    <span class="keyword">do</span>
+    {
+        --x;
+    } <span class="keyword">while</span> (x &gt; <span class="number">0</span>);
+}
+<span class="comment">// ↓</span>
+<span class="keyword">static</span> <span class="keyword">void</span> DoWhileCompiled(<span class="keyword">int</span> x)
+{
+    BEGIN_DO_WHILE:;
+    --x;
+    <span class="keyword">if</span> (x &gt; <span class="number">0</span>) <span class="keyword">goto</span> BEGIN_DO_WHILE;
+}</code></pre>
+<p>これに対して、<code>while</code>だと以下のように、<code>goto</code> (IL 的には <code>br</code> 命令。x64 系 CPU のネイティブコード的には jmp 命令)が1個多く展開されたりします。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> While(<span class="keyword">int</span> x)
+{
+    <span class="keyword">while</span> (x &gt; <span class="number">0</span>)
+    {
+        --x;
+    }
+}
+<span class="comment">// ↓</span>
+<span class="keyword">static</span> <span class="keyword">void</span> WhileCompiled(<span class="keyword">int</span> x)
+{
+    <span class="keyword">goto</span> END_WHILE;<span class="comment">// この goto がいまいち好きになれない</span>
+    BEGIN_WHILE:;
+    --x;
+    END_WHILE:;
+    <span class="keyword">if</span> (x &gt; <span class="number">0</span>) <span class="keyword">goto</span> BEGIN_WHILE;
+}</code></pre>
+<p>この、<code>while</code>、<code>do-while</code>を使ったものと、展開結果の<code>goto</code>を使ったものが本当に一緒になるかも確認してみましょう。
+上記コードをコンパイルして、ildasmを掛けた結果は以下の通りです。
+上が<code>while</code>、下が<code>do-while</code>。
+左が展開前、右が展開後。</p>
+<p><img src="/assets/media/1114/dasm.png" alt="コンパイル結果" /></p>
+<p>ついでに、<code>do-while</code>の方が数バイト小さくなることもわかります。
+ここではILしか出していませんけども、たいていのCPUで、ネイティブ コードでもやっぱり<code>do-while</code>の方が短くなると思います。</p>
+<p>とはいえ、この微々たる要件のためにいまだにこの構文が必要かと言われると微妙なラインですかね。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/12/">2016/12</a></li><li><a href="/blog/2016/12/tipstryroslyn/">C#&#x5C0F;&#x30CD;&#x30BF;&#x96C6;: C#&#x3092;Web&#x4E0A;&#x3067;&#x8A66;&#x3059;</a></li><li><a href="/blog/2016/12/tipsildasm/">&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x3092;&#x8997;&#x3044;&#x3066;&#x307F;&#x3088;&#x3046;</a></li><li><a href="/blog/2016/12/tipscorefxlab/">&#x5C0F;&#x30CD;&#x30BF; corefxlab&#x3068;System.Memory</a></li><li><a href="/blog/2016/12/tipsevalorder/">&#x5C0F;&#x30CD;&#x30BF; &#x5F0F;&#x306E;&#x8A55;&#x4FA1;&#x9806;&#x5E8F;</a></li><li><a href="/blog/2016/12/tipsobjectinitializer/">&#x5C0F;&#x30CD;&#x30BF; &#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2016/12/tipscollectioninitializer/">&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2016/12/tipsindexedforeach/">&#x5C0F;&#x30CD;&#x30BF; &#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;&#x4ED8;&#x304D; foreach</a></li><li><a href="/blog/2016/12/tipsuniontypes/">&#x5C0F;&#x30CD;&#x30BF; &#x30C1;&#x30A7;&#x30C3;&#x30AF;&#x4F8B;&#x5916;&#x3068;Union&#x578B;</a></li><li><a href="/blog/2016/12/tipscontextfreetask/">&#x5C0F;&#x30CD;&#x30BF; &#x540C;&#x671F;&#x30B3;&#x30F3;&#x30C6;&#x30AD;&#x30B9;&#x30C8;&#x3092;&#x62FE;&#x308F;&#x306A;&#x3044;Task&#x578B;</a></li><li><a href="/blog/2016/12/tipsformattingcharacter/">&#x5C0F;&#x30CD;&#x30BF; &#x30D5;&#x30A9;&#x30FC;&#x30DE;&#x30C3;&#x30C8;&#x6587;&#x5B57;&#x8B58;&#x5225;&#x5B50;</a></li><li><a href="/blog/2016/12/tipsimplicitmembers/">&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/blog/2016/12/tipstadpoleoperator/">&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x6F14;&#x7B97;&#x5B50;(&#xFF1F;)</a></li><li><a href="/blog/2016/12/tipsnulloperation/">&#x5C0F;&#x30CD;&#x30BF; null&#x95A2;&#x4FC2;&#x306E;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/blog/2016/12/vs2017rc2/">Updating Visual Studio 2017 Release Candidate</a></li><li><a href="/blog/2016/12/patternmatching/">&#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30DE;&#x30C3;&#x30C1;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/pickuproslyn1214/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/14</a></li><li><a href="/blog/2016/12/tipsdeconstruct/">&#x5C0F;&#x30CD;&#x30BF; &#x300C;deconstruct&#x300D;&#x3068;&#x3044;&#x3046;&#x5358;&#x8A9E;</a></li><li><a href="/blog/2016/12/tipsgeneratedil/">&#x5C0F;&#x30CD;&#x30BF; &#x69CB;&#x6587;&#x7CD6;&#x8863;&#x3068;&#x3001;&#x305D;&#x3046;&#x3067;&#x306F;&#x306A;&#x3044;&#x69CB;&#x6587;&#x3068;</a></li><li><a href="/blog/2016/12/tipsprimitives/">&#x5C0F;&#x30CD;&#x30BF; &#x30D7;&#x30EA;&#x30DF;&#x30C6;&#x30A3;&#x30D6;&#x578B;</a></li><li><a href="/blog/2016/12/tipsapisurface/">&#x5C0F;&#x30CD;&#x30BF; private&#x30E1;&#x30F3;&#x30D0;&#x30FC;&#x306F;API&#x306E;&#x4E00;&#x90E8;&#x304B;</a></li><li><a href="/blog/2016/12/tipsstringmarshal/">&#x5C0F;&#x30CD;&#x30BF; string&#x578B;&#x306E;&#x30DE;&#x30FC;&#x30B7;&#x30E3;&#x30EA;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/tipsnumargs/">&#x5C0F;&#x30CD;&#x30BF; &#x5F15;&#x6570;&#x306E;&#x500B;&#x6570;&#x306E;&#x4E0A;&#x9650;</a></li><li><a href="/blog/2016/12/tipsotherlangs/">&#x5C0F;&#x30CD;&#x30BF; C# &#x3068;&#x4ED6;&#x306E;&#x8A00;&#x8A9E;&#x3068;&#x306E;&#x5DEE;&#x3068;&#x3044;&#x3046;&#x3068;</a></li><li><a href="/blog/2016/12/tipsconcurrentcollections/">&#x5C0F;&#x30CD;&#x30BF; Concurrent &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/blog/2016/12/discards/">discards</a></li><li><a href="/blog/2016/12/tipssmallheapallocation/">&#x5C0F;&#x30CD;&#x30BF; &#x5C0F;&#x3055;&#x306A;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x5272;&#x308A;&#x5F53;&#x3066;</a></li><li><a href="/blog/2016/12/tipsparallelism/">&#x5C0F;&#x30CD;&#x30BF; &#x4E26;&#x5217;&#x5316;</a></li><li><a href="/blog/2016/12/tipsatan2/">&#x5C0F;&#x30CD;&#x30BF; atan2</a></li><li><a href="/blog/2016/12/tipsnormaldistribution/">&#x5C0F;&#x30CD;&#x30BF; &#x6B63;&#x898F;&#x5206;&#x5E03;&#x306E;&#x4E38;&#x307F;</a></li><li><a href="/blog/2016/12/lookbackattheyear/">&#x4ECA;&#x5E74;&#x306E;&#x632F;&#x308A;&#x8FD4;&#x308A;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

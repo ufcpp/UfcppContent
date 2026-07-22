@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>[&#x96D1;&#x8A18;] Dispose &#x306B;&#x307E;&#x3064;&#x308F;&#x308B;&#x4F59;&#x8AC7; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/resource/rm_disposable/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="dispose">[雑記] Dispose にまつわる余談</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>「<a href="/study/csharp/resource/oo_dispose/">リソースの破棄</a>」で説明したように、
+C# で何らかのリソースの破棄が必要な場合、IDisposable インターフェイスを実装して、using ステートメントを使います。</p>
+<p>この、IDisposable インターフェイス（の Dispose メソッド）の実装方法などに関して、少々注釈を。</p>
+<h2 id="idisposable"><a id="sec-generated-title-2"></a> <a id="idisposable"></a>IDisposable インターフェイスの実装</h2>
+<p>.NET の性質上、
+明示的に破棄処理を書く必要があるリソースには、非管理リソース（unmanaged resource）と管理リソース（managed resource）の2種類あります。</p>
+<h5 id="section-1"><a id="sec-generated-title-3"></a>非管理リソース</h5>
+<p>.NET Framework （の自動メモリ管理）の範疇にないリソースです。
+ネイティブ コードで書かれた OS 機能を直接呼び出す場合などです。</p>
+<p>例えば、.NET の範疇でも File クラスを使ってファイルの読み書きができますが、
+Windows が提供している全機能を使えるわけではありません。
+File クラスからは触れない機能を使いたければ、Windows API を直接呼ぶ必要があります。</p>
+<p>.NET の管理下にあるオブジェクトの場合、明示的に Dispose メソッドを呼ぶのを忘れても、
+最悪、ガベージ コレクションによって使っていないオブジェクトは解放されます。
+しかし、非管理リソースの場合は、確実に破棄処理を働かせるためには、Dispose メソッドだけでなく、<em>ファイナライザーにも破棄処理を書く必要があります</em>。</p>
+<h5 id="section-2"><a id="sec-generated-title-4"></a>管理リソース</h5>
+<p>破棄処理をかけるべき対象が全て .NET Framework の管理化に収まるリソースです。</p>
+<p>例えば、他の IDisposable オブジェクトをメンバーに持っていて、間接的にしか非管理リソースを使わない場合もあります。
+この場合、直接触れる部分はあくまでも .NET Framework の管理化にあるオブジェクトになります。</p>
+<p>.NET Framework の管理化にあるものは .NET Framework に任せるべきです。
+非管理リソースと違って、<em>ファイナライザーの中では触れてはいけません</em>。
+(※ 「<a href="/study/csharp/resource/rm_gc/#cost-to-finalize">ファイナライズのコスト</a>」 で説明しているように、ファイナライザーにはかなり高コストな処理が発生します。)</p>
+<h3 id="dispose-1"><a id="sec-generated-title-5"></a> <a id="derivation"></a>Dispose の実装方法</h3>
+<p>この2種類に正式に対応（しつつ問題を起こさない実装を）するには、以下のような書き方をします。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> SomeClass : IDisposable
+{
+    <span class="keyword">public</span> <span class="keyword">void</span> Dispose()
+    {
+        Dispose(<span class="keyword">true</span>);
+        GC.SuppressFinalize(<span class="keyword">this</span>);
+    }
+
+    <span class="keyword">protected</span> <span class="keyword">virtual</span> <span class="keyword">void</span> Dispose(<span class="keyword">bool</span> disposing)
+    {
+        <span class="keyword">if</span> (disposing)
+        {
+            <span class="comment">// 管理（managed）リソースの破棄処理をここに記述します。 </span>
+        }
+
+        <span class="comment">// 非管理（unmanaged）リソースの破棄処理をここに記述します。</span>
+    }
+
+    ~SomeClass()
+    {
+        Dispose(<span class="keyword">false</span>);
+    }
+}</code></pre>
+<p>派生クラス含め、まったく非管理リソースを持たないのであれば、ここまで煩雑なコードを書かなくても、単純に Dispose メソッドを実装するだけで構いません。
+派生クラスを作る場合には、派生クラスでも絶対に非管理リソースを持たないという保証ができない限り、この書き方を推奨します。
+その際、派生クラスでは Dispose(bool disposing) の方をオーバーライドします（引数なしの Dispose メソッドとファイナライザーにはノータッチ）。</p>
+<h5 id="disposebool-disposing"><a id="sec-generated-title-6"></a>Dispose(bool disposing) の中身</h5>
+<p>bool 型の引数 disposing は、Dispose メソッドから呼ぶときは true、ファイナライザーから呼ぶときは false を渡します。
+if (disposing)  の中でだけ管理リソースの破棄を行うことで、ファイナライザーの中で管理リソースに触れないようにしています。</p>
+<h5 id="suppressfinalize"><a id="sec-generated-title-7"></a>SuppressFinalize</h5>
+<p>引数なしの Dispose メソッドの中では、引数付きの Dispose メソッドの後で、SuppressFinalize というメソッドを呼んでいます。
+これは、ガベージ コレクション時にもうファイナライザーを呼んでもらう必要がないということを、ガベージ コレクターに伝えるためのメソッドです
+（実際、呼ばれなくなります）。
+ファイナライザーを呼ぶのは、かなり（だいたいは、仕組みを知らない人が想像するよりも大幅に）コストのかかる処理です。
+Dispose メソッド内ですでに破棄処理を済ませているので、必要のなくなったファイナライザー呼び出しはしないようにします。</p>
+<h2 id="close"><a id="sec-generated-title-8"></a> <a id="close"></a>Close メソッド</h2>
+<p>リソースの明示的な破棄が必要となる典型的な例として、<a href="http://msdn.microsoft.com/ja-jp/library/System.IO.Stream.aspx">Stream クラス</a>がありますが、
+このクラスは Dispose メソッドに加えて、<a href="http://msdn.microsoft.com/ja-jp/library/System.IO.Stream.aspx">Close メソッド</a>も持っています。</p>
+<p>C# （をはじめとする .NET 言語）では、リソースの破棄には極力 「<a href="/study/csharp/resource/oo_dispose/#using">using ステートメント</a>」を使います。
+using ステートメントは IDisposable インターフェイスの Dispose メソッドを実装していることを前提にしているので、
+Stream を閉じる操作（リソース破棄の一例）も Dispose メソッドを使ってやるべきです。</p>
+<p>ところが、Stream クラスは Close メソッドも持ってしまっているわけです。
+しかも、Stream クラスの Close メソッドの中身は Dispose メソッドと同じことをしていて、完全に無駄な重複となっています。
+（無駄なだけならまだしも、混乱の原因でもあります。
+using ステートメントを使って Stream を閉じていても、内情を知らない人は「Close していないから Stream が閉じられないのではないか」と心配して、
+変なコーディング・変なコード レビューが横行します。）</p>
+<p>さすがに、マイクロソフトの .NET チームからも、この Close メソッドを持たせてしまったことは失敗だったと認識されているようです。
+互換性を崩すわけにはいかないデスクトップ版の .NET Framework では Close メソッドが残り続けますが、
+Windows ストア アプリ版や、クラウド最適化版の .NET Framework では削除されました。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/stream.close.png"><img src="/assets/media/ufcpp2000/csharp/fig/stream.close.png" alt="Stream.Close メソッドの利用可否。" /></a></p>
+<figcaption>Stream.Close メソッドの利用可否。</figcaption>
+</figure>
+<h2 id="task"><a id="sec-generated-title-9"></a> <a id="task"></a>Task クラス</h2>
+<p>IDisposable インターフェイスを実装するクラスのインスタンスは、用が済み次第 Dispose メソッドを呼んで破棄するべきです
+(クラスを作った側からすると、そうしてほしいから IDisposable インターフェイスを実装している)。</p>
+<p>しかし、Dispose したくても無理なクラスもあって、
+その最たるものが Task クラス(System.Threading.Tasks 名前空間)です。
+例えば、以下のようなコードを見てください。まじめに 全部 Dispose して回るのはかなり面倒です。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> t1 = Task.Run(() =&gt; Work1()); <span class="comment">// ここで Task インスタンスが1個できる</span>
+
+t1.ContinueWith(t =&gt; Work2()); <span class="comment">// ここでも1個</span>
+t1.ContinueWith(t =&gt; Work3()); <span class="comment">// ここでも1個</span>
+
+<span class="comment">// t1 の Dispose はどこでやるべき？</span>
+<span class="comment">// ContinueWith の方で作られる Task も変数で受けて Dispose呼ぶべき？</span></code></pre>
+<p>幸い、実は、Task クラスの Dispose メソッドはめったなことでは呼ぶ必要ありません。
+Task クラスにはいろいろな使い方がありますが、その中のある特定の使い方をした時だけ、Dispose を呼ぶ必要のある(破棄する必要のある)リソースを確保するそうです。
+以下のような場合が、唯一の Dispose が必要になる(ようなリソースを確保する)使い方です。</p>
+<pre><code class="language-csharp">IAsyncResult ar = Task.Run(() =&gt; Work1());
+ar.AsyncWaitHandle.WaitOne(); <span class="comment">// AsyncWaitHandle を呼んだ時点でリソース確保。</span></code></pre>
+<p>端的にいうと、古いバージョンのコードとの互換性のためだけにあるようなもので、
+<a href="/study/csharp/async/sp5_async/#async"><code>await</code></a> がある今、あまりやらない使い方です。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/resource/">&#x30E1;&#x30E2;&#x30EA;&#x3068;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x7BA1;&#x7406;</a></li><li><a href="/study/csharp/resource/rm_gc/">C# &#x306E;&#x30E1;&#x30E2;&#x30EA;&#x7BA1;&#x7406;</a></li><li><a href="/study/csharp/resource/rm_struct/">&#x69CB;&#x9020;&#x4F53;</a></li><li><a href="/study/csharp/resource/oo_reference/">&#x5024;&#x578B;&#x3068;&#x53C2;&#x7167;&#x578B;</a></li><li><a href="/study/csharp/resource/readonlyness/">readonly &#x306E;&#x6CE8;&#x610F;&#x70B9;</a></li><li><a href="/study/csharp/resource/rm_default/">&#x65E2;&#x5B9A;&#x5024;</a></li><li><a href="/study/csharp/resource/sp_ref/">&#x53C2;&#x7167;&#x6E21;&#x3057;</a></li><li><a href="/study/csharp/resource/span/">Span&lt;T&gt;&#x69CB;&#x9020;&#x4F53;</a></li><li><a href="/study/csharp/resource/refstruct/">ref&#x69CB;&#x9020;&#x4F53;</a></li><li><a href="/study/csharp/resource/misc_heap/">[&#x96D1;&#x8A18;] &#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x3068;&#x30D2;&#x30FC;&#x30D7;</a></li><li><a href="/study/csharp/resource/rmboxing/">&#x30DC;&#x30C3;&#x30AF;&#x30B9;&#x5316;</a></li><li><a href="/study/csharp/resource/sp2_nullable/">null&#x8A31;&#x5BB9;&#x5024;&#x578B;(Nullable&amp;lt;T&amp;gt; &#x578B;)</a></li><li><a href="/study/csharp/resource/nullablereferencetype/">null &#x8A31;&#x5BB9;&#x53C2;&#x7167;&#x578B;</a></li><li><a href="/study/csharp/resource/rm_nullusage/">null &#x306E;&#x53D6;&#x308A;&#x6271;&#x3044;</a></li><li><a href="/study/csharp/resource/oo_dispose/">&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x7834;&#x68C4;</a></li><li><a href="/study/csharp/resource/rm_destructor/">&#x30D5;&#x30A1;&#x30A4;&#x30CA;&#x30E9;&#x30A4;&#x30B6;&#x30FC;</a></li><li><a href="/study/csharp/resource/rmweakreference/">&#x3010;&#x96D1;&#x8A18;&#x3011;&#x5F31;&#x53C2;&#x7167;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

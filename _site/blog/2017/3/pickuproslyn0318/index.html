@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 3/18: &#x30A4;&#x30F3;&#x30BF;&#x30FC;&#x30D5;&#x30A7;&#x30A4;&#x30B9;&#x306E;&#x30C7;&#x30D5;&#x30A9;&#x30EB;&#x30C8;&#x5B9F;&#x88C5; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2017/3/pickuproslyn0318/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2017-03-18T21:00:51">2017-03-18</time></span><span>更新: <time datetime="2017-03-18T21:00:51">2017-03-18</time></span></div><h1 id="roslyn-318">ピックアップRoslyn 3/18: インターフェイスのデフォルト実装</h1>
+<p>C#でもインターフェイスのデフォルト実装(まんま、Javaのデフォルト メソッドと同じ機能)の実装始めたって。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/pull/17927">Enable a default implementation of an interface method to be provided as part of its declaration. #17927</a></li>
+</ul>
+<p>結構びっくり…</p>
+<p>驚いてるって言っても、この機能が革新的だとかそういう驚きではなくてですね。
+この機能、.NET ランタイムに手を入れないと実現できない機能なので、「今から実装始めれるんだ？！」という驚きになります。</p>
+<h2 id="section">デフォルト実装</h2>
+<p>機能的にはそんなに驚くこともなく。
+というか、本当にJavaのデフォルト メソッドそのままなので。
+まあ、今からC#にデフォルト実装の機能を入れても、そこまで大きなインパクトはないと思います。</p>
+<p>メリットは、</p>
+<ul>
+<li>インターフェイスに後からメンバーを追加しても、利用側コードを壊さずに済むようになる</li>
+<li><code>IEnumerable.GetEnumerator</code>みたいな、1.0時代の互換性のためだけに現存しているものの実装が楽になる</li>
+</ul>
+<p>というくらい。後者の方は要するに、以下のような話。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> System.Collections.Generic
+{
+    <span class="keyword">public</span> <span class="keyword">interface</span> IEnumerable&lt;<span class="keyword">out</span> T&gt; : IEnumerable
+    {
+        IEnumerator&lt;T&gt; GetEnumeartor();
+
+        <span class="comment">// こんな風に、デフォルト実装を与えておいてもらう</span>
+        IEnumerator IEnumerable.GetEnumeartor() =&gt; GetEnumerator();
+    }
+}
+
+<span class="keyword">namespace</span> ConsoleApp1
+{
+    <span class="keyword">using</span> System.Collections.Generic;
+
+    <span class="keyword">class</span> MyEnumerable : IEnumerable&lt;<span class="keyword">int</span>&gt;
+    {
+        IEnumerator&lt;<span class="keyword">int</span>&gt; GetEnumerator()
+        {
+            <span class="keyword">yield</span> <span class="keyword">return</span> <span class="number">1</span>;
+            <span class="keyword">yield</span> <span class="keyword">return</span> <span class="number">2</span>;
+            <span class="keyword">yield</span> <span class="keyword">return</span> <span class="number">3</span>;
+        }
+
+        <span class="comment">// IEnumerator IEnumerable.GetEnumeartor の方は書かなくてもいい</span>
+    }
+}</code></pre>
+<p>あったらあったで便利なんですが、ランタイム側の修正が必要となるとなかなか。</p>
+<h2 id="net">.NET ランタイムに手を入れる</h2>
+<p>C# の機能って、C# 3～7までの間は、コンパイラーが頑張って実現しているような機能がほとんどで、
+.NET ランタイム的にいうと .NET Framework 2.0上でも動くものばかりでした。</p>
+<p>(参考: <a href="/study/csharp/cheatsheet/listfxlangversion/">C#の言語バージョンと.NET Frameworkバージョン</a>
+<a href="/study/csharp/async/sp5_async/">async/await</a>が<a href="https://msdn.microsoft.com/ja-jp/library/system.threading.tasks.task(v=vs.110).aspx"><code>Task</code>クラス</a>に依存していたり、ライブラリを必要とする機能はちらほらありましたが、
+ランタイムに関しては.NET Framework 2.0以降何も変化していません。
+)</p>
+<p>とはいえ、さすがに、ランタイムに手を入れないとなぁという感じはしてきています。
+いくつか、「ランタイムによってコンパイラーの進化が妨げられている」みたいなリストもできていたりします。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/251">Places where runtime bugs interfere with compiler or language evolution #251</a></li>
+</ul>
+<p>見るからに「バグだから直して」って感じのもありますが、
+他にも例えば、以下のようなものが挙がっています。</p>
+<ul>
+<li>構造体に対して引数なしのコンストラクターを認めたい(<code>Activator.CreateInstance</code>のバグで今はそれができない)</li>
+<li>属性にジェネリックなものを認めたい</li>
+<li>インターフェイスにデフォルト実装を認めたい</li>
+</ul>
+<p>需要があるんだからランタイムの修正してくれよって話ではあるんですが、
+ここ数年の.NETって、クロスプラットフォーム化とかで忙しくて、新機能を追加する余裕なんて全然なかったんですよね。
+そりゃまあ、デフォルト実装を認めるよりも先にXamarin (iOS/Android)とか.NET Core (Linux/Mac)とかの安定化の方が先だろと。</p>
+<p>ってことで、個人的な予想としては、この手のランタイム修正が必要な機能の実装は.NET Core 2.0とかよりさらに後だろうとか思ってたんですが。
+デフォルト実装も、当初予定では<a href="https://github.com/dotnet/csharplang/milestone/8">C# 8.0 milestone</a>に並べられてたはずですし。
+なので、冒頭の「今？！」という驚きにつながるわけです。</p>
+<p>今作業が始まったってことは、.NET Core 2.0(一瞬、「今年の春には」とか言う話も出ていましたけど。今年中には出るのかなぁ…出るはずよなぁ…きっと？)とかでひょっとしてランタイムの修正もするのかな？とか期待に胸を膨らませたり。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2017/3/">3&#x6708;</a></li><li><a href="/blog/2017/3/csharp7rtm/">C# 7.0&#x30EA;&#x30EA;&#x30FC;&#x30B9;(&#x3082;&#x3046;2&#x9031;&#x9593;&#x304F;&#x3089;&#x3044;&#x7D4C;&#x904E;&#x3057;&#x305F;&#x3051;&#x3069;&#x3082;)</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

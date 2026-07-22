@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 10/9: base(T), UTF-8 String, Discard parameters | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2019/10/pickuproslyn1029/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2019-10-29T21:42:13">2019-10-29</time></span><span>更新: <time datetime="2019-10-29T21:42:13">2019-10-29</time></span></div><h1 id="roslyn-109-baset-utf-8-string-discard-parameters">ピックアップRoslyn 10/9: base(T), UTF-8 String, Discard parameters</h1>
+<p>数日前、いくつかの新機能について、仕様書のドラフト案が上がっていました。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/2910">base(T) - Draft Specification #2910</a></li>
+<li><a href="https://github.com/dotnet/csharplang/issues/2911">UTF8 String Literals - Draft Specification #2911</a></li>
+</ul>
+<p>どちらも、これまであった Design Meeting の議事録通りな感じ。</p>
+<p>あと、ちょこっと変更が検討されて、結局元さやに納まったものが1件。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/111">Champion &quot;Lambda discard parameters&quot; #111</a></li>
+</ul>
+<h2 id="baset">base(T)</h2>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/2910">base(T) - Draft Specification #2910</a></li>
+</ul>
+<p>これは、C# によるプログラミング入門に説明を書いた直後に「やっぱり C# 8.0 ではやめておく」となってしまったやつ。
+(しょうがないんで「<a href="/study/csharp/oop/oo_inherit/#non-virtual-base-access">C# 8.0 から外れました</a>」って書き足してそのまま残してあったり。)</p>
+<p>まあ、.NET ランタイムのレベルで対応してもらう予定だそうです。
+<code>base(T).M()</code> と書いたとき、<code>T</code> 自体に <code>M</code> の実装がなくても基底クラスをたどって最初に見つかった <code>M</code> を呼んでもらえるという仕様。</p>
+<h2 id="utf-8-string-literals">UTF-8 String Literals</h2>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/2911">UTF8 String Literals - Draft Specification #2911</a></li>
+</ul>
+<p>待望の。</p>
+<p>といっても、<code>Utf8String</code> 自体についてはまだいくつか悩ましいポイントがあり…</p>
+<ul>
+<li><code>string</code> (今は UTF-16)自体を UTF-8 に切り替えるオプションがやっぱりほしい
+<ul>
+<li>とはいえ、インデクサー(UTF-16 での i 文字目を <code>s[i]</code> で定数時間アクセスできる)を期待しているコードが壊れる</li>
+<li>unsafe に <code>fixed (char* p = s)</code> しているコードも壊れる</li>
+</ul>
+</li>
+<li><code>System.String</code> に対して C# キーワードの <code>string</code> があるけど <code>Utf8String</code> に対してはどうするべきか
+<ul>
+<li>キーワード足さない？</li>
+<li><code>ustring</code>？</li>
+<li><code>utf8</code>？</li>
+</ul>
+</li>
+<li>クラス名自体まだ悩ましい
+<ul>
+<li>今回のドラフト案も冒頭に「corert 側が今のところその名前になってるのでそれに従う」との注釈がまだ必要な段階</li>
+</ul>
+</li>
+</ul>
+<p>というのもあって、C# vNext で検討されているのは本当に「手始め」という感じのものだけ。</p>
+<ul>
+<li>(今ある) <a href="/study/csharp/start/st_embeddedtype/#charl">文字列リテラル</a>をそのまま使う</li>
+<li>以下のようなルールだけ C# に追加
+<ul>
+<li>文字列リテラルから <code>Utf8String</code> への暗黙の型変換を認める</li>
+<li><code>Utf8String</code> は <code>const</code> にできて、それに渡せるのは <code>const</code> な文字列のみ</li>
+<li><code>+</code> 演算子は <code>Utf8String.Concat</code> として解釈する</li>
+</ul>
+</li>
+<li>コンパイル結果としても <code>string</code> (UTF-16) のままプログラムにデータを埋め込む
+<ul>
+<li>読み込み時に .NET ランタイム組み込みのヘルパー関数を呼んで UTF-8 に変換する</li>
+<li>将来的には直接 UTF-8 なデータをプログラムに埋め込めるように改修する可能性はあり</li>
+</ul>
+</li>
+</ul>
+<p>まあ、<code>Utf8String</code> クラスが標準ライブラリに入ってくれるだけでも随分助かりはするんですが…
+既存のコードベースが <code>string</code> だらけなのがだいぶやっぱりネックになりそうな感じ。</p>
+<h2 id="discard-parameters">Discard parameters</h2>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/111">Champion &quot;Lambda discard parameters&quot; #111</a></li>
+</ul>
+<p>この issue の趣旨自体は、<code>Action&lt;T, T&gt; a = (_. _) =&gt; { };</code> みたいな書き方を認めたいというもの。
+2個以上の引数が <code>_</code> の時、それは<a href="/study/csharp/cheatsheet/ap_ver7/#discard">discard</a>扱いにします。
+ラムダ式の中で <code>_</code> を普通の変数のように触ろうとするとコンパイル エラー。
+一方で、1引数の <code>_</code> は今現在有効は引数名として使えてしまっているので、破壊的変更を避けるために今のまま。</p>
+<p>で、ここ数日で、一瞬、「ラムダ式以外、普通のメソッドの引数やローカル関数にも適用してもいいんじゃないか」というのが議題に上がりました。
+でも、<a href="/study/csharp/structured/sp4_optional/#named">名前付き引数</a>がある以上、引数の名前は API の一部分であり、メソッドの外から見えてしまう情報になります。
+そこを省略するのはあんまりお行儀がよくない。</p>
+<p>なので結局、当初予定通り<a href="/study/csharp/functional/fun_localfunctions/#anonymous-function">匿名関数</a>(ラムダ式と匿名メソッド式)でだけ、<code>_</code> のdiscard扱いをしたいという結論に。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2019/10/">10&#x6708;</a></li><li><a href="/blog/2019/10/pickuproslyn1004/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 10/4: C# 9.0, &#x30D1;&#x30BF;&#x30FC;&#x30F3;&#x8FFD;&#x52A0;&#x3001;switch &#x5F0F;&#x30B9;&#x30C6;&#x30FC;&#x30C8;&#x30E1;&#x30F3;&#x30C8;&#x3001;&#x5171;&#x5909;&#x623B;&#x308A;&#x5024;</a></li><li><a href="/blog/2019/10/netcore3concludesfxporting/">.NET Core 3.0 &#x3092;&#x3082;&#x3063;&#x3066; .NET Framework &#x304B;&#x3089;&#x306E;&#x79FB;&#x690D;&#x4F5C;&#x696D;&#x306F;&#x5B8C;&#x7D50;</a></li><li><a href="/blog/2019/10/pickuproslyn1025/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 10/25: Records&#x3001;Static lambdas</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

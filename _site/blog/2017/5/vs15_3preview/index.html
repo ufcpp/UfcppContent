@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Visual Studio 2017 Update 3 (15.3) Preview | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2017/5/vs15_3preview/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2017-05-13T18:49:52">2017-05-13</time></span><span>更新: <time datetime="2017-05-13T18:49:52">2017-05-13</time></span></div><h1 id="visual-studio-2017-update-3-15.3-preview">Visual Studio 2017 Update 3 (15.3) Preview</h1>
+<p><a href="https://channel9.msdn.com/Events/Build/2017/">Build 2017</a>で、Visual Studio 2017 Update 3の Preview 版が公開されました。
+(ちなみに、Preview のつかない安定板 Visual Studio とは side by side の別フォルダーへのインストールになります。)</p>
+<p>当初、.NET Core 2.0/.NET Standard 2.0 Preview がらみの更新かと思ったら、案外C#がらみも更新かかっていたことに今更気づいたり。
+「<a href="https://channel9.msdn.com/Events/Build/2017/B8104">The future of C#</a>」とか「<a href="https://channel9.msdn.com/Events/Build/2017/B8083">The future of Visual Studio</a>」とかを見ていると、「C# 7.1」の文字が。</p>
+<p>確かに、今見てみたら「C# 7.1」を使えるオプションがありました。</p>
+<p><img src="/assets/media/1133/vs15_3cs7_1.png" alt="C# 7.1" /></p>
+<h2 id="c-7.1">現時点で実装されている C# 7.1 機能</h2>
+<p>資料を見てると、以下の2つがリストに並んではいるんですが。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/102">default expressions</a></li>
+<li><a href="https://github.com/dotnet/csharplang/issues/97">async main</a></li>
+</ul>
+<p>試してみてる感じ、default expressions の方しか動いてなさげ。</p>
+<h3 id="default-default-expressions">default 式 (default expressions)</h3>
+<p><code>default(T)</code>と書かなくても、左辺から型推論できる限りには<code>default</code>だけで既定値を与えられるという機能。
+ちゃんと型推論なので、以下のように、マウス オーバーで型が出たりします。</p>
+<p><img src="/assets/media/1134/defaultexpressions.png" alt="default 式" /></p>
+<p>名前が長い型のデフォルト引数とか作る場合にありがたそう。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> X(
+    (<span class="keyword">int</span> x, <span class="keyword">int</span> y) t = <span class="keyword">default</span>,
+    KeyValuePair&lt;<span class="keyword">string</span>, <span class="keyword">int</span>?&gt; p = <span class="keyword">default</span>,
+    CancellationToken ct = <span class="keyword">default</span>)
+{
+    ...
+}</code></pre>
+<h3 id="async-main">async Mainメソッド</h3>
+<p><code>Main</code>メソッドの戻り値が、<code>Task</code>、<code>Task&lt;int&gt;</code>でもよくなったという話。
+もちろん、<code>await</code> を使うための仕様。</p>
+<p>なんですが、なんか現状の Update 3 Preview (15.3 26510.0-Preview)ではダメでした。
+普通に「<code>Main</code>のシグネチャが不正」って言ってコンパイル エラーになりました。</p>
+<p>何か他に条件いるのか、次の更新で来るのか…</p>
+<h2 id="ide">その他、新しい IDE 機能</h2>
+<p>なんか、いくつか便利そうなQuick Actionが追加されてました。</p>
+<h3 id="section">引数生成</h3>
+<p>メソッドの引数を書くとき、型名まで打てば、それと同名の引数を作ってくれるCode-Fixが入ったみたいです。</p>
+<p>確かに、型名と引数名が一致すること多いですもんね。</p>
+<p><img src="/assets/media/1135/autoparametername.png" alt="型名通りの引数名を自動的に挿入できる機能" /></p>
+<p>今、仕事で書いてるライブラリ、大体<code>CancellationToken</code>な引数の名前が<code>ct</code>だわ…
+こういう略語はあんまりよくないと思いつつ、cancellationTokenって文字列が長すぎて心折れてて。
+この機能を紹介するデモでまさに<code>CancellationToken</code>を使っていて、みんな考えることは同じなのかとか思いました。</p>
+<h3 id="git">git 衝突解決</h3>
+<p>git の衝突解決するためのQuick Actionが入ってました。</p>
+<p>確かに、<code>git gui</code>とかで衝突の解決しようとすると、「どっちがremoteだっけ… この操作であってるかな…」とか常に間違い、
+結局 Visual Studio 上で手作業解決してたりしますし。</p>
+<p>例えば、こんな衝突したとして。</p>
+<pre><code class="language-csharp">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+<span class="keyword">class</span> A { }
+=======
+<span class="keyword">class</span> B { }
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; branch</code></pre>
+<p>なるほど、こういうQuick Action出れば間違えないわ。</p>
+<p><img src="/assets/media/1136/gitconflict.png" alt="git 衝突解決" /></p>
+<h3 id="section-1">コンストラクター引数からのプロパティ生成</h3>
+<p>コンストラクターだけ書けば、対応するプロパティと、プロパティへの代入を生成してくれます。</p>
+<p><img src="/assets/media/1137/genproperty.png" alt="コンストラクター引数からのプロパティ生成" /></p>
+<p><a href="https://www.nuget.org/packages/RecordConstructorGenerator/">RecordConstructorGenerator</a>もやっと退役かなぁ。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2017/5/">5&#x6708;</a></li><li><a href="/blog/2017/5/newcsproj/">&#x65B0;&#x3057;&#x3044; csproj &#x5F62;&#x5F0F;</a></li><li><a href="/blog/2017/5/roslynjitasm/">TryRoslyn &#x6539;&#x3081; SharpLab &#x3067;&#x3001;JIT Asm&#x8868;&#x793A;</a></li><li><a href="/blog/2017/5/pickuproslyn0530/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 5/30: C# 7.1&#x306A;&#x3069;(de:code 2017)</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

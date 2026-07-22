@@ -1,0 +1,140 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x3010;C# 11 &#x5019;&#x88DC;&#x3011; &#x5F15;&#x6570;&#x306E; null &#x30C1;&#x30A7;&#x30C3;&#x30AF; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2022/2/parameter-null-check/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2022-02-13T13:03:28">2022-02-13</time></span><span>更新: <time datetime="2022-02-13T13:03:28">2022-02-13</time></span></div><h1 id="c-11-null">【C# 11 候補】 引数の null チェック</h1>
+<p>先日出た Visual Studio 17.1 Preview 3 で、引数 null チェックの簡素化構文が入りました。</p>
+<pre><code class="language-csharp">m(<span class="keyword">null</span>); <span class="comment">// ArgumentNull 例外が出る。</span>
+
+<span class="keyword">void</span> m(<span class="keyword">string</span> x!!) { }</code></pre>
+<h2 id="section">展開結果</h2>
+<p>上記の <code>void m(string x!!)</code> は以下のように展開されます。
+(クラス名は実際には通常の C# では書けない変な名前で生成されます。)</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> m(<span class="keyword">string</span> x)
+{
+    Internal.ThrowIfNull(x, <span class="string">&quot;x&quot;</span>);
+}
+
+<span class="keyword">internal</span> <span class="keyword">class</span> Internal
+{
+    <span class="keyword">internal</span> <span class="keyword">static</span> <span class="keyword">void</span> Throw(<span class="keyword">string</span> paramName)
+    {
+        <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentNullException(paramName);
+    }
+
+    <span class="keyword">internal</span> <span class="keyword">static</span> <span class="keyword">void</span> ThrowIfNull(<span class="keyword">object</span> argument, <span class="keyword">string</span> paramName)
+    {
+        <span class="keyword">if</span> (argument == <span class="keyword">null</span>)
+        {
+            Throw(paramName);
+        }
+    }
+}</code></pre>
+<p>もしかしたら、C# 11.0 リリースまでには、internal なコンパイラー生成メソッドではなくて、
+標準ライブラリ中の <a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.argumentnullexception.throwifnull"><code>ArgumentNullException.ThrowIfNull</code></a> メソッドに置き変わったりするかもしれませんが、まあ、やってることは一緒です。</p>
+<p>ちなみに、<code>ThrowIfNull</code> メソッドから <code>Throw</code> メソッドだけがさらに抽出されているのはその方がパフォーマンスがいいからです。
+<code>throw</code> ステートメントがあるとインライン展開を阻害したりするので。</p>
+<h2 id="nrt">NRT と相補的な機能</h2>
+<p><a href="https://github.com/dotnet/csharplang/issues/2145">初期提案</a>が出たのは2019年の1月頃で、
+C# 8.0 (2019年9月リリース)の <a href="/study/csharp/cheatsheet/ap_ver8/#nullable-reference-type">null 許容参照型</a> (略して NRT)と同時期に検討されていたものです。</p>
+<p>下手に NRT と同時期だったので紛らわしいのは紛らわしいんですが、</p>
+<table>
+<thead>
+<tr>
+<th>NRT</th>
+<th>引数!!</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>コンパイル時のチェック(警告)</td>
+<td>実行時のチェック(例外)</td>
+</tr>
+<tr>
+<td>コンパイル結果には全く影響を及ぼさない</td>
+<td>コンパイル結果が変わる</td>
+</tr>
+<tr>
+<td>メタデータに残る(外から見える・区別がある)</td>
+<td>残らない(あくまで内部実装の簡単化)</td>
+</tr>
+</tbody>
+</table>
+<p>という感じで、相補的な機能です。</p>
+<h2 id="section-1">文法案</h2>
+<p>文法的にはちょっと悩ましいんですが… 例えば、</p>
+<ul>
+<li>使う記号は何がいいか
+<ul>
+<li>初期案では <code>!</code> だった</li>
+<li>他に <code>??</code>、<code>?? throw</code>、<code>?!</code> みたいな話は出てはいる</li>
+<li>結局現在は <code>!!</code></li>
+</ul>
+</li>
+<li>場所
+<ul>
+<li>内部実装にしか影響ないのにメソッド宣言部分にあっていいのか</li>
+<li><code>void m(string x) { x!! }</code> みたいにメソッドの中になくていいのか</li>
+<li>NRT に合わせるなら <code>string?</code> に倣って <code>string! x</code> とかにしなくていいのか</li>
+</ul>
+</li>
+<li>変に記号にせず、汎用的な contract として、<code>requires x is not null</code> とか書けないか</li>
+<li><code>&lt;Nullable&gt;throw&lt;/Nullable&gt;</code> みたいなオプションで、問答無用で全ての引数に実行時 null チェックを挟めないか</li>
+<li><code>[DisallowNull]</code> みたいな属性ではどうか</li>
+</ul>
+<p>とかさんざん言われています。</p>
+<p>これに対して、</p>
+<ul>
+<li><code>!</code> は <a href="/study/csharp/resource/nullablereferencetype/#null-forgiving">null 抑止</a>と同じ記号なのがまずい
+<ul>
+<li>null 抑止は「何もせず警告を無視」、<code>!!</code> は「実行時に例外」で大きな差</li>
+</ul>
+</li>
+<li><code>??</code> は、<a href="/study/csharp/resource/rm_nullusage/#null-coalesce">null 合体</a>との弁別が構文解析する上で大変</li>
+<li><code>?!</code> も条件演算子 + 単項前置き <code>!</code></li>
+<li><code>?? throw</code> は単純に長い</li>
+<li><code>string!</code> は NRT との混同しててちょっとずれてる。NRT はあくまでコンパイル時チェックだけしたい</li>
+<li><code>void m(string x) { x!! }</code> は <code>x</code> を2度書くのが結局つらい</li>
+<li>汎用 contract (<code>requres</code>) は、NRT 以前から何度か案が出て、プロトタイプ実装もされては何度も没ってる</li>
+<li>全ての引数に実行時 null チェックを挟むのはパフォーマンス的に論外。コンパイル オプションで <code>throw</code> の有無が変わるのもあまり好ましくない</li>
+<li>属性が実行時の挙動に大きな影響を及ぼすのはあんまり本望ではない</li>
+</ul>
+<p>等々ありまして、結局は <code>void m(string x!!)</code> 案で実装されました。</p>
+<h2 id="section-2">再燃</h2>
+<p>で、<code>!!</code> の実装がリリースされたことで、
+先日、dotnet/runtime 内のコードにそれを適用する pull request が出たわけですが。</p>
+<ul>
+<li><a href="https://github.com/dotnet/runtime/pull/64720">Initial roll out of !!</a></li>
+</ul>
+<p>約1200ファイル、2万行の差分。</p>
+<p>そしてこれが Twitter 上で話題になり、今更ながら反発の声多数。</p>
+<p>元々色々もめ気味の機能ですからねぇ。
+まして、急に Twitter 上で話題になったことで、
+普段 csharplang にいない人が急にわらわらと出てくる事態になり。
+2019年にさんざんやった話を蒸し返し中…</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/discussions/5735">Question: How is !! envisaged to be used?</a></li>
+</ul>
+<p>ほんと、普段こんなに人いないのに…
+みんなぬるぽが好きすぎ…</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2022/2/">2&#x6708;</a></li><li><a href="/blog/2022/2/span-optimization/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011; ReadOnlySpan &#x6700;&#x9069;&#x5316;</a></li><li><a href="/blog/2022/2/params-span/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011;params Span</a></li><li><a href="/blog/2022/2/ref-generic-arguments/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011; ref &#x578B;&#x5F15;&#x6570;</a></li><li><a href="/blog/2022/2/ref-field/">&#x3010;C# 11&#x5019;&#x88DC;&#x3011; ref field</a></li><li><a href="/blog/2022/2/embedded-languages/">C# &#x4E2D;&#x306E;&#x57CB;&#x3081;&#x8FBC;&#x307F;&#x8A00;&#x8A9E;</a></li><li><a href="/blog/2022/2/csharp10-breaking-change-field-init/">&#x3010;C# 10.0 &#x5909;&#x66F4;&#x70B9;&#x3011; &#x69CB;&#x9020;&#x4F53;&#x306E;&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x521D;&#x671F;&#x5316;&#x5B50;&#x306B;&#x306F;&#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;&#x5FC5;&#x9808;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

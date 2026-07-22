@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D7;&#x30ED;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x7BA1;&#x7406; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/devenv/vs_project/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">プロジェクト管理</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>Visual Studio で C# を使ったプログラム開発を行う場合、まず、「プロジェクト」というものを作ります。
+また、この際、「ソリューション」というものが一緒に作られます。</p>
+<p>ここでは、そのプロジェクトの作り方の簡単な紹介と、プロジェクトやソリューションが何なのか、どうして必要なのかを説明します。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li>プロジェクト: 1つのプログラムを作るのに必要な各種ファイルを管理するもの</li>
+<li>ソリューション: 1つの課題を解決するのに必要な一連のプロジェクト(≒ プログラム)を管理するもの</li>
+</ul>
+<p>ちなみに、プログラムを作るのにどうして「プロジェクト」という単位が必要になるのかや、
+どういう単位で「プロジェクト」を区切るのかなどは
+「<a href="/study/csharp/package/project/">プロジェクトの分割</a>」で説明します。</p>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="new-project"></a>プロジェクトの作成</h2>
+<p>プロジェクトやソリューションの説明は次節以降でしますが、まずは、そのプロジェクトの作り方を簡単に紹介します。
+(※ここでは、Visual Studio 2015を使ってスクリーンショットを撮っています。他のバージョンでもそれほど大きな違いはありません。)
+Visual Studio を起動すると以下のような画面になっていると思います。</p>
+<p><img src="/assets/media/1002/newproject1.png" alt="Visual Studio 起動直後" /></p>
+<p>ここで、「スタート」→「新しいプロジェクト」を選ぶと、以下のようなダイアログが表示されます。</p>
+<p><img src="/assets/media/1003/newproject2.png" alt="「新しいプロジェクト」で「プロジェクト テンプレート」を選択" /></p>
+<p>この中から、作りたいプログラムの種類に応じた「プロジェクト テンプレート」(後述)を選びます。</p>
+<p>この「C# によるプログラミング入門」での説明の多くは「コンソール アプリケーション」で動きます。ここでも「コンソール アプリケーション」を選びます。通常は、「名前」のところには作りたいプログラムの名前に応じた適切な名前を入力します。今回はとりあえず、最初から入っている「ConsoleApplication1」という名前のままでプロジェクトを作ってみましょう。これで、以下のような画面になるはずです。</p>
+<p><img src="/assets/media/1005/newproject3.png" alt="プロジェクト作成直後" /></p>
+<p>これで、プログラム作成に必要な最低ラインの準備が整いました。ちなみに、この時点で(プロジェクトの新規作成をしただけで)、ソリューションというものも一緒に作られています。
+以降では、ここで出てきた「プロジェクト」「ソリューション」「プロジェクト テンプレート」などの言葉について説明していきます。</p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="project"></a>プロジェクトとは</h2>
+<p>プログラムの作成・実行 で説明するように、ソースコードをコンパイルすることでプログラムを作ります。
+通常、ソースコードは切りのいい単位ごとに別ファイルに分けて作るので、プログラムの作成には複数のソースコード ファイルが必要になります。
+また、プログラムの種類によっては、ソースコード以外にも画像や音声など、様々な素材（アセット(asset)と呼んだりします）が必要です。</p>
+<p>これら、プログラムを作るのに必要なファイルを管理するのがプロジェクトです。
+例えば、下図の場合、ConsoleApplication1 という名前のプロジェクトに、App.config、Logic.cs、Program.cs という3つのファイルが管理されています。</p>
+<p><img src="/assets/media/1001/project1.png" alt="enter image description here" /></p>
+<p>その他、C#のプロジェクトでは以下のようなものを管理します。</p>
+<ul>
+<li>ライブラリ の参照</li>
+<li>コンパイル オプション(プログラム名、C# のバージョンや、コンパイル時の警告の厳しさなど)の設定</li>
+<li>プログラムの種類によっては、インストーラー作成や、サーバーやストアへのアップロード方法などの設定</li>
+</ul>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="solution"></a>ソリューションとは</h2>
+<p>何かやりたいこと(課題)があるからプログラムを作るはずです。
+そしてそのやりたいことの実現(解決)には、1つのプログラムではなく、複数のプログラムを作る場合があります。
+あるいは、それらのプログラムから共通利用する「部品」も必要になったりします。</p>
+<p>このような、やりたいことを実現(課題を解決)するために必要な複数のプログラムや部品(その1つ1つがプロジェクトとして管理される)を束ねるのがソリューション(solution: 解決策)です。</p>
+<p>以下の図は、例として、「アプリ1」「社内ツール1」「社内ツール2」という3つのプログラムと、この3つから使う「共通部品」という、合わせて4つのプロジェクトを作った例です。
+この3つのプロジェクトを管理するのが「アプリ1」ソリューションです。</p>
+<p><img src="/assets/media/1139/solution1.png" alt="4つのプロジェクトを含むソリューションの例" /></p>
+<p>ソリューション内には、プロジェクト間の依存関係などが記録されています。</p>
+<h2 id="section-6"><a id="sec-generated-title-6"></a> <a id="project-template"></a>プロジェクト テンプレート</h2>
+<p>プログラムに必要なソースコードなどのファイルは、どんなプログラムでも同じなような必要最低限のものであっても、結構な分量があります。
+どんなプログラムでもだいたい同じになるなら、最初からひな形を用意しようというのが、プロジェクト テンプレート(project template: プロジェクトのひな形)です。</p>
+<p>いくつか紹介しましょう。</p>
+<table>
+<tr>
+<th>テンプレートの種類</th><th>説明</th>
+</tr>
+<tr>
+<td>コンソール アプリケーション</td>
+<td>“古き良き”文字だけのプログラムのことをコンソール アプリケーション(console application: console は操作卓という意味。昔はコンピューターをキーボードからの文字入力だけで操作していたのの名残)といいます。</td>
+</tr>
+<tr>
+<td>ASP.NET Web アプリケーション</td>
+<td>Web アプリを作ります。ASP.NET は、C#でWebアプリを作るためのフレームワークの名前です。</td>
+</tr>
+<tr>
+<td>Blank App (Windows Universal)</td>
+<td>(Windows 10以降用の)Windows GUIアプリを作ります。C#でGUIアプリを作るためのフレームワークは、詳細は省きますが、歴史的経緯で、他にも WPF、Windows Formsなどたくさんあります。</td>
+</tr>
+</table>
+<p>とにかく習うより慣れろで見た目に面白いものや、実用的なものを作りたいという方は、Web アプリや GUI アプリから始めるのもいいでしょう。</p>
+<p>作るのが簡単なのはコンソール アプリです。
+このサイトでは、C# というプログラミング言語や、プログラミングに関する概念的な説明が主題なので、ほとんどのサンプルがコンソール アプリになっています。</p>
+<p>その他にもいろんな種類のテンプレートが用意されています。例えば、Visual Studio 2015では、iOSやAndroidなど、マイクロソフト以外の製品向けのアプリ開発ができるテンプレートも用意されています。選べるプログラミング言語も、C#の他、C++、Visual Basic、JavaScript、TypeScriptなどたくさんあります。Visual Studioが標準で用意しているものの他にも、拡張機能(いろんな会社から、商用・非商用問わずたくさん出ています)を入れることでより多くのテンプレートを利用できます。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/devenv/">C#&#x958B;&#x767A;&#x74B0;&#x5883;</a></li><li><a href="/study/csharp/devenv/ab_devenv/">C# &#x958B;&#x767A;&#x74B0;&#x5883;</a></li><li><a href="/study/csharp/devenv/getstarted_csharp/">&#x306F;&#x3058;&#x3081;&#x3066;&#x306E; C# &#x5B9F;&#x6F14;&#x7DE8;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

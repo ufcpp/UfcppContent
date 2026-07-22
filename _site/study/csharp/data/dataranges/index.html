@@ -1,0 +1,329 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;/&#x7BC4;&#x56F2;&#x51E6;&#x7406; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/data/dataranges/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">インデックス/範囲処理</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<h5 class="version version8">Ver. 8.0</h5>
+<p>C# 8.0 で、配列などに対して以下のような書き方をできるようになります。</p>
+<ul>
+<li><code>a[^i]</code> で「後ろからi番目の要素」を参照</li>
+<li><code>a[i..j]</code> で「i番目からj番目の範囲」を参照</li>
+</ul>
+<p>例えば、以下のような書き方で配列の前後1要素ずつを削ったものを得ることができます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> a = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> };
+ 
+        <span class="comment">// 前後1要素ずつ削ったもの</span>
+        <span class="keyword">var</span> middle = a[<span class="number">1</span>..^<span class="number">1</span>];
+ 
+        <span class="comment">// 2, 3, 4 が表示される</span>
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> middle)
+        {
+            Console.WriteLine(x);
+        }
+    }
+}</code></pre>
+<p>ちなみに、<code>i..j</code> は「iは含んでjは含まない」という範囲になります。
+<code>for (var x = i; x &lt; j; ++x)</code> のイメージ。</p>
+<p>より細かく言うと、以下のような機能の組み合わせになります。</p>
+<ul>
+<li><code>^i</code> で「後ろからi番目」を表す <code>Index</code> 型の値を得る</li>
+<li><code>i..j</code> で「i番目からj番目」を表す <code>Range</code> 型の値を得る</li>
+<li>所定の条件を満たす型に対して <code>Index</code>/<code>Range</code> を渡すと、所定のパターンに展開する</li>
+</ul>
+<p>いくつかのプログラミング言語で似たような構文があり、
+多くの場合は range (範囲)構文と呼ばれます。
+C# 8.0 で導入されたものは配列などのインデックス用途に特化していて、
+<code>Index</code>型と<code>Range</code>型からなるので、index/range (インデックス/範囲)構文と言ったりもします。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="background"></a>背景</h2>
+<h3 id="span"><a id="sec-generated-title-3"></a> <a id="span"></a>Span</h3>
+<p>C# 7.2 で、<a href="/study/csharp/resource/span/"><code>Span&lt;T&gt;</code> 構造体</a>が導入されました。
+配列や文字列中の一定範囲を抜き出して効率的に読み書きするための型です。
+(単純な機能なのでもっと昔からあってもよさそうなものですが、
+<a href="/study/computer/essential-software/memorymanagement/#garbage-collection">ガベージ コレクション</a>があっても<a href="/study/csharp/resource/span/#two-implementations">安全かつ高速に</a>動くようにするのが意外と大変で、C# 7.2 まで導入が見送られていました。)</p>
+<p>「<a href="/blog/2018/12/arrayindexer/">配列のインデクサー</a>」というブログで書いたことがあるんですが、
+<code>Span&lt;T&gt;</code> 構造体は特別な最適化の対象になっていて、非常に高速です。
+例えば以下の2つのメソッドでは、<code>Span&lt;T&gt;</code> を使った <code>Sum2</code> の方が高速です。</p>
+<pre><code class="language-csharp"><span class="comment">// i番目からj番目までの和。</span>
+[MethodImpl(MethodImplOptions.NoInlining)]
+<span class="keyword">static</span> <span class="keyword">int</span> Sum1(<span class="keyword">int</span>[] array, <span class="keyword">int</span> i, <span class="keyword">int</span> j)
+{
+    <span class="keyword">var</span> sum = <span class="number">0</span>;
+    <span class="keyword">for</span> (<span class="keyword">int</span> x = i; x &lt; j; x++) sum += array[x];
+    <span class="keyword">return</span> sum;
+}
+ 
+<span class="comment">// Sum1 と同じ処理を Span を使って書く。</span>
+<span class="comment">// Sum1 よりこっちの方が速い。</span>
+[MethodImpl(MethodImplOptions.NoInlining)]
+<span class="keyword">static</span> <span class="keyword">int</span> Sum2(<span class="keyword">int</span>[] array, <span class="keyword">int</span> i, <span class="keyword">int</span> j)
+{
+    <span class="keyword">var</span> sum = <span class="number">0</span>;
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> array.AsSpan()[i..j]) sum += x;
+    <span class="keyword">return</span> sum;
+}</code></pre>
+<h3 id="section-3"><a id="sec-generated-title-4"></a> <a id="unification"></a>範囲のルール統一</h3>
+<p>配列の一定範囲を抜き出すという処理は、<code>array.AsSpan(x, y)</code> というように、単なるメソッド呼び出しでもできます。
+ただ、ここで問題となるのは、引数の意味がメソッドによってぶれている点です。
+<code>x</code>、<code>y</code> にそれぞれ3、5を渡した場合、どういう意味になるでしょう。
+例えば、以下のようなパターンが考えられます。</p>
+<ul>
+<li>(1) 3, 4, 5 (3から5まで、3も5も含む)</li>
+<li>(2) 3, 4 (3から5まで、5は含まない)</li>
+<li>(3) 3, 4, 5, 6, 7 (3から5要素)</li>
+</ul>
+<p>実際、 .NET の標準ライブラリ中でもぶれています。
+例えば、<a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.threading.tasks.parallel.for?view=netstandard-2.1#System_Threading_Tasks_Parallel_For_System_Int32_System_Int32_System_Action_System_Int32__">Parallel.For</a>や<a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.random.next?view=netframework-4.8#System_Random_Next_System_Int32_System_Int32_"><code>Random.Next</code></a> は (2) の意味ですが、<a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.string.substring?view=netstandard-2.1#System_String_Substring_System_Int32_System_Int32_"><code>Substring</code></a>や<a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.memoryextensions.asspan?view=netstandard-2.1#System_MemoryExtensions_AsSpan__1___0___System_Int32_System_Int32_"><code>AsSpan</code></a>は (3) の意味です。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Threading.Tasks;
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// この2つは 1から3 (3は含まない) = 1, 2の意味</span>
+        Parallel.For(<span class="number">1</span>, <span class="number">3</span>, i =&gt; { });
+        <span class="keyword">var</span> v = <span class="keyword">new</span> Random().Next(<span class="number">1</span>, <span class="number">3</span>);
+ 
+        <span class="comment">// この2つは 1から3要素 = 1, 2, 3 の意味</span>
+        <span class="keyword">var</span> span = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }.AsSpan(<span class="number">1</span>, <span class="number">3</span>);
+        <span class="keyword">var</span> substr = <span class="string">&quot;abcde&quot;</span>.Substring(<span class="number">1</span>, <span class="number">3</span>);
+    }
+}</code></pre>
+<p>名前付き引数を使えば、多少混乱を予防することはできます。</p>
+<pre><code class="language-csharp">Parallel.For(fromInclusive: <span class="number">1</span>, toExclusive: <span class="number">3</span>, i =&gt; { });
+<span class="keyword">var</span> v = <span class="keyword">new</span> Random().Next(minValue: <span class="number">1</span>, maxValue: <span class="number">3</span>);
+<span class="keyword">var</span> span = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }.AsSpan(start: <span class="number">1</span>, length: <span class="number">3</span>);
+<span class="keyword">var</span> substr = <span class="string">&quot;abcde&quot;</span>.Substring(startIndex: <span class="number">1</span>, length: <span class="number">3</span>);</code></pre>
+<p>ただ、名前付き引数を使っても以下の問題があります。</p>
+<ul>
+<li>コードがとにかく長くなる</li>
+<li><code>Random.Next</code> のように「含むか含まないか」を明示していないやつがいる</li>
+<li>あくまで実装者の良心頼みになっている</li>
+<li>多次元データだと <code>matrix[1, 3, 1, 3]</code> みたいにさらにわかりにくい</li>
+</ul>
+<p>そこで、範囲を表す専用の構文が欲しいわけです。
+構文になっていれば意味がぶれることがなくなります。
+C# では、<code>i..j</code> で「i番目からj番目(j は含まない)」となる構文を採用しました。</p>
+<h3 id="section-4"><a id="sec-generated-title-5"></a> <a id="index-usage"></a>インデックス用途</h3>
+<p><code>i..j</code> と書いたとき、j を含むかどうかは難しい問題です。
+実際、あるプログラミング言語では j を含みますし、別のある言語では含みません。
+<code>..=</code> や <code>..&lt;</code> などで含む・含まないを選ぶようになっている言語もありますが、
+<code>..</code> だけを書く構文もあったりして、その <code>..</code> の意味は言語ごとにまちまちです。</p>
+<p>用途次第でもあります。
+「この範囲に入っているかどうかを判定」みたいな用途(要するに<a href="/study/csharp/datatype/patterns/">パターン マッチング</a>)だと、末尾も含んでくれている方がわかりやすいです。
+一方で、<code>Span</code>や<code>Substring</code>のように、配列や文字列から一定範囲を抜き出す用途(インデックス用途)では、末尾を含まない方が使いやすかったりします。</p>
+<p>インデックス用途での「末尾を含まない」には以下のようなメリットがあります。</p>
+<ul>
+<li><code>j - i</code> だけで長さを計算できる</li>
+<li>ループで使いやすい
+<ul>
+<li>ループでは <code>for (int x = i; x &lt; j; ++x)</code> というように <code>&lt;</code> で条件判定することが多い</li>
+</ul>
+</li>
+<li><code>i..i</code> (先頭と末尾が同じ)が不正にならない(単に長さ0の範囲になる)
+<ul>
+<li>逆に「j を含む」を採用する場合、長さ0の範囲は <code>i..(i-1)</code> と書く必要がある</li>
+</ul>
+</li>
+</ul>
+<p>C# の <code>i..j</code> で「j は含まない」の方を採用したのは、明確にインデックス用途を意図したものです。</p>
+<h2 id="index"><a id="sec-generated-title-6"></a> <a id="index"></a>Index</h2>
+<p>配列や文字列からの一定範囲の抜き出しではよく「末尾から i 番目」という場所を取りたいことがあります。
+C# 8.0 では、そのために単項 <code>^</code> 演算子を使います。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> i = ^<span class="number">1</span>; <span class="comment">// Length - 1 の場所</span>
+ 
+<span class="keyword">var</span> value = <span class="number">1</span>;
+<span class="keyword">var</span> j = ^value; <span class="comment">// 変数に対しても ^ を使える</span></code></pre>
+<p>単項 <code>^</code> 演算子はオペランドに <code>int</code> (か <code>int</code> に暗黙に変換できる型)しか受け付けません。
+また、戻り値は <code>Index</code> 構造体(<code>System</code> 名前空間)になります。
+<code>Index</code> は、以下のようなプロパティ・メソッドを持つ構造体です。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">struct</span> Index
+{
+    <span class="keyword">public</span> Index(<span class="keyword">int</span> value, <span class="keyword">bool</span> fromEnd = <span class="keyword">false</span>);
+    <span class="keyword">public</span> <span class="keyword">bool</span> IsFromEnd { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Value { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> GetOffset(<span class="keyword">int</span> length);
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">implicit</span> <span class="keyword">operator</span> Index(<span class="keyword">int</span> value)
+}</code></pre>
+<p><code>^i</code> は <code>new Index(i, true)</code> に展開されます
+(第2引数の <code>true</code> が「末尾から」の意味です)。
+<code>int</code> からの暗黙的な変換もあって、それは素直に「先頭から i 番目」の意味になります。</p>
+<h3 id="section-5"><a id="sec-generated-title-7"></a> <a id="non-negative"></a>補足: インデックスは0以上の整数</h3>
+<p>C# では、<a href="/blog/2018/12/arrayindex/">配列のインデックスは0以上(非負)という前提</a>があります。
+なので、<code>Index</code> 構造体も以下のような作りになっています。</p>
+<ul>
+<li>コンストラクターに負の整数を渡すと <code>IndexOutOfRange</code> 例外が発生する
+<ul>
+<li><code>^-1</code> みたいな書き方は文法的には認められるものの、実行時に例外発生</li>
+</ul>
+</li>
+<li>内部的には <code>int</code> 1つだけ持っていて、負の数を「末尾から」の意味で使っている
+<ul>
+<li>構造体のサイズは <code>int</code> と同じ4バイト</li>
+</ul>
+</li>
+</ul>
+<h2 id="range"><a id="sec-generated-title-8"></a> <a id="range"></a>Range</h2>
+<p>C# 8.0 で <code>..</code> という新しい構文が追加されました。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> r1 = <span class="number">1</span>..^<span class="number">1</span>;
+<span class="keyword">var</span> r2 = <span class="number">1</span>..;
+<span class="keyword">var</span> r3 = ..^<span class="number">1</span>;
+<span class="keyword">var</span> r4 = ..;
+ 
+<span class="keyword">var</span> i = <span class="number">1</span>;
+<span class="keyword">var</span> j = ^<span class="number">1</span>;
+<span class="keyword">var</span> r = i..j;</code></pre>
+<p>他の2項演算子と違って、<code>i..</code> や <code>..j</code>、<code>..</code> というようにオペランドを省略できます。
+オペランドは <code>Index</code> 型か、(<code>int</code> を含む) <code>Index</code> 型に暗黙的に変換できる型である必要があります。
+戻り値は <code>Range</code> 型(<code>System</code> 名前空間)になります。
+<code>Range</code> は、以下のようなプロパティ・メソッドを持つ構造体です。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">struct</span> Range
+{
+    <span class="keyword">public</span> Range(Index start, Index end);
+    <span class="keyword">public</span> Index Start { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> Index End { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> (<span class="keyword">int</span> Offset, <span class="keyword">int</span> Length) GetOffsetAndLength(<span class="keyword">int</span> length);
+}</code></pre>
+<p>左オペランドの省略時は先頭から、右オペランドの省略時は末尾までの意味になります。
+すなわち、<code>i..</code> は <code>i..^0</code> と、<code>..j</code> は <code>0..j</code> と、<code>..</code> は <code>0..^0</code> と同じ意味です。
+また、<code>i..j</code> は <code>new Range(i, j)</code> に展開されます。</p>
+<p>名前通り、<code>Start</code> が開始位置で、<code>End</code> が末尾位置です。
+コンストラクターの引数は、第1、第2引数がそれぞれ <code>Start</code>、<code>End</code> と対応しています。
+これまでの説明通り、<code>Start</code> は「含む」、<code>End</code>は「含まない」という扱いです。</p>
+<p>この辺りは言葉で説明してもわかりにくいと思うので、以下の図を参考にしてください。</p>
+<p><img src="/assets/media/1174/ranges.png" alt="Index/Range の意味" /></p>
+<p><code>i..^j</code> で、先頭からi要素、末尾からj要素を削った範囲になります。</p>
+<p>ちなみに、演算子の優先順位は結構高いです。
+2項演算(乗除算含む)や <a href="/study/csharp/datatype/typeswitch/#switch-expression"><code>switch</code> 式</a>よりも上になります。</p>
+<pre><code class="language-csharp">_ = <span class="number">2</span> * <span class="number">3</span>..<span class="number">4</span>; <span class="comment">// 2 * (3..4) の意味。そんな掛け算はできないのでコンパイル エラーに。</span>
+_ = <span class="number">2</span>..<span class="number">3</span> <span class="keyword">switch</span> <span class="comment">// 2..3 という Range が switch 式の引数になる</span>
+{
+    Range _ =&gt; <span class="number">4</span>,
+};
+_ = (<span class="number">1</span> + <span class="number">2</span>)..(<span class="number">3</span> + <span class="number">4</span>); <span class="comment">// 足し算とかを優先したければ () 必須</span></code></pre>
+<h2 id="indexrange"><a id="sec-generated-title-9"></a> <a id="indexer"></a>Index/Range とインデクサー</h2>
+<p><code>Index</code>/<code>Range</code>型に対するインデクサーは、
+以下で説明するように、
+一定のパターンで <code>int</code> に対するインデクサーや<code>Slice</code>メソッドに展開されます。</p>
+<p>(当初予定では、<code>^i</code>から<code>Index</code>型を、<code>i..j</code>から<code>Range</code>型を作るところまでだけが C# コンパイラーの仕事で、それを使ったインデクサーは使う側(配列や <code>List&lt;T&gt;</code>などのコレクションの側)の仕事にする予定でした。
+それだとあらゆるコレクションに対して1個1個インデクサーのオーバーロードを追加する作業が大変なのと、最適化が掛けにくいという理由で、現状のパターン ベースな方式に変更されました。)</p>
+<p><code>Index</code>型の <code>i</code> に対するインデクサー <code>a[i]</code> は基本的に以下のように展開されます。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> offset = i.GetOffset(a.Length);
+a[offset];</code></pre>
+<p>また、<code>Range</code> 型の <code>r</code> に対するインデクサー <code>a[r]</code> は基本的に以下のように展開されます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> offset1 = r.Start.GetOffset(a.Length);
+<span class="keyword">var</span> offset2 = r.End.GetOffset(a.Length);
+a.Slice(offset1, offset2 - offset1);</code></pre>
+<p><code>a</code> の型によって多少バリエーションがあります。
+C# のコレクションは長さを <code>Length</code> で取るものと <code>Count</code> で取るものの両方あるので、
+そのどちらにも対応しています。<code>Length</code> がなくて <code>Count</code> がある場合それを使います
+(<code>Length</code> があるならそっちが優先)。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> offset = i.GetOffset(a.Count);
+a[offset];</code></pre>
+<pre><code class="language-csharp"><span class="keyword">var</span> offset1 = r.Start.GetOffset(a.Count);
+<span class="keyword">var</span> offset2 = r.End.GetOffset(a.Count);
+a.Slice(offset1, offset2 - offset1);</code></pre>
+<p>また、<code>Range</code> 型インデクサーには、配列と文字列の場合だけ特別扱いがあります。
+<code>Slice</code> メソッドではなく、それぞれ <code>GetSubArray</code>、<code>Substring</code> メソッドが呼ばれます
+(<code>GetSubArray</code>は<code>RuntimeHelpers</code>クラス(<code>System.Runtime.CompilerServices</code> 名前空間)の静的メソッド)。</p>
+<h3 id="section-6"><a id="sec-generated-title-10"></a> <a id="avoid-copy"></a>コピーの回避</h3>
+<p>配列と文字列に対する <code>Range</code>型インデクサー <code>a[i..j]</code>
+(展開結果的には <code>GetSubArray</code> と <code>Substring</code>)は、
+それぞれ配列、文字列を返します。
+この際、新しい配列・文字列を確保してコピーするコストが発生します。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> array = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> };
+<span class="keyword">var</span> str = <span class="string">&quot;abcde&quot;</span>;
+ 
+<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++)
+{
+    <span class="comment">// こういう書き方をすると、ループのたびに new int[], new string が発生。</span>
+    <span class="comment">// だいぶ重たい。</span>
+    <span class="keyword">var</span> subarray = array[<span class="number">1</span>..^<span class="number">1</span>];
+    <span class="keyword">var</span> substr = str[<span class="number">1</span>..^<span class="number">1</span>];
+}</code></pre>
+<p>これらはそれなりに重たい処理なので、パフォーマンスにシビアな状況での利用には注意が必要です。</p>
+<p>コピーを発生させたくない場合、<a href="/study/csharp/resource/span/"><code>Span&lt;T&gt;</code></a>を経由します。
+要するに、<code>AsSpan()</code> や <code>AsMemory()</code> を挟めばコピーを回避できます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> array = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> };
+<span class="keyword">var</span> str = <span class="string">&quot;abcde&quot;</span>;
+ 
+<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++)
+{
+    <span class="comment">// 以下の書き方をすれば Span&lt;int&gt;/ReadOnlySpan&lt;char&gt; の Slice が呼ばれるようになる。</span>
+    <span class="comment">// これならコピーは発生せず、軽い。</span>
+    <span class="keyword">var</span> subarray = array.AsSpan()[<span class="number">1</span>..^<span class="number">1</span>];
+    <span class="keyword">var</span> substr = str.AsSpan()[<span class="number">1</span>..^<span class="number">1</span>];
+}</code></pre>
+<h5 id="section-7"><a id="sec-generated-title-11"></a>サンプル</h5>
+<p>「一定範囲を抜き出す」という処理は、テキスト処理でよく使います。</p>
+<p>例として、書式が決まっているテキストの中から一部分を取り出してみましょう。
+今回は「1行1項目で、<code>:</code> 区切りでキーと値が並んでいる」というような書式を考えます。
+この書式のテキストの中からキーだけを取り出すようなコードを以下のように書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Collections.Generic;
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> testData = <span class="stringCSharpVerbatim">@&quot;longitude: 139.8803943
+latitude: 35.6328964
+postal code: 279-0031
+&quot;</span>;
+ 
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> key <span class="keyword">in</span> GetKeys(testData))
+        {
+            Console.WriteLine(key);
+        }
+    }
+ 
+    <span class="comment">// 行頭から : までの間の文字列だけを抜き出す</span>
+    <span class="keyword">static</span> IEnumerable&lt;ReadOnlyMemory&lt;<span class="keyword">char</span>&gt;&gt; GetKeys(<span class="keyword">string</span> content)
+    {
+        <span class="keyword">var</span> start = <span class="number">0</span>;
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; content.Length; i++)
+        {
+            <span class="keyword">var</span> c = content[i];
+            <span class="keyword">if</span> (c == <span class="string">&#39;:&#39;</span>)
+            {
+                <span class="keyword">yield</span> <span class="keyword">return</span> content.AsMemory()[start..i];
+            }
+            <span class="keyword">else</span> <span class="keyword">if</span> (c == <span class="string">&#39;\n&#39;</span>)
+            {
+                start = i + <span class="number">1</span>;
+            }
+        }
+    }
+}</code></pre>
+<pre><code class="language-console">longitude
+latitude
+postal code</code></pre>
+<p>例なのでシンプルな書式にしましたが、もうちょっと実用的な、例えば JSON 形式からのキーの取り出しなども、こういうコードの延長線上になります。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/data/">&#x30C7;&#x30FC;&#x30BF;&#x5217;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/data/sp_foreach/">foreach</a></li><li><a href="/study/csharp/data/sp2_iterator/">&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;&#x30FC;</a></li><li><a href="/study/csharp/data/sp2_itpattern/">[&#x96D1;&#x8A18;] &#x5185;&#x90E8;&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;&#x3068;&#x5916;&#x90E8;&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;</a></li><li><a href="/study/csharp/data/da_about/">&#x30C7;&#x30FC;&#x30BF;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/data/sp3_linq/">LINQ</a></li><li><a href="/study/csharp/data/sp3_stdquery/">&#x6A19;&#x6E96;&#x30AF;&#x30A8;&#x30EA;&#x6F14;&#x7B97;&#x5B50;&#xFF08;&#x30AF;&#x30A8;&#x30EA;&#x5F0F;&#x95A2;&#x4FC2;&#xFF09;</a></li><li><a href="/study/csharp/data/sp3_stdqueryo/">&#x6A19;&#x6E96;&#x30AF;&#x30A8;&#x30EA;&#x6F14;&#x7B97;&#x5B50;&#xFF08;&#x305D;&#x306E;&#x4ED6;&#xFF09;</a></li><li><a href="/study/csharp/data/sp3_lazylist/">[&#x96D1;&#x8A18;] LINQ &#x3068;&#x9045;&#x5EF6;&#x8A55;&#x4FA1;</a></li><li><a href="/study/csharp/data/datamodulararchitecture/">[&#x96D1;&#x8A18;] &#x5C0F;&#x3055;&#x306A;&#x6A5F;&#x80FD;&#x306E;&#x7D44;&#x307F;&#x5408;&#x308F;&#x305B;</a></li><li><a href="/study/csharp/data/sp3_ormismatch/">[&#x96D1;&#x8A18;] O/R &#x30A4;&#x30F3;&#x30D4;&#x30FC;&#x30C0;&#x30F3;&#x30B9;&#x30DF;&#x30B9;&#x30DE;&#x30C3;&#x30C1;</a></li><li><a href="/study/csharp/data/sp3_ormismatch2/">[&#x96D1;&#x8A18;] O/R &#x30A4;&#x30F3;&#x30D4;&#x30FC;&#x30C0;&#x30F3;&#x30B9;&#x30DF;&#x30B9;&#x30DE;&#x30C3;&#x30C1;&#xFF08;&#x30AF;&#x30E9;&#x30B9;&#x306E;&#x7D99;&#x627F;&#xFF09;</a></li><li><a href="/study/csharp/data/sp3_linqtosql/">[&#x96D1;&#x8A18;] LINQ to SQL &#x5B9F;&#x8DF5;&#x7DE8;</a></li><li><a href="/study/csharp/data/sp3_iqueryable/">[&#x96D1;&#x8A18;] IQueryable &#x306E;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/data/misc_immutabledata/">&#x4E0D;&#x5909;(immutable)&#x306A;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

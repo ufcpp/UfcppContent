@@ -1,0 +1,241 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>await &#x3063;&#x3066;&#x8A00;&#x3046;&#x5358;&#x8A9E; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2018/1/await/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2018-01-08T18:53:34">2018-01-08</time></span><span>更新: <time datetime="2018-01-08T19:08:51">2018-01-08</time></span></div><h1 id="await">await って言う単語</h1>
+<p>C# 5.0で<a href="/study/csharp/cheatsheet/ap_ver5/#async">非同期メソッド</a>が導入されてから、
+正式リリースを基準にしても5年以上、
+最初の発表からだと7年以上経っています。</p>
+<p>で、5年経っても、「なんて読むの」「asyncのaとawaitのaは違う」などなどが「定番ネタ」として定期的に出てくるわけですが。
+特に、<a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Operators/await">ECMAScript 2017</a>がasync/awaitを導入したり、
+<a href="https://blogs.unity3d.com/jp/2017/07/11/introducing-unity-2017/">Unity 2017</a>がやっとC#のバージョンを6.0に上げれる感じになってきたり、
+5年の断絶を経て去年からasync/awaitに触れる人が増えているようです。</p>
+<p>5年も離れたら、世代断絶も起こりますよね…
+そりゃ、「定番ネタ」が改めて増えもしますよね…</p>
+<p>ということで、5年くらい前に同じようなことをどこかで書いてるはずなんですけど、改めて。</p>
+<h2 id="section">英単語</h2>
+<h3 id="section-1">えいしんく</h3>
+<p>まず読み方。</p>
+<ul>
+<li>async: エイシンク</li>
+<li>await : アウェイト</li>
+</ul>
+<p>ってやつ。async の方が「アシンク」と読まれがち。
+ごくまれに await の方を「エイウェイト」って間違う人もいるみたいですけども…</p>
+<p>なんていうか、接頭辞の a を「エイ」って読む英単語は珍しいんでよく間違われます。
+普通、aをエイと読むのはアクセントのあるところだけなわけですけども、asynchronous のアクセントは syn のところ。
+英語のアクセントって「接頭辞を除いて一番前」なことが多く、接頭辞である a にはアクセントが来ない。</p>
+<p>これ、たぶん、冠詞の a との弁別のためにこうなっちゃったのかなぁという感じはあります。
+a synchronous ~ と、asynchronicity で a の発音同じだと困るだろうと。
+日本語で言うと工学と光学、市立と私立みたいなもので。
+「ひかりがく」「いちりつ」「わたくしりつ」とか、読み方としてはきもいけど弁別のためにはこう読まざるを得ないことがあるというような類です。</p>
+<p>逆にいうと、冠詞を必要としていない日本語にカタカナ語として輸入するなら「アシンク」でも何も問題はなかったりはしますが…
+元々がギリシャ語の ασύγχρονη なのでこれの読みだとアシーンクロニーですし。</p>
+<p>ちなみに、後述するように async の a と await の a は別由来の別接頭辞なんですけども、
+由来が違うから読み方が違うわけじゃないです。
+async と同系統の a だと、例えば atom とかがそうですけども、これは英語でもアトムですし。</p>
+<h2 id="a">a- 接頭辞</h2>
+<p>asynchronous も await も、a + synchronous、a + wait という形の単語なわけですが…</p>
+<ul>
+<li>a + sync: a(否定) sync(同時)</li>
+<li>a + wait: a(向かう) wait(待つ)</li>
+</ul>
+<p>になります。</p>
+<p>async はギリシャ語系で、a は否定接頭辞。同じような構成の単語だと、</p>
+<ul>
+<li>atom: a(否定) tom(切る) → 「切れない」 → 原子</li>
+<li>atopy: a(否定) topy(場所、由来) → 「由来がない」 → 特定されていない、奇妙な</li>
+</ul>
+<p>とかがあります。
+ギリシャ語だから変。英語化するときに un とかに振り替えとけよ…という感じ。</p>
+<p>await の方は、古フランス語(フランク語)の agaiter が由来でそれの a はラテン語の ad- 接頭辞から来てるっぽく、
+現代英語だと to (~へ向かう)的な意味っぽい。
+近いのはたぶん、</p>
+<ul>
+<li>amaze: a(向かう) maze(迷路、当惑) → 驚く</li>
+</ul>
+<p>とか。
+類似の ad- まで広げると、</p>
+<ul>
+<li>adjust: ad(向かう) just(ちょうど) → 「ちょうどよくする」 → 調整する</li>
+<li>adventure: ad(向かう) venture(投機、大胆) → 「大胆に向かう」 → 冒険</li>
+</ul>
+<p>とか。</p>
+<p>同じスペルで全然意味が違うわけですが…
+a- 接頭辞は特にひどいみたいでして、まとめると以下のようなものがあるっぽいです。</p>
+<ul>
+<li>ギリシャ語の a- 由来 → not。否定</li>
+<li>ラテン語の ab- 由来 → from, out。「~から離れる」</li>
+<li>ラテン語の ad- 由来 → to。「~に向かう」</li>
+<li>フランス語の à 由来 → さらにたどるとラテン語の ad- 由来。on とか at 的な意味も</li>
+<li>古英語の ar-, or- 由来 → on, up</li>
+</ul>
+<p>由来違いが混ざったのと、
+本来あった差が消失しているせいでひどいみたいです。</p>
+<p>日本語で言うと、
+不遍・普遍、不通・普通とか、
+読む/呼ぶ → 読んだ/呼んだ みたいな感じですかね。
+不と普は元の中国語だと区別がつくはずが、日本語は発音が少ないので区別できなくなり。
+む・ぶは古代日本語だと区別していたはずが、音便変化で同じになってしまったり。</p>
+<h3 id="wait-await">wait と await</h3>
+<p>wait 自体に動詞用法がある現在、別途 await があるのはちょっと奇妙なものの、
+フランク語の時点で gaiter と agaiter 両方あるみたいです。</p>
+<p>await の方は古英語っぽく感じるらしく、古臭い・フォーマルな印象になるそうです。
+まあこの辺り、「待つ」って大和言葉があるのに「待機」って漢語由来の単語があって、
+待機の方がフォーマルな印象になるのと同じ。</p>
+<p>a- (向かう)が付くことでニュアンスも変わるらしく、類語辞書を引くと、</p>
+<ul>
+<li>wait → interval, downtime, halt, hold</li>
+<li>await → anticipate, hope, ready for, look for</li>
+</ul>
+<p>とかが並んでいます。要するに、</p>
+<ul>
+<li>wait → 待機。止まって待つ(他の事せず待ってる印象あり)</li>
+<li>await → 待望。気持ち的には待ってる(他のことをしてる印象あり)</li>
+</ul>
+<p>という区別になります。</p>
+<p>あと、「await は wait 単体じゃなくて、wait for と類語」とか言われたりします。
+「A wait B」だと「A が B を待たせる」的な感じで、「A await B」「A wait for B」だと「AがBの到来を待つ」。</p>
+<h3 id="q">Q. これだから英語は</h3>
+<ol type="A">
+<li>「不遍・普遍」「市立・私立」「読んだ・呼んだ」で困ったことのない人だけが石を投げなさい。</li>
+</ol>
+<p>「これだから自然言語は」という感じはするので、みんな形式言語で会話すればいいんじゃないでしょうか。</p>
+<h3 id="async-wait">async + wait?</h3>
+<p>で、なんか、「<a href="https://github.com/dotnet/csharplang/issues/1237">await って、もしかして asynchronously wait の略で await なの？</a>」とかいう都市伝説が発生しているらしく…</p>
+<p>ちなみに、質問に関する回答は「it's <a href="https://ja.wikipedia.org/wiki/%E3%82%BB%E3%83%AC%E3%83%B3%E3%83%87%E3%82%A3%E3%83%94%E3%83%86%E3%82%A3">serendipity</a>」。</p>
+<p>どうも、C# の仕様書に「await: asynchronously wait for the tasks completion」と書かれているからというのが理由みたいなんですけども。
+言われてみれば、非ネイティブにはつらい文面。</p>
+<p>英語の、前置詞によってニュアンスが変わるのは本当に難しい…
+とはいえ、接頭辞のカオスっぷりに比べると幾分かマシなので、
+時代とともに「基本的な動詞 + 副詞/前置詞」で表現の幅を増やす用法が増えているという話もあります。</p>
+<h2 id="c-await">C# が await キーワードを採用</h2>
+<p>C# が非同期メソッドを導入する際には、文法をどうするか、特に await に相当する単語をどうするかはかなり悩んだみたいです。</p>
+<p>Eric Lippert (当時の中の人)のブログ:</p>
+<ul>
+<li><a href="https://blogs.msdn.microsoft.com/ericlippert/2010/10/29/asynchronous-programming-in-c-5-0-part-two-whence-await/">Asynchronous Programming in C# 5.0 part two: Whence await?</a></li>
+</ul>
+<h3 id="yield">yield 案</h3>
+<p>元々、2010年のPDCでの最初の発表の時点では yield でした。</p>
+<pre><code class="language-csharp">Task M()
+{
+    <span class="keyword">yield</span> Task.Delay(<span class="number">1</span>);
+    <span class="keyword">var</span> text = <span class="keyword">yield</span> File.ReadAllTextAsync(<span class="string">&quot;a.txt&quot;</span>);
+}</code></pre>
+<p>yield と言えば、C# だと<a href="/study/csharp/data/sp2_iterator/">イテレーター構文</a>があります。</p>
+<pre><code class="language-csharp">IEnumerable&lt;<span class="keyword">char</span>&gt; Producer()
+{
+    <span class="keyword">yield</span> <span class="keyword">return</span> <span class="string">&#39;&quot;&#39;</span>;
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++)
+    {
+        <span class="keyword">yield</span> <span class="keyword">return</span> (<span class="keyword">char</span>)(i + <span class="string">&#39;0&#39;</span>);
+    }
+    <span class="keyword">yield</span> <span class="keyword">return</span> <span class="string">&#39;&quot;&#39;</span>;
+}
+
+<span class="keyword">void</span> Consumer()
+{
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> c <span class="keyword">in</span> Producer())
+    {
+        Console.WriteLine(c);
+    }
+}</code></pre>
+<p>これで以下のような感じの挙動になります。</p>
+<p><img src="/assets/media/1159/yieldreturn.png" alt="yield return" /></p>
+<p>Producer 側で値を1つ作るたびに、その値を Consumer 側に渡すような動作。</p>
+<p>yield は yield で日本人には何か難しい単語で、以下のような意味があります。</p>
+<ul>
+<li>(車線などを)譲る・明け渡す・降伏する</li>
+<li>産み出す・収穫/利益が出る</li>
+</ul>
+<p>語源的には「支払う」という意味らしく、後者の意味も「大地から恵みを支払ってもらう」「農作業の結果の支払いを受ける」みたいな感じでしょうか。</p>
+<p>それか、win が「勝つ」の意味と「獲得する」の意味があるのと同じような感じですかね。
+何かを得るために戦う。なので戦いに勝ったら何かもらえるのは当然、みたいな感じで。
+「譲る」と言うからには「産出」を伴うのが当然というか。
+略奪文化怖い…</p>
+<p>で、「A yield B to C」と書くと、「A は B を(産み出して) C に譲る」になるみたいです。</p>
+<p>イテレーターの yield return だと、「制御/スレッド/CPU の利用権を他のメソッドに譲る」みたいな感じで yield という単語が使われます。
+でも、「A yield B to C」の用法があるので、
+Producer yield return values of &quot;, 0, 1, 2, &quot; to Consumerで
+「Producer が戻り値 &quot;, 0, 1, 2, &quot; を産み出して、Consumer に譲り渡す」みたいなニュアンスもたぶんあります。</p>
+<p>さて、非同期メソッドの「yield 案」に話を戻しますが、
+「制御/スレッド リソース/CPU の利用権を他のメソッドに譲る」という意味では、
+非同期メソッドがやっていることはまさにこれです。
+実のところ、イテレーターと非同期メソッドは、動作原理/C# コンパイラーのコード生成的な所は全く同じものです。
+イテレーターの、非同期処理への応用結果が非同期メソッド。</p>
+<p>しかしここで問題になるのが、「何かを産み出しつつ譲る」というニュアンスの方。
+<code>await Task.Delay(1)</code>で、Producer は Consumer に <code>Task</code> を支払っているのかというと、そんなことはなく。
+イテレーターの場合には譲り渡す相手が明確にいましたが、
+非同期メソッドの場合は「スレッド リソースをOSに返還する」みたいな見えない部分での譲渡になるのがわかりにくいです。</p>
+<p>それでも、イテレーターよりも先に非同期メソッドがあったのなら、もしかしたら yield 採用の芽もあったかもしれません。
+とはいえ、似て非なるものに同じキーワードを使うのも怖いですし。
+将来的には「<a href="https://github.com/dotnet/csharplang/issues/43">非同期ストリーム</a>」という、非同期メソッドとイテレーターを混ぜれる機能も入る予定なので、混ざる前提でキーワードを決める必要があります。</p>
+<p>上記ブログには「yield return との区別が必要なら、yield with, yield for, yield while, yield until はどうか？」というコメントも結構多いくらいです。
+ただ、ECMAScript 2017とかではむしろ、単に <code>yield</code> で generator (C# のイテレーター相当の機能)を表すことになっていますし、
+yield return みたいな複合キーワード(2単語で初めてキーワード扱い)は総じて受けが悪いです。</p>
+<h3 id="section-2">他の案</h3>
+<p>他だと、Eric Lippert の挙げているのが</p>
+<ul>
+<li>wait for</li>
+<li>while away</li>
+<li>hearken unto</li>
+<li>for sooth Romeo wherefore art thou</li>
+</ul>
+<p>コメントに挙がってるのが</p>
+<ul>
+<li>after</li>
+<li>continue with, continue after</li>
+</ul>
+<p>とか。</p>
+<p>wait for は、それとほぼ同義を1単語で表す await があるわけで。</p>
+<p>while とか continue は<a href="/study/csharp/structured/st_loop/">ループで使うやつ</a>と被るから駄目でしょうね。</p>
+<p>after はどうだったんだろう。そもそも候補に挙げている人も少ないので、あんまりしっくりこないのかも。</p>
+<p>hearken とか、wherefore art thou とかは完全にネタです。
+await 自体が「古めかしい印象」の単語なので、
+もっと古典な hearken unto (listen to) とか wherefore art thou (why are you: ロミオとジュリエットの「どうしてあなたは」)とかをシャレで挙げています。
+まあ、「await は気持ち悪い？俺もそう思う。けど難しかったんだ」くらいの主張だと思われます。</p>
+<h3 id="await-1">await 案</h3>
+<p>ということで、最終的には await になりました。
+前述の通り、await には「待望」(待ちつつも他の事やってる感じ)のニュアンスがちょっとあります。</p>
+<pre><code class="language-csharp"><span class="keyword">async</span> Task M()
+{
+    <span class="comment">// wait = 待機</span>
+    <span class="comment">// 止まって待つ</span>
+    <span class="comment">// Thread.Sleep してるのと同じで、スレッド リソースを確保したままスレッドが止まる</span>
+    Task.Delay(<span class="number">1</span>).Wait();
+
+    <span class="comment">// await = 待望</span>
+    <span class="comment">// 気持ち待ってるけど作業は止めない</span>
+    <span class="comment">// スレッド リソースを明け渡すので、OS はそのリソースを他に使える</span>
+    <span class="keyword">await</span> Task.Delay(<span class="number">1</span>);
+}</code></pre>
+<p>とはいえ、await も割かしぎりぎり採用された感じです。
+「なんか wait の古めかしい言い方」、「wait forと同じ意味」くらいにも思われる単語ですんで。
+wait と await で内部的に起きる現象が違うというのはだいぶ危うい感じ。</p>
+<p>とはいえ、メソッド <code>M</code> にとっては <code>Task</code> はやっぱり「完了を待ちたいもの」になります。
+「待ちたいんだけど単純に待機しちゃダメ」と言うのが非同期メソッドの難しいところなので…</p>
+<p>結局、去年リリースされた <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Operators/await">ECMAScript のやつ</a>も await になりましたし、
+<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3722.pdf">C++ に出てる提案</a>が await なのは提案者が Microsoft なので当然として、
+<a href="https://www.python.org/dev/peps/pep-0492/">Python</a> とか <a href="https://gist.github.com/lattner/31ed37682ef1576b16bca1432ea9f782">Swift</a> で出ている提案も await を使う雰囲気になっていますし、
+「わざわざ変えなきゃいけないほどは悪くない」程度には受け入れられている感じはします。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2018/1/">1&#x6708;</a></li><li><a href="/blog/2018/1/pickuproslyn0103/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 1/3: Regex &#x30D1;&#x30FC;&#x30B5;&#x30FC; / C# 7.2 fixes</a></li><li><a href="/blog/2018/1/getunicodecategory/">GetUnicodeCategory(int codePoint) &#x3092;&#x63D0;&#x6848;&#x3057;&#x3066;&#x307F;&#x305F;</a></li><li><a href="/blog/2018/1/pickuproslyn0121/">Pickup Roslyn 1/21</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

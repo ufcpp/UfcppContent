@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>C# 9.0 &#x6700;&#x7D42;&#x7248; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2020/9/csharp9final/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2020-09-13T09:41:23">2020-09-13</time></span><span>更新: <time datetime="2020-09-13T09:41:23">2020-09-13</time></span><span class="entry-tags"><span class="entry-tag">C# 9.0</span></span></div><h1 id="c-9.0">C# 9.0 最終版</h1>
+<p>いくつかライブ配信では言ってたんですが、C# 9.0 がそろそろ機能確定しそうな感じ。
+11月リリースと言ってるわけなので、まあ、時期的にもこの辺りで確定していないとまずいでしょう。</p>
+<p>ということで、先日、 What's new in C# 9.0 もドキュメント化されて docs 上に公開されました。</p>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-9?WT.mc_id=DT-MVP-4028921">What's new in C# 9.0</a></li>
+</ul>
+<p>見出しに載るようなレベルでの機能の増減はもうありません。</p>
+<p>Records とか Function pointers とか、一部の機能はまだちょっと修正が入るかと思います。
+それに関しては9月9日の Design Meeting 議事録にまとまっています。
+(同日の議題には C# 10.0 の話題というか、C# 10.0 に流れてしまったものの話もあり。)</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2020/LDM-2020-09-09.md">C# Language Design Meeting for September 9th, 2020</a></li>
+</ul>
+<p>ちなみに先日のライブ配信:</p>
+<div>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/nJ1TMNfmllA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+<h2 id="visual-studio-16.8-preview-2">Visual Studio 16.8 Preview 2</h2>
+<p><a href="https://youtu.be/Uc04x0eZBBM">16.8 Preview 2 が出た時点でのライブ配信</a>では気づいてなかったんですが、
+以下の2つの機能、この時点で入っていました。
+(これらが最後の C# 9.0 機能です。)</p>
+<ul>
+<li>Covariant return types</li>
+<li>Extension GetEnumerator</li>
+</ul>
+<h3 id="covariant-return-types">Covariant return types</h3>
+<p>いわゆる共変戻り値。virtual メソッドの override 側で、戻り値の型を共変にできるようになりました。
+要するに、以下のようなやつです。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Base
+{
+    <span class="keyword">public</span> <span class="keyword">virtual</span> Base Clone() =&gt; <span class="keyword">new</span> Base();
+}
+
+<span class="keyword">class</span> Derived : Base
+{
+    <span class="comment">// これの戻り値、C# 8.0 までは Base でないとダメだった</span>
+    <span class="keyword">public</span> <span class="keyword">override</span> Derived Clone() =&gt; <span class="keyword">new</span> Derived();
+}</code></pre>
+<p>デリゲートや、<code>out</code> 修飾付きのジェネリック型引数などではこれまでもできていたことですし、
+認めてまずいことは何1つありません。
+これができないことは割かしずっと問題として認識はされていて、
+今になってようやく実装されたのは単に優先度の問題です。</p>
+<p>C# 9.0 の機能のメジャーな機能の中では唯一、 .NET Runtime 側の修正が必須
+(C# コンパイラーによる小手先のトリックだけでは実現不能)な機能です。
+要するに、「.NET Core への移行だけで手一杯(C# 7.0 付近)」 → 「<a href="/study/csharp/oop/oo_interface/#dim">インターフェイスのデフォルト実装</a>の方が優先(C# 8.0)」 → 「共変戻り値に着手(今ここ)」という感じ。</p>
+<p>(インターフェイスのデフォルト実装同様、というかそれよりさらにだいぶ昔から、Java にはこの機能があったり。
+Android での Java との相互運用のためもあって、.NET Core と Xamarin (Mono) との統合を目指している今このタイミングで共変戻り値も採用になりました。)</p>
+<h3 id="extension-getenumerator">Extension GetEnumerator</h3>
+<p><code>GetEnumerator</code> が拡張メソッドであっても <a href="/study/csharp/data/sp_foreach/"><code>foreach</code> ステートメント</a>で使えるようになりました。</p>
+<p>例えば以下のような拡張メソッドを用意することで、2-<a href="/study/csharp/datatype/tuples/">tuple</a> に対する <code>foreach</code> が使えます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Collections.Generic;
+ 
+<span class="keyword">foreach</span> (<span class="keyword">var</span> i <span class="keyword">in</span> (<span class="number">1</span>, <span class="number">2</span>))
+{
+    Console.WriteLine(i);
+}
+ 
+<span class="keyword">static</span> <span class="keyword">class</span> TupleExtensions
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> Tuple2Enumerator&lt;T&gt; GetEnumerator&lt;T&gt;(<span class="keyword">this</span> (T, T) t) =&gt; <span class="keyword">new</span>(t);
+ 
+    <span class="keyword">public</span> <span class="keyword">struct</span> Tuple2Enumerator&lt;T&gt; : IEnumerator&lt;T&gt;
+    {
+        <span class="keyword">private</span> <span class="keyword">int</span> _i;
+        <span class="keyword">private</span> (T, T) _tuple;
+ 
+        <span class="keyword">public</span> Tuple2Enumerator((T, T) tuple)
+        {
+            _i = <span class="number">0</span>;
+            _tuple = tuple;
+        }
+ 
+        <span class="keyword">public</span> T Current =&gt; _i <span class="keyword">switch</span>
+        {
+            <span class="number">1</span> =&gt; _tuple.Item1,
+            <span class="number">2</span> =&gt; _tuple.Item2,
+            _ =&gt; <span class="keyword">default</span>!,
+        };
+ 
+        <span class="keyword">public</span> <span class="keyword">bool</span> MoveNext() =&gt; ++_i &lt; <span class="number">3</span>;
+ 
+        <span class="keyword">object</span> System.Collections.IEnumerator.Current =&gt; Current!;
+        <span class="keyword">void</span> System.Collections.IEnumerator.Reset() =&gt; <span class="keyword">throw</span> <span class="keyword">new</span> NotImplementedException();
+        <span class="keyword">void</span> IDisposable.Dispose() { }
+    }
+}</code></pre>
+<p>まあ、実用途があるかというとそこまで有益な使い道は思いつかないんですが…</p>
+<p>配信ではしゃべってるんですが、
+<a href="https://github.com/ufcpp-live/UfcppLiveAgenda/issues/14#issuecomment-687748403">タプルに対しては arity ごとに別拡張メソッドが必要だったり</a>、
+<a href="https://github.com/ufcpp-live/UfcppLiveAgenda/issues/14#issuecomment-687749388">Range に対しては inclusive/exclusive 問題がやっぱりだいぶ混乱しそうとか</a>あり。</p>
+<p>これは、他の新しめの文法との一貫性を取るためです。
+<a href="/study/csharp/misc/miscpatternbased/#index">パターン ベースな構文一覧</a>にある通り、
+<a href="/study/csharp/data/sp3_stdquery/">クエリ式</a>とか<a href="/study/csharp/datatype/deconstruction/#arbitrary-types">分解</a>、
+<a href="/study/csharp/async/sp5_awaitable/#awaiter">await</a> では認めていることなので、
+それと揃えたいという話が前々からありました。</p>
+<p>(確かそれも、実用性が低めということで着手されず、最終的にはコミュニティ貢献(C# チーム外の人の実装)だったと思います。)</p>
+<h3 id="null">null 許容参照型の改善</h3>
+<p><a href="https://github.com/dotnet/csharplang/issues/3297">#3297</a>のうち、たぶん、制約なしジェネリック型に対する <code>T?</code> は 16.8 Preview 2 で入ったはず。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> C&lt;T&gt;
+<span class="comment">//where T :class // これがあれば前からOK</span>
+<span class="comment">//where T :struct // これがあれば前からOK</span>
+<span class="comment">// 制約なしは今回から初めてOK</span>
+{
+    <span class="comment">// これだとエラー。 </span>
+    <span class="comment">// T? と言いつつ、C&lt;int&gt; とかを渡すと int。int? ではない</span>
+    <span class="comment">//public static T? M() =&gt; null;</span>
+ 
+    <span class="comment">// 実は nullable じゃなくて、defaultable</span>
+    <span class="comment">// LINQ の FirstOrDefault 的な奴</span>
+    <span class="comment">// あまりにきもいから、当初 T?? にしようという案もあった</span>
+    <span class="comment">// ? になったのは、 x ?? y の ?? と区別つかなくて困ったかららしい</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> T? M() =&gt; <span class="keyword">default</span>;
+}</code></pre>
+<p>ただこれ、少々クセはありまして。
+上記コメントにもありますが、この場合の <code>T?</code> は nullable じゃなくて「defaultable」と呼んだ方がいいかもしれないようなものです。
+以下のように、型引数として非 null 値型を渡すと nullable にはなりません。</p>
+<pre><code class="language-csharp"><span class="keyword">string</span>? x1 = C&lt;<span class="keyword">string</span>?&gt;.M();
+<span class="keyword">string</span>? x2 = C&lt;<span class="keyword">string</span>&gt;.M(); <span class="comment">// 順当に string?</span>
+<span class="keyword">int</span>?    x3 = C&lt;<span class="keyword">int</span>?&gt;.M();   <span class="comment">// 順当に int?</span>
+<span class="keyword">int</span>     x4 = C&lt;<span class="keyword">int</span>&gt;.M();    <span class="comment">// これの戻り値は int? にならない。default(int)、つまり、0 が返る。</span></code></pre>
+<p>「実は nullable じゃなくて defaultable」という挙動が気持ち悪すぎて C# 8.0 時点では見送られたし、
+9.0 でも <code>T??</code> みたいな他の文法が検討されたりしたんですが、他の文法にもいろいろ問題があって、
+結局単に「制約なしの <code>T?</code> は defaultable」ということになったみたいです。</p>
+<h2 id="c-9.0-1">C# 9.0 最終トリアージ</h2>
+<p><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2020/LDM-2020-09-09.md">C# Language Design Meeting for September 9th, 2020</a>は、C# 9.0 のタイミングでやる作業の最終判断みたいな感じになっています。</p>
+<p>冒頭で言った通り、
+「<a href="https://docs.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-9?WT.mc_id=DT-MVP-4028921">What's new in C# 9.0</a>」みたいな記事が docs に並ぶ時点でもう、大きな変更はないんですけども、
+いくつか細かい議題が。</p>
+<p>とりあえず今日は 9.0 の残作業の話のみ。</p>
+<p>「10.0 行き」みたいな感じで分類されているものも、
+言い回しとしては「10.0 までの期間で再検討」みたいなふわっとしたものが多いので、
+もうちょっと固まってきたら改めて。
+その他、「Anytime (いつやるか不明。相当低優先度)」行きなものも省略。</p>
+<h3 id="section">! と .? の組み合わせがおかしい</h3>
+<p><a href="https://github.com/dotnet/csharplang/issues/3393">#3393</a></p>
+<p>現在、<code>a?.b.c!.d.e</code> が <code>(a?.b.c)!.d.e</code> として解釈されてしまうという問題があります。</p>
+<p><a href="/study/csharp/resource/rm_nullusage/#key-null-conditional">null 条件演算子 <code>?.</code></a>のショートサーキットの性質上、<code>!</code> の有無によって挙動が変わります。
+<a href="/study/csharp/resource/nullablereferencetype/#null-forgiving">null 抑止演算子 <code>!</code></a>の理念としては、<code>!</code> の有無で挙動は変えたくないそうで、これは完全に想定外の仕様バグです。</p>
+<p>ただ、C# 8.0 で1度この仕様で実装してしまったものはしょうがないので、「破壊的変更を許容してでも直すべきバグかどうか」が争点にはなっていました。
+まあ、それでも「9.0 で直す」判定になりそうです。</p>
+<h3 id="section-1">インターフェイスの静的メソッドが共変注釈をちゃんと見てない</h3>
+<p><a href="https://github.com/dotnet/csharplang/issues/3275">#3275</a></p>
+<p>これもほぼバグ。こっちは破壊的変更をするわけでもなく、単に深刻度が低くて優先度が低い状態。
+Pull Request はすでに出ていて間に合うかどうかだけの問題で、
+一応まだ C# 9.0 候補だそうです。</p>
+<h3 id="record">record がらみ</h3>
+<p><a href="https://github.com/dotnet/csharplang/issues/3226">#3226</a>、
+<a href="https://github.com/dotnet/csharplang/issues/3213">#3213</a>、
+<a href="https://github.com/dotnet/csharplang/issues/3137">#3137</a> など</p>
+<p>結構、10.0 行きになった機能はあります。</p>
+<p>ただ、いくつかは 16.8 Preview 2 時点で実装されていないけども正式リリースまでに実装されるということになっているものがあります。</p>
+<ul>
+<li><code>ToString</code> で単に型名だけじゃなく、<code>Point { X = 1, Y = 2 }</code> みたいな文字列化されるようになる</li>
+<li><code>==</code> 演算子が生成されるようになる
+<ul>
+<li>reference equal じゃなくて、<code>Equals</code> メソッド呼び出しの「値による比較」になる</li>
+</ul>
+</li>
+<li><code>Equals</code> と <code>GetHashCode</code> (コンパイラーが自動生成してくれるものの、手書きで挙動を上書き可能)のうち、片方だけ手動上書きすると警告になる</li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2020/9/">9&#x6708;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

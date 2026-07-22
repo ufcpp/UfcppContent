@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>field, value &#x3092;&#x6587;&#x8108;&#x30AD;&#x30FC;&#x30EF;&#x30FC;&#x30C9;&#x5316; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2024/2/value-as-context-keyword/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2024-02-24T22:20:18">2024-02-24</time></span><span>更新: <time datetime="2024-02-24T23:08:00">2024-02-24</time></span></div><h1 id="field-value">field, value を文脈キーワード化</h1>
+<p>C# 13 向けに検討されている機能の一つに、
+「半自動プロパティ」とか「field キーワード」と呼ばれているものがあります。
+元々は C# 12 向けに考えられていて、去年、うちのブログでも書いているやつです。</p>
+<ul>
+<li><a href="/blog/2023/1/semi-auto-property/">【C# 12 候補】半自動プロパティ</a></li>
+</ul>
+<p>簡単におさらいすると、
+プロパティの <code>get</code>/<code>set</code> アクセサー内で、<code>field</code> を使って
+<a href="/study/csharp/oop/oo_property/#auto">バッキング フィールド</a>(自動プロパティの値を保存するためにコンパイラーが生成するフィールド)に明示的にアクセスするというものです。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+    <span class="comment">// 手動プロパティ (manual property)</span>
+    <span class="comment">// (と、自前で用意したフィールド)。</span>
+    <span class="comment">// こういう、プロパティからほぼ素通しで値を記録しているフィールドを「バッキング フィールド」(backing field)という。</span>
+    <span class="keyword">private</span> <span class="keyword">int</span> _x;
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span> =&gt; _x; <span class="keyword">set</span> =&gt; _x = value; }
+
+    <span class="comment">// 自動プロパティ (auto-property)。</span>
+    <span class="comment">// 前述の X とほぼ一緒。</span>
+    <span class="comment">// バッキング フィールドの自動生成。</span>
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+    <span class="comment">// 【C# 12 候補(改め、13 候補)】 半自動プロパティ (semi-auto-property)。</span>
+    <span class="comment">// バッキング フィールドは自動生成。</span>
+    <span class="comment">// 全自動の方と違って、バッキング フィールドの使い方は自由にできる。</span>
+    <span class="comment">// field キーワードでバッキング フィールドを読み書き。</span>
+    <span class="keyword">public</span> <span class="keyword">int</span> Z { <span class="keyword">get</span> =&gt; field; <span class="keyword">set</span> =&gt; field = value; }
+}</code></pre>
+<p>C# 12 時点では「これを破壊的変更なしで実装するのは大変」ということで見送りになりまして、
+その結果検討されていたのが先日書いたブログの話。</p>
+<ul>
+<li><a href="/blog/2024/2/breaking-changes/">C# での破壊的変更の今後の扱い (続報)</a></li>
+</ul>
+<p>ここで、「<code>field</code> の扱いで破壊的変更があるんだったら、<code>value</code> についても…」
+という話が出ています。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/issues/7964">[Proposal]: Field and value as contextual keywords #7964</a></li>
+</ul>
+<p>というのも、<code>value</code> (プロパティの <code>set</code> 内でだけ特別な意味を持つ)はちょっと C# 的には珍しく、
+キーワードではなくて「暗黙に定義された引数」で、ちょっと浮いた挙動をします。</p>
+<p>1つ目、<a href="/study/csharp/start/st_variable/#identifier"><code>@</code> で「脱キーワード化」</a>ができない。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X
+    {
+        <span class="keyword">set</span>
+        {
+            <span class="comment">// value は @ を付けてもダメ。</span>
+            <span class="comment">// 扱いが「暗黙定義された引数」なので、@value もその引数を指す。</span>
+            <span class="keyword">var</span> @value = <span class="number">1</span>;
+
+            <span class="comment">// 普通、キーワードだったら @ を付けることで識別子に使える。</span>
+            <span class="keyword">var</span> @<span class="keyword">this</span> = <span class="number">2</span>;
+        }
+    }
+}</code></pre>
+<p>2つ目、<a href="/study/csharp/start/st_string/#nameof-operator"><code>nameof</code></a>。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X
+    {
+        <span class="keyword">set</span>
+        {
+            <span class="comment">// 逆に、引数扱いゆえに nameof が使える。</span>
+            <span class="keyword">var</span> n1 = nameof(value);
+
+            <span class="comment">// キーワードには nameof は使えない。</span>
+            <span class="keyword">var</span> n2 = nameof(<span class="keyword">this</span>);
+        }
+    }
+}</code></pre>
+<p>3つ目、外側の識別子の参照。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+    <span class="keyword">int</span> value;
+    <span class="keyword">int</span> @<span class="keyword">this</span>;
+
+    <span class="keyword">public</span> <span class="keyword">int</span> X
+    {
+        <span class="keyword">set</span>
+        {
+            <span class="comment">// 外にある「value フィールド」すら、@value では参照できない。</span>
+            <span class="comment">// 暗黙の引数の方になる(@ を付けるだけ無駄)。</span>
+            <span class="comment">// (ちなみに、 this.value = 1; と書けばフィールド参照になる。)</span>
+            @value = <span class="number">1</span>;
+
+            <span class="comment">// キーワードの場合は @this で外のフィールド参照になる。</span>
+            @<span class="keyword">this</span> = <span class="number">2</span>;
+        }
+    }
+}</code></pre>
+<p><code>field</code> を足すことで軽微ながら破壊的変更が出るんなら、
+<code>value</code> に軽微な破壊的変更がかかってもいいのではということで、
+もうこの際 <code>value</code> もキーワード(<code>set</code> 内限定なので、<a href="/study/csharp/appendix/ap_reserved/#context">文脈キーワード</a>)してもいいのではという話になります。
+どういう影響があるかというと、先ほどの例からわかる通りで、</p>
+<ul>
+<li><code>var @value = 1;</code> みたいなのが書けるようになる
+<ul>
+<li>これは、できないことができるようにあるので破壊的ではない</li>
+</ul>
+</li>
+<li><code>nameof(value)</code> が書けなくなる
+<ul>
+<li>こう書いていた人が多数派とは思えない</li>
+<li>※追記: <code>if (value is null) throw new ArgumentNullException(nameof(value));</code> って書く人それなりにいる説あり</li>
+</ul>
+</li>
+<li><code>@value = 1;</code> みたいなのが暗黙的引数の上書きから、外のフィールドの上書きに変わる
+<ul>
+<li>単に <code>value = 1;</code> でよかったわけで、もともと変</li>
+</ul>
+</li>
+</ul>
+<p>となります。</p>
+<p>ちなみに、<code>field</code> は「暗黙の引数扱い」でも「文脈キーワード扱い」でもどちらにしろ破壊的変更になります。
+「文脈キーワード扱い」の方が自然っぽいんですが、
+そうなるとこの「<code>value</code> と何か挙動が違う」が気になるという懸念がありまして。
+そこで出た対案が「<code>value</code> も文脈キーワードに変更」という感じかと思います。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2024/2/">2&#x6708;</a></li><li><a href="/blog/2024/2/hat-operator-in-object-initializer/">&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x521D;&#x671F;&#x5316;&#x5B50;&#x4E2D;&#x306E; ^ &#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/blog/2024/2/breaking-changes/">C# &#x3067;&#x306E;&#x7834;&#x58CA;&#x7684;&#x5909;&#x66F4;&#x306E;&#x4ECA;&#x5F8C;&#x306E;&#x6271;&#x3044; (&#x7D9A;&#x5831;)</a></li><li><a href="/blog/2024/2/ref-struct-interface/">ref &#x69CB;&#x9020;&#x4F53;&#x306E;&#x30A4;&#x30F3;&#x30BF;&#x30FC;&#x30D5;&#x30A7;&#x30A4;&#x30B9;&#x5B9F;&#x88C5; / &#x578B;&#x5F15;&#x6570;&#x3067;&#x306E;&#x4F7F;&#x7528;</a></li><li><a href="/blog/2024/2/interceptors/">&#x30A4;&#x30F3;&#x30BF;&#x30FC;&#x30BB;&#x30D7;&#x30BF;&#x30FC;</a></li><li><a href="/blog/2024/2/first-class-span/">&#x30D5;&#x30A1;&#x30FC;&#x30B9;&#x30C8;&#x30AF;&#x30E9;&#x30B9;&#x306A; Span &#x578B;</a></li><li><a href="/blog/2024/2/partial-inference/">&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30C3;&#x30AF;&#x578B;&#x5F15;&#x6570;&#x306E;&#x90E8;&#x5206;&#x578B;&#x63A8;&#x8AD6;</a></li><li><a href="/blog/2024/2/overload-resolution-priority/">&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30ED;&#x30FC;&#x30C9;&#x89E3;&#x6C7A;&#x512A;&#x5148;&#x5EA6;</a></li><li><a href="/blog/2024/2/ref-out-lambda-params/">&#x30E9;&#x30E0;&#x30C0;&#x5F0F;&#x306E;&#x5F15;&#x6570;&#x3067;&#x3001;&#x578B;&#x540D;&#x3092;&#x7701;&#x7565;&#x3057;&#x3066; ref, out &#x306A;&#x3069;&#x3060;&#x3051;&#x3092;&#x6307;&#x5B9A;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

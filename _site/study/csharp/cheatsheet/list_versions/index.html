@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/cheatsheet/list_versions/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">バージョン</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/Index/versions.png"><img src="/assets/media/ufcpp2000/csharp/fig/Index/versions.png" alt="C#、.NET Framework、Visual Studio のバージョン" /></a></p>
+<figcaption>C#、.NET Framework、Visual Studio のバージョン</figcaption>
+</figure>
+<h2 id="c"><a id="sec-generated-title-2"></a> <a id="cs"></a>C</h2>
+<p>C# のバージョンアップに関しては、以下の各ページを参照してください。</p>
+<div><ul>
+<li><a href="/study/csharp/cheatsheet/ap_ver2/">C# 2.0 の機能</a></li>
+<li><a href="/study/csharp/cheatsheet/ap_ver3/">C# 3.0 の機能</a></li>
+<li><a href="/study/csharp/cheatsheet/ap_ver4/">C# 4.0 の機能</a></li>
+<li><a href="/study/csharp/cheatsheet/ap_ver5/">C# 5.0 の機能</a></li>
+<li><a href="/study/csharp/cheatsheet/ap_ver6/">C# 6 の機能</a></li>
+<li><a href="/study/csharp/cheatsheet/ap_ver7/">C# 7 の機能</a></li>
+</ul></div>
+<p>正確には C# 1.2 というバージョンもあるんですが、
+この C# 1.2 は、「<a href="/study/csharp/misc/sp_xmldoc/#doccomment">ドキュメンテーションコメント</a>」に <code>/** */</code> 形式が追加されただけのものです。
+ドキュメンテーション コメントはプログラムの実行に関係ない機能ですし、
+<code>/** */</code> 形式はそもそも余り使われませんし、
+C# 1.2 は標準化も行われていない（標準規格的には 1st Edition の時点で <code>/** */</code> 形式コメントを含んでいる）ので、
+存在感がない（1.0 とまとめられることが多い）バージョンです。</p>
+<p>ちなみに、Visual Basic も 7.0 （いわゆる .NET 版 VB、VB.NET になってから）以降は C# とほぼ同じ機能追加がされています。
+（C# 2.0 ≒ VB 8.0、 C# 3.0 ≒ VB 9.0、…）</p>
+<h2 id="net-framework"><a id="sec-generated-title-3"></a> <a id="dotnet"></a>.NET Framework</h2>
+<p>.NET Framework は頻繁にバージョンアップしているように見えますが、実際のところほとんどはライブラリの追加のみです。</p>
+<h3 id="section-2"><a id="sec-generated-title-4"></a> <a id="ves"></a>実行環境</h3>
+<p>実行環境としての .NET Framework （図1中の CLR の列）に関して、大きな修正（命令の追加）があったのは 2.0 の時だけです。</p>
+<ul>
+<li><p>1.1 … バグ修正のみ</p>
+</li>
+<li><p>2.0 … ジェネリック関連の命令追加</p>
+</li>
+<li><p>4.0 … 性能改善（主にガベージコレクションの）</p>
+</li>
+<li><p>4.5 … 性能改善と、WinRT への対応</p>
+</li>
+<li><p>5 … .NET Native や Cloud Mode など JIT 以外の配布方式、NuGet パッケージ マネージャーによる標準ライブラリ個別配布への対応</p>
+</li>
+</ul>
+<p>2.0 のジェネリック関連の命令追加は、
+Java （の JVM/バイトコード）と違って、実行環境レベルでジェネリックに対応したということです。
+その結果、.NET Framework のジェネリック型は、型引数の情報をリフレクションで取得できたり、
+JIT コンパイル結果の最適化が効いたりします
+（利便性や性能上、非常に優秀）。</p>
+<p>ちなみに、C# では 4.0 からジェネリックの反変性・共変性（in/out）に対応しましたが、
+.NET Framework 上は、2.0 の時点からこの機能用のフラグを持っています（なので、.NET 4 での仕様的な修正はない）。</p>
+<p>4.0 や 4.5 での修正は、仕様上の変更はほとんどありません（4.5 で、WinRT 対応のために型情報のフラグが1つ増えただけ）。
+あくまで内部的な挙動の改善です。
+ただし、世の中には性能を改善しただけで顕在化するようなバグを含んだコードも存在するため、別バージョンとして扱われます。</p>
+<p>5 でも、「今までのコードほぼそのままで、ネイティブ配布やソースコード配布にも対応します」というもので、C# 開発者が使える機能としては変わっていません。</p>
+<h3 id="section-3"><a id="sec-generated-title-5"></a> <a id="library"></a>ライブラリ</h3>
+<p>ということで、.NET Framework 2.0 以降のバージョンアップはほとんどライブラリの追加のみといえます。</p>
+<ul>
+<li><p>1.1 … バグ修正のみ</p>
+</li>
+<li><p>2.0 … ジェネリックなコレクション追加</p>
+</li>
+<li><p>3.0 … WPF、WCF、WF 等追加</p>
+</li>
+<li><p>3.5 … LINQ 関連のライブラリ、ASP.NET AJAX 追加</p>
+</li>
+<li><p>3.5 SP1 … ADO.NET Entity Framework 等追加</p>
+</li>
+<li><p>4 … dynamic 関連、並列処理関連の追加</p>
+</li>
+<li><p>4.5 … async/await 関連の追加</p>
+</li>
+</ul>
+<p>3.0 近辺のバージョンアップだけが細かいのは、標準ライブラリの提供形態の変化のためです。
+3.0 の頃（2005 ～ 2008年）は、新機能をできるだけ早く提供してほしいという要望に応えるべく頑張っていましたが、
+あくまで .NET Framework 自体のバージョンアップと合わせての大型アップデート提供だけでした。</p>
+<p>一方、4 （2010 年頃）以降は、<a href="http://nuget.org/">NuGet</a> パッケージ マネージャーなどの整備ができたこともあり、
+.NET Framework 本体とは別に（本体のアップデートタイミングと揃えず）ライブラリ提供するようになりました。
+結果として、.NET Framework 4 や 4.5 （特に 4.5 の方）では、それぞれ C# 4.0、5.0 の機能の実現に必要なものが一番のアップデート内容になっています。</p>
+<p>5 では、NuGet パッケージ マネージャーによる配布が本格化していて、「.NET 5ならこの機能」というようなライブラリはもはや明確でなくなっています。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/cheatsheet/">C# &#x306E;&#x6A5F;&#x80FD;&#x4E00;&#x89A7;&#xFF08;&#x7D22;&#x5F15;&#x7684;&#x306A;&#x3082;&#x306E;&#xFF09;</a></li><li><a href="/study/csharp/cheatsheet/list_expression/">C# &#x306E;&#x5F0F;&#x3068;&#x6587;&#x306E;&#x4E00;&#x89A7;</a></li><li><a href="/study/csharp/cheatsheet/list_type/">C# &#x306E;&#x578B;&#x3068;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver1/">C# 1.0</a></li><li><a href="/study/csharp/cheatsheet/ap_ver2/">C# 2.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver3/">C# 3.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver4/">C# 4.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver5/">C# 5.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver6/">C# 6 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7/">C# 7 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_1/">C# 7.1 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_2/">C# 7.2 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_3/">C# 7.3 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver8/">C# 8.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver9/">C# 9.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver10/">C# 10.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver11/">C# 11.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver12/">C# 12.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver13/">C# 13.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver14/">C# 14.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/langversionoption/">&#x8A00;&#x8A9E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x306E;&#x6307;&#x5B9A;</a></li><li><a href="/study/csharp/cheatsheet/listfxlangversion/">C#&#x306E;&#x8A00;&#x8A9E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x3068;.NET&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/cheatsheet/ap_modern/">&#x4F7F;&#x308F;&#x306A;&#x304F;&#x306A;&#x3063;&#x305F;&#x6A5F;&#x80FD;&#x30FB;&#x65B0;&#x3057;&#x3044;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/apscripting/">C#&#x30B9;&#x30AF;&#x30EA;&#x30D7;&#x30C8;&#x5B9F;&#x884C;</a></li><li><a href="/study/csharp/cheatsheet/file-based-app/">&#x30D5;&#x30A1;&#x30A4;&#x30EB; &#x30D9;&#x30FC;&#x30B9;&#x5B9F;&#x884C;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

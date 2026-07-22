@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>ref &#x69CB;&#x9020;&#x4F53;&#x306E;&#x30A4;&#x30F3;&#x30BF;&#x30FC;&#x30D5;&#x30A7;&#x30A4;&#x30B9;&#x5B9F;&#x88C5; / &#x578B;&#x5F15;&#x6570;&#x3067;&#x306E;&#x4F7F;&#x7528; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2024/2/ref-struct-interface/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2024-02-11T11:53:20">2024-02-11</time></span><span>更新: <time datetime="2024-02-11T11:53:20">2024-02-11</time></span></div><h1 id="ref">ref 構造体のインターフェイス実装 / 型引数での使用</h1>
+<p><a href="/study/csharp/resource/refstruct/">ref 構造体</a>で説明しているように、
+<a href="/study/csharp/resource/span/"><code>Span&lt;T&gt;</code></a> 型など一部の型は「スタック上にないといけない」という強い制約があります。</p>
+<p>この制約を守るため、これまで、ref 構造体は</p>
+<ul>
+<li>インターフェイスを実装できなかった</li>
+<li>ジェネリック型引数に使えなかった</li>
+</ul>
+<p>という制限が掛かっていました。</p>
+<p>C# 13 では、この制限を緩和するため、
+ジェネリック型引数に「<code>allows ref struct</code>」という「アンチ制約」を追加する予定です。</p>
+<p>こういう案自体は <a href="/study/csharp/resource/refstruct/#ref-field">ref フィールド</a>が追加された C# 11 (2022年)の頃から温められてはいたんですが、
+いよいよ C# 13 で本格的に取り組むみたいです。
+.NET 8/C# 12 がリリースされた後くらいからちらほら提案ドキュメントの更新あり。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/pull/7769">Add draft for demonstrating ref-struct-constraint soundness</a></li>
+<li><a href="https://github.com/dotnet/csharplang/pull/7865">Update ref struct interfaces based on LDM discussions</a></li>
+<li><a href="https://github.com/dotnet/csharplang/pull/7911">ref struct interfaces updates</a></li>
+</ul>
+<p>ちなみに、ランタイム側はその2022年頃に対応すでに入っているみたいです。</p>
+<ul>
+<li><a href="https://github.com/dotnet/runtime/pull/67129">Design to support ByRefLike types in Generics</a></li>
+<li><a href="https://github.com/dotnet/runtime/pull/67783">Support ByRefLike types as Generic parameters</a></li>
+</ul>
+<h2 id="ref-1">ref 構造体の制限緩和の要求</h2>
+<p>わかりやすい例でいうと、<code>Span&lt;T&gt;</code> は <code>IEnumerable&lt;T&gt;</code> であってほしいというものです。
+C# 12 時点だと、以下のような2重実装を余儀なくされています。</p>
+<pre><code class="language-csharp">List&lt;<span class="keyword">int</span>&gt; list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];
+ReadOnlySpan&lt;<span class="keyword">int</span>&gt; span = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];
+
+Console.WriteLine(MyMath.Sum(list));
+Console.WriteLine(MyMath.Sum(span));
+
+<span class="keyword">static</span> <span class="keyword">class</span> MyMath
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> Sum(IEnumerable&lt;<span class="keyword">int</span>&gt; numbers)
+    {
+        <span class="keyword">var</span> sum = <span class="number">0</span>;
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> numbers) sum+= x;
+        <span class="keyword">return</span> sum;
+    }
+
+    <span class="comment">// メソッドの中身全く同じ。</span>
+    <span class="comment">// Span/ReadOnlySpan が IEnumerable じゃないので別メソッドでの実装が必須。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> Sum(ReadOnlySpan&lt;<span class="keyword">int</span>&gt; numbers)
+    {
+        <span class="comment">// 実装的に、numbers をボックス化したり、ref フィールドを外に漏らしたりもしてない。</span>
+        <span class="comment">// IEnumerable に対する実装をそのまま使って何も問題ない。</span>
+        <span class="keyword">var</span> sum = <span class="number">0</span>;
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> numbers) sum += x;
+        <span class="keyword">return</span> sum;
+    }
+}</code></pre>
+<p>ref 構造体にインターフェイス実装を持たせること自体はそこまで問題ではありません。
+問題は、以下のように、「インターフェイス型の変数に直接代入してしまうとボックス化を起こしてまずい」という点です。</p>
+<pre><code class="language-csharp">Span&lt;<span class="keyword">int</span>&gt; span = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];
+
+<span class="comment">// たとえ、Span が IEnumerable&lt;T&gt; を実装していたとしても、</span>
+<span class="comment">// 以下のようなコードを書くとこの時点でボックス化が起きる。</span>
+<span class="comment">// span がヒープに漏れてしまうのでまずい。</span>
+IEnumerable&lt;<span class="keyword">int</span>&gt; e = span;</code></pre>
+<p>じゃあどうすべきかというと、ジェネリクスを介します。</p>
+<pre><code class="language-csharp">Span&lt;<span class="keyword">int</span>&gt; span = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];
+
+<span class="comment">// ジェネリクスを介すれば、ボックス化を起こさずにインターフェイスのメンバーを呼べる。</span>
+<span class="comment">// (前述の問題はクリア。)</span>
+<span class="keyword">static</span> T Sum&lt;T, TEnumerable&gt;(TEnumerable list)
+    <span class="keyword">where</span> TEnumerable : IEnumerable&lt;T&gt;
+{
+    <span class="comment">// 省略</span>
+    <span class="keyword">return</span> <span class="keyword">default</span>!; <span class="comment">// 仮</span>
+}
+
+<span class="comment">// なので残る問題はこっち。</span>
+<span class="comment">// ref 構造体を型引数に渡したい。</span>
+Sum&lt;<span class="keyword">int</span>, Span&lt;<span class="keyword">int</span>&gt;&gt;(span);</code></pre>
+<p>ということで次節で説明する「アンチ制約」が必要になります。</p>
+<h2 id="section">アンチ制約</h2>
+<p>ジェネリック型制約(<code>where T :</code> みたいなやつ)は、普通、制限を掛けることで、</p>
+<ul>
+<li>メソッド内で <code>T</code>に対して できること(呼べるメソッドとか)が増える</li>
+<li>その代わり、呼び出し側で <code>T</code> に対して渡せる型が減る</li>
+</ul>
+<p>というものになります。</p>
+<pre><code class="language-csharp"><span class="comment">// 制限なし。</span>
+<span class="keyword">static</span> <span class="keyword">void</span> M1&lt;T&gt;() { }
+
+<span class="comment">// 何の型でも渡せる。</span>
+M1&lt;<span class="keyword">int</span>&gt;();
+M1&lt;<span class="keyword">string</span>&gt;();
+M1&lt;<span class="keyword">object</span>&gt;();
+
+<span class="comment">// 制限あり。</span>
+<span class="keyword">static</span> <span class="keyword">void</span> M2&lt;T&gt;() <span class="keyword">where</span> T:ISpanParsable&lt;T&gt;
+{
+    <span class="comment">// 呼べるメソッドが増える。</span>
+    T value = T.Parse(<span class="string">&quot;123&quot;</span>, <span class="keyword">null</span>);
+}
+
+<span class="comment">// 渡せる型が減る。</span>
+M2&lt;<span class="keyword">int</span>&gt;();
+M2&lt;<span class="keyword">string</span>&gt;();
+M2&lt;<span class="keyword">object</span>&gt;(); <span class="comment">// コンパイルエラー。</span></code></pre>
+<p>ところが今回、「ref 構造体を渡せるようにしたい」という逆の要件なので、「制約」ではなく「アンチ制約(制約の撤回)」が必要になります。</p>
+<p><a href="/blog/2022/2/ref-generic-arguments/">2年くらい前のブログ</a>でちょこっと触れていますが、
+逆のことをするのに <code>where T : ref struct</code> とは書かせたくないようで、ちょっと別文法を模索していました。
+当初案だと <code>allow T : ref struct</code> とかも検討されていたんですが、
+結局は <code>where T : allows ref struct</code> (where はそのまま。制約の前に allows)になりそうです。</p>
+<pre><code class="language-csharp"><span class="comment">// allows で制限を緩める。</span>
+<span class="keyword">static</span> <span class="keyword">void</span> M3&lt;T&gt;(T x)
+    <span class="keyword">where</span> T : allows <span class="keyword">ref</span> <span class="keyword">struct</span> <span class="comment">// アンチ制約。</span>
+{
+    <span class="comment">// メソッド内でできることが減る。</span>
+    <span class="keyword">object</span> obj = x; <span class="comment">// box 化ダメ。エラーにする予定。</span>
+}
+
+<span class="comment">// 渡せる型が増える。</span>
+M3&lt;<span class="keyword">int</span>&gt;();
+M3&lt;<span class="keyword">string</span>&gt;();
+M3&lt;<span class="keyword">object</span>&gt;();
+M3&lt;Span&lt;<span class="keyword">int</span>&gt;&gt;(); <span class="comment">// allows ref struct がないと呼べない。</span></code></pre>
+<p>ちなみに、<code>where T : IDisposable, allows ref struct</code> みたいに、制約とアンチ制約は並べて書けます。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2024/2/">2&#x6708;</a></li><li><a href="/blog/2024/2/hat-operator-in-object-initializer/">&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x521D;&#x671F;&#x5316;&#x5B50;&#x4E2D;&#x306E; ^ &#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/blog/2024/2/breaking-changes/">C# &#x3067;&#x306E;&#x7834;&#x58CA;&#x7684;&#x5909;&#x66F4;&#x306E;&#x4ECA;&#x5F8C;&#x306E;&#x6271;&#x3044; (&#x7D9A;&#x5831;)</a></li><li><a href="/blog/2024/2/interceptors/">&#x30A4;&#x30F3;&#x30BF;&#x30FC;&#x30BB;&#x30D7;&#x30BF;&#x30FC;</a></li><li><a href="/blog/2024/2/first-class-span/">&#x30D5;&#x30A1;&#x30FC;&#x30B9;&#x30C8;&#x30AF;&#x30E9;&#x30B9;&#x306A; Span &#x578B;</a></li><li><a href="/blog/2024/2/partial-inference/">&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30C3;&#x30AF;&#x578B;&#x5F15;&#x6570;&#x306E;&#x90E8;&#x5206;&#x578B;&#x63A8;&#x8AD6;</a></li><li><a href="/blog/2024/2/overload-resolution-priority/">&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30ED;&#x30FC;&#x30C9;&#x89E3;&#x6C7A;&#x512A;&#x5148;&#x5EA6;</a></li><li><a href="/blog/2024/2/value-as-context-keyword/">field, value &#x3092;&#x6587;&#x8108;&#x30AD;&#x30FC;&#x30EF;&#x30FC;&#x30C9;&#x5316;</a></li><li><a href="/blog/2024/2/ref-out-lambda-params/">&#x30E9;&#x30E0;&#x30C0;&#x5F0F;&#x306E;&#x5F15;&#x6570;&#x3067;&#x3001;&#x578B;&#x540D;&#x3092;&#x7701;&#x7565;&#x3057;&#x3066; ref, out &#x306A;&#x3069;&#x3060;&#x3051;&#x3092;&#x6307;&#x5B9A;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

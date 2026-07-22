@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x3010;C# 10.0 &#x5909;&#x66F4;&#x70B9;&#x3011; &#x69CB;&#x9020;&#x4F53;&#x306E;&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x521D;&#x671F;&#x5316;&#x5B50;&#x306B;&#x306F;&#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;&#x5FC5;&#x9808; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2022/2/csharp10-breaking-change-field-init/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2022-02-19T18:29:28">2022-02-19</time></span><span>更新: <time datetime="2022-02-19T18:29:28">2022-02-19</time></span></div><h1 id="c-10.0">【C# 10.0 変更点】 構造体のフィールド初期化子にはコンストラクター必須</h1>
+<p>先日 Visual Studio 17.1.0 (正式リリース)と 17.2 Preview 1 が出たわけですが。</p>
+<p>これをインストールすると、ちょこっと C# 10.0 の構造体のフィールド初期化子の挙動が変わります。
+以下のようなコード、17.0/17.1 Preview 時代はコンパイルできていたんですが、17.1/17.2 Preview ではコンパイル エラーになります。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> S
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X = <span class="number">1</span>; <span class="comment">// ここが原因。</span>
+}</code></pre>
+<p>ちなみに、C# の言語バージョンが改まったわけではなく、
+バグ修正とかと同じノリでサイレント修正です。</p>
+<p>仕様: <a href="https://github.com/dotnet/csharplang/pull/5637">Never synthesize parameterless struct constructor</a></p>
+<h2 id="section">問題</h2>
+<p>上記のコードの 17.0/17.1 Preview 時代の挙動なんですが、
+まあ、暗黙的に引数なしコンストラクターが追加されています。
+以下のような挙動。</p>
+<pre><code class="language-csharp">Console.WriteLine(<span class="keyword">new</span> S().X); <span class="comment">// 1</span>
+
+<span class="keyword">struct</span> S
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X = <span class="number">1</span>;
+    <span class="comment">// public S() { } これがある時と同じ挙動になってた。</span>
+}</code></pre>
+<p>問題は、このコードに引数ありコンストラクターを足したとき。
+以下のようになっていたそうです。</p>
+<pre><code class="language-csharp">Console.WriteLine(<span class="keyword">new</span> S().X); <span class="comment">// 0。 default(S).X 扱い…</span>
+
+<span class="keyword">struct</span> S
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X = <span class="number">1</span>;
+    <span class="keyword">public</span> S(<span class="keyword">int</span> x) =&gt; X = x;
+    <span class="comment">// public S() { } これが生成されなくなる。</span>
+}</code></pre>
+<p>この挙動が罠すぎるので、傷が浅いうちに不具合扱いして挙動を変えようということになりました。</p>
+<h2 id="section-1">案1: 現状維持</h2>
+<p>もちろん、現状維持も検討されたみたいなんですが、
+C# 10.0 リリース後のユーザーの反応的には相当に強い懸念の声が出ていて、無視はできないレベルと判断されたそうです。</p>
+<h2 id="section-2">案2: 常に引数なしコンストラクターを生成する</h2>
+<p>以下のように直すのが自然な気がしなくもないわけですが…</p>
+<pre><code class="language-csharp">Console.WriteLine(<span class="keyword">new</span> S().X); <span class="comment">// ちゃんと1になればいいわけで。</span>
+
+<span class="keyword">struct</span> S
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X = <span class="number">1</span>;
+    <span class="keyword">public</span> S(<span class="keyword">int</span> x) =&gt; X = x;
+    <span class="comment">// public S() { } これが生成されればいい。</span>
+}</code></pre>
+<p>これで問題になるのが、<code>record struct</code> の<a href="/study/csharp/datatype/record/#primary-constructor">プライマリ コンストラクター</a>だそうで。</p>
+<p>プライマリ コンストラクターがある場合、「全てのコンストラクターは最終的にプライマリ コンストラクターにたどり着く必要がある」ということになっています。</p>
+<pre><code class="language-csharp">record <span class="keyword">struct</span> S(<span class="keyword">int</span> X)
+{
+    <span class="comment">// 必ず S(int X) にたどり着くように書かないとダメ。</span>
+    <span class="keyword">public</span> S() : <span class="keyword">this</span>(<span class="number">1</span>) { }
+    <span class="keyword">public</span> S(<span class="keyword">int</span> a, <span class="keyword">int</span> b) : <span class="keyword">this</span>(a * b) { }
+}</code></pre>
+<p>ここで、じゃあ、先ほどの、フィールド初期化子があるときにどうするか。
+コンパイラーが自動的に引数なしコンストラクターを追加するのであれば、プライマリ コンストラクターには何を渡すべきかという問題がでます。</p>
+<pre><code class="language-csharp">record <span class="keyword">struct</span> S(<span class="keyword">string</span> X)
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> Y = <span class="number">1</span>;
+
+    <span class="comment">// public S() : this(null) { } を足す？</span>
+    <span class="comment">// 非 null が期待される string に null が渡ってしまう…</span>
+}</code></pre>
+<p>これがあるから、当初、「引数ありコンストラクターがあるときにはむやみに引数なしコンストラクターを追加しない」という判断になったようです。</p>
+<h2 id="section-3">案3: コンストラクターが1つもないとき、フィールド初期化子をエラーに</h2>
+<p>ということで、今日のブログの冒頭の話に戻ります。</p>
+<p>以下のコードがエラーになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> S
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X = <span class="number">1</span>;
+}</code></pre>
+<p>ちなみに、Visual Studio 17.2 Preview 1 では、この状態の(エラーのある)コードに対して「引数なしコンストラクターを追加する」というリファクタリング機能が追加されています。</p>
+<p><img src="/assets/media/1211/generateconstructor.png" alt="Generate constructor リファクタリング" /></p>
+<p>ただ、最初から以下のようなコードを書くと罠っぽい挙動になるのは今と同じ。</p>
+<pre><code class="language-csharp">Console.WriteLine(<span class="keyword">new</span> S().X); <span class="comment">// 0。 default(S).X 扱い…</span>
+
+<span class="keyword">struct</span> S
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X = <span class="number">1</span>;
+    <span class="keyword">public</span> S(<span class="keyword">int</span> x) =&gt; X = x;
+    <span class="comment">// public S() { } これは生成されない。</span>
+}</code></pre>
+<p>ただ、「後から迂闊に引数ありコンストラクターを足してしまう」という状況は減るはずです。</p>
+<p>エラーにならないようにするのは元々が以下のようなコードのはずで、</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> S
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X = <span class="number">1</span>;
+    <span class="keyword">public</span> S() { }
+}</code></pre>
+<p>ここに引数ありコンストラクターを足すはずなので、
+以下のような挙動が期待されます。</p>
+<pre><code class="language-csharp">Console.WriteLine(<span class="keyword">new</span> S().X); <span class="comment">// ちゃんと1。</span>
+
+<span class="keyword">struct</span> S
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X = <span class="number">1</span>;
+    <span class="keyword">public</span> S() { }
+    <span class="keyword">public</span> S(<span class="keyword">int</span> x) =&gt; X = x;
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2022/2/">2&#x6708;</a></li><li><a href="/blog/2022/2/span-optimization/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011; ReadOnlySpan &#x6700;&#x9069;&#x5316;</a></li><li><a href="/blog/2022/2/params-span/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011;params Span</a></li><li><a href="/blog/2022/2/ref-generic-arguments/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011; ref &#x578B;&#x5F15;&#x6570;</a></li><li><a href="/blog/2022/2/ref-field/">&#x3010;C# 11&#x5019;&#x88DC;&#x3011; ref field</a></li><li><a href="/blog/2022/2/parameter-null-check/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011; &#x5F15;&#x6570;&#x306E; null &#x30C1;&#x30A7;&#x30C3;&#x30AF;</a></li><li><a href="/blog/2022/2/embedded-languages/">C# &#x4E2D;&#x306E;&#x57CB;&#x3081;&#x8FBC;&#x307F;&#x8A00;&#x8A9E;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

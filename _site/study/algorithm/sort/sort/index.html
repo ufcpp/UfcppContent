@@ -1,0 +1,185 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30BD;&#x30FC;&#x30C8;&#x6982;&#x8981; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/algorithm/sort/sort/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">ソート概要</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>まあ、結局の所、今現在世の中で使われているソートアルゴリズムの大半は、マージソートか「<a href="/study/algorithm/sort/sort_quick/#quick">クイックソート</a>」をベースにしたものです。
+（基本的にこの2つのソートを使い、途中から「<a href="/study/algorithm/sort/sort_insert/#insert">挿入ソート</a>」というソートに切り替えるという手法が有名。）</p>
+<p>ですが、そこに至るまでの道筋には先人達の試行錯誤があったわけで、
+その試行錯誤の中で生まれ、現在に至るまでその名を残すアルゴリズムは結構な種類存在します。
+そして、アルゴリズム入門書籍・ウェブサイトでは、
+その手のソートアルゴリズムが必ずといっていいほど頻繁に取り上げられています。</p>
+<p>これは、以下のような理由で、アルゴリズム入門として記事にしやすいからでしょう。</p>
+<ul>
+<li><p>いろんな種類のアルゴリズムがある</p>
+</li>
+<li><p>それぞれの特徴が分かりやすい・説明しやすい</p>
+</li>
+<li><p>オーダーの違うアルゴリズムの圧倒的差を体感できる</p>
+</li>
+</ul>
+<p>ということで、このページでも様々なソートアルゴリズムについて説明したいと思います。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="demo"></a>デモ</h2>
+<p>説明に入る前に、先にソートの様子を視覚化したデモをお見せしておきましょう。</p>
+<div><iframe src="https://black-ocean-009cb0000.2.azurestaticapps.net/?i=0&s=0&w=150" width="780" height="500"></iframe></div>
+<p>(<a href="https://github.com/ufcpp/StaticWebApps/tree/main/BlazorWasm/SortVisualizer">ソースコード</a>)</p>
+<p>ソートの途中で、比較や入れ替えがどうおこなわれているのかという経過を表示しています。
+これで大まかなイメージをつかんでから説明を読んでもらうと、理解が深まるかと思います。</p>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="common"></a>はじめに</h2>
+<p>まずはじめにいくつか留意点を。</p>
+<p>「<a href="/study/algorithm/">アルゴリズムとデータ構造</a>」インデックスページでも書いたように、
+サンプルプログラムには 「<a href="/study/csharp/abstract/ab_csharp/#cs">C#</a>」 を用います。
+また、C# 2.0 の機能である「<a href="/study/csharp/oop/sp2_generics/#generics">ジェネリック</a>」を使用します。</p>
+<p>それから、ソートでは、アルゴリズムの種類を問わず、
+2つの要素を入れ替えるスワップという処理をよく使用します。
+なので、スワップは以下のように関数化しておきます。</p>
+<pre><code class="language-csharp"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> a と b の中身を入れ替える。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;a&quot;&gt;</span><span class="xmlDocComment">オペランドa&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;b&quot;&gt;</span><span class="xmlDocComment">オペランドb&lt;/param&gt;</span>
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Swap&lt;T&gt;(<span class="keyword">ref</span> T a, <span class="keyword">ref</span> T b)
+{
+  T c = a; a = b; b = c;
+}</code></pre>
+<p>ref というキーワードに関しては「<a href="/study/csharp/resource/sp_ref/">引数の参照渡し</a>」を、
+&lt;T&gt; という部分に関しては「<a href="/study/csharp/oop/sp2_generics/">ジェネリック</a>」を参照してください。</p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="stable"></a>安定性</h2>
+<p>数あるソートアルゴリズムを分類する方法の1つに、
+安定性の有無があります。</p>
+<p><strong id="stable" class="keyword">安定</strong>なソート（stable sort）とは、
+順序的に同等な要素が複数あったときに、その並びが元のまま保たれるもののことを言います。
+そうでない場合は<strong id="unstable" class="keyword">不安定</strong>（unstable）。</p>
+<p>整数などの、単純な数値型の配列を比較する場合には安定性の有無は問題になってきませんが、
+以下のようなケースを考えて見ましょう。</p>
+<p>具体的な例として、年齢と名前のペアを作り、その配列で名簿管理みたいなことをしたいとします。
+そして、年齢の大小でソートすることを考えて見ましょう。
+まず、年齢と名前のペアは Entry と言う名前で以下のように実装します。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Entry : IComparable&lt;Entry&gt;
+{
+  <span class="keyword">public</span> <span class="keyword">int</span> age;
+  <span class="keyword">public</span> <span class="keyword">string</span> name;
+
+  <span class="keyword">public</span> Entry(<span class="keyword">int</span> age, <span class="keyword">string</span> name)
+  {
+    <span class="keyword">this</span>.age = age;
+    <span class="keyword">this</span>.name = name;
+  }
+
+  <span class="keyword">int</span> IComparable&lt;Entry&gt;.CompareTo(Entry other)
+  {
+    <span class="keyword">return</span> <span class="keyword">this</span>.age.CompareTo(other.age);
+  }
+}</code></pre>
+<p>これを使って、以下のようなリストを作ります。</p>
+<pre><code class="language-csharp">Entry[] list = <span class="keyword">new</span> Entry[]{
+  <span class="keyword">new</span> Entry(<span class="number">10</span>, <span class="string">&quot;a&quot;</span>),
+  <span class="keyword">new</span> Entry(<span class="number">11</span>, <span class="string">&quot;b&quot;</span>),
+  <span class="keyword">new</span> Entry(<span class="number">12</span>, <span class="string">&quot;c&quot;</span>),
+  <span class="keyword">new</span> Entry(<span class="number">11</span>, <span class="string">&quot;d&quot;</span>),
+  <span class="keyword">new</span> Entry(<span class="number">13</span>, <span class="string">&quot;e&quot;</span>),
+  <span class="keyword">new</span> Entry(<span class="number">10</span>, <span class="string">&quot;f&quot;</span>),
+  <span class="keyword">new</span> Entry(<span class="number">12</span>, <span class="string">&quot;g&quot;</span>),
+  <span class="keyword">new</span> Entry(<span class="number">14</span>, <span class="string">&quot;h&quot;</span>),
+};</code></pre>
+<p>この状態では、名前順に並んでいますね。
+そして、10歳、11歳、12歳のエントリーがそれぞれ複数含まれています。
+これを、Array.Sort メソッドを使ってソートしてみましょう。</p>
+<pre><code class="language-csharp">Array.Sort(list);
+<span class="keyword">foreach</span> (Entry entry <span class="keyword">in</span> list)
+{
+  Console.Write(<span class="string">&quot;{0}, {1}\n&quot;</span>, entry.age, entry.name);
+} </code></pre>
+<p>結果は以下のようになります。</p>
+<pre><code class="language-console">10, f
+10, a
+11, d
+11, b
+12, g
+12, c
+13, e
+14, h</code></pre>
+<p>名前の順序がばらばらになっていることが分かります。
+Array.Sort は、おそらく「<a href="/study/algorithm/sort/sort_quick/#quick">クイックソート</a>」を使っている物と思われます。
+クイックソートには安定性はなく、名前の順序を元のまま保てません。
+もしも、これを安定なソートアルゴリズムを使ってソートするならば、
+結果は以下のようになります。</p>
+<pre><code class="language-console">10, a
+10, f
+11, d
+11, b
+12, c
+12, g
+13, e
+14, h</code></pre>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="outer"></a>外部記憶の必要性</h2>
+<p>配列をソートする際に、
+配列内の要素の交換だけでソートできる物を<strong id="inner" class="keyword">内部</strong>ソートと呼びます。
+逆に、ソートしたい配列の他に、余分に記憶領域を確保して、
+そちらに一時的にデータを保存しなければならない物を<strong id="outer" class="keyword">外部</strong>ソートと呼びます。</p>
+<p>大半のソートアルゴリズムは内部ソートだったりします。
+有名どころのうちで、例外はマージソートのみ。</p>
+<h2 id="section-6"><a id="sec-generated-title-6"></a> <a id="order"></a>オーダー</h2>
+<p>ソートに限らず、アルゴリズムの良し悪しの判断基準として最も重要なのは計算量でしょう。
+計算量の評価は、厳密に行うのは難しい場合も多く、
+大まかな見積もりにとどめる場合もあります。</p>
+<p>計算量の大まかな見積もり指標の1つが<strong id="order" class="keyword">オーダー</strong>です。</p>
+<h2 id="section-7"><a id="sec-generated-title-7"></a> <a id="simple"></a>単純なソート</h2>
+<p>O(n<sup>2</sup>)の物。</p>
+<ul>
+<li><p>「<a href="/study/algorithm/sort/sort_bubble/">バブルソート</a>」</p>
+</li>
+<li><p>「<a href="/study/algorithm/sort/sort_select/">選択ソート</a>」</p>
+</li>
+<li><p>「<a href="/study/algorithm/sort/sort_insert/">挿入ソート</a>」</p>
+</li>
+</ul>
+<p>ちょっと高速な物。</p>
+<ul>
+<li>「<a href="/study/algorithm/sort/sort_shell/">シェルソート</a>」</li>
+</ul>
+<h2 id="section-8"><a id="sec-generated-title-8"></a> <a id="rapid"></a>高速なソート</h2>
+<p>O(n lon n)の物。</p>
+<ul>
+<li><p>「<a href="/study/algorithm/sort/sort_quick/">クイックソート</a>」</p>
+</li>
+<li><p>「<a href="/study/algorithm/sort/sort_heap/">ヒープソート</a>」</p>
+</li>
+<li><p>「<a href="/study/algorithm/sort/sort_merge/">マージソート</a>」</p>
+</li>
+</ul>
+<h2 id="section-9"><a id="sec-generated-title-9"></a> <a id="integer"></a>整数限定のソート</h2>
+<p>範囲が予め分かっている整数に限って、
+O(n) で計算できる物。
+制限が強いけども、超高速。</p>
+<ul>
+<li><p>「<a href="/study/algorithm/sort/sort_bucket/">バケットソート</a>」</p>
+</li>
+<li><p>「<a href="/study/algorithm/sort/sort_radix/">基数ソート</a>」</p>
+</li>
+</ul>
+<h2 id="section-10"><a id="sec-generated-title-10"></a> <a id="src"></a>ソースファイル</h2>
+<p>紹介したソートプログラムのソースファイルを置いておきます。</p>
+<p><a href="https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/algorithm/src/Sort.cs">ソースファイル</a></p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/algorithm/sort/">&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort_bubble/">&#x30D0;&#x30D6;&#x30EB;&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort_select/">&#x9078;&#x629E;&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort_insert/">&#x633F;&#x5165;&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort_shell/">&#x30B7;&#x30A7;&#x30EB;&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort_quick/">&#x30AF;&#x30A4;&#x30C3;&#x30AF;&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort_heap/">&#x30D2;&#x30FC;&#x30D7;&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort_merge/">&#x30DE;&#x30FC;&#x30B8;&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort_bucket/">&#x30D0;&#x30B1;&#x30C3;&#x30C8;&#x30BD;&#x30FC;&#x30C8;</a></li><li><a href="/study/algorithm/sort/sort_radix/">&#x57FA;&#x6570;&#x30BD;&#x30FC;&#x30C8;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

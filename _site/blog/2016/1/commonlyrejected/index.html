@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Commonly Rejected Changes | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/1/commonlyrejected/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-01-02T10:45:02">2016-01-02</time></span><span>更新: <time datetime="2016-01-02T10:45:02">2016-01-02</time></span></div><h1 id="commonly-rejected-changes">Commonly Rejected Changes</h1>
+<p>twitterで見かけた話。きっかけはSwiftのものなんですが、「<a href="https://github.com/apple/swift-evolution/blob/master/commonly_proposed.md">Commonly Rejected Changes</a>」、つまり、「頻繁にリジェクトされる変更の提案」集がまとめられてるみたいです。これを見た感想は「ああ、あるある、C#でもよくある」だったので、それをネタにしてみようかと。</p>
+<h2 id="section"></h2>
+<p>これ、SwiftやC#に限らずありとあらゆるプログラミング言語で発生すると思うんですが、必ず出てくるんですよね、インデントでブロックを切る構文を求めてくる人。SwiftにしろC#にしろ、基本方針として「空白文字を除外しても意味が変わらない」を採用している言語に対してそういう要求をされましても…</p>
+<p>まあ、Swiftは「空白を抜いたら意味が変わる」構文あるんですけどね。<code>?:</code>の<code>?</code>の前にスペースを入れないと、<code>型名?</code>の<code>?</code>と区別がつかないそうで。</p>
+<p>それを言い出すと、C系言語共通で、<code>a+++b</code>の解釈は空白の入れ方によって変わってしまうわけですが。</p>
+<h2 id="section-1">セミコロンなくして</h2>
+<p>同上。</p>
+<p>「空白文字を除外しても意味が変わらない」方針と相性悪いんですよねぇ、セミコロンlessプログラム。
+改行のあるなしで実行結果が変わることがあるとか、割かし悪夢を生みます。</p>
+<p>逆に、「改行区切り」の代表格、Visual Basicなんかは、改行を挟めない(挟めなかった)ことでいろいろ苦労していますし。</p>
+<h2 id="section-2">記号が分かりづらいから止めてほしい</h2>
+<p>2件ほど。</p>
+<ul>
+<li><code>&amp;&amp;</code> と <code>||</code> の代わりに <code>and</code> <code>or</code> とかにしてほしい</li>
+<li>条件演算子 <code>?  :</code> はわかりにくいからやめてほしい</li>
+</ul>
+<p>いずれも、本質は「記号が分かりづらい」だと思います。</p>
+<p>これはわからなくはないもの。「式」＝「演算子」＝「記号」ってのは、C言語の悪い癖な感じもします。確かに初見の人には優しくなく、googlabilityも悪い。</p>
+<p>でも、そのために予約語(= 変数名などに使えない)を増やすの？とか、C言語をすでに知ってる人の数が多いのでわざわざ変えるメリットも低いとかあり。</p>
+<h2 id="ifelseswitch">if/elseとswitchを式にしてほしい</h2>
+<p>if/elseは、前節の「<code>?  :</code> が記号だからわかりづらい」問題と同義でしょう。「if/else相当の式」は<code>?  :</code> でできる話なので。</p>
+<p>switchは、C#だと7で式バージョンのswitchが入る方向で議論進んでいます。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/5154">Proposal: expression-based switch (&quot;match&quot;) for pattern matching #5154</a></li>
+</ul>
+<p>C#の場合は、これまで、if/elseやループに相当する式は書けたもののswitchはなかったので。</p>
+<table>
+<thead>
+<tr>
+<th>ステートメント</th>
+<th>式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>if/else</td>
+<td>'? : '</td>
+</tr>
+<tr>
+<td>foreach</td>
+<td>LINQ</td>
+</tr>
+<tr>
+<td>switch</td>
+<td>switch (C# 7向け提案)</td>
+</tr>
+</tbody>
+</table>
+<p>これまではswitchの利用頻度がそこまで高くなかったのでそんなに欲しいとも思わなかったものの、C# 7では別途<a href="https://github.com/dotnet/roslyn/pull/4882">パターン マッチング</a>で使えるようにswitchステートメントを拡張する予定なので。そうすると「switch式」もほしくなるだろいうということで、一緒に提案されています。</p>
+<p>ただ、こうなるとますます「<code>?  :</code> が記号だからわかりづらい」というのが分からなくもない話に。
+switchは、ステートメントでも式でも<code>switch</code>キーワードを使います(式はもしかしたら<code>match</code>キーワードになる可能性もあるもの、いずれにしても記号ではなくて英単語)。
+なので、if/elseの式バージョンも、if/elseっていう英単語の方が分かりやすかったりしないかなぁとは少し思います。</p>
+<p>まあ、今更の変更は無理ですが。</p>
+<h2 id="swiftswift">Swiftを使ってSwiftコンパイラーを書き直して</h2>
+<p>C#も10年くらい言われ続けました。C#の場合はそれが<a href="https://github.com/dotnet/roslyn">Roslyn</a>なわけですが、これがどれだけ大変だったか。</p>
+<p>実際のところ、「既存のプログラムと互換性を保ったものを、別の言語に移植」というのはかなり不毛な作業です。よっぽど強い動機がなければできない。C#の場合は以下のような動機がありました</p>
+<ul>
+<li>さすがにC++製コンパイラーだと機能追加が苦しくなってきた</li>
+<li>Visual Studioとの連携(コード補完、静的コード解析、リファクタリング)の高機能化が難しかった</li>
+</ul>
+<p>が、これも「10年越しの実現」です。「そろそろ苦しい」が「移植の不毛さ」を上回るのにそれくらいの歳月がかかっています。</p>
+<p>また、Roslynの完成は相当待たされました。理由は、以下のようなものです。</p>
+<ul>
+<li>他部署からの要望(C#の場合はWindows 8関連、つまり、Windows Runtime APIと非同期処理への対応)に時間を取られて、なかなか「単なる移植」には人員を割けなかった</li>
+<li>「単なる移植」で数年、言語の進化を停滞させるのもつらい</li>
+<li>実はバグだった挙動も含め、元のコンパイラーの挙動を変えると、世の中に出回っているコードを壊すので、そこの互換性確保が結構つらい</li>
+</ul>
+<p>こういうハードルがあって、結局、「C#コンパイラーのC#化」に取り掛かってから、リリースまでに5・6年はかかっています。C#自体の発表から数えると、15年の歳月をかけてやっと「C#化」されました。</p>
+<h2 id="section-3">クロージャの構文を変えてほしい</h2>
+<p>これは、C#だとあんまり言われないんですよね。みんな、ラムダ式におおむね満足しているようで。</p>
+<p>多少の提案はあったりはするんですが。</p>
+<ul>
+<li>引数を別に使わない場合に省略したいという類
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/20">Lambdas omitting parameters #20</a></li>
+<li><a href="https://github.com/dotnet/roslyn/issues/7463">Short syntax for lambda declaration #7463</a></li>
+</ul>
+</li>
+<li>ローカル変数のキャプチャの仕方を制御したい
+<ul>
+<li><a href="http://kaworu.jpn.org/cpp/%E3%83%A9%E3%83%A0%E3%83%80%E5%BC%8F">C++ 14のラムダ式</a>みたいなやつ
+<ul>
+<li>参照で取り込み、値のコピーで取り込みを選びたいことがある</li>
+<li>取り込んだ変数の書き換えの可否を制御したいことがある</li>
+</ul>
+</li>
+<li>C#のは常に、参照で書き換え可能</li>
+</ul>
+</li>
+</ul>
+<h2 id="section-4">シングル クォートの文字リテラルがほしい</h2>
+<p>Swiftって文字リテラルと文字列リテラルの区別ないんですね…</p>
+<p>これはでもなかなか難しい問題でして。特に、1文字が何バイトになるか全くわからない現在となっては。</p>
+<p>マイクロソフト内部でC#を作り始めた当時(だいたい1998年頃)は、Unicode出始めの時期、つまり、まだ16ビットですべての文字を表せるという幻想があった頃です。なので、<code>char</code>型は16ビットだし、<code>string</code>はそれの配列に皮を被せたような構造。</p>
+<p>ですが、今はどうかというと。<a href="http://codezine.jp/article/detail/1592">サロゲート ペア</a>があり、<a href="http://tech.albert2005.co.jp/blog/2014/11/21/mco-normalize/">結合文字</a>があり、<a href="https://ja.wikipedia.org/wiki/%E7%95%B0%E4%BD%93%E5%AD%97%E3%82%BB%E3%83%AC%E3%82%AF%E3%82%BF">異体字セレクター</a>があり。最近だと、絵文字がなかなか来てます。肌色(異体字)セレクターと結合の組み合わせで、「色白男性と色黒女性の家族」みたいに、1文字で表示されるけどもデータ上は何バイトも使う文字すらあります。</p>
+<p>結局、世の中の主流派UTF8、つまり、可変バイトの文字列符号化でして。Webでレガシーとの互換が必要ないものだと、ほとんどのテキストがUTF8で流れてるんじゃないですかね。となると、C#でパフォーマンス的にネックになりがちなのが、UTF8から<code>string</code>への変換処理だったりします。その結果、今、<code>string</code>とは別に、<a href="https://github.com/dotnet/corefxlab/blob/master/src/System.Text.Utf8/src/System/Text/Utf8/Utf8String.cs"><code>System.Text.Utf8.Utf8String</code></a>なんていうクラスを別途実装中だったりします。この場合、16ビットな<code>char</code>は大して意味をなさなかったり。</p>
+<h2 id="continue">continueキーワードを、スクリプト言語でみられる他のキーワードに置き換えてほしい</h2>
+<p>これもC#だとあんまり言われないですね。</p>
+<p>まあこれ、「自分が慣れた言語に近づいてほしい」欲なんですかねぇ。C#の場合は名前にCという文字がはいってるのもあって、「C系文化」から外れようという提案は少な目なんですが。Swiftは結構「脱C」しているのでこういうこと言われてしまうのかも。</p>
+<h2 id="switch-default-case">switch 中で、default の代わりに case _ を使いたい</h2>
+<p>C#では、C# 7でパターン マッチングが入って、その仕様の中に <code>case *</code> で任意のパターンにマッチというのを作れるので、確かにdefaultとの住み分けはどうなるんだろうって思います。まあでも、C系言語に脈々と受け継がれてきたdefaultの使い方を変えるだけの価値があるかと言われると。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/1/">1&#x6708;</a></li><li><a href="/blog/2016/1/ebookscampaign/">&#x300C;&#x30B3;&#x30F3;&#x30D4;&#x30E5;&#x30FC;&#x30BF;&#x30FC;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30DF;&#x30F3;&#x30B0;&#x5165;&#x9580;&#x4EE5;&#x524D;&#x300D;&#x96FB;&#x5B50;&#x66F8;&#x7C4D;&#x30AD;&#x30E3;&#x30F3;&#x30DA;&#x30FC;&#x30F3;</a></li><li><a href="/blog/2016/1/pickuproslyn0109/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 1/9: structural typing</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

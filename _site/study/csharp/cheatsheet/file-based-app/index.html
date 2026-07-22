@@ -1,0 +1,191 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D5;&#x30A1;&#x30A4;&#x30EB; &#x30D9;&#x30FC;&#x30B9;&#x5B9F;&#x884C; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/cheatsheet/file-based-app/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">ファイル ベース実行</h1>
+<h1 id="section-1"><a id="sec-generated-title-1"></a>ファイル ベース実行</h1>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="abstract">概要</a></h2>
+<p>.NET 10 (C# 14 と同世代)で単独の <code>.cs</code> ファイルだけで C# プログラムを実行できるようになりました。
+例えば、<code>app1.cs</code> という名前で保存した C# ファイルを <code>dotnet app1.cs</code> という1コマンドだけで実行できます。
+それに伴って、C# 14 で <code>#!</code> と <code>#:</code> (無視ディレクティブ)という機能が追加されています。</p>
+<p>(C# 言語の新文法というよりは、C# コンパイラーの1機能という感じのものです。
+バージョン的にも C# 14 である必要はなくて、.NET 10 以降付属の C# コンパイラーであれば言語バージョン問わず <code>#!</code> と <code>#:</code> を認識します。)</p>
+<p>本項ではこの「単独のファイルでの実行」(ファイル ベース実行)の話と、
+C# 14 の <code>#!</code> と <code>#:</code> (無視ディレクティブ)について説明します。</p>
+<p>サンプル コード: <a href="https://github.com/ufcpp/UfcppSample/tree/master/Chapters/FileBaseApp">FileBaseApp</a></p>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="file-based-app">ファイル ベース実行</a></h2>
+<p>改めて、 .NET 10 で C# ファイルを直接1コマンドで実行できるようになりました。
+例えば、以下の1行だけ書いたファイル <code>app1.cs</code> を用意して、</p>
+<pre><code class="language-csharp">Console.WriteLine(<span class="string">&quot;&#128008;&quot;</span>);</code></pre>
+<p>以下のようなコマンドを打つと、この C# ファイルを単独で実行できます。</p>
+<pre><code class="language-console">&gt; dotnet app1.cs
+🐈</code></pre>
+<p>これは<a href="/study/csharp/cheatsheet/apscripting/">スクリプト実行</a>ではなく、通常の<sup><a href="#non-scripting">※脚注</a></sup> C# 実行になります。
+この仕組みをファイル ベース実行(file-based execution) と言い、これを使って書かれた C# プログラムをファイル ベース アプリ(file-based app)と言ったりします。</p>
+<p>この機能の追加に伴い、これまでであれば<a href="/study/csharp/devenv/vs_project/">プロジェクト</a> (実体は拡張子 <code>.csproj</code> の XML ファイル)に書いていた設定の類を C# 中に直接書けるようになりました。
+以下の2つが追加されています。</p>
+<ul>
+<li><code>#!</code> : いわゆる <a href="https://ja.wikipedia.org/wiki/%E3%82%B7%E3%83%90%E3%83%B3_(Unix)">shebang</a></li>
+<li><code>#:</code> : プロジェクト設定の類を書くための<a href="/study/csharp/misc/sp_preprocess/#preprocess">ディレクティブ</a>で、C# コンパイラーにとっては「単に無視」になる</li>
+</ul>
+<p>ちなみに、普通に <code>.csproj</code> ファイルを使って C# プロジェクトをコンパイルする際には、<code>#!</code> や <code>#:</code> があるとコンパイル エラーになります。
+ただし、<code>.csproj</code> ファイル中に <code>&lt;Features&gt;FileBasedProgram&lt;/Features&gt;</code> オプションを書いておくとコンパイルでき、この場合、<code>#!</code> や <code>#:</code> から始まる行は単に無視されます。
+C# コンパイラーからすると「単に無視するもの」なので、無視ディレクティブ(ignored directive)と呼ばれます。</p>
+<p><sup><a id="non-scripting">※</a></sup> スクリプト実行が「それ専用の構文がいくつかある」状態なのに対して、
+ファイル ベース実行は本当に普通の C# です。
+スクリプト実行みたいに「1行1行追加で実行」みたいなことができない一方で、
+「コードが多くなってきたから <code>.csproj</code> 形式の通常の C# プロジェクトに切り替えたい」というときにスムーズに移行できます。
+移行を自動化するための <code>dotnet project convert</code> というコマンドも用意されています。</p>
+<h2 id="shebang"><a id="sec-generated-title-4"></a> <a id="shebang">shebang</a></h2>
+<p><code>#!</code> (通称 shebang。 sharp + bang が由来)は主に Unix のスクリプト言語で使われるもので、
+ソースコードの先頭にこの記号から始まる行を入れると「何を使ってこのスクリプトを実行するか」を指定できます。</p>
+<p>C# 14 で、C# にもこの1行を入れることができるようになりました。
+例えば前節の <code>app1.cs</code> ファイルにちょっと手を加えて以下のような内容にします。</p>
+<pre><code class="language-csharp">#!/usr/bin/env dotnet
+Console.WriteLine(<span class="string">&quot;&#128008;&quot;</span>);</code></pre>
+<p>このファイルは <a href="https://ja.wikipedia.org/wiki/Bash">bash</a> などの Unix 系シェルで <code>./app1.cs</code> みたいに直接実行できるようになります。
+(実行権限が必要なので、最初に1回 <code>chmod +x</code> などの操作が必要。)</p>
+<pre><code class="language-console">$ ls
+app1.cs
+$ chmod +x app1.cs
+$ ./app1.cs
+🐈</code></pre>
+<p>用途的に、<code>#!</code> はファイルの先頭にのみ書けます。
+<code>#!</code> の前には改行はもちろんのこと、空白文字や <a href="https://ja.wikipedia.org/wiki/%E3%83%90%E3%82%A4%E3%83%88%E9%A0%86%E3%83%9E%E3%83%BC%E3%82%AF">BOM</a> を入れることもできません。</p>
+<h2 id="section-4"><a id="sec-generated-title-5"></a> <a id="ignored-directive">: 無視ディレクティブ</a></h2>
+<p><code>#:</code> から始まる行は <code>dotnet</code> コマンドがプロジェクト設定として解釈するために使い、
+C# 上は単に無視されます。</p>
+<p>例えば、以下のような <code>.cs</code> ファイルをファイル ベース実行するのは、</p>
+<pre><code class="language-csharp">#:property InvariantGlobalization=<span class="keyword">true</span>
+Console.WriteLine(<span class="keyword">new</span> DateTime(<span class="number">2000</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>));</code></pre>
+<p>以下のような2ファイルを使って既存の <code>.csproj</code> ベースの <code>dotnet run</code> をするのとほぼ同じ意味になります。</p>
+<p><code>app1.csproj</code>:</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">Project</span> <span class="xmlAttribute">Sdk</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Microsoft.NET.Sdk</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">OutputType</span><span class="xmlDelimiter">&gt;</span>Exe<span class="xmlDelimiter">&lt;/</span><span class="xmlName">OutputType</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">TargetFramework</span><span class="xmlDelimiter">&gt;</span>net10.0<span class="xmlDelimiter">&lt;/</span><span class="xmlName">TargetFramework</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">ImplicitUsings</span><span class="xmlDelimiter">&gt;</span>enable<span class="xmlDelimiter">&lt;/</span><span class="xmlName">ImplicitUsings</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">Nullable</span><span class="xmlDelimiter">&gt;</span>enable<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Nullable</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">InvariantGlobalization</span><span class="xmlDelimiter">&gt;</span>true<span class="xmlDelimiter">&lt;/</span><span class="xmlName">InvariantGlobalization</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Project</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p><code>app1.cs</code>:</p>
+<pre><code class="language-xml">Console.WriteLine(new DateTime(2000, 1, 2, 3, 4, 5));</code></pre>
+<p>(ちなみに <code>InvariantGlobalization</code> を指定すると書式が北米フォーマットになるので、出力される結果は <code>01/02/2000 03:04:05</code> (MM/dd/yyyy)になります。)</p>
+<p><code>#:</code> で始まる無視ディレクティブは <a href="#shebang">shebang</a> とコメントを除いて、ファイルの先頭に置く必要があります。
+例えば以下のコードでは、5行目(<code>LangVersion</code> の行)は問題なく、
+9行目(<code>ImplicitUsings</code> の行)でだけコンパイル エラーを起こします。</p>
+<pre><code class="language-csharp">#!/usr/bin/env dotnet
+
+<span class="comment">// コメントはあってもいい。</span>
+
+#:property LangVersion=<span class="number">13</span>
+
+Console.WriteLine(<span class="string">&quot;&#128008;&quot;</span>);
+
+#:property ImplicitUsings=<span class="keyword">disable</span></code></pre>
+<p>.NET 10 時点で、<code>dotnet</code> コマンドは以下のディレクティブを解釈できます。</p>
+<table>
+<thead>
+<tr>
+<th>ディレクティブ</th>
+<th>意味</th>
+<th><code>.csproj</code> での書き方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>#:sdk</code></td>
+<td><a href="https://learn.microsoft.com/ja-jp/dotnet/core/project-sdk/overview">プロジェクト SDK</a> を指定</td>
+<td><code>&lt;Project Sdk=&quot;これ&quot;&gt;</code></td>
+</tr>
+<tr>
+<td><code>#:property</code></td>
+<td><a href="https://learn.microsoft.com/ja-jp/visualstudio/msbuild/propertygroup-element-msbuild">プロパティ要素</a></td>
+<td><code>&lt;PropertyGroup&gt;</code> の子要素</td>
+</tr>
+<tr>
+<td><code>#:package</code></td>
+<td><a href="https://learn.microsoft.com/ja-jp/nuget/consume-packages/package-references-in-project-files">パッケージ参照</a></td>
+<td><code>&lt;PackageReference&gt;</code> 要素</td>
+</tr>
+<tr>
+<td><code>#:project</code></td>
+<td><a href="https://learn.microsoft.com/ja-jp/visualstudio/msbuild/common-msbuild-project-items#projectreference">プロジェクト参照</a></td>
+<td><code>&lt;ProjectReference&gt;</code> 要素</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sdk"><a id="sec-generated-title-6"></a> <a id="sdk-directive">sdk ディレクティブ</a></h3>
+<p><code>#:sdk</code> は、 <code>.csproj</code> では <code>&lt;Project Sdk=&quot;Identifier&quot;&gt;</code> と書いていたものです。
+省略した場合は <code>Microsoft.NET.Sdk</code> (ライブラリやコンソール プログラムで使う一番シンブルな SDK)になります。
+実質的には「ASP.NET プログラムを書きたいときに <code>Microsoft.NET.Sdk.Web</code> にするもの」です。</p>
+<p>例えば、以下のようなコードで ASP.NET なコードをファイル ベース実行できます。</p>
+<pre><code class="language-csharp">#:sdk Microsoft.NET.Sdk.Web
+
+<span class="keyword">var</span> app = WebApplication.CreateBuilder(args).Build();
+app.MapGet(<span class="string">&quot;/&quot;</span>, () =&gt; <span class="string">&quot;Hello World!&quot;</span>);
+app.Run();</code></pre>
+<h3 id="property"><a id="sec-generated-title-7"></a> <a id="property-directive">property ディレクティブ</a></h3>
+<p><code>#:property</code> は、 <code>.csproj</code> では <code>&lt;PropertyGroup&gt;</code> の子要素として書いていたものです。
+<code>.csproj</code> の <code>&lt;Tag&gt;Value&lt;/Tag&gt;</code> 要素が <code>#:property Tag=Value</code> という書き方になります。</p>
+<p><a href="#ignored-directive">無視ディレクティブの節</a>の冒頭の <code>InvariantGlobalization</code> の例もこれになります。
+その他、例えば <a href="/study/csharp/interop/sp_unsafe/">unsafe ブロック</a>はオプションを指定しないと使えない構文なわけですが、以下のように書くことでそのオプションを指定できます。</p>
+<pre><code class="language-csharp">#:property AllowUnsafeBlocks=<span class="keyword">true</span>
+
+<span class="comment">// unsafe ブロックはオプションをつけないと使えない構文。</span>
+<span class="keyword">unsafe</span>
+{
+    <span class="keyword">int</span> n = <span class="number">1</span>;
+    <span class="keyword">int</span>* pn = &amp;n;
+    Console.WriteLine($<span class="string">&quot;{(nint)pn:x}&quot;</span>);
+}</code></pre>
+<h3 id="package"><a id="sec-generated-title-8"></a> <a id="package-directive">package ディレクティブ</a></h3>
+<p><code>#:package</code> は、 <code>.csproj</code> では <code>&lt;PackageReference&gt;</code> 要素で書いていたものです。
+<code>.csproj</code> の <code>&lt;PackageReference Include=&quot;PackageName&quot; Version=&quot;x.y.z&quot; /&gt;</code> 要素が <code>#:package PackageName@x.y.z</code> という書き方になります。</p>
+<p>例として <code>Microsoft.CodeAnalysis.CSharp</code> パッケージ(C# 中から C# コンパイラー自身を呼ぶためのライブラリ)を参照したコードを書くと以下のようになります。
+(ちなみに、4.14.0 は C# 13 当時のバージョンです。)</p>
+<pre><code class="language-csharp">#:package Microsoft.CodeAnalysis.CSharp@<span class="number">4</span>.<span class="number">14</span>.<span class="number">0</span>
+
+<span class="keyword">using</span> Microsoft.CodeAnalysis.CSharp;
+
+<span class="keyword">var</span> tree = CSharpSyntaxTree.ParseText(<span class="string">&quot;class Class1;&quot;</span>);
+<span class="keyword">var</span> root = <span class="keyword">await</span> tree.GetRootAsync();
+Console.WriteLine(root.GetFirstToken().Text);</code></pre>
+<h3 id="project"><a id="sec-generated-title-9"></a> <a id="project-directive">project ディレクティブ</a></h3>
+<p><code>#:project</code> は、 <code>.csproj</code> では <code>&lt;ProjectReference&gt;</code> 要素で書いていたものです。
+<code>.csproj</code> の <code>&lt;ProjectReference Include=&quot;path&quot; /&gt;</code> 要素が <code>#:project path</code> という書き方になります。</p>
+<p>例えば以下のような書き方で、<code>.cs</code> のある場所からの相対パスで <code>Lib/Lib.csproj</code> プロジェクトを参照できます。</p>
+<pre><code class="language-csharp">#:project Lib/Lib.csproj
+Console.WriteLine(Lib.Class1.Name);</code></pre>
+<h3 id="section-5"><a id="sec-generated-title-10"></a> <a id="unknown-directive">未対応のディレクティブ</a></h3>
+<p>未対応の <code>#:</code> ディレクティブは、ファイル ベース実行するとエラーを起こします。
+例えば以下のようなコードを書いて <code>dotnet app1.cs</code> コマンド実行すると、
+「認識されないディレクティブ ' aaa' です。」というエラーが出ます。</p>
+<pre><code class="language-csharp">#:aaa
+Console.WriteLine(<span class="string">&quot;&#128008;&quot;</span>);</code></pre>
+<p>ちなみにこのエラーを出すのはあくまで <code>dotnet</code> コマンドであって、
+C# コンパイラー的には「<code>#:</code> で始まるディレクティブはすべて無視」という挙動になっています。
+<code>&lt;Features&gt;FileBasedProgram&lt;/Features&gt;</code> オプションを書いた <code>.csproj</code> ファイルを用意して、
+旧来方式でコンパイルすると <code>#:aaa</code> の行のエラーは出ません。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/cheatsheet/">C# &#x306E;&#x6A5F;&#x80FD;&#x4E00;&#x89A7;&#xFF08;&#x7D22;&#x5F15;&#x7684;&#x306A;&#x3082;&#x306E;&#xFF09;</a></li><li><a href="/study/csharp/cheatsheet/list_expression/">C# &#x306E;&#x5F0F;&#x3068;&#x6587;&#x306E;&#x4E00;&#x89A7;</a></li><li><a href="/study/csharp/cheatsheet/list_type/">C# &#x306E;&#x578B;&#x3068;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/study/csharp/cheatsheet/list_versions/">&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver1/">C# 1.0</a></li><li><a href="/study/csharp/cheatsheet/ap_ver2/">C# 2.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver3/">C# 3.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver4/">C# 4.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver5/">C# 5.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver6/">C# 6 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7/">C# 7 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_1/">C# 7.1 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_2/">C# 7.2 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_3/">C# 7.3 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver8/">C# 8.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver9/">C# 9.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver10/">C# 10.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver11/">C# 11.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver12/">C# 12.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver13/">C# 13.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver14/">C# 14.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/langversionoption/">&#x8A00;&#x8A9E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x306E;&#x6307;&#x5B9A;</a></li><li><a href="/study/csharp/cheatsheet/listfxlangversion/">C#&#x306E;&#x8A00;&#x8A9E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x3068;.NET&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/cheatsheet/ap_modern/">&#x4F7F;&#x308F;&#x306A;&#x304F;&#x306A;&#x3063;&#x305F;&#x6A5F;&#x80FD;&#x30FB;&#x65B0;&#x3057;&#x3044;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/apscripting/">C#&#x30B9;&#x30AF;&#x30EA;&#x30D7;&#x30C8;&#x5B9F;&#x884C;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

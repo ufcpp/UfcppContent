@@ -1,0 +1,293 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>[&#x96D1;&#x8A18;] &#x975E;&#x540C;&#x671F;&#x5236;&#x5FA1;&#x30D5;&#x30ED;&#x30FC; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/async/misc_asyncflow/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">[雑記] 非同期制御フロー</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>C# 5.0のasync/awaitがなかったころ、少し複雑目な非同期制御フローをどうやって実現していたかという話。</p>
+<p>C# 5.0を使えない状況下で非同期処理を書くことになった場合の参考としてや、async/awaitがどうやって実現されているかを知るきっかけになると思います。</p>
+<p>*
+<a href="/assets/media/ufcpp2000/csharp/source/ShowDialogAsyncSample.zip">サンプル コード（ZIP 形式。proj/sln 含め一式。）</a></p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>C# 5.0（await演算子）便利だなー</p>
+</li>
+<li><p>await演算子が内部的にやっていることは、イテレーターに近い</p>
+</li>
+<li><p>なので、昔はイテレーターを使って非同期処理をすることが結構あった</p>
+</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="requirement"></a>サンプルの要件</h2>
+<p>今回の例として使うのは、Figure 1に示すような、確認ダイアログ表示のフロー。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/asyncflow1.png"><img src="/assets/media/ufcpp2000/csharp/fig/asyncflow1.png" alt="確認ダイアログを表示する例" /></a></p>
+<figcaption>確認ダイアログを表示する例</figcaption>
+</figure>
+<p>要は、何かを実行するにあたって、特定条件下では確認ダイアログの表示が必要で、すべてのダイアログで「OK」を押したときにだけ実行に移るという仕組みです。</p>
+<p>たとえばゲームでも想像してもらって、「このアイテムはレアですが、本当に合成素材にしますか？」みたいなの。</p>
+<ul>
+<li><p>レアですよ？</p>
+</li>
+<li><p>合成して強化したアイテムですよ？</p>
+</li>
+<li><p>これ以上合成しても上限に達してて変化しませんよ？</p>
+</li>
+</ul>
+<p>など、確認すべき項目がいくつかあります。</p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="control-flow"></a>制御フロー</h2>
+<p>ダイアログ表示のコードを同期的に書ける場合、特に問題もなく書けると思います。</p>
+<p>たとえばWPFだと、Windowクラス（System.Windows名前空間）のShowDialogメソッドで同期的にダイアログ表示できるので、それほど困りません（ダイアログを表示している間、呼び出し元のウィンドウは止まってしまいますが）。</p>
+<p>以下のように書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">private</span> <span class="keyword">bool</span> CheckBlocking()
+{
+    <span class="keyword">if</span> (<span class="keyword">this</span>.Check1.IsChecked ?? <span class="keyword">false</span>)
+    {
+        <span class="keyword">var</span> result = Dialog.ShowDialog(<span class="string">&quot;確認 1&quot;</span>, <span class="string">&quot;1つ目の確認作業&quot;</span>);
+        <span class="keyword">if</span> (!result) <span class="keyword">return</span> <span class="keyword">false</span>;
+    }
+
+    <span class="keyword">if</span> (<span class="keyword">this</span>.Check2.IsChecked ?? <span class="keyword">false</span>)
+    {
+        <span class="keyword">var</span> result = Dialog.ShowDialog(<span class="string">&quot;確認 2&quot;</span>, <span class="string">&quot;2つ目の確認作業&quot;</span>);
+        <span class="keyword">if</span> (!result) <span class="keyword">return</span> <span class="keyword">false</span>;
+    }
+
+    <span class="keyword">if</span> (<span class="keyword">this</span>.Check3.IsChecked ?? <span class="keyword">false</span>)
+    {
+        <span class="keyword">var</span> result = Dialog.ShowDialog(<span class="string">&quot;確認 3&quot;</span>, <span class="string">&quot;3つ目の確認作業&quot;</span>);
+        <span class="keyword">if</span> (!result) <span class="keyword">return</span> <span class="keyword">false</span>;
+    }
+
+    <span class="keyword">return</span> <span class="keyword">true</span>;
+}</code></pre>
+<p>問題は、非同期に書かざるを得ない場合です。Silverlightなんかはそうですし、最近実際に困ったのは<a href="http://unity3d.com/">Unity</a>での話。</p>
+<p>その「実際の話」では、ダイアログを表示するためのAPIが、引数にコールバック用のデリゲートを渡すタイプのAPIでした。</p>
+<pre><code class="language-csharp"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> コールバック型の非同期ダイアログ表示。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;title&quot;&gt;</span><span class="xmlDocComment">ダイアログのタイトル文字列。&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;message&quot;&gt;</span><span class="xmlDocComment">ダイアログの本文。&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;onClose&quot;&gt;</span><span class="xmlDocComment">コールバック（OK が押されたら true、Cancel が押されたら false を渡す）。&lt;/param&gt;</span>
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> BeginShowDialog(<span class="keyword">string</span> title, <span class="keyword">string</span> message, Action&lt;<span class="keyword">bool</span>&gt; onClose)</code></pre>
+<p>で、これを使ってダイアログを表示する部分ですが、チーム開発の「後から継ぎ足し」の結果、気が付けば、以下のようなコードが出来上がっていました。</p>
+<p><span class="expand-button" title="展開/折畳">（クリックしてソースコードを表示（割と見るに堪えないので初期状態を非表示に））</span></p>
+<div class="expand-panel" title="（クリックしてソースコードを表示（割と見るに堪えないので初期状態を非表示に））"><pre><code class="language-csharp"><span class="keyword">private</span> <span class="keyword">void</span> BeginCheck(Action&lt;<span class="keyword">bool</span>&gt; onComplete)
+{
+    <span class="keyword">if</span> (<span class="keyword">this</span>.Check1.IsChecked ?? <span class="keyword">false</span>)
+    {
+        Dialog.BeginShowDialog(<span class="string">&quot;確認 1&quot;</span>, <span class="string">&quot;1つ目の確認作業&quot;</span>, result =&gt;
+        {
+            <span class="keyword">if</span> (!result)
+            {
+                onComplete(<span class="keyword">false</span>);
+                <span class="keyword">return</span>;
+            }
+<pre><code>        &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (&lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;.Check2.IsChecked ?? &lt;span class=&quot;keyword&quot;&gt;false&lt;/span&gt;)
+        {
+            Dialog.BeginShowDialog(&lt;span class=&quot;string&quot;&gt;&amp;quot;確認 2&amp;quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&amp;quot;2つ目の確認作業&amp;quot;&lt;/span&gt;, result2 =&amp;gt;
+            {
+                &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (!result2)
+                {
+                    onComplete(&lt;span class=&quot;keyword&quot;&gt;false&lt;/span&gt;);
+                    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt;;
+                }
+
+                &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (&lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;.Check3.IsChecked ?? &lt;span class=&quot;keyword&quot;&gt;false&lt;/span&gt;)
+                {
+                    Dialog.BeginShowDialog(&lt;span class=&quot;string&quot;&gt;&amp;quot;確認 3&amp;quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&amp;quot;3つ目の確認作業&amp;quot;&lt;/span&gt;, result3 =&amp;gt;
+                    {
+                        onComplete(result3);
+                    });
+                }
+                &lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt;
+                    onComplete(&lt;span class=&quot;keyword&quot;&gt;true&lt;/span&gt;);
+            });
+        }
+        &lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (&lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;.Check3.IsChecked ?? &lt;span class=&quot;keyword&quot;&gt;false&lt;/span&gt;)
+        {
+            Dialog.BeginShowDialog(&lt;span class=&quot;string&quot;&gt;&amp;quot;確認 3&amp;quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&amp;quot;3つ目の確認作業&amp;quot;&lt;/span&gt;, result3 =&amp;gt;
+            {
+                onComplete(result3);
+            });
+        }
+        &lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt;
+            onComplete(&lt;span class=&quot;keyword&quot;&gt;true&lt;/span&gt;);
+    });
+}
+&lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (&lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;.Check2.IsChecked ?? &lt;span class=&quot;keyword&quot;&gt;false&lt;/span&gt;)
+{
+    Dialog.BeginShowDialog(&lt;span class=&quot;string&quot;&gt;&amp;quot;確認 2&amp;quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&amp;quot;2つ目の確認作業&amp;quot;&lt;/span&gt;, result =&amp;gt;
+    {
+        &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (!result)
+        {
+            onComplete(&lt;span class=&quot;keyword&quot;&gt;false&lt;/span&gt;);
+            &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt;;
+        }
+
+        &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (&lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;.Check3.IsChecked ?? &lt;span class=&quot;keyword&quot;&gt;false&lt;/span&gt;)
+        {
+            Dialog.BeginShowDialog(&lt;span class=&quot;string&quot;&gt;&amp;quot;確認 3&amp;quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&amp;quot;3つ目の確認作業&amp;quot;&lt;/span&gt;, result3 =&amp;gt;
+            {
+                onComplete(result);
+            });
+        }
+        &lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt;
+            onComplete(&lt;span class=&quot;keyword&quot;&gt;true&lt;/span&gt;);
+    });
+}
+&lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (&lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;.Check3.IsChecked ?? &lt;span class=&quot;keyword&quot;&gt;false&lt;/span&gt;)
+{
+    Dialog.BeginShowDialog(&lt;span class=&quot;string&quot;&gt;&amp;quot;確認 3&amp;quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&amp;quot;3つ目の確認作業&amp;quot;&lt;/span&gt;, result3 =&amp;gt;
+    {
+        onComplete(result3);
+    });
+}
+&lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt;
+    onComplete(&lt;span class=&quot;keyword&quot;&gt;true&lt;/span&gt;);
+</code></pre>
+<p>}</code></pre></div></p>
+<p>条件分岐や途中で処理を打ち切ったりするのはコールバックで書くのが大変で、コピペ コードが散乱してしまっています。見るからにダメなコードですが、3つ目のダイアログ表示まではかろうじて「書けるには書けた」のでごまかしごまかしここまで来てしまった状態。</p>
+<p>そして、仕様追加で4つ目のダイアログが必要になった時点でくじけることに。</p>
+<h2 id="c-5.0"><a id="sec-generated-title-5"></a> <a id="csharp5"></a>C# 5.0</h2>
+<p>C# 5.0が使えるなら、つまり、Visual Studio 2012で、.NET Framework 4.5が入っていれば、非常に簡単な解決策があります。</p>
+<p>Taskクラスを返す非同期APIを用意して、await演算子を使うだけ。</p>
+<h3 id="task"><a id="sec-generated-title-6"></a> <a id="task-class"></a>Task クラス</h3>
+<p>コールバックを渡すタイプのAPIだとawait演算子を使えないので、まずはTaskクラス（System.Threading.Tasks名前空間）を返すタイプのAPIに変換します。以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">static</span> Task&lt;<span class="keyword">bool</span>&gt; ShowDialogAsync(<span class="keyword">string</span> title, <span class="keyword">string</span> message)
+{
+    <span class="keyword">var</span> tcs = <span class="keyword">new</span> TaskCompletionSource&lt;<span class="keyword">bool</span>&gt;();
+    BeginShowDialog(title, message, result =&gt; { tcs.TrySetResult(result); });
+    <span class="keyword">return</span> tcs.Task;
+}</code></pre>
+<p>（単純化のため、例外処理をさぼっています）</p>
+<p>Taskクラス自体は.NET Framework 4の頃からあるので、それ以降のバージョンを使えるなら、このタイプのAPIを用意しておくといいでしょう。</p>
+<h3 id="await"><a id="sec-generated-title-7"></a> <a id="await-op"></a>await 演算子</h3>
+<p>そして、ダイアログを表示する部分は以下のように書きます。</p>
+<pre><code class="language-csharp"><span class="keyword">private</span> <span class="keyword">async</span> Task&lt;<span class="keyword">bool</span>&gt; CheckAsync()
+{
+    <span class="keyword">if</span> (<span class="keyword">this</span>.Check1.IsChecked ?? <span class="keyword">false</span>)
+    {
+        <span class="keyword">var</span> result = <span class="keyword">await</span> Dialog.ShowDialogAsync(<span class="string">&quot;確認 1&quot;</span>, <span class="string">&quot;1つ目の確認作業&quot;</span>);
+        <span class="keyword">if</span> (!result) <span class="keyword">return</span> <span class="keyword">false</span>;
+    }
+
+    <span class="keyword">if</span> (<span class="keyword">this</span>.Check2.IsChecked ?? <span class="keyword">false</span>)
+    {
+        <span class="keyword">var</span> result = <span class="keyword">await</span> Dialog.ShowDialogAsync(<span class="string">&quot;確認 2&quot;</span>, <span class="string">&quot;2つ目の確認作業&quot;</span>);
+        <span class="keyword">if</span> (!result) <span class="keyword">return</span> <span class="keyword">false</span>;
+    }
+
+    <span class="keyword">if</span> (<span class="keyword">this</span>.Check3.IsChecked ?? <span class="keyword">false</span>)
+    {
+        <span class="keyword">var</span> result = <span class="keyword">await</span> Dialog.ShowDialogAsync(<span class="string">&quot;確認 3&quot;</span>, <span class="string">&quot;3つ目の確認作業&quot;</span>);
+        <span class="keyword">if</span> (!result) <span class="keyword">return</span> <span class="keyword">false</span>;
+    }
+
+    <span class="keyword">return</span> <span class="keyword">true</span>;
+}</code></pre>
+<p>同期呼び出しの場合と比べて、背景色を変えて強調している部分だけが変化しています。
+違いは、以下の通りで、残りの部分は全く同じです。</p>
+<ul>
+<li><p>メソッドに async 修飾子が付く</p>
+</li>
+<li><p>非同期処理を行いたい部分に await 演算子が付く</p>
+</li>
+<li><p>命名規約上、非同期処理を行うメソッドの名前は、語尾に Async を付ける</p>
+</li>
+</ul>
+<p>async修飾子やawait演算子の詳細は「<a href="/study/csharp/async/sp5_async/#async">非同期メソッド</a>」 を参照してください。</p>
+<h2 id="section-5"><a id="sec-generated-title-8"></a> <a id="iterator"></a>イテレーター非同期</h2>
+<p>そう、C# 5.0ならね。</p>
+<p>ということで、問題は、C# 5.0が使えない場合。</p>
+<p>C# 5.0以前、割と常套手段として知られていたのが、イテレーター（詳しくは「<a href="/study/csharp/data/sp2_iterator/">イテレーター</a>」を参照）を使った非同期処理手法です。</p>
+<p>上記の例を、この手法を使って書き直すと、以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">private</span> <span class="keyword">void</span> BeginCheckWithIterator(Action&lt;<span class="keyword">bool</span>&gt; onComplete)
+{
+    <span class="keyword">var</span> e = CheckIterator(onComplete).GetEnumerator();
+
+    Action a = <span class="keyword">null</span>;
+
+    a = () =&gt;
+    {
+        <span class="keyword">if</span> (!e.MoveNext()) <span class="keyword">return</span>;
+        e.Current(a);
+    };
+
+    a();
+}
+
+<span class="keyword">private</span> IEnumerable&lt;Action&lt;Action&gt;&gt; CheckIterator(Action&lt;<span class="keyword">bool</span>&gt; onComplete)
+{
+    <span class="keyword">if</span> (<span class="keyword">this</span>.Check1.IsChecked ?? <span class="keyword">false</span>)
+    {
+        <span class="keyword">bool</span> result = <span class="keyword">false</span>;
+        <span class="keyword">yield</span> <span class="keyword">return</span> callback =&gt; Dialog.BeginShowDialog(<span class="string">&quot;確認 1&quot;</span>, <span class="string">&quot;1つ目の確認作業&quot;</span>, r =&gt; { result = r; callback(); });
+
+        <span class="keyword">if</span> (!result)
+        {
+            onComplete(<span class="keyword">false</span>);
+            <span class="keyword">yield</span> <span class="keyword">break</span>;
+        }
+    }
+
+    <span class="keyword">if</span> (<span class="keyword">this</span>.Check2.IsChecked ?? <span class="keyword">false</span>)
+    {
+        <span class="keyword">bool</span> result = <span class="keyword">false</span>;
+        <span class="keyword">yield</span> <span class="keyword">return</span> callback =&gt; Dialog.BeginShowDialog(<span class="string">&quot;確認 2&quot;</span>, <span class="string">&quot;2つ目の確認作業&quot;</span>, r =&gt; { result = r; callback(); });
+
+        <span class="keyword">if</span> (!result)
+        {
+            onComplete(<span class="keyword">false</span>);
+            <span class="keyword">yield</span> <span class="keyword">break</span>;
+        }
+    }
+
+    <span class="keyword">if</span> (<span class="keyword">this</span>.Check3.IsChecked ?? <span class="keyword">false</span>)
+    {
+        <span class="keyword">bool</span> result = <span class="keyword">false</span>;
+        <span class="keyword">yield</span> <span class="keyword">return</span> callback =&gt; Dialog.BeginShowDialog(<span class="string">&quot;確認 3&quot;</span>, <span class="string">&quot;3つ目の確認作業&quot;</span>, r =&gt; { result = r; callback(); });
+
+        <span class="keyword">if</span> (!result)
+        {
+            onComplete(<span class="keyword">false</span>);
+            <span class="keyword">yield</span> <span class="keyword">break</span>;
+        }
+    }
+
+    onComplete(<span class="keyword">true</span>);
+}</code></pre>
+<p>行数は増えてしまっていますが、パターンとして、</p>
+<ul>
+<li><p><code>await</code>⇔<code>yield return</code></p>
+</li>
+<li><p><code>return 戻り値;</code>⇔<code>onComplete(戻り値); yield break;</code></p>
+</li>
+</ul>
+<p>というような、機械的な置き換えが成り立ちます。一度覚えてしまえば「書けなくはない」でしょう。</p>
+<p>非同期処理に必要なのは、要するに「中断と再開」で、実は、イテレーターがやっていることと同じです。なので、この例みたいに、イテレーターを使って非同期制御フローを書けるわけです。</p>
+<p>実際、C# 5.0のawait演算子は、イテレーターがやっているのと同様のコード生成によって実現されています。</p>
+<h2 id="section-6"><a id="sec-generated-title-9"></a> <a id="conclusion"></a>まとめ</h2>
+<p>C# 5.0で追加されたawait演算子が内部で行っていることは「中断と再開」で、イテレーターと同系統の技術です。</p>
+<p>逆に言うと、イテレーターを使って、await演算子と同じようなことをする方法があります。実際、C# 5.0以前には、この方法で非同期処理を行っている人もいました。</p>
+<p>ここでは、そのイテレーターを使った非同期処理の例を挙げました。C# 5.0が使えない環境での助けや、C# 5.0のawait演算子の挙動を知る助けになるかと思います。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/async/">&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/async/sp_thread/">&#x30DE;&#x30EB;&#x30C1;&#x30B9;&#x30EC;&#x30C3;&#x30C9;</a></li><li><a href="/study/csharp/async/asyncvariation/">&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406;&#x306E;&#x7A2E;&#x985E;</a></li><li><a href="/study/csharp/async/asyncinside/">&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406;&#x3092;&#x652F;&#x3048;&#x308B;&#x30A4;&#x30F3;&#x30D5;&#x30E9;</a></li><li><a href="/study/csharp/async/asyncexecutioncontext/">&#x5B9F;&#x884C;&#x30B3;&#x30F3;&#x30C6;&#x30AD;&#x30B9;&#x30C8;</a></li><li><a href="/study/csharp/async/misc_synchronize/">[&#x96D1;&#x8A18;] &#x30B9;&#x30EC;&#x30C3;&#x30C9;&#x9593;&#x306E;&#x7AF6;&#x5408;&#x56DE;&#x907F;</a></li><li><a href="/study/csharp/async/misc_task/">[&#x96D1;&#x8A18;] &#x30B9;&#x30EC;&#x30C3;&#x30C9; &#x30D7;&#x30FC;&#x30EB;&#x3068;&#x30BF;&#x30B9;&#x30AF;</a></li><li><a href="/study/csharp/async/sp5_async/">&#x975E;&#x540C;&#x671F;&#x30E1;&#x30BD;&#x30C3;&#x30C9;</a></li><li><a href="/study/csharp/async/sp5_awaitable/">&#x975E;&#x540C;&#x671F;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x306E;&#x5185;&#x90E8;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/async/misc_continuation/">[&#x96D1;&#x8A18;] &#x7D99;&#x7D9A;&#x3068;&#x5148;&#x7269;</a></li><li><a href="/study/csharp/async/misc_uithread/">[&#x96D1;&#x8A18;] GUI &#x3068;&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/async/asyncstream/">&#x975E;&#x540C;&#x671F;&#x30B9;&#x30C8;&#x30EA;&#x30FC;&#x30E0;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

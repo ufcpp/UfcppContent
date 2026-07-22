@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Visual Studio &quot;15&quot; Preview 4 | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/8/vs15p4/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-08-23T03:19:11">2016-08-23</time></span><span>更新: <time datetime="2016-08-23T03:19:11">2016-08-23</time></span></div><h1 id="visual-studio-15-preview-4">Visual Studio &quot;15&quot; Preview 4</h1>
+<p>Preview 4が出たみたいですね。</p>
+<ul>
+<li><a href="https://blogs.msdn.microsoft.com/visualstudio/2016/08/22/visual-studio-15-preview-4/">Visual Studio “15” Preview 4</a></li>
+</ul>
+<p>最近、まあ、Previeｗ の新しいのが出ても、C# vNext の進捗具合だけしか取り上げてなかったりするんですが。
+今回も主にその話題で。</p>
+<h2 id="section">インストーラー</h2>
+<p>1点だけ。新しいインストーラーがだいぶちゃんとしたものになってますね。
+細かい機能を選択して入れるんじゃなくて、「UWP開発したい人はこのオプションを選択してください」みたいな感じのUIに(その結果、それに必要な機能に一通りチェックが入る)。</p>
+<p>Visual Studioってものすごいインストールに時間が掛かるので有名ですが、結構な割合、エミュレーターとか仮想マシンのインストールに取られてる時間だったりします。
+要するに、UWPとかモバイル開発が不要なら、ここ外すだけでかなりインストール早かったり。</p>
+<h2 id="c-7">C# 7 進捗</h2>
+<p>C# 7で入るものの予定は以下のページ参照。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/blob/master/docs/Language%20Feature%20Status.md">Language Feature Status</a></li>
+</ul>
+<p>これを踏まえて、Preview 4でのC# 7実装の状況まとめ:</p>
+<div>
+<script src="https://gist.github.com/ufcpp/637759fdd02409d9f9795e5b00ae0ee2.js"></script>
+</div>
+<p><code>ValueTask</code>は、ちょっと前に中の人が「Preview 4に入る予定のブランチにマージされたぜ」ってtwitterでつぶやいてましたが、
+QA通らなかったのか、リバート食らってました。</p>
+<p>他は、たぶんあと細かい調整だけですかね。
+変数/ローカル関数のスコープとか、クエリ式中でも分解構文使えるようにするとか。</p>
+<p>ちなみに、タプルを使うためには<code>System.ValueTuple</code>が、<code>ValueTask</code>を使うためには<code>System.Threading.Tasks.Extensions</code>が必要になりますが、
+どっちももうNuGet.orgに並んでいます。</p>
+<ul>
+<li><a href="https://www.nuget.org/packages/System.ValueTuple/">System.ValueTuple</a> (prerelease version のみ)</li>
+<li><a href="https://www.nuget.org/packages/System.Threading.Tasks.Extensions/">System.Threading.Tasks.Extensions</a></li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/8/">2016&#x5E74;8&#x6708;</a></li><li><a href="/blog/2016/8/pickuproslyn0805/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/5</a></li><li><a href="/blog/2016/8/pickuproslyn0806/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/6</a></li><li><a href="/blog/2016/8/pickuproslyn0810/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/10</a></li><li><a href="/blog/2016/8/pickuproslyn0816/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/16 Close&#x796D;&#x308A;</a></li><li><a href="/blog/2016/8/rickuproslyn0827/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/27: What&#x2019;s New in C# 7.0</a></li><li><a href="/blog/2016/8/tuples/">&#x30BF;&#x30D7;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

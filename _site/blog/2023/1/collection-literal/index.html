@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x3010;C# 12 &#x5019;&#x88DC;&#x3011;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3; &#x30EA;&#x30C6;&#x30E9;&#x30EB; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2023/1/collection-literal/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2023-01-29T16:24:10">2023-01-29</time></span><span>更新: <time datetime="2023-01-29T16:24:10">2023-01-29</time></span></div><h1 id="c-12">【C# 12 候補】コレクション リテラル</h1>
+<p>今回はコレクション リテラルの話。</p>
+<p>・提案 issue: <a href="https://github.com/dotnet/csharplang/issues/5354">[Proposal]: Collection literals #5354</a></p>
+<p>今日の話も、提案自体は<a href="/blog/2021/12/collection-literal/">去年から結構前向きに検討されてたもの</a>です。
+リスト パターンの実装の過程で出てきた案で、元から「C# 11 には間に合わないかも」みたいな空気感だったもの。
+昨年11月に C# 11 が世に出た後、改めて進捗が出始めたので、今日はその辺りの話になります。</p>
+<p>ちなみに、<a href="https://github.com/dotnet/roslyn/blob/main/docs/Language%20Feature%20Status.md">Language Feature Status</a> で、<a href="https://github.com/dotnet/roslyn/commit/0e17a88c3b34f7c7f995c5e29207d2bfe0095fb9">最近 &quot;C# Next&quot; の欄に並びました</a>。
+実装もちらほら始まっているので、割かし C# 12 入りが有望だと思います。</p>
+<h2 id="section">コレクション リテラルおさらい</h2>
+<p><a href="/blog/2021/12/collection-literal/">去年</a>から大体決まってそうなところをおさらい。</p>
+<p>文法的には <code>[]</code> を使う案が有力です。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Collections.Immutable;
+
+<span class="comment">// いろんなコレクション型に対して共通して使える。</span>
+<span class="keyword">int</span>[] array = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
+Span&lt;<span class="keyword">int</span>&gt; span = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
+List&lt;<span class="keyword">int</span>&gt; list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
+ImmutableArray&lt;<span class="keyword">int</span>&gt; immutable = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</code></pre>
+<p>また、同時に、いわゆる &quot;spread&quot; と呼ばれる操作も導入されます。</p>
+<pre><code class="language-csharp"><span class="comment">// いろんなコレクション型に対して共通して使える。</span>
+<span class="keyword">int</span>[] a = [<span class="number">1</span>, <span class="number">2</span>];
+<span class="keyword">int</span>[] b = [<span class="number">3</span>, <span class="number">4</span>];
+
+<span class="comment">// これだと、2重配列の [ [1, 2], [3, 4] ] になる。</span>
+<span class="keyword">int</span>[][] nested = [a, b];
+
+<span class="comment">// これが &quot;spread&quot;。各コレクションを展開して、concat 的な操作をする。</span>
+<span class="comment">// [ 1, 2, 3, 4] になる。</span>
+<span class="keyword">int</span>[] spread = [..a, ..b];
+
+<span class="comment">// もちろん混在もあり得る。</span>
+<span class="comment">// [ [1, 2], 3, 4] になる。</span>
+<span class="keyword">object</span>[] spread = [a, ..b];</code></pre>
+<p>導入の動機は以下のようなものです。</p>
+<ul>
+<li>現在だと <code>new T[] { ... }</code>, <code>new T { ... }</code>, <code>stackalloc T[] { ... }</code>, <code>T.Create(...)</code> みたいにバラバラな書き方になるものを簡潔な書き方に統一する
+<ul>
+<li>特に、<a href="/blog/2022/12/stackalloc-natural-type/"><code>stackalloc</code></a> みたいな不自然な構文の必要性を減らす</li>
+</ul>
+</li>
+<li><a href="/study/csharp/datatype/patterns/#list">リスト パターン</a>と対称な構文を用意する</li>
+<li>コレクション初期化周りのパフォーマンス改善
+<ul>
+<li>現状書くとすると <code>a.Concat(b).Append(c).ToArray()</code> は書くのが煩雑な上にパフォーマンスが悪い</li>
+<li><a href="/blog/2022/2/span-optimization/">ReadOnlySpan 最適化</a>みたいな知らないとまず書けない最適化を減らしたい</li>
+</ul>
+</li>
+<li>型推論フレンドリーにしたい
+<ul>
+<li><a href="/blog/2022/11/covariantarrayincident/">現在の事故例</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="section-1">その後</h2>
+<p>最近の C# チームは、有望そうな機能ごとに、その機能を専門に検討する「Working Group」という単位を作って作業をしています。
+コレクション リテラルにも Working Group があって、2回ほど Working Group 内でのミーティング議事録が公開されています。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/blob/main/meetings/working-groups/collection-literals/CL-2022-10-06.md">Collection literals working group meeting for October 6th, 2022</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/main/meetings/working-groups/collection-literals/CL-2022-10-14.md">Collection literals working group meeting for October 14th, 2022</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/main/meetings/working-groups/collection-literals/CL-2022-10-21.md">Collection literals working group meeting for October 21st, 2022</a></li>
+</ul>
+<p>以下、これらの議事録から<a href="/blog/2021/12/collection-literal/">去年</a>からの進捗を拾って列挙していこうかと思います。</p>
+<ul>
+<li>自然な型 (<code>var x = [a];</code> のときの <code>x</code> の型)は <code>List&lt;T&gt;</code> がよさそう
+<ul>
+<li><code>var a = [x]; a.Add(y);</code> ってやりたい</li>
+<li><code>let</code> (readonly local) が入るんなら、<code>let x = [a];</code> の自然な型は <code>ImmutableArray&lt;T&gt;</code> がよさげ。Swift がそう</li>
+</ul>
+</li>
+<li>アロケーションを減らせるように、長さが既知なら <code>new List&lt;T&gt;(length)</code> みたいに capacity を渡せるようにしたい
+<ul>
+<li><code>IEnumerable&lt;T&gt;</code> に対しても、<code>Enumerable.TryGetNonEnumeratedCount</code> を使って事前に長さをとれないか試みる</li>
+</ul>
+</li>
+<li>当初予定では <code>var x = new(length); x.Init(buffer);</code> みたいなコード生成のつもりでいたけども、このメソッドは <code>Init</code> よりも <code>Construct</code> という名前の方がいいかも</li>
+<li>長さが未知の <code>[..enumarable]</code> を <code>ImmutableArray&lt;T&gt;</code> みたいな <code>Add</code> が使えない型に対しても使えるようにしたい</li>
+<li>lazy な enumerable に対して <code>[..a, ..b]</code> するとき、これも lazy であってほしいと望む人もいそうだけど、たぶん、(即時評価で)新しいコレクション作る</li>
+<li>新しい文法がが「一番パフォーマンスいい」状態にはしたい
+<ul>
+<li>(<code>ImmutableArray&lt;T&gt;</code> に対する <code>[..enumerableOfT]</code> は <code>ImmutableArray.CreateRange&lt;T&gt;</code> よりも遅くなってはいけない。)</li>
+</ul>
+</li>
+<li><code>[..a]</code> は <code>a</code> のクローン手段として使えていい</li>
+<li><code>[]</code> は <code>null</code> と同様に、「どんな型のコレクションにでも代入できる特殊なリテラル」であるべき</li>
+<li><code>var list = cond ? [str] : [obj];</code> の型はどう決める？ target-typed? それか、common-base-type?</li>
+<li>一緒に Dictionary リテラルもやる。最有力候補は <code>[key:value]</code>という書き方
+<ul>
+<li><code>key:value</code> の部分で <code>KeyValuePair&lt;TKey, TValue&gt;</code> なリテラルになりそう</li>
+<li><code>List&lt;T&gt;</code>, <code>Dictionary&lt;TKey, TValue&gt;</code>, <code>KeyValuePair&lt;TKey, TValue&gt;</code> の3つの型は first-class になりそう</li>
+</ul>
+</li>
+</ul>
+<h3 id="dictionary">Dictionary リテラル</h3>
+<p>特に、Dictionary リテラルの話は<a href="/blog/2021/12/collection-literal/">去年</a>はまだなかったですかね、確か。
+候補となる文法は以下のようなもの。
+(このうち、<code>[key: value]</code> が有力。<code>[ [key] = value ]</code> もありかも。)</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> dict1 = { <span class="string">&quot;key1&quot;</span>: <span class="string">&quot;value1&quot;</span>, <span class="string">&quot;key2&quot;</span>: <span class="string">&quot;value2&quot;</span> };
+<span class="keyword">var</span> dict2 = [<span class="string">&quot;key1&quot;</span>: <span class="string">&quot;value1&quot;</span>, <span class="string">&quot;key2&quot;</span>: <span class="string">&quot;value2&quot;</span> ];
+<span class="keyword">var</span> dict3 = [ [<span class="string">&quot;key1&quot;</span>] = <span class="string">&quot;value1&quot;</span>, [<span class="string">&quot;key2&quot;</span>] = <span class="string">&quot;value2&quot;</span> ];
+<span class="keyword">var</span> dict4 = [<span class="string">&quot;key1&quot;</span> =&gt; <span class="string">&quot;value1&quot;</span>, <span class="string">&quot;key2&quot;</span> =&gt; <span class="string">&quot;value2&quot;</span>];</code></pre>
+<p>Dictionary リテラルをやるのであれば、一緒に「Dictionary パターン」もやりたいそうです。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> dict = [ <span class="string">&quot;key1&quot;</span>: <span class="string">&quot;value1&quot;</span>, <span class="string">&quot;key2&quot;</span>: <span class="string">&quot;value2&quot;</span> ];
+
+<span class="keyword">if</span> (dict <span class="keyword">is</span> [ <span class="string">&quot;key1&quot;</span>: <span class="keyword">var</span> value ])
+{
+}</code></pre>
+<p><code>[key: value]</code> の場合には <code>x.Add(new(key, value))</code> (もしくは前述の <code>Construct</code>)扱いで、
+<code>[ [key] = value ]</code> の場合には <code>x[key] = value</code> 扱いという区別で両方認める可能性もあります。
+この場合、「パターン」の方も、以下のような別パターンを考えます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> dict = [ [<span class="string">&quot;key1&quot;</span>] = <span class="string">&quot;value1&quot;</span>, [<span class="string">&quot;key2&quot;</span>] = <span class="string">&quot;value2&quot;</span> ];
+
+<span class="keyword">if</span> (dict <span class="keyword">is</span> [ [<span class="string">&quot;key1&quot;</span>]: <span class="keyword">var</span> value ])
+{
+}</code></pre>
+<p>他に、以下のような話あり。</p>
+<ul>
+<li>spread の併用で <code>[..dict, prop: a]</code> とか書くのも OK</li>
+<li>Swift は <code>[:]</code> で空辞書リテラル作れる。C# もやる？</li>
+<li><code>init void Init(KeyValuePair&lt;TKey, TValue&gt;[] values)</code> で実装</li>
+<li>コレクション インデクサー(<code>List&lt;string&gt; list = [0: &quot;first&quot;, 1: &quot;second&quot;];</code> みたいなの)も認める？</li>
+<li>Dictionary 2個連結した <code>[..dict1, ..dict2]</code> は Dictionary であるべき</li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2023/1/">1&#x6708;</a></li><li><a href="/blog/2023/1/lambda-default/">&#x3010;C# 12 &#x5019;&#x88DC;&#x3011;&#x30E9;&#x30E0;&#x30C0;&#x5F0F;&#x306E;&#x30C7;&#x30D5;&#x30A9;&#x30EB;&#x30C8;&#x5F15;&#x6570;&#x3068; params &#x5F15;&#x6570;</a></li><li><a href="/blog/2023/1/list-pattern-enumerable/">&#x3010;C# 12 &#x5019;&#x88DC;&#x3011;IEnumerable &#x5411;&#x3051;&#x30EA;&#x30B9;&#x30C8; &#x30D1;&#x30BF;&#x30FC;&#x30F3;</a></li><li><a href="/blog/2023/1/semi-auto-property/">&#x3010;C# 12 &#x5019;&#x88DC;&#x3011;&#x534A;&#x81EA;&#x52D5;&#x30D7;&#x30ED;&#x30D1;&#x30C6;&#x30A3;</a></li><li><a href="/blog/2023/1/using-alias-any-types/">using alias &#x3092;&#x4EFB;&#x610F;&#x306E;&#x578B;&#x306B;&#x5BFE;&#x5FDC;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

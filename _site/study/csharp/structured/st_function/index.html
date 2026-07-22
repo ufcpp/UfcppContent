@@ -1,0 +1,985 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x95A2;&#x6570; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/structured/st_function/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">関数</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>同じプログラムコードを複数の場所で何度も利用したい場合があります。
+例えば、今まで説明してきた中で、たびたび「入力を促すメッセージを出力して、整数を入力してもらう」という場面が出てきました。
+そのために何度も同じようなソースコードを書いてきました。</p>
+<p>「<a href="/study/csharp/structured/st_loop/">反復処理</a>」のところでも説明しましたが、
+同じコードを複数の箇所に書くのはプログラムを管理していく上で好ましくありません。
+そこで、こういう頻繁に使われる機能をまとめて、何度も呼び出せるようにしたのが<strong id="function" class="keyword">関数</strong>（function）です。</p>
+<p>(追記したい)
+何度も出てくる処理でなくても、
+処理に名前が付く単位で関数化すべき。
+明確な名前を付ける(名前が付く単位で区切る)のがよいコードを書くコツ。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>何度も出てくる処理は関数化する。</p>
+</li>
+<li><p>数学の「関数」から取った名前。プログラミング用語的には、他に、サブルーチン、プロシージャ（手続き）、メソッド等といった呼び方がある。</p>
+</li>
+<li><p>C# の機能の呼び名としては、このページで説明しているものは正確には「メソッド」という。</p>
+<ul>
+<li><p>とりあえず現時点では、メソッド ＝ 関数 と思っておいて OK。</p>
+</li>
+<li><p>C# の場合、関数的な挙動をするものがいくつかあって、そのうち、一番「関数らしい関数」がメソッド。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="section-3"><a id="sec-generated-title-3"></a>サンプル</h5>
+<p><a href="https://github.com/ufcpp/UfcppSample/tree/master/Chapters/StructuredProgramming/Function">https://github.com/ufcpp/UfcppSample/tree/master/Chapters/StructuredProgramming/Function</a></p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="sec-function-member"></a>補足: 関数メンバー</h2>
+<p>C# の場合、このページで説明するような「関数」的な動作、
+すなわち、何らかの値を受け取って、処理して、結果の値を返すような挙動をするものがいくつかあります。
+具体的には、以下のようなものがあります。</p>
+<ul>
+<li><p>メソッド</p>
+<ul>
+<li>拡張メソッド(参考:「<a href="/study/csharp/functional/sp3_extension/">拡張メソッド</a>」)</li>
+</ul>
+</li>
+<li><p>コンストラクター(参考:「<a href="/study/csharp/oop/oo_construct/">コンストラクター</a>」)</p>
+</li>
+<li><p>プロパティ(参考:「<a href="/study/csharp/oop/oo_property/">プロパティ</a>」)</p>
+</li>
+<li><p>インデクサー(参考:「<a href="/study/csharp/oop/oo_indexer/">インデクサー</a>」)</p>
+</li>
+<li><p>イベント(参考:「<a href="/study/csharp/functional/sp_event/">イベント</a>」)</p>
+</li>
+<li><p>演算子(参考:「<a href="/study/csharp/oop/oo_operator/">演算子のオーバーロード</a>」)</p>
+</li>
+<li><p>ユーザー定義の型変換(参考:「<a href="/study/csharp/oop/oo_operator/">演算子のオーバーロード</a>」)</p>
+</li>
+<li><p>ファイナライザー(参考: 「<a href="/study/csharp/resource/rm_destructor/">ファイナライザー</a>」)</p>
+</li>
+</ul>
+<p>これらを合わせて、<strong id="function-member" class="keyword">関数メンバー</strong>(function member)と呼びます。
+このページで説明しているものは、C# の機能名としては、正確には<strong id="method" class="keyword">メソッド</strong>といいます。</p>
+<p>また、数学の関数を引き合いに出して説明していますが、
+数学の関数のイメージと一番合うのは、「静的メソッド」というものです
+(メソッドにもインスタンス メソッドと静的メソッドの2種類があります)。
+これについては、「<a href="/study/csharp/oop/oo_static/">静的メンバー</a>」で説明します。</p>
+<p>このページでの説明(つまり、メソッドに対する説明)の多くは、メソッド以外の関数メンバーにも当てはまります。
+引数の書き方、関数本体の書き方、戻り値の返し方などは、すべての関数メンバーで共通です。
+(引数や戻り値が指定できない関数メンバーもありますが、指定できる場合には、書き方が同じです。)</p>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="definition"></a>関数定義</h2>
+<p>C# では、以下のようにして関数(C# 用語としては、正確にはメソッド)を定義します。</p>
+<pre><code class="language-csharp">戻り値の型 関数名(引数一覧)
+{
+    関数本体(具体的な処理)
+}</code></pre>
+<h5 class="version version6">Ver. 6</h5>
+また、C# 6 では、関数本体の部分が1つの式だけからなる場合、以下のような書き方をすることができるようになりました。
+これを、expression-bodied (本体が式の)関数と呼びます(詳細は後述)。
+<pre><code class="language-csharp">戻り値の型 関数名(引数一覧) =&gt; 関数本体の式</code></pre>
+<p>関数という名前は、数学用語の関数からきています。
+数学の関数は、ある値を入力すると、一定のルールに従った出力が得られます。
+また、入力することの出来る値の範囲や、出力として得られる値の範囲はしっかりと決められています。</p>
+<p>C#の関数も同じように、入力出来る値と、出力される値の型をあらかじめ決めておかなければ行けません。
+例えば、実数(浮動小数点数)を入力して、その値のsinを求めるような関数を作りたい場合、
+以下のようにして関数を作ることが出来ます。</p>
+<pre><code class="language-csharp"><span class="comment">// sin x を求める関数。</span>
+<span class="comment">// テイラー展開を利用。</span>
+<span class="comment">// かなり適当に作ってるので、この方法ではそんなに精度はよくない。</span>
+<span class="keyword">double</span> Sin(<span class="keyword">double</span> x)
+{
+  <span class="keyword">double</span> xx = -x * x;
+  <span class="keyword">double</span> fact = <span class="number">1</span>;
+  <span class="keyword">double</span> sin = x;
+  <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;<span class="number">100</span>;)
+  {
+    fact *= i; ++i; fact *= i; ++i;
+    x *= xx;
+    sin += x / fact;
+  }
+  <span class="keyword">return</span> sin;
+}</code></pre>
+<p>まず、コメントの部分を除いて1番最初の、「<code>
+<span class="reserved">double</span> Sin(<span class="reserved">double</span> x)
+</code>」の部分を細かく見ていくと、
+先頭の「<code>
+<span class="reserved">double</span>
+</code>」が関数の出力(これを<strong id="return" class="keyword">戻り値</strong>という)の型、
+次の「<code>Sin</code>」が関数の名前、
+<code>()</code>の中にある「<code>
+<span class="reserved">double</span> x
+</code>」が入力の型と入力された値を保持するための変数(これを<strong id="paramter" class="keyword">引数</strong>(paramter)といいます)です。</p>
+<p>その後に続く<code></code>の中身が関数の内部で行う処理です。
+そして、出力にしたい値(これを<strong id="return-value" class="keyword">戻り値</strong>(return value)といいます)は<strong id="return" class="keyword">return</strong>というキーワードの後ろに書きます。</p>
+<p>作成した関数を呼び出すには、</p>
+<pre><code class="language-csharp">変数 = 関数名(入力)</code></pre>
+<p>というように書きます。
+以下に関数を呼び出す例を挙げます。</p>
+<h5 id="section-6"><a id="sec-generated-title-6"></a>サンプル</h5>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> SinSample
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">10</span>; ++i)
+    {
+      <span class="keyword">double</span> x = <span class="number">0</span>.<span class="number">01</span> * i;
+
+      <span class="keyword">double</span> y = Sin(x); <span class="comment">// 関数呼び出し</span>
+
+      Console.Write(<span class="string">&quot;sin({0:f2}) = {1:f6}\n&quot;</span>, x, y);
+    }
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> sin(x) の値を求める。</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 実装は割りと適当。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="keyword">static</span> <span class="keyword">double</span> Sin(<span class="keyword">double</span> x) <span class="comment">// 関数定義</span>
+  {
+    <span class="keyword">double</span> xx = -x * x;
+    <span class="keyword">double</span> fact = <span class="number">1</span>;
+    <span class="keyword">double</span> sin = x;
+    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;<span class="number">100</span>;)
+    {
+      fact *= i; ++i; fact *= i; ++i;
+      x *= xx;
+      sin += x / fact;
+    }
+    <span class="keyword">return</span> sin;
+  }
+}</code></pre>
+<pre><code class="language-console">sin(0.00) = 0.000000
+sin(0.01) = 0.010000
+sin(0.02) = 0.019999
+sin(0.03) = 0.029996
+sin(0.04) = 0.039989
+sin(0.05) = 0.049979
+sin(0.06) = 0.059964
+sin(0.07) = 0.069943
+sin(0.08) = 0.079915
+sin(0.09) = 0.089879</code></pre>
+<p><code>Sin</code> 関数の定義の部分の前についている <code>
+<span class="reserved">static</span>
+</code> というキーワードについては、
+「<a href="/study/csharp/oop/oo_static/">静的メンバー</a>」で説明します。</p>
+<p>もう一つ違う例を挙げて見ましょう。
+今まで、実数の入力は以下のようにして行っていました。</p>
+<pre><code class="language-csharp">Console.Write(<span class="string">&quot;ユーザーに入力を促すメッセージ&quot;</span>);
+x = <span class="keyword">double</span>.Parse(Console.ReadLine());</code></pre>
+<p>実数を入力する必要のある場面ごとにこのようなコードを書くのは面倒ですし、
+これを関数化して見ましょう。
+まず、単純に関数化した結果を以下に示します。</p>
+<pre><code class="language-csharp"><span class="keyword">double</span> GetDouble(<span class="keyword">string</span> message)
+{
+  Console.Write(message);
+  <span class="keyword">double</span> x = <span class="keyword">double</span>.Parse(Console.ReadLine());
+  <span class="keyword">return</span> x;
+}</code></pre>
+<p>今までずっと無視してきていたのですが、実はこのままでは、実数に出来ない文字列を入力してしまうとエラーが発生して、以下のようなエラーメッセージを表示してプログラムが途中で止まってしまいます。</p>
+<pre><code class="language-console">未処理の例外 : System.FormatException: 入力文字列の形式が正しくありません。
+  at System.Number.ParseDouble(String s, NumberStyles style, NumberFormatInfo info)
+  at System.Double.Parse(String s, NumberStyles style, IFormatProvider provider)
+  at StatementSample2.Main()</code></pre>
+<p>本当は例外処理(後述)というものを行ってこのようなエラーが出たときの対処を行わないといけません。
+そこで、この例外処理を行うように変更を加えてみましょう。
+(例外処理については「<a href="/study/csharp/structured/oo_exception/">例外処理</a>」参照。
+<code>try</code>と<code>catch</code>は例外処理を行うための構文です。)</p>
+<pre><code class="language-csharp"><span class="keyword">double</span> GetDouble(<span class="keyword">string</span> message)
+{
+  <span class="keyword">double</span> x;
+  <span class="keyword">while</span>(<span class="keyword">true</span>)
+  {
+    <span class="keyword">try</span>
+    {
+      <span class="comment">// 入力を促すメッセージを表示して、値を入力してもらう</span>
+      Console.Write(message);
+      x = <span class="keyword">double</span>.Parse(Console.ReadLine());
+    }
+    <span class="keyword">catch</span>(Exception)
+    {
+      <span class="comment">// 不正な入力が行われた場合の処理</span>
+      Console.Write(
+        <span class="string">&quot;error : 正しい値が入力されませんでした\n入力しなおしてください\n&quot;</span>);
+      <span class="keyword">continue</span>;
+    }
+    <span class="keyword">break</span>;
+  }
+  <span class="keyword">return</span> x;
+}</code></pre>
+<p>この修正した関数を用いて「<a href="/study/csharp/start/st_variable/">変数と式</a>」の最後で示したサンプルを書き換えてみましょう。</p>
+<h5 id="section-7"><a id="sec-generated-title-7"></a>サンプル</h5>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> StatementSample2
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="keyword">double</span> x, y, z; <span class="comment">// 変数を宣言。</span>
+
+    <span class="comment">// x, y にユーザーの入力した値を代入。</span>
+    x = GetDouble(<span class="string">&quot;input x : &quot;</span>);
+    y = GetDouble(<span class="string">&quot;input y : &quot;</span>);
+
+    <span class="comment">// 入力された値を元に計算</span>
+    z = x * x + y * y; <span class="comment">// z に x と y の二乗和を代入</span>
+    x /=  z;           <span class="comment">// x =  x / z; と同じ。</span>
+    y /= -z;           <span class="comment">// y = -y / z; と同じ。</span>
+
+    <span class="comment">// 計算結果を出力</span>
+    Console.Write(<span class="string">&quot;({0}, {1})&quot;</span>, x, y);
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 入力を促すメッセージを表示して、実数を入力してもらう。</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 正しく実数として解釈できる文字が入力されるまで繰り返す。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;message&quot;&gt;</span><span class="xmlDocComment"> 入力を促すメッセージ &lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;return&gt;</span><span class="xmlDocComment"> 入力された値 &lt;/return&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="keyword">static</span> <span class="keyword">double</span> GetDouble(<span class="keyword">string</span> message)
+  {
+    <span class="keyword">double</span> x;
+    <span class="keyword">while</span>(<span class="keyword">true</span>)
+    {
+      <span class="keyword">try</span>
+      {
+        <span class="comment">// 入力を促すメッセージを表示して、値を入力してもらう</span>
+        Console.Write(message);
+        x = <span class="keyword">double</span>.Parse(Console.ReadLine());
+      }
+      <span class="keyword">catch</span>(Exception)
+      {
+        <span class="comment">// 不正な入力が行われた場合の処理</span>
+        Console.Write(
+          <span class="string">&quot;error : 正しい値が入力されませんでした\n入力しなおしてください\n&quot;</span>);
+        <span class="keyword">continue</span>;
+      }
+      <span class="keyword">break</span>;
+    }
+    <span class="keyword">return</span> x;
+  }
+}</code></pre>
+<h3 id="return"><a id="sec-generated-title-8"></a> <a id="return-statement"></a>returnの場所・数</h3>
+<p>これまでの例ではすべて、関数の最後に1つだけ<code>return</code>を書いていますが、C# には別にそういう縛りはありません。
+<code>return</code> は関数の途中にも書けますし、1つの関数内に複数書けます。</p>
+<p>複数個の<code>return</code>を書きたくなる1番の例は<a href="/study/csharp/structured/st_branch/">条件分岐</a>でしょう。
+以下のように、条件を満たすときと満たさない時で別の値を返したい場合などです。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">int</span> Max(<span class="keyword">int</span> x, <span class="keyword">int</span> y)
+{
+    <span class="keyword">if</span> (x &gt; y) <span class="keyword">return</span> x;
+    <span class="keyword">else</span> <span class="keyword">return</span> y;
+}</code></pre>
+<p>分岐なしで関数の途中に<code>return</code>を書くこともできますが、この場合は、<code>return</code>よりも後ろは実行されません。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">int</span> F(<span class="keyword">int</span> x)
+{
+    Console.WriteLine(<span class="string">&quot;ここは実行される&quot;</span>);
+    <span class="keyword">return</span> x;
+
+    Console.WriteLine(<span class="string">&quot;ここは実行されない&quot;</span>);
+}</code></pre>
+<h2 id="section-8"><a id="sec-generated-title-9"></a> <a id="arity"></a>引数・戻り値の数</h2>
+<p>引数や戻り値は、なくてもよかったり、複数書けたりします。</p>
+<h3 id="section-9"><a id="sec-generated-title-10"></a> <a id="multiple-params"></a>引数が複数ある関数、</h3>
+<p>数学の関数では、例えば「f(x, y、z) = x<sup>2</sup>+y<sup>2</sup>+z<sup>2</sup>」といったように、入力が複数ある場合があります。
+C#の関数でもこのように引数が複数ある関数を作れます。
+引数を複数使いたい場合、数学の関数と同じように、関数を定義する際に、以下のように複数の引数を <code>,</code> で区切って並べます。
+このように、引数を <code>,</code> で区切って並べたものを<em>引数リスト</em>といいます。</p>
+<pre><code class="language-csharp"><span class="keyword">double</span> Norm(<span class="keyword">double</span> x, <span class="keyword">double</span> y, <span class="keyword">double</span> z)
+{
+  <span class="comment">// ノルムの計算</span>
+  <span class="keyword">return</span> x*x + y*y + z*z;
+}</code></pre>
+<h3 id="section-10"><a id="sec-generated-title-11"></a> <a id="no-param"></a>引数のない関数</h3>
+<p>数学ではあまり考えられませんが、C#では引数のない関数も定義できます。
+引数のない関数は、以下のように、引数リストを空にして定義します。</p>
+<pre><code class="language-csharp"><span class="keyword">ulong</span> seed = 4275646295673547UL;
+<span class="keyword">ulong</span> Random()
+{
+  <span class="comment">// 線形合同法による疑似乱数の生成</span>
+  <span class="keyword">unchecked</span>{seed = seed * 1566083941UL + <span class="number">1</span>;}
+  <span class="keyword">return</span> seed;
+}</code></pre>
+<h3 id="section-11"><a id="sec-generated-title-12"></a> <a id="void"></a>戻り値のない関数</h3>
+<p>同様に戻り値のない関数も定義できます。
+戻り値のない関数は、以下のように、戻り値の型を <em>
+<code>void</code>
+</em> (「空の、何もない」という意味)というものにしておきます。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> WriteArray(<span class="keyword">int</span>[] array)
+{
+  Console.Write(<span class="string">&quot;{&quot;</span>);
+  <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;array.Length-<span class="number">1</span>; ++i)
+  {
+    Console.Write(<span class="string">&quot;{0}, &quot;</span>, array[i]);
+  }
+  Console.Write(array[array.Length-<span class="number">1</span>] + <span class="string">&quot;}\n&quot;</span>);
+}</code></pre>
+<p>戻り値のない物でも「関数」と呼ぶのはC言語やC++言語から受け継いだ習慣です。
+その他の言語では、
+戻り値のないものは「<em>サブルーチン</em>」とか「<em>プロシージャ</em>」といって関数と区別する場合もあります。</p>
+<p>ちなみに、戻り値がない(<code>void</code>)の場合、<code>return</code>は書けますが、<code>return</code>の後ろには何も値を書かず、関数を途中で抜ける意味だけ持ちます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> F(<span class="keyword">int</span> x)
+{
+    <span class="keyword">if</span> (x &lt;= <span class="number">0</span>) <span class="keyword">return</span>;
+
+    Console.WriteLine(<span class="string">&quot;x が正の時だけ実行される&quot;</span>);
+}</code></pre>
+<h3 id="void"><a id="sec-generated-title-13"></a> <a id="unit"></a>補足1: void だけ特別扱いは不便</h3>
+<p>戻り値が<code>void</code>の関数は<code>return</code>の後ろに値を書けません。
+これは<code>void</code>の場合だけの特別な書き方になります。
+そして、特別に書き方を変えないといけないというのが面倒になることがあります。</p>
+<p>例えば、C# では関数を変数に格納して使うことができるんですが、
+戻り値がある場合は<code>Func</code>、ない場合は<code>Action</code>と、別の型に代入して使うことになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        Action a1 = A1; <span class="comment">// Func&lt;void&gt; とは書けない</span>
+        Action&lt;<span class="keyword">int</span>&gt; a2 = A2;
+        Func&lt;<span class="keyword">int</span>&gt; f1 = F1; <span class="comment">// Action と Func が別</span>
+        Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; f2 = F2;
+    }
+
+    <span class="keyword">static</span> <span class="keyword">void</span> A1() { } <span class="comment">// 戻り値がないと、=&gt; 記法も使えない</span>
+    <span class="keyword">static</span> <span class="keyword">void</span> A2(<span class="keyword">int</span> x) { }
+    <span class="keyword">static</span> <span class="keyword">int</span> F1() =&gt; <span class="number">0</span>;
+    <span class="keyword">static</span> <span class="keyword">int</span> F2(<span class="keyword">int</span> x) =&gt; x;
+}</code></pre>
+<p>そこで、以下のように、空っぽの値を用意して、<code>void</code>の代わりに使うことですべて「戻り値あり」で統一する手法を時々使ったりします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="comment">// 空っぽの型を1個用意</span>
+<span class="keyword">struct</span> Unit { }
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// void の代わりに Unit を使うことで、全部 Func に統一</span>
+        Func&lt;Unit&gt; a1 = A1;
+        Func&lt;<span class="keyword">int</span>, Unit&gt; a2 = A2;
+        Func&lt;<span class="keyword">int</span>&gt; f1 = F1;
+        Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; f2 = F2;
+    }
+
+    <span class="keyword">static</span> Unit A1() =&gt; <span class="keyword">default</span>(Unit); <span class="comment">// 空っぽの値を返しておく</span>
+    <span class="keyword">static</span> Unit A2(<span class="keyword">int</span> x) =&gt; <span class="keyword">default</span>(Unit);
+    <span class="keyword">static</span> <span class="keyword">int</span> F1() =&gt; <span class="number">0</span>;
+    <span class="keyword">static</span> <span class="keyword">int</span> F2(<span class="keyword">int</span> x) =&gt; x;
+}</code></pre>
+<p>不格好なので積極的に使うものでもありませんが、統一のためにやむを得ないこともあったりします。</p>
+<h4 id="unit"><a id="sec-generated-title-14"></a> <a id="why-unit"></a>Unitという名前</h4>
+<p>ちなみに、先ほどの例では、空っぽの型の名前をunit (単位元)にしていますが、
+一応意味があってこの名前を使っています。
+プログラミング用語しても使われるので、C#に限らず、たまに目にする言葉かもしれません。</p>
+<p>この名前は数学用語に由来します。
+数学では、以下のような表現をすることがあります。</p>
+<ul>
+<li>0 =   … 0とは空っぽ(0要素)の集合である</li>
+<li>1 = { 0 } … 1とは0のみを持つ(1要素の)集合である</li>
+</ul>
+<p>unitというのはこの意味での「1」を指します。
+先ほどの例では<code>defautl(Unit)</code>という意味のない値を返していますが、<code>Unit</code>型は、この意味のない値を1つだけ持つ型ということになります。</p>
+<h3 id="section-12"><a id="sec-generated-title-15"></a> <a id="tuple"></a>補足2: 複数の戻り値(タプル)</h3>
+<p>C#では、基本的には戻り値は1つだけ返せます。</p>
+<p>複数の値(多値)を返したいこともありますが、その場合、C# 6以前では<a href="/study/csharp/structured/st_struct/#about">複合型</a>を1つ作って返していました。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> SumCount
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> sum;
+    <span class="keyword">public</span> <span class="keyword">int</span> count;
+}
+
+<span class="keyword">static</span> SumCount Tally(<span class="keyword">int</span>[] items)
+{
+    <span class="keyword">var</span> sum = <span class="number">0</span>;
+    <span class="keyword">var</span> count = <span class="number">0</span>;
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> items)
+    {
+        sum += x;
+        count++;
+    }
+    <span class="keyword">return</span> <span class="keyword">new</span> SumCount { sum = sum, count = count };
+}</code></pre>
+<h5 class="version version7">Ver. 7</h5>
+<p>この型に本当にちゃんとした意味があればいいんですが、この例の場合は見るからに大した意味がありません。
+「和(sum)と個数(count)を表す<code>SumCount</code>型」なんていわれなくても、<code>sum</code>と<code>count</code>を見ればわかります。</p>
+<p>そこで、C# 7では、以下のように書けるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> (<span class="keyword">int</span> sum, <span class="keyword">int</span> count) Tally(<span class="keyword">int</span>[] items)
+{
+    <span class="keyword">var</span> sum = <span class="number">0</span>;
+    <span class="keyword">var</span> count = <span class="number">0</span>;
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> items)
+    {
+        sum += x;
+        count++;
+    }
+    <span class="keyword">return</span> (sum, count);
+}</code></pre>
+<p>複数の戻り値を返しているような書き心地になります。</p>
+<p>これは実際には、<code>(int sum, int count)</code>という「名前のない型」(これをタプルと呼びます)を1つ作って、その値を返しています。
+詳細は<a href="/study/csharp/structured/st_anonymoustype/">名前のない複合型</a>で説明します。</p>
+<h5 id="section-13"><a id="sec-generated-title-16"></a>サンプル</h5>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> FunctionSample
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="keyword">int</span>[] array = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">3</span>];
+
+    <span class="comment">// 乱数を使って値を生成</span>
+    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;array.Length; ++i)
+    {
+      array[i] = (<span class="keyword">int</span>)(Random() &gt;&gt; <span class="number">58</span>); <span class="comment">// [0,63] の整数乱数生成</span>
+    }
+
+    <span class="comment">// ノルムを計算</span>
+    <span class="keyword">double</span> norm = Norm(array[<span class="number">0</span>], array[<span class="number">1</span>], array[<span class="number">2</span>]);
+
+    <span class="comment">// 値の出力</span>
+    WriteArray(array);
+    Console.Write(<span class="string">&quot;norm = {0}\n&quot;</span>, norm);
+  }
+
+  <span class="keyword">static</span> <span class="keyword">ulong</span> seed = 4275646293455673547UL;
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 線形合同法による乱数の生成</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="keyword">static</span> <span class="keyword">ulong</span> Random()
+  {
+    <span class="keyword">unchecked</span>{seed = seed * 1566083941UL + <span class="number">1</span>;}
+    <span class="keyword">return</span> seed;
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 入力した3つの値のノルムを計算</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="keyword">static</span> <span class="keyword">double</span> Norm(<span class="keyword">double</span> x, <span class="keyword">double</span> y, <span class="keyword">double</span> z)
+  {
+    <span class="keyword">return</span> x*x + y*y + z*z;
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 配列を , で各要素を区切って、{}で括った形式で出力</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> WriteArray(<span class="keyword">int</span>[] array)
+  {
+    Console.Write(<span class="string">&quot;{&quot;</span>);
+    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;array.Length-<span class="number">1</span>; ++i)
+    {
+      Console.Write(<span class="string">&quot;{0}, &quot;</span>, array[i]);
+    }
+    Console.Write(array[array.Length-<span class="number">1</span>] + <span class="string">&quot;}\n&quot;</span>);
+  }
+}</code></pre>
+<pre><code class="language-console">{40, 31, 39}
+norm = 4082</code></pre>
+<h3 id="section-14"><a id="sec-generated-title-17"></a> <a id="state"></a>補足: 状態</h3>
+<p>この例の <code>Random</code> は、数学の関数と違って、「状態」(state)を持っています。
+一般に、数学の関数は、引数と戻り値の関係だけを説明していて、同じ引数を与えた場合、常に同じ戻り値が返ります。
+一方、この例は、関数の外にある <code>seed</code> という変数に値を記録・書き換え(これを「状態を持つ」という)していて、呼ぶたびに状態が変わり、違う戻り値を返します。</p>
+<p>ちなみに、この関数の外にある変数のことは、C# 的にはフィールド(field)と呼びます。詳しくは「<a href="/study/csharp/structured/st_struct/">データの構造化</a>」で説明します。</p>
+<h2 id="section-15"><a id="sec-generated-title-18"></a> <a id="parameter"></a>補足: 引数</h2>
+<p>引数についてはいくつか補足があります。</p>
+<h3 id="section-16"><a id="sec-generated-title-19"></a> <a id="default-parameter"></a>オプション引数と名前付き引数</h3>
+<h5 class="version version4">Ver. 4.0</h5>
+<p>C# 4 から、引数に規定値(default value)を与えて、呼び出し時に省略できたり(optional)、名前付き(named)で引数を書けるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> OptionalParameterSample
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Sample()
+    {
+        <span class="comment">// 引数の省略(optional parameter)</span>
+        <span class="keyword">var</span> s1 = Sum();     <span class="comment">// Sum(0, 0, 0); と同じ意味。</span>
+        <span class="keyword">var</span> s2 = Sum(<span class="number">1</span>);    <span class="comment">// Sum(1, 0, 0); と同じ意味。</span>
+        <span class="keyword">var</span> s3 = Sum(<span class="number">1</span>, <span class="number">2</span>); <span class="comment">// Sum(1, 2, 0); と同じ意味。</span>
+
+        <span class="comment">// 名前付きで引数を与える(named parameter)</span>
+        <span class="keyword">var</span> s4 = Sum(x: <span class="number">1</span>, y: <span class="number">2</span>, z: <span class="number">3</span>); <span class="comment">// Sum(1, 2, 3); と同じ意味。</span>
+        <span class="keyword">var</span> s5 = Sum(z: <span class="number">3</span>);             <span class="comment">// Sum(0, 0, 3); と同じ意味。</span>
+    }
+
+    <span class="keyword">static</span> <span class="keyword">int</span> Sum(<span class="keyword">int</span> x = <span class="number">0</span>, <span class="keyword">int</span> y = <span class="number">0</span>, <span class="keyword">int</span> z = <span class="number">0</span>)
+    {
+        <span class="keyword">return</span> x + y + z;
+    }
+}</code></pre>
+<p>詳しくは、「<a href="/study/csharp/structured/sp4_optional/">オプション引数・名前付き引数</a>」で説明します。</p>
+<p>リンク先の余談、「<a href="/study/csharp/structured/sp4_optional/#fyi">余談： なんでいまさら？</a>」 で説明していますが、引数の規定値には「後から値を変えにくい」という問題があるので、使用する際には注意が必要です。
+とはいえ、後から値を変えることもそう多くなく、便利に使える機能です。</p>
+<h3 id="section-17"><a id="sec-generated-title-20"></a> <a id="actual-formal"></a>実引数と仮引数</h3>
+<p>引数という言葉は、「引数として渡す値」と「引数を受け取るための変数」という2つの意味で使われます。
+区別が必要な場合、前者を<strong id="actual-parameter" class="keyword">実引数</strong>(actual parameter)、後者を<strong id="formal parameter" class="keyword">仮引数</strong>(formal parameter)と呼びます。</p>
+<p>例えば、先ほどの例で言うと、以下のように、Norm 関数に渡す 3, 4, 5 などの数値が実引数、
+Norm 関数の定義側にある x, y, z などの変数が仮引数です。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> Main()
+{
+    <span class="keyword">var</span> norm = Norm(<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>); <span class="comment">// 3, 4, 5 が実引数</span>
+}
+
+<span class="keyword">static</span> <span class="keyword">double</span> Norm(<span class="keyword">double</span> x, <span class="keyword">double</span> y, <span class="keyword">double</span> z) <span class="comment">// x, y, z が仮引数</span>
+{
+    <span class="keyword">return</span> x * x + y * y + z * z;
+}</code></pre>
+<h5 id="paramter-argument"><a id="sec-generated-title-21"></a>余談: paramter と argument</h5>
+<p>少し余談になりますが、引数は、英語だと parameter 以外に、argument (ここでは「独立変数」の意味。数学用語としての argument)という単語を使うこともあります。
+(ちなみに、parameter も、数学用語としては「媒介変数」という訳語になります。)</p>
+<p>流儀によっては、実引数の意味で argument、仮引数の意味で parameter といように単語で呼び分けることもあるようです。
+(どちらがどちらだったかわからなくなるので、あまり推奨はされません。結局、actual argument, formal argument という言い方もします。)</p>
+<h3 id="section-18"><a id="sec-generated-title-22"></a> <a id="special-case"></a>特殊な引数</h3>
+<p>C# には、いくつか特殊な引数があります。
+詳しくは別項で説明しています。</p>
+<ul>
+<li><p>ref, out:「<a href="/study/csharp/resource/sp_ref/">引数の参照渡し</a>」</p>
+</li>
+<li><p>params:「<a href="/study/csharp/structured/sp_params/">可変長引数</a>」</p>
+</li>
+<li><p>this:「<a href="/study/csharp/functional/sp3_extension/">拡張メソッド</a>」</p>
+</li>
+</ul>
+<h2 id="section-19"><a id="sec-generated-title-23"></a> <a id="overload"></a>関数のオーバーロード</h2>
+<p>関数を作る際、関数の名前が同じで引数リストだけが異なる関数を複数作ることが出来ます。
+例えば、以下のように同じ名前の関数を作成することが出来ます。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> WriteTypeAndValue(<span class="keyword">string</span> s)
+{
+  Console.Write(<span class="string">&quot;文字列 : {0}\n&quot;</span>, s);
+}
+
+<span class="keyword">void</span> WriteTypeAndValue(<span class="keyword">int</span> n)
+{
+  Console.Write(<span class="string">&quot;整数   : {0}\n&quot;</span>, n);
+}
+
+<span class="keyword">void</span> WriteTypeAndValue(<span class="keyword">double</span> x)
+{
+  Console.Write(<span class="string">&quot;実数   : {0}\n&quot;</span>, x);
+}</code></pre>
+<p>このように、引数リストだけが異なる関数を作ることを関数の<strong id="overload" class="keyword">オーバーロード</strong>(overload : 過負荷、上積み)といいます。</p>
+<h5 id="section-20"><a id="sec-generated-title-24"></a>サンプル</h5>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> OverloadSample
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    WriteTypeAndValue(<span class="string">&quot;サンプル&quot;</span>); <span class="comment">// WriteTypeAndValue(string) が呼ばれる</span>
+    WriteTypeAndValue(<span class="number">13</span>);         <span class="comment">// WriteTypeAndValue(int)    が呼ばれる</span>
+    WriteTypeAndValue(<span class="number">3</span>.<span class="number">14159265</span>); <span class="comment">// WriteTypeAndValue(double) が呼ばれる</span>
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 型名と値を出力する(string 版)。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> WriteTypeAndValue(<span class="keyword">string</span> s)
+  {
+    Console.Write(<span class="string">&quot;文字列 : {0}\n&quot;</span>, s);
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 型名と値を出力する(int 版)。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> WriteTypeAndValue(<span class="keyword">int</span> n)
+  {
+    Console.Write(<span class="string">&quot;整数   : {0}\n&quot;</span>, n);
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 型名と値を出力する(double 版)。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> WriteTypeAndValue(<span class="keyword">double</span> x)
+  {
+    Console.Write(<span class="string">&quot;実数   : {0}\n&quot;</span>, x);
+  }
+}</code></pre>
+<pre><code class="language-console">文字列 : サンプル
+整数   : 13
+実数   : 3.14159265</code></pre>
+<h3 id="section-21"><a id="sec-generated-title-25"></a> <a id="non-ovarloadable"></a>オーバーロードできない例</h3>
+<p>C# のメソッドのオーバーロードにはいくつか制限があります。</p>
+<p>引数の型違いのオーバーロードはできますが、引数名だけが違うオーバーロードは作れません。</p>
+<pre><code class="language-csharp"><span class="comment">// F は、引数の型が違うので大丈夫</span>
+<span class="keyword">static</span> <span class="keyword">void</span> F(<span class="keyword">int</span> x) { }
+<span class="keyword">static</span> <span class="keyword">void</span> F(<span class="keyword">string</span> x) { }
+
+<span class="comment">// G は、引数の型まで一緒で、名前だけ違う。これはコンパイル エラー</span>
+<span class="keyword">static</span> <span class="keyword">void</span> G(<span class="keyword">int</span> x) { }
+<span class="keyword">static</span> <span class="keyword">void</span> G(<span class="keyword">int</span> y) { }</code></pre>
+<p>また、戻り値だけ違うオーバーロードも作れません。</p>
+<pre><code class="language-csharp"><span class="comment">// H は、引数が一致していて、戻り値だけ違う。これもコンパイル エラー</span>
+<span class="keyword">static</span> <span class="keyword">int</span> H() =&gt; <span class="number">1</span>;
+<span class="keyword">static</span> <span class="keyword">string</span> H() =&gt; <span class="string">&quot;&quot;</span>;</code></pre>
+<p>あと、「C# としては区別しているように見えるけども、内部的には同じ扱いになっていて区別できないのでオーバーロードにも使えない」という型がいくつかあります。</p>
+<ul>
+<li><a href="/study/csharp/dynamic/sp4_dynamic/"><code>dynamic</code></a>は<a href="/study/csharp/dynamic/sp4_callsite/">内部的には<code>object</code>扱い</a></li>
+<li><a href="/study/csharp/resource/sp_ref/#ref-in-out"><code>in</code>、<code>ref</code>、<code>out</code>は内部的には同じ扱い</a></li>
+</ul>
+<p>例えば以下のようなオーバーロードは作れません。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> D(<span class="keyword">object</span> x) { }
+<span class="keyword">void</span> D(<span class="keyword">dynamic</span> x) { }</code></pre>
+<pre><code class="language-csharp"><span class="keyword">void</span> F(<span class="keyword">ref</span> <span class="keyword">int</span> x) { }
+<span class="keyword">void</span> F(<span class="keyword">in</span> <span class="keyword">int</span> x) { }
+
+<span class="keyword">void</span> G(<span class="keyword">ref</span> <span class="keyword">int</span> x) { }
+<span class="keyword">void</span> G(<span class="keyword">out</span> <span class="keyword">int</span> x) =&gt; x = <span class="number">0</span>;
+
+<span class="keyword">void</span> H(<span class="keyword">in</span> <span class="keyword">int</span> x) { }
+<span class="keyword">void</span> H(<span class="keyword">out</span> <span class="keyword">int</span> x) =&gt; x = <span class="number">0</span>;</code></pre>
+<h3 id="section-22"><a id="sec-generated-title-26"></a> <a id="signature"></a>シグネチャ</h3>
+<p>オーバーロードがある以上、関数は、複数ある関数のうちのどれを呼ぶか、名前だけ特定することができません。
+特定には、関数名と、引数の型が必要になります。
+こういう、関数の呼び分けに必要な情報のことを<strong id="key-signature" class="keyword">シグネチャ</strong>(signature: 署名、サイン)と呼びます。</p>
+<p>前述の通り、C#の場合は引数名や戻り値の型はオーバロード解決には使えないので、これらはシグネチャには含まれません。
+例えば、<code>int F(int x, int y)</code>というようなメソッドがあった場合、このメソッド<code>F</code>のシグネチャは<code>F(int, int)</code>です(引数名と戻り値の型が消える)。</p>
+<p>参考までに他の言語の例を上げておくと、
+C++やJavaはC#と同様です。
+C言語やGoは、関数のオーバーロード自体認めていない(呼び分けには名前自体を変えないといけない)ので、関数名 = シグネチャです。
+Swiftでは、引数名違いや戻り値の型違いのオーバーロードができるので、<code>func x(x: Int) -&gt; Int</code>というような関数があった場合、<code>x(x: Int) -&gt; Int</code>全体がシグネチャです。</p>
+<h3 id="section-23"><a id="sec-generated-title-27"></a> <a id="method-group"></a>メソッド グループ</h3>
+<p>関数の中でも<a href="#method">メソッド</a>の場合は、<a href="/study/csharp/functional/sp_delegate/">デリゲート</a>への代入の際に <code>Action a = M;</code> みたいな引数なしな書き方ができます。</p>
+<p>この引数なしな書き方では、<code>M</code>だけではなくてその周りまで見ないと「どの<code>M</code>か」が確定しません。
+すなわち、「いくつかあるメソッド<code>M</code>のうちのいずれか」という状態です。
+この状態の<code>M</code>を<strong id="key-method-group" class="keyword">メソッド グループ</strong>(method group)と呼びます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Program
+{
+    <span class="comment">// M(int) という「メソッド」</span>
+    <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">int</span> x) { }
+
+    <span class="comment">// M(string) という「メソッド」</span>
+    <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">string</span> x) { }
+
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// 右辺だけ見ると M は「M(int) か M(string) のどちらか」という状態</span>
+        <span class="comment">// この状態の M をメソッド グループという</span>
+        <span class="comment">// 左辺の Action&lt;int&gt; を見て初めてどちらなのかが確定する</span>
+        Action&lt;<span class="keyword">int</span>&gt; a = M;
+    }
+}</code></pre>
+<h2 id="expression-bodied"><a id="sec-generated-title-28"></a> <a id="sec-expression-bodied"></a>expression-bodied な関数</h2>
+<h5 class="version version6">Ver. 6</h5>
+C# 6 では、関数本体の部分が1つの式だけからなる場合、 `=>` 記号を使って以下のような書き方をすることができるようになりました。
+これを、<strong id="expression-bodied" class="keyword">expression-bodied (本体が式の)関数</strong>(expression-bodied function)と呼びます。
+<p>例えば、先ほど例に出した2つの関数、Random と Norm は以下のように書くこともできます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">ulong</span> Random() =&gt; <span class="keyword">unchecked</span>(seed = seed * 1566083941UL +  <span class="number">1</span> );
+
+<span class="keyword">static</span> <span class="keyword">double</span> Norm(<span class="keyword">double</span> x, <span class="keyword">double</span> y, <span class="keyword">double</span> z) =&gt; x * x + y * y + z * z;</code></pre>
+<p>C# 6時点では、メソッド、演算子、プロパティとインデクサー(get-only)を <code>=&gt;</code> 記号で書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Csharp6
+{
+    <span class="comment">// メソッド</span>
+    <span class="keyword">int</span> Method(<span class="keyword">int</span> x) =&gt; x * x;
+
+    <span class="comment">// 演算子</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> Csharp6 <span class="keyword">operator</span> +(Csharp6 x) =&gt; x;
+
+    <span class="comment">// プロパティ(get-only)</span>
+    <span class="keyword">int</span> X =&gt; <span class="number">0</span>;
+
+    <span class="comment">// インデクサー(get-only)</span>
+    <span class="keyword">int</span> <span class="keyword">this</span>[<span class="keyword">int</span> index] =&gt; index;
+}</code></pre>
+<p>また、C# 7では、コンストラクター、ファイナライザー、プロパティとインデクサー(get/set それぞれ)、イベント(add/removeそれぞれ)も <code>=&gt;</code> 記号で書けるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Csharp7
+{
+    <span class="keyword">static</span> <span class="keyword">int</span> x;
+
+    <span class="comment">// コンストラクター</span>
+    Csharp7() =&gt; x++;
+
+    <span class="comment">// ファイナライザー</span>
+    ~Csharp7() =&gt; x--;
+
+    <span class="comment">// プロパティ(get/set)</span>
+    <span class="keyword">int</span> X
+    {
+        <span class="keyword">get</span> =&gt; x++;
+        <span class="keyword">set</span> =&gt; x--;
+    }
+
+    <span class="comment">// インデクサー(get/set)</span>
+    <span class="keyword">int</span> <span class="keyword">this</span>[<span class="keyword">int</span> index]
+    {
+        <span class="keyword">get</span> =&gt; x += index;
+        <span class="keyword">set</span> =&gt; x -= index;
+    }
+
+    <span class="comment">// イベント(add/remove)</span>
+    <span class="keyword">event</span> Action E
+    {
+        add =&gt; x++;
+        remove =&gt; x--;
+    }
+}</code></pre>
+<h2 id="section-24"><a id="sec-generated-title-29"></a> <a id="sec-local"></a>ローカル関数</h2>
+<h5 class="version version7">Ver. 7</h5>
+<p>C# 7では、関数の中で別の関数を定義して使うことができます。
+関数の中でしか使えないため、<strong id="key-local">ローカル関数</strong>(local function: その場所でしか使えない関数)と呼びます。</p>
+<p>例えば以下のように書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// Main 関数の中で、ローカル関数 f を定義</span>
+        <span class="keyword">int</span> f(<span class="keyword">int</span> n) =&gt; n &gt;= <span class="number">1</span> ? n * f(n - <span class="number">1</span>) : <span class="number">1</span>;
+
+        Console.WriteLine(f(<span class="number">10</span>));
+    }
+}</code></pre>
+<p>詳細は「<a href="/study/csharp/functional/fun_localfunctions/">ローカル関数と匿名関数</a>」で説明しています。</p>
+<h2 id="section-25"><a id="sec-generated-title-30"></a> <a id="anonymous"></a>匿名関数</h2>
+<h5 class="version version2">Ver. 2.0</h5>
+<p>もう1つ、関数の中に関数を書く方法として、<strong id="key-anonymous" class="keyword">匿名関数</strong>(anonymous function)というものがあります。</p>
+<p>以下のような書き方をします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Linq;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> input = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> };
+        <span class="keyword">var</span> output = input
+            .Where(n =&gt; n &gt; <span class="number">3</span>)
+            .Select(n =&gt; n * n);
+
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> output)
+        {
+            Console.WriteLine(x);
+        }
+    }
+}</code></pre>
+<p>強調表示している部分が匿名関数です。
+通常の関数もローカル関数も名前を持っていますが、匿名関数は、その名前通り、無名です。</p>
+<p>匿名関数は、ローカル関数と比べて制限も多いですが、その代わり、どこにでも書けるという利点があります。
+(正確には、<a href="/study/csharp/start/st_variable/#expression">式</a>が書ける場所ならどこにでも書けます。
+一方、ローカル関数は<a href="/study/csharp/start/st_variable/#statement">ステートメント</a>です。)</p>
+<p>詳細は「<a href="/study/csharp/functional/fun_localfunctions/">ローカル関数と匿名関数</a>」で説明しています。</p>
+<h2 id="section-26"><a id="exercise"></a>演習問題</h2>
+<h3 id="section-27"><a id="exercise-func0"></a>問題 1</h3>
+<p>int 型の配列に格納されている値の最大値、最小値および平均値を求める関数をそれぞれ作成せよ。</p>
+<pre><code class="language-csharp"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 配列中の値の最大値を求める。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;a&quot;&gt;</span><span class="xmlDocComment">対象の配列&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">最大値&lt;/returns&gt;</span>
+<span class="keyword">static</span> <span class="keyword">int</span> Max(<span class="keyword">int</span>[] a)
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 配列中の値の最小値を求める。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;a&quot;&gt;</span><span class="xmlDocComment">対象の配列&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">最小値&lt;/returns&gt;</span>
+<span class="keyword">static</span> <span class="keyword">int</span> Min(<span class="keyword">int</span>[] a)
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 配列中の値の平均値を求める。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;a&quot;&gt;</span><span class="xmlDocComment">対象の配列&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">平均値&lt;/returns&gt;</span>
+<span class="keyword">static</span> <span class="keyword">double</span> Average(<span class="keyword">int</span>[] a)</code></pre>
+<h4 id="section-28">解答例 1</h4>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Exercise
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="comment">// 配列長の入力</span>
+    Console.Write(<span class="string">&quot;配列の長さ: &quot;</span>);
+    <span class="keyword">int</span> n = <span class="keyword">int</span>.Parse(Console.ReadLine());
+
+    <span class="comment">// 配列の値の入力</span>
+    <span class="keyword">int</span>[] a = <span class="keyword">new</span> <span class="keyword">int</span>[n];
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; ++i)
+    {
+      Console.Write(<span class="string">&quot;{0}: &quot;</span>, i);
+      a[i] = <span class="keyword">int</span>.Parse(Console.ReadLine());
+    }
+
+    Console.Write(
+<span class="stringCSharpVerbatim">@&quot;
+最大値: {0}
+最小値: {1}
+平均値: {2}
+&quot;</span>
+    , Max(a), Min(a), Average(a));
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 配列中の値の最大値を求める。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;a&quot;&gt;</span><span class="xmlDocComment">対象の配列&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">最大値&lt;/returns&gt;</span>
+  <span class="keyword">static</span> <span class="keyword">int</span> Max(<span class="keyword">int</span>[] a)
+  {
+    <span class="keyword">int</span> max = <span class="keyword">int</span>.MinValue;
+
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; a.Length; ++i)
+    {
+      <span class="keyword">if</span> (max &lt; a[i]) max = a[i];
+    }
+
+    <span class="keyword">return</span> max;
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 配列中の値の最小値を求める。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;a&quot;&gt;</span><span class="xmlDocComment">対象の配列&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">最小値&lt;/returns&gt;</span>
+  <span class="keyword">static</span> <span class="keyword">int</span> Min(<span class="keyword">int</span>[] a)
+  {
+    <span class="keyword">int</span> min = <span class="keyword">int</span>.MaxValue;
+
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; a.Length; ++i)
+    {
+      <span class="keyword">if</span> (min &gt; a[i]) min = a[i];
+    }
+
+    <span class="keyword">return</span> min;
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 配列中の値の最大値を求める。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;a&quot;&gt;</span><span class="xmlDocComment">対象の配列&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">平均値&lt;/returns&gt;</span>
+  <span class="keyword">static</span> <span class="keyword">double</span> Average(<span class="keyword">int</span>[] a)
+  {
+    <span class="keyword">double</span> average = <span class="number">0</span>;
+
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; a.Length; ++i)
+    {
+      average += a[i];
+    }
+
+    <span class="keyword">return</span> average / a.Length;
+  }
+}</code></pre>
+<h3 id="section-29"><a id="exercise-func1"></a>問題 2</h3>
+<p>double 型の値 x の整数冪を求める関数 Power を作成せよ。</p>
+<pre><code class="language-csharp"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> x の整数冪を求める。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;x&quot;&gt;</span><span class="xmlDocComment">仮数 x&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;n&quot;&gt;</span><span class="xmlDocComment">指数 n&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">x の n 乗&lt;/returns&gt;</span>
+<span class="keyword">static</span> <span class="keyword">double</span> Power(
+  <span class="keyword">double</span> x,
+  <span class="keyword">int</span> n)</code></pre>
+<h4 id="section-30">解答例 1</h4>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Exercise
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="keyword">const</span> <span class="keyword">double</span> x = <span class="number">3</span>;
+    Console.Write(<span class="string">&quot;{0}\n&quot;</span>, Power(x, <span class="number">4</span>));
+    Console.Write(<span class="string">&quot;{0}\n&quot;</span>, Power(x, -<span class="number">1</span>));
+    Console.Write(<span class="string">&quot;{0}\n&quot;</span>, Power(x, -<span class="number">2</span>));
+    Console.Write(<span class="string">&quot;{0}\n&quot;</span>, Power(x, <span class="number">0</span>));
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> x の整数冪を求める。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;x&quot;&gt;</span><span class="xmlDocComment">仮数 x&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;n&quot;&gt;</span><span class="xmlDocComment">指数 n&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">x の n 乗&lt;/returns&gt;</span>
+  <span class="keyword">static</span> <span class="keyword">double</span> Power(
+    <span class="keyword">double</span> x,
+    <span class="keyword">int</span> n)
+  {
+    <span class="keyword">if</span> (n == <span class="number">0</span>)
+      <span class="keyword">return</span> <span class="number">1</span>;
+
+    <span class="keyword">if</span> (n &lt; <span class="number">0</span>)
+    {
+      x = <span class="number">1</span>.<span class="number">0</span> / x;
+      n = -n;
+    }
+
+    <span class="keyword">double</span> y = x;
+    <span class="keyword">while</span> (--n &gt; <span class="number">0</span>)
+    {
+      y *= x;
+    }
+
+    <span class="keyword">return</span> y;
+  }
+}</code></pre>
+<h3 id="section-31"><a id="exercise-func2"></a>問題 3</h3>
+<p>配列に格納されている値の最大値を求める関数を、
+<code>int[]</code> に対するものと
+<code>double[]</code> に対するものの2種類作成せよ。</p>
+<h4 id="section-32">解答例 1</h4>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Exercise
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="keyword">int</span>[]    ai = <span class="keyword">new</span> <span class="keyword">int</span>[]    { <span class="number">1</span>, <span class="number">3</span>, <span class="number">9</span>, <span class="number">2</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">4</span> };
+    <span class="keyword">double</span>[] ad = <span class="keyword">new</span> <span class="keyword">double</span>[] { <span class="number">1</span>, <span class="number">3</span>, <span class="number">9</span>, <span class="number">2</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">4</span> };
+
+    Console.Write(<span class="string">&quot;{0}, {1}\n&quot;</span>, Max(ai), Max(ad));
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 配列中の値の最大値を求める。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;a&quot;&gt;</span><span class="xmlDocComment">対象の配列&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">最大値&lt;/returns&gt;</span>
+  <span class="keyword">static</span> <span class="keyword">int</span> Max(<span class="keyword">int</span>[] a)
+  {
+    <span class="keyword">int</span> max = <span class="keyword">int</span>.MinValue;
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; a.Length; ++i)
+    {
+      <span class="keyword">if</span> (max &lt; a[i]) max = a[i];
+    }
+    <span class="keyword">return</span> max;
+  }
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 配列中の値の最大値を求める。</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;a&quot;&gt;</span><span class="xmlDocComment">対象の配列&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">最大値&lt;/returns&gt;</span>
+  <span class="keyword">static</span> <span class="keyword">double</span> Max(<span class="keyword">double</span>[] a)
+  {
+    <span class="keyword">double</span> max = <span class="keyword">int</span>.MinValue;
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; a.Length; ++i)
+    {
+      <span class="keyword">if</span> (max &lt; a[i]) max = a[i];
+    }
+    <span class="keyword">return</span> max;
+  }
+}</code></pre>
+<p>見ての通り、型が変わっただけで、処理自体は全く同じものになっています。
+このように、型と無関係に同じ処理で実現できるものは、
+「<a href="/study/csharp/oop/sp2_generics/#generics">ジェネリック</a>」を使うことで実装の手間を軽減できます。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/structured/">&#x69CB;&#x9020;&#x5316;</a></li><li><a href="/study/csharp/structured/st_structured/">&#x69CB;&#x9020;&#x5316;</a></li><li><a href="/study/csharp/structured/st_control/">&#x5236;&#x5FA1;&#x30D5;&#x30ED;&#x30FC;</a></li><li><a href="/study/csharp/structured/st_branch/">&#x6761;&#x4EF6;&#x5206;&#x5C90;</a></li><li><a href="/study/csharp/structured/st_loop/">&#x53CD;&#x5FA9;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/structured/st_array/">&#x914D;&#x5217;</a></li><li><a href="/study/csharp/structured/miscentrypoint/">[&#x96D1;&#x8A18;] &#x30A8;&#x30F3;&#x30C8;&#x30EA;&#x30FC;&#x30DD;&#x30A4;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/structured/miscinlining/">[&#x96D1;&#x8A18;] &#x30A4;&#x30F3;&#x30E9;&#x30A4;&#x30F3;&#x5316;</a></li><li><a href="/study/csharp/structured/miscoverloadresolution/">[&#x96D1;&#x8A18;] &#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30ED;&#x30FC;&#x30C9;&#x89E3;&#x6C7A;</a></li><li><a href="/study/csharp/structured/sp_params/">&#x53EF;&#x5909;&#x9577;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/sp4_optional/">&#x30AA;&#x30D7;&#x30B7;&#x30E7;&#x30F3;&#x5F15;&#x6570;&#x30FB;&#x540D;&#x524D;&#x4ED8;&#x304D;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/st_command/">&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x30E9;&#x30A4;&#x30F3;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/st_library/">&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li><li><a href="/study/csharp/structured/st_enum/">&#x5217;&#x6319;&#x578B;</a></li><li><a href="/study/csharp/structured/st_struct/">&#x30C7;&#x30FC;&#x30BF;&#x306E;&#x69CB;&#x9020;&#x5316;(&#x8907;&#x5408;&#x578B;)</a></li><li><a href="/study/csharp/structured/st_anonymoustype/">&#x540D;&#x524D;&#x306E;&#x306A;&#x3044;&#x8907;&#x5408;&#x578B;</a></li><li><a href="/study/csharp/structured/sp_namespace/">&#x540D;&#x524D;&#x7A7A;&#x9593;</a></li><li><a href="/study/csharp/structured/oo_exception/">&#x4F8B;&#x5916;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/structured/misc_exception/">[&#x96D1;&#x8A18;] &#x4F8B;&#x5916;&#x306E;&#x4F7F;&#x3044;&#x65B9;</a></li><li><a href="/study/csharp/structured/misc_stacktrace/">[&#x96D1;&#x8A18;] &#x4F8B;&#x5916;&#x306E;&#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x30C8;&#x30EC;&#x30FC;&#x30B9;</a></li><li><a href="/study/csharp/structured/miscexpressions/">[&#x96D1;&#x8A18;] &#x5F0F;&#x306B;&#x307E;&#x3064;&#x308F;&#x308B;&#x88DC;&#x8DB3;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,160 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x6982;&#x8981; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/algorithm/collection/collection/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">コレクション概要</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>「データ構造」と呼ばれるものの代表格というと、
+同じ型のデータをたくさん集めたもの、すなわちコレクションと呼ばれるものでしょう。</p>
+<p>今の世の中、Java も C# も標準で、
+List やら Dictionary やらいろいろなコレクションを持っています。
+C++ も、1998年に標準化された STL と呼ばれるライブラリに、
+一通りのコレクション（STL の流儀ではコンテナとも呼びます）が揃っています。</p>
+<p>昔の人は結構な頻度でこの手のデータ構造を自作していました。
+また、標準でその手のコレクションを利用できる現在においても、
+どのコレクションの内部構造がどういう風になっているのか概要だけでも知っていれば、
+どういうケースでどのコレクションを使うのが最適なのかがすぐに分かるという利点があります。</p>
+<p>かなりの部分が STL の説明と被るので、
+「単なるC# サンプルプログラム」みたいな扱いになりそうですが、
+とにかく、コレクションについての説明をしていきたいと思います。</p>
+<h2 id="c"><a id="sec-generated-title-2"></a> <a id="cpp"></a>C++ のコレクション</h2>
+<p>1998年に標準化された STL（Standard Template Library）には多数のコレクションクラスが含まれています。
+詳細は「<a href="/study/stl/">C++ STL</a>」で説明しますが、
+C++ の STL は非常に高機能で、
+現在の C++ では、ほとんどの場合、コレクションクラスを自作する必要がありません。</p>
+<h2 id="c-1"><a id="sec-generated-title-3"></a> <a id="cs"></a>C# のコレクション</h2>
+<p>.NET Framework には、
+<code>System.Collections.Generic</code> 名前空間以下にコレクションクラスが用意されています。
+C++ の STL と比べると、その機能はシンプルで、
+特に需要の高いコレクションのみが揃っています。</p>
+<p>STL と比べて欠けているのは、
+「<a href="/study/stl/seq_container/deque/#deque">deque</a>」、
+「<a href="/study/stl/container_adaptor/priority_queue/#priority">priority_queue</a>」、
+「<a href="/study/stl/assosiative_container/set/#set">set</a>」 および
+「<a href="/study/stl/assosiative_container/set/#multiset">multiset</a>」 に相当する物がないのと、
+STL の iterator に相当する enumerator が、
+forward iterator 相当の機能しか持っていないという点です。
+これで困る場面はそれほど多くもないですが、
+元々 C++ を使いこなしていた方には少々不満かもしれません。</p>
+<p>C++/CLI （.NET Framework 向けに拡張された C++）専用で、
+<a href="http://www.microsoft.com/japan/msdn/vs05/visualc/stl-netprimer.aspx">STL.NET</a> というライブラリもありますが、
+残念ながら C++/CLI からしか利用できません。</p>
+<h2 id="section-2"><a id="sec-generated-title-4"></a> <a id="inpl"></a>実装方法による分類</h2>
+<h3 id="section-3"><a id="sec-generated-title-5"></a> <a id="sequence"></a>順序構造を保つコレクション</h3>
+<table summary="">
+
+	<tr>
+		<th>名前</th>
+		<th>C++ STL</th>
+		<th>C# System.Collections</th>
+	</tr>
+	<tr>
+		<td><p>「<a href="/study/algorithm/collection/col_array/">配列リスト</a>」</p></td>
+		<td><p><a href="http://cpprefjp.github.io/reference/vector.html"><code>vector</code></a></p></td>
+		<td><p><a href="https://msdn.microsoft.com/ja-jp/library/6sh2ey19.aspx"><code>List</code></a></p></td>
+	</tr>
+	<tr>
+		<td><p>「<a href="/study/algorithm/collection/col_circular/">循環バッファ</a>」</p></td>
+		<td><p><a href="http://cpprefjp.github.io/reference/deque.html"><code>deque</code></a></p></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><p>「<a href="/study/algorithm/collection/col_flist/">片方向連結リスト</a>」</p></td>
+		<td><p><a href="http://cpprefjp.github.io/reference/forward_list.html"><code>forward_list</code></a></p></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><p>「<a href="/study/algorithm/collection/col_blist/">双方向連結リスト</a>」</p></td>
+		<td><p><a href="http://cpprefjp.github.io/reference/list.html"><code>list</code></a></p></td>
+		<td><p><a href="https://msdn.microsoft.com/ja-jp/library/he2s3bh7.aspx"><code>LinkedList</code></a></p></td>
+	</tr>
+</table>
+<h3 id="section-4"><a id="sec-generated-title-6"></a> <a id="set"></a>検索が高速なコレクション</h3>
+<table summary="">
+
+	<tr>
+		<th>名前</th>
+		<th>C++ STL</th>
+		<th>C# System.Collections</th>
+	</tr>
+	<tr>
+		<td><p>「<a href="/study/algorithm/collection/col_sorted/">ソート済み配列</a>」</p></td>
+		<td></td>
+		<td><p><a href="https://msdn.microsoft.com/ja-jp/library/ms132319.aspx"><code>SortedList</code></a></p></td>
+	</tr>
+	<tr>
+		<td><p>「<a href="/study/algorithm/collection/col_hash/">ハッシュテーブル</a>」</p></td>
+		<td><p><a href="http://cpprefjp.github.io/reference/unordered_set.html"><code>unordered_set</code></a>, <a href="http://cpprefjp.github.io/reference/unordered_map.html"><code>unordered_map</code></a></p></td>
+		<td><p><a href="https://msdn.microsoft.com/ja-jp/library/xfhwa508.aspx"><code>Dictionary</code></a>, <a href="https://msdn.microsoft.com/ja-jp/library/bb359438.aspx"><code>HashSet</code></a></p></td>
+	</tr>
+	<tr>
+		<td><p>「<a href="/study/algorithm/collection/col_tree/">2分探索木</a>」</p></td>
+		<td><p><a href="http://cpprefjp.github.io/reference/set.html"><code>set</code></a>, <a href="http://cpprefjp.github.io/reference/map.html"><code>map</code></a></p></td>
+		<td><p><a href="https://msdn.microsoft.com/ja-jp/library/ms132289.aspx"><code>SortedDictionary</code></a>, <a href="https://msdn.microsoft.com/ja-jp/library/dd412070.aspx"><code>SortedSet</code></a></p></td>
+	</tr>
+</table>
+<h2 id="section-5"><a id="sec-generated-title-7"></a> <a id="usage"></a>用途による分類</h2>
+<h3 id="section-6"><a id="sec-generated-title-8"></a> <a id="buffer"></a>要素の挿入・削除を一定ルールで行うコレクション</h3>
+<table summary="">
+
+	<tr>
+		<th>名前</th>
+		<th>C++ STL</th>
+		<th>C# System.Collections</th>
+	</tr>
+	<tr>
+		<td><p>「<a href="/study/algorithm/collection/col_stack/">スタック</a>」</p></td>
+		<td><p><a href="http://cpprefjp.github.io/reference/stack.html"><code>stack</code></a></p></td>
+		<td><p><a href="https://msdn.microsoft.com/ja-jp/library/3278tedw.aspx"><code>Stack</code></a></p></td>
+	</tr>
+	<tr>
+		<td><p>「<a href="/study/algorithm/collection/col_queue/">待ち行列</a>」</p></td>
+		<td><p><a href="http://cpprefjp.github.io/reference/queue.html"><code>queue</code></a></p></td>
+		<td><p><a href="https://msdn.microsoft.com/ja-jp/library/7977ey2c.aspx"><code>Queue</code></a></p></td>
+	</tr>
+	<tr>
+		<td><p>「<a href="/study/algorithm/collection/col_heap/">優先度付き待ち行列</a>」</p></td>
+		<td><p><a href="http://cpprefjp.github.io/reference/queue/priority_queue.html"><code>priority_queue</code></a></p></td>
+		<td></td>
+	</tr>
+</table>
+<h3 id="section-7"><a id="sec-generated-title-9"></a> <a id="assoc"></a>連想コレクション</h3>
+<table summary="">
+
+	<tr>
+		<th>名前</th>
+		<th>C++ STL</th>
+		<th>C# System.Collections</th>
+	</tr>
+	<tr>
+		<td><p>「<a href="/study/algorithm/collection/col_set/">セット</a>」</p></td>
+		<td><p><a href="http://cpprefjp.github.io/reference/set.html"><code>set</code></a>,  <a href="http://cpprefjp.github.io/reference/set/multiset.html"><code>multiset</code></a>, <a href="http://cpprefjp.github.io/reference/unordered_set.html"><code>unordered_set</code></a>, <a href="http://cpprefjp.github.io/reference/unordered_set/unordered_set.html"><code>unordered_muliset</code></a></p></td>
+		<td><p><a href="https://msdn.microsoft.com/ja-jp/library/bb359438.aspx"><code>HashSet</code></a>,　<a href="https://msdn.microsoft.com/ja-jp/library/dd412070.aspx"><code>SortedSet</code></a></p></td>
+	</tr>
+	<tr>
+		<td><p>「<a href="/study/algorithm/collection/col_dic/">辞書</a>」</p></td>
+		<td><p><a href="http://cpprefjp.github.io/reference/map.html"><code>map</code></a>, <a href="http://cpprefjp.github.io/reference/map/multimap.html"><code>multimap</code></a>, <a href="http://cpprefjp.github.io/reference/unordered_map.html"><code>unordered_map</code></a>, <a href="http://cpprefjp.github.io/reference/unordered_map/unordered_multimap.html"><code>unordered_multimap</code></a></p></td>
+		<td><p><a href="https://msdn.microsoft.com/ja-jp/library/xfhwa508.aspx"><code>Dictionary</code></a>, <a href="https://msdn.microsoft.com/ja-jp/library/ms132289.aspx"><code>SortedDictionary</code></a>, <a href="https://msdn.microsoft.com/ja-jp/library/ms132319.aspx"><code>SortedList</code></a></p></td>
+	</tr>
+</table>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/algorithm/collection/">&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/study/algorithm/collection/col_array/">&#x914D;&#x5217;&#x30EA;&#x30B9;&#x30C8;</a></li><li><a href="/study/algorithm/collection/col_circular/">&#x5FAA;&#x74B0;&#x30D0;&#x30C3;&#x30D5;&#x30A1;</a></li><li><a href="/study/algorithm/collection/col_flist/">&#x7247;&#x65B9;&#x5411;&#x9023;&#x7D50;&#x30EA;&#x30B9;&#x30C8;</a></li><li><a href="/study/algorithm/collection/col_blist/">&#x53CC;&#x65B9;&#x5411;&#x9023;&#x7D50;&#x30EA;&#x30B9;&#x30C8;</a></li><li><a href="/study/algorithm/collection/col_sorted/">&#x30BD;&#x30FC;&#x30C8;&#x6E08;&#x307F;&#x914D;&#x5217;</a></li><li><a href="/study/algorithm/collection/col_hash/">&#x30CF;&#x30C3;&#x30B7;&#x30E5;&#x30C6;&#x30FC;&#x30D6;&#x30EB;</a></li><li><a href="/study/algorithm/collection/col_tree/">2&#x5206;&#x63A2;&#x7D22;&#x6728;</a></li><li><a href="/study/algorithm/collection/col_stack/">&#x30B9;&#x30BF;&#x30C3;&#x30AF;</a></li><li><a href="/study/algorithm/collection/col_queue/">&#x5F85;&#x3061;&#x884C;&#x5217;</a></li><li><a href="/study/algorithm/collection/col_heap/">&#x512A;&#x5148;&#x5EA6;&#x4ED8;&#x304D;&#x5F85;&#x3061;&#x884C;&#x5217;</a></li><li><a href="/study/algorithm/collection/col_set/">&#x30BB;&#x30C3;&#x30C8;</a></li><li><a href="/study/algorithm/collection/col_dic/">&#x8F9E;&#x66F8;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

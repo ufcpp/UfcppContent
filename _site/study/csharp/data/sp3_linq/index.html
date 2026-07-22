@@ -1,0 +1,360 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>LINQ | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/data/sp3_linq/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="linq">LINQ</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<h5 class="version version3">Ver. 3.0</h5>
+<p>C# 3.0（そして、同時に発表された VB 9.0）の目玉となる新機能は、
+Language Integrated Query、略して LINQ と呼ばれるもので、
+リレーショナルデータベースや XML に対する操作をプログラミング言語に統合するものです。</p>
+<p>LINQ を用いることで、様々なタイプのデータソースに対する検索や操作を、
+共通の構文で行うことができます。
+IEnumeable を実装するコレクションクラスに対するもの（LINQ to Object）や、
+XML に対するもの（LINQ to XML）、
+それに、リレーショナルデータベースサーバに対する SQL クエリを生成するもの（LINQ to SQL）などがあります。</p>
+<p>LINQ には以下のような利点があります。</p>
+<ul>
+<li><p>オブジェクト指向言語らしい書き方でデータベースへの問い合わせができます。</p>
+</li>
+<li><p>in-memory なオブジェクト、XML、リレーショナルデータベースに対して、同じ文法でデータの問い合わせができます。</p>
+</li>
+<li><p>問い合わせ時に、コンパイラによる文法チェックや、IntelliSense のようなツールの補助を受けることができます。</p>
+</li>
+</ul>
+<p>技術的には、LINQ は、データベースや XML 操作用のライブラリと、
+C# や VB.NET 言語中に SQL 風の問い合わせ構文を埋め込めるようにする言語拡張から成ります。</p>
+<h5 id="section-1"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>クエリ式：<code>var q = from x in collection where x &gt; 10 select x * x;</code></p>
+</li>
+<li><p>メソッド形式で LINQ：<code>var q = collection.Where(x =&gt; x &gt; 10).Select(x =&gt; x * x);</code></p>
+</li>
+</ul>
+<h2 id="linq-1"><a id="sec-generated-title-3"></a> <a id="linq"></a>LINQ とは</h2>
+<p><strong id="linq" class="keyword">LINQ</strong> とは、
+Language Integrated Query の略称で、
+C# や VB などの .NET Framework 対応言語に、
+リレーショナルデータや XML に対するデータ操作構文を組み込む
+（＋ データベースや XML 操作用のライブラリ）
+というものです。</p>
+<p>その目的は、
+データベース問い合わせとオブジェクト指向プログラミング（OOP: Object-Oriented Programming）の統合です。
+これまでに、
+SQL などの問い合わせ言語によって、
+データベースの構築・問い合わせが容易になりました。
+また、
+C# や Java などの OOP 言語によって、
+さまざまなデータ（文字列・数値はもちろん、画像や音声なども）に対する操作を容易に記述できるようになりました。</p>
+<p>しかしながら、
+画像や音声なども含めた多種多様なデータ構造に対する問い合わせはどうでしょうか。
+残念ながら、
+これまでの SQL などの問い合わせ言語、あるいは C# などの OOP 言語のどちらかだけでは、
+容易に実現可能とはいきませんでした。
+文字列や数値にとどまらず、さまざまなデータ構造をデータベース的に扱いたいという要求は、
+近年、ますます高まっているにもかかわらず、
+その実現は非常に困難だったのです。</p>
+<p>そこで、Language Integrated Query、
+すなわち、OOP 言語への問い合わせ構文の統合という考え方が必要になります。</p>
+<h3 id="section-2"><a id="sec-generated-title-4"></a> <a id="db"></a>データベース言語</h3>
+<p>SQL などのデータベース操作言語をご存知の方ならば、
+すぐに LINQ になじむこと出来るでしょう。
+この手の言語のことをご存じない方のために、
+SQL を例に、簡単な説明をしたいと思います。</p>
+<p>まず、操作対象の例として、
+表1に示すような、「学生名簿」と言う名前のデータテーブルを考えます。</p>
+<table summary="データテーブル： 学生名簿">
+	<caption>
+		データテーブル： 学生名簿
+	</caption>
+	<tr>
+		<th>出席番号</th>
+		<th>姓</th>
+		<th>名</th>
+	</tr>
+	<tr>
+		<td><p>14</p></td>
+		<td><p>風浦</p></td>
+		<td><p>可符香</p></td>
+	</tr>
+	<tr>
+		<td><p>20</p></td>
+		<td><p>小森</p></td>
+		<td><p>霧</p></td>
+	</tr>
+	<tr>
+		<td><p>22</p></td>
+		<td><p>常月</p></td>
+		<td><p>まとい</p></td>
+	</tr>
+	<tr>
+		<td><p>19</p></td>
+		<td><p>小節</p></td>
+		<td><p>あびる</p></td>
+	</tr>
+	<tr>
+		<td><p>18</p></td>
+		<td><p>木村</p></td>
+		<td><p>カエレ</p></td>
+	</tr>
+	<tr>
+		<td><p>16</p></td>
+		<td><p>音無</p></td>
+		<td><p>芽留</p></td>
+	</tr>
+	<tr>
+		<td><p>17</p></td>
+		<td><p>木津</p></td>
+		<td><p>千里</p></td>
+	</tr>
+	<tr>
+		<td><p>8</p></td>
+		<td><p>関内</p></td>
+		<td><p>マリア</p></td>
+	</tr>
+	<tr>
+		<td><p>28</p></td>
+		<td><p>日塔</p></td>
+		<td><p>奈美</p></td>
+	</tr>
+</table>
+<p>こういったデータテーブルの中から、
+特定の条件を満たすものだけを取り出したり、
+順番を並べ替えたりという操作を行うのがデータベース操作言語です。
+例えば、SQL を使って、
+このテーブル中から、
+出席番号前半（15以下）の学生だけ、
+出席番号の小さい順に並べ、
+その「名」を取り出したい場合、
+以下のような問い合わせを書きます。</p>
+<pre><code class="language-sql"><span class="keyword">SELECT</span> 名 <span class="keyword">FROM</span> 学生名簿
+  <span class="keyword">WHERE</span> 出席番号 &lt;= 15
+  <span class="keyword">ORDER</span> <span class="keyword">BY</span> 出席番号;</code></pre>
+<p>この問い合わせの結果は、
+表2のようになるでしょう。</p>
+<table summary="問い合わせ結果： 出席番号前半の「名」">
+	<caption>
+		問い合わせ結果： 出席番号前半の「名」
+	</caption>
+	<tr>
+		<th>名</th>
+	</tr>
+	<tr>
+		<td><p>マリア</p></td>
+	</tr>
+	<tr>
+		<td><p>可符香</p></td>
+	</tr>
+</table>
+<p>SELECT などのキーワードに関して、
+簡単にだけ説明すると以下のようになります。</p>
+<table summary="SQL のキーワード">
+	<caption>
+		SQL のキーワード
+	</caption>
+	<tr>
+		<th>キーワード</th>
+		<th>説明</th>
+	</tr>
+	<tr>
+		<td><p>SELECT</p></td>
+		<td><p>姓、名、学生番号などのうち、どれを表示するか</p></td>
+	</tr>
+	<tr>
+		<td><p>FROM</p></td>
+		<td><p>どのデータテーブルからデータを読むか</p></td>
+	</tr>
+	<tr>
+		<td><p>WHERE</p></td>
+		<td><p>取り出したいデータに対する条件</p></td>
+	</tr>
+	<tr>
+		<td><p>ORDER BY</p></td>
+		<td><p>取り出す順番</p></td>
+	</tr>
+</table>
+<p>さらに、複数のテーブルに渡る問い合わせも可能です。
+先ほど表1で示したデータテーブルに加え、
+表3のようなデータテーブルもあったとしましょう。</p>
+<table summary="データテーブル： 備考欄">
+	<caption>
+		データテーブル： 備考欄
+	</caption>
+	<tr>
+		<th>出席番号</th>
+		<th>備考</th>
+	</tr>
+	<tr>
+		<td><p>19</p></td>
+		<td><p>しっぽ好き</p></td>
+	</tr>
+	<tr>
+		<td><p>19</p></td>
+		<td><p>被 DV 疑惑</p></td>
+	</tr>
+	<tr>
+		<td><p>16</p></td>
+		<td><p>毒舌メール</p></td>
+	</tr>
+	<tr>
+		<td><p>17</p></td>
+		<td><p>几帳面</p></td>
+	</tr>
+</table>
+<p>で、この2つのテーブル「学生名簿」と「備考欄」に対して、
+以下のような問い合わせ操作をしてみます。</p>
+<pre><code class="language-sql"><span class="keyword">SELECT</span> 姓, 名, 備考 <span class="keyword">FROM</span> 学生名簿, 備考欄
+  <span class="keyword">WHERE</span> 学生名簿.学生番号 == 備考欄.学生番号</code></pre>
+<p>その結果得られるデータは以下のようになります。</p>
+<table summary="問い合わせ結果： 姓名と備考">
+	<caption>
+		問い合わせ結果： 姓名と備考
+	</caption>
+	<tr>
+		<th>姓</th>
+		<th>名</th>
+		<th>備考</th>
+	</tr>
+	<tr>
+		<td><p>小節</p></td>
+		<td><p>あびる</p></td>
+		<td><p>しっぽ好き</p></td>
+	</tr>
+	<tr>
+		<td><p>小節</p></td>
+		<td><p>あびる</p></td>
+		<td><p>被 DV 疑惑</p></td>
+	</tr>
+	<tr>
+		<td><p>音無</p></td>
+		<td><p>芽留</p></td>
+		<td><p>毒舌メール</p></td>
+	</tr>
+	<tr>
+		<td><p>木津</p></td>
+		<td><p>千里</p></td>
+		<td><p>几帳面</p></td>
+	</tr>
+</table>
+<h3 id="linq-2"><a id="sec-generated-title-5"></a> <a id="linqsample"></a>LINQ の例</h3>
+<p>本当に簡単にですが、データベース操作言語の概要を述べた所で、
+LINQ の話に戻りましょう。
+改めて書きますが、LINQ とは、
+C# 等の言語に SQL ライクなデータベース操作構文を組み込む
+（＋ データベースや XML 操作用のライブラリ）
+というものです。</p>
+<p>百聞は一見にしかずということで、
+とりあえず、先ほどの SQL での例を C# 3.0 の構文を使って書いてみましょう。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> 学生名簿 =
+<span class="keyword">new</span>[] {
+  <span class="keyword">new</span> {学生番号 = <span class="number">14</span>, 姓 = <span class="string">&quot;風浦&quot;</span>, 名 = <span class="string">&quot;可符香&quot;</span>},
+  <span class="keyword">new</span> {学生番号 = <span class="number">20</span>, 姓 = <span class="string">&quot;小森&quot;</span>, 名 = <span class="string">&quot;霧&quot;</span>    },
+  <span class="keyword">new</span> {学生番号 = <span class="number">22</span>, 姓 = <span class="string">&quot;常月&quot;</span>, 名 = <span class="string">&quot;まとい&quot;</span>},
+  <span class="keyword">new</span> {学生番号 = <span class="number">19</span>, 姓 = <span class="string">&quot;小節&quot;</span>, 名 = <span class="string">&quot;あびる&quot;</span>},
+  <span class="keyword">new</span> {学生番号 = <span class="number">18</span>, 姓 = <span class="string">&quot;木村&quot;</span>, 名 = <span class="string">&quot;カエレ&quot;</span>},
+  <span class="keyword">new</span> {学生番号 = <span class="number">16</span>, 姓 = <span class="string">&quot;音無&quot;</span>, 名 = <span class="string">&quot;芽留&quot;</span>  },
+  <span class="keyword">new</span> {学生番号 = <span class="number">17</span>, 姓 = <span class="string">&quot;木津&quot;</span>, 名 = <span class="string">&quot;千里&quot;</span>  },
+  <span class="keyword">new</span> {学生番号 =  <span class="number">8</span>, 姓 = <span class="string">&quot;関内&quot;</span>, 名 = <span class="string">&quot;マリア&quot;</span>},
+  <span class="keyword">new</span> {学生番号 = <span class="number">28</span>, 姓 = <span class="string">&quot;日塔&quot;</span>, 名 = <span class="string">&quot;奈美&quot;</span>  },
+};
+
+<span class="keyword">var</span> 出席番号前半名 =
+  <span class="keyword">from</span> p <span class="keyword">in</span> 学生名簿
+  <span class="keyword">where</span> p.学生番号 &lt;= <span class="number">15</span>
+  <span class="keyword">orderby</span> p.学生番号
+  <span class="keyword">select</span> p.名;
+
+<span class="keyword">foreach</span>(<span class="keyword">var</span> 名 <span class="keyword">in</span> 出席番号前半名)
+{
+  Console.Write(<span class="string">&quot;{0}\n&quot;</span>, 名);
+}</code></pre>
+<pre><code class="language-console">マリア
+可符香</code></pre>
+<p>非常に見慣れない構文だらけで困惑するかもしれませんが、
+C# 3.0 ではこのコードがコンパイル可能です。
+というより、これがコンパイル可能となるような、新しい構文が追加されました。</p>
+<p>簡単に解説だけしておくと、
+第1文、<code>var 学生名簿</code> の部分では、
+SQL の説明で述べた所のデータテーブルを作っています。
+「<a href="/study/csharp/functional/sp3_functional/">関数型言語・動的言語的な機能</a>」で説明したような、
+型推論、匿名型、ラムダ式などはこのために追加されたようなものです。</p>
+<p>第2文、<code>var 出席番号前半姓</code> の部分では、
+C# 3.0 の目玉となる機能、LINQ を使っています。
+where や select などの「クエリ式」を用いて、
+データ操作を行っています。
+詳細は次節以降で述べていくことになります。</p>
+<p>最後の部分、<code>foreach</code> 以下は、
+C# 2.0 までの感覚でも割となじみやすいのではないかと思います。
+問い合わせ結果の一覧を画面に表示しています。</p>
+<h2 id="linq-3"><a id="sec-generated-title-6"></a> <a id="linq_architecture"></a>LINQ の全体像</h2>
+<p>LINQ の全体像を絵的に表すと、図1のようになります。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/linq01.png"><img src="/assets/media/ufcpp2000/csharp/fig/linq01.png" alt="LINQ の全体像" /></a></p>
+<figcaption>LINQ の全体像</figcaption>
+</figure>
+<p>詳しくは「<a href="#query">クエリ式</a>」で説明しますが、
+まず、C# や VB.NET 内に SQL 風のクエリ式を記述できるような言語構文が拡張されています。</p>
+<p>これは実際には、
+Where、Select などのメソッド呼び出しに変換されます。
+すなわち、「<em>Where、Select など、所定のメソッドを定義してさえあれば、どんなクラスでもクエリ式を使える</em>」という規約があるということです。
+この規約で定められたメソッド群のことを<strong id="std_query_op" class="keyword">標準クエリ演算子</strong>（standard query operators）と呼びます。
+（メソッド呼び出しですが、呼称的には「演算子」という呼び方をするようです。）</p>
+<p>.NET Framework 3.5 では標準ライブラリ内のいくつかのデータソースクラスを LINQ に対応（標準クエリ演算子を実装）させています。
+例えば、IEnumerable は LINQ に対応していて、配列やコレクションクラスを LINQ のデータソースとして利用できるようになっています（LINQ to Object）。
+また、データベースサーバ接続用や XML リーダー/ライタークラスも LINQ 対応しました（LINQ to SQL、LINQ to XML）。</p>
+<p>LINQ の実体は、標準クエリ演算子のメソッド呼び出しなので、クエリ式を実装していない言語からでも、これらのメソッド呼び出しによってさまざまな LINQ 対応データソースにアクセスできます。</p>
+<h2 id="section-3"><a id="sec-generated-title-7"></a> <a id="query"></a>クエリ式</h2>
+<p>改めて書くと、
+C# 3.0 の目玉となる機能は<strong id="query" class="keyword">クエリ式</strong>（query expression）です。
+すでに何度か例を示していますが、
+以下のように、SQL 風の問い合わせを C# ソースファイル中に直接書ける機能です。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> list1 =
+  <span class="keyword">from</span> p <span class="keyword">in</span> list
+  <span class="keyword">where</span> p.id &lt;= <span class="number">15</span>
+  <span class="keyword">orderby</span> p.id
+  <span class="keyword">select</span> <span class="keyword">new</span> { p.FamilyName, p.FirstName };</code></pre>
+<p>この SQL 風のクエリ式は、
+実は、C# のコンパイラ自体にデータ問い合わせの機構が埋め込まれているわけではありません。
+C# 3.0 のコンパイラは、クエリ式をメソッド（あるいは「<a href="/study/csharp/functional/sp3_extension/#exmethod">拡張メソッド</a>」）呼び出しに変換します。
+例えば、以下のようなクエリ式を考えます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> list1 =
+  <span class="keyword">from</span> p <span class="keyword">in</span> list
+  <span class="keyword">where</span> p.id &lt;= <span class="number">15</span>
+  <span class="keyword">select</span> p.Name;</code></pre>
+<p>これは、C# 3.0 コンパイラによって、以下のように解釈されます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> list1 = list.Where(p =&gt; p.id &lt;= <span class="number">15</span>).Select(p =&gt; p.Name);</code></pre>
+<p>そして、実際のデータ問い合わせはこの Where や Select などのメソッド（あるいは「<a href="/study/csharp/functional/sp3_extension/#exmethod">拡張メソッド</a>」）内で行われます。
+問い合わせ構文は、Where や Select などのメソッドを持つか、
+あるいは、拡張メソッドによってこれらのメソッドを追加した、
+任意のクラスに対して利用できます。</p>
+<p>（
+「何かインターフェースを実装していないとダメ」とかはなく、
+コンパイラは Where や Select などという名前のメソッド（あるいは拡張メソッド）があるかどうかだけを見ます。
+要するに、「<a href="/study/csharp/appendix/ap_term/#ducktype">ダックタイピング</a>」です。
+）</p>
+<p>ちなみに、少し実装上の話をすると、この機能は System.Array や、
+System.Collections.Generic.List&lt;T&gt; にこれらのメソッド定義があるわけではなく、
+IEnumerable インターフェースの拡張メソッドとして定義されています。
+拡張メソッドの定義場所は、System.Query.Sequence クラスです。</p>
+<p>どういうクエリ式がどういう標準クエリ演算子に変換されるかは次章「<a href="/study/csharp/data/sp3_stdquery/">標準クエリ演算子（クエリ式関係）</a>」で説明します。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/data/">&#x30C7;&#x30FC;&#x30BF;&#x5217;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/data/sp_foreach/">foreach</a></li><li><a href="/study/csharp/data/sp2_iterator/">&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;&#x30FC;</a></li><li><a href="/study/csharp/data/sp2_itpattern/">[&#x96D1;&#x8A18;] &#x5185;&#x90E8;&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;&#x3068;&#x5916;&#x90E8;&#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;</a></li><li><a href="/study/csharp/data/da_about/">&#x30C7;&#x30FC;&#x30BF;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/data/sp3_stdquery/">&#x6A19;&#x6E96;&#x30AF;&#x30A8;&#x30EA;&#x6F14;&#x7B97;&#x5B50;&#xFF08;&#x30AF;&#x30A8;&#x30EA;&#x5F0F;&#x95A2;&#x4FC2;&#xFF09;</a></li><li><a href="/study/csharp/data/sp3_stdqueryo/">&#x6A19;&#x6E96;&#x30AF;&#x30A8;&#x30EA;&#x6F14;&#x7B97;&#x5B50;&#xFF08;&#x305D;&#x306E;&#x4ED6;&#xFF09;</a></li><li><a href="/study/csharp/data/sp3_lazylist/">[&#x96D1;&#x8A18;] LINQ &#x3068;&#x9045;&#x5EF6;&#x8A55;&#x4FA1;</a></li><li><a href="/study/csharp/data/datamodulararchitecture/">[&#x96D1;&#x8A18;] &#x5C0F;&#x3055;&#x306A;&#x6A5F;&#x80FD;&#x306E;&#x7D44;&#x307F;&#x5408;&#x308F;&#x305B;</a></li><li><a href="/study/csharp/data/sp3_ormismatch/">[&#x96D1;&#x8A18;] O/R &#x30A4;&#x30F3;&#x30D4;&#x30FC;&#x30C0;&#x30F3;&#x30B9;&#x30DF;&#x30B9;&#x30DE;&#x30C3;&#x30C1;</a></li><li><a href="/study/csharp/data/sp3_ormismatch2/">[&#x96D1;&#x8A18;] O/R &#x30A4;&#x30F3;&#x30D4;&#x30FC;&#x30C0;&#x30F3;&#x30B9;&#x30DF;&#x30B9;&#x30DE;&#x30C3;&#x30C1;&#xFF08;&#x30AF;&#x30E9;&#x30B9;&#x306E;&#x7D99;&#x627F;&#xFF09;</a></li><li><a href="/study/csharp/data/sp3_linqtosql/">[&#x96D1;&#x8A18;] LINQ to SQL &#x5B9F;&#x8DF5;&#x7DE8;</a></li><li><a href="/study/csharp/data/sp3_iqueryable/">[&#x96D1;&#x8A18;] IQueryable &#x306E;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/data/misc_immutabledata/">&#x4E0D;&#x5909;(immutable)&#x306A;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/data/dataranges/">&#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;/&#x7BC4;&#x56F2;&#x51E6;&#x7406;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,120 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>nullable &#x8B66;&#x544A;&#x3082;&#x307F;&#x6D88;&#x3057;(&#x6765;&#x5E74;&#x307E;&#x3067;&#x306E;&#x6211;&#x6162;)&#x306E;&#x624B;&#x6BB5; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2022/1/nullable-property-disable/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2022-01-28T20:49:46">2022-01-28</time></span><span>更新: <time datetime="2022-01-28T20:50:52">2022-01-28</time></span></div><h1 id="nullable">nullable 警告もみ消し(来年までの我慢)の手段</h1>
+<p>今日はとあるアンケートの結果を乗せておこう的な話。</p>
+<h2 id="null">背景: 非 null プロパティの初期化</h2>
+<p><a href="/study/csharp/resource/nullablereferencetype/">null 許容参照型</a>の仕様が入って以来、以下のようなコードに警告が出るようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> X;
+    <span class="keyword">public</span> <span class="keyword">string</span> Y { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">string</span> Z { <span class="keyword">get</span>; init; }
+}</code></pre>
+<p>C# 10.0 現在、この警告を回避する唯一の方法は「ちゃんとコンストラクターで初期化すること」です。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> X;
+    <span class="keyword">public</span> <span class="keyword">string</span> Y { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">string</span> Z { <span class="keyword">get</span>; init; }
+
+    <span class="keyword">public</span> A(<span class="keyword">string</span> x, <span class="keyword">string</span> y, <span class="keyword">string</span> z) =&gt; (X, Y, Z) = (x, y, z);
+}</code></pre>
+<p>困るのが、「このプロパティは <code>new() { X = &quot;&quot;, Y = &quot;&quot;, Z = &quot;&quot; }</code> みたいに初期化子で初期化したい」という場面。
+結構あると思うんですよね、コンストラクターを定義したくない・できないとき。
+今のところいい解決策がない状態です。</p>
+<h3 id="required">【将来予定】 required</h3>
+<p>一応補足。
+将来的には解消する予定です。
+今のところ C# 11.0 目標で、<code>required</code> 修飾子を付けるという案が進められています。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+    <span class="keyword">public</span> required <span class="keyword">string</span> X;
+    <span class="keyword">public</span> required <span class="keyword">string</span> Y { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> required <span class="keyword">string</span> Z { <span class="keyword">get</span>; init; }
+}</code></pre>
+<p>これが付いていると、オブジェクト初期化子で非 null な値を渡すことを義務付けられるようになるので、クラス定義側には警告が出なくなります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> a1 = <span class="keyword">new</span> A(); <span class="comment">// required プロパティ/フィールドに値を与えていないので警告</span>
+
+<span class="keyword">var</span> a2 = <span class="keyword">new</span> A()
+{
+    X = <span class="keyword">null</span>, <span class="comment">// null を与えたので警告</span>
+};
+
+<span class="comment">// required プロパティ/フィールド全てにちゃんと値を与えたのでOKに</span>
+<span class="keyword">var</span> a3 = <span class="keyword">new</span> A()
+{
+    X = <span class="string">&quot;&quot;</span>,
+    Y = <span class="string">&quot;&quot;</span>,
+    Z = <span class="string">&quot;&quot;</span>,
+};</code></pre>
+<h2 id="section">現状の回避策</h2>
+<p>ということで、<code>required</code> によって来年には根本解決の当てがあるわけですが。
+そうなると、今現在 <code>A</code> の作者が頑張って回避策を取る必要もないよなぁ…
+ということになって、
+「来年まではやっつけ対処でもみ消ししとこう」という発想になります。</p>
+<p>ただ、
+こういうやっつけほど具体的にどう対処しようか迷います。
+また、もみ消しにいくつかの手段があるのでその点もちょっと迷うポイント。</p>
+<p>ということでアンケート。</p>
+<h3 id="section-1">選択肢</h3>
+<p>選択肢1. 該当行を <code>nullable disable</code></p>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+#nullable <span class="keyword">disable</span> warnings
+    <span class="keyword">public</span> <span class="keyword">string</span> X;
+    <span class="keyword">public</span> <span class="keyword">string</span> Y { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">string</span> Z { <span class="keyword">get</span>; init; }
+#nullable restore warnings
+}</code></pre>
+<p>選択肢2. 該当行を <code>pragma warning disable</code></p>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+<span class="preprocessorKeyword">#pragma</span> warning disable CS8618
+    <span class="keyword">public</span> <span class="keyword">string</span> X;
+    <span class="keyword">public</span> <span class="keyword">string</span> Y { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">string</span> Z { <span class="keyword">get</span>; init; }
+<span class="preprocessorKeyword">#pragma</span> warning restore CS8618
+}</code></pre>
+<p>選択肢3. とりあえず <code>default!</code> や <code>null!</code> を代入</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> X = <span class="keyword">null</span>!;
+    <span class="keyword">public</span> <span class="keyword">string</span> Y { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">null</span>!;
+    <span class="keyword">public</span> <span class="keyword">string</span> Z { <span class="keyword">get</span>; init; } = <span class="keyword">null</span>!;
+}</code></pre>
+<p>選択肢4. ノーガード。警告出っぱなしなのをあきらめる</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> X;
+    <span class="keyword">public</span> <span class="keyword">string</span> Y { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">string</span> Z { <span class="keyword">get</span>; init; }
+}</code></pre>
+<h3 id="section-2">結果</h3>
+<p>C# 配信中にこの話題になり、
+配信真っ最中に Twitter アンケートを作って投票してもらったり。</p>
+<p><a href="https://twitter.com/ufcpp/status/1434168597060853760">https://twitter.com/ufcpp/status/1434168597060853760</a></p>
+<p><code>!</code> でもみ消し派が35%くらいでちょっと多めですね。
+まあ思ったよりは差が広がらず。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2022/1/">1&#x6708;</a></li><li><a href="/blog/2022/1/countable/">&#x3010;C# 11 &#x3067;&#x518D;&#x691C;&#x8A0E;&#x3011;Countable</a></li><li><a href="/blog/2022/1/defaultable/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011;defaultable value type</a></li><li><a href="/blog/2022/1/naming-style/">&#x3010;Visual Studio&#x3011; Naming Style &#x8A2D;&#x5B9A;</a></li><li><a href="/blog/2022/1/member-not-null/">MemberNotNull (&#x5024;&#x578B;) &#x5224;&#x5B9A;</a></li><li><a href="/blog/2022/1/main-attribute/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011; &#x30C8;&#x30C3;&#x30D7; &#x30EC;&#x30D9;&#x30EB; &#x30B9;&#x30C6;&#x30FC;&#x30C8;&#x30E1;&#x30F3;&#x30C8;&#x306E; Main &#x306B;&#x5C5E;&#x6027;&#x3092;&#x4ED8;&#x3051;&#x308B;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

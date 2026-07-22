@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Windows PowerShell | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/powershell/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content subject"><h1 id="windows-powershell">Windows PowerShell</h1>
+<p>Windows Power Shell は、
+Windows をコマンドラインから、あるいは、
+スクリプトを使って管理するために作られた新しいシェル環境です。</p>
+<p>作られた目的のせいか、
+Power Shell を解説する書籍・ウェブサイトには、
+「管理者向けの TIPS、実例集」
+（レジストリの値の変え方とか、WMI の呼び出し方とか）
+みたいな物が多かったりします。</p>
+<p>でも、Power Shell を調べてみた感じ、
+Power Shell 用のスクリプト言語や、
+コマンドレットの動作・作り方など、
+プログラミング的にも結構面白そうな感じなので、
+その辺りを中心に話をしてみようかと思います。</p>
+<p>（注：
+コマンドの実行結果など、
+ページ表示の収まりをよくするため、
+ところどころ省略している部分があります。
+）</p>
+<h2 id="section">章</h2>
+<h3 id="section-1"><a id="intro"></a><a href="/study/powershell/intro/">前置き</a></h3>
+<ul>
+<li><a href="/study/powershell/intro/abstract/">Windows PowerShell 概要</a></li>
+<li><a href="/study/powershell/intro/scriptlang/">スクリプト言語とは</a></li>
+<li><a href="/study/powershell/intro/prepare/">準備</a></li>
+</ul>
+<h3 id="powershel"><a id="syntax"></a><a href="/study/powershell/syntax/">PowerShel の構文</a></h3>
+<ul>
+<li><a href="/study/powershell/syntax/basic/">基礎知識</a></li>
+<li><a href="/study/powershell/syntax/variable/">変数</a></li>
+<li><a href="/study/powershell/syntax/dotnet/">.NET Framework オブジェクト</a></li>
+<li><a href="/study/powershell/syntax/valuetype/">値型</a></li>
+<li><a href="/study/powershell/syntax/string/">文字列</a></li>
+<li><a href="/study/powershell/syntax/array/">配列</a></li>
+<li><a href="/study/powershell/syntax/xml/">XML</a></li>
+<li><a href="/study/powershell/syntax/flow/">制御構文</a></li>
+<li><a href="/study/powershell/syntax/function/">関数、フィルタ、スクリプト</a></li>
+<li><a href="/study/powershell/syntax/exception/">例外処理</a></li>
+</ul>
+<h3 id="cmdlet"><a id="cmdlet"></a><a href="/study/powershell/cmdlet/">Cmdlet</a></h3>
+<ul>
+<li><a href="/study/powershell/cmdlet/cmdlet/">コマンド実行</a></li>
+<li><a href="/study/powershell/cmdlet/cmd_variable/">変数操作関連の Cmdlet</a></li>
+<li><a href="/study/powershell/cmdlet/cmd_object/">オブジェクト操作 Cmdlet</a></li>
+</ul>
+<h3 id="net"><a id="interop"></a><a href="/study/powershell/interop/">.NET 言語からの利用</a></h3>
+<ul>
+<li><a href="/study/powershell/interop/interop/">C# 上で PowerShell スクリプトを実行</a></li>
+</ul>
+<h3 id="section-2"><a id="misc"></a><a href="/study/powershell/misc/">その他</a></h3>
+<ul>
+<li><a href="/study/powershell/misc/psdrive/">プロバイダとドライブ</a></li>
+<li><a href="/study/powershell/misc/customize/">環境のカスタマイズ</a></li>
+<li><a href="/study/powershell/misc/keywords/">重要語句・Cmdlet 一覧</a></li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/">study</a></li><li><a href="/study/csharp/">C# &#x306B;&#x3088;&#x308B;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30DF;&#x30F3;&#x30B0;&#x5165;&#x9580;</a></li><li><a href="/study/dotnet/">&#x30AF;&#x30E9;&#x30B9;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li><li><a href="/study/il/">IL&#xFF08;.NET &#x306E;&#x4E2D;&#x9593;&#x8A00;&#x8A9E;&#xFF09;</a></li><li><a href="/study/computer/">&#x30B3;&#x30F3;&#x30D4;&#x30E5;&#x30FC;&#x30BF;&#x306E;&#x57FA;&#x790E;&#x77E5;&#x8B58;</a></li><li><a href="/study/algorithm/">&#x30A2;&#x30EB;&#x30B4;&#x30EA;&#x30BA;&#x30E0;&#x3068;&#x30C7;&#x30FC;&#x30BF;&#x69CB;&#x9020;</a></li><li><a href="/study/sp/">&#x4FE1;&#x53F7;&#x51E6;&#x7406;</a></li><li><a href="/study/dsl/">DSL (Domain Specific Language)</a></li><li><a href="/study/stl/">C&#x2B;&#x2B; STL</a></li><li><a href="/study/office/">Office &#x95A2;&#x9023;</a></li><li><a href="/study/miscprog/">&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30DF;&#x30F3;&#x30B0;&#x96D1;&#x8A18;</a></li><li><a href="/study/misc/">&#x96D1;&#x8A18;</a></li><li><a href="/study/en/">&#x82F1;&#x8A9E;&#x30BD;&#x30FC;&#x30B9;&#x7F6E;&#x304D;&#x5834;</a></li><li><a href="/study/xml/">XML,XSL</a></li><li><a href="/study/math/">&#x6570;&#x5B66;</a></li><li><a href="/study/physics/">&#x7269;&#x7406;</a></li><li><a href="/study/powershell/intro/">&#x524D;&#x7F6E;&#x304D;</a></li><li><a href="/study/powershell/syntax/">PowerShel &#x306E;&#x69CB;&#x6587;</a></li><li><a href="/study/powershell/cmdlet/">Cmdlet</a></li><li><a href="/study/powershell/interop/">.NET &#x8A00;&#x8A9E;&#x304B;&#x3089;&#x306E;&#x5229;&#x7528;</a></li><li><a href="/study/powershell/misc/">&#x305D;&#x306E;&#x4ED6;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

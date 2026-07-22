@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x3010;C# 12 &#x5019;&#x88DC;&#x3011;IEnumerable &#x5411;&#x3051;&#x30EA;&#x30B9;&#x30C8; &#x30D1;&#x30BF;&#x30FC;&#x30F3; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2023/1/list-pattern-enumerable/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2023-01-14T16:21:28">2023-01-14</time></span><span>更新: <time datetime="2023-01-14T16:21:28">2023-01-14</time></span></div><h1 id="c-12-ienumerable">【C# 12 候補】IEnumerable 向けリスト パターン</h1>
+<p>C# vNext (12 候補)紹介シリーズ。</p>
+<p>今日はリスト パターンがらみ。</p>
+<p>提案ドキュメント:</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/blob/main/proposals/list-patterns-enumerables.md">List patterns on enumerables</a> (この当時から、リスト パターンの文法には結構変更あり)</li>
+<li><a href="https://github.com/dotnet/csharplang/blob/main/meetings/2022/LDM-2022-10-19.md">直近の Language Design Meeting ノート</a></li>
+</ul>
+<h2 id="c-11">C# 11 のときの話</h2>
+<p><a href="/study/csharp/cheatsheet/ap_ver11/#list">C# 11 でリスト パターン</a>が入りました。</p>
+<p><code>is []</code> みたいに、<code>[]</code> を使って配列とか <code>List&lt;T&gt;</code> に対するパターン マッチを行います。
+ただ、C# 11 時点では、</p>
+<ul>
+<li>countable: <code>Length</code> もしくは <code>Count</code> で長さを取れる</li>
+<li>indexable: <code>[int index]</code> (整数引数のインデクサー)で i 番目の要素を取れる</li>
+<li>sliceable: <code>[Range range]</code> や <code>Slice(int start, int length)</code> でスライスを作れる</li>
+</ul>
+<p>みたいな割と厳し目な条件を満たす型に対してだけリスト パターンを使えました。
+以下の例ではリスト パターンとその展開結果をコメントに書いていますが、
+見ての通り、 <code>Length</code> や <code>[]</code> を使ったコードと等価です。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> <span class="keyword">static</span> System.Console;
+
+<span class="keyword">static</span> <span class="keyword">void</span> m(<span class="keyword">int</span>[] x)
+{
+    WriteLine(x <span class="keyword">is</span> []); <span class="comment">// x.Length == 0</span>
+    WriteLine(x <span class="keyword">is</span> [<span class="number">1</span>]); <span class="comment">// x.Length == 1 &amp;&amp; x[0] == 1</span>
+    WriteLine(x <span class="keyword">is</span> [<span class="number">1</span>, ..]); <span class="comment">// x.Length &gt;= 1 &amp;&amp; x[0] == 1</span>
+    WriteLine(x <span class="keyword">is</span> [_, .. <span class="keyword">var</span> y]); <span class="comment">// y = x[1..]</span>
+    WriteLine(x <span class="keyword">is</span> [_, .. <span class="keyword">var</span> z, _, _]); <span class="comment">// y = x[1..^2]</span>
+}</code></pre>
+<h2 id="ienumerable">対 IEnumerable</h2>
+<p>提案当初(コミュニティ提案だったりします)では、
+リスト パターンは <code>IEnumerable</code> に対しても使える提案がありました。
+別にリジェクトされたわけでもないんですが、countable, indexable, sliceable に対するものと比べると課題が多いので「後回し」にされています。</p>
+<p>まあ、元々提案にあったものなので、引き続き検討しようかという感じで C# vNext 候補です。
+元々の提案では、何らかのヘルパー クラスを間に挟んで、
+<code>x is [0, 1, ..]</code> みたいなコードを以下のような感じで展開することを考えています。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> helper = <span class="keyword">new</span> ListPatternHelper(x, <span class="number">2</span>, <span class="number">0</span>);
+
+helper.TryGetStartElement(index: <span class="number">0</span>, <span class="keyword">out</span> <span class="keyword">var</span> element0) &amp;&amp; element0 <span class="keyword">is</span> <span class="number">0</span> &amp;&amp;
+helper.TryGetStartElement(<span class="number">1</span>, <span class="keyword">out</span> <span class="keyword">var</span> element1) &amp;&amp; element1 <span class="keyword">is</span> <span class="number">1</span></code></pre>
+<h2 id="section">課題</h2>
+<p>リスト パターンを <code>IEnumerable</code> でも使えるようにしようとすると、スライスが絡むときが難しそうです。
+例えば、 <code>x is [0, 1]</code> だとそんなに問題はなくて、
+「最初の2個分 <code>MoveNext</code> → <code>Current</code> するだけ」になるんですが。
+一方で <code>x is [.., 1]</code> だと、 LINQ でいうところの <code>Last</code> になるわけで、
+LINQ でもそうなんですけども、無限シーケンスで困ります。</p>
+<pre><code class="language-csharp"><span class="comment">// 普通、無限シーケンスは Take(有限の値) とかで一部分だけ取り出して使う。</span>
+<span class="keyword">var</span> x = m().Take(<span class="number">100</span>);
+
+<span class="comment">// 無限なものの Last があるわけなく、永久ループになる。まずい。</span>
+<span class="keyword">var</span> y = m().Last();
+
+<span class="keyword">static</span> IEnumerable&lt;<span class="keyword">int</span>&gt; m()
+{
+    <span class="keyword">var</span> i = <span class="number">0</span>;
+    <span class="keyword">while</span> (<span class="keyword">true</span>) <span class="keyword">yield</span> <span class="keyword">return</span> i++; <span class="comment">// whiel(true) なので永久に途切れない</span>
+}</code></pre>
+<p>この辺りを中心に、<a href="https://github.com/dotnet/csharplang/blob/main/meetings/2022/LDM-2022-10-19.md">LDM</a>で検討:</p>
+<h3 id="section-1">スライスの後ろにパターンがある場合</h3>
+<p>前述のように <code>x is [.., 1, 2]</code> とかになっているパターンをどうするか:</p>
+<ul>
+<li>展開結果がちょっと複雑
+<ul>
+<li>→ 手書きするよりはコンパイラーに頑張ってもらう方がマシ</li>
+</ul>
+</li>
+<li>無限シーケンスとかみたいに footgun (勢い余って自分の足を打ち抜いちゃいそうな道具)になりそう
+<ul>
+<li>→ 元から。LINQ もそうだし、なんだったら .NET Framework 1.0 の頃からこの手の footgun はある</li>
+</ul>
+</li>
+<li>LINQ よりもパフォーマンスが落ちる可能性
+<ul>
+<li>LINQ to Object の場合、内部的に <code>is IList</code> 分岐とかで「indexable ならそれ前提のコードを使う」みたいな最適化をしてる</li>
+<li>この問題は大きいと思っている。「パターンを使うとパフォーマンスが悪くなる」という状況は避けたい</li>
+<li><code>IEnumerable</code> 向けリスト パターンでもその手の最適化がかかるようにしないといけない</li>
+</ul>
+</li>
+</ul>
+<p>まあとりあえず、最初の実装としては <code>x is [1, 2, ..]</code> みたいな「スライスの前」だけを認めて、
+<code>x is [.., 1, 2]</code> みたいな「スライスの後」は後々改めて検討するのでもいいかも見たいな雰囲気です。</p>
+<p>「スライスの後」の方は、
+結局は、「最初に紹介した <code>ListPatternHelper</code> みたいなヘルパー クラスの中で、LINQ と比べてパフォーマンス悪化させないような最適化がかかってほしい」ということになるんですが、「BCL チームと連携して作る」とのこと。</p>
+<h2 id="section-2">.. 部分をキャプチャ</h2>
+<p>リスト パターンでは、<code>x is [1, 2, ..var y]</code> みたいに書いて、<code>y = x[2..]</code> みたいなスライスをキャプチャすることもできます。
+とうことで、「スライスをキャプチャ」は、「<a href="/study/csharp/data/dataranges/#indexer">配列とかリストのスライス</a>」と密接に紐づいています。</p>
+<p>で、このスライスなんですが、推奨としては「<code>Slice</code> メソッドの戻り値は元の型と同じにするべき」ということになっています。
+配列であれば <code>x[i..j]</code> の結果も配列、
+<code>List&lt;T&gt;</code> であれば <code>x[i..j]</code> の結果も <code>List&lt;T&gt;</code>、
+<code>Span&lt;T&gt;</code> であれば <code>x[i..j]</code> の結果も <code>Span&lt;T&gt;</code> ということです。</p>
+<p>(その結果、配列や <code>List&lt;T&gt;</code> に対して <code>[..]</code> を使うとコピーが発生してパフォーマンスはそんなによくないですが、「型が同じ」の方が驚きは少ないだろう、パフォーマンスが必要なら <code>Span</code> を使えばいいだろうということになっています。)</p>
+<p>ところが、<code>IEnumerable</code> の場合、スライスを具体的に何の型にすればいいのかが決まらないので困ると。</p>
+<p>これも結局、「よいヘルパー クラスができてから改めて考える」みたいな空気感で終わっています。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2023/1/">1&#x6708;</a></li><li><a href="/blog/2023/1/lambda-default/">&#x3010;C# 12 &#x5019;&#x88DC;&#x3011;&#x30E9;&#x30E0;&#x30C0;&#x5F0F;&#x306E;&#x30C7;&#x30D5;&#x30A9;&#x30EB;&#x30C8;&#x5F15;&#x6570;&#x3068; params &#x5F15;&#x6570;</a></li><li><a href="/blog/2023/1/semi-auto-property/">&#x3010;C# 12 &#x5019;&#x88DC;&#x3011;&#x534A;&#x81EA;&#x52D5;&#x30D7;&#x30ED;&#x30D1;&#x30C6;&#x30A3;</a></li><li><a href="/blog/2023/1/using-alias-any-types/">using alias &#x3092;&#x4EFB;&#x610F;&#x306E;&#x578B;&#x306B;&#x5BFE;&#x5FDC;</a></li><li><a href="/blog/2023/1/collection-literal/">&#x3010;C# 12 &#x5019;&#x88DC;&#x3011;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3; &#x30EA;&#x30C6;&#x30E9;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

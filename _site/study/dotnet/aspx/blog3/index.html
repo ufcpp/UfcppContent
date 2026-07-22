@@ -1,0 +1,472 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D6;&#x30ED;&#x30B0;&#x8868;&#x793A;&#xFF08;&#xFF13;&#xFF09; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/dotnet/aspx/blog3/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">ブログ表示（３）</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>「<a href="/study/dotnet/aspx/blog2/">ブログ表示（２）</a>」の続き。</p>
+<p>利便性向上のためのおまけとして、
+RSS フィードの出力と、
+URL リライト・リダイレクトによる URL 短縮について説明します。
+すなわち、以下のうちの 4、5 を説明。</p>
+<ol>
+<li><p>Web コントロール</p>
+</li>
+<li><p>XSLT</p>
+</li>
+<li><p>クエリ文字列</p>
+</li>
+<li><p>HTTP リクエストのリライト・リダイレクト</p>
+</li>
+<li><p>RSS の作成</p>
+</li>
+</ol>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="rewrite"></a>リライト・リダイレクト</h2>
+<p>「<a href="/study/dotnet/aspx/blog2/">ブログ表示（２）</a>」までの実装で、
+BlogDate.aspx?year=2007&amp;month=6&amp;day=30 みたいな URL でリクエストを受けると、
+2007年6月30日のブログを表示するようにできました。
+でも、この長ったらしいクエリ文字列つきの URL がうっとうしいので、
+2007/06/30.aspx というような URL を受け取って、
+BlogDate.aspx?year=2007&amp;month=6&amp;day=30 にリダイレクトなりリライトするような仕組みを実装しましょう。</p>
+<p>リダイレクトとリライトですが、
+リダイレクトは要するに転送、
+リライトの方は URL はそのままで中身だけ書き換えです。
+例えば、2007/06/30.aspx というリクエストを受け取ったとき、
+それぞれの動作は以下のようなものです。</p>
+<ul>
+<li><p>リダイレクト … クライアントに BlogDate.aspx?year=2007&amp;month=6&amp;day=30 にアクセスしなおしてもらう。</p>
+</li>
+<li><p>リライト … クライアント側には 2007/06/30.aspx という URL が表示されたまま、BlogDate.aspx?year=2007&amp;month=6&amp;day=30 の結果を返す。</p>
+</li>
+</ul>
+<h5 id="global.aspx"><a id="sec-generated-title-3"></a>Global.aspx を使ったリダイレクト/リライト</h5>
+<p>ASP.NET におけるリダイレクト/リライトの方法ですが、
+Global.aspx 中の Application_BeginRequest イベントハンドラ内で、
+Response.Redirect か Context.RewritePath メソッドを呼び出します。</p>
+<p>URL の書き換えは、例えば、正規表現を使って以下のように行います。</p>
+<pre><code class="language-html">protected void Application_BeginRequest(object sender, EventArgs e)
+{
+  string url = Request.Url.AbsolutePath;
+
+  Regex lookFor = new Regex(@&quot;(\d{4})/(\d{2})/(\d{2})\.aspx&quot;);
+  string sendTo = &quot;BlogDate.aspx?mode=date&amp;y=$1&amp;m=$2&amp;d=$3&quot;;
+
+  if (!lookFor.IsMatch(url))
+    continue;
+
+  string result = lookFor.Replace(url, sendTo);
+  Response.Redirect(result);
+}</code></pre>
+<pre><code class="language-html">protected void Application_BeginRequest(object sender, EventArgs e)
+{
+  string url = Request.Url.AbsolutePath;
+
+  Regex lookFor = new Regex(@&quot;(\d{4})/(\d{2})/(\d{2})\.aspx&quot;);
+  string sendTo = &quot;BlogDate.aspx?mode=date&amp;y=$1&amp;m=$2&amp;d=$3&quot;;
+
+  if (!lookFor.IsMatch(url))
+    continue;
+
+  string result = lookFor.Replace(url, sendTo);
+  Context.RewritePath(result, false);
+}</code></pre>
+<h5 id="section-3"><a id="sec-generated-title-4"></a>汎用性を持たせる</h5>
+<p>もう少し汎用性を持たせてみましょう。
+（元 URL, リダイレクト/リライト先 URL）のペアのリストを持っておいて、
+リスト中の項目を1つ1つチェックしていくようにしてみます。</p>
+<p>以下の例では、
+2007/06/30.aspx を 20070630.aspx にリダイレクト、
+20070630.aspx を BlogDate.aspx&amp;y=2007&amp;m=06&amp;d=30 にリライトします。</p>
+<pre><code class="language-html">public struct RewriteRule
+{
+  public Regex LookFor;
+  public string SendTo;
+
+  public RewriteRule(string lookFor, string sendTo)
+  {
+    this.LookFor = new Regex(lookFor);
+    this.SendTo = sendTo;
+  }
+}
+
+static RewriteRule[] rewriteRules = new RewriteRule[]
+  {
+    new RewriteRule(@&quot;(\d{4})(\d{2})(\d{2})(\d+)\.aspx&quot;,
+      &quot;BlogDate.aspx?mode=date&amp;y=$1&amp;m=$2&amp;d=$3&amp;n=$4&quot;),
+    new RewriteRule(@&quot;(\d{4})(\d{2})(\d{2})\.aspx&quot;,
+      &quot;BlogDate.aspx?mode=date&amp;y=$1&amp;m=$2&amp;d=$3&quot;),
+  };
+static RewriteRule[] redirectRules = new RewriteRule[]
+  {
+    new RewriteRule(@&quot;(\d{4})/(\d{2})/(\d{2})/(\d+)\.aspx&quot;,
+      &quot;$1$2$3$4.aspx&quot;),
+    new RewriteRule(@&quot;(\d{4})/(\d{2})/(\d{2})\.aspx&quot;,
+      &quot;$1$2$3.aspx&quot;),
+  };
+
+protected void Application_BeginRequest(object sender, EventArgs e)
+{
+  string url = Request.Url.AbsolutePath;
+  string result;
+
+  foreach (RewriteRule rule in rewriteRules)
+  {
+    if (!rule.LookFor.IsMatch(url))
+      continue;
+
+    result = rule.LookFor.Replace(url, rule.SendTo);
+    Context.RewritePath(result, false);
+    return;
+  }
+
+  foreach (RewriteRule rule in redirectRules)
+  {
+    if (!rule.LookFor.IsMatch(url))
+      continue;
+
+    result = rule.LookFor.Replace(url, rule.SendTo);
+    Response.Redirect(result);
+    return;
+  }
+}</code></pre>
+<p>まあ、さらに汎用性を持たせたければ、
+URL の変換ルールをソース中に埋め込むのではなく、
+外部の設定ファイルに書いておくほうが望ましいです。</p>
+<p>参考：
+<a href="http://www.microsoft.com/japan/msdn/net/aspnet/URLRewriting.aspx">ASP.NET での URL 書き換え</a>。</p>
+<h5 id="httpmodulehttphandler"><a id="sec-generated-title-5"></a>HttpModule、HttpHandler</h5>
+<p>ここで説明したような、Global.aspx に処理を書く方法の他に、
+HttpModule や HttpHandler を使う方法もあります。</p>
+<p>参考：
+<a href="http://uchukamen.com/ASPNET20/URLRedirect/index.htm">URLのリダイレクト</a>。</p>
+<h3 id="url"><a id="sec-generated-title-6"></a> <a id="redirect_note1"></a>注意点1: 元 URL</h3>
+<p>「<a href="/study/dotnet/aspx/logging/">アクセスログを取ろう</a>」でも同じような話がありましたが、
+元 URL は ASP.NET エンジンを通して表示する物でなければなりません。
+（txt を ASP.NET を通して表示する設定にしていない限り）
+2007/06/30.txt というような URL で BlogDate.aspx&amp;y=2007&amp;m=06&amp;d=30 にリダイレクト/リライトはできません。</p>
+<p>まあ、もし、例えば、2007/06/30 という URL をリダイレクト/リライトしたければ、
+2007/06/30/ というフォルダを予め作った上で、
+その中に Default.aspx というダミー（中身が空の）ファイルを置いておくことで、
+リダイレクト/リライトをする事もできます。
+（いちいちフォルダを作るのは面倒ですが。）</p>
+<p>あるいは、
+「<a href="/study/dotnet/aspx/logging/">アクセスログを取ろう</a>」のときと同様に、
+サーバ上の設定で、
+仮想ディレクトリ中のありとあらゆるファイルを一度 ASP.NET エンジンを通してから表示するように設定するという手もあります。
+（多少、サーバに掛かる負荷が増える物の、その増加量は小さいそうです。）</p>
+<h3 id="rebase"><a id="sec-generated-title-7"></a> <a id="redirect_note2"></a>注意点2: リライト時の rebase</h3>
+<p>URL のリライトをする際、1つ気をつけるべきことがあります。</p>
+<p>例えば、2007/06/30.aspx を BlogDate.aspx&amp;y=2007&amp;m=06&amp;d=30 にリライトする場合、
+クライアントは表示されているページを「2007/06 ディレクトリ中の 30.aspx というファイル」だと思っているわけです。
+ページ中に &lt;img src=&quot;logo.jpg&quot;/&gt; と書かれていた場合、
+それは 2007/06/logo.jpg を意味します。</p>
+<p>ところが、表示されているページは実際には、BlogDate.aspx なわけで、
+BlogDate.aspx としては、&lt;img src=&quot;logo.jpg&quot;/&gt; といわれれば、
+BlogDate.aspx と同じディレクトリ内の log.jpg であって欲しいはずです。</p>
+<p>（まあ、&lt;img src=&quot;~/logo.jpg&quot;/&gt; と言うように絶対パスで書いておけばこんな問題も起きないんですが。どうしても絶対パス指定したくない場合には困る。）</p>
+<p>こういう問題を回避するため、ASP.NET では、
+2007/06/30.aspx が呼ばれたときには &lt;img src=&quot;logo.jpg&quot;/&gt; の代わりに &lt;img src=&quot;../../logo.jpg&quot;/&gt; を表示するような機構も持っています。
+この機構を働かせるためには、以下の2点を守る必要があります。</p>
+<p>1つは、RewritePath メソッドを呼ぶ際に、
+Context.RewritePath(result, false); と言うように、第2引数に false を指定すること。
+（この第2引数は、パスの rebase をするかどうかのフラグ。
+true の時には、&lt;img src=&quot;~/logo.jpg&quot;/&gt; といわれれば、
+BlogDate.aspx では logo.jpg、
+2007/06/30.aspx では 2007/06/logo.jpg だと思う。
+false の時には、どちらの場合でも logo.jpg だと思う。
+）</p>
+<p>もう1つは、
+&lt;img src=&quot;~/logo.jpg&quot;/&gt; などに runat=&quot;server&quot; 属性を付けることです。
+（要するに、サーバ上で処理を掛けた物を表示する設定にする。）
+（HTML コントロールよりも、asp:Image などの ASP.NET Web コントロールを使うこと推奨。）</p>
+<p>具体例を挙げてみましょう。
+まず、先ほど作った Global.aspx のリライトルールに以下の物を追加します。</p>
+<pre><code class="language-html">static RewriteRule[] rewriteRules = new RewriteRule[]
+  {
+    new RewriteRule(@&quot;Test/(RewriteTest.aspx)&quot;,
+      &quot;$1&quot;),
+    new RewriteRule(@&quot;(\d{4})/(\d{2})/(\d{2})\.aspx&quot;,
+      &quot;BlogDate.aspx?mode=date&amp;y=$1&amp;m=$2&amp;d=$3&quot;),
+  };</code></pre>
+<p>で、RewriteText.aspx という名前で、以下のような Web フォームページを作ります。</p>
+<pre><code class="language-html">&lt;%@ Page Language=&quot;C#&quot; %&gt;
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">html</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">head</span> <span class="htmlAttributeName">runat</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;server&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">title</span><span class="htmlTagDelimiter">&gt;</span>リダイレクトのテスト<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">title</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">head</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">body</span><span class="htmlTagDelimiter">&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">form</span> <span class="htmlAttributeName">id</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;form1&quot;</span> <span class="htmlAttributeName">runat</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;server&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">p</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">a</span> <span class="htmlAttributeName">href</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;Default.aspx&quot;</span><span class="htmlTagDelimiter">&gt;</span>html <span class="htmlEntity">&amp;lt;</span>a<span class="htmlEntity">&amp;gt;</span> tag<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">a</span><span class="htmlTagDelimiter">&gt;</span>
+  <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">p</span><span class="htmlTagDelimiter">&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">p</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">HyperLink</span> <span class="htmlAttributeName">runat</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;server&quot;</span>
+      <span class="htmlAttributeName">NavigateUrl</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;Default.aspx&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+      asp:HyperLink
+      <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">asp</span><span class="htmlTagDelimiter">:</span><span class="htmlElementName">HyperLink</span><span class="htmlTagDelimiter">&gt;</span>
+  <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">p</span><span class="htmlTagDelimiter">&gt;</span>
+  <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">form</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">body</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">html</span><span class="htmlTagDelimiter">&gt;</span></code></pre>
+<p>このファイルの表示結果なんですが、
+まず、RewriteText.aspx で表示した場合には、
+&lt;body&gt; の中身には以下のような HTML が生成されます。</p>
+<pre><code class="language-html">  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">p</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">a</span> <span class="htmlAttributeName">href</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;Default.aspx&quot;</span><span class="htmlTagDelimiter">&gt;</span>html <span class="htmlEntity">&amp;lt;</span>a<span class="htmlEntity">&amp;gt;</span> tag<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">a</span><span class="htmlTagDelimiter">&gt;</span>
+  <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">p</span><span class="htmlTagDelimiter">&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">p</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">a</span> <span class="htmlAttributeName">href</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;Default.aspx&quot;</span><span class="htmlTagDelimiter">&gt;</span>asp:HyperLink<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">a</span><span class="htmlTagDelimiter">&gt;</span>
+  <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">p</span><span class="htmlTagDelimiter">&gt;</span></code></pre>
+<p>これに対して、Test/RewriteText.aspx という URL で要求を受けて、
+リライトした場合には、以下のような HTML になります。</p>
+<pre><code class="language-html">  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">p</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">a</span> <span class="htmlAttributeName">href</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;Default.aspx&quot;</span><span class="htmlTagDelimiter">&gt;</span>html <span class="htmlEntity">&amp;lt;</span>a<span class="htmlEntity">&amp;gt;</span> tag<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">a</span><span class="htmlTagDelimiter">&gt;</span>
+  <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">p</span><span class="htmlTagDelimiter">&gt;</span>
+  <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">p</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">a</span> <span class="htmlAttributeName">href</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;../Default.aspx&quot;</span><span class="htmlTagDelimiter">&gt;</span>asp:HyperLink<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">a</span><span class="htmlTagDelimiter">&gt;</span>
+  <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">p</span><span class="htmlTagDelimiter">&gt;</span></code></pre>
+<p>runat=&quot;server&quot; なしの a タグの方では、
+href 内のパスの修正が掛かっていない状態になります。
+（意図して修正が掛からないようにしているならいいけども、
+そうでない場合は注意。）</p>
+<p>ということで、2007/06/30.aspx というような URL から BlogDate.aspx にリライト処理するなら、
+「<a href="/study/dotnet/aspx/mailform/">メールフォーム</a>」で作った「<a href="/study/dotnet/aspx/mailform/#master">マスタページ</a>」も、
+以下のように書き換える必要があります。</p>
+<pre><code class="language-xml">&lt;%@ Master Language=&quot;C#&quot; AutoEventWireup=&quot;true&quot;
+  CodeBehind=&quot;Site.master.cs&quot; Inherits=&quot;WebsiteSample.Site&quot; %&gt;
+
+<span class="xmlDelimiter">&lt;!</span><span class="xmlName">DOCTYPE</span> <span class="xmlAttribute">html</span> <span class="xmlAttribute">PUBLIC</span> <span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">-//W3C//DTD XHTML 1.0 Transitional//EN</span><span class="xmlAttributeQuotes">&quot;</span>
+  <span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+
+<span class="xmlDelimiter">&lt;</span><span class="xmlName">html</span> <span class="xmlAttribute">xmlns</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">http://www.w3.org/1999/xhtml</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;</span><span class="xmlName">head</span> <span class="xmlAttribute">runat</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">server</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">link</span> <span class="xmlAttribute">rel</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">stylesheet</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">type</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">text/css</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">href</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">main.css</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">title</span><span class="xmlDelimiter">&gt;</span>無題のページ<span class="xmlDelimiter">&lt;/</span><span class="xmlName">title</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">head</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;</span><span class="xmlName">body</span><span class="xmlDelimiter">&gt;</span>
+
+<span class="xmlDelimiter">&lt;</span><span class="xmlName">form</span> <span class="xmlAttribute">id</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">form1</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">runat</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">server</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">p</span> <span class="xmlAttribute">class</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">head</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">asp</span><span class="xmlDelimiter">:</span><span class="xmlName">Image</span> <span class="xmlAttribute">runat</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">server</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">ImageUrl</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">logo.jpg</span><span class="xmlAttributeQuotes">&quot;</span>
+    <span class="xmlAttribute">Width</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">320</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">Height</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">80</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">AlternateText</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">site logo</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlDelimiter">/&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">p</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">div</span> <span class="xmlAttribute">class</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">menu</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">span</span> <span class="xmlAttribute">class</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">menuItem</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">asp</span><span class="xmlDelimiter">:</span><span class="xmlName">HyperLink</span> <span class="xmlAttribute">runat</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">server</span><span class="xmlAttributeQuotes">&quot;</span>
+        <span class="xmlAttribute">NavigateUrl</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Default.aspx</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>TOP<span class="xmlDelimiter">&lt;/</span><span class="xmlName">asp</span><span class="xmlDelimiter">:</span><span class="xmlName">HyperLink</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">span</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">span</span> <span class="xmlAttribute">class</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">menuItem</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">asp</span><span class="xmlDelimiter">:</span><span class="xmlName">HyperLink</span> <span class="xmlAttribute">runat</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">server</span><span class="xmlAttributeQuotes">&quot;</span>
+        <span class="xmlAttribute">NavigateUrl</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Mail.aspx</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>メール<span class="xmlDelimiter">&lt;/</span><span class="xmlName">asp</span><span class="xmlDelimiter">:</span><span class="xmlName">HyperLink</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">span</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">span</span> <span class="xmlAttribute">class</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">menuItem</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">asp</span><span class="xmlDelimiter">:</span><span class="xmlName">HyperLink</span> <span class="xmlAttribute">runat</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">server</span><span class="xmlAttributeQuotes">&quot;</span>
+        <span class="xmlAttribute">NavigateUrl</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">BlogLatest.aspx</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>日記<span class="xmlDelimiter">&lt;/</span><span class="xmlName">asp</span><span class="xmlDelimiter">:</span><span class="xmlName">HyperLink</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">span</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">span</span> <span class="xmlAttribute">class</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">menuItem</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+      <span class="xmlDelimiter">&lt;</span><span class="xmlName">asp</span><span class="xmlDelimiter">:</span><span class="xmlName">HyperLink</span> <span class="xmlAttribute">runat</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">server</span><span class="xmlAttributeQuotes">&quot;</span>
+        <span class="xmlAttribute">NavigateUrl</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Rss.aspx</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>RSS<span class="xmlDelimiter">&lt;/</span><span class="xmlName">asp</span><span class="xmlDelimiter">:</span><span class="xmlName">HyperLink</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">span</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">div</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">p</span> <span class="xmlAttribute">class</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">counter</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+    総アクセス数: &lt;%= Session[&quot;count&quot;] %&gt;
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">p</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">div</span> <span class="xmlAttribute">class</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">content</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">asp</span><span class="xmlDelimiter">:</span><span class="xmlName">ContentPlaceHolder</span> <span class="xmlAttribute">ID</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">ContentPlaceHolder1</span><span class="xmlAttributeQuotes">&quot;</span> <span class="xmlAttribute">runat</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">server</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;/</span><span class="xmlName">asp</span><span class="xmlDelimiter">:</span><span class="xmlName">ContentPlaceHolder</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">div</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">div</span> <span class="xmlAttribute">class</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">foot</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">p</span><span class="xmlDelimiter">&gt;</span>
+    このサイトへのリンクはご自由にどうぞ
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">p</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">div</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">form</span><span class="xmlDelimiter">&gt;</span>
+
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">body</span><span class="xmlDelimiter">&gt;</span>
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">html</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<h2 id="rss"><a id="sec-generated-title-8"></a> <a id="rss"></a>RSS</h2>
+<p>最後に、RSS フィードを生成してみます。</p>
+<p>＠IT の記事「<a href="http://www.atmarkit.co.jp/fdotnet/special/rss/rss_03.html">サイトの更新情報を提供する標準言語RSS</a>」あたりを参考に。
+汎用性を持たせるために、RSS を出力する部分だけ独立させて、
+クラス化してみました →
+<a href="/assets/media/ufcpp2000/dotnet/resources/RssWriter.cs">RssWriter.cs</a></p>
+<p>この RssWriter クラスは、以下のように使います。</p>
+<pre><code class="language-csharp">RssWriter writer = <span class="keyword">new</span> RssWriter();
+<span class="keyword">this</span>.writer.SiteName = <span class="string">&quot;My Site&quot;</span>;
+<span class="keyword">this</span>.writer.AdministratorName = <span class="string">&quot;admin name&quot;</span>;
+<span class="keyword">this</span>.writer.Url = <span class="string">&quot;http://my.domain.net/&quot;</span>;
+
+<span class="keyword">this</span>.writer.Add(pageUrl, title, <span class="keyword">new</span> DateTime(year, month, day), digest);
+
+<span class="keyword">this</span>.writer.Write(Request.Url.AbsoluteUri, Response.OutputStream);</code></pre>
+<p>このクラスを使って、
+「<a href="/study/dotnet/aspx/blog2/">ブログ表示（２）</a>」で作ったブログもどきの RSS フィードを作ってみましょう。
+まず、
+「<a href="/study/dotnet/aspx/counter/#image">画像カウンタ</a>」のときと同じく、
+.aspx ファイルは空っぽで、コードビハインド（.aspx.cs）のみの Web フォームを作ります。
+名前は Rss.aspx にしておきます。</p>
+<p>そして、コードビハインドファイル（Rss.aspx.cs）の内容は以下のような感じ。</p>
+<pre><code class="language-html">using System;
+using System.Web;
+using System.IO;
+using System.Xml;
+using System.Text.RegularExpressions;
+
+namespace WebsiteSample
+{
+  public partial class Rss : System.Web.UI.Page
+  {
+    RssWriter writer = new RssWriter();
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+      Response.ContentType = &quot;application/xml&quot;;
+      Response.ContentEncoding = System.Text.Encoding.UTF8;
+
+      this.writer.Write(Request.Url.AbsoluteUri, Response.OutputStream);
+    }
+
+    protected override void OnInit(EventArgs e)
+    {
+      base.OnInit(e);
+
+      this.writer.SiteName = &quot;My Site&quot;;
+      this.writer.AdministratorName = &quot;admin name&quot;;
+      this.writer.Url = URL;
+      this.ReadItems();
+    }
+
+    const int DEFAULT_NUM = 15;
+    const int DEFAULT_DIGEST_LENGTH = 128;
+
+    const string URL = &quot;http://my.domain.net/&quot;;
+
+    static readonly Regex regYyyyMmDd =
+      new Regex(@&quot;(?<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">y</span><span class="htmlTagDelimiter">&gt;</span>\d\d\d\d)(?<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">m</span><span class="htmlTagDelimiter">&gt;</span>\d\d)(?<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">d</span><span class="htmlTagDelimiter">&gt;</span>\d\d)&quot;,
+      RegexOptions.Compiled);
+    static readonly Regex regCDATA =
+      new Regex(@&quot;\&lt;!\[CDATA\[.*?\]\]\&gt;&quot;,
+      RegexOptions.Compiled);
+    static readonly Regex regTags =
+     new Regex(@&quot;\&lt;.*?\&gt;&quot;,
+     RegexOptions.Compiled);
+
+    /// <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">summary</span><span class="htmlTagDelimiter">&gt;</span>
+    /// データを読み出して、RssWriter に項目を追加。
+    /// <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">summary</span><span class="htmlTagDelimiter">&gt;</span>
+    void ReadItems()
+    {
+      int num, digestLen;
+      if (!int.TryParse(Request.QueryString[&quot;num&quot;], out num))
+        num = DEFAULT_NUM;
+      if (!int.TryParse(Request.QueryString[&quot;len&quot;], out digestLen))
+        digestLen = DEFAULT_DIGEST_LENGTH;
+
+      string PATH = Server.MapPath(@&quot;~/App_Data&quot;);
+
+      DirectoryInfo dataDir = new DirectoryInfo(PATH);
+      FileInfo[] files = dataDir.GetFiles(&quot;*.xml&quot;);
+
+      Array.Sort(files,
+        delegate(FileInfo a, FileInfo b)
+        {
+          return b.Name.CompareTo(a.Name);
+        });
+
+      foreach (FileInfo file in files)
+      {
+        Match m = regYyyyMmDd.Match(file.Name);
+        if (!m.Success)
+          continue;
+        int year = int.Parse(m.Groups[&quot;y&quot;].Value);
+        int month = int.Parse(m.Groups[&quot;m&quot;].Value);
+        int day = int.Parse(m.Groups[&quot;d&quot;].Value);
+
+        XmlDocument doc = new XmlDocument();
+        using (Stream stream = new FileStream(
+          file.FullName, FileMode.Open,
+          FileAccess.Read, FileShare.ReadWrite))
+        {
+          doc.Load(stream);
+        }
+
+        XmlNodeList list = doc.GetElementsByTagName(&quot;blog&quot;);
+        foreach (XmlNode node in list)
+        {
+          string pageUrl = URL +
+            string.Format(&quot;{0}/{1:00}/{2:00}.aspx&quot;,
+            year, month, day);
+
+          XmlAttribute att;
+          string title = string.Empty;
+          att = node.Attributes[&quot;title&quot;];
+          if (att != null) title = att.Value;
+          att = node.Attributes[&quot;category&quot;];
+          if (att != null)
+          {
+            title += &quot; [&quot; + att.Value + &quot;]&quot;;
+          }
+
+          string digest = Digest(node.InnerXml, digestLen);
+
+          this.writer.Add(
+            pageUrl, title,
+            new DateTime(year, month, day), digest);
+        }
+
+        if (this.writer.Count &gt;= num) break;
+      }
+    }
+
+    /// <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">summary</span><span class="htmlTagDelimiter">&gt;</span>
+    /// XML のダイジェストを作る。
+    /// XML のタグを取り除いて、テキストのみにして、最初の num 文字だけを返す。
+    /// <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">summary</span><span class="htmlTagDelimiter">&gt;</span>
+    /// <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">param</span> <span class="htmlAttributeName">name</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;xml&quot;</span><span class="htmlTagDelimiter">&gt;</span>XML 文字列<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">param</span><span class="htmlTagDelimiter">&gt;</span>
+    /// <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">param</span> <span class="htmlAttributeName">name</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;num&quot;</span><span class="htmlTagDelimiter">&gt;</span>最初何文字を返すか<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">param</span><span class="htmlTagDelimiter">&gt;</span>
+    /// <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">returns</span><span class="htmlTagDelimiter">&gt;</span>タグを取り除いた結果<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">returns</span><span class="htmlTagDelimiter">&gt;</span>
+    static string Digest(string xml, int num)
+    {
+      xml = xml.Replace(&quot;\n&quot;, &quot;&quot;);
+      xml = xml.Replace(&quot;\r&quot;, &quot;&quot;);
+
+      string digest;
+      digest = regCDATA.Replace(xml, &quot;&quot;);
+      digest = regTags.Replace(xml, &quot;&quot;);
+
+      if (num &gt;= digest.Length)
+        return digest;
+
+      digest = digest.Substring(0, num);
+      return digest + &quot; …&quot;;
+    }
+  }
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/dotnet/aspx/">ASP.NET</a></li><li><a href="/study/dotnet/aspx/aspx_abstract/">ASP.NET &#x6982;&#x8981;</a></li><li><a href="/study/dotnet/aspx/webapp/">Web &#x30A2;&#x30D7;&#x30EA;&#x30B1;&#x30FC;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/study/dotnet/aspx/logging/">&#x30A2;&#x30AF;&#x30BB;&#x30B9;&#x30ED;&#x30B0;&#x3092;&#x53D6;&#x308D;&#x3046;</a></li><li><a href="/study/dotnet/aspx/counter/">&#x30A2;&#x30AF;&#x30BB;&#x30B9;&#x30AB;&#x30A6;&#x30F3;&#x30BF;&#x3092;&#x4F5C;&#x308D;&#x3046;</a></li><li><a href="/study/dotnet/aspx/mailform/">&#x30E1;&#x30FC;&#x30EB;&#x30D5;&#x30A9;&#x30FC;&#x30E0;</a></li><li><a href="/study/dotnet/aspx/blog1/">&#x30D6;&#x30ED;&#x30B0;&#x8868;&#x793A;&#xFF08;&#xFF11;&#xFF09;</a></li><li><a href="/study/dotnet/aspx/blog2/">&#x30D6;&#x30ED;&#x30B0;&#x8868;&#x793A;&#xFF08;&#xFF12;&#xFF09;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

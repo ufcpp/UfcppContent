@@ -1,0 +1,157 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: C# 10.0 &#x3067;&#x306E;&#x4F4E;&#x6C34;&#x6E96;&#x6A5F;&#x80FD;&#x6539;&#x5584;(ref &#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306A;&#x3069;) | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2020/10/pickuproslynlowlevel10/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2020-10-11T22:30:21">2020-10-11</time></span><span>更新: <time datetime="2020-10-11T22:30:21">2020-10-11</time></span></div><h1 id="roslyn-c-10.0-ref">ピックアップRoslyn: C# 10.0 での低水準機能改善(ref フィールドなど)</h1>
+<p><a href="/blog/2020/10/pickuproslynrecord10/">前回書いたの</a>の続き。</p>
+<p>ここ数週間くらいの Language Design Meeting 議事録は C# 10.0 (今年11月に正式リリースされるのが 9.0 で、すでにその次のデザイン)話になっていています。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2020/LDM-2020-09-23.md">C# Language Design Meeting for September 23rd, 2020</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2020/LDM-2020-09-28.md">C# Language Design Meeting for September 28th, 2020</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2020/LDM-2020-09-30.md">C# Language Design Meeting for September 30th, 2020</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2020/LDM-2020-10-05.md">C# Language Design Meeting for October 5th, 2020</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2020/LDM-2020-10-07.md">C# Language Design Meeting for October 7th, 2020</a></li>
+</ul>
+<p>このうち、<a href="/blog/2020/10/pickuproslynrecord10/">前回</a>はレコード型関連の話を書きましたが、
+今日は低水準機能の改善の話です。(<a href="https://github.com/dotnet/csharplang/blob/master/meetings/2020/LDM-2020-09-23.md">9/23 議事録分</a>)</p>
+<p>(残り、細かいトリアージ話もあるんですが、それはまたさらに回を改めて。)</p>
+<h2 id="low-level">低水準 (low level) 機能</h2>
+<p>.NET Core 2.1 くらいの世代で .NET のパフォーマンスが劇的に向上したわけですが、その原動力になっているのは<a href="/study/csharp/resource/span/"><code>Span&lt;T&gt;</code>構造体</a>です。
+関連する C# の言語機能としては以下のものがあります。</p>
+<ul>
+<li><a href="/study/csharp/cheatsheet/ap_ver7/#ref-returns">参照戻り値と参照ローカル変数</a></li>
+<li><a href="/study/csharp/cheatsheet/ap_ver7_2/#span-safety">ref 構造体</a></li>
+</ul>
+<p>C# のような「生産性と安全性重視」なプログラミング言語にとっては珍しく、パフォーマンス優先の機能です。
+C# だと普段あまり意識しなくていいはずのメモリ管理を強く意識した機能なので、低水準(low-level: ハードウェア寄りという意味)機能というくくりになります。</p>
+<p>今回、C# 10.0 向けに検討されているのもこの手の低水準機能で、以下のようなものです。</p>
+<ul>
+<li>ref 構造体が ref フィールドを持てるようにする</li>
+<li><code>ByReferenct&lt;T&gt;</code> という特殊な型を使うのをやめて、ref フィールドに移行する</li>
+<li>構造体が、そのフィールドを ref 戻り値で返せるようにする</li>
+<li>safe な文脈で、<a href="/study/csharp/interop/sp_unsafe/#unmanaged-types">managed な型</a>に対しても<a href="/study/csharp/interop/sp_unsafe/#fixed-buffer">固定長バッファー</a>を使えるようにする</li>
+</ul>
+<h2 id="span-ref">Span 構造体の内部と「ref フィールド」</h2>
+<p><a href="/study/csharp/resource/span/"><code>Span&lt;T&gt;</code>構造体</a>は、<em>論理的には</em>以下のような構造体だと説明されます。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> Span&lt;T&gt;
+{
+    <span class="keyword">ref</span> T _pointer;
+    <span class="keyword">int</span> _length;
+}</code></pre>
+<p>フィールドとして <code>T</code> への参照と長さを持っています。
+この「フィールドとして <code>T</code> への参照を持っている」(以下、これを「ref フィールド」と呼びます)というのが <code>Span&lt;T&gt;</code> 構造体の肝で、
+パフォーマンス向上のポイントになっています。</p>
+<p>ただ、「論理的には」と書いたのは、これまでの .NET (.NET 5.0/ C# 9.0 時点でも)にはこの ref フィールド機能がなくて、 .NET Core 2.1 の <code>Span&lt;T&gt;</code> 実装当時には、以下のような特殊処理をすることにしました。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> ByReference&lt;T&gt;
+{
+    <span class="comment">// .NET ランタイムが特別扱いする前提なので、C# では書けない</span>
+}
+ 
+<span class="keyword">struct</span> Span&lt;T&gt;
+{
+    ByReference&lt;T&gt; _pointer;
+    <span class="keyword">int</span> _length;
+}</code></pre>
+<p><code>ByReference&lt;T&gt;</code> がやりたいことはまさに ref フィールドなんですが、
+.NET に本格的に ref フィールドを導入するよりは、この特殊処理で実装した方が楽だったそうです。</p>
+<p>そして、ref フィールドが欲しくなるような状況の大半は <code>Span&lt;T&gt;</code> がカバーしているので、
+この時点では以下のような方針になりました。</p>
+<ul>
+<li>将来、本格的に ref フィールドを導入するときまで <code>ByReference&lt;T&gt;</code> は public にしない</li>
+<li><code>Span&lt;T&gt;</code> に関する escape analysis (メソッド外に漏らしてまずいものを return してないかのフロー解析)だけ実装する</li>
+</ul>
+<p>そして、この先送りにしていた ref フィールドの話が本格的に検討される段階になったみたいです。
+.NET ランタイムにも手を入れる必要がありますし、
+C# コンパイラー的にも escape analysis の改善が必要で、
+<a href="https://github.com/dotnet/csharplang/blob/master/meetings/2020/LDM-2020-09-23.md">9/23 の議事録</a>では ref フィールドに対する escape analysis の案が書かれています。</p>
+<p>当然、ref フィールドが入れば、<code>ByReference&lt;T&gt;</code> という特殊な構造体は必要なくなるので、
+<code>Span&lt;T&gt;</code> も素直に ref フィールドで実装したいという話にもなります。</p>
+<pre><code class="language-csharp"><span class="keyword">readonly</span> <span class="keyword">ref</span> <span class="keyword">struct</span> Span&lt;T&gt;
+{
+    <span class="keyword">ref</span> <span class="keyword">readonly</span> T _field;
+    <span class="keyword">readonly</span> <span class="keyword">int</span> _length;
+ 
+    <span class="comment">// 今までありそうでなかったコンストラクター。</span>
+    <span class="comment">// 今回の提案はこれをできるようにするのも目標の1つ。</span>
+    <span class="keyword">public</span> Span(<span class="keyword">ref</span> T value)
+    {
+        <span class="keyword">ref</span> _field = <span class="keyword">ref</span> value;
+        _length = <span class="number">1</span>;
+    }
+}</code></pre>
+<h2 id="ref">構造体のフィールドを ref 戻り値で返す</h2>
+<p><a href="/study/csharp/resource/sp_ref/#ref-returns">ref 戻り値</a>では、構造体のフィールドの参照を返せなかったりします。
+例えば、以下のコードはコンパイル エラーになります。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> S
+{
+    <span class="keyword">int</span> _field;
+    <span class="keyword">public</span> <span class="keyword">ref</span> <span class="keyword">int</span> Prop =&gt; <span class="keyword">ref</span> _field; <span class="comment">// _field の参照を返せない</span>
+}</code></pre>
+<p>以下のような、インターフェイス実装とジェネリックなメソッド呼び出しをしたときに、
+外に漏れてはいけない参照を漏らしてしまうことがあるので禁止されています。</p>
+<pre><code class="language-csharp"><span class="keyword">interface</span> I1
+{
+    <span class="keyword">ref</span> <span class="keyword">int</span> Prop { <span class="keyword">get</span>; }
+}
+ 
+<span class="keyword">struct</span> S1 : I1
+{
+    <span class="keyword">int</span> _field;
+    <span class="keyword">public</span> <span class="keyword">ref</span> <span class="keyword">int</span> Prop =&gt; <span class="keyword">ref</span> _field;
+ 
+    <span class="comment">// p の寿命は M 内で閉じてるはずなものの、その p の中身が ref 戻り値で返ってしまう。</span>
+    <span class="keyword">static</span> <span class="keyword">ref</span> <span class="keyword">int</span> M&lt;T&gt;(T p) <span class="keyword">where</span> T : I1 =&gt; <span class="keyword">ref</span> p.Prop;
+}</code></pre>
+<p>これに対する対処は、結局、</p>
+<ul>
+<li>フィールドの参照を返すメソッドには <code>ThisRefEscapes</code> 属性を付ける
+<ul>
+<li>専用の C# 文法を用意してコンパイラー生成にするか、明示的にこの属性を書かせるかはまだ要検討</li>
+</ul>
+</li>
+<li>この属性が付いているメソッドには制限を掛ける
+<ul>
+<li>インターフェイス実装できなくする</li>
+<li>以下のようなメソッド呼び出しも制限する</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-csharp"><span class="keyword">struct</span> S1
+{
+    <span class="keyword">public</span> <span class="keyword">ref</span> <span class="keyword">int</span> GetValue() =&gt; ...
+}
+ 
+<span class="keyword">class</span> Example
+{
+    <span class="keyword">ref</span> <span class="keyword">int</span> M()
+    {
+        <span class="comment">// このコードは今現在有効 (破壊的変更したくないので今後も有効)</span>
+        S1 local = <span class="keyword">default</span>;
+        <span class="keyword">return</span> <span class="keyword">ref</span> local.GetValue();
+    }
+}</code></pre>
+<h2 id="safe">safe な固定長バッファー</h2>
+<p><code>Span&lt;T&gt;</code> が出た当初にも、この構造体があれば<a href="/study/csharp/interop/sp_unsafe/#fixed-buffer">固定長バッファー</a>を safe に実装できるんじゃないかという話は出ていたんですが。</p>
+<p>実際には、固定長バッファーを safe にしたいときに問題になるのは前節の「構造体のフィールドの参照を返す」の方なので、これまで実装が止まっていました。
+前述の <code>ThisRefEscapes</code> 属性があれば問題が解決するので、一緒に検討に上がっているみたいです。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2020/10/">10&#x6708;</a></li><li><a href="/blog/2020/10/pickuproslynrecord10/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: C# 10.0 &#x3067;&#x306E;&#x30EC;&#x30B3;&#x30FC;&#x30C9;&#x8A71;</a></li><li><a href="/blog/2020/10/pickuproslyncs10triage/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: C# 10.0 &#x30C8;&#x30EA;&#x30A2;&#x30FC;&#x30B8;</a></li><li><a href="/blog/2020/10/pickuproslyn1030/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 10/31: csharplang &#x306E;&#x904B;&#x55B6;&#x65B9;&#x91DD;&#x3068;&#x304B;&#x30C8;&#x30EA;&#x30A2;&#x30FC;&#x30B8;&#x3068;&#x304B;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

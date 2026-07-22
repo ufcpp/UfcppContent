@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>RC &#x51FA;&#x3066;&#x305F;&#x8A71;&#x304B;&#x3089;&#x306E;&#x3001;GA &#x8FEB;&#x3063;&#x3066;&#x305F;&#x308A;&#x3059;&#x308B;&#x8A71; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2021/11/2022-ga-soon/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2021-11-05T23:56:08">2021-11-05</time></span><span>更新: <time datetime="2021-11-05T23:56:08">2021-11-05</time></span></div><h1 id="rc-ga">RC 出てた話からの、GA 迫ってたりする話</h1>
+<p><a href="/blog/2021/8/invariantculture/">8月</a>からしばらくブログをさぼっていたわけですが。
+ブログとしてはお久しぶりです。</p>
+<h2 id="c-10.0">C# 10.0 記事</h2>
+<p>まあ、とはいえ、別に消息不明になっていたわけでもなく、<a href="/study/csharp/">C# によるプログラミング入門</a>の方の記事書きをちゃんとしていただけでして。</p>
+<div>
+<section class="latest-posts sub-info-section">
+<header><h3>更新履歴</h3></header>
+<article>
+<time datetime="2021-10-24T00:00:00.0000000">2021/10/24</time>
+<header>
+<h4>更新：<a href="/study/csharp/cheatsheet/ap_ver10/">C# 10.0 の新機能</a></h4>
+<span class="subject">[C#]</span>
+</header>
+</article>
+<article>
+<time datetime="2021-10-17T00:00:00.0000000">2021/10/17</time>
+<header>
+<h4>更新：<a href="/study/csharp/functional/fun_localfunctions/">ローカル関数と匿名関数</a></h4>
+<span class="subject">[C#]</span>
+</header>
+</article>
+<article>
+<time datetime="2021-09-23T00:00:00.0000000">2021/09/23</time>
+<header>
+<h4>更新：<a href="/study/csharp/start/improvedinterpolatedstring/">C# 10.0 の補間文字列の改善</a></h4>
+<span class="subject">[C#]</span>
+</header>
+</article>
+<article>
+<time datetime="2021-09-20T00:00:00.0000000">2021/09/20</time>
+<header>
+<h4>更新：<a href="/study/csharp/datatype/patterns/">パターン マッチング</a></h4>
+<span class="subject">[C#]</span>
+</header>
+</article>
+<article>
+<time datetime="2021-09-12T00:00:00.0000000">2021/09/12</time>
+<header>
+<h4><a href="/study/csharp/start/miscreservedattribute/">[雑記] コンパイル結果に影響を及ぼす属性</a></h4>
+<span class="subject">[C#]</span>
+</header>
+</article>
+</section>
+</div>
+<p><a href="https://github.com/ufcpp/UfcppSample/issues/342">C# 10.0 機能リスト</a>のうち、最低限必要なものは埋まったというか、残りは、</p>
+<ul>
+<li>限られた人だけが使う(大部分の人は間接的恩恵しか受けない)もの</li>
+<li>細かい挙動変更</li>
+<li>C# 10.0 リリース時点でどの道 <code>&lt;LangVersion&gt;preview&lt;/LangVersion&gt;</code> 必須なもの</li>
+</ul>
+<p>だけのはずです。</p>
+<p><img src="/assets/media/1191/csharp10-todo-2021-11-05.png" alt="C# 10.0 記事執筆状況" /></p>
+<p>まあこの時期どうせネタ元であるところの <a href="https://github.com/dotnet/csharplang/">csharplang</a> も <a href="https://github.com/dotnet/roslyn/">roslyn</a> も11月の .NET 6.0 / C# 10.0 正式リリースに向けた作業をしているわけで、
+うちのサイト的にも C# 入門ページを更新する方の優先度高めでおかしくないはず。
+(という言い訳。)</p>
+<h2 id="rc">RC (リリース候補版)出てた</h2>
+<p>そうこうしている間に、
+<a href="https://github.com/ufcpp-live/UfcppLiveAgenda/issues/45">.NET 6 も RC になり</a>、
+<a href="https://github.com/ufcpp-live/UfcppLiveAgenda/issues/47">Visual Studio も RC になり</a>、
+それに対するライブ配信では「今日の本題は &quot;go-live&quot; の一言で終わりです。あとはその先の話を」とかやっていたりしました。</p>
+<h2 id="ga">GA (正式リリース)する</h2>
+<p>そして、Visual Studio 2022 も .NET 6.0 も C# 10.0 も、来週には正式リリース(Generally Available)になりますね。
+正式リリースされた暁には…
+毎年あるあるなんですが、プレビューの時に遊びつくしていてリリースのタイミングで改めて言うこともないので記念雑談でもしようかと…</p>
+<p><a href="https://github.com/ufcpp-live/UfcppLiveAgenda/issues/49">C# 10.0 / .NET 6.0 / Visual Studio 2022 正式リリース記念</a></p>
+<div>
+<iframe width="400" height="225" src="https://www.youtube.com/embed/-5jmoMUCQnc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+<p>今年、なんか、<a href="https://www.dotnetconf.net/">.NET Conf</a> の前日に <a href="https://visualstudio.microsoft.com/ja/launch/">Visual Studio 2022 のローンチ イベント</a>をやるみたいですね。
+Visual Studio 2022 はそのタイミングで正式リリースとのこと。</p>
+<p>ということで、上記「記念配信」は、Visual Studio はリリース済み(アメリカ太平洋標準時8日以降)、
+.NET Conf 開催(同 PST 9日8時半)直前のはずの、日本時間の9日夜にする予定です。</p>
+<h2 id="section">その先の話しようか</h2>
+<p>上記 RC ライブ配信でも「その先の話」してましたし、直近のライブ配信なんて「<a href="https://github.com/ufcpp-live/UfcppLiveAgenda/issues/48">時代は既に what's next for VS</a>」とかやってたわけでして。</p>
+<p>要は、うちのブログで「ピックアップRoslyn」って銘打ってやってる話を最近さぼり気味で、ネタがたまり気味…</p>
+<p>C# 10.0 記事の方が(ニッチなネタを除けば)落ち着いたんで、ちょこちょこ消化していければいいなぁと思う所存です。(「明日から本気出す」なやつ。)</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2021/11/">11&#x6708;</a></li><li><a href="/blog/2021/11/fix-all-file-scoped-namespace/">&#x3010;C# 10.0&#x3011;&#x30D5;&#x30A1;&#x30A4;&#x30EB; &#x30B9;&#x30B3;&#x30FC;&#x30D7;&#x540D;&#x524D;&#x7A7A;&#x9593; (&#x4E00;&#x6589;&#x7F6E;&#x63DB;&#x8A2D;&#x5B9A;)</a></li><li><a href="/blog/2021/11/implicitusings/">&#x3010;C# 10.0&#x3011; ImplicitUsings (&#x81EA;&#x52D5; global using)</a></li><li><a href="/blog/2021/11/latestmajor/">TargetFramework net5.0 &#x306A;&#x30B3;&#x30FC;&#x30C9;&#x3092; .NET 6 &#x30E9;&#x30F3;&#x30BF;&#x30A4;&#x30E0;&#x3067;&#x52D5;&#x304B;&#x3059;</a></li><li><a href="/blog/2021/11/appendliteral/">&#x3010;C# 10.0&#x3011; AppendLiteral(&quot; &quot;)</a></li><li><a href="/blog/2021/11/top-level-csharp10/">&#x3010;C# 10.0&#x3011; &#x30C8;&#x30C3;&#x30D7; &#x30EC;&#x30D9;&#x30EB; &#x30B9;&#x30C6;&#x30FC;&#x30C8;&#x30E1;&#x30F3;&#x30C8;&#x306E;&#x5909;&#x66F4;&#x70B9;</a></li><li><a href="/blog/2021/11/unicode-operator/">Unicode &#x6F14;&#x7B97;&#x5B50; (&#x2211;&#x3A3; &#x3068;&#x304B; &#x222B;&#x283; &#x3068;&#x304B;)</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

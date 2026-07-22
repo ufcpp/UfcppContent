@@ -1,0 +1,503 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>[&#x96D1;&#x8A18;] &#x578B;&#x306E;&#x6C7A;&#x5B9A; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/start/misctyperesolution/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">[雑記] 型の決定</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>C# の<a href="/study/csharp/start/st_variable/#variable">変数</a>や<a href="/study/csharp/start/st_variable/#expression">式</a>はそれぞれが「型」を持っています。
+例えば <code>int x;</code> として宣言した変数 <code>x</code> は <code>int</code> 型になりますし、<code>&quot;abc&quot;</code> という式(文字列<a href="/study/csharp/start/st_variable/#literal">リテラル</a>も式の一種)は <code>string</code> 型になります。</p>
+<p>そして、代入(<code>=</code>)などの処理では、左右両辺の型が一致しないとコンパイル時にエラーを起こします。
+例えば以下のコードはコンパイルできません。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> x = <span class="string">&quot;abc&quot;</span>;</code></pre>
+<p>どうせ左右で型を合わせる必要があるわけで、片方からもう片方の型を自動決定する構文もいくつかあります。
+<a href="/study/csharp/start/sp3_inference/#type-inference">ローカル変数の型推論(<code>var</code> 変数宣言)</a>が代表例で、
+例えば以下のような書き方をすると、「右辺の型に合わせて <code>x</code> の型が自動的に <code>string</code> になる」という挙動になります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = <span class="string">&quot;abc&quot;</span>;</code></pre>
+<p>逆に、反対側の辺を見ないと型が決定できないようなものもいくつかあります。
+<a href="/study/csharp/functional/sp_delegate/">デリゲート</a>や<a href="/study/csharp/functional/fun_localfunctions/#anonymous-function">匿名関数</a>が代表例で、
+例えば以下のコードは「型が決定できなくてコンパイル エラー」になります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> m = Main;
+        <span class="keyword">var</span> f = () =&gt; { };
+ 
+        <span class="comment">// 以下の書き方ならコンパイル可能。左辺の型が必須。</span>
+        Action m1 = Main;
+        Action f1 = () =&gt; { };
+    }
+}</code></pre>
+<p>本項では、こういった「型の決定」について説明していきます。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="source-target"></a>型決定の「向き」</h2>
+<p>型の決定には「向き」があります。
+概要で話した通り、型決定の代表例は代入処理で、<code>=</code> 演算子の左右を指して「左辺」(left hand side)、「右辺」(right hand side)と言ったりします。
+ただ、同様の型決定は、必ずしも「左右」になっていない構文でも発生します。
+例えば、メソッド呼び出し(<a href="/study/csharp/structured/miscoverloadresolution/">オーバーロード解決</a>)の場合は「左右」というよりは「内外」といった方がいいかもしれません。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// 右辺の &quot;abc&quot; から左辺の s の型が string に決定。</span>
+        <span class="keyword">var</span> s = <span class="string">&quot;abc&quot;</span>;
+ 
+        <span class="comment">// 内側の 1 から外側の X (の引数)の型が int に決定(X(int x) が呼ばれる)。</span>
+        X(<span class="number">1</span>);
+ 
+        <span class="comment">// 左辺の Action から右辺の () =&gt; { } の型が決定。</span>
+        Action a = () =&gt; { };
+ 
+        <span class="comment">// 外側の Y (の引数の Action)から内側の () =&gt; { } の型が決定。</span>
+        Y(() =&gt; { });
+    }
+ 
+    <span class="keyword">static</span> <span class="keyword">void</span> X(<span class="keyword">int</span> x) { }
+    <span class="keyword">static</span> <span class="keyword">void</span> X(<span class="keyword">string</span> x) { }
+ 
+    <span class="keyword">static</span> <span class="keyword">void</span> Y(Action a) { }
+}</code></pre>
+<p>どちらの場合でも、「値の出所」と「値を受け取る側」に分かれます。
+そして、出所の方を<strong id="source-type" class="keyword">ソース型</strong>(source type)、受け取る側を<strong id="target-type" class="keyword">ターゲット型</strong>(target type)と言います。</p>
+<table>
+<thead>
+<tr>
+<th>型の「向き」</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ソース</td>
+<td>代入の右辺、メソッド呼び出しの実引数</td>
+</tr>
+<tr>
+<td>ターゲット</td>
+<td>代入の左辺、メソッドの仮引数</td>
+</tr>
+</tbody>
+</table>
+<p>元々 C# ではソース型の方を明示的に指定して、ターゲット型の方を自動決定することが多いです。
+なので、単に推論(inference)とか解決(resolution)という場合、この向き(ソース型からの決定)なことが多いです。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// 変数の型推論(type inference)はソース型からの型決定</span>
+        <span class="keyword">var</span> s = <span class="string">&quot;abc&quot;</span>;
+ 
+        <span class="comment">// オーバーロード解決(overload resolution)はソース型からの型決定。</span>
+        X(<span class="number">1</span>);
+    }
+ 
+    <span class="keyword">static</span> <span class="keyword">void</span> X(<span class="keyword">int</span> x) { }
+    <span class="keyword">static</span> <span class="keyword">void</span> X(<span class="keyword">string</span> x) { }
+ 
+    <span class="keyword">static</span> <span class="keyword">void</span> Y(Action a) { }
+}</code></pre>
+<p>しかし徐々にターゲット型の方を明示的に指定する構文が増えています。
+後入りな構文が多いせいか、こちらは「ターゲット型からの(target typed)」という形容をすることが多いです。
+例えば C# 7.1 で入った <a href="/study/csharp/resource/rm_default/#default-expr"><code>default</code> 式</a>は「target typed default」などと呼ばれることがあります。
+また、C# 8.0 で入った <a href="/study/csharp/datatype/typeswitch/#target-typed"><code>switch</code> 式はターゲットからの型決定</a>をしていますが、
+こちらも「target typed switch」と言われたりします。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">bool</span> b)
+{
+    <span class="comment">// 以前の C# では default(DateTime) と書く必要があった。</span>
+    <span class="comment">// C# 7.1 から、ターゲットからの型推論で default だけで書けるようになった。</span>
+    DateTime t = <span class="keyword">default</span>;
+ 
+    <span class="comment">// C# の型決定機構では「1 と null の共通型が何かわからない」ということでコンパイルできなかった。</span>
+    <span class="comment">// switch 式ではターゲット型(この場合 int?)を見て、switch の型を決めて、1 と null を受け付けできるようにした。</span>
+    <span class="keyword">int</span>? x = b <span class="keyword">switch</span>
+    {
+        <span class="keyword">true</span> =&gt; <span class="number">1</span>,
+        <span class="keyword">false</span> =&gt; <span class="keyword">null</span>
+    };
+}</code></pre>
+<h5 id="section-3"><a id="sec-generated-title-3"></a> <a id="source-typed"></a>ソース型からの決定</h5>
+<p>ソース型によって挙動が決まる構文として以下のようなものがあります。</p>
+<ul>
+<li><a href="/study/csharp/start/sp3_inference/#implicit">ローカル変数の型推論</a></li>
+<li><a href="/study/csharp/start/sp3_inference/#impl_array">配列の暗黙的型付け</a></li>
+<li><a href="/study/csharp/structured/miscoverloadresolution/">オーバーロード解決</a>
+<ul>
+<li>特に、<a href="/study/csharp/oop/sp2_generics/#method">ジェネリック型引数の推論</a></li>
+</ul>
+</li>
+</ul>
+<h5 id="section-4"><a id="sec-generated-title-4"></a> <a id="source-typed"></a>ターゲット型からの決定</h5>
+<p>ターゲット型によって挙動が決まる構文として以下のようなものがあります。</p>
+<p>単に「ターゲットを見るまで型が確定しない」程度のものもあります。
+暗黙的型変換の一種として考えることができます(未確定の型から確定した型への変換)。</p>
+<ul>
+<li><a href="/study/csharp/start/st_embeddedtype/#intl">整数リテラル</a></li>
+<li><a href="/study/csharp/oop/oo_class/#null">null</a></li>
+<li><a href="/study/csharp/resource/rm_default/#default-expr"><code>default</code> 式</a></li>
+<li><a href="/study/csharp/oop/oo_construct/#target-typed-new"><code>new</code> 演算子</a></li>
+<li><a href="/study/csharp/functional/sp_delegate/">デリゲート</a></li>
+</ul>
+<p>もう少し積極的にターゲット型の情報を使う構文もあります。</p>
+<ul>
+<li><a href="/study/csharp/datatype/typeswitch/#target-typed"><code>switch</code> 式</a></li>
+<li><a href="/study/csharp/structured/st_branch/#terget-typed-conditional">条件演算子</a></li>
+</ul>
+<p>また、ターゲットの型によってまるっきり異なる挙動になるものもあります。</p>
+<ul>
+<li><a href="/study/csharp/start/st_string/#string-interpolation">文字列補間</a></li>
+<li><a href="/study/csharp/start/st_string/#FormattableString"><code>IFormattable</code> 型に渡すとき</a></li>
+<li><a href="/study/csharp/functional/sp3_lambda/">ラムダ式</a></li>
+<li><a href="/study/csharp/functional/sp3_lambda/#expression"><code>Expression</code> 型に渡すとき</a></li>
+</ul>
+<p>ちなみに、組み合わせも行けます。
+以下のように、<code>switch</code> 式中の条件演算子中の <code>new</code> みたいな入れ子になった状況でもターゲット型推論が働きます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="comment">// target-typed switch 式中の</span>
+<span class="comment">// target-typed 条件演算子中の</span>
+<span class="comment">// target-typed new 式。</span>
+TimeSpan X(<span class="keyword">int</span> i, <span class="keyword">bool</span> b) =&gt; i <span class="keyword">switch</span>
+{
+    &lt; <span class="number">0</span> =&gt; b ? <span class="keyword">new</span>(<span class="number">0</span>) : <span class="keyword">new</span>(<span class="number">1</span>),
+    <span class="number">0</span> =&gt; b ? <span class="keyword">new</span>(<span class="number">2</span>) : <span class="keyword">new</span>(<span class="number">6</span>),
+    &gt; <span class="number">0</span> =&gt; b ? <span class="keyword">new</span>(<span class="number">4</span>) : <span class="keyword">new</span>(<span class="number">5</span>),
+};</code></pre>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="history"></a>自動型決定の歴史</h2>
+<p>ソース/ターゲットのいずれか一方だけの型を指定して他方を自動決定するというのは、
+2000年代頃から増え始めたものです。
+20世紀の(1990年代以前の)プログラミング言語では少数派でしたし、
+C# でも、C# 2.0 や 3.0 から導入された構文が多いです。
+例えば、C# 1.0 (2000年発表、2002年正式リリース)時代には以下のような書き方はできませんでした。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> Main()
+{
+    <span class="comment">// C# 2.0 から。</span>
+    <span class="comment">// C# 1.0 時代は Action m = new Action(Main); と書く必要あり。</span>
+    Action m = Main;
+ 
+    <span class="comment">// C# 3.0 から。</span>
+    <span class="comment">// C# 1.0 時代は string s = &quot;abc&quot;; と書く必要あり。</span>
+    <span class="keyword">var</span> s = <span class="string">&quot;abc&quot;</span>;
+}</code></pre>
+<p>ただ、明確に型推論(type inference)という言葉が出始めたのは C# 3.0 の頃からですが、
+それ以前でも、推論に類するものはありました。
+例えばメソッドのオーバーロード解決は「ソース型からの型決定」に類するものですし、
+整数リテラルや null などは実は「ターゲット型からの型決定」をしています
+(正確に言うと「暗黙的型変換」なんですが、いずれにせよターゲット型が決まるまで解釈が確定しません)。</p>
+<pre><code class="language-csharp"><span class="comment">// byte リテラルや short リテラルは存在していなくて、「整数リテラル」の暗黙的型変換で代用している。</span>
+<span class="keyword">byte</span> a = <span class="number">1</span>;  <span class="comment">// この 1 は byte (に代入可能)</span>
+<span class="keyword">short</span> b = <span class="number">1</span>; <span class="comment">// この 1 は short (に代入可能)</span>
+
+<span class="comment">// 変数だと int から byte や short への暗黙的変換は認められていない。コンパイル エラーに。</span>
+<span class="keyword">int</span> i = <span class="number">1</span>;
+a = i;
+ 
+<span class="comment">// ちゃんと精度チェックが入る。byte に代入できない大きさの整数リテラルはコンパイル エラーを起こす。</span>
+a = <span class="number">256</span>;
+
+<span class="comment">// ただし、var に対して使った時は int 扱い。</span>
+<span class="keyword">var</span> c = <span class="number">1</span>; <span class="comment">// c の型は int</span>
+ 
+<span class="comment">// 配列初期化子はターゲット型を見ているのでこの書き方は OK。</span>
+<span class="keyword">byte</span>[] d = { <span class="number">1</span>, <span class="number">2</span> }; <span class="comment">// この 1, 2 は byte 扱い</span>
+ 
+<span class="comment">// でも、配列の型推論はソース型からの型決定なので NG。</span>
+<span class="comment">// 右辺は int[] 扱いで、左辺の byte[] と型が合わなくてコンパイル エラーになる。</span>
+<span class="keyword">byte</span>[] e = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span> };</code></pre>
+<h2 id="section-6"><a id="sec-generated-title-6"></a> <a id="conflict"></a>自動型決定の競合</h2>
+<p>ソースから型決定する構文とターゲットから型決定する構文は、当然ですが両立はできません。
+どちらもあいまいでは型決定できません。片方は明示的な型指定が必要になります。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// OK。引数の側の型を明示。</span>
+        X(<span class="keyword">out</span> <span class="keyword">int</span> a);
+ 
+        <span class="comment">// OK。メソッドの側の型を明示。</span>
+        X&lt;<span class="keyword">int</span>&gt;(<span class="keyword">out</span> <span class="keyword">var</span> b);
+ 
+        <span class="comment">// NG。(型引数の)推論と(ローカル変数の)推論が重なって型決定不可。</span>
+        X(<span class="keyword">out</span> <span class="keyword">var</span> c);
+    }
+ 
+    <span class="keyword">static</span> <span class="keyword">void</span> X&lt;T&gt;(<span class="keyword">out</span> T x) =&gt; x = <span class="keyword">default</span>;
+}</code></pre>
+<p>ちなみに、型推論は「後から」競合を起こす原因になり得たりもします。
+例えば以下のようなコードはコンパイルできるコードなんですが、</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> M(DateTime? x) { }
+ 
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        M(<span class="keyword">null</span>);
+        M(<span class="keyword">default</span>);
+        M(<span class="keyword">new</span>());
+    }
+}</code></pre>
+<p>ここに1行、オーバーロードを増やすとどちらを呼ぶべきか決定できなくてコンパイル エラーになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">int</span>? x) { } <span class="comment">// この行を追加</span>
+    <span class="keyword">static</span> <span class="keyword">void</span> M(DateTime? x) { }
+ 
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        M(<span class="keyword">null</span>);
+        M(<span class="keyword">default</span>);
+        M(<span class="keyword">new</span>());
+    }
+}</code></pre>
+<h2 id="section-7"><a id="sec-generated-title-7"></a> <a id="priority"></a>優先度付きのターゲットからの型決定</h2>
+<p>ターゲットの型を見て挙動が変わりはするものの、
+未指定の場合の既定の挙動が決まっていて、ソース型からの型推論と競合しないものもあります。</p>
+<p>整数リテラルなどがそうで、整数リテラルはターゲットの型によって挙動を変えますが、
+型推論に対しては <code>int</code> 扱いになりますし、
+オーバーロード解決では <code>int</code> が最優先になります。</p>
+<pre><code class="language-csharp"><span class="comment">// ターゲットの型を見ている。</span>
+<span class="keyword">byte</span> a = <span class="number">1</span>;  <span class="comment">// この 1 は byte 扱い</span>
+<span class="keyword">short</span> b = <span class="number">1</span>; <span class="comment">// この 1 は short 扱い</span>
+ 
+<span class="comment">// ターゲット型が決まっていない場合は int になる。</span>
+<span class="keyword">var</span> c = <span class="number">1</span>; <span class="comment">// 1 は int で、そこからの型推論で c の型は int</span>
+
+<span class="keyword">void</span> f&lt;T&gt;(T x) { }
+f(<span class="number">1</span>); <span class="comment">// 型引数の推論でも int 扱い</span></code></pre>
+<p><a href="/study/csharp/start/st_string/#string-interpolation">文字列補間</a>にも優先度があります。
+文字列補間は <code>IFormattable</code> 型よりも <code>string</code> が優先です。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">int</span> x)
+    {
+        <span class="comment">// var に対して文字列補間を使うと string 扱い。</span>
+        <span class="keyword">var</span> s = $<span class="string">&quot;abc {x}&quot;</span>;
+ 
+        <span class="comment">// M(string) が優先的に呼ばれる。</span>
+        M($<span class="string">&quot;abc {x}&quot;</span>);
+ 
+        <span class="comment">// M(IFormattable) の方を呼びたければキャストが必要。</span>
+        M((IFormattable)$<span class="string">&quot;abc {x}&quot;</span>);
+    }
+ 
+    <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">string</span> s) { }
+    <span class="keyword">static</span> <span class="keyword">void</span> M(IFormattable s) { }
+}</code></pre>
+<h2 id="section-8"><a id="sec-generated-title-8"></a> <a id="cost"></a>自動型決定のコスト</h2>
+<p>ソースとターゲットのどちらか片方から他方を決定できるといっても、
+その推論が低コストなものと、意外と高コストなものがあったりします。</p>
+<p>例えば、ローカル変数の型推論はほとんどコストがかからないそうです。
+なんせ左辺と右辺が1対1ですし、元々「型が合うかどうか」の判定のために左右どちらにも明確な型を求めています。
+単に片方を他方に伝搬させるだけなので低コストです。</p>
+<p>一方、オーバーロード解決は結構高コストです。
+多数の候補の中から1つを選ばないといけないので単純に検索コストがかかります。
+例えば、以下のようなコードでは <code>Parse(&quot;&quot;)</code> で呼び出せるメソッドの候補が4つあります。</p>
+<pre><code class="language-csharp"><span class="comment">// この1行によって DateTime.Parse(string) がオーバーロード解決候補に入る。</span>
+<span class="keyword">using</span> <span class="keyword">static</span> System.DateTime;
+ 
+<span class="keyword">class</span> Base
+{
+    <span class="comment">// 基底クラスにも同名のメソッド。</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> Parse(<span class="keyword">string</span> x) { }
+}
+ 
+<span class="keyword">class</span> Derived : Base
+{
+    <span class="comment">// Parse(&quot;&quot;) で呼び出せる候補が複数。</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> Parse(<span class="keyword">object</span> x) { }
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Parse&lt;T&gt;(T x) { }
+ 
+    <span class="keyword">void</span> M()
+    {
+        Parse(<span class="string">&quot;abc&quot;</span>);
+    }
+}</code></pre>
+<p>オーバーロードの数や引数の数が多くなれば多くなるほど複雑になることは容易に想像できるかと思います。
+標準ライブラリ中にも多数のオーバーロードを持つメソッドは多く、容易に複雑化します。
+実は、C# ソースコードのコンパイル時間のうち数割程度はオーバーロード解決が占めているといわれています。</p>
+<pre><code class="language-csharp"><span class="comment">// 以下の5つの Parse が候補に</span>
+<span class="comment">// int Parse(ReadOnlySpan&lt;char&gt; s, NumberStyles style = NumberStyles.Integer, IFormatProvider provider = null)</span>
+<span class="comment">// int Parse(string s)</span>
+<span class="comment">// int Parse(string s, NumberStyles style)</span>
+<span class="comment">// int Parse(string s, NumberStyles style, IFormatProvider provider)</span>
+<span class="comment">// int Parse(string s, IFormatProvider provider)</span>
+<span class="keyword">using</span> <span class="keyword">static</span> System.Int32;
+ 
+<span class="comment">// 以下の4つの Parse が候補に</span>
+<span class="comment">// DateTime Parse(ReadOnlySpan&lt;char&gt; s, IFormatProvider provider = null, DateTimeStyles styles = DateTimeStyles.None)</span>
+<span class="comment">// DateTime Parse(string s)</span>
+<span class="comment">// DateTime Parse(string s, IFormatProvider provider)</span>
+<span class="comment">// DateTime Parse(string s, IFormatProvider provider, DateTimeStyles styles)</span>
+<span class="keyword">using</span> <span class="keyword">static</span> System.DateTime;
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// 2引数で、第2引数が NumberStyles なものは1個しかないので、</span>
+        <span class="comment">// int Parse(string, NumberStyles)</span>
+        Parse(<span class="keyword">null</span>, System.Globalization.NumberStyles.HexNumber);
+ 
+        <span class="comment">// stackalloc によって第1引数の型が ReadOnlySpan&lt;char&gt; に決定</span>
+        <span class="comment">// 第3引数が DateTimeStyles なので、</span>
+        <span class="comment">// DateTime Parse(ReadOnlySpan&lt;char&gt;, IFormatProvider, DateTimeStyles)</span>
+        Parse(<span class="keyword">stackalloc</span> <span class="keyword">char</span>[<span class="number">0</span>], <span class="keyword">null</span>, System.Globalization.DateTimeStyles.None);
+    }
+}</code></pre>
+<p>ちなみに、C# は、ローカル変数に対しては型推論(<code>var</code> 変数宣言)を認めていますが、
+メンバー(フィールド、プロパティやメソッド)の引数・戻り値に対しては認めていません。
+これは、作法的な問題(メンバーの型は明示すべきという思想)もありますが、
+簡単に高コストになりうるから認められないという問題もあるそうです。</p>
+<pre><code class="language-csharp"><span class="comment">// 以下、仮定的な構文。C# では認めていない(おそらく今後も認めない)。</span>
+ 
+<span class="comment">// 再帰しているので当然型決定が不可能。</span>
+<span class="comment">// この例はまだ単純なものの、「再帰の検知」も十分複雑になりえる。</span>
+<span class="keyword">static</span> <span class="keyword">var</span> a = b;
+<span class="keyword">static</span> <span class="keyword">var</span> b = a;
+ 
+<span class="comment">// ただでさえ複雑なオーバーロード解決と組み合わせると悲惨なことに…</span>
+<span class="keyword">static</span> (T, U) M&lt;T, U&gt;(T t, U u) =&gt; (t, u);
+<span class="keyword">static</span> <span class="keyword">short</span> M(<span class="keyword">int</span> x, <span class="keyword">string</span> y) =&gt; <span class="number">0</span>;
+<span class="keyword">static</span> <span class="keyword">float</span> M(<span class="keyword">double</span> x, <span class="keyword">string</span> y) =&gt; <span class="number">0</span>;
+ 
+<span class="keyword">static</span> <span class="keyword">var</span> A() =&gt; M(B(), C());
+<span class="keyword">static</span> <span class="keyword">var</span> B() =&gt; M(D(), E());
+<span class="keyword">static</span> <span class="keyword">var</span> C() =&gt; M(F(), <span class="string">&quot;&quot;</span>);
+<span class="keyword">static</span> <span class="keyword">var</span> D() =&gt; M(<span class="number">1</span>, <span class="number">1</span>.<span class="number">2</span>);
+<span class="keyword">static</span> <span class="keyword">var</span> E() =&gt; M(<span class="number">1</span>, <span class="string">&quot;&quot;</span>);
+<span class="keyword">static</span> <span class="keyword">var</span> F() =&gt; M(<span class="number">1</span>.<span class="number">2</span>, <span class="keyword">new</span> <span class="keyword">object</span>());</code></pre>
+<h2 id="section-9"><a id="sec-generated-title-9"></a> <a id="nest"></a>入れ子</h2>
+<p>いくつかの構文では、多段に中身を追って型決定してくれます。
+例えば、以下のように、多重のラムダ式からオーバーロード解決することができます。
+(ただし制限あり。)</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// 非ジェネリックなオーバーロードなら、多段ラムダ式でも解決可能。</span>
+        <span class="comment">// (ただし、この解決ができるのは C# 6.0 以降)</span>
+        M(() =&gt; () =&gt; <span class="number">1</span>);   <span class="comment">// M(Func&lt;Func&lt;int&gt;&gt; x)</span>
+        M(() =&gt; () =&gt; <span class="number">1</span>.<span class="number">0</span>); <span class="comment">// M(Func&lt;Func&lt;double&gt;&gt; x)</span>
+ 
+        <span class="comment">// ただ、ジェネリックなものについては無理。コンパイル エラーに。</span>
+        <span class="comment">// M&lt;string&gt; は呼んでもらえない。</span>
+        M(() =&gt; () =&gt; <span class="string">&quot;&quot;</span>);
+    }
+ 
+    <span class="keyword">static</span> <span class="keyword">void</span> M(Func&lt;Func&lt;<span class="keyword">int</span>&gt;&gt; x) { }
+    <span class="keyword">static</span> <span class="keyword">void</span> M(Func&lt;Func&lt;<span class="keyword">double</span>&gt;&gt; x) { }
+    <span class="keyword">static</span> <span class="keyword">void</span> M&lt;T&gt;(Func&lt;Func&lt;T&gt;&gt; x) { }
+}</code></pre>
+<p>暗黙の型変換の類は<a href="/study/csharp/datatype/tuples/">タプル</a>の中でも働きますし、この場合、タプルが入れ子になっていても大丈夫です。</p>
+<pre><code class="language-csharp"><span class="comment">// 整数リテラルはターゲット型を見て暗黙的に変換がかかる。</span>
+<span class="comment">// たとえ入れ子のタプルになっていてもこの仕組みは働く。</span>
+(<span class="keyword">byte</span>, (<span class="keyword">short</span>, <span class="keyword">long</span>)) t = (<span class="number">1</span>, (<span class="number">2</span>, <span class="number">3</span>));
+ 
+<span class="comment">// ちなみに、以下のコードだとコンパイル エラー。</span>
+<span class="comment">// リテラル以外では、int から byte, short への変換は暗黙的にできない。</span>
+(<span class="keyword">int</span>, (<span class="keyword">int</span>, <span class="keyword">int</span>)) i = (<span class="number">1</span>, (<span class="number">2</span>, <span class="number">3</span>));
+t = i;</code></pre>
+<p><a href="/study/csharp/datatype/typeswitch/#target-typed">target-typed な<code>switch</code> 式</a>も、入れ子になっていても平気です。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">byte</span>? M(<span class="keyword">object</span> obj) =&gt; obj <span class="keyword">switch</span>
+{
+    <span class="keyword">string</span> s =&gt; s.Length <span class="keyword">switch</span>
+    {
+        <span class="number">0</span> =&gt; <span class="number">1</span>,    <span class="comment">// 2重の switch の中でも byte に変換できる</span>
+        _ =&gt; <span class="keyword">null</span>, <span class="comment">// 同、null を byte? 扱いできる</span>
+    },
+    <span class="keyword">byte</span> i =&gt; i,
+    _ =&gt; <span class="keyword">null</span>,
+};</code></pre>
+<p>一方で、条件演算子や配列の型推論、ジェネリック型引数などは、ターゲット型からの型推論に対応していなくて、
+以下のコードはコンパイル エラーになります。
+(ただし、条件演算子については C# 9.0 でターゲット型推論を導入する予定があります。)</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> Fail()
+{
+    <span class="comment">// 以下のいずれもコンパイル エラー。</span>
+    <span class="keyword">byte</span>? a = <span class="keyword">true</span> ? <span class="number">1</span> : <span class="keyword">null</span>;
+    <span class="keyword">byte</span>?[] b = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="keyword">null</span> };
+    <span class="keyword">byte</span>? c = M(<span class="number">1</span>, <span class="keyword">null</span>);
+}
+ 
+<span class="keyword">static</span> <span class="keyword">void</span> Success()
+{
+    <span class="comment">// ターゲット型推論に頼らない書き方が求められる。</span>
+    <span class="comment">// 以下の書き方ならソースからだけで型決定できる。</span>
+    <span class="keyword">byte</span>? a = <span class="keyword">true</span> ? (<span class="keyword">byte</span>?)<span class="number">1</span> : <span class="keyword">null</span>;
+    <span class="keyword">byte</span>?[] b = <span class="keyword">new</span>[] { (<span class="keyword">byte</span>?)<span class="number">1</span>, <span class="keyword">null</span> };
+    <span class="keyword">byte</span>? c = M((<span class="keyword">byte</span>?)<span class="number">1</span>, <span class="keyword">null</span>);
+}
+ 
+<span class="keyword">static</span> T M&lt;T&gt;(T x, T y) =&gt; x;</code></pre>
+<h2 id="section-10"><a id="sec-generated-title-10"></a> <a id="common-type"></a>共通型</h2>
+<p><code>switch</code> 式や条件演算子など、いくつかの「枝」を持つ構文では、枝ごとの型の「共通の型」(common type)を探す作業を一応行います。
+ただ、C# 8.0 時点では制約がきつく、「枝のうちいずれか1つ」しか選ばれません。</p>
+<p>ちょっとわかりにくいと思うので具体例を挙げます。
+まず、以下のようなクラスを用意します。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Base { }
+<span class="keyword">class</span> A : Base { }
+<span class="keyword">class</span> B : Base { }</code></pre>
+<p>このクラスと、あと、int を使って共通型を決定できるかどうかの例を示します。</p>
+<pre><code class="language-csharp"><span class="comment">// 型の候補は A, B。それぞれお互いには変換不可なので、共通型の決定不可。</span>
+<span class="keyword">var</span> ng1 = x ? <span class="keyword">new</span> A() : <span class="keyword">new</span> B();
+ 
+<span class="comment">// 型の候補は int。null は int に変換不可なので、共通型の決定不可。</span>
+<span class="keyword">var</span> ng2 = x ? <span class="number">1</span> : <span class="keyword">null</span>;
+ 
+<span class="comment">// 型の候補は Base, A。A から Base に変換可能なので、共通型は Base に決定。</span>
+<span class="keyword">var</span> ok1 = x ? <span class="keyword">new</span> Base() : <span class="keyword">new</span> A();
+ 
+<span class="comment">// 型の候補は int?。null は int? に変換可能なので、共通型は int?。</span>
+<span class="keyword">var</span> ok2 = x ? (<span class="keyword">int</span>?)<span class="number">1</span> : <span class="keyword">null</span>;
+ 
+<span class="comment">// 型の候補は int, int?。int は int? に変換可能なので、共通型は int?。</span>
+<span class="keyword">var</span> ok3 = x ? <span class="number">1</span> : <span class="keyword">default</span>(<span class="keyword">int</span>?);</code></pre>
+<p><code>int</code> と null の共通型は <code>int?</code> だとわかりそうなものですが、少なくとも C# 8.0 ではそういう自動判定はしません。
+枝のいずれか1つが <code>int?</code> でないと共通型判定できません。</p>
+<p>ちなみに、「提案が出ている」という程度の状態で実現するかはわかりませんが、
+値型 <code>T</code>と null が並んでいた場合、共通の型として <code>T?</code> を選ぶようにするという案もあります。</p>
+<p>また、クラスの場合も共通の基底クラス(<code>A</code> と <code>B</code> の場合 <code>Base</code>)を共通型として選ぶかどうかも検討されています。
+こちらは「基底クラスに限る」(共通インターフェイスの場合は相変わらず)という条件付きです。
+インターフェイスが絡むと以下のように多段派生があったり複雑なのでおそらく認められません。</p>
+<pre><code class="language-csharp"><span class="comment">// 型 D と F の「共通型」といわれると何？</span>
+<span class="comment">// インターフェイス J？ それともクラス A？</span>
+<span class="keyword">interface</span> I { }
+<span class="keyword">interface</span> J { }
+<span class="keyword">class</span> A { }
+<span class="keyword">class</span> B : A, I { }
+<span class="keyword">class</span> C : A { }
+<span class="keyword">class</span> D : B, J { }
+<span class="keyword">class</span> E : B { }
+<span class="keyword">class</span> F : C, J { }</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/start/">&#x57FA;&#x790E;</a></li><li><a href="/study/csharp/start/st_basis/">C#&#x306E;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x57FA;&#x672C;&#x69CB;&#x9020;</a></li><li><a href="/study/csharp/start/st_compile/">&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x4F5C;&#x6210;&#x30FB;&#x5B9F;&#x884C;</a></li><li><a href="/study/csharp/start/st_comment/">&#x30B3;&#x30E1;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/start/st_consoleio/">&#x5024;&#x306E;&#x5165;&#x51FA;&#x529B;</a></li><li><a href="/study/csharp/start/st_variable/">&#x5909;&#x6570;&#x3068;&#x5F0F;</a></li><li><a href="/study/csharp/start/misc_identifier/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x540D;&#x306B;&#x4F7F;&#x3048;&#x308B;&#x6587;&#x5B57;</a></li><li><a href="/study/csharp/start/misc_unicode/">[&#x96D1;&#x8A18;] C# &#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x3068; Unicode</a></li><li><a href="/study/csharp/start/st_embeddedtype/">&#x7D44;&#x8FBC;&#x307F;&#x578B;</a></li><li><a href="/study/csharp/start/stnumber/">&#x6570;&#x5024;</a></li><li><a href="/study/csharp/start/st_string/">&#x7279;&#x6B8A;&#x306A;&#x6587;&#x5B57;&#x5217;&#x30EA;&#x30C6;&#x30E9;&#x30EB;</a></li><li><a href="/study/csharp/start/improvedinterpolatedstring/">C# 10.0 &#x306E;&#x88DC;&#x9593;&#x6587;&#x5B57;&#x5217;&#x306E;&#x6539;&#x5584;</a></li><li><a href="/study/csharp/start/st_operator/">&#x7D44;&#x8FBC;&#x307F;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/study/csharp/start/st_cast/">&#x7D44;&#x8FBC;&#x307F;&#x578B;&#x5909;&#x63DB;</a></li><li><a href="/study/csharp/start/sp_checked/">&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30D5;&#x30ED;&#x30FC;&#x306E;&#x30C1;&#x30A7;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/start/sp_const/">&#x5B9A;&#x6570;</a></li><li><a href="/study/csharp/start/sp3_inference/">&#x578B;&#x63A8;&#x8AD6;(&#x6697;&#x9ED9;&#x7684;&#x578B;&#x4ED8;&#x3051;)&#x3068;&#x533F;&#x540D;&#x578B;</a></li><li><a href="/study/csharp/start/sp3_var/">[&#x96D1;&#x8A18;] &#x578B;&#x63A8;&#x8AD6;&#x306E;&#x662F;&#x975E;</a></li><li><a href="/study/csharp/start/st_scope/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x306E;&#x30B9;&#x30B3;&#x30FC;&#x30D7;&#x3068;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x5BFF;&#x547D;</a></li><li><a href="/study/csharp/start/miscreservedattribute/">[&#x96D1;&#x8A18;] &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x306B;&#x5F71;&#x97FF;&#x3092;&#x53CA;&#x307C;&#x3059;&#x5C5E;&#x6027;</a></li><li><a href="/study/csharp/start/definiteassignment/">[&#x96D1;&#x8A18;] &#x660E;&#x78BA;&#x306A;&#x4EE3;&#x5165;&#x30EB;&#x30FC;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

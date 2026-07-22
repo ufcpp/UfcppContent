@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: &#x5206;&#x89E3;&#x6642;&#x306E;&#x5BA3;&#x8A00;&#x3068;&#x5909;&#x6570;&#x306E;&#x6DF7;&#x5728; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2021/3/mix-deconstruction/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2021-03-05T21:47:26">2021-03-05</time></span><span>更新: <time datetime="2021-03-05T21:55:39">2021-03-05</time></span></div><h1 id="roslyn">ピックアップRoslyn: 分解時の宣言と変数の混在</h1>
+<p><a href="https://devblogs.microsoft.com/dotnet/announcing-net-6-preview-1/">.NET 6 Preview 1</a>とか <a href="https://devblogs.microsoft.com/visualstudio/vs2019-v16-9-and-v16-10-preview-1/">Visual Studio 16.9 正式版＆ 16.10 Preview 1</a>とかが出ましたね。</p>
+<p>というの、ライブ配信はしてたんですが。</p>
+<div>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/y7kqEYov5ro" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+<div>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/99ek2n6F_1U" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+<p>その中で、今日は C# 10.0 候補で、すでに Visual Studio 16.10 にマージ済みの機能の紹介。
+以下のようなコードがコンパイルできるようになっています。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> x;
+(x, <span class="keyword">var</span> y) = (<span class="number">1</span>, <span class="string">&quot;abc&quot;</span>);</code></pre>
+<p>配信では言ってるんですが、 .NET 6 Preview 1 が出た時点で、コマンドライン (dotnet コマンド)ではコンパイルできていました。
+「今回、.NET SDK と Visual Studio で2週間くらいリリースタイミング違うんですね」とか「Visual Studio は <a href="https://myignite.microsoft.com/home">Ignite</a> のために取っといたんですかね」とかいう感じ。</p>
+<p>で、Visual Studio の方は、16.10 の方で「<a href="/study/csharp/cheatsheet/langversionoption/#langversion">LangVersion preview</a>」にした時だけ上記コードがコンパイルできます。</p>
+<h2 id="c-7.0"><a id="deconstruction">分解(C# 7.0)</a></h2>
+<p><a href="/study/csharp/datatype/deconstruction/">分解</a>という機能自体は C# 7.0 の頃に入っています。
+以下のようなコード、どれも C# 7.0 として有効。</p>
+<p>1つ目。<code>()</code> 内で変数宣言。</p>
+<pre><code class="language-csharp">(<span class="keyword">int</span> x, <span class="keyword">string</span> y) = (<span class="number">1</span>, <span class="string">&quot;abc&quot;</span>);</code></pre>
+<p>2つ目。これを型推論(var)で書いたもの。型推論してる点以外は1つ目のコードと同じ。コンパイラーの解釈結果は全く同じです。</p>
+<pre><code class="language-csharp">(<span class="keyword">var</span> x, <span class="keyword">var</span> y) = (<span class="number">1</span>, <span class="string">&quot;abc&quot;</span>);</code></pre>
+<p>3つ目。タプル変数宣言。頭に1個だけ <code>var</code> を書いて、複数の変数の宣言をまとめてやる構文。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> (x, y) = (<span class="number">1</span>, <span class="string">&quot;abc&quot;</span>);</code></pre>
+<p>4つ目。既存の変数を使って分解。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> x;
+<span class="keyword">string</span> y;
+(x, y) = (<span class="number">1</span>, <span class="string">&quot;abc&quot;</span>);</code></pre>
+<h2 id="c-10.0"><a id="mix-deconstruction">混在分解(C# 10.0)</a></h2>
+<p>で、これの実装時点で、変数宣言と既存変数の混在についても検討はされていました。
+「何か地雷を踏みそうで怖い」みたいな感じで「後でやる」扱い。</p>
+<p>それが今回、16.10 Preview 1 でマージされました。
+以下のコードが通ります。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> x;
+(x, <span class="keyword">string</span> y) = (<span class="number">1</span>, <span class="string">&quot;abc&quot;</span>);</code></pre>
+<p>変数宣言には <code>var</code> も使えて、それが冒頭のコードになります。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> x;
+(x, <span class="keyword">var</span> y) = (<span class="number">1</span>, <span class="string">&quot;abc&quot;</span>);</code></pre>
+<p>欲しいかと言われると微妙なライン… と感じますが、
+実装負担がほとんどなかったみたいですね。</p>
+<p>「あえてエラーにしてたけど、そのあえてエラーにする行を消すだけで動く」というレベルだったみたいで。
+コミュニティ(C# チームの外の人)から「<a href="https://github.com/dotnet/roslyn/pull/44476">エラー行を消して、テストを足しといたよ</a>」っていう pull request が出ていました。</p>
+<p>pull request をみるに、式ステートメントと <code>for</code> の初期化式(1項目)中でだけ認めるみたいです。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> x;
+ 
+<span class="comment">// OK な例1</span>
+(x, <span class="keyword">string</span> y1) = (<span class="number">1</span>, <span class="string">&quot;abc&quot;</span>);
+ 
+<span class="comment">// OK な例2</span>
+<span class="keyword">for</span> ((x, <span class="keyword">string</span> y2) = (<span class="number">1</span>, <span class="string">&quot;abc&quot;</span>); <span class="keyword">false</span>;)
+{
+}
+ 
+<span class="comment">// ダメな例1</span>
+<span class="keyword">var</span> t = (x, <span class="keyword">string</span> y3) = (<span class="number">1</span>, <span class="string">&quot;abc&quot;</span>);
+ 
+<span class="comment">// ダメな例2</span>
+m(<span class="keyword">out</span> (x, <span class="keyword">string</span> y4));
+<span class="keyword">void</span> m(<span class="keyword">out</span> (<span class="keyword">int</span>, <span class="keyword">string</span>) t) =&gt; t = (<span class="number">1</span>, <span class="string">&quot;abc&quot;</span>);</code></pre>
+<p>ちなみに、コミュニティ貢献であってもレビューのコストは掛かるわけで、
+この手の pull request が常にうまくいくわけではないんですが。
+今回に関しては <a href="https://github.com/YairHalberstadt">pull request 作者さん</a>が元々 <a href="https://github.com/dotnet/csharplang/">charplang</a>/<a href="https://github.com/dotnet/roslyn">roslyn</a> への貢献が大きい人なのと、
+本当に「ほぼテストを足しただけ」レベルの修正だったからあっさりと通ったんじゃないかなという感じはします。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2021/3/">3&#x6708;</a></li><li><a href="/blog/2021/3/usingimprovements/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: using &#x304C;&#x3089;&#x307F; (using &#x30A8;&#x30A4;&#x30EA;&#x30A2;&#x30B9;&#x306E;&#x6539;&#x5584;&#x3068; global using)</a></li><li><a href="/blog/2021/3/improvedinterpolatedstrings/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: Improved Interpolated Strings</a></li><li><a href="/blog/2021/3/200b/">&#x306A;&#x3093;&#x3068;&#x304B;&#x3057;&#x3066;&#x304F;&#x308C;&#x308B;&#x30BC;&#x30ED;&#x5E45;&#x30B9;&#x30DA;&#x30FC;&#x30B9;</a></li><li><a href="/blog/2021/3/ufcpplive/">YouTube &#x3067; C# &#x304C;&#x3089;&#x307F;&#x306E;&#x30E9;&#x30A4;&#x30D6;&#x914D;&#x4FE1;&#x521D;&#x3081;&#x3066;&#x307E;&#x3057;&#x305F;(1&#x5E74;&#x7D4C;&#x3063;&#x305F;)</a></li><li><a href="/blog/2021/3/lambdaimprovements/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: &#x30E9;&#x30E0;&#x30C0;&#x5F0F;&#x306E;&#x6539;&#x5584;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

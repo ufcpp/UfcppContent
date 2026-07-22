@@ -1,0 +1,229 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5217;&#x6319;&#x578B; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/structured/st_enum/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">列挙型</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>C# では、<strong id="enum" class="keyword">列挙型</strong>（enumeration type）と呼ばれるものを利用することで、曜日などの特定の値しかとらないデータを表現することが出来ます。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>列挙型: 特定の値しか取らないようなもの（例えば曜日など）に対して使う型</p>
+</li>
+<li><p>enum DayOfWeek { Monday, Tuesday, ... }</p>
+</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="about"></a>列挙型とは</h2>
+<p>例えば、曜日は月・火・水・木・金・土・日の7つの値しか取りませんし、
+英語の月は January, February, March, April, May, June, July, August, September, October, November, December の12個の値しか取りません。
+その他にも、
+飛行機の乗車クラス(エコノミー・ビジネス・ファースト)、
+日本の年号(明治・大正・昭和・平成)、
+性別(男・女)など、特定の値しか取らないものはたくさんあります。
+C# で、このような特定の値しか取らない型を表現するためには列挙型というものを使います。</p>
+<p>列挙型は以下のようにして定義します。</p>
+<pre><code class="language-csharp"><span class="keyword">enum</span> 列挙型名
+{
+  メンバー1, メンバー2, …, メンバーn
+}</code></pre>
+<p>列挙型を利用する側では以下のようにします。</p>
+<pre><code class="language-csharp">列挙型名.メンバー名</code></pre>
+<p>また、列挙型の値を <code>Console.Write</code> などに渡して表示すると、
+メンバー名がそのまま表示されます。
+例えば、和暦の年号を列挙型として定義すると以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">enum</span> 年号
+{
+  明治, 大正, 昭和, 平成
+}
+
+<span class="keyword">class</span> EnumSample
+{
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 和暦を西暦に変換する</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    年号[] era = <span class="keyword">new</span> 年号[<span class="number">5</span>]{年号.昭和, 年号.大正, 年号.明治, 年号.平成, 年号.昭和};
+    <span class="keyword">int</span>[] j_year = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">5</span>]{<span class="number">33</span>, <span class="number">12</span>, <span class="number">20</span>, <span class="number">10</span>, <span class="number">54</span>};
+    <span class="keyword">int</span>[] year = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">5</span>];
+
+    Console.Write(<span class="string">&quot;和暦      西暦\n&quot;</span>);
+    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">5</span>; ++i)
+    {
+      <span class="keyword">switch</span>(era[i])
+      {
+      <span class="keyword">case</span> 年号.明治: year[i] = j_year[i] + <span class="number">1863</span>; <span class="keyword">break</span>;
+      <span class="keyword">case</span> 年号.大正: year[i] = j_year[i] + <span class="number">1911</span>; <span class="keyword">break</span>;
+      <span class="keyword">case</span> 年号.昭和: year[i] = j_year[i] + <span class="number">1925</span>; <span class="keyword">break</span>;
+      <span class="keyword">case</span> 年号.平成: year[i] = j_year[i] + <span class="number">1988</span>; <span class="keyword">break</span>;
+      }
+
+      Console.Write(<span class="string">&quot;{0}{1:d2}年  {2:d4}年\n&quot;</span>, era[i], j_year[i], year[i]);
+    }
+  }
+}</code></pre>
+<pre><code class="language-console">和暦      西暦
+昭和33年  1958年
+大正12年  1923年
+明治20年  1883年
+平成10年  1998年
+昭和54年  1979年</code></pre>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="value"></a>列挙型の値</h2>
+<p>列挙型はプログラムの内部では整数として扱われていて、
+整数型に変換することでその値を取り出すことが出来ます。
+特に値や型を指定しなければ、列挙型は <code>int</code> として扱われ、
+各メンバーは宣言した順番に 0, 1, 2, …, n となります。</p>
+<p>例えば以下のような列挙型を定義すると、
+<code>Mon, Tue, Wed, Thu, Fri, Sat, Sun</code>
+の値はそれぞれ 0, 1, 2, 3, 4, 5, 6 になります。</p>
+<pre><code class="language-csharp"><span class="keyword">enum</span> DayOfWeek
+{
+  Mon, Tue, Wed, Thu, Fri, Sat, Sun
+}</code></pre>
+<p>列挙型の型や値は以下のようにすることで明示的に指定することも出来ます。</p>
+<pre><code class="language-csharp"><span class="keyword">enum</span> 列挙型名 : 内部的な型
+{
+  メンバー1 = メンバー1の値,
+  メンバー2 = メンバー2の値,
+   …,
+  メンバーn = メンバーnの値
+}</code></pre>
+<p>また、1つ目のメンバーだけに値を指定すると、残りのメンバーの値は1つ目のメンバーの値から1ずつ増加した値になります。</p>
+<p>例えば、<code>byte</code> 型で、値が1から始まる列挙型を定義したければ以下のようにします。</p>
+<pre><code class="language-csharp"><span class="keyword">enum</span> Month : <span class="keyword">byte</span>
+{
+  January = <span class="number">1</span>, February, March, April,
+  May, June, July, August,
+  September, October, November, December
+}
+
+<span class="keyword">class</span> EnumSample
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;<span class="number">12</span>; ++i)
+      Console.Write(<span class="string">&quot;{0}月  {1}\n&quot;</span>, i, (Month)i);
+  }
+}</code></pre>
+<pre><code class="language-console">1月  January
+2月  February
+3月  March
+4月  April
+5月  May
+6月  June
+7月  July
+8月  August
+9月  September
+10月  October
+11月  November</code></pre>
+<p>ちなみに、この例から分かるように、
+列挙型を文字列化（ToString）すると、列挙型のメンバー名が表示されます。</p>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="flag"></a>フラグ</h2>
+<p>ときには、以下のような定数を定義したい場合もあります。</p>
+<ul>
+<li><p>条件が n 個ある（例えば X, Y, Z の3つ）</p>
+</li>
+<li><p>「X かつ Y」とか「Y かつ Z」というような条件もありうる</p>
+</li>
+</ul>
+<p>こういう場合、列挙型を以下のように使って実現したりします。</p>
+<pre><code class="language-csharp"><span class="keyword">enum</span> Xyz
+{
+  X = <span class="number">1</span>, <span class="comment">// 001</span>
+  Y = <span class="number">2</span>, <span class="comment">// 010</span>
+  Z = <span class="number">4</span>, <span class="comment">// 100</span>
+}
+
+<span class="keyword">class</span> Program
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+  {
+    Xyz xy = Xyz.X | Xyz.Y; <span class="comment">// 011</span>
+    ...
+  }</code></pre>
+<p>列挙型の値を2の累乗にして、OR 演算をとります。</p>
+<p>ただし、このままだと、Console.Write を使って表示するときに少し困ります。
+以下の例の場合、X | Y は 3 になるわけですが、値が3のメンバーは Xyz 列挙型には定義されていないので、
+表示結果は数値の3がそのまま表示されます。</p>
+<pre><code class="language-csharp"><span class="keyword">enum</span> Xyz
+{
+  X = <span class="number">1</span>, <span class="comment">// 001</span>
+  Y = <span class="number">2</span>, <span class="comment">// 010</span>
+  Z = <span class="number">4</span>, <span class="comment">// 100</span>
+}
+
+<span class="keyword">class</span> Program
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+  {
+    Console.Write(<span class="string">&quot;{0}\n&quot;</span>, Xyz.X);
+    Console.Write(<span class="string">&quot;{0}\n&quot;</span>, Xyz.Y);
+    Console.Write(<span class="string">&quot;{0}\n&quot;</span>, Xyz.Z);
+
+    Xyz xy = Xyz.X | Xyz.Y;
+    Console.Write(<span class="string">&quot;{0}\n&quot;</span>, xy);
+  }
+}</code></pre>
+<pre><code class="language-console">X
+Y
+Z
+3</code></pre>
+<p>これに対して、列挙型に Flags 属性を付けると、以下のような表示結果が得られるようになります。
+（属性に関しては「<a href="/study/csharp/dynamic/sp_attribute/">属性</a>」を参照。）</p>
+<pre><code class="language-csharp">[Flags]
+<span class="keyword">enum</span> Xyz
+{
+  X = <span class="number">1</span>, <span class="comment">// 001</span>
+  Y = <span class="number">2</span>, <span class="comment">// 010</span>
+  Z = <span class="number">4</span>, <span class="comment">// 100</span>
+}
+
+<span class="keyword">class</span> Program
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+  {
+    Xyz xy = Xyz.X | Xyz.Y;
+    Console.Write(<span class="string">&quot;{0}\n&quot;</span>, xy);
+
+    Xyz yz = Xyz.Y | Xyz.Z;
+    Console.Write(<span class="string">&quot;{0}\n&quot;</span>, yz);
+
+    Xyz zx = Xyz.Z | Xyz.X;
+    Console.Write(<span class="string">&quot;{0}\n&quot;</span>, zx);
+
+    Xyz xyz = Xyz.X | Xyz.Y | Xyz.Z;
+    Console.Write(<span class="string">&quot;{0}\n&quot;</span>, xyz);
+  }
+}</code></pre>
+<pre><code class="language-console">X, Y
+Y, Z
+X, Z
+X, Y, Z</code></pre>
+<h2 id="section-6"><a id="sec-generated-title-6"></a> <a id="plan"></a>追加予定</h2>
+<p>System.Enum クラスから派生。
+特別扱い（他の値型同様）。</p>
+<p>いくつかメソッド紹介。
+インスタンス: ToString, HasFlag。
+静的: IsDefined, GetName, GetNames, GetValues, TryParse</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/structured/">&#x69CB;&#x9020;&#x5316;</a></li><li><a href="/study/csharp/structured/st_structured/">&#x69CB;&#x9020;&#x5316;</a></li><li><a href="/study/csharp/structured/st_control/">&#x5236;&#x5FA1;&#x30D5;&#x30ED;&#x30FC;</a></li><li><a href="/study/csharp/structured/st_branch/">&#x6761;&#x4EF6;&#x5206;&#x5C90;</a></li><li><a href="/study/csharp/structured/st_loop/">&#x53CD;&#x5FA9;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/structured/st_array/">&#x914D;&#x5217;</a></li><li><a href="/study/csharp/structured/st_function/">&#x95A2;&#x6570;</a></li><li><a href="/study/csharp/structured/miscentrypoint/">[&#x96D1;&#x8A18;] &#x30A8;&#x30F3;&#x30C8;&#x30EA;&#x30FC;&#x30DD;&#x30A4;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/structured/miscinlining/">[&#x96D1;&#x8A18;] &#x30A4;&#x30F3;&#x30E9;&#x30A4;&#x30F3;&#x5316;</a></li><li><a href="/study/csharp/structured/miscoverloadresolution/">[&#x96D1;&#x8A18;] &#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30ED;&#x30FC;&#x30C9;&#x89E3;&#x6C7A;</a></li><li><a href="/study/csharp/structured/sp_params/">&#x53EF;&#x5909;&#x9577;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/sp4_optional/">&#x30AA;&#x30D7;&#x30B7;&#x30E7;&#x30F3;&#x5F15;&#x6570;&#x30FB;&#x540D;&#x524D;&#x4ED8;&#x304D;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/st_command/">&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x30E9;&#x30A4;&#x30F3;&#x5F15;&#x6570;</a></li><li><a href="/study/csharp/structured/st_library/">&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li><li><a href="/study/csharp/structured/st_struct/">&#x30C7;&#x30FC;&#x30BF;&#x306E;&#x69CB;&#x9020;&#x5316;(&#x8907;&#x5408;&#x578B;)</a></li><li><a href="/study/csharp/structured/st_anonymoustype/">&#x540D;&#x524D;&#x306E;&#x306A;&#x3044;&#x8907;&#x5408;&#x578B;</a></li><li><a href="/study/csharp/structured/sp_namespace/">&#x540D;&#x524D;&#x7A7A;&#x9593;</a></li><li><a href="/study/csharp/structured/oo_exception/">&#x4F8B;&#x5916;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/structured/misc_exception/">[&#x96D1;&#x8A18;] &#x4F8B;&#x5916;&#x306E;&#x4F7F;&#x3044;&#x65B9;</a></li><li><a href="/study/csharp/structured/misc_stacktrace/">[&#x96D1;&#x8A18;] &#x4F8B;&#x5916;&#x306E;&#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x30C8;&#x30EC;&#x30FC;&#x30B9;</a></li><li><a href="/study/csharp/structured/miscexpressions/">[&#x96D1;&#x8A18;] &#x5F0F;&#x306B;&#x307E;&#x3064;&#x308F;&#x308B;&#x88DC;&#x8DB3;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,441 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x95A2;&#x6570;&#x3001;&#x30D5;&#x30A3;&#x30EB;&#x30BF;&#x3001;&#x30B9;&#x30AF;&#x30EA;&#x30D7;&#x30C8; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/powershell/syntax/function/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">関数、フィルタ、スクリプト</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>他の多くのプログラミング言語と同様に、
+PowerShell にも関数やサブルーチンと呼ばれる類の機能があります。</p>
+<p>PowerShell の関数はオブジェクトパイプラインを強く意識して作られています。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="function"></a>関数</h2>
+<p>PowerShell では、
+<strong id="keyfunction" class="keyword">function</strong> キーワードを使って、
+「function 関数名 {処理内容}」という構文で<strong id="function" class="keyword">関数</strong>（function）を定義します。</p>
+<p>呼び出しは、単に関数名を記述するだけです。</p>
+<pre><code class="language-console">&gt;  function f { pwd }
+&gt;  f
+
+Path
+----
+C:\Users\Public</code></pre>
+<h3 id="section-3"><a id="sec-generated-title-3"></a> <a id="args"></a>引数の受け取り</h3>
+<p>PowerShell の関数は引数を持てるんですが、
+引数の受け取り方には3パターンあります。</p>
+<ol>
+<li><p>$args 自動変数を使う。</p>
+</li>
+<li><p>引数リストを書く。</p>
+</li>
+<li><p>param キーワードを使う。</p>
+</li>
+</ol>
+<p>まずは、$args という自動変数を使って引数を受け取る方法です。
+「f param1 param2 param3」というように引数を与えると、
+param1, param2, param3 が自動的に配列 $args に格納されます。</p>
+<pre><code class="language-console">&gt;  function f { $args.Length }
+&gt;  f a b c
+3
+&gt;  f 1 2 3 4
+4
+&gt;  function f { $args[0] * $args[1] }
+&gt;  f 2 3
+6</code></pre>
+<p>ちなみに、関数の呼び出しはコマンド扱いです（引数の取り方は「<a href="/study/powershell/syntax/basic/#commandmode">コマンドモード</a>」になる）。</p>
+<p>自動変数 $args を使う方法以外に、
+明示的に引数を宣言する構文もあります。
+関数名の後ろに、「function f($x, $y)」というように引数リストを書きます。</p>
+<pre><code class="language-console">&gt;  function f($x, $y) { $x * $y }
+&gt;  f 2 3
+6</code></pre>
+<p>もう1つ、param キーワードを使う方法があります。
+関数名の後とかではなくて、
+関数本体内部に param($x, $y) というような書き方をします。</p>
+<pre><code class="language-console">&gt;  function f { param($x, $y); $x * $y }
+&gt;  f 2 3
+6</code></pre>
+<p>関数では、普通に引数リストを書けばいい話なので、
+あまり param を使う必要もありませんが、
+後述する外部スクリプトやスクリプトブロックでは、
+この param キーワードを使って引数を受け取ることになります。</p>
+<h3 id="section-4"><a id="sec-generated-title-4"></a> <a id="argstype"></a>引数の型指定</h3>
+<p>引数リストによる方法と、param キーワードを使う方法では、
+引数の型を明示することもできます。</p>
+<pre><code class="language-console">&gt;  function f([int]$x, [int]$y) { $x * $y }
+&gt;  f 2 3
+6
+&gt;  f 2.2 3.4
+# ↓ int に型変換される
+6</code></pre>
+<p>型を明示する場合としない場合とで、
+型変換によって挙動が代わる場合もあるので注意してください。
+（できるだけ型は明示すべき。）</p>
+<pre><code class="language-console">&gt;  function f($x, $y) { $x * $y }
+&gt;  f &quot;2&quot; 3
+222
+&gt;  function f([int]$x, [int]$y) { $x * $y }
+&gt;  f &quot;2&quot; 3
+6</code></pre>
+<h3 id="ref"><a id="sec-generated-title-5"></a> <a id="ref"></a>ref 引数</h3>
+<p>関数の引数は参照渡しもできます。
+（参照渡しに関しては、「<a href="/study/csharp/resource/sp_ref/">引数の参照渡し</a>」参照。）
+参照渡しをするには、引数の前に [ref] をつけます。</p>
+<pre><code class="language-console">&gt; function swap([ref]$a, [ref]$b) {
+  $t = $a.Value; $a.Value = $b.Value; $b.Value = $t
+}
+
+&gt; $x = 1
+&gt; $y = 2
+&gt; $x, $y
+1
+2
+&gt; swap ([ref]$x) ([ref]$y)
+&gt; $x, $y
+2
+1</code></pre>
+<p>ただし、上の例を見ての通り、
+参照先の変数には Value を通してアクセスする必要があります。
+（この辺り、C# の ref キーワードとはちょっと違う。）
+[ref] を付けた変数は System.Management.Automation.PSReference 型になります。</p>
+<h3 id="section-5"><a id="sec-generated-title-6"></a> <a id="call"></a>引数の渡し方</h3>
+<p>既に少し触れましたが、
+関数の呼び出しはコマンド扱いです。
+引数の取り方が「<a href="/study/powershell/syntax/basic/#commandmode">コマンドモード</a>」になる以外にも、
+名前付きパラメータで（オプション的な書式）で引数を渡すこともできたりします。</p>
+<p>例えば、「function f($x, $y)」というように、変数名 $x, $y で引数を定義した関数の場合、
+「f -x 2 -y 3」と言うような書式でも関数の呼び出しが可能です。
+（オプション的な渡し方と、並べる順番による渡し方の併用も可能。）</p>
+<pre><code class="language-console">&gt;  function f($x, $y) { $x * $y }
+&gt;  f -x 2 -y 3
+6
+&gt;  f 2 -y 3
+6
+&gt;  f -x 2 3
+6</code></pre>
+<h3 id="section-6"><a id="sec-generated-title-7"></a> <a id="default"></a>引数のデフォルト値</h3>
+<p>引数には、
+デフォルト値（呼び出し側で引数を与えずに呼んだときに設定される値）を設定できます。</p>
+<p>デフォルト値の設定の書式は、
+引数リスト（もしくは param）で変数を宣言する際に、値を代入しておくだけです。</p>
+<pre><code class="language-console">&gt;  function f($x = 3, $y = 5) { $x * $y }
+&gt;  f
+15
+&gt;  f 2
+10
+&gt;  f -x 2
+10
+&gt;  f -y 2
+6</code></pre>
+<h3 id="return"><a id="sec-generated-title-8"></a> <a id="return"></a>return</h3>
+<p>関数中に return と書くと、そこで関数の処理を終了します。</p>
+<pre><code class="language-console">&gt;  function f($x) { if($x -lt 5) {return}; $x }
+&gt;  f 3
+# ↓ 値を出力する前に return してる
+&gt;  f 5
+5</code></pre>
+<h3 id="section-7"><a id="sec-generated-title-9"></a> <a id="returnval"></a>戻り値</h3>
+<p>値を出力するコマンドを書くと、
+それが関数の戻り値になります。
+値を出力するコマンドを複数並べた場合、
+出力が配列になります。</p>
+<pre><code class="language-console">&gt;  function f {1; &quot;test&quot;; pwd}
+&gt;  f
+1
+test
+
+Path
+----
+C:\Users\Public</code></pre>
+<p>return の後ろに戻り値を書くこともできますが、
+まあ、どこに書いても戻り値が出力されちゃうんで、あんまり意味もないです。</p>
+<pre><code class="language-console">&gt;  function f { 1; 2; return 3}
+&gt;  f
+1
+2
+3</code></pre>
+<p>で、気をつけないといけないのは、
+関数内で戻り値を持った別の関数を呼ぶ場合。
+（成功したかどうかを示すフラグを返すだけとかで）
+戻り値を受け取る必要がない場合でも、
+ちゃんと変数で戻り値を受け取るか、
+[void] を書いておかないと不要な値が出力されてしまいます。</p>
+<pre><code class="language-console">&gt;  function parse($str)
+{
+  [int] $local:a = 0;
+  [int]::TryParse($str, [ref]$local:a)
+# ↓ TryParse が結果を返すことを忘れると
+  $str
+}
+
+&gt;  parse &quot;128&quot;
+True
+# ↓ 不要な出力が混ざる
+128
+&gt;  parse &quot;test&quot;
+False
+0</code></pre>
+<pre><code class="language-console">&gt;  function parse($str)
+{
+  [int] $local:a = 0;
+  [void][int]::TryParse($str, [ref]$local:a)
+  $str
+}
+
+&gt;  parse &quot;128&quot;
+128
+&gt;  parse &quot;test&quot;
+0</code></pre>
+<h3 id="section-8"><a id="sec-generated-title-10"></a> <a id="pipeline"></a>パイプライン引数</h3>
+<p>PowerShell の関数の他のスクリプト言語の関数と異なるのは、
+オブジェクトパイプラインを強く意識している所です。</p>
+<p>PowerShell の関数は、コマンド（Cmdlet や 外部スクリプト）とほとんど同じ機能を持っていて、
+| を使ってパイプラインで他のコマンドと繋ぐこともできます。</p>
+<p>パイプラインから受け取った値は、
+$input という自動変数に格納されます。
+$input は Enumerator なので、foreach 文などを使って要素を参照します。</p>
+<pre><code class="language-console">&gt;  function times([int] $a)
+{
+  foreach($x in $input)
+  {
+    $a * $x
+  }
+}
+
+&gt;  1,2,3 | times 2
+2
+4
+6</code></pre>
+<h3 id="begin-process-end"><a id="sec-generated-title-11"></a> <a id="process"></a>begin, process, end</h3>
+<p>PowerShell の関数には、パイプライン処理専用の以下のような構文も用意されています。</p>
+<pre><code class="language-console">&gt;  function 関数名
+{
+  begin   { 最初に1回呼ばれる }
+  process { パイプラインで受け取ったオブジェクトごとに呼ばれる }
+  end     { 最後に1回呼ばれる }
+}</code></pre>
+<p>パイプラインで受け取ったオブジェクトは $_ という自動変数に格納されます。
+要するに、例えば、「1,2,3 | f」と書いて、配列 1,2,3 を f に渡すと、
+以下のような動作をします。</p>
+<ul>
+<li><p>begin ブロックが呼ばれる</p>
+</li>
+<li><p>$_ = 1 として process ブロックが呼ばれる</p>
+</li>
+<li><p>$_ = 2 として process ブロックが呼ばれる</p>
+</li>
+<li><p>$_ = 3 として process ブロックが呼ばれる</p>
+</li>
+<li><p>end ブロックが呼ばれる</p>
+</li>
+</ul>
+<p>例えば、以下のように使います。</p>
+<pre><code class="language-console">&gt;  function f()
+{
+  begin   { $local:count = 0 }
+  process { $_; $local:count += 1 }
+  end     { &quot;total {0} objects&quot; -f $local:count }
+}
+
+&gt;  1,2,3 | f
+1
+2
+3
+total 3 objects</code></pre>
+<h2 id="section-9"><a id="sec-generated-title-12"></a> <a id="filter"></a>フィルタ</h2>
+<p>関数とは別に、パイプラインから受け取ったオブジェクトに対する処理専用の<strong id="filter" class="keyword">フィルタ</strong>（filter）というものもあります。
+まあ、要するに、process 文だけを持つ function だと思ってください。</p>
+<p>書式は関数とほとんど一緒なんですが、function の変わりに <strong id="keyfilter" class="keyword">filter</strong> キーワードを使って、
+「filter フィルタ名 { 処理内容 }」と書きます。</p>
+<pre><code class="language-console">&gt;  filter square { $_ * $_}
+&gt;  1,2,3 | square
+1
+4
+9</code></pre>
+<p>関数と同様に、引数を取ったりもできます。</p>
+<pre><code class="language-console">&gt;  filter times($a) { $a * $_}
+&gt;  1,2,3 | times 2
+2
+4
+6</code></pre>
+<p>複数の戻り値を返すこともできます。</p>
+<pre><code class="language-console">&gt;  filter duplicate { $_; $_ }
+&gt;  1,2,3 | duplicate
+1
+1
+2
+2
+3
+3</code></pre>
+<h2 id="section-10"><a id="sec-generated-title-13"></a> <a id="scriptblock"></a>スクリプトブロック</h2>
+<p>名前付きの関数・フィルタに加えて、
+匿名関数のような物も作れます。
+作り方は以下のような感じで、 で囲ったコードを書くだけ。</p>
+<pre><code class="language-console">&gt;  $block = { $a * $a }</code></pre>
+<p>これを、<strong id="scriptblock" class="keyword">スクリプトブロック</strong>と呼びます。</p>
+<p>スクリプトブロックは、関数と同じように呼び出し可能なんですが、
+呼び出すためにはスクリプトブロックを代入した変数の前に &amp; を付ける必要があります。</p>
+<pre><code class="language-console">&gt;  $block = { $a * $a }
+&gt;  $block
+# ↓ &amp; を付けないと、中身が表示される
+$a * $a
+&gt;  $a = 2
+&gt;  &amp; $block
+4
+&gt;  $a = 3
+&gt;  &amp; $block
+9</code></pre>
+<p>&amp; 演算子の詳細については「<a href="#execute">実行演算子</a>」で説明します。</p>
+<p>$args や param を使って引数を受け取ることもできます。</p>
+<pre><code class="language-console">&gt;  $block = { param($a); $a * $a }
+&gt;  &amp; $block 3
+9</code></pre>
+<p>&amp; を使ったスクリプトブロックも、
+コマンドと同じ扱いになります。
+（引数は「<a href="/study/powershell/syntax/basic/#commandmode">コマンドモード</a>」で渡す。）</p>
+<p>ちなみに、
+スクリプトブロックは System.Management.Automation.ScriptBlock 型になります。
+ScriptBlock 型は、Invoke メソッドを持っていて、
+この Invoke を呼び出すことでもスクリプトブロックの中身を実行可能です。</p>
+<pre><code class="language-console">&gt;  $block = { $args[0] * $args[0] }
+&gt;  $block.Invoke(2)
+4</code></pre>
+<p>ただし、この記法だと param を使った引数は受け取れないので注意。</p>
+<p>あと、混乱を招きそうなんですが、
+&amp; で呼ぶ際には引数は「<a href="/study/powershell/syntax/basic/#commandmode">コマンドモード</a>」で呼ぶのに対して、
+Invoke の方は () を使って , 区切りで与えるので注意してください。</p>
+<pre><code class="language-console">&gt;  $block = { $args[0] * $args[1] }
+&gt;  &amp; $block 2 3
+6
+&gt;  $block.Invoke(2, 3)
+6</code></pre>
+<h2 id="section-11"><a id="sec-generated-title-14"></a> <a id="extern"></a>外部スクリプト</h2>
+<p>「<a href="/study/powershell/syntax/basic/#extern">スクリプトファイル</a>」で説明したとおり、
+拡張子 .ps1 のファイルにスクリプトを書いておいて、
+そのスクリプトファイルを呼び出すということもできます。
+スクリプトの中からさらに別のスクリプトファイルを呼び出すこともできます。</p>
+<p>スクリプトは、
+書き方も呼び出し方も関数の中身とほとんど同じです。</p>
+<p>書く側では、
+param で引数を取ることが出来ますし、
+begin, process, end ブロックを書くこともできます。
+$args や $input も使えますし、
+process ブロック内では $_ も使えます。</p>
+<p>呼び出す側では、
+引数を宣言順で渡すことも、オプション的な書式で渡すこともできますし、
+パイプラインを通した呼び出しもできます。</p>
+<p>例えば、
+square.ps1 という名前のファイルに以下の内容を書いておいたとします。</p>
+<pre><code class="language-powershell"><span class="keyword">param</span>(<span class="powershellVariable">$factor</span>)
+
+<span class="keyword">process</span>
+{
+  <span class="powershellVariable">$factor</span> <span class="powershellOperator">*</span> <span class="powershellVariable">$_</span> <span class="powershellOperator">*</span> <span class="powershellVariable">$_</span>
+}</code></pre>
+<p>すると、以下のようなスクリプト呼び出しが可能です。</p>
+<pre><code class="language-console">&gt;  1,2,3 | .\test.ps1 -factor 2
+2
+8
+18</code></pre>
+<h2 id="section-12"><a id="sec-generated-title-15"></a> <a id="execute"></a>実行演算子</h2>
+<p>「<a href="#scriptblock">スクリプトブロック</a>」のところで、
+スクリプトブロックは &amp; を使って呼び出すと書きましたが、
+ここではもう少し詳しく &amp; について説明します。</p>
+<p>&amp; には、実はいくつかの機能があります。
+（といっても、いずれもコマンドの実行がらみ。）</p>
+<ol>
+<li><p>&amp; 外部スクリプト … 関数、外部スクリプトを呼び出す。</p>
+</li>
+<li><p>&amp; スクリプトブロック … スクリプトブロックを実行する。</p>
+</li>
+<li><p>&amp; &quot;文字列&quot; … 文字列をコマンドとして解釈する。</p>
+</li>
+</ol>
+<p>まあ、1番目は、&amp; をつけなくても、
+関数名・スクリプトファイル名だけでも呼び出せるのであまり必要はないですね。
+ただ、後述する . 演算子との対比のためにこういう書き方もできるようになっているんだと思います。</p>
+<p>2番目は「<a href="#scriptblock">スクリプトブロック</a>」で説明したとおりです。</p>
+<p>3番目は以下のような感じ。</p>
+<pre><code class="language-console">&gt;  &amp; &quot;pwd&quot;
+
+Path
+----
+C:\Users\Public</code></pre>
+<p>ちなみに、これは、文字列内全体が1つのコマンドとみなされます。
+例えば、&amp; &quot;cd ..&quot; とか書くと、
+スペースも含めて「cd ..」全体で1つのコマンドだと思われて、
+「そんな名前のコマンドはない」と怒られます。
+（「&amp; &quot;cd&quot; ..」なら正しく実行できる。）</p>
+<h2 id="section-13"><a id="sec-generated-title-16"></a> <a id="source"></a>ソース演算子</h2>
+<p>実行演算子 &amp; と似たような演算子に、
+ソース演算子 . があります。
+&amp; と同じく、以下の3つのことができます。</p>
+<ol>
+<li><p>. 外部スクリプト … 関数、外部スクリプトを呼び出す。</p>
+</li>
+<li><p>. スクリプトブロック … スクリプトブロックを実行する。</p>
+</li>
+<li><p>. &quot;文字列&quot; … 文字列をコマンドとして解釈する。</p>
+</li>
+</ol>
+<p>で、&amp; との違いなんですが、
+実行されるスコープが違います。
+&amp; の方は、1段階下のレベルのスコープになるんですが、
+. では、呼び出し元と同じスコープで実行されます。
+（Unix 系コマンドの source と同じ動作。）</p>
+<p>例えば以下のコードを見てください。</p>
+<pre><code class="language-console">&gt;  function f { $x = 0 }
+&gt;  $x = 1
+&gt;  f
+&gt;  $x
+1</code></pre>
+<p>関数 f 内の $x と、呼び出し元で 1 を代入している $x は別物です。
+（関数内はレベルが1段階下。）
+なので、関数内で $x の値を 0 に上書きしたつもりでも、
+呼び出し元の方の $x には影響はありません。</p>
+<p>これを . で呼び出すとどうなるかと言うと、
+以下の通り。</p>
+<pre><code class="language-console">&gt;  function f { $x = 0 }
+&gt;  $x = 1
+&gt;  . f
+&gt;  $x
+0</code></pre>
+<p>関数の中身が、呼び出し元と同じスコープで実行されます。
+従って、呼び出し元の $x が書き換えられます。</p>
+<p>なので、“呼び出し”というよりは“取り込み”ということで、
+ソース（source）演算子と呼びます。</p>
+<p>外部スクリプトファイル中で定数や関数を定義して、
+それを取り込みたい場合
+（要するに、C 言語の #include 的な使い方をしたい場合）
+には &amp; ではなくて . を使います。</p>
+<p>ちなみに、
+.test とかいうように書くと、
+PowerShell は &quot;.test&quot; という名前のファイルを探しにいっちゃうので、
+. 演算子の後ろには1スペース空ける必要があります。</p>
+<h2 id="section-14"><a id="sec-generated-title-17"></a> <a id="priority"></a>コマンド名の解決順位</h2>
+<p>PowerShell では、
+Cmdlet も関数もスクリプトも全部同じ書式でコマンドとして呼び出せます。
+また、Cmdlet と同じ名前の関数やエイリアスを作ったりすることもできます。</p>
+<p>同名のエイリアスや関数がある場合には、以下の優先順位で実行されます。</p>
+<p>エイリアス → 関数 → Cmdlet → ps1 スクリプト → exe/bat ファイル → 通常ファイル</p>
+<p>（通常のファイルをコマンドとして入力すると、
+ファイルに関連付けられたアプリケーションが立ち上がります。）</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/powershell/syntax/">PowerShel &#x306E;&#x69CB;&#x6587;</a></li><li><a href="/study/powershell/syntax/basic/">&#x57FA;&#x790E;&#x77E5;&#x8B58;</a></li><li><a href="/study/powershell/syntax/variable/">&#x5909;&#x6570;</a></li><li><a href="/study/powershell/syntax/dotnet/">.NET Framework &#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;</a></li><li><a href="/study/powershell/syntax/valuetype/">&#x5024;&#x578B;</a></li><li><a href="/study/powershell/syntax/string/">&#x6587;&#x5B57;&#x5217;</a></li><li><a href="/study/powershell/syntax/array/">&#x914D;&#x5217;</a></li><li><a href="/study/powershell/syntax/xml/">XML</a></li><li><a href="/study/powershell/syntax/flow/">&#x5236;&#x5FA1;&#x69CB;&#x6587;</a></li><li><a href="/study/powershell/syntax/exception/">&#x4F8B;&#x5916;&#x51E6;&#x7406;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

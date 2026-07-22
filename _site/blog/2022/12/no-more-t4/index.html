@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5FC5;&#x305A;&#x3001;&#x304B;&#x306E;&#x90AA;&#x77E5;&#x66B4;&#x8650;&#x306E; T4 &#x3092;&#x9664;&#x304B;&#x306D;&#x3070;&#x306A;&#x3089;&#x306C;&#x3068;&#x6C7A;&#x610F;&#x3057;&#x305F; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2022/12/no-more-t4/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2022-12-20T22:39:14">2022-12-20</time></span><span>更新: <time datetime="2022-12-20T22:58:46">2022-12-20</time></span></div><h1 id="t4">必ず、かの邪知暴虐の T4 を除かねばならぬと決意した</h1>
+<p>個人的に、前々から「<a href="https://learn.microsoft.com/ja-jp/visualstudio/modeling/code-generation-and-t4-text-templates">T4</a> は将来性が見えなさ過ぎてもう使うのやめたい」と言い続けていたわけですが、
+最近ようやく自分が保守している T4 を全部別の手段で書き換えたので、
+今日はそれの話。</p>
+<h2 id="t4-text-template-transformation-toolkit"><a id="t4">T4 (Text Template Transformation Toolkit)</a></h2>
+<p>テキスト テンプレートというと、ひな形的なテキストを簡易な文法で生成するようなものです。</p>
+<p>例えば、</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> TryParse(<span class="keyword">this</span> <span class="keyword">string</span> s, <span class="keyword">out</span> {{T}} x) =&gt; {{T}}.TryParse(s, <span class="keyword">out</span> x);</code></pre>
+<p>みたいな文字列の、<code>{{T}}</code> のところに <code>bool</code>, <code>byte</code>, <code>int</code>, <code>double</code> を与えて、</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> TryParse(<span class="keyword">this</span> <span class="keyword">string</span> s, <span class="keyword">out</span> <span class="keyword">bool</span> x) =&gt; <span class="keyword">bool</span>.TryParse(s, <span class="keyword">out</span> x);
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> TryParse(<span class="keyword">this</span> <span class="keyword">string</span> s, <span class="keyword">out</span> <span class="keyword">byte</span> x) =&gt; <span class="keyword">byte</span>.TryParse(s, <span class="keyword">out</span> x);
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> TryParse(<span class="keyword">this</span> <span class="keyword">string</span> s, <span class="keyword">out</span> <span class="keyword">int</span> x) =&gt; <span class="keyword">int</span>.TryParse(s, <span class="keyword">out</span> x);
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> TryParse(<span class="keyword">this</span> <span class="keyword">string</span> s, <span class="keyword">out</span> <span class="keyword">double</span> x) =&gt; <span class="keyword">double</span>.TryParse(s, <span class="keyword">out</span> x);</code></pre>
+<p>とかを生成したいことがたまにあります。</p>
+<p>今書いたみたいに4種・4行程度なら手書きでも全然かまわないんですが、
+<code>sbyte</code>, <code>short</code>, <code>ushort</code>, ... と増やしていくとテキスト テンプレートに頼りたくなります。</p>
+<p>C# でテキスト テンプレートというと、
+<a href="https://learn.microsoft.com/ja-jp/visualstudio/modeling/code-generation-and-t4-text-templates">T4</a> (Text Template Transfomration Toolkit)が有名ではあります。</p>
+<p>T4 を使うと、上記の <code>Parse</code> は以下のように書けます。</p>
+<pre><code class="language-csharp">&lt;#
+<span class="keyword">var</span> types = <span class="keyword">new</span>[] { <span class="string">&quot;bool&quot;</span>, <span class="string">&quot;byte&quot;</span>, <span class="string">&quot;int&quot;</span>, <span class="string">&quot;double&quot;</span> };
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> t <span class="keyword">in</span> types)
+{
+#&gt;
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> TryParse(<span class="keyword">string</span> s, <span class="keyword">out</span> &lt;#= t #&gt; x) =&gt; &lt;#= t #&gt;.TryParse(s, <span class="keyword">out</span> x);
+&lt;#
+}
+#&gt;</code></pre>
+<h2 id="t4-1"><a id="t4-now">T4 の今</a></h2>
+<p>元々 Entity Framework が内部で使っていたツールを公にしてしまったものですよね、確か。
+今となっては本当に「してしまった」みたいな言い方にした方がいいと僕は本気で思っているんですけども。
+どうも、.NET の中の人も、Entity Framework チーム以外あんまり乗り気で使っている風には見えず。
+真面目に使う気があるのなら今時もうちょっと改良されててもよさそうなものなのに、
+ちょっと塩漬け感があります。</p>
+<p>例えば以下のような問題あり。</p>
+<ul>
+<li>Visual Studio でしか動かず、しかも、手作業で .tt ファイルを開いて保存したタイミングでしかテキスト生成が走らない
+<ul>
+<li>今時あれば、<a href="/study/csharp/misc/analyzer-generator/">Roslyn Source Generator</a> 化すれば dotnet build でテキスト生成できるのにやってない</li>
+<li>Git とかで管理するなら、生成結果のテキストもコミットする運用になる</li>
+</ul>
+</li>
+<li>Visual Studio 自体の表示言語に生成結果が依存する
+<ul>
+<li>編集して保存した人の表示言語によって生成結果が変わる</li>
+<li>無駄に差分が出て、Git とかの差分が悲惨</li>
+</ul>
+</li>
+<li>csproj 内にいろいろとゴミが残る
+<ul>
+<li><a href="https://github.com/ufcpp/UfcppSample/blob/master/Demo/2022/NoMoreT4/ClassLibrary1/ClassLibrary1.csproj#L11"><code>&lt;Service Include=&quot;{508349b6-6b84-4df5-91f0-309beebad82d}&quot; /&gt;</code></a> とか</li>
+<li><a href="https://github.com/ufcpp/UfcppSample/blob/master/Demo/2022/NoMoreT4/ClassLibrary1/ClassLibrary1.csproj#L10"><code>System.CodeDom</code> の参照</a>とか</li>
+<li><a href="https://github.com/ufcpp/UfcppSample/blob/master/Demo/2022/NoMoreT4/ClassLibrary1/ClassLibrary1.csproj#L14-L24"><code>&lt;None Update=&quot;T4Generator.tt&quot;&gt;</code> みたいなの</a>とか</li>
+</ul>
+</li>
+</ul>
+<p>さらに、中間的に作られる「テキスト生成するための generator クラス」がまたかなり悲惨だったりします。</p>
+<p>一例: <a href="https://github.com/ufcpp/UfcppSample/blob/master/Demo/2022/NoMoreT4/ClassLibrary1/T4Generator.tt">元 tt ファイル</a> → <a href="https://github.com/ufcpp/UfcppSample/blob/master/Demo/2022/NoMoreT4/ClassLibrary1/T4Generator.cs">生成される generator クラス</a></p>
+<p>例えば、元 tt ファイルで <code>&lt;#= t #&gt;</code> みたいになっているところは
+generator 内では <code>ToStringWithCulture(t)</code> みたいに展開されるんですが、
+この <code>ToStringWithCulture</code> の中身は以下のようになっています。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">string</span> ToStringWithCulture(<span class="keyword">object</span> objectToConvert)
+{
+    <span class="keyword">if</span> ((objectToConvert == <span class="keyword">null</span>))
+    {
+        <span class="keyword">throw</span> <span class="keyword">new</span> global::System.ArgumentNullException(<span class="string">&quot;objectToConvert&quot;</span>);
+    }
+    System.Type t = objectToConvert.GetType();
+    System.Reflection.MethodInfo method = t.GetMethod(<span class="string">&quot;ToString&quot;</span>, <span class="keyword">new</span> System.Type[] {
+                <span class="keyword">typeof</span>(System.IFormatProvider)});
+    <span class="keyword">if</span> ((method == <span class="keyword">null</span>))
+    {
+        <span class="keyword">return</span> objectToConvert.ToString();
+    }
+    <span class="keyword">else</span>
+    {
+        <span class="keyword">return</span> ((<span class="keyword">string</span>)(method.Invoke(objectToConvert, <span class="keyword">new</span> <span class="keyword">object</span>[] {
+                    <span class="keyword">this</span>.formatProviderField })));
+    }
+}</code></pre>
+<p>任意の型に対してカルチャー(<code>IFromatProvider</code>)指定するためだけにリフレクション。
+しかも、<code>MethodInfo</code> のキャッシュもせず、毎回律義に <code>GetMethod</code>。
+さらに、常に <code>object</code> 引数で受け取っているので、<code>int</code> (おそらく最多で渡される)とかだと都度<a href="/study/csharp/resource/rmboxing/">ボックス化</a>。</p>
+<p>T4 が作られた当初ならしょうがなかったのかもしれないですけどねぇ。
+今なら、単に <a href="https://learn.microsoft.com/ja-jp/dotnet/api/system.string.create#system-string-create(system-iformatprovider-system-runtime-compilerservices-defaultinterpolatedstringhandler@)"><code>string.Create</code></a>とか<a href="https://learn.microsoft.com/ja-jp/dotnet/api/system.text.stringbuilder.append#system-text-stringbuilder-append(system-iformatprovider-system-text-stringbuilder-appendinterpolatedstringhandler@)">StringBuilder.Append</a>でカルチャー指定もできるのに。
+というか、むしろ、<a href="/blog/2021/8/invariantculture/">カルチャー依存やめろ、誰得</a>。</p>
+<p>ちなみに、T4 生成の generator クラスと、自前で<a href="/study/csharp/start/st_string/#string-interpolation">文字列補間</a>を使って書いた generator でベンチマークを比べると、一例として以下のテーブルくらいの差が出ます。</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th style="text-align: right;">Mean</th>
+<th style="text-align: right;">Error</th>
+<th style="text-align: right;">StdDev</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T4</td>
+<td style="text-align: right;">19,247.7 ns</td>
+<td style="text-align: right;">74.46 ns</td>
+<td style="text-align: right;">69.65 ns</td>
+</tr>
+<tr>
+<td>Interpolation</td>
+<td style="text-align: right;">330.6 ns</td>
+<td style="text-align: right;">5.94 ns</td>
+<td style="text-align: right;">5.55 ns</td>
+</tr>
+</tbody>
+</table>
+<p>2桁差。
+2倍ではなく、<em>2桁</em>。
+マイクロ秒とナノ秒の補助単位違いレベル。</p>
+<p>という感じで、T4、
+さすがに中身がグダグダすぎ、かつ、近代化される気配がまるっきり皆無でつらいかなと思います。
+テンプレートの文法とかはそこまでおかしくもないんですけどね。
+さすがにもう使っていられないかなと…</p>
+<h2 id="t4-2"><a id="no-more-t4">脱 T4</a></h2>
+<p>ということで脱 T4 の話。</p>
+<p>ただ、T4 の用途は2種類ありまして、それぞれ代替手段が異なります。</p>
+<ul>
+<li>TextTemplatingFilePreprocessor: 上記でいう「generator を作る」ところまでやるモード</li>
+<li>TextTemplatingFileGenerator: さらにその generator を実行して、最終結果を直接生成するモード</li>
+</ul>
+<h3 id="texttemplatingfilepreprocessor"><a id="file-preprocessor">TextTemplatingFilePreprocessor</a></h3>
+<p>「generator を作るところまで」の方。</p>
+<p>TextTemplatingFilePreprocessor な T4 はもう本当に存在意義がないですね。
+先ほどすでに「文字列補間で自前で」とかやっていますが、
+文字列補間で十分です。</p>
+<p>特に、<a href="/study/csharp/start/st_string/#csharp10-improvement">C# 10 で文字列補間のパフォーマンスが劇的に向上</a>していますし、
+C# 11 で入った<a href="/study/csharp/start/st_string/#raw-string">生文字列リテラル</a>によってテンプレートも書きやすくなっています。
+本校冒頭で書いたテンプレートなら、普通に以下のように書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Text;
+
+<span class="keyword">var</span> s = <span class="keyword">new</span> StringBuilder();
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> t <span class="keyword">in</span> <span class="keyword">new</span>[] { <span class="string">&quot;bool&quot;</span>, <span class="string">&quot;byte&quot;</span>, <span class="string">&quot;int&quot;</span>, <span class="string">&quot;double&quot;</span> })
+{
+    s.Append($$<span class="string">&quot;&quot;</span>&quot;
+            <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> TryParse(<span class="keyword">string</span> s, <span class="keyword">out</span> {{t}} x) =&gt; {{t}}.TryParse(s, <span class="keyword">out</span> x);
+
+        <span class="string">&quot;&quot;</span>&quot;);
+}</code></pre>
+<p>(カルチャー指定が必要なら <code>Append</code> メソッドの第1引数を追加。)</p>
+<p>テキスト テンプレートとしては結構冗長ですけども、まあ、許容範囲で、
+「素の C# だけで書けてる」ということを考慮すると十分満足の行くコードじゃないかと思います。</p>
+<p>T4 からの移行も割かし簡単で、
+<a href="https://gist.github.com/ufcpp/2262fe3f607974b68b849b5b47a4dc32">こんな感じのコード</a>で置換を掛けるだけで行けます。</p>
+<ul>
+<li><code>&lt;#=</code> ～ <code>#&gt;</code> を、<code>{{</code> ～ <code>}}</code> に置換</li>
+<li><code>#&gt;</code> を <code> s.Append($$&quot;&quot;&quot;</code> に置換</li>
+<li><code>&lt;#</code> を <code>&quot;&quot;&quot;);</code> に置換</li>
+</ul>
+<p>(これだと不足もあるんですが、あとは手での書き換えでもなんとかなるレベル。)</p>
+<h3 id="texttemplatingfilegenerator"><a id="file-generator">TextTemplatingFileGenerator</a></h3>
+<p>「generator を実行までして最終結果を直接得る」の方。</p>
+<p>こっちはさすがに素の C# ではできないんですが。
+ビルド時に何かしらのテキストを生成するものというと、最近だと Roslyn Source Generator です。</p>
+<p>T4 も、テンプレートの文法自体に不満はそこまでないので、Source Generator 実装に置き換わっていたらそれを普通に使うんですけどね…
+ここ数年定期的に「誰か T4 を Source Generator 実装しなおしてないかな」とか検索したりしてたんですが…
+いないですね。一向に。</p>
+<p>そして、「ないので自分で作ろう」ってなったときに、なかなかきれいな T4 エンジン ライブラリが見つからず。
+「だったらもっと楽に使えそうな別のテンプレート エンジンを使いたい」となりまして。
+結局、Source Generator で一番使いやすそうだったのが scriban でした。</p>
+<ul>
+<li><a href="https://github.com/scriban/scriban">scriban</a></li>
+</ul>
+<p>ということで作ったのがこれです:</p>
+<ul>
+<li><a href="https://github.com/ufcpp/ScribanSourceGenerator">ScribanSourceGenerator</a></li>
+<li><a href="https://github.com/ufcpp/UfcppSample/tree/master/Demo/2022/NoMoreT4/FileGenerator">利用例</a></li>
+</ul>
+<p>例えば以下のような拡張子 .scriban のファイルを置くか、</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">class</span> Extensions
+{
+{{
+<span class="keyword">for</span> $t <span class="keyword">in</span> [<span class="string">&quot;bool&quot;</span>,<span class="string">&quot;byte&quot;</span>,<span class="string">&quot;int&quot;</span>,<span class="string">&quot;double&quot;</span>]
+~}}
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> TryParse(<span class="keyword">this</span> <span class="keyword">string</span> s, <span class="keyword">out</span> {{$t}} x) =&gt; {{$t}}.TryParse(s, <span class="keyword">out</span> x);
+{{ end }}
+}</code></pre>
+<p>以下のようにクラスに属性を付けてコード生成できます。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> FileGenerator;
+
+[ScribanSourceGeneretor.ClassMember(<span class="string">&quot;&quot;</span>&quot;
+    {{
+    <span class="keyword">for</span> $t <span class="keyword">in</span> [<span class="string">&quot;bool&quot;</span>,<span class="string">&quot;byte&quot;</span>,<span class="string">&quot;int&quot;</span>,<span class="string">&quot;double&quot;</span>]
+    ~}}
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> TryParse(<span class="keyword">this</span> <span class="keyword">string</span> s, <span class="keyword">out</span> {{$t}} x) =&gt; {{$t}}.TryParse(s, <span class="keyword">out</span> x);
+    {{ end }}
+    <span class="string">&quot;&quot;</span>&quot;)]
+<span class="keyword">internal</span> <span class="keyword">static</span> <span class="keyword">partial</span> <span class="keyword">class</span> Extensions
+{
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2022/12/">12&#x6708;</a></li><li><a href="/blog/2022/12/rawstringwhitespace/">raw string &#x306E;&#x7A7A;&#x767D;&#x6587;&#x5B57;</a></li><li><a href="/blog/2022/12/stackalloc-natural-type/">stackalloc &#x306E;&#x81EA;&#x7136;&#x306A;&#x578B;</a></li><li><a href="/blog/2022/12/extension-resolution/">&#x62E1;&#x5F35;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x306F;&#x6697;&#x9ED9;&#x578B;&#x5909;&#x63DB;&#x3092;&#x898B;&#x306A;&#x3044;</a></li><li><a href="/blog/2022/12/unused-generic-type-parameter/">&#x672A;&#x4F7F;&#x7528;&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30C3;&#x30AF;&#x578B;&#x5F15;&#x6570;&#x3067; TypeLoadException &#x304C;&#x8D77;&#x3053;&#x308B;&#x554F;&#x984C;</a></li><li><a href="/blog/2022/12/unsafer-unsafe/">Unsafe &#x30AF;&#x30E9;&#x30B9;&#x306E;&#x6557;&#x5317; (&#x95A2;&#x6570;&#x30DD;&#x30A4;&#x30F3;&#x30BF;&#x30FC;)</a></li><li><a href="/blog/2022/12/binarytool/">JSON &#x3068;&#x304B;&#x306E;&#x4E2D;&#x8EAB;&#x78BA;&#x8A8D;&#x30C4;&#x30FC;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

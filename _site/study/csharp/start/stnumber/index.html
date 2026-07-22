@@ -1,0 +1,141 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x6570;&#x5024; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/start/stnumber/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">数値</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>本項では、<a href="/study/csharp/start/st_embeddedtype/">組み込み型</a>の補足として、<a href="/study/csharp/start/st_embeddedtype/#integer">整数型</a>や<a href="/study/csharp/start/st_embeddedtype/#float">浮動小数点数型</a>など、いわゆる「数値」がらみの少し細かい話をします。</p>
+<h2 id="intdouble"><a id="sec-generated-title-2"></a> <a id="int-double"></a>int型とdouble型</h2>
+<p>C#の数値型には、使用する記憶領域サイズ違いのものがいくつかあります。その中で代表的な位置づけにあるのは、整数では<code>int</code>型(4バイト)、浮動小数点数では<code>double</code>型(8バイト)です。</p>
+<p>どう「代表的」かというと以下のような感じです。</p>
+<ul>
+<li><code>int</code>型より小さいサイズの整数は、計算時にいったん<code>int</code>扱いされる</li>
+<li>浮動小数点数は、計算時にいったん<code>double</code>扱いされる</li>
+<li>リテラルも、数字だけを書くと基本的に<code>int</code>、<code>double</code>扱い</li>
+</ul>
+<p>例えば、下図のように、<code>short</code>型(2バイト)同士の計算をすると、結果が<code>int</code>型になります。</p>
+<p><img src="/assets/media/1077/int.png" alt="整数型同士の計算結果はintに" /></p>
+<p>これは、大体必要とされる桁数が<code>int</code>型か<code>double</code>型で十分まかなえるため、これらの計算が一番高速になるようなCPUが多いという理由があります。
+(実際にはいろんな要因がからんで、<code>int</code>型か<code>double</code>型を使っておけば安泰というわけでもなく、何が最適かは状況によります。
+CPU構造の流行など、時代による差もあったりします。最近だと<code>double</code>型(8バイト)よりも<code>float</code>型の方が有利になる場面も多いです。)</p>
+<h2 id="section-2"><a id="sec-generated-title-3"></a> <a id="base"></a>10進数以外の数値</h2>
+<p>普通に整数リテラルを書くと10進数なわけですが、その他に、16進数と2進数で書くことができます。</p>
+<p>16進数や2進数については「<a href="/study/computer/digits/digitsincomputer/#bin-oct-hex">コンピューターでよく使う数字</a>」を参照してください。</p>
+<h3 id="section-3"><a id="sec-generated-title-4"></a> <a id="hexadecimal"></a>16進数リテラル</h3>
+<p>普通に数字を並べると10進数扱いされますが、先頭に<code>0x</code>を付けると16進数で数値を書けるようになります(hexadecimal literals)。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = 0xFF;       <span class="comment">// 16進数のFF = 15&#215;16 + 15 = 10進数だと 255</span>
+<span class="keyword">var</span> y = 0XabcdABCD; <span class="comment">// 0X や、A～F の記号は大文字・小文字どちらでもOK</span></code></pre>
+<h3 id="section-4"><a id="sec-generated-title-5"></a> <a id="binary"></a>2進数リテラル</h3>
+<h5 class="version version7">Ver. 7</h5>
+<p>C# 7で、2進数でもリテラルを書けるようになりました(binary literals)。
+先頭に<code>0b</code>を付けると2進数リテラルになります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = 0b10010101; <span class="comment">// 2進数の10010101 = 128 + 16 + 4 + 1 = 10進数だと 149</span>
+<span class="keyword">var</span> y = 0B1111;     <span class="comment">// b は大文字・小文字どちらでもOK</span></code></pre>
+<p>よくある用途としては、「フラグ」があります。
+以下のように、ビットごとに意味があって、ビットの組み合わせを表したい場合です。</p>
+<pre><code class="language-csharp"><span class="keyword">enum</span> ColorFlags
+{
+    Black = <span class="number">0</span>,
+
+    Red = <span class="number">1</span>,
+    Green = 0b10,
+    Blue = 0b100,
+
+    Yellow = Red | Green,
+    Cyan = Green | Blue,
+    Magenta = Blue | Red,
+
+    White = Red | Green | Blue,
+}</code></pre>
+<p>この例では、1ビット目が赤(red)、2ビット目が緑(green)、3ビット目が青(blue)を表していて、
+「赤と緑の組み合わせが黄色(yellow)」というのを、1ビット目と2ビット目が1なので、2進数で11(つまり、10進数で3)という数値で表しています。
+こういう表し方を、特定の場所に旗(flag)を立てて目印にするのに例えて、「フラグ」と呼びます。</p>
+<h3 id="section-5"><a id="sec-generated-title-6"></a> <a id="initial0"></a>数値リテラルの先頭は 0～9</h3>
+<p>16進数リテラルも2進数リテラルも、どちらも0から始まります(それぞれ、<code>0x</code>か<code>0b</code>始まり)。
+10進数リテラルも数字(0～9のいずれか)から始まるわけで、数値リテラルは常に数字始まりです。</p>
+<p>一方で、C#では識別子(変数名などに使える名前)に数字始まりを認めていません。例えば0から始まる名前の変数は作れません。
+最初の1文字だけを見て、それが識別子なのか数値リテラルなのかを判別できます。</p>
+<p>C#で書かれたソースコードの解釈を高速に行うためにこういう仕様になっています。</p>
+<h2 id="section-6"><a id="sec-generated-title-7"></a> <a id="digit-separator"></a>数字区切り文字</h2>
+<h5 class="version version7">Ver. 7</h5>
+<p>C# 7では、数値リテラルの数字と数字の間に、<code>_</code>で区切りを入れれるようになりました。
+リテラルの桁数が大きい時に便利です。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> million = 1_000_000;
+<span class="keyword">var</span> abcd = 0b1010_1011_1100_1101; <span class="comment">// 特に2進数リテラルで有用</span>
+<span class="keyword">var</span> abcd2 = 0xab_cd;              <span class="comment">// 16進数リテラルにも使える</span>
+<span class="keyword">var</span> x = <span class="number">1</span>.123_456_789;            <span class="comment">// 浮動小数点数リテラルにも使える</span></code></pre>
+<p>特に2進数リテラルを使うと桁が大きくなりがちなので、<a href="#binary">2進数リテラル</a>との組み合わせが便利でしょう。</p>
+<p>ちなみに、末尾や先頭、小数点の前後に <code>_</code> を書くことはできません。以下のコードは全行でコンパイル エラーになります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> a = _10;
+<span class="keyword">var</span> b = 10_;
+<span class="keyword">var</span> c = <span class="number">1</span>._0;
+<span class="keyword">var</span> d = 1_.<span class="number">0</span>;
+
+<span class="comment">// (以下の2つは C# 7.2 以降であれば書ける)</span>
+<span class="keyword">var</span> e = 0x_10;
+<span class="keyword">var</span> f = 0b_10;</code></pre>
+<h3 id="section-7"><a id="sec-generated-title-8"></a> <a id="leading-separator"></a>先頭区切り文字</h3>
+<h5 class="version version7_1">Ver. 7.2</h5>
+<p>C# 7.2で、<code>0b</code>、<code>0x</code>の直後に区切り文字の <code>_</code> を入れることができるようになりました。</p>
+<pre><code class="language-csharp"><span class="comment">// C# 7.0 から書ける</span>
+<span class="keyword">var</span> b1 = 0b1111_0000;
+<span class="keyword">var</span> x1 = 0x0001_F408;
+
+<span class="comment">// C# 7.2 から書ける</span>
+<span class="comment">// b, x の直後に _ 入れてもOKに</span>
+<span class="keyword">var</span> b2 = 0b_1111_0000;
+<span class="keyword">var</span> x2 = 0x_0001_F408;</code></pre>
+<p>C# 7.2で認められたのはあくまで <code>0b</code> と <code>0x</code> の直後だけです。
+以下の4つは C# 7.2 であっても書けません。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> a = _10;
+<span class="keyword">var</span> b = 10_;
+<span class="keyword">var</span> c = <span class="number">1</span>._0;
+<span class="keyword">var</span> d = 1_.<span class="number">0</span>;</code></pre>
+<p>「C# 7.0時点では迷ったので、入れない方に倒した」程度のものです。
+(後から機能を追加するのは簡単にできますが、
+1度入れてしまった機能は問題があってもなくすことができないため。)
+迷った理由は、「数字(digit)の区切り」という割には<code>b</code>や<code>x</code>が数字ではないためと、
+<code>_10</code> と書くと識別子扱いされるので <code>0b_10</code>や<code>0x_10</code>を認めるのに多少抵抗があったためだそうです。</p>
+<h2 id="section-8"><a id="sec-generated-title-9"></a> <a id="plan"></a>他、書く予定</h2>
+<p>(書きかけ)</p>
+<ul>
+<li>科学表記リテラルについて多少詳しめに</li>
+<li>浮動小数点数リテラルは <code>.</code> から始めてもOK</li>
+<li>整数サフィックスの<code>L</code>, <code>U</code>は大文字小文字、順序自由: <code>U</code> <code>u</code> <code>L</code> <code>l</code> <code>UL</code> <code>Ul</code> <code>uL</code> <code>ul</code> <code>LU</code> <code>Lu</code> <code>lU</code> <code>lu</code> どれでもOK
+<ul>
+<li>数字の1と紛らわしいので小文字の<code>l</code>はあんまり使わないけども</li>
+</ul>
+</li>
+<li><a href="/study/computer/digits/floatingpointnumber/">浮動小数点数</a>に触れておく
+<ul>
+<li>無限大とNaN</li>
+</ul>
+</li>
+<li>IEEE 754規格
+<ul>
+<li>float, doubleはIEEE 754規格</li>
+<li>decimalは規格に沿ってない(decimal向けのIEEE規格は、C#ができた当時にはなかった)</li>
+</ul>
+</li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/start/">&#x57FA;&#x790E;</a></li><li><a href="/study/csharp/start/st_basis/">C#&#x306E;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x57FA;&#x672C;&#x69CB;&#x9020;</a></li><li><a href="/study/csharp/start/st_compile/">&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x4F5C;&#x6210;&#x30FB;&#x5B9F;&#x884C;</a></li><li><a href="/study/csharp/start/st_comment/">&#x30B3;&#x30E1;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/start/st_consoleio/">&#x5024;&#x306E;&#x5165;&#x51FA;&#x529B;</a></li><li><a href="/study/csharp/start/st_variable/">&#x5909;&#x6570;&#x3068;&#x5F0F;</a></li><li><a href="/study/csharp/start/misc_identifier/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x540D;&#x306B;&#x4F7F;&#x3048;&#x308B;&#x6587;&#x5B57;</a></li><li><a href="/study/csharp/start/misc_unicode/">[&#x96D1;&#x8A18;] C# &#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x3068; Unicode</a></li><li><a href="/study/csharp/start/st_embeddedtype/">&#x7D44;&#x8FBC;&#x307F;&#x578B;</a></li><li><a href="/study/csharp/start/st_string/">&#x7279;&#x6B8A;&#x306A;&#x6587;&#x5B57;&#x5217;&#x30EA;&#x30C6;&#x30E9;&#x30EB;</a></li><li><a href="/study/csharp/start/improvedinterpolatedstring/">C# 10.0 &#x306E;&#x88DC;&#x9593;&#x6587;&#x5B57;&#x5217;&#x306E;&#x6539;&#x5584;</a></li><li><a href="/study/csharp/start/st_operator/">&#x7D44;&#x8FBC;&#x307F;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/study/csharp/start/st_cast/">&#x7D44;&#x8FBC;&#x307F;&#x578B;&#x5909;&#x63DB;</a></li><li><a href="/study/csharp/start/sp_checked/">&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30D5;&#x30ED;&#x30FC;&#x306E;&#x30C1;&#x30A7;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/start/sp_const/">&#x5B9A;&#x6570;</a></li><li><a href="/study/csharp/start/sp3_inference/">&#x578B;&#x63A8;&#x8AD6;(&#x6697;&#x9ED9;&#x7684;&#x578B;&#x4ED8;&#x3051;)&#x3068;&#x533F;&#x540D;&#x578B;</a></li><li><a href="/study/csharp/start/sp3_var/">[&#x96D1;&#x8A18;] &#x578B;&#x63A8;&#x8AD6;&#x306E;&#x662F;&#x975E;</a></li><li><a href="/study/csharp/start/st_scope/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x306E;&#x30B9;&#x30B3;&#x30FC;&#x30D7;&#x3068;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x5BFF;&#x547D;</a></li><li><a href="/study/csharp/start/misctyperesolution/">[&#x96D1;&#x8A18;] &#x578B;&#x306E;&#x6C7A;&#x5B9A;</a></li><li><a href="/study/csharp/start/miscreservedattribute/">[&#x96D1;&#x8A18;] &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x306B;&#x5F71;&#x97FF;&#x3092;&#x53CA;&#x307C;&#x3059;&#x5C5E;&#x6027;</a></li><li><a href="/study/csharp/start/definiteassignment/">[&#x96D1;&#x8A18;] &#x660E;&#x78BA;&#x306A;&#x4EE3;&#x5165;&#x30EB;&#x30FC;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

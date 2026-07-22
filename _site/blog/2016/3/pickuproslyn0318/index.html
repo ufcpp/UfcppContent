@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 3/18 | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/3/pickuproslyn0318/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-03-18T10:43:23">2016-03-18</time></span><span>更新: <time datetime="2016-03-18T10:43:23">2016-03-18</time></span></div><h1 id="roslyn-318">ピックアップRoslyn 3/18</h1>
+<h2 id="c-7">C# 7に取り込む範囲、ある程度決まったみたい</h2>
+<p>作業リストが更新されてた。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/2136">C# 7 Work List of Features #2136</a></li>
+</ul>
+<p>前はあって今消えてるものは単に「7からは外す」という意味。
+まだ最終決定でもないんで、ここからまた増減はあるはず。</p>
+<p>個人的な印象としては、現状でもそこそこ動いているものだけ残してる感じ。
+たぶん、「年に1回リリース」、つまり、今年中のC# 7リリースがかなり現実味ありそう。</p>
+<p>ということで、まだちょっと検討が要りそうなものはリストから抜けました。
+待ち遠しいけども先送られたのは「非同期シーケンス」と「非null参照型」あたりですかね。</p>
+<ul>
+<li>async sequences (<a href="https://github.com/dotnet/roslyn/issues/261">#261</a>, <a href="https://github.com/dotnet/roslyn/issues/5383">#5383</a>)</li>
+<li>non-null reference type (<a href="https://github.com/dotnet/roslyn/issues/227">#227</a>, <a href="https://github.com/dotnet/roslyn/issues/7445">#7445</a>)</li>
+</ul>
+<h2 id="section">レコード型の仕様書</h2>
+<p>レコード型の仕様書がやっとできてた。future ブランチにはマージ済み。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/blob/future/docs/features/records.md">Records for C#</a></li>
+</ul>
+<h2 id="expression-bodied-setget">expression-bodied な set/get、コンストラクター</h2>
+<p>set, get 個別に、<code>=&gt;</code> を使った短縮形のプロパティ定義を書けるようにしてほしいとか、そういう要望が前々から上がっていたわけですが。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/pull/8594">Expression body syntax for accessors, ctor and finalize #8594</a></li>
+<li><a href="https://github.com/dotnet/roslyn/issues/7881">Proposal: Expression bodied get and set methods #7881</a></li>
+</ul>
+<p>C# 6の時にも検討されたものの、「要望があるのはわかるけど、そこまで需要高くないし後回し」扱いされていたものです。</p>
+<p>それに対して、C# チームの外から pull request が来て、C# チーム的にも「それをベースに実装するか」という流れになっている模様。</p>
+<h2 id="section-1">サロゲートペア識別子対応</h2>
+<p>日本人的に、ほしければ「Add your reaction」で +1 だけでもつけといた方がよさそうなものが。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/9731">Compiler does not correctly interpret surrogate pairs when used in an identifier #9731</a></li>
+</ul>
+<p>サロゲートペアになってる文字でも、文字カテゴリーが letter になってるんだったら識別子に使えるべきじゃないかという話。</p>
+<p>要するに「𩸽」(ほっけ。U+29E3D)とかの話。</p>
+<p>C# 的には、letter系のカテゴリーに含まれている文字を識別子に使えるという仕様になっています。
+ただ、.NETが内部的に16ビット(UTF16)で文字列を持ってるせいで、サロゲートペアになってる文字はカテゴリーを正しく判定してもらえない。</p>
+<p>要するに、以下のようなコードを実行すると、結果はSurrogateになります。</p>
+<pre><code class="language-csharp"><span class="keyword">char</span>.GetUnicodeCategory(<span class="string">&quot;&#171581;&quot;</span>[<span class="number">0</span>])</code></pre>
+<p>とはいえ、以下のように、<code>char</code>じゃなくて<code>string</code>を受け付けて、サロゲートペアな文字でも使えるオーバーロードに書き直せばちゃんと判定できます。
+𩸽の場合はOtherLetter。</p>
+<pre><code class="language-csharp"><span class="keyword">char</span>.GetUnicodeCategory(<span class="string">&quot;&#171581;&quot;</span>, <span class="number">0</span>)</code></pre>
+<p>ってことで、</p>
+<ul>
+<li>C# 実装なRoslyn的に、実は判定自体はできる</li>
+<li>でも、2文字見ないといけなくなってそれなりにコンパイラーに負担が掛かる</li>
+<li>それで使えるようになる文字というと、日本語的には𩸽みたいなレアな文字
+<ul>
+<li>このissueページで言われてるのは「シュメール語の文字を使いたい」みたいな要望</li>
+</ul>
+</li>
+</ul>
+<p>という感じ。</p>
+<p>それでも、この手の文字を識別子に使いたいですか？使いたいなら、reactionしておきましょう。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/3/">2016&#x5E74;3&#x6708;</a></li><li><a href="/blog/2016/3/pickuproslyn0301/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 3/1: position-to-property&#x30DE;&#x30C3;&#x30C1;</a></li><li><a href="/blog/2016/3/pickuproslyn0303/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7; Roslyn 3/3: &#x30BF;&#x30D7;&#x30EB; &#x30D9;&#x30FC;&#x30B9;&#x306E;position-to-property&#x30DE;&#x30C3;&#x30C1;</a></li><li><a href="/blog/2016/3/vs-updates-0331/">Visual Studio 2015 Update 2&#x304C;RTM &#xFF06; Visual Studio &quot;15&quot; Preview</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

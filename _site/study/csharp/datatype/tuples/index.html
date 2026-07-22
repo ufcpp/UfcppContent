@@ -1,0 +1,720 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30BF;&#x30D7;&#x30EB; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/datatype/tuples/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">タプル</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<h5 class="version version7">Ver. 7</h5>
+<p>「<a href="/study/csharp/structured/st_anonymoustype/">名前のない複合型</a>」で説明したように、
+型には常によい名前が付くわけではなく、名無しにしておきたいことがあります。
+そういう場合に使うもののうちの1つがC# 7で導入されたタプルです。</p>
+<p>タプルの最大の用途は<a href="/study/csharp/structured/st_anonymoustype/#multiple-returns">多値戻り値</a>です。
+関数の戻り値は引数と対になるものなので、タプルの書き心地は引数に近くなるように設計されています。</p>
+<h4 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h4>
+<ul>
+<li><code>(int x, int y)</code>というような、引数みたいな書き方で「名前のない型」を作れます</li>
+<li>この書き方をタプルと呼びます</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="tuple"></a>タプル</h2>
+<p>C# 7で導入された<strong id="key-tuple" class="keyword">タプル</strong>(tuple)は、
+<code>(int x, int y)</code>というような、引数みたいな書き方で「名前のない型」を作る機能です。</p>
+<p>※ タプルの利用には、<code>ValueTuple</code>構造体という型が必要になります。
+この型が標準ライブラリに取り込まれるのは .NET Framework 4.7、.NET Standard 1.7を予定しています。
+それ以前のバージョンでタプルを使いたい場合には、以下のパッケージを参照する必要があります。</p>
+<ul>
+<li><a href="https://www.nuget.org/packages/System.ValueTuple/">System.ValueTuple</a></li>
+</ul>
+<h3 id="section-4"><a id="sec-generated-title-4"></a> <a id="name"></a>タプルという名前</h3>
+<p>最初に例を挙げた<code>(int x, int y)</code>という書き方は、2つの<code>int</code>の値<code>x</code>と<code>y</code>を並べたものなわけですが、こういう「データを複数並べたもの」を意味する単語がタプルです。</p>
+<p>英語では倍数を「double, triple, quadruple, ...」などという単語で表しますが、これを一般化して n-tuple (nは0以上の任意の整数)と書くことがあり、これがタプルの語源です。
+n倍、n重、n連結というような意味しかなく、まさに「名前のない複合型」にピッタリの単語です。</p>
+<h3 id="section-5"><a id="sec-generated-title-5"></a> <a id="denotation"></a>型の明示</h3>
+<p><code>(int x, int y)</code>みたいな書き方で、1つの型を表します。
+タプルの型の書き方はメソッドの仮引数リスト(引数を受け取る側の書き方)に似ていて、<code>()</code>の中に「型名 メンバー名」を <code>,</code> 区切りで並べます。</p>
+<p>これは、型を書ける場所であれば概ねどこにでもこの「型」を書けます。
+まず、以下のように、フィールドや戻り値などの型にできます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Sample
+{
+    <span class="keyword">private</span> (<span class="keyword">int</span> x, <span class="keyword">int</span> y) value;
+    <span class="keyword">public</span> (<span class="keyword">int</span> x, <span class="keyword">int</span> y) GetValue() =&gt; value;
+}</code></pre>
+<p>以下のように、ローカル変数の型としても明示できます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> s = <span class="keyword">new</span> Sample();
+(<span class="keyword">int</span> x, <span class="keyword">int</span> y) t = s.GetValue();</code></pre>
+<p>もちろん、<code>var</code>を使った型推論も効きます。</p>
+<p><img src="/assets/media/1091/tuplelocalinference.png" alt="varで型推論" /></p>
+<p>また、ジェネリックな型の型引数にも使えます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> dic = <span class="keyword">new</span> Dictionary&lt;(<span class="keyword">string</span> s, <span class="keyword">string</span> t), (<span class="keyword">int</span> x, <span class="keyword">int</span> y)&gt;
+{
+    { (<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>), (<span class="number">1</span>, <span class="number">2</span>) },
+    { (<span class="string">&quot;x&quot;</span>, <span class="string">&quot;y&quot;</span>), (<span class="number">4</span>, <span class="number">8</span>) },
+};
+
+Console.WriteLine(dic[(<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>)]); <span class="comment">// (1, 2)</span></code></pre>
+<h3 id="section-6"><a id="sec-generated-title-6"></a> <a id="denotation-disallowed"></a>制限事項</h3>
+<p>ただ、いくつか、通常の型であれば書ける場所で、タプルのこの記法を使えないところがあります。
+以下の3つです。</p>
+<ul>
+<li><code>new</code>演算子</li>
+<li><code>is</code>演算子 (<a href="/study/csharp/datatype/patterns/#positional">C# 8.0 以降は使えるように</a>)</li>
+<li><code>using</code>ディレクティブ (<a href="/study/csharp/structured/sp_namespace/#using-any-type">C# 12 以降は使えるように</a>)</li>
+</ul>
+<p>例えば以下のコードはコンパイル エラーを起こします。</p>
+<pre><code class="language-csharp"><span class="comment">// using でエイリアスを付けることはできない(C# 11 以前)</span>
+<span class="keyword">using</span> T = (<span class="keyword">int</span> x, <span class="keyword">int</span> y);
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// var t = new T(1, 2); みたいなのと同じノリでは書けない</span>
+        <span class="keyword">var</span> t1 = <span class="keyword">new</span> (<span class="keyword">int</span> x, <span class="keyword">int</span> y)(<span class="number">1</span>, <span class="number">2</span>);
+        <span class="keyword">var</span> t2 = <span class="keyword">new</span> (<span class="keyword">int</span> x, <span class="keyword">int</span> y) { x = <span class="number">1</span>, y = <span class="number">2</span> };
+    }
+
+    <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">object</span> obj)
+    {
+        <span class="comment">// (C# 7.3 までは) is 演算子には使えない</span>
+        <span class="keyword">if</span>(obj <span class="keyword">is</span> (<span class="keyword">int</span> x, <span class="keyword">int</span> y))
+        {
+        }
+    }
+}</code></pre>
+<p>ただし、以下のように、配列やnull許容型を作る場合には<code>new</code>を使えます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> a = <span class="keyword">new</span>(<span class="keyword">int</span> x, <span class="keyword">int</span> y)[<span class="number">10</span>]; <span class="comment">// OK</span>
+<span class="keyword">var</span> n = <span class="keyword">new</span>(<span class="keyword">int</span> x, <span class="keyword">int</span> y)?();  <span class="comment">// OK</span></code></pre>
+<p><code>new (int x, int y)</code>という書き方は、将来的な言語拡張の予定と被る(被ってしまったら将来の拡張ができない)ため禁止しているようです。
+<code>is</code>演算子は、C# 8.0で入った<a href="/study/csharp/datatype/patterns/#positional">位置パターン</a>との競合を懸念して、C# 8.0までは認めていませんでした。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> ticks = <span class="number">100000</span>;
+        <span class="comment">// (予定。C#7 ではできない) C# 8?</span>
+        DateTime d = <span class="keyword">new</span>(ticks); <span class="comment">// 左辺から型推論して、new DateTime(ticks) が呼ばれる</span>
+    }
+
+    <span class="keyword">static</span> <span class="keyword">void</span> M(<span class="keyword">object</span> obj)
+    {
+        <span class="comment">// C# 8.0 で入った構文</span>
+        <span class="comment">// is T 扱いじゃなくて、位置パターンで obj を x, y に分解</span>
+        <span class="keyword">if</span> (obj <span class="keyword">is</span> (<span class="keyword">int</span> x, <span class="keyword">int</span> y))
+        {
+            Console.WriteLine($<span class="string">&quot;{x}, {y}&quot;</span>);
+        }
+    }
+}</code></pre>
+<p>また、タプルのメンバーは2つ以上である必要があります。<code>()</code>や<code>(int x)</code>というようなタプルは現在の仕様では作れません。</p>
+<pre><code class="language-csharp">() noneple;     <span class="comment">// ダメ</span>
+(<span class="keyword">int</span> x) oneple; <span class="comment">// ダメ</span>
+
+<span class="comment">// タプル構文で書けるのは2つ以上だけ</span>
+(<span class="keyword">int</span> x, <span class="keyword">int</span> y) twople; <span class="comment">// OK</span>
+
+<span class="comment">// タプル構文でなければ、0-tuple, 1-tuple も作れる</span>
+ValueTuple none;     <span class="comment">// OK</span>
+ValueTuple&lt;<span class="keyword">int</span>&gt; one; <span class="comment">// OK</span></code></pre>
+<h3 id="section-7"><a id="sec-generated-title-7"></a> <a id="literal"></a>タプル リテラル</h3>
+<p>タプルは<code>(1, 2)</code>というような書き方で<a href="/study/csharp/start/st_variable/#literal">リテラル</a>を書くことができます。
+タプル リテラルは実引数リスト(引数を渡す側の書き方)に似ています。</p>
+<pre><code class="language-csharp"><span class="comment">// メソッド呼び出し時の F(1, 2); みたいなノリ</span>
+(<span class="keyword">int</span> x, <span class="keyword">int</span> y) t1 = (<span class="number">1</span>, <span class="number">2</span>);
+
+<span class="comment">// メソッド呼び出し時の F(x: 1, y: 2); みたいなノリ</span>
+<span class="keyword">var</span> t2 = (x: <span class="number">1</span>, y: <span class="number">2</span>);</code></pre>
+<p><code>null</code>のように単体では型が決まらないものも、左辺に型があれば推論が効きます。
+一方で、左辺も<code>var</code>等になっていて型が決まらない場合、コンパイル エラーになります。</p>
+<pre><code class="language-csharp"><span class="comment">// これは左辺から型推論が聞くので、null も書ける</span>
+(<span class="keyword">string</span> s, <span class="keyword">int</span> i) t1 = (<span class="keyword">null</span>, <span class="number">1</span>);
+
+<span class="comment">// これはダメ。null の型が決まらない。</span>
+<span class="keyword">var</span> t2 = (<span class="keyword">null</span>, <span class="number">1</span>); <span class="comment">// コンパイル エラー</span></code></pre>
+<h3 id="section-8"><a id="sec-generated-title-8"></a> <a id="member-access"></a>メンバー参照</h3>
+<p>メンバーの参照の仕方は普通の型と変わりません。<code>(int x, int y)</code>であれば、<code>x</code>、<code>y</code>という名前でアクセスできます。
+ちなみに、タプルのメンバーは書き換え可能です。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> t = (x: <span class="number">1</span>, y: <span class="number">2</span>);
+Console.WriteLine(t.x); <span class="comment">// 1</span>
+Console.WriteLine(t.y); <span class="comment">// 2</span>
+
+<span class="comment">// メンバーごとに書き換え可能</span>
+t.x = <span class="number">10</span>;
+t.y = <span class="number">20</span>;
+Console.WriteLine(t.x); <span class="comment">// 10</span>
+Console.WriteLine(t.y); <span class="comment">// 20</span>
+
+<span class="comment">// タプル自身も書き換え可能</span>
+t = (<span class="number">100</span>, <span class="number">200</span>);
+Console.WriteLine(t.x); <span class="comment">// 100</span>
+Console.WriteLine(t.y); <span class="comment">// 200</span></code></pre>
+<p>ちなみに、タプルのメンバーはフィールドになっています
+(プロパティではない)。
+フィールドになっているということは、例えば、<a href="/study/csharp/resource/sp_ref/#sec-byref">参照引数(<code>ref</code>)</a>に直接渡せます
+(これが、プロパティだと無理)。</p>
+<p>例えば以下のようなメソッドがあったとします。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> Swap&lt;T&gt;(<span class="keyword">ref</span> T x, <span class="keyword">ref</span> T y)
+{
+    <span class="keyword">var</span> t = x;
+    x = y;
+    y = t;
+}</code></pre>
+<p>このとき、以下のようにタプルのメンバーを渡せます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> t = (x: <span class="number">1</span>, y: <span class="number">2</span>);
+Swap(<span class="keyword">ref</span> t.x, <span class="keyword">ref</span> t.y);
+Console.WriteLine(t.x); <span class="comment">// 2</span>
+Console.WriteLine(t.y); <span class="comment">// 1</span></code></pre>
+<h3 id="section-9"><a id="sec-generated-title-9"></a> <a id="deconstruction"></a>タプルの分解</h3>
+<p>タプルは、各メンバーを分解して、それぞれ別の変数に受けて使うことができます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> t = (x: <span class="number">1</span>, y: <span class="number">2</span>);
+
+<span class="comment">// 分解宣言1</span>
+(<span class="keyword">int</span> x1, <span class="keyword">int</span> y1) = t; <span class="comment">// x1, y1 を宣言しつつ、ｔ を分解</span>
+<span class="comment">// 分解宣言2</span>
+<span class="keyword">var</span> (x2, y2) = t; <span class="comment">// 分解宣言の簡易記法</span>
+
+<span class="comment">// 分解代入</span>
+<span class="keyword">int</span> x, y;
+(x, y) = t; <span class="comment">// 分解結果を既存の変数に代入</span></code></pre>
+<p>この分解は、タプル以外の型に対しても使えるものです。
+詳しくは「<a href="/study/csharp/datatype/deconstruction/">複合型の分解</a>」で説明します。</p>
+<h3 id="section-10"><a id="sec-generated-title-10"></a> <a id="conversion"></a>タプル間の変換</h3>
+<p>タプル間の代入は、一定の条件下では暗黙的変換が掛かります。</p>
+<h4 id="section-11"><a id="sec-generated-title-11"></a> <a id="different-names"></a>名前違いのタプル</h4>
+<p>タプル間の代入は、メンバーの宣言位置に基づいて行われます。
+逆に言うと、名前は無関係で、メンバーの型の並びだけ一致していれば代入できます。</p>
+<p>例えば以下のように書くと、1番目同士(<code>x</code> → <code>s</code>)、2番目同士(<code>y</code> → <code>t</code>)で値が代入されます。</p>
+<pre><code class="language-csharp">(<span class="keyword">int</span> s, <span class="keyword">int</span> t) t1 = (x: <span class="number">1</span>, y: <span class="number">2</span>);
+Console.WriteLine(t1.s); <span class="comment">// 1</span>
+Console.WriteLine(t1.t); <span class="comment">// 2</span></code></pre>
+<p>同名であっても、位置が優先です。以下のような書き方をすると、<code>x</code>、<code>y</code>が入れ替わります。</p>
+<pre><code class="language-csharp">(<span class="keyword">int</span> y, <span class="keyword">int</span> x) t2 = (x: <span class="number">1</span>, y: <span class="number">2</span>);
+Console.WriteLine(t2.x); <span class="comment">// 2</span>
+Console.WriteLine(t2.y); <span class="comment">// 1</span></code></pre>
+<h4 id="section-12"><a id="sec-generated-title-12"></a> <a id="different-types"></a>型違いのタプル</h4>
+<p>タプルのメンバーの型が違う場合、メンバーごとに調べて、すべてのメンバーで暗黙的な変換がかかる場合に限り、
+タプル間の暗黙的変換ができます。</p>
+<p>例えば以下の場合、<code>x</code>も<code>y</code>も<code>z</code>も、それぞれが型変換できるので、タプルの暗黙的型変換が掛かります。</p>
+<pre><code class="language-csharp"><span class="keyword">object</span> x = <span class="string">&quot;abc&quot;</span>; <span class="comment">// string → object は OK</span>
+<span class="keyword">long</span> y = <span class="number">1</span>; <span class="comment">// int → long は OK</span>
+<span class="keyword">int</span>? z = <span class="number">2</span>; <span class="comment">// int → int? は OK</span>
+<span class="comment">// ↓</span>
+(<span class="keyword">object</span> x, <span class="keyword">long</span> y, <span class="keyword">int</span>? z) t = (<span class="string">&quot;abc&quot;</span>, <span class="number">1</span>, <span class="number">2</span>); <span class="comment">// OK</span></code></pre>
+<p>逆に、以下の場合はコンパイル エラーになります。この例では全部のメンバーが変換不能ですが、全部でなくても、どれか1つでも変換できないと、タプル自体の変換もエラーになります。</p>
+<pre><code class="language-csharp"><span class="keyword">string</span> x = <span class="number">1</span>; <span class="comment">// int → string は NG</span>
+<span class="keyword">int</span> y = 1L; <span class="comment">// long → int は NG</span>
+<span class="keyword">int</span> z = <span class="keyword">default</span>(<span class="keyword">int</span>?); <span class="comment">// int? → int は NG</span>
+<span class="comment">// ↓</span>
+(<span class="keyword">string</span> x, <span class="keyword">int</span> y, <span class="keyword">int</span> z) t = (<span class="number">1</span>, 1L, <span class="keyword">default</span>(<span class="keyword">int</span>?)); <span class="comment">// NG</span></code></pre>
+<h4 id="section-13"><a id="sec-generated-title-13"></a> <a id="extensions"></a>拡張メソッドの解決</h4>
+<p>前節のような型違いのタプル間の変換は、拡張メソッドのオーバーロード解決の際にも働きます。</p>
+<p>例えば以下のように、配列×2のタプルに対して、<code>IEnumerable</code>×2のタプルの拡張メソッドを呼べます。
+(配列から<code>IEnumerable</code>への変換は暗黙的に行えるので、このタプル間の変換も暗黙的に行えます。)</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Collections.Generic;
+<span class="keyword">using</span> System.Linq;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">int</span>[] a1 = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span> };
+        <span class="keyword">string</span>[] a2 = <span class="keyword">new</span>[] { <span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>, <span class="string">&quot;c&quot;</span> };
+
+        <span class="comment">// 配列 &#215;2のタプルに対して、IEnumerable &#215;2のタプルの拡張メソッドを呼べる</span>
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> (i, s) <span class="keyword">in</span> (a1, a2).Zip())
+        {
+            Console.WriteLine($<span class="string">&quot;{i}: {s}&quot;</span>);
+        }
+    }
+}
+
+<span class="keyword">static</span> <span class="keyword">class</span> TupelExtensions
+{
+    <span class="comment">// IEnumerable &#215;2 に対する拡張メソッド</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> IEnumerable&lt;(T1 x1, T2 x2)&gt; Zip&lt;T1, T2&gt;(<span class="keyword">this</span> (IEnumerable&lt;T1&gt; items1, IEnumerable&lt;T2&gt; items2) t)
+        =&gt; t.items1.Zip(t.items2, (x1, x2) =&gt; (x1, x2));
+}</code></pre>
+<h3 id="section-14"><a id="sec-generated-title-14"></a> <a id="nest"></a>タプルの入れ子</h3>
+<p>タプルは入れ子にできます。</p>
+<pre><code class="language-csharp"><span class="comment">// タプルの入れ子</span>
+(<span class="keyword">string</span> a, (<span class="keyword">int</span> x, <span class="keyword">int</span> y) b) t1 = (<span class="string">&quot;abc&quot;</span>, (<span class="number">1</span>, <span class="number">2</span>));
+Console.WriteLine(t1.a);   <span class="comment">// abc</span>
+Console.WriteLine(t1.b.x); <span class="comment">// 1</span>
+Console.WriteLine(t1.b.y); <span class="comment">// 2</span>
+
+<span class="comment">// 型推論も可能</span>
+<span class="keyword">var</span> t2 = (a: <span class="string">&quot;abc&quot;</span>, b: (x: <span class="number">1</span>, y: <span class="number">2</span>));</code></pre>
+<h3 id="section-15"><a id="sec-generated-title-15"></a> <a id="anonymous-member"></a>メンバー名も匿名</h3>
+<p>タプルは、メンバー名もなくして、完全に匿名(名無し)にすることもできます。
+この場合、メンバーを使う際には<code>Item1</code>、<code>Item2</code>、…というような名前で参照します。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> t1 = (<span class="number">1</span>, <span class="number">2</span>);
+Console.WriteLine(t1.Item1); <span class="comment">// 1</span>
+Console.WriteLine(t1.Item2); <span class="comment">// 2</span></code></pre>
+<p><code>Item1</code>、<code>Item2</code>、… という名前は、後述する<code>ValueTuple</code>構造体のメンバー名です。</p>
+<p>冒頭や「<a href="/study/csharp/structured/st_anonymoustype/">名前のない複合型</a>」で説明したように、
+「メンバー名だけ見れば十分」だから型名を省略するのであって、
+メンバー名まで省略するのとさすがにプログラムが読みづらくなります。
+メンバー名も持っていない完全な匿名タプルは、おそらくかなり短い寿命でしか使わないでしょう。
+例えば、すぐに別の(メンバー名のある)タプル型に代入したり、分解して変数に受けて使うことになります。</p>
+<h3 id="section-16"><a id="sec-generated-title-16"></a> <a id="overload"></a>オーバーロード</h3>
+<p>型違いのタプルを使うのであれば、オーバーロードに使えます。
+例えば、以下のメソッド<code>F</code>は、<code>y</code>の型が違うのでオーバーロード可能です。</p>
+<pre><code class="language-csharp"><span class="comment">// 型違いのタプルでのオーバーロードは可能</span>
+<span class="keyword">void</span> F((<span class="keyword">int</span> x, <span class="keyword">int</span> y) t) { }
+<span class="keyword">void</span> F((<span class="keyword">int</span> x, <span class="keyword">string</span> y) t) { }</code></pre>
+<p>一方、型が一緒で名前だけが違うタプルではオーバーロードできません。
+以下のメソッド<code>G</code>は、同じものが2つあるのでコンパイル エラーを起こします。</p>
+<pre><code class="language-csharp"><span class="comment">// 型が一緒で名前だけ違うタプルでのオーバーロードはダメ。コンパイル エラー</span>
+<span class="keyword">void</span> G((<span class="keyword">int</span> x, <span class="keyword">int</span> y) t) { }
+<span class="keyword">void</span> G((<span class="keyword">int</span> a, <span class="keyword">int</span> b) t) { }</code></pre>
+<p>こういう仕様になっている理由は2つあります。
+1つは、次節で説明するように、内部実装的に名前だけ違うタプルを区別できないという、技術的な理由。
+もう1つは、<a href="/study/csharp/structured/st_function/#overload">引数でのオーバーロード</a>が名前を見ていない(引数の型だけがシグネチャに含まれる)のだから、引数に倣って設計されているタプルでも、メンバー名は区別しないのが自然という理由です。</p>
+<h3 id="section-17"><a id="sec-generated-title-17"></a> <a id="infer-tuple-name"></a>タプル要素名の推論</h3>
+<h5 class="version version7_1">Ver. 7.1</h5>
+<p>C# 7.1から、タプル構築時に渡した変数からタプルの要素名を推論できるようになりました。
+例えば以下のように、<code>(x, y)</code> と書くだけで、1要素目に<code>x</code>、2要素目に <code>y</code> という名前が付きます。
+(これまでだと、<code>(x: x, y: y)</code> と書く必要がありました。)</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = <span class="number">1</span>;
+<span class="keyword">var</span> y = <span class="number">2</span>;
+<span class="keyword">var</span> t = (x, y);
+
+<span class="comment">// C# 7.0。t の要素には名前が付かない</span>
+Console.WriteLine(t.Item1);
+Console.WriteLine(t.Item2);
+
+<span class="comment">// C# 7.1。(x, y) で (x: x, y: y) 扱い</span>
+<span class="comment">// t の要素に x, y という名前が付く</span>
+Console.WriteLine(t.x);
+Console.WriteLine(t.y);</code></pre>
+<p>以下のように、部分的な適用もされます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> y = <span class="number">2</span>;
+<span class="keyword">var</span> t = (<span class="number">1</span>, y);
+Console.WriteLine(t.Item1); <span class="comment">// 1</span>
+Console.WriteLine(t.y);     <span class="comment">// 2</span></code></pre>
+<p>ただし、名前に被りがあるときには推論が働きません。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = <span class="number">1</span>;
+<span class="keyword">var</span> t = (x, x);
+Console.WriteLine(t.Item1); <span class="comment">// t.x とは書けない</span>
+Console.WriteLine(t.Item2); <span class="comment">// こっちも t.x とは書けない</span>
+
+<span class="keyword">var</span> u = (x: <span class="number">0</span>, x);
+Console.WriteLine(u.x); <span class="comment">// u.x というと Item1 の方</span>
+Console.WriteLine(u.Item2); <span class="comment">// Item2 の方は x とは書けない</span></code></pre>
+<p>名前がないので当然ですが、リテラルからは要素名の推論はできません</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> t = (<span class="number">1</span>, <span class="number">2</span>);
+Console.WriteLine(t.Item1); <span class="comment">// さすがに t.1 とかは書けない</span></code></pre>
+<p>また、メソッド名からは推論されません。
+一方で、プロパティ名からは推論されます。
+プロパティやフィールドの場合、インスタンス メンバーへのアクセスでも推論されます
+(<code>t.x</code>とかなら、タプル要素名は<code>x</code>になります。<code>t?.x</code>でも可)。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> F() =&gt; <span class="number">1</span>;
+<span class="keyword">var</span> s = <span class="string">&quot;abc&quot;</span>;
+
+<span class="keyword">var</span> t = (F(), s?.Length);
+Console.WriteLine(t.Item1); <span class="comment">// メソッド名からは推論されない(t.F はダメ)</span>
+Console.WriteLine(t.Length); <span class="comment">// プロパティ名からは推論される( . でも ?. でも OK)</span></code></pre>
+<h3 id="section-18"><a id="sec-generated-title-18"></a> <a id="equality"></a>==、!= での比較</h3>
+<h5 class="version version7">Ver. 7.3</h5>
+<p>C# 7.3で、タプル同士を <code>==</code>、<code>!=</code> 演算子で比較できるようになりました。</p>
+<p>これは、後述する<a href="#tuple-ValueTuple"><code>ValueTuple</code></a>の演算子が呼ばれるわけではなく、
+コンパイラーによる特別な処理が入ります。</p>
+<p>タプルに対する<code>==</code>比較は、以下のように、メンバーごとの<code>==</code>を<a href="/study/csharp/start/st_operator/#short-circuit"><code>&amp;&amp;</code></a>で繋いだものに展開されます。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> M((<span class="keyword">int</span> a, (<span class="keyword">int</span> x, <span class="keyword">int</span> y) b) t)
+{
+    <span class="comment">// このタプル == 比較は、</span>
+    Console.WriteLine(t == (<span class="number">1</span>, (<span class="number">2</span>, <span class="number">3</span>)));
+    <span class="comment">// こんな感じで、メンバーごとの == を &amp;&amp; で繋いだものに展開される。</span>
+    Console.WriteLine(t.a == <span class="number">1</span> &amp;&amp; t.b.x == <span class="number">2</span> &amp;&amp; t.b.y == <span class="number">3</span>);
+}</code></pre>
+<p>同様に、<code>!=</code>は以下のように、メンバーごとの<code>!=</code>を<a href="/study/csharp/start/st_operator/#short-circuit"><code>||</code></a>で繋いだものになります。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> N((<span class="keyword">int</span> a, (<span class="keyword">int</span> x, <span class="keyword">int</span> y) b) t)
+{
+    <span class="comment">// 同じく != 比較は、</span>
+    Console.WriteLine(t != (<span class="number">1</span>, (<span class="number">2</span>, <span class="number">3</span>)));
+    <span class="comment">// こんな感じで、メンバーごとの != を || で繋いだものに展開される。</span>
+    Console.WriteLine(t.a != <span class="number">1</span> || t.b.x != <span class="number">2</span> || t.b.y != <span class="number">3</span>);
+}</code></pre>
+<p><code>ValueTuple</code>の<code>==</code>演算子や<code>Equals</code>メソッドではなくこういうコンパイラーによる処理が入っているのは、
+「<a href="#conversion">タプル間の変換</a>」で説明したような、メンバーごとの型変換を考慮してのことです。
+例えば、以下のように、暗黙的型変換ができるもの同士の比較ができます。</p>
+<pre><code class="language-csharp">(<span class="keyword">long</span> a, (<span class="keyword">double</span> x, <span class="keyword">decimal</span> y) b) t = (<span class="number">1</span>, (<span class="number">2</span>, <span class="number">3</span>));
+
+<span class="comment">// byte → long</span>
+<span class="comment">// float → double</span>
+<span class="comment">// short → decimal</span>
+<span class="comment">// という、暗黙的型変換ができるもの同士の比較</span>
+Console.WriteLine(t == ((<span class="keyword">byte</span>)<span class="number">1</span>, ((<span class="keyword">float</span>)<span class="number">2</span>, (<span class="keyword">short</span>)<span class="number">3</span>)));</code></pre>
+<p>ちなみに、<a href="/study/csharp/oop/oo_operator/">ユーザー定義</a>の<code>==</code>、<code>!=</code>演算子を持っている場合、そのユーザー定義のものが呼ばれます。
+また、ユーザー定義であれば<code>==</code>が<code>bool</code>以外の型を返すこともありますが、
+その場合も、<a href="/study/csharp/oop/oo_operator/#true-false"><code>true</code>、<code>false</code>演算子</a>があれば比較できます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">struct</span> MyBool
+{
+    <span class="keyword">public</span> <span class="keyword">bool</span> Value;
+    <span class="keyword">public</span> MyBool(<span class="keyword">bool</span> value) =&gt; Value = value;
+
+    <span class="comment">// 何が呼ばれてるかがわかるように WriteLine を挟む</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> <span class="keyword">operator</span> <span class="keyword">true</span>(MyBool x) { Console.WriteLine(<span class="string">&quot;MyBool.true&quot;</span>); <span class="keyword">return</span> x.Value; }
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> <span class="keyword">operator</span> <span class="keyword">false</span>(MyBool x) { Console.WriteLine(<span class="string">&quot;MyBool.false&quot;</span>); <span class="keyword">return</span> !x.Value; }
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">implicit</span> <span class="keyword">operator</span> MyBool(<span class="keyword">bool</span> b) =&gt; <span class="keyword">new</span> MyBool(b);
+}
+
+<span class="keyword">struct</span> MyInt
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> Value;
+    <span class="keyword">public</span> MyInt(<span class="keyword">int</span> value) =&gt; Value = value;
+    <span class="keyword">public</span> <span class="keyword">static</span> MyBool <span class="keyword">operator</span> ==(MyInt x, MyInt y) =&gt; x.Value == y.Value;
+    <span class="keyword">public</span> <span class="keyword">static</span> MyBool <span class="keyword">operator</span> !=(MyInt x, MyInt y) =&gt; x.Value != y.Value;
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">implicit</span> <span class="keyword">operator</span> MyInt(<span class="keyword">int</span> b) =&gt; <span class="keyword">new</span> MyInt(b);
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">bool</span> Equals(<span class="keyword">object</span> obj) =&gt; obj <span class="keyword">is</span> MyInt x &amp;&amp; Value == x.Value;
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">int</span> GetHashCode() =&gt; Value.GetHashCode();
+}
+
+<span class="keyword">public</span> <span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        (MyInt a, (MyInt x, MyInt y) b) t = (<span class="number">1</span>, (<span class="number">2</span>, <span class="number">3</span>));
+
+        <span class="comment">// MyInt の == に展開されるので、MyBool が得られる。</span>
+        <span class="comment">// MyBool 同士の &amp;&amp; で、MyBool の false 演算子が呼ばれる。</span>
+        <span class="comment">// (この例の場合、&quot;MyBool.false&quot; が3回表示される。)</span>
+        <span class="comment">// (false の方が呼ばれるのは C# の &amp;&amp; の仕様。)</span>
+        Console.WriteLine(t == (<span class="number">1</span>, (<span class="number">2</span>, <span class="number">3</span>)));
+    }
+}</code></pre>
+<!-- original-page-break -->
+<h2 id="section-19"><a id="sec-generated-title-19"></a> <a id="internal"></a>タプルの内部実装</h2>
+<p>タプルがどういうコードに展開されるかについても話しておきましょう。</p>
+<p>タプルを使ったコードを古いバージョンの.NET上で動かしたり、
+タプルを使ったライブラリを古いバージョンのC#から参照したり、
+別のプログラミング言語から参照したい場合もあります。
+そのために、タプルは、<code>ValueTuple</code>という構造体に展開されます。</p>
+<h3 id="valuetuple"><a id="sec-generated-title-20"></a> <a id="tuple-ValueTuple"></a>ValueTuple構造体への展開</h3>
+<p>タプルは、コンパイルの結果としては<code>ValueTuple</code>構造体(<code>System</code>名前空間)に展開されます。</p>
+<p>例えば、以下のようなコードを考えます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> t = (x: <span class="number">3</span>, y: <span class="number">5</span>);
+<span class="keyword">var</span> p = t.x * t.y;
+<span class="keyword">var</span> (x, y) = t;
+Console.WriteLine($<span class="string">&quot;{x} &#215; {y} = {p}&quot;</span>);</code></pre>
+<p>以下のようなコードに展開されます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> t = <span class="keyword">new</span> ValueTuple&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;(<span class="number">3</span>, <span class="number">5</span>); <span class="comment">// (x: 3, y: 5)</span>
+<span class="keyword">var</span> p = t.Item1 * t.Item2; <span class="comment">// t.x * t.y</span>
+<span class="keyword">var</span> x = t.Item1;
+<span class="keyword">var</span> y = t.Item2;
+Console.WriteLine($<span class="string">&quot;{x} &#215; {y} = {p}&quot;</span>);</code></pre>
+<p>元々の<code>x</code>や<code>y</code>という名前は、内部的には残っていません。<code>ValueTuple</code>構造体のメンバーである<code>Item1</code>や<code>Item2</code>に展開されます。</p>
+<p>特に、一度<code>object</code>や<code>dynamic</code>を経由すると、名前を完全に紛失します。
+以下のコードでは、<code>x</code>や<code>y</code>が見つからず、実行時エラーを起こします。</p>
+<pre><code class="language-csharp"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> Dynamic()
+{
+    <span class="comment">// 匿名型は名前が残る</span>
+    <span class="keyword">var</span> a = <span class="keyword">new</span> { x = <span class="number">3</span>, y = <span class="number">5</span> };
+    <span class="keyword">var</span> s1 = Sum(a); <span class="comment">// 大丈夫</span>
+    Console.WriteLine(s1);
+
+    <span class="comment">// タプル型は名前を紛失する</span>
+    <span class="keyword">var</span> t = (x: <span class="number">3</span>, y: <span class="number">5</span>);
+    <span class="keyword">var</span> s2 = Sum(t); <span class="comment">// x, yという名前が実行時になくてエラーに</span>
+    Console.WriteLine(s2);
+}
+
+<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">dynamic</span> Sum(<span class="keyword">dynamic</span> d) =&gt; d.x + d.y;</code></pre>
+<h3 id="tupleelementnames"><a id="sec-generated-title-21"></a> <a id="TupleElementNames"></a>TupleElementNames属性</h3>
+<p>とはいえ、名前をどこにも残さないと、ライブラリをまたいだ時に<code>x</code>、<code>y</code>などの名前が使えなくて困ります。
+そこで、クラスのメンバーにタプルを使う場合には、<code>TupleElementNames</code>属性(<code>System.Runtime.CompilerServices</code>名前空間)を付けて、
+C#コンパイラーには名前がわかるようにしています。</p>
+<p>例えば、以下のような引数も戻り値もタプルなメソッドを書いたとします。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> (<span class="keyword">int</span> x, <span class="keyword">int</span> y) F((<span class="keyword">int</span> a, <span class="keyword">int</span> b) t) =&gt; (t.a + t.b, t.a - t.b);</code></pre>
+<p>このメソッドは、以下のように展開されます。タプルが<code>ValueTuple</code>構造体に化けますが、<code>TupleElementNames</code>属性を付けて名前を残します。</p>
+<pre><code class="language-csharp">[<span class="keyword">return</span>: TupleElementNames(new[] { <span class="string">&quot;x&quot;</span>, <span class="string">&quot;y&quot;</span> })]
+<span class="keyword">public</span> ValueTuple&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; F([TupleElementNames(<span class="keyword">new</span>[] { <span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span> })] ValueTuple&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; t)
+    =&gt; <span class="keyword">new</span> ValueTuple&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;(t.Item1 + t.Item2, t.Item1 - t.Item2);</code></pre>
+<p>C#コンパイラーは、この情報を元に、タプルの名前を復元します。</p>
+<h3 id="valuetuple-1"><a id="sec-generated-title-22"></a> <a id="ValueTuple-definition"></a>ValueTuple構造体の中身</h3>
+<p>タプルの展開結果にあたる<code>ValueTuple</code>は、型引数が0～8個の合計9個の構造体があります。
+例えば、型引数2個のものは以下のような定義になっています。</p>
+<pre><code class="language-csharp">[StructLayout(LayoutKind.Auto)]
+<span class="keyword">public</span> <span class="keyword">struct</span> ValueTuple&lt;T1, T2&gt;
+    : IEquatable&lt;ValueTuple&lt;T1, T2&gt;&gt;, IStructuralEquatable, IStructuralComparable, IComparable, IComparable&lt;ValueTuple&lt;T1, T2&gt;&gt;
+{
+    <span class="keyword">public</span> T1 Item1;
+    <span class="keyword">public</span> T2 Item2;
+
+    <span class="keyword">public</span> ValueTuple(T1 item1, T2 item2)
+    {
+        Item1 = item1;
+        Item2 = item2;
+    }
+
+    <span class="comment">// 後略、インターフェイスのメンバー定義</span>
+}</code></pre>
+<p>基本的には、publicなフィールドだけを持つ構造体です。
+それに、値の比較用の各種インターフェイスが実装されています。</p>
+<h4 id="section-20"><a id="sec-generated-title-23"></a> <a id="long-tuple"></a>メンバーが9個以上のタプル</h4>
+<p>最初に言った通り、<code>ValueTuple</code>構造体の型引数は、最大のものでも8個です。
+では、メンバーが9個以上のタプルを作るとどうなるかというと、入れ子の<code>ValueTuple</code>構造体が作られます。</p>
+<p>例えば、以下のようなコードを書いたとします。
+メンバー名も匿名で作ったので <code>ItemN</code>(<code>N</code>は正の整数)といったような名前でメンバーを読み書きすることになります。
+C#上は、8番目以降のメンバーに対しても、<code>Item8</code>、<code>Item9</code>というような名前で参照できます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> t = (<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>);
+Console.WriteLine(t.Item9);</code></pre>
+<p>このコードは、以下のように展開されます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> t = <span class="keyword">new</span> ValueTuple&lt;<span class="keyword">int</span>, <span class="keyword">int</span>, <span class="keyword">int</span>, <span class="keyword">int</span>, <span class="keyword">int</span>, <span class="keyword">int</span>, <span class="keyword">int</span>, ValueTuple&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;&gt;(
+    <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="keyword">new</span> ValueTuple&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;(<span class="number">8</span>, <span class="number">9</span>));
+Console.WriteLine(t.Rest.Item2);</code></pre>
+<p><code>ValueTuple</code>構造体には<code>Item8</code>、<code>Item9</code>という名前のメンバーはありません。
+型引数の数が最大のもので8メンバーで、その8つ目のメンバーの名前は<code>Rest</code> (残り)です。
+そして、以下のように、C#上<code>Item9</code>であれば展開結果的には<code>Rest</code>のさらに<code>Item2</code>というように、入れ子のメンバー参照に展開されます。</p>
+<table>
+<thead>
+<tr>
+<th>C# 上</th>
+<th>コンパイル結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Item8</code></td>
+<td><code>Rest.Item1</code></td>
+</tr>
+<tr>
+<td><code>Item9</code></td>
+<td><code>Rest.Item2</code></td>
+</tr>
+<tr>
+<td>…</td>
+<td>…</td>
+</tr>
+<tr>
+<td><code>Item15</code></td>
+<td><code>Rest.Rest.Item1</code></td>
+</tr>
+<tr>
+<td><code>Item16</code></td>
+<td><code>Rest.Rest.Item2</code></td>
+</tr>
+<tr>
+<td>…</td>
+<td>…</td>
+</tr>
+</tbody>
+</table>
+<h4 id="valuetuple-2"><a id="sec-generated-title-24"></a> <a id="nupkg"></a>ValueTuple構造体の定義場所</h4>
+<p>C# 7のリリースに合わせて、<code>ValueTuple</code>構造体は標準ライブラリに取り込まれる予定です。</p>
+<p>一方で、古い.NET (.NET Framework 4.6.2以前、.NET Standard 1.6以前)上でタプルを使いたい場合、
+以下のライブラリを参照します。この中に<code>ValueTuple</code>構造体や、<code>TupleElementNames</code>属性が定義されています。</p>
+<ul>
+<li><a href="https://www.nuget.org/packages/System.ValueTuple/">System.ValueTuple</a></li>
+</ul>
+<h3 id="valuetuple-3"><a id="sec-generated-title-25"></a> <a id="0-tuple"></a>型引数0、1のValueTuple</h3>
+<p>前述の通り、タプルのメンバーは2つ以上な必要があって、<code>()</code>や<code>(int x)</code>というようなタプルは作れません。
+一方で、<code>ValueTuple</code>構造体には、型引数0個と1個のものが存在します。</p>
+<pre><code class="language-csharp"><span class="comment">// メンバー0個、1個のものは、構造体はあるけど、タプル構文は使えない</span>
+<span class="keyword">var</span> noneple = <span class="keyword">new</span> ValueTuple();
+<span class="keyword">var</span> oneple = <span class="keyword">new</span> ValueTuple&lt;<span class="keyword">int</span>&gt;(<span class="number">1</span>);
+
+<span class="comment">// メンバー2個以上はタプル構文を使える</span>
+<span class="keyword">var</span> twople = (<span class="number">1</span>, <span class="number">2</span>); <span class="comment">// new ValueTuple&lt;int, int&gt;(1, 2);</span>
+<span class="keyword">var</span> threeple = (<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>); <span class="comment">// new ValueTuple&lt;int, int, int&gt;(1, 2, 3);</span></code></pre>
+<p>型引数0個の<code>ValueTuple</code>(0-tuple)は、いわゆる<a href="/study/csharp/structured/st_function/#unit">Unit型</a>です。
+<code>void</code>の代わりにこの型を使うことで、戻り値がある場合とない場合のコードを統一的に書けてうれしい場合があります。
+一方、型引数1個のもの(1-tuple)も、用途としては0-tupleと同じです。
+型引数2個以上のものと並べて、戻り値や引数の個数違いを統一的に書けます。</p>
+<p>例えば、以下の2つのコードはどちらの方が統一性があっていいかという話になります。</p>
+<pre><code class="language-csharp"><span class="comment">// タプルでは0、1は書けない</span>
+<span class="keyword">async</span> Task F0() { }
+<span class="keyword">async</span> Task&lt;<span class="keyword">int</span>&gt; F1() =&gt; <span class="number">1</span>;
+<span class="keyword">async</span> Task&lt;(<span class="keyword">int</span> x1, <span class="keyword">int</span> x2)&gt; F2() =&gt; (<span class="number">1</span>, <span class="number">2</span>);
+<span class="keyword">async</span> Task&lt;(<span class="keyword">int</span> x1, <span class="keyword">int</span> x2, <span class="keyword">int</span> x3)&gt; F3() =&gt; (<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</code></pre>
+<pre><code class="language-csharp"><span class="comment">// こう書けると統一性があってきれい(C# 7では書けない)</span>
+<span class="keyword">async</span> Task&lt;()&gt; F0() { }
+<span class="keyword">async</span> Task&lt;(<span class="keyword">int</span> x1)&gt; F1() =&gt; (<span class="number">1</span>);
+<span class="keyword">async</span> Task&lt;(<span class="keyword">int</span> x1, <span class="keyword">int</span> x2)&gt; F2() =&gt; (<span class="number">1</span>, <span class="number">2</span>);
+<span class="keyword">async</span> Task&lt;(<span class="keyword">int</span> x1, <span class="keyword">int</span> x2, <span class="keyword">int</span> x3)&gt; F3() =&gt; (<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</code></pre>
+<p>特に、ソースコード生成などでまとめて、個数違いのメソッドを生成したい場合などには、0-tupleや1-tupleがほしくなります。
+0個と1個の時だけ特別扱いが必要になるかどうかという問題です。
+0-tupleと1-tupleがあれば、特別扱いなしでソースコード生成ができて楽です。</p>
+<p>ということで、0-tuple、1-tupleの需要はあるんですが、問題があって構文を提供できていません。
+1-tupleになるであろう構文は<code>(1)</code>というような形になるはずですが、
+これが、C#の既存の構文ですでに、単に<code>1</code>と同じ意味で解釈されるため、1-tupleを作れません。
+0-tupleの方の<code>()</code>は、これまでは書けなかった書き方なので別にC# 7で追加できますが、
+1-tupleだけ飛ばして「0か2以上のみ」とするのも変な話です。</p>
+<!-- original-page-break -->
+<h2 id="section-21"><a id="sec-generated-title-26"></a> <a id="related"></a>関連</h2>
+<p>タプルには、毛色の似た機能が2つあります。</p>
+<ul>
+<li><a href="/study/csharp/start/sp3_inference/#anonymous">匿名型</a> … タプルと同様に、名前がない型</li>
+<li><a href="/study/csharp/resource/sp_ref/#out">出力引数</a> … 複数の戻り値を返すのに使える</li>
+</ul>
+<p>これらとの関連・使い分けについても話しておきましょう。</p>
+<h3 id="section-22"><a id="sec-generated-title-27"></a> <a id="anonymous-type"></a>匿名型との比較</h3>
+<p>タプルは、名前がない型という観点で言うと、<a href="/study/csharp/start/sp3_inference/#anonymous">匿名型</a>と似ています。
+しかし、「<a href="/study/csharp/structured/st_anonymoustype/">名前のない複合型</a>」で説明したように、
+出自・用途の違いから、内部実装は結構異なります。</p>
+<p>以下の表のようになります。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>タプル</th>
+<th>匿名型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主な用途</td>
+<td><a href="/study/csharp/structured/st_anonymoustype/#multiple-returns">多値戻り値</a></td>
+<td><a href="/study/csharp/structured/st_anonymoustype/#projection">部分的なメンバー抜き出し</a></td>
+</tr>
+<tr>
+<td>展開結果</td>
+<td><code>ValueTuple</code>構造体＋属性</td>
+<td>クラスの生成</td>
+</tr>
+<tr>
+<td>型の種類</td>
+<td>値型</td>
+<td>参照型</td>
+</tr>
+<tr>
+<td>見た目</td>
+<td>引数の書き方に似ている</td>
+<td>オブジェクト初期化子の書き方に似ている</td>
+</tr>
+</tbody>
+</table>
+<p>展開結果の差は用途の差から来ています。
+タプルは戻り値として使います。publicなメンバーの型にも使うことになるので、ライブラリ間をまたげる必要があります。
+<code>ValueTuple</code>構造体に展開することで、ライブラリをまたいでも同じ構造体を参照する状態になります。</p>
+<p>一方、匿名型は、ライブラリごとにそれぞれクラスを生成します(「<a href="/study/csharp/start/sp3_inference/#anonymous">匿名型</a>」参照)。
+同じ型に見えて、ライブラリをまたぐと別クラスになってしまいます。
+このことから、匿名型は、メソッドの戻り値など、publicになりうる場所には書けません。
+メソッド内のローカルな部分で完結して使う必要があります。</p>
+<p>とはいえ、<code>ValueTuple</code>構造体に展開では、前節での説明の通り、実行時に名前を紛失します。
+<a href="/study/csharp/dynamic/sp4_dynamic/"><code>dynamic</code></a>や、<a href="/study/csharp/dynamic/sp3_expression/">式木</a>での利用にはタプルは向きません。この用途なら匿名型の方が向いています。</p>
+<p>値型か参照型かも実装が異なりますが、これも、戻り値として使う、その後すぐに<a href="#deconstruction">分解</a>して使うという想定だと、値型の方が実行性能的に有利だからです。
+用途が変われば最適な実装は変わります。</p>
+<h3 id="section-23"><a id="sec-generated-title-28"></a> <a id="out-params"></a>出力引数との比較</h3>
+<p>多値戻り値という用途だと、<a href="/study/csharp/resource/sp_ref/#out">出力引数</a>という手段もあります。
+一般的に言うと、多値戻り値には今後タプルを使うのがおすすめです。
+出力引数の方が煩雑な書き方になりがちだからです。</p>
+<p>比較のために簡単な例を挙げてみましょう。まず、C# 6以前の出力引数を使ったものです。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> F(Point p)
+{
+    <span class="comment">// 事前に変数を用意しないといけない/var 不可</span>
+    <span class="keyword">int</span> x, y;
+    <span class="comment">// 1個1個 out を付けないといけない</span>
+    Deconstruct(p, <span class="keyword">out</span> x, <span class="keyword">out</span> y);
+    Console.WriteLine($<span class="string">&quot;{x}, {y}&quot;</span>);
+
+    <span class="comment">//非同期メソッドには使えない</span>
+}
+
+<span class="comment">// 1個1個 out を付けないといけない</span>
+<span class="keyword">static</span> <span class="keyword">void</span> Deconstruct(Point p, <span class="keyword">out</span> <span class="keyword">int</span> x, <span class="keyword">out</span> <span class="keyword">int</span> y)
+{
+    <span class="comment">// 1個1個代入</span>
+    x = p.X;
+    y = p.Y;
+}</code></pre>
+<p>1個1個<code>out</code>修飾子を付けて回るのは結構な煩雑さです。
+呼び出す前に別途変数宣言が必要なのも面倒です。
+これらは単に煩雑なだけなので我慢すれば何とかなりますが、
+致命的なのは非同期メソッドで使えないことです。</p>
+<p>ちなみに、煩雑さはC# 7で多少マシになりました。<a href="/study/csharp/resource/sp_ref/#out-var">出力変数宣言</a>という構文が追加されて、以下のように書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> F(Point p)
+{
+    <span class="comment">// 変数の事前準備は不要に</span>
+    <span class="comment">// でも1個1個 out を付けないといけない</span>
+    Deconstruct(p, <span class="keyword">out</span> <span class="keyword">var</span> x, <span class="keyword">out</span> <span class="keyword">var</span> y);
+    Console.WriteLine($<span class="string">&quot;{x}, {y}&quot;</span>);
+
+    <span class="comment">//非同期メソッドには相変わらず使えない</span>
+}
+
+<span class="comment">// 1個1個 out を付けないといけない</span>
+<span class="keyword">static</span> <span class="keyword">void</span> Deconstruct(Point p, <span class="keyword">out</span> <span class="keyword">int</span> x, <span class="keyword">out</span> <span class="keyword">int</span> y) =&gt; (x, y) = (p.X, p.Y);</code></pre>
+<p>でも、相変わらず長くなりがちです。
+また、非同期メソッドで使えない点は変わりません。</p>
+<p>タプルを使えばこの問題は解決です。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">async</span> Task F(Point p)
+{
+    <span class="comment">// 1個の var で受け取れる</span>
+    <span class="keyword">var</span> t1 = Deconstruct(p);
+    Console.WriteLine($<span class="string">&quot;{t1.x}, {t1.y}&quot;</span>);
+
+    <span class="comment">// 何なら分解と併せればもっと書き心地よく書ける</span>
+    <span class="keyword">var</span> (x, y) = Deconstruct(p);
+    Console.WriteLine($<span class="string">&quot;{x}, {y}&quot;</span>);
+
+    <span class="comment">// 非同期メソッドで使えるのはタプルだけ</span>
+    <span class="keyword">var</span> t2 = <span class="keyword">await</span> DeconstructAsync(p);
+    Console.WriteLine($<span class="string">&quot;{t2.x}, {t2.y}&quot;</span>);
+}
+
+<span class="keyword">static</span> (<span class="keyword">int</span> x, <span class="keyword">int</span> y) Deconstruct(Point p) =&gt; (p.X, p.Y); <span class="comment">// 1個の式で書けて楽</span>
+<span class="keyword">static</span> <span class="keyword">async</span> Task&lt;(<span class="keyword">int</span> x, <span class="keyword">int</span> y)&gt; DeconstructAsync(Point p) =&gt; (p.X, p.Y);</code></pre>
+<p>一方で、出力引数を使いたくなる場面も残っています。</p>
+<ul>
+<li><code>TryParse</code>のように、<code>bool</code>値を返して<code>if</code>ステートメントなどの条件式内で使いたい場合</li>
+<li>オーバーロードを呼び分けたい場合</li>
+</ul>
+<p><code>if</code>内で使いたい場合は、例えば以下のようなコードになります。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> TryPattern()
+{
+    <span class="keyword">var</span> s = Console.ReadLine();
+    <span class="keyword">if</span> (<span class="keyword">int</span>.TryParse(s, <span class="keyword">out</span> <span class="keyword">var</span> x)) Console.WriteLine(x);
+}</code></pre>
+<p>これはさすがにタプルを使う方が煩雑です。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> TuplePattern()
+{
+    <span class="keyword">var</span> s = Console.ReadLine();
+    <span class="keyword">var</span> (success, x) = Parse(s);
+    <span class="keyword">if</span> (success) Console.WriteLine(x);
+}
+
+<span class="keyword">static</span> (<span class="keyword">bool</span> success, <span class="keyword">int</span> value) Parse(<span class="keyword">string</span> s) =&gt; <span class="keyword">int</span>.TryParse(s, <span class="keyword">out</span> <span class="keyword">var</span> x) ? (<span class="keyword">true</span>, x) : (<span class="keyword">false</span>, <span class="number">0</span>);</code></pre>
+<p>もっとも、C# 7では、以下のような <code>is</code> 演算子を使った<code>null</code>チェックで同様のことをすると言う手もあります。
+この書き方を型スイッチと呼びます(説明ページ準備中。でき次第リンク)。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> NullCheckPattern()
+{
+    <span class="keyword">var</span> s = Console.ReadLine();
+    <span class="keyword">if</span> (ParseOrDefault(s) <span class="keyword">is</span> <span class="keyword">int</span> x) Console.WriteLine(x);
+}
+
+<span class="keyword">static</span> <span class="keyword">int</span>? ParseOrDefault(<span class="keyword">string</span> s) =&gt; <span class="keyword">int</span>.TryParse(s, <span class="keyword">out</span> <span class="keyword">var</span> x) ? x : <span class="keyword">default</span>(<span class="keyword">int</span>?);</code></pre>
+<p>もう1つ、<a href="/study/csharp/structured/st_function/#overload">オーバーロード</a>ですが、C#では(というか.NETでは)、引数でのオーバーロードはできますが、戻り値でのオーバーロードはできません。
+そこで、以下のように、オーバーロードに関しては出力引数の方が有利になります。</p>
+<pre><code class="language-csharp"><span class="comment">// これはオーバーロード可能</span>
+<span class="keyword">static</span> <span class="keyword">void</span> F(<span class="keyword">out</span> <span class="keyword">int</span> x, <span class="keyword">out</span> <span class="keyword">int</span> y) =&gt; (x, y) = (<span class="number">1</span>, <span class="number">2</span>);
+<span class="keyword">static</span> <span class="keyword">void</span> F(<span class="keyword">out</span> <span class="keyword">int</span> id, <span class="keyword">out</span> <span class="keyword">string</span> name) =&gt; (id, name) = (<span class="number">1</span>, <span class="string">&quot;abc&quot;</span>);
+
+<span class="comment">// 戻り値でのオーバーロードはできない</span>
+<span class="comment">// コンパイル エラーに</span>
+<span class="keyword">static</span> (<span class="keyword">int</span> x, <span class="keyword">int</span> y) F() =&gt; (<span class="number">1</span>, <span class="number">2</span>);
+<span class="keyword">static</span> (<span class="keyword">int</span> id, <span class="keyword">string</span> name) F() =&gt; (<span class="number">1</span>, <span class="string">&quot;abc&quot;</span>);</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/datatype/">&#x30C7;&#x30FC;&#x30BF;&#x578B;</a></li><li><a href="/study/csharp/datatype/deconstruction/">&#x8907;&#x5408;&#x578B;&#x306E;&#x5206;&#x89E3;</a></li><li><a href="/study/csharp/datatype/typeswitch/">is&#x3001;switch &#x306E;&#x62E1;&#x5F35; (&#x578B;&#x30B9;&#x30A4;&#x30C3;&#x30C1;)</a></li><li><a href="/study/csharp/datatype/patterns/">&#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30DE;&#x30C3;&#x30C1;&#x30F3;&#x30B0;</a></li><li><a href="/study/csharp/datatype/declarationexpressions/">&#x7279;&#x6B8A;&#x306A;&#x5909;&#x6570;&#x5BA3;&#x8A00;</a></li><li><a href="/study/csharp/datatype/record/">&#x30EC;&#x30B3;&#x30FC;&#x30C9;&#x578B;</a></li><li><a href="/study/csharp/datatype/collection-expression/">&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x5F0F;</a></li><li><a href="/study/csharp/datatype/inline-array/">[&#x96D1;&#x8A18;] InlineArray</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

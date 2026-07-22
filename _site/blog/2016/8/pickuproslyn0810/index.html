@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/10 | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/8/pickuproslyn0810/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-08-09T15:37:28">2016-08-09</time></span><span>更新: <time datetime="2016-08-09T15:37:28">2016-08-09</time></span></div><h1 id="roslyn-810">ピックアップRoslyn 8/10</h1>
+<p>7月のデザインノートが2件ほど。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/13022">C# Language Design Notes for Jul 12, 2016</a></li>
+<li><a href="https://github.com/dotnet/roslyn/issues/13015">C# Language Design Notes for Jul 13, 2016</a></li>
+</ul>
+<p>これ関連の作業がひと段落したところでまとめて清書して表に出したって感じですかねぇ。
+この辺りの話、かなりの割合がもう実装されててマージされてたりします。</p>
+<p>先週、dots.をお借りしてこんなイベントやってたわけですが</p>
+<ul>
+<li><a href="http://eventdots.jp/event/594178">roslyn (C# 7) もくもく会</a></li>
+</ul>
+<p>最新のmasterブランチの取ってきてビルドして実行してみると、大体この仕様通りになってる感じ。</p>
+<p>さて、どんな感じの仕様かというと…</p>
+<h2 id="section">タプル型のメンバー名は省略・名前付きの混在可能</h2>
+<p>こんなコードでOKですって。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> t = (<span class="number">1</span>, y: <span class="number">2</span>); <span class="comment">// infers (int, int y)</span>
+(<span class="keyword">int</span> x, <span class="keyword">int</span>) t = (<span class="number">1</span>, <span class="number">2</span>);</code></pre>
+<p>ちなみに、名前を省略したところは、<code>ValueTuple</code>がたの本来のメンバーである <code>x.Item1</code> とかの名前で参照できます。</p>
+<h2 id="ituple">ITuple</h2>
+<p>タプル型みたいな「単に複数のデータを寄せ集めただけ」な型に対して、インデックスでメンバー参照したくなることがあります。
+<code>ValueTuple</code>型はそのために、以下のようなインターフェイスを実装すべきじゃないかという話に。</p>
+<pre><code class="language-csharp"><span class="keyword">interface</span> ITuple
+{
+    <span class="keyword">int</span> Size;
+    <span class="keyword">object</span> <span class="keyword">this</span>[<span class="keyword">int</span> i] { <span class="keyword">get</span>; }
+}</code></pre>
+<p>タプル型の分解に使いたいそうで。</p>
+<p><code>ValueTuple</code>型はこれを実装すべきだとは思うものの、名前にはまだ議論の余地あり。
+インターフェイス名も<code>IDeconstructable</code>とかがいいかもしれないし。
+要素数のプロパティも<code>Length</code>とか<code>Count</code>とかもあり得るし。</p>
+<h2 id="var">var型がある場合。</h2>
+<p>C#のvarは、文脈キーワード(特定の文脈でだけキーワード扱いされる)です。<code>var</code>って名前のクラスがあると、クラス名として認識される。</p>
+<p>で、タプル型の分解構文で以下のような書き方を認めることになるわけですが、</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> (x, y) = e;</code></pre>
+<p>ここで、<code>var</code>クラスがあった場合どうなるべきか。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> <span class="keyword">var</span> {}
+<span class="keyword">var</span> (x, y) = e;</code></pre>
+<p>ちなみに、世の中には、わざわざこういう<code>var</code>クラスを用意しておくことで、型推論のvarを使わせない(コンパイル エラーにさせる)トリッキーな運用をしている人もいるそうで。C#チーム的には「(その良し悪しは置いといて)そういう運用も認めるべきでしょう」という感じ。
+そういう背景もあって、タプル型の分解におけるvarでも、<code>var</code>クラスがあったらコンパイル エラーにするみたい。</p>
+<h2 id="var-1">var メソッド</h2>
+<p>じゃあ、メソッドの場合はどうか。分解代入の構文、メソッド呼び出しに似ているので、以下のような書き方ができてしまいます。</p>
+<pre><code class="language-csharp"><span class="keyword">ref</span> <span class="keyword">int</span> <span class="keyword">var</span>(<span class="keyword">int</span> x, <span class="keyword">int</span> y);
+<span class="keyword">var</span>(x, y) = e; <span class="comment">// deconstruction or call?</span></code></pre>
+<p>参照戻り値なメソッドへの代入(参照先への代入)か、分解代入か、どちらにするべきか。</p>
+<p>常に分解代入の方を選ぶそうです。メソッドの方を呼びたい場合は <code>@var</code> って書けばできます。</p>
+<h2 id="partial">partialクラスでのインターフェイス</h2>
+<p>partialクラスの場合、複数の宣言で、同じインターフェイスを継承できたりします。
+ここで、じゃあ、メンバー名違いの同じ型のインターフェイスを継承してしまった場合はどうするべきか。</p>
+<pre><code class="language-csharp"><span class="keyword">partial</span> <span class="keyword">class</span> C : IEnumerable&lt;(<span class="keyword">string</span> name, <span class="keyword">int</span> age)&gt; { ... }
+<span class="keyword">partial</span> <span class="keyword">class</span> C : IEnumerable&lt;(<span class="keyword">string</span> fullname, <span class="keyword">int</span>)&gt; { ... } </code></pre>
+<p>タプル型は、内部的には全部<code>ValueTuple</code>構造体に変換されます。
+名前は属性に残るだけ。
+で、じゃあ、上記の名前違いのインターフェイスは別の型なのか同じ型なのかよくわからず。
+紛らわしいのでコンパイル エラーにすべきでしょう。
+逆に、メンバー名も含めて全一致している場合だけは、複数のpartial宣言に書いても大丈夫。</p>
+<p>もう少し面倒なケースは、多重継承(インターフェイスであればC#でも多重継承が可能)。
+以下の場合はどうすべきか。</p>
+<pre><code class="language-csharp"><span class="keyword">interface</span> I1 : IEnumerable&lt;(<span class="keyword">int</span> a, <span class="keyword">int</span> b)&gt; {}
+<span class="keyword">interface</span> I2 : IEnumerable&lt;(<span class="keyword">int</span> c, <span class="keyword">int</span> d)&gt; {}
+<span class="keyword">interface</span> I3 : I1, I2 {} <span class="comment">// what comes out when you enumerate?</span>
+<span class="keyword">class</span> C : I1 { <span class="keyword">public</span> IEnumerator&lt;(<span class="keyword">int</span> e, <span class="keyword">int</span> f)&gt; GetEnumerator() {} } <span class="comment">// what comes out when you enumerate?</span></code></pre>
+<p>現状、これもコンパイル エラーにする案で進めてるみたい。
+できてそこまで大きなメリットもなさそうなので、複雑化させない方向に倒すという感じ。
+もし、将来的にこれを認めたくなるような重要な利用シナリオが見つかったりした場合、それはその時に考える。</p>
+<h2 id="section-1">タプル リテラルの分解</h2>
+<p>null (全ての参照型に代入可能)とか、1 (<code>int</code>、<code>short</code>, <code>byte</code> 辺りのどれか不明瞭)とか、リテラルの場合、型があいまいなものがあります。
+その分解はちゃんと働くべきか。</p>
+<pre><code class="language-csharp">(<span class="keyword">string</span> x, <span class="keyword">byte</span> y, <span class="keyword">var</span> z) = (<span class="keyword">null</span>, <span class="number">1</span>, <span class="number">2</span>);</code></pre>
+<p>できるべきだろうとのこと。</p>
+<p>各要素ごとに並べて書いた時と同じ挙動になるべき。上記コードであれば、まあ、↓みたいなのと同じ解釈をすべき。</p>
+<pre><code class="language-csharp"><span class="keyword">string</span> x = <span class="keyword">null</span>;
+<span class="keyword">byte</span> y = <span class="number">1</span>;
+<span class="keyword">var</span> z) = <span class="number">2</span>;</code></pre>
+<p>ただし、これが逐次実行されるわけじゃなくて、一斉に代入が起きる。つまり、swapに使っても差し支えないようなにはなってる。</p>
+<pre><code class="language-csharp">(x, y) = (y, x); <span class="comment">// swap!</span></code></pre>
+<h2 id="var-2">タプル型の中のvar</h2>
+<p>「タプル型の変数宣言」と「分解代入」は非常に似た構文になるわけですが。</p>
+<pre><code class="language-csharp">(<span class="keyword">int</span> x, <span class="keyword">int</span> y) = GetTuple(); <span class="comment">// 分解</span>
+(<span class="keyword">int</span> x, <span class="keyword">int</span> y) t = GetTuple(): <span class="comment">// タプル型の変数宣言</span></code></pre>
+<p>じゃあ、以下の構文(これも似て非なるもの)の場合はどうなるべきか。</p>
+<pre><code class="language-csharp">(<span class="keyword">var</span> x, <span class="keyword">var</span> y) = GetTuple(); <span class="comment">// これは分解代入時の型推論</span>
+(<span class="keyword">var</span> x, <span class="keyword">var</span> y) t = GetTuple(): <span class="comment">// varなタプル型。これは認めるべき？</span></code></pre>
+<p>で、結論的には、この後者は認めないとのこと。</p>
+<h2 id="void">分解代入の戻り値の型は void？</h2>
+<p>C#では、代入は式です。どこにでも書けます…</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = <span class="number">1</span>;
+<span class="keyword">var</span> y = (x = <span class="number">2</span>) * x;</code></pre>
+<p>まあ、ろくでもないんですが。副作用を伴う式とか割かし害悪。C言語を参考にしすぎたところですね。とはいえ、今更変更できません。</p>
+<p>例えばの話、forステートメントの中には式を書くことになっているので、以下のようなコードを書きたければ、タプルの分解代入も式でないといけないそうです。</p>
+<pre><code class="language-csharp"><span class="keyword">for</span> (... ;; (current, next) = (next, next.Next)) { ... }</code></pre>
+<p>とはいえ、実のところ、「戻り値がvoidの式」という扱いにすれば、forステートメントの中で使えつつ、さっきのろくでもない<code>y = (x = 2) * x</code> みたいなコードをなくせたりします。</p>
+<p>ということで、voidであるべき？</p>
+<p>まあ、これも、既存の代入式との一貫性がなくなるので、voidではなく、タプル型を返すべきだと思ってるみたいです。
+C# 7では実装しなさそうだけど、後々は、分解代入の結果を、再度タプル構築して戻り値に返すべきだと思っているとのこと。</p>
+<h3 id="swift">参考までに: Swift</h3>
+<p>ちなみに、Swiftはほんとに、代入は戻り値がvoidの式みたいです。
+<code>y = (x = 2) * x</code> なんていうクソコードは認めません。</p>
+<p>その割にインクリメント・デクリメントがあった <code>y = ++x * x</code> とか書けたわけですが。
+そりゃ、forステートメントもインクリメントもなくしたくもなります(Swift 3で破壊的変更してまでなくす予定)。</p>
+<h2 id="section-2">分解を変換として、変換を分解として</h2>
+<p>分解代入と型変換はある程度似た構文です。分解は、タプル型への変換的な雰囲気があります。似てるのあれば、いっそある程度統一性を持たせるべき？</p>
+<p>まあ、そうしない方がよさそう。分解(コンパイル結果的には<code>Deconstruct</code>メソッドの呼び出し)は型変換的に扱われるべきじゃない。</p>
+<h2 id="section-3">匿名型</h2>
+<p>匿名型(<code>{ X = 1, Y = &quot;a&quot; }</code> みたいなやつ)は<code>Deconstruct</code>メソッドや<code>ITuple</code>インターフェイス実装を持つべき？</p>
+<p>そうでもなさそう。実装しても、今のところ有用な利用シナリオが思い当たらないとのこと。
+欲しくなる場面もなくはないけど、そういう場面では大体タプル型を使えば解決しそう。</p>
+<h2 id="section-4">分解代入時のワイルドカード</h2>
+<p>ワイルドカードってのは、要するに、要らない部分を読み飛ばす機能。</p>
+<pre><code class="language-csharp">(<span class="keyword">var</span> x, <span class="keyword">var</span> y, *) = (<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</code></pre>
+<p>こういうコードで、3を読み飛ばすために使いもしないダミー変数を用意する必要はありません。</p>
+<p>C#的に、こういう機能を入れるべきだろうとは思ってるみたい。
+ただし、たぶん、C# 8になる(7には入らない。パターン マッチングと同時期に入る予定)。</p>
+<p>あと、ワイルドカードのために使う記号はたぶん <code>*</code>。
+関数型言語の類だと <code>_</code> を使うことが多いんですが、C#では <code>_</code> が有効な識別子になっちゃうので。
+既存コードの意味を変えてまではこの記号は使わないみたい(コード解析をきっちりやれば不可能ではないけど、そうまでするかという話)。</p>
+<h2 id="doubleswitch">double型に対するswitch</h2>
+<p>パターン マッチングが入った暁には、<code>double</code>型の変数もswitchに使えるわけですが。
+ここで問題になるのは、<code>double</code>型の等値判定。</p>
+<p>NaN(Not a Number)の扱いどうするの？とか、実は<code>==</code>と<code>Equals</code>でNaNとの比較結果が違ったりするけどどうする？とか。</p>
+<p><code>==</code>と<code>Equals</code>の違いというと、<code>int</code>の1と<code>double</code>の1.0が等値判定とかも。前者はtrueになるけど、後者はfalse。</p>
+<p><code>Equals</code>の側を使いそう。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/8/">2016&#x5E74;8&#x6708;</a></li><li><a href="/blog/2016/8/pickuproslyn0805/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/5</a></li><li><a href="/blog/2016/8/pickuproslyn0806/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/6</a></li><li><a href="/blog/2016/8/pickuproslyn0816/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/16 Close&#x796D;&#x308A;</a></li><li><a href="/blog/2016/8/vs15p4/">Visual Studio &quot;15&quot; Preview 4</a></li><li><a href="/blog/2016/8/rickuproslyn0827/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/27: What&#x2019;s New in C# 7.0</a></li><li><a href="/blog/2016/8/tuples/">&#x30BF;&#x30D7;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

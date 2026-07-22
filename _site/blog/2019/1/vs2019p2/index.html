@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Visual Studio 2019 Preview 2 | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2019/1/vs2019p2/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2019-01-24T19:58:52">2019-01-24</time></span><span>更新: <time datetime="2019-01-24T19:58:52">2019-01-24</time></span></div><h1 id="visual-studio-2019-preview-2">Visual Studio 2019 Preview 2</h1>
+<p>なんか、<a href="https://docs.microsoft.com/en-us/visualstudio/releases/2019/release-notes-preview#VS2019_Preview2">Visual Studio 2019 Preview 2</a>が出てますね。</p>
+<p>リリースノート上は、.NET 関連はまた「<a href="https://docs.microsoft.com/en-us/visualstudio/releases/2019/release-notes-preview#net-productivity">リファクタリング機能が増えたよ</a>」みたいな感じのアナウンス。</p>
+<p>あとは、自分が手元で確認してみた感じ、<a href="/blog/2018/12/vs2019p1/">Preview 1</a>の頃から3つほど C# 8.0 の実装が増えてました。</p>
+<ul>
+<li>再帰パターン</li>
+<li>using の改善</li>
+<li>静的ローカル関数</li>
+</ul>
+<p>動作確認で使ったコード: <a href="https://github.com/ufcpp/UfcppSample/tree/master/Demo/2019/Csharp80/Preview2">Demo/2019/Csharp80/Preview2</a></p>
+<h2 id="section">再帰パターン</h2>
+<p>これは Preview 1 で入ると思ってたのに入らなかったというくらいなので、
+前に、<a href="https://sharplab.io/">sharplab.io</a>で動作確認しながら書いた以下の2つのブログほぼそのまま。</p>
+<ul>
+<li><a href="/blog/2018/12/cs8patterns/">再帰パターン</a></li>
+<li><a href="/blog/2018/12/cs8switchexpr/">switch 式</a></li>
+</ul>
+<p>一応、0引数・1引数での <code>Deconstruct</code> ができるようになったりしているみたいです。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">struct</span> X
+{
+    <span class="keyword">public</span> <span class="keyword">void</span> Deconstruct() { }
+    <span class="keyword">public</span> <span class="keyword">void</span> Deconstruct(<span class="keyword">out</span> <span class="keyword">int</span> x) =&gt; x = <span class="number">0</span>;
+    <span class="keyword">public</span> <span class="keyword">void</span> Deconstruct(<span class="keyword">out</span> <span class="keyword">int</span> x, <span class="keyword">out</span> <span class="keyword">int</span> y) =&gt; (x, y) = (<span class="number">0</span>, <span class="number">0</span>);
+}
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> x = <span class="keyword">new</span> X();
+        Console.WriteLine(x <span class="keyword">is</span> ());      <span class="comment">// 0引数</span>
+        Console.WriteLine(x <span class="keyword">is</span> <span class="keyword">var</span> (_)); <span class="comment">// 1引数のだけは、() 式とかキャストとかとの弁別のために var 必須</span>
+        Console.WriteLine(x <span class="keyword">is</span> (_, _));  <span class="comment">// 2引数</span>
+    }
+}</code></pre>
+<h2 id="using">using の改善</h2>
+<p>2つほど。</p>
+<ul>
+<li><code>ref struct</code> に限り、<code>IDisposable</code> インターフェイスを実装していなくても、パターン ベースで<code>Dispose</code>メソッドを呼んでくれるようになった</li>
+<li><code>using var</code> で、ローカル変数のスコープに紐づいたリソースの破棄(<code>Dispose</code> メソッド呼び出し)ができるようになった</li>
+</ul>
+<p>はい、残念なお知らせ。パターン ベースでの<code>Dispose</code>呼び出しが<a href="/study/csharp/resource/refstruct/"><code>ref struct</code></a>限定になりました。
+そうしないと破壊的変更を起こす可能性があってやむなく限定したそうです。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="comment">// インターフェイスなし、ref なし</span>
+<span class="keyword">struct</span> A { <span class="keyword">public</span> <span class="keyword">void</span> Dispose() { } }
+ 
+<span class="comment">// インターフェイスあり</span>
+<span class="keyword">struct</span> B : IDisposable { <span class="keyword">public</span> <span class="keyword">void</span> Dispose() { } }
+ 
+<span class="comment">// ref あり</span>
+<span class="keyword">ref</span> <span class="keyword">struct</span> C { <span class="keyword">public</span> <span class="keyword">void</span> Dispose() { } }
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">using</span> <span class="keyword">var</span> a = <span class="keyword">new</span> A(); <span class="comment">// ダメ</span>
+        <span class="keyword">using</span> <span class="keyword">var</span> b = <span class="keyword">new</span> B(); <span class="comment">// 元々 OK</span>
+        <span class="keyword">using</span> <span class="keyword">var</span> c = <span class="keyword">new</span> C(); <span class="comment">// C# 8.0 で OK に</span>
+    }
+}</code></pre>
+<h2 id="section-1">静的ローカル関数</h2>
+<p>ローカル関数に <code>static</code> 修飾を付けることで、<a href="/study/csharp/functional/sp2_anonymousmethod/#closure">ローカル変数のキャプチャ</a>をしないということを明示できるようになります。</p>
+<pre><code class="language-csharp"><span class="comment">// ローカル関数に static を付けると、ローカル変数をキャプチャできなくなる。</span>
+<span class="keyword">static</span> <span class="keyword">int</span> a(<span class="keyword">int</span> x) =&gt; <span class="number">2</span> * x;
+ 
+<span class="comment">// 以下のコードは2行目の n のところでエラーに。</span>
+<span class="keyword">int</span> n = <span class="number">0</span>;
+<span class="keyword">static</span> <span class="keyword">int</span> b(<span class="keyword">int</span> x) =&gt; n * x;</code></pre>
+<h2 id="preview-1">Preview 1 からのその他の修正</h2>
+<p><a href="/blog/2018/12/cs8asyncstreams/">Async streams</a>はいまだに動きません…
+これは、たぶん、 .NET Core 3.0 の方の Preview 2が来れば解消される気がします。</p>
+<p>あと、<a href="/blog/2018/12/cs8nrt/">null許容参照型</a>は、以下のような変更が掛かってそう</p>
+<ul>
+<li>プロジェクト全体に対して null 解析をオンにするためのオプションが以下のように変更されてそう
+<ul>
+<li>旧: <code>&lt;NullableReferenceTypes&gt;true&lt;/NullableReferenceTypes&gt;</code></li>
+<li>新: <code>&lt;NullableContextOptions&gt;Enable&lt;/NullableContextOptions&gt;</code></li>
+</ul>
+</li>
+<li>解析が走るタイミングが変わっていそう(たぶん)
+<ul>
+<li>旧: 常時</li>
+<li>新: ファイルを開いているとき</li>
+</ul>
+</li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2019/1/">1&#x6708;</a></li><li><a href="/blog/2019/1/fasternullchecks/">null &#x304B;&#x3069;&#x3046;&#x304B;&#x3092;&#x5224;&#x5B9A;</a></li><li><a href="/blog/2019/1/falsetrueother/">bool &#x578B;&#x306E; false, true, &#x305D;&#x308C;&#x4EE5;&#x5916;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 7/19: &#x305D;&#x308D;&#x305D;&#x308D; C# 9.0 &#x6A5F;&#x80FD;&#x306F; fix&#x3001;10.0 &#x5411;&#x3051;&#x30C8;&#x30EA;&#x30A2;&#x30FC;&#x30B8; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2020/7/pickuproslyn0719/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2020-07-19T17:41:32">2020-07-19</time></span><span>更新: <time datetime="2020-07-19T17:49:52">2020-07-19</time></span></div><h1 id="roslyn-719-c-9.0-fix10.0">ピックアップRoslyn 7/19: そろそろ C# 9.0 機能は fix、10.0 向けトリアージ</h1>
+<p>Visual Studio 16.7 Preview 4 が出てるのと、Design Meeting 議事録を1件紹介。</p>
+<ul>
+<li><a href="https://docs.microsoft.com/ja-jp/visualstudio/releases/2019/release-notes-preview#16.7.0-pre-4.0">Visual Studio 2019 バージョン 16.7 Preview 4</a></li>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2020/LDM-2020-07-13.md">C# Language Design Meeting for July 13th, 2020</a></li>
+</ul>
+<p>16.7 Preview 4 で、<code>LangVersion</code> に <code>9.0</code> が入りました。
+また、7月13日の Meeting 議事録は C# 9.0 よりも先の話が出てきています。
+一部のちょっとした修正を除けば、「C# 10.0 候補として採用」、「C# 10.0 のタイミングで再検討」みたいな結論のものが多いです。</p>
+<h2 id="preview-4-c-9.0">16.7 Preview 4 と C# 9.0</h2>
+<p><a href="/blog/2020/6/cs9vs16_7p3/">16.7 Preview 3 のとき</a>から目立った新機能はないんですが、Preview 3 の時に気になっていたバグは治っていました。</p>
+<p>特に、Top-level statements が安心して使えるようになったのは結構な嬉しさがあります。
+(Preview 3/3.1 の時は、誤判定で「未使用 private メソッド扱い」されて挙動不審だった。)</p>
+<p>以下のような、<code>class Program</code> も <code>static void Main</code> も要らないコードが書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> r <span class="keyword">in</span> <span class="string">&quot;&#129402;&#128525;&#128580;&quot;</span>.EnumerateRunes())
+{
+    Console.WriteLine($<span class="string">&quot;{r.Value:X}&quot;</span>);
+}</code></pre>
+<p><img src="/assets/media/1180/toplevel-statements.png" alt="ぴえん" /></p>
+<p>これまで、C# 9.0 候補の機能は Preview としてだけ提供されていて、<code>LangVersion</code> に <code>preview</code> を指定しないと使えませんでした。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">Project</span> <span class="xmlAttribute">Sdk</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Microsoft.NET.Sdk</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">OutputType</span><span class="xmlDelimiter">&gt;</span>Exe<span class="xmlDelimiter">&lt;/</span><span class="xmlName">OutputType</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">TargetFramework</span><span class="xmlDelimiter">&gt;</span>net5.0<span class="xmlDelimiter">&lt;/</span><span class="xmlName">TargetFramework</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">LangVersion</span><span class="xmlDelimiter">&gt;</span>preview<span class="xmlDelimiter">&lt;/</span><span class="xmlName">LangVersion</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span>
+
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Project</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>これに対して、VS 16.7 Preview 4 で、「<code>9.0</code>」が追加され、以下のように言語バージョンを明示できるようになりました。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">Project</span> <span class="xmlAttribute">Sdk</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Microsoft.NET.Sdk</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">OutputType</span><span class="xmlDelimiter">&gt;</span>Exe<span class="xmlDelimiter">&lt;/</span><span class="xmlName">OutputType</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">TargetFramework</span><span class="xmlDelimiter">&gt;</span>net5.0<span class="xmlDelimiter">&lt;/</span><span class="xmlName">TargetFramework</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">LangVersion</span><span class="xmlDelimiter">&gt;</span>9.0<span class="xmlDelimiter">&lt;/</span><span class="xmlName">LangVersion</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span>
+
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Project</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<p>また、 .NET 5 がターゲット(<code>TargetFramework</code> が <code>net5.0</code>)の場合、
+デフォルト挙動(<code>LangVersion</code> を省略、もしくは、<code>default</code> 指定)が C# 9.0 になりました。
+なので、以下の書き方(<code>net5.0</code> で <code>LangVersion</code> 省略)でも C# 9.0 になります。</p>
+<pre><code class="language-xml"><span class="xmlDelimiter">&lt;</span><span class="xmlName">Project</span> <span class="xmlAttribute">Sdk</span><span class="xmlDelimiter">=</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlAttributeValue">Microsoft.NET.Sdk</span><span class="xmlAttributeQuotes">&quot;</span><span class="xmlDelimiter">&gt;</span>
+
+  <span class="xmlDelimiter">&lt;</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">OutputType</span><span class="xmlDelimiter">&gt;</span>Exe<span class="xmlDelimiter">&lt;/</span><span class="xmlName">OutputType</span><span class="xmlDelimiter">&gt;</span>
+    <span class="xmlDelimiter">&lt;</span><span class="xmlName">TargetFramework</span><span class="xmlDelimiter">&gt;</span>net5.0<span class="xmlDelimiter">&lt;/</span><span class="xmlName">TargetFramework</span><span class="xmlDelimiter">&gt;</span>
+  <span class="xmlDelimiter">&lt;/</span><span class="xmlName">PropertyGroup</span><span class="xmlDelimiter">&gt;</span>
+
+<span class="xmlDelimiter">&lt;/</span><span class="xmlName">Project</span><span class="xmlDelimiter">&gt;</span></code></pre>
+<h2 id="section">10.0 向けトリアージ</h2>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/blob/master/meetings/2020/LDM-2020-07-13.md">C# Language Design Meeting for July 13th, 2020</a></li>
+</ul>
+<p>スケジュール的に、今年11月リリースを予定されている .NET 5/C# 9.0 にはこれ以上大き目の機能は追加されない状態になりました。
+(いくつか小さめの機能が入る可能性や、現状入っている機能に対して修正が加わる可能性はまだまだあります。)
+なので、C# Language Design Meeting ではそろそろ「10.0」(来年11月)を見据えた話になっています。</p>
+<h3 id="generics-and-generic-type-parameters-in-aliases">Generics and generic type parameters in aliases</h3>
+<ul>
+<li><code>using MyList&lt;T&gt; = System.Collections.Generic.List&lt;T&gt;;</code> みたいに、using エイリアスに型引数を書きたいという話</li>
+<li>その他、タプルとかにもエイリアスを書けるようにしたい</li>
+<li>(ファイル単位じゃなく)グローバルに影響する using も検討の対象</li>
+<li>C# 10.0 に向けて検討</li>
+</ul>
+<h3 id="closed-enum-types">&quot;closed&quot; enum types</h3>
+<ul>
+<li><code>enum</code> に対して、<code>switch</code> で網羅性チェックが効く(その代わり、後からのメンバー追加が破壊的変更(<code>switch</code> に警告・エラーが出る)ようにしたいという話</li>
+<li>元々 C# 10.0 として検討されていた Discriminated Union (Record の延長戦上)と一緒に検討したい</li>
+</ul>
+<h3 id="allow-ref-assignment-for-switch-expressions">Allow ref assignment for switch expressions</h3>
+<ul>
+<li><code>switch</code> 式で <code>ref</code> 戻り値を返したい</li>
+<li><code>ref var r = ref x switch { 0 =&gt; ref a, _ =&gt; ref b };</code> みたいなの</li>
+<li>ちなみに、条件演算子の場合は今でも <code>ref var r = ref (x ? ref a : ref b);</code> と書ける</li>
+<li>「Any Time」(優先度低め。コミュニティ貢献があれば実現するかも、くらい)扱い</li>
+</ul>
+<h3 id="null-suppressions-nested-under-propagation-operators">Null suppressions nested under propagation operators</h3>
+<ul>
+<li>null 抑止の後起き <code>!</code> の挙動がちょっと怪しいらしい</li>
+<li>「<code>!</code> の有無によって実行時の挙動は変わらない」(あくまで警告抑止の効果しかない)ということになっているのに、挙動を変えちゃうことがあるみたい</li>
+<li><code>a?.b.c!.d.e</code> が <code>(a?.b.c)!.d.e</code> として解釈されてて、このせいで、<code>?.</code> のショートサーキットの掛かり方が変わるとのこと</li>
+<li>この挙動はまずそうなので、破壊的変更になってでも直したい</li>
+<li>C# 9.0 のタイミングで検討</li>
+</ul>
+<h3 id="relax-rules-for-trailing-whitespaces-in-format-specifier">Relax rules for trailing whitespaces in format specifier</h3>
+<ul>
+<li><code>$&quot;{date:yyyy-MM-dd}</code> と <code>$&quot;{date:yyyy-MM-dd }</code> みたいに、文字列補間のフォーマット指定で、<code>{}</code> 内の空白の有無で挙動が変わるのは変じゃないか</li>
+<li>Rejcted。変じゃない。意図的。元から、<code>date.ToString(&quot;yyyy-MM-dd&quot;)</code> と <code>date.ToString(&quot;yyyy-MM-dd &quot;)</code> で出力が変わるので</li>
+</ul>
+<h3 id="private-field-consideration-in-structs-during-definite-assignment-analysis">Private field consideration in structs during definite assignment analysis</h3>
+<ul>
+<li><code>struct Result { public object Value { get; } }</code> みたいに、自動実装プロパティから生成されてるはずの private フィールドが、構造体の「<a href="/study/csharp/resource/rm_struct/#definite-assignment">確実な初期化</a>」解析から漏れるバグがあるらしい</li>
+<li>native compiler (C# 5.0 以前の、C++ 実装の C# コンパイラー)時代からのバグで、「バグまで含めて破壊的変更を起こさないように移植した結果」とのこと</li>
+<li>でも、結構まずいバグなので変更することに前向き</li>
+<li>「来週しっかり検討」という扱い(たぶん、C# 9.0 で修正しそう)</li>
+</ul>
+<h3 id="remove-restriction-that-optional-parameters-must-be-trailing">Remove restriction that optional parameters must be trailing</h3>
+<ul>
+<li><code>void M(int x, int y = 0, int z)</code> みたいに、末尾以外にオプション引数を認めたいという話</li>
+<li>.NET のメタデータ的には許される構造で、C# が禁止してるだけ</li>
+<li>まあ、制限を緩めてもいいかも</li>
+<li>Any Time (あまり積極的ではない)</li>
+</ul>
+<h3 id="list-patterns">List patterns</h3>
+<ul>
+<li>パターン マッチングで、<code>x is [1, 2, 3]</code> みたいな書き方で配列/リストに対するマッチングをしたいという話</li>
+<li>コミュニティ貢献ですでにプロトタイプがある</li>
+<li>それを元に詳細を検討する必要がある</li>
+<li>C# 10.0 に向けて検討</li>
+</ul>
+<h3 id="property-scoped-fields-and-the-field-keyword">Property-scoped fields and the <code>field</code> keyword</h3>
+<ul>
+<li>プロパティの <code>get</code>/<code>set</code>/<code>init</code> 内でだけアクセスできるフィールドを定義したいという話</li>
+<li>ものすごく昔からたびたび似た要求が上がっては「そのうちね」な空気感だったやつ</li>
+<li>ついに C# 10.0 で検討</li>
+</ul>
+<h3 id="file-scoped-namespaces">File-scoped namespaces</h3>
+<ul>
+<li><code>namespace X { ... }</code> みたいに <code>{}</code> でくくってインデントが1段下がる書き方じゃなく、<code>namespace X;</code> みたいな1行でインデントを下げずに名前空間定義したいという話</li>
+<li>同上、これもついに C# 10.0 で検討</li>
+</ul>
+<h3 id="allowing-refout-on-lambda-parameters-without-explicit-type">Allowing ref/out on lambda parameters without explicit type</h3>
+<ul>
+<li><code>(ref x, ref y) =&gt; {}</code> みたいなラムダ式を書きたいという話</li>
+<li>実装できない大きな問題もなさそうだけど、優先度が付くほど需要もない</li>
+<li>Any Time</li>
+</ul>
+<h3 id="using-declarations-with-a-discard">Using declarations with a discard</h3>
+<ul>
+<li><code>using var _ = new X();</code> とか <code>using (new X()) { }</code> とかは書けるんだから、<code>using _ = new X();</code> とか <code>using new X();</code> を認めてほしいという話</li>
+<li><code>X.X</code> (「いつかは取り組む」くらい。Any Time よりは多分前向き)</li>
+</ul>
+<h3 id="allow-null-conditional-operator-on-the-left-hand-side-of-an-assignment">Allow null-conditional operator on the left hand side of an assignment</h3>
+<ul>
+<li><code>x?.Value = 1;</code> みたいなので、<code>if (x != null) x.Value = 1;</code> 扱いしてほしいという話</li>
+<li><code>X.X</code></li>
+</ul>
+<h3 id="top-level-statements-and-functions">Top level statements and functions</h3>
+<ul>
+<li>Top level statements 自体は C# 9.0 に入る</li>
+<li>まだ検討課題として残っているものとして、top level に書いたメソッドはプロジェクト全体から呼べるべきかどうかという話がある</li>
+<li>9.0 ではあくまで「生成される Main メソッド内のローカル関数扱い」、「top level メソッドは top level statement からしか呼べない」という実装で行く</li>
+<li>「プロジェクト全体から呼べるかどうか」は「top level statements part 2」としてC# 10.0 で再度ディスカッションを設ける</li>
+</ul>
+<h3 id="implicit-usings">Implicit usings</h3>
+<ul>
+<li>プロジェクト全体にしたして影響する <code>using</code> ディレクティブが欲しい</li>
+<li>C# スクリプト構文だとこれに類するものが認められてて、例えば Visual Studio の C# Interactive では <code>using System;</code> はなくても <code>System</code> 名前空間の型を使える</li>
+<li>top level statements 文法とスクリプト文法の差異を少しでも減らすためには、通常 C# でもこの手の暗黙的な <code>using</code> があった方がいいのではないか</li>
+<li>現状、csc のオプションとして <code>csc -using:System</code> みたいな与え方を検討</li>
+<li>C# 10.0 のタイミングでディスカッション</li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2020/7/">7&#x6708;</a></li><li><a href="/blog/2020/7/pickuproslyn0721/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 7/21: &#x5F15;&#x304D;&#x7D9A;&#x304D; C# 10.0 &#x5411;&#x3051;&#x30C8;&#x30EA;&#x30A2;&#x30FC;&#x30B8;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

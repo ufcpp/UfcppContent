@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>JSON &#x3068;&#x304B;&#x306E;&#x4E2D;&#x8EAB;&#x78BA;&#x8A8D;&#x30C4;&#x30FC;&#x30EB; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2022/12/binarytool/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2022-12-30T16:34:58">2022-12-30</time></span><span>更新: <time datetime="2022-12-30T16:43:50">2022-12-30</time></span></div><h1 id="json">JSON とかの中身確認ツール</h1>
+<p>今日は、「主に自分が使う用ツールを Blazor WebAssembly で作って Static Web Apps に置いたよ」系の話を一応ブログ化。</p>
+<ul>
+<li><a href="https://github.com/ufcpp/StaticWebApps/tree/main/BlazorWasm/BinaryTool">ソースコード</a></li>
+<li><a href="https://ambitious-plant-0ea3d5100.2.azurestaticapps.net/">Static Web App</a></li>
+</ul>
+<div>
+<iframe width="1409" height="794" src="https://www.youtube.com/embed/_oi53peGbnw" title="Binary Tool" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+<p>よくある「JSON とかのデータの中身を確認するツール」です。</p>
+<p>しばらく、JSON と MessagePack の読み書きをするコードを書いてて、
+デバッグがしんどくなって作ったのがこのツール。</p>
+<p>いろんな形式を同時に扱うことがニッチ需要なのであんまり自分の需要にあったツールがなかったんですよね。なら、まあ、自作。</p>
+<p><a href="https://youtu.be/_f6UA3Vs3Kc?t=5935">こないだの C# 配信</a> で、UTF-8 とか MessagePack バイナリとかを手打ちで入力してたら <a href="https://twitter.com/xin9le">@xin9le</a>, <a href="https://twitter.com/okazuki">@okazuki</a> 両氏にドン引きされたやつ。</p>
+<h2 id="parser">バイナリ読み込み (Parser)</h2>
+<p>UTF-8 を <code>ReadOnlySpan&lt;byte&gt;</code> のまま扱ってて、
+ブレイクポイントを仕掛けてデバッガーで中身を覗くとかやってると、
+「97, 98, 99」みたいな数値列しか見れないことが多く。</p>
+<p>デバッガーからコピペするとその数値が <code>&quot;97, 98, 99&quot;</code> みたいな文字列としてコピーされてしまったりするので、それをバイナリに戻す処理を入れています。</p>
+<p>せっかくなので、</p>
+<ul>
+<li>10進数コンマ区切り <code>97,98,99</code></li>
+<li>10進数スペース区切り <code>97 98 99</code></li>
+<li>16進数コンマ区切り <code>61,62,63</code></li>
+<li>16進数スペース区切り <code>61 62 63</code></li>
+<li>16進数区切りなし <code>616263</code></li>
+<li>UTF-8 文字列 <code>abc</code></li>
+<li>Base64エンコードされた文字列 <code>YWJj</code></li>
+<li>C# 風 <code>0b0110_0001, 0x62, 99</code></li>
+<li>上記の中からある程度自動判定</li>
+</ul>
+<p>とかを読めるようにしています。</p>
+<h2 id="formatter">文字列化 (Formatter)</h2>
+<p>読み込んだバイナリを表示する形式も選択式に。
+UTF-8 だったらそれをデコードした文字列を見たいことがほとんどですし、
+バイナリなら16進数を並べたもの辺りが使い勝手がいいと思います。</p>
+<p>その他、「デバッグで使いたいけども、いちいちファイルとかから読むの面倒で、C# コード中に生で埋め込みたい」みたいな時のために、<code>new byte[] { 0x61, 0x62, 0x63 }</code> みたいな書式にする機能も持たせています。</p>
+<h2 id="dom">デシリアライズ結果の可視化 (DOM)</h2>
+<p>用途が「JSON とかの中身確認」だったのでその機能を持っています。</p>
+<pre><code class="language-json">{<span class="jsonKey">&quot;abc&quot;</span>:<span class="jsonNumber">0</span>,<span class="jsonKey">&quot;ABC&quot;</span>:[<span class="jsonConst">null</span>,<span class="jsonConst">false</span>,<span class="jsonConst">true</span>]}</code></pre>
+<p>みたいなデータを、</p>
+<ul>
+<li>abc: 0</li>
+<li>ABC:
+<ul>
+<li>0: null</li>
+<li>1: false</li>
+<li>2: true</li>
+</ul>
+</li>
+</ul>
+<p>みたいな <code>&lt;li&gt;</code> タグにして表示します。</p>
+<p>とりあえず JSON と MessagePack に対応。
+Protocol Buffers と YAML くらいには対応してもいいかも。</p>
+<p>自動判定というか、「エラーなくデシリアライズできた最初の1個を選択」みたいな処理も入れています。
+(いかにも「自分用ツール」らしく、エラー処理が甘いんで結構フリーズするんですが…)</p>
+<h2 id="writer">再シリアライズ (Writer)</h2>
+<p>再度シリアライズして、改めて Formatter にかける処理も入っています。</p>
+<p>「MessagePack なバイナリを、JSON な UTF-8 で表示」みたいなことやると結構デバッグがはかどりまして。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2022/12/">12&#x6708;</a></li><li><a href="/blog/2022/12/rawstringwhitespace/">raw string &#x306E;&#x7A7A;&#x767D;&#x6587;&#x5B57;</a></li><li><a href="/blog/2022/12/stackalloc-natural-type/">stackalloc &#x306E;&#x81EA;&#x7136;&#x306A;&#x578B;</a></li><li><a href="/blog/2022/12/extension-resolution/">&#x62E1;&#x5F35;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x306F;&#x6697;&#x9ED9;&#x578B;&#x5909;&#x63DB;&#x3092;&#x898B;&#x306A;&#x3044;</a></li><li><a href="/blog/2022/12/unused-generic-type-parameter/">&#x672A;&#x4F7F;&#x7528;&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30C3;&#x30AF;&#x578B;&#x5F15;&#x6570;&#x3067; TypeLoadException &#x304C;&#x8D77;&#x3053;&#x308B;&#x554F;&#x984C;</a></li><li><a href="/blog/2022/12/unsafer-unsafe/">Unsafe &#x30AF;&#x30E9;&#x30B9;&#x306E;&#x6557;&#x5317; (&#x95A2;&#x6570;&#x30DD;&#x30A4;&#x30F3;&#x30BF;&#x30FC;)</a></li><li><a href="/blog/2022/12/no-more-t4/">&#x5FC5;&#x305A;&#x3001;&#x304B;&#x306E;&#x90AA;&#x77E5;&#x66B4;&#x8650;&#x306E; T4 &#x3092;&#x9664;&#x304B;&#x306D;&#x3070;&#x306A;&#x3089;&#x306C;&#x3068;&#x6C7A;&#x610F;&#x3057;&#x305F;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 4/16 | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2017/4/pickuproslyn0416/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2017-04-16T21:39:16">2017-04-16</time></span><span>更新: <time datetime="2017-04-16T21:41:23">2017-04-16</time></span></div><h1 id="roslyn-416">ピックアップRoslyn 4/16</h1>
+<p>結構久々のSprint進捗報告。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/18719">Sprint 116 Summary #18719</a></li>
+</ul>
+<p>Visual Studio 2017リリース前後の作業が「バグ修正してた」しかなかったので、割かしほんとに久々。
+C# 7.1/7.2作業が始まっています。
+いくつか紹介。
+(ここに並んでいるのが7.1/7.2に入る全てでもないし、優先度の変更もあり得るものです。あくまで、最近作業したもので、現状の予定としてこのバージョンで出したいというもの。)</p>
+<h2 id="c-7.1">C# 7.1</h2>
+<h3 id="default">default 式</h3>
+<p>左辺から型推論が効くなら、<code>default(T)</code>の<code>(T)</code>の部分を省略可能にするという話。</p>
+<p><a href="/blog/2016/9/pickuproslyn0906/">割と前から</a>実装を初めていて、masterにmerge済み。</p>
+<h3 id="async-main">async main</h3>
+<p>やっと、<code>Main</code> メソッドを非同期にできるようになるみたい。実装的には、</p>
+<ul>
+<li><code>Main</code>の戻り値に<code>Task</code>と<code>Task&lt;int&gt;</code>を許す</li>
+<li>その場合、<code>async</code>修飾子を付けるの必須</li>
+<li>コード生成で、<code>Main().GetAwaiter().GetResult()</code>を呼ぶだけの繋ぎ用メソッドを生成する</li>
+</ul>
+<p>という感じみたい。</p>
+<h3 id="tuple-names">Tuple names</h3>
+<p>タプルでも、匿名型みたいに要素名を自動で付けたいっていう話。
+↓みたいに、変数<code>x</code>, <code>y</code>があるとき、<code>(x, y)</code>と書けば、タプル要素名を自動的に<code>x</code>にしてほしいという。</p>
+<p><img src="/assets/media/1129/tuplename.png" alt="tuple names" /></p>
+<h2 id="c-7.2">C# 7.2</h2>
+<p>一部ビルドできるようにして、<a href="https://github.com/dotnet/corefxlab/">CoreFX Labs</a>で使ってもらい始めたみたい。</p>
+<p>確かに、時々、Visual Studio 2017付属の普通のC# 7.0コンパイラーではビルドできないコードがあるんですよねぇ、corefxlab。</p>
+<h3 id="span-safety">Span Safety</h3>
+<p><a href="https://dotnet.myget.org/feed/dotnet-core/package/nuget/System.Memory"><code>System.Memory</code></a>パッケージ中に入ってる<code>Span&lt;T&gt;</code>構造体がらみで、ちょっとコンパイラーによる制限を掛けたいっていう話。</p>
+<p><code>Span&lt;T&gt;</code>型は、内部的にスタック上の参照を握っちゃったりするんで、<code>ref</code>と同種のコード フロー解析をしないとまずいということみたい。今は妥協的な実装をしているものの、将来的には<a href="https://github.com/dotnet/coreclr/blob/d4fd78eb013de26639b3327f45072807858d0dde/src/mscorlib/src/System/ByReference.cs"><code>ByReference&lt;T&gt;</code>型</a>とかいう、ほんとに「フィールドとして参照を持てる型」を作って使いたいみたいで、そうなると、<code>Span&lt;T&gt;</code>に対するフロー解析をちゃんとやらないといよいよまずい。</p>
+<p>要するに、</p>
+<ul>
+<li><code>ref T</code>と同種の扱いをしないといけない型を<code>ref-like</code>タイプと呼ぶ</li>
+<li>条件としては、
+<ul>
+<li>参照(<code>ref T</code>)や、一定範囲のメモリ(<code>(ref T data, int length)</code>)を握っている構造体</li>
+<li>あるいは、それを入れ子で握っている構造体</li>
+</ul>
+</li>
+<li>掛かる制限としては、<code>ref T</code>と同じく、
+<ul>
+<li>普通の型のフィールドにできない
+<ul>
+<li><code>ref-like</code>型のフィールドにはできる</li>
+</ul>
+</li>
+<li><a href="/study/csharp/resource/sp_ref/#ref-returns">引数として受け取ったものとか、一部のものしか戻り値として返せない</a></li>
+</ul>
+</li>
+</ul>
+<p>という型。</p>
+<h4 id="typedreference">補足: TypedReference</h4>
+<p>これ、実のところ、現在のC#でも<code>TypedReference</code>っていう「<code>ref T</code>と同じ扱いしないとまずい型」があったりします。
+まあ、<a href="/study/csharp/interop/sp_makeref/">隠し(ドキュメント化されていない)機能</a>を使わないと扱えない型なので問題にはなっていませんが。</p>
+<p>現状の<code>TypedReference</code>は特殊な制約が掛かっていて、やっぱり普通の型のフィールドにできなくなっています。
+C# 7.0で参照戻り値が書けるようになったのに対して、<code>TypedReference</code>はいまだに戻り値にも使えません。
+これも、参照戻り値と同ラインまでは制限を緩めて大丈夫なはずで、<code>ref-like</code>型の一例です。</p>
+<h3 id="ref-readonly">ref readonly</h3>
+<p><a href="/blog/2017/2/pickuproslyn0213/">2月に紹介した</a>やつ。C++でいう<code>const&amp;</code>。
+構造体のコピーを避けるための参照渡しであって、書き換えは認めたくないっていうやつ。
+一部、プロトタイプ実装を始めたみたいです。</p>
+<h2 id="section">その先</h2>
+<p>ちょうど最近<a href="http://www.buildinsider.net/column/iwanaga-nobuyuki/013">Build Insiderの記事書きました</a>けども、インターフェイスのデフォルト メソッドの実装作業、もう始まっていたりします。
+まあ、それなりに時間が掛かる作業なので、今実装が始まっているって言っても、実際のリリースはだいぶ先。</p>
+<p>同様に、非null参照がらみもちらほら作業を進めてるみたいです。
+(書かれてる作業内容的には、前々から作業してたやつがしばらく塩漬けで、それを久々にmasterブランチと同期したっぽい？)</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2017/4/">4&#x6708;</a></li><li><a href="/blog/2017/4/net47update/">.NET Framework 4.7</a></li><li><a href="/blog/2017/4/bitfields/">C# &#x3067;&#x30D3;&#x30C3;&#x30C8;&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;</a></li><li><a href="/blog/2017/4/intgenericparamter/">int &#x578B;&#x306E;&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30C3;&#x30AF;&#x578B;&#x5F15;&#x6570;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

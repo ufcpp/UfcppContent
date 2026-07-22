@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: .NET 5 &#x3078;&#x306E; Xamarin &#x7D71;&#x5408;&#x306B;&#x5411;&#x3051;&#x3066; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2020/5/featureswitch/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2020-05-03T18:24:27">2020-05-03</time></span><span>更新: <time datetime="2020-05-03T18:24:27">2020-05-03</time></span></div><h1 id="roslyn.net-5-xamarin">ピックアップRoslyn: .NET 5 への Xamarin 統合に向けて</h1>
+<p>1つ前のブログで話した <a href="/blog/2020/5/sourcegenerator/">Source Generator</a> の動機の1つは、
+リフレクションが使えない環境でのコード生成をある程度カバーできるようにというものです。</p>
+<p>今、 .NET Core と Xamarin の統合作業真っ最中で、
+その結果、iOS とか Web Assembly とかで使いにくい機能をどうしようかという話になっていて、リフレクションもその1つです。</p>
+<p>その他にもいくつか、対応プラットフォームが増えることで必要な作業がちらほらと。</p>
+<h2 id="feature-switch">Feature Switch</h2>
+<p>iOS とかの AOT (事前ネイティブ コンパイル)シナリオだと使わない機能はコンパイル時に削ってしまいたいわけですが、
+そのためのスイッチを用意したいみたいな話も出ていたりします。</p>
+<ul>
+<li><a href="https://github.com/dotnet/designs/blob/master/accepted/2020/feature-switch.md">Feature Switch</a></li>
+</ul>
+<p><code>Regex</code> の <code>RegexOptions.Compiled</code> とか、めったに使わず、使わない場合削ってしまえればコード量が結構多いみたいです。
+あと、暗号系のアルゴリズムとかは、アプリごとに1度「これ」と決めてしまえばほとんどの場合その1個だけしか使わないと思いますが、この場合、使わないものを軒並み決してしまいたかったり。</p>
+<p>こういう特定機能のスイッチは、 Target Framework の亜種を増やすのではなくて、
+以下のような感じの <code>bool</code> フラグでソースコード中で切り替え処理をしてほしそうです。
+(<a href="/blog/2018/12/hdintrinsic/">Hardware Intrinsics</a>とかでやっているのと同じ方式です。)</p>
+<pre><code class="language-csharp"><span class="keyword">internal</span> <span class="keyword">static</span> <span class="keyword">class</span> FeatureDefiningType
+{
+    [FeatureSwitch(<span class="string">&quot;System.Runtime.OptionalFeatureBehavior&quot;</span>)]
+    <span class="keyword">internal</span> <span class="keyword">static</span> <span class="keyword">bool</span> IsOptionalFeatureEnabled { <span class="keyword">get</span>; }
+}</code></pre>
+<h2 id="section">国際化対応</h2>
+<p>カレンダーや時刻とかの国ごとに違う書式(2020年5月3日 か 3 May, 2020 か)とか、
+文字ごとの Unicode カテゴリー、文字列のどこで改行していいかとか、
+アルファベットの大文字・小文字の対応付けとか、
+どれも結構大きなテーブルデータを必要とします。</p>
+<p>これに対して、.NET Core の国際化対応は <a href="http://site.icu-project.org/home">ICU</a> (International Components for Unicode) に依存していたりします。</p>
+<p>で、これも iOS とかでどうしようかという話に。</p>
+<ul>
+<li><a href="https://github.com/dotnet/designs/pull/102">Globalization support in .NET 5</a></li>
+</ul>
+<p>デスクトップやサーバーOSには今どき大体 ICU が同梱されていたりするんですが。
+Android も、API level 24 移行は <a href="https://developer.android.com/guide/topics/resources/internationalization#relation">ICU4J</a> を持っていたりします。
+問題が iOS と Web Assembly で、この辺りは OS/プラットフォーム側に ICU がないのでどうしようかという状態。</p>
+<p>案としては、いっそ国際化対応を捨てるという方法。
+どのカルチャーを取得しようとしても常に <a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.globalization.cultureinfo.invariantculture"><code>InvariantCulture</code></a>を返してしまうというモードがあるみたいです。</p>
+<ul>
+<li><a href="https://github.com/dotnet/runtime/blob/master/docs/design/features/globalization-invariant-mode.md">.NET Core Globalization Invariant Mode</a></li>
+</ul>
+<p>別案としては、ICU をアプリ単位で同梱する方法。
+これは、「OS のバージョンに依らず、所望の ICU バージョン(≒ Unicode バージョン)に依存したい」という場合にも使えます。</p>
+<ul>
+<li><a href="https://github.com/dotnet/runtime/pull/35383">Add app-local support for ICU</a></li>
+</ul>
+<p>ちなみに、ICU はテーブルデータを全部持とうとすると16MBくらいのサイズになるらしく、
+アプリ1個1個に全部含めてしまうには少々でかいです。
+ICU 自体には「必要な分だけ残してテーブルを削る」みたいな仕組みもあるらしくて、
+iOS とか Web Assembly みたいな AOT シナリオのコンパイルにもテーブル削減の仕組みを組み込みたいというような話もあります。</p>
+<ul>
+<li><a href="https://github.com/dotnet/runtime/issues/35092">Prototype ICU size reduction tooling</a></li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2020/5/">5&#x6708;</a></li><li><a href="/blog/2020/5/sourcegenerator/">C# Source Generator (first preview)&#x3092;&#x8A66;&#x3057;&#x3066;&#x307F;&#x308B;</a></li><li><a href="/blog/2020/5/pickuproslyn0503/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn: C# 9.0 &#x5411;&#x3051; Design Notes</a></li><li><a href="/blog/2020/5/variationselectoridentifier/">&#x898B;&#x305F;&#x76EE;&#x3067;&#x533A;&#x5225;&#x3067;&#x304D;&#x306A;&#x3044;&#x5909;&#x6570;</a></li><li><a href="/blog/2020/5/cs9net5p4/">C# 9.0 in .NET 5 Preview 4 (Build &#x3067;&#x306E;&#x30EA;&#x30EA;&#x30FC;&#x30B9;)</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x3010;C# 11 &#x5019;&#x88DC;&#x3011; UTF-8 &#x30EA;&#x30C6;&#x30E9;&#x30EB; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2021/12/utf8-literal/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2021-12-28T14:45:05">2021-12-28</time></span><span>更新: <time datetime="2024-02-08T20:34:04">2024-02-08</time></span></div><h1 id="c-11-utf-8">【C# 11 候補】 UTF-8 リテラル</h1>
+<p>.NET の UTF-8 対応がらみの続報。</p>
+<h2 id="byte">byte でやりくり</h2>
+<p>元々、<code>string</code> (UTF-16 でデータを持ってる)に加えて <code>Utf8String</code> みたいな名前で UTF-8 な型を追加しようか何て話もあったんですが。
+<code>string</code> と <code>Utf8String</code> の2重管理がしんどいだろう、これだけ <code>string</code> 前提で .NET エコシステムが確立された状況で追加は無理だろうという雰囲気になっています。</p>
+<p><code>string</code> の中身を UTF-8 に変更した方が建設的かもしれないという話も出るくらいですが、さすがにそれをやりだすと大工事過ぎて短期では無理でしょう。
+著者個人的にも「10年先ならわからないけども」くらいのお気持ちになりつつあります。</p>
+<p>そうこうしているうちに、「生 byte 列で UTF-8 を扱う」と言うのが .NET エコシステム内でデファクトスタンダード化してしまいました(今ここ)。
+例えば <code>System.Text.Unicode</code> 名前空間中のメソッドは以下のような感じになっています。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Buffers;
+
+<span class="keyword">namespace</span> System.Text.Unicode;
+
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> Utf8
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> OperationStatus FromUtf16(
+        ReadOnlySpan&lt;<span class="keyword">char</span>&gt; source, Span&lt;<span class="keyword">byte</span>&gt; destination, <span class="keyword">out</span> <span class="keyword">int</span> charsRead, <span class="keyword">out</span> <span class="keyword">int</span> bytesWritten,
+        <span class="keyword">bool</span> replaceInvalidSequences = <span class="keyword">true</span>, <span class="keyword">bool</span> isFinalBlock = <span class="keyword">true</span>);
+
+    <span class="keyword">public</span> <span class="keyword">static</span> OperationStatus ToUtf16(
+        ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; source, Span&lt;<span class="keyword">char</span>&gt; destination, <span class="keyword">out</span> <span class="keyword">int</span> bytesRead, <span class="keyword">out</span> <span class="keyword">int</span> charsWritten,
+        <span class="keyword">bool</span> replaceInvalidSequences = <span class="keyword">true</span>, <span class="keyword">bool</span> isFinalBlock = <span class="keyword">true</span>);
+}</code></pre>
+<p><code>Span&lt;byte&gt;</code> と <code>ReadOnlySpan&lt;byte&gt;</code> で UTF-8 文字列を扱っています。</p>
+<p>文字なのかその他のバイナリ形式なのかがわからなくなるんであんまり親切設計ではないんですが…
+型変換やオーバーロードをあんまり増やすのもしんどく、
+「生 byte 列で UTF-8 を扱う」は結構定着しちゃうんじゃないかという感じ。</p>
+<h2 id="section">リテラル問題</h2>
+<p>とはいえ。
+UTF-8 扱いで <code>Span&lt;byte&gt;</code> とかを使うにあたって困るのが文字列リテラル。
+今だと以下のように <code>byte</code> 定数的に <code>new byte[]</code> するしか方法がありません。</p>
+<pre><code class="language-csharp">ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; _true = <span class="keyword">new</span> <span class="keyword">byte</span>[] { (<span class="keyword">byte</span>)<span class="string">&#39;t&#39;</span>, (<span class="keyword">byte</span>)<span class="string">&#39;r&#39;</span>, (<span class="keyword">byte</span>)<span class="string">&#39;u&#39;</span>, (<span class="keyword">byte</span>)<span class="string">&#39;e&#39;</span> };
+ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; _false = <span class="keyword">new</span> <span class="keyword">byte</span>[] { (<span class="keyword">byte</span>)<span class="string">&#39;f&#39;</span>, (<span class="keyword">byte</span>)<span class="string">&#39;a&#39;</span>, (<span class="keyword">byte</span>)<span class="string">&#39;l&#39;</span>, (<span class="keyword">byte</span>)<span class="string">&#39;s&#39;</span>, (<span class="keyword">byte</span>)<span class="string">&#39;e&#39;</span> };
+ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; _null = <span class="keyword">new</span> <span class="keyword">byte</span>[] { (<span class="keyword">byte</span>)<span class="string">&#39;n&#39;</span>, (<span class="keyword">byte</span>)<span class="string">&#39;u&#39;</span>, (<span class="keyword">byte</span>)<span class="string">&#39;l&#39;</span>, (<span class="keyword">byte</span>)<span class="string">&#39;l&#39;</span> };</code></pre>
+<p>一応、これ、最適化はされて <code>new byte[]</code> のヒープ アロケーションは発生せず、
+直接 DLL 中のデータ領域からデータが読まれます。</p>
+<p>この3つくらいならいいんですけども、極まってくるとありとあらゆる文字列リテラルを UTF-8 byte 列化したくなり…</p>
+<ul>
+<li><a href="https://github.com/dotnet/aspnetcore/blob/8b30d862de6c9146f466061d51aa3f1414ee2337/src/Servers/Kestrel/Core/src/Internal/Http2/Http2Connection.Generated.cs">HTTP のヘッダーとかで使う文字列</a></li>
+<li><a href="https://github.com/dotnet/aspnetcore/blob/52eff90fbcfca39b7eb58baad597df6a99a542b0/src/Shared/runtime/Http2/Hpack/StatusCodes.cs">HTTP のステータス コード</a></li>
+</ul>
+<p>とかを見てもらえるとなかなかにつらみを感じてもらえるのではないかと思います。</p>
+<p><code>&quot;100&quot;</code> みたいなものすら <code>new byte[] { (byte)'1', (byte)'0', (byte)'0' }</code>。</p>
+<h2 id="utf-8">UTF-8 文字列リテラル</h2>
+<p>と言うことで着地点として、<a href="https://github.com/dotnet/csharplang/blob/main/proposals/utf8-string-literals.md">リテラルだけ UTF-8 なものを用意しようか</a>という雰囲気になっています。</p>
+<ul>
+<li><code>Span&lt;byte&gt;</code> や <code>ReadSpan&lt;byte&gt;</code> に対して文字列リテラルを渡すと自動的に上記のような UTF-8 byte 列を生成する</li>
+<li>オーバーロード解決や <code>var</code> 型推論用に <code>u8</code> 接尾辞を用意</li>
+</ul>
+<p>例えば以下のように書けるようになります。</p>
+<p>暗黙的変換:</p>
+<pre><code class="language-csharp"><span class="keyword">byte</span>[] array = <span class="string">&quot;hello&quot;</span>;             <span class="comment">// new byte[] { 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20 }</span>
+Span&lt;<span class="keyword">byte</span>&gt; span = <span class="string">&quot;dog&quot;</span>;            <span class="comment">// new byte[] { 0x64, 0x6f, 0x67 }</span>
+ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; span = <span class="string">&quot;cat&quot;</span>;    <span class="comment">// new byte[] { 0x63, 0x61, 0x74 }</span></code></pre>
+<p><code>u8</code> 接尾辞:</p>
+<pre><code class="language-csharp"><span class="keyword">string</span> s1 = <span class="string">&quot;hello&quot;</span>u8;      <span class="comment">// エラー。型が合ってない。</span>
+<span class="keyword">var</span> s2 = <span class="string">&quot;hello&quot;</span>u8;         <span class="comment">// Ok。型は ReadOnlySpan&lt;byte&gt;。</span>
+Span&lt;<span class="keyword">byte</span>&gt; s3 = <span class="string">&quot;hello&quot;</span>u8;  <span class="comment">// Ok。</span>
+<span class="keyword">byte</span>[] s4 = <span class="string">&quot;hello&quot;</span>u8;      <span class="comment">// Ok。</span></code></pre>
+<p>UTF-8 として不正になる文字列リテラルはコンパイル エラーにするそうです。
+.NET の文字列は UTF-16 というか実際には「古き良き Unicode」(2バイト固定長で行けると思ってた頃の Unicode)なので、「<a href="https://codezine.jp/article/detail/1592">サロゲート ペア</a>の片割れ」みたいな今となってはダメなやつを受け付けてしまうので。</p>
+<pre><code class="language-csharp"><span class="keyword">byte</span>[] array = <span class="string">&quot;\uD801&quot;</span>; <span class="comment">// ハイ サロゲートのみ。コンパイル エラーにする。</span></code></pre>
+<p>ちなみに、<code>const string</code> から UTF-8 リテラルも作れるし、
+「不正な UTF-16 を <code>+</code> でつないで、その結果が有効な UTF-8 になるなら OK」だそうです。</p>
+<pre><code class="language-csharp"><span class="keyword">const</span> <span class="keyword">string</span> first = <span class="string">&quot;\uD83D&quot;</span>;  <span class="comment">// ハイ サロゲート。</span>
+<span class="keyword">const</span> <span class="keyword">string</span> second = <span class="string">&quot;\uDE00&quot;</span>; <span class="comment">// ロー サロゲート。</span>
+ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; span = first + second; <span class="comment">// これは OK</span></code></pre>
+<h2 id="utf8string">Utf8String 型の可能性</h2>
+<p>前述の通り、今の <code>string</code> を置き換えるような <code>Utf8String</code> 型が追加される可能性はかなり低くなってきたんですが。</p>
+<p>一応まだ可能性 0 とは断じない方がいいので、一応この仮定的な <code>Utf8String</code> の存在は考慮しているそうです。</p>
+<p>もしも <code>Utf8String</code> が積極的に使いたい「良い型」になったとしても、
+たぶん、<code>&quot;&quot;</code> から <code>byte[]</code>、<code>Span&lt;byte&gt;</code>、<code>ReadOnlySpan&lt;byte&gt;</code> への暗黙的変換は対して問題にならなさそう。</p>
+<p>後悔するとしたら <code>u8</code> 接尾辞の「自然な型」を <code>ReadOnlySpan&lt;byte&gt;</code> にしてしまう点で、これに関しては「やっぱり <code>Utf8String</code> に変えたい」となっても変えれるものではなくなります。
+とはいえ、「なので今は自然な型を決めるのはやめておこう」と思うほどのものではない(ので、<code>ReadOnlySpan&lt;byte&gt;</code> な方針でいく)でしょう。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2021/12/">12&#x6708;</a></li><li><a href="/blog/2021/12/regional-indicator/">Regional Indicator (&#x56FD;&#x65D7;&#x7D75;&#x6587;&#x5B57;)</a></li><li><a href="/blog/2021/12/activator-net48/">&#x3010;C# 10.0 &#x95A2;&#x9023;&#x3011;&#x5F15;&#x6570;&#x306A;&#x3057;&#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;&#x306E; Activator &#x30D0;&#x30B0;</a></li><li><a href="/blog/2021/12/unicode-benzene/">&#x30D9;&#x30F3;&#x30BC;&#x30F3;&#x74B0;&#x306E;&#x6587;&#x5B57;&#x30B3;&#x30FC;&#x30C9;: &#x232C; (U&#x2B;232C), &#x23E3; (U&#x2B;23E3)</a></li><li><a href="/blog/2021/12/newlines-in-interpolated-string/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011; {} &#x4E2D;&#x306E;&#x6539;&#x884C;</a></li><li><a href="/blog/2021/12/lower-cased-type-names/">&#x3010;&#x8FD1;&#x3005;&#x8B66;&#x544A;&#x8FFD;&#x52A0;&#x3011;&#x5C0F;&#x6587;&#x5B57; a&#xFF5E;z &#x578B;&#x540D;</a></li><li><a href="/blog/2021/12/ninjacatdies/">&#x30CB;&#x30F3;&#x30B8;&#x30E3;&#x30AD;&#x30E3;&#x30C3;&#x30C8;&#x1F431;&#x200D;&#x1F464;</a></li><li><a href="/blog/2021/12/full-color-emoji/">&#x4EFB;&#x610F;&#x8272;&#x7D75;&#x6587;&#x5B57;&#xFF1F;</a></li><li><a href="/blog/2021/12/notorious-compat-char/">&#x60AA;&#x3044;&#x610F;&#x5473;&#x3067;&#x304A;&#x6C17;&#x306B;&#x5165;&#x308A;&#x306E;&#x6587;&#x5B57; &#x3020;&#x3004;</a></li><li><a href="/blog/2021/12/semi-auto-property/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011; &#x534A;&#x81EA;&#x52D5;&#x30D7;&#x30ED;&#x30D1;&#x30C6;&#x30A3;</a></li><li><a href="/blog/2021/12/list-pattern/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011;&#x30EA;&#x30B9;&#x30C8; &#x30D1;&#x30BF;&#x30FC;&#x30F3;&#x3010;VS 17.1 p2 &#x3067;&#x8FFD;&#x52A0;&#x4E88;&#x5B9A;&#x3011;</a></li><li><a href="/blog/2021/12/immutable-array-init/">ImmutableArray &#x306B;&#x5BFE;&#x3057;&#x3066;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2021/12/collection-literal/">&#x3010;C# 11 &#x5019;&#x88DC;&#x3011;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3; &#x30EA;&#x30C6;&#x30E9;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

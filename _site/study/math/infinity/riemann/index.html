@@ -1,0 +1,141 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30EA;&#x30FC;&#x30DE;&#x30F3;&#x7403;&#x9762; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/math/infinity/riemann/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">リーマン球面</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="riemann"></a>リーマン球面</h2>
+<p>リーマン球面という考え方を用いて、
+複素数に ∞ を付け加えることができます。
+リーマン球面の概要を説明すると、以下のようになります（図1）。</p>
+<ul>
+<li><p>三次元空間上の<span class="math">x-y</span>平面を複素数平面とみなす。</p>
+</li>
+<li><p>三次元空間上の点<span class="math"><span class="paren" style="font-size:em;">(</span>0, 0, 1/2<span class="paren" style="font-size:em;">)</span></span>を中心とする直径 1 の球面を<span class="math">S</span>とする。</p>
+</li>
+<li><p>球面の上端の点<span class="math">n ＝ <span class="paren" style="font-size:em;">(</span>0, 0, 1<span class="paren" style="font-size:em;">)</span></span>をこの球面の北極点と呼ぶ。</p>
+</li>
+<li><p>北極点<span class="math">n</span>と点<span class="math">p ＝ <span class="paren" style="font-size:em;">(</span>x, y, z<span class="paren" style="font-size:em;">)</span></span>を通る直線と、複素数平面の交点を<span class="math">α ＝ u ＋ iv ＝ <span class="paren" style="font-size:em;">(</span>u, v, 0<span class="paren" style="font-size:em;">)</span></span>とする。</p>
+</li>
+<li><p>すると、点<span class="math">p</span>と点<span class="math">α</span>は1対1に対応するので、球面上の点<span class="math">p</span>によって複素数を表すことが出来る。</p>
+</li>
+<li><p>北極点<span class="math">n</span>に対応する複素数はないが、この点を∞に相当する点として複素数に加える。</p>
+</li>
+</ul>
+<figure>
+<p><a href="/assets/media/ufcpp2000/math/riemann0.emf"><img src="/assets/media/ufcpp2000/math/riemann0.emf" alt="リーマン球面" /></a></p>
+<figcaption>リーマン球面</figcaption>
+</figure>
+<p>ここで出てきた球面を<strong id="riemann_sphere" class="keyword">リーマン球面</strong>（Riemann sphere：リーマンはドイツの数学者の名前）と呼びます。
+複素数をリーマン球面上の点として考えることで、
+複素数に∞に相当する値を付け加えることが出来ます（しかも、空間的に連続に）。</p>
+<p>このようにして、複素数 <span class="math"><span class="bold">C</span></span> に∞を付け加えたものを拡張複素数と呼び、
+<span class="math"><span class="bold">C</span><sup>*</sup></span> とか
+<span class="math"><span class="bold">C</span></span> の上にハット（^）を付けたもので表します。</p>
+<div class="math">
+      <span class="bold">C</span>
+      <sup>*</sup>
+＝
+<span class="bold">C</span>
+∪
+<span class="paren" style="font-size:em;">{</span>∞<span class="paren" style="font-size:em;">}</span></div>
+この定義による∞は、
+北極点で定義されることからも明らかなように、
+ただ1つの元になります。
+すなわち、
+∞は、
+0 と同じように、
+偏角を持っていません。
+当然、±の区別も付きません（－∞ ＝ ∞）。
+ 
+余談ですが、
+このリーマン球面の考え方のように、ある空間を1次元高い次元から“見下ろす”ことによって、
+数学としての表現の幅が広がることがよくあります。
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="d70e124"></a>∞の逆数</h2>
+<p>リーマン球面上に、図2で示すような座標
+<span class="math"><span class="paren" style="font-size:em;">(</span>
+φ, θ
+<span class="paren" style="font-size:em;">)</span></span>
+を導入します。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/math/riemann1.emf"><img src="/assets/media/ufcpp2000/math/riemann1.emf" alt="リーマン球面上の座標 (φ, θ)" /></a></p>
+<figcaption>リーマン球面上の座標 (φ, θ)</figcaption>
+</figure>
+<p>すると、
+複素平面状の点 <span class="math">α</span> は、</p>
+<div class="math">
+α ＝
+<span class="normal">exp</span><span class="paren" style="font-size:em;">(</span>i φ<span class="paren" style="font-size:em;">)</span><span class="normal">tan</span>θ
+</div>
+と表されます。
+そして、この逆数<span class="math">α<sup>－1</sup></span>は
+<div class="math">
+α<sup>－1</sup>
+＝
+<span class="normal">exp</span><span class="paren" style="font-size:em;">(</span>－i φ<span class="paren" style="font-size:em;">)</span><span class="normal">cot</span>θ
+＝
+<span class="normal">exp</span><span class="paren" style="font-size:em;">(</span>－i φ<span class="paren" style="font-size:em;">)</span><span class="normal">tan</span><span class="paren" style="font-size:em;">(</span>π/2 － θ<span class="paren" style="font-size:em;">)</span></div>
+となります。
+したがって、
+座標
+<span class="math"><span class="paren" style="font-size:em;">(</span>φ, θ<span class="paren" style="font-size:em;">)</span></span>
+で表される点の逆数の座標は
+<span class="math"><span class="paren" style="font-size:em;">(</span>－φ, π/2 － θ<span class="paren" style="font-size:em;">)</span></span>
+となります。
+ 
+ところで、この座標を用いた表現では、
+複素数平面状の0（＝リーマン球面上の南極点）の座標は
+<span class="math"><span class="paren" style="font-size:em;">(</span>φ, 0<span class="paren" style="font-size:em;">)</span></span>
+（<span class="math">φ</span> は任意）で、
+∞（＝リーマン球面上の北極点）の座標は
+<span class="math"><span class="paren" style="font-size:em;">(</span>φ, π/2<span class="paren" style="font-size:em;">)</span></span>
+になります。
+先ほどの逆数に関するルールと照らし合わせると、
+0 の逆数は∞、
+∞の逆数は 0、
+と言えます。
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="d70e207"></a>0 で割っても意味がない</h2>
+<p>詳しい説明は省きますが、
+∞には何をかけてもやはり∞です。</p>
+<div class="math">
+∀α ∈ <span class="bold">C</span><sup>*</sup> － <span class="paren" style="font-size:em;">{</span>0<span class="paren" style="font-size:em;">}</span>, 
+α × ∞
+＝
+∞ × α
+＝
+∞
+</div>
+先ほどの説明の通り、
+リーマン球面上では、
+∞は 0 の逆数とみなすことができます。
+なので、0 で割るというのは、
+∞ を掛けると読み替えることが出来るわけです。
+ですが、「∞には何をかけても∞」なので、
+「0 で割ると何を割っても∞」ということになります。
+「何を割ったか」という情報は失われ、
+ただ「∞になった」という意味のない結果だけが残ります。
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="d70e227"></a>まとめ</h2>
+<p>リーマン球面という考え方を使うと、
+0 の逆数として ∞ を定義できます。
+しかしながら、
+∞は 0 と同様に特別扱いが必要な数です。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/math/infinity/">&#x221E;</a></li><li><a href="/study/math/infinity/div0/">&#x5B9F;&#x6570;&#x306E;0&#x9664;&#x7B97;</a></li><li><a href="/study/math/infinity/limit/">&#x6975;&#x9650;</a></li><li><a href="/study/math/infinity/epsilon/">&#x3B5;-&#x3B4;</a></li><li><a href="/study/math/infinity/polynomial/">&#x591A;&#x9805;&#x5F0F;&#x74B0;</a></li><li><a href="/study/math/infinity/power/">&#x96C6;&#x5408;&#x306E;&#x6FC3;&#x5EA6;</a></li><li><a href="/study/math/infinity/distribution-e_distribution/">&#x8D85;&#x95A2;&#x6570;</a></li><li><a href="/study/math/infinity/float/">&#x8A08;&#x7B97;&#x6A5F;&#x4E0A;&#x3067;&#x306F;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

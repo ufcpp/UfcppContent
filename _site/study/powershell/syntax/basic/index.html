@@ -1,0 +1,455 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x57FA;&#x790E;&#x77E5;&#x8B58; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/powershell/syntax/basic/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">基礎知識</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>まず、Windows PowerShell の構文の基礎的な部分について説明します。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="case"></a>大文字小文字</h2>
+<p>PowerShell では、アルファベットの大文字・小文字を区別しません。
+get-location と Get-Location、
+$a と $A は同じコマンド・変数になります。</p>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="command"></a>コマンド実行</h2>
+<p>シェル言語なので、
+本分はコマンドの実行です。
+コマンド実行にいちいち
+<code>WSH.Run(command)</code> とかいうように書かなきゃいけないようだと、
+シェル言語としてはちょっと不便です。</p>
+<p>ということで、
+とりえあず、コマンド名を打てばそれだけでコマンドが実行されます。</p>
+<pre><code class="language-console">&gt;  Get-Location
+
+Path
+----
+C:\Users\john\Desktop\temp</code></pre>
+<p>コマンドとして実行できるものには以下のようなものがあります。</p>
+<ol>
+<li><p>PowerShell 用の<strong id="cmdlet" class="keyword">Cmdlet</strong>（コマンドレットと読む）</p>
+</li>
+<li><p>function で定義した関数</p>
+</li>
+<li><p>外部スクリプト</p>
+</li>
+<li><p>Windows コンソールアプリ/バッチファイル（*.exe, *.com, *.bat）</p>
+</li>
+</ol>
+<p>詳しくはそれぞれ別項で説明します。
+1～3 に関しては、「<a href="/study/powershell/intro/abstract/#pipeline">オブジェクトパイプライン</a>」で説明したように、
+.NET オブジェクトベースのパイプラインニングが可能です。
+4 は、既存の資産の活用のために備わっている機能ですが、
+既存のコンソールアプリ相手のパイプラインは、残念ながら、文字列ベースのものになります。</p>
+<p>もちろん、コマンドには引数を与えることができます。</p>
+<pre><code class="language-console">&gt;  Get-Command p* -CommandType Cmdlet
+
+CommandType     Name             Definition
+-----------     ----             ----------
+Cmdlet          Pop-Location     Pop-Location [-PassThru] [-Stack...
+Cmdlet          Push-Location    Push-Location [[-Path] &lt;String&gt;]...</code></pre>
+<p>また、コマンドには<strong id="alias" class="keyword">エイリアス</strong>（alias: 別名）を付けることもできます。</p>
+<p>例えば Get-ChildItem は、
+MS-DOS でいうところの dir、
+Unix でいうとろこの ls にあたるコマンドですが、
+dir と ls の両方の名前でエイリアスが設定されていて、
+これらの名前で実行可能です。</p>
+<pre><code class="language-console">&gt;  dir
+
+Mode                LastWriteTime     Length Name
+----                -------------     ------ ----
+d----        2007/05/19     18:36            doc
+d----        2007/05/19      0:40            sample
+-a---        2007/05/19     18:34        186 test.ps1
+
+
+&gt;  ls
+
+Mode                LastWriteTime     Length Name
+----                -------------     ------ ----
+d----        2007/05/19     18:36            doc
+d----        2007/05/19      0:40            sample
+-a---        2007/05/19     18:34        186 test.ps1</code></pre>
+<p>ちなみに、エイリアスの設定は Set-Alias コマンドで行います
+（詳細は別途）。</p>
+<p>あと、セミコロン ; で区切ることで、
+1行に複数のコマンドを書くこともできます。</p>
+<pre><code class="language-console">&gt;  pushd C:\Users\Public; ls; popd
+
+Mode                LastWriteTime     Length Name
+----                -------------     ------ ----
+d-r--        2006/11/02     22:02            Documents
+d-r--        2006/11/02     21:50            Downloads
+d-r--        2006/11/02     21:50            Music
+d-r--        2006/11/02     21:50            Pictures
+d-r--        2006/11/02     21:50            Videos</code></pre>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="pipeline"></a>パイプライン</h2>
+<p>コマンドとコマンドの間を | で繋ぐと、
+前のコマンドの出力を次のコマンドの入力として与えることができます。</p>
+<pre><code class="language-console">Get-Command | more</code></pre>
+<p>Get-Command は、利用できるコマンド
+（登録されている Cmdlet や、path の通った場所にある Windows コンソールアプリ）
+を取得するコマンドです。
+more は、出力が1画面に収まらないときに、1ページずつ表示するコマンドです。
+何も引数を与えずに Get-Command を実行すると、
+利用可能なコマンド全てが表示されますが、
+かなり量が多いので、more コマンドで受けて1ページずつ表示します。</p>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="redirect"></a>リダイレクト</h2>
+<p>Windows のコマンドプロンプトや Unix 系のシェルで言うところのリダイレクト
+（command &lt; input.txt &gt; output.txt とかすると、
+input.txt の中身を command に食わせて、
+出力結果を output.txt に書き出す機能）は出力側（&gt; の方）のみ対応しています。
+（&lt; を使うと「まだサポートされていません」と表示されるので、
+そのうちサポートするつもりっぽい。）
+&lt; に相当する機能を使いたければ、
+Get-Content コマンドとパイプラインを使います。</p>
+<pre><code class="language-console">Get-Content input.txt | command</code></pre>
+<p>出力の方も、Set-Content コマンドを使って同じことができます。</p>
+<pre><code class="language-console">Get-Content input.txt | command | Set-Content output.txt</code></pre>
+<p>出力リダイレクトに関しては、ファイル上書きの &gt; に加えて、
+追記の &gt;&gt; も使えます。</p>
+<pre><code class="language-console">&gt;  echo &quot;test 1&quot; &gt; test.txt
+&gt;  echo &quot;test 2&quot; &gt;&gt; test.txt
+&gt;  echo &quot;test 3&quot; &gt;&gt; test.txt
+&gt;  Get-Content test.txt
+test 1
+test 2
+test 3
+&gt;  echo &quot;test 1&quot; &gt; test.txt
+&gt;  Get-Content test.txt
+test 1</code></pre>
+<p>その他、リダイレクトには以下のようなものがあります。</p>
+<table summary="リダイレクト記号">
+	<caption>
+		リダイレクト記号
+	</caption>
+	<tr>
+		<td><p>2&gt;&amp;1</p></td>
+		<td><p>結果にエラーを追加</p></td>
+	</tr>
+	<tr>
+		<td><p>1&gt;&amp;2</p></td>
+		<td><p>エラーに結果を追加</p></td>
+	</tr>
+	<tr>
+		<td><p>&gt;&gt;</p></td>
+		<td><p>ファイルの最後に結果を追加</p></td>
+	</tr>
+	<tr>
+		<td><p>&gt;</p></td>
+		<td><p>結果でファイルを作成、以前のファイルの内容は上書き</p></td>
+	</tr>
+	<tr>
+		<td><p>&lt;</p></td>
+		<td><p>入力 (未対応)</p></td>
+	</tr>
+	<tr>
+		<td><p>2&gt;&gt;</p></td>
+		<td><p>ファイルの最後にエラーを追加</p></td>
+	</tr>
+	<tr>
+		<td><p>2&gt;</p></td>
+		<td><p>指定のファイルに処理エラーを書き込み、以前のファイルの内容は上書き</p></td>
+	</tr>
+</table>
+<h2 id="section-6"><a id="sec-generated-title-6"></a> <a id="expression"></a>式</h2>
+<p>行頭がアルファベットで始まると、
+最初の1単語はコマンド名とみなされてコマンドが実行されるのに対して、
+&quot; や ' などの文字列の開始を表す記号や、
+数字から始まると式とみなされて、
+1 + 1 などといった計算や、
+&quot;this is &quot; + &quot;a test&quot; などといった文字列操作（この場合は連結）ができます。</p>
+<pre><code class="language-console">&gt;  1+1
+2
+&gt;  &quot;this is &quot; + &quot;a test&quot;
+this is a test</code></pre>
+<p>また、
+$a とか $x というように、
+頭に $ を付けると変数とみなされて、これも式になります。</p>
+<p>変数名に続けて = を書けば、代入式になります。
+また、変数だけ書くと、変数の中身が表示されます。</p>
+<pre><code class="language-console">&gt;  $a = 1 + 1
+&gt;  $a
+2</code></pre>
+<p>= の直後がアルファベットから始まっている場合、
+= 直後の単語はコマンドとみなされて、
+コマンドの実行結果が変数に代入されます。</p>
+<pre><code class="language-console">&gt;  $a = Get-Location
+&gt;  $a
+
+Path
+----
+C:\Users\john\Desktop\temp</code></pre>
+<p>= とか + 以外に、どういう式が書けるかとかは別項で説明予定。</p>
+<h2 id="section-7"><a id="sec-generated-title-7"></a> <a id="comment"></a>コメント</h2>
+<p>コマンドの実行や式計算とは無関係なコメントを入れることもできます。
+コメントは # で始めて、行末までがコメントになります。
+当然のことながら、&quot;&quot; や '' （要するに文字列）中の # はコメントにはなりません。</p>
+<pre><code class="language-console">&gt;  ls C:\Users\Public # comment</code></pre>
+<pre><code class="language-console">&gt;  echo &quot;# not comment&quot;
+# not comment</code></pre>
+<h2 id="section-8"><a id="sec-generated-title-8"></a> <a id="mode"></a>式モードとコマンドモード</h2>
+<p>PowerShell の構文解析には、
+<strong id="expressionmode" class="keyword">式モード</strong>（expression mode）と<strong id="commandmode" class="keyword">コマンドモード</strong>（command mode）という2つのモードがあります。
+（command modeの日本語訳、
+「コマンドモード」と「引数モード」の2つあるみたい。）</p>
+<p>前節・前々節で、
+「アルファベットから始まったらコマンド」
+「数字、文字列（&quot;&quot; もしくは ''）、変数（$a とか）から始まったら式」という話をしました。
+で、PowerShell では、
+コマンドと解釈されるか式と解釈されるかによって微妙に構文解析の仕方が違います。</p>
+<p>まあ、例を挙げてみましょう。</p>
+<pre><code class="language-console">&gt;  $a = 1 + 1
+&gt;  echo $a
+2
+&gt;  echo 1 + 1
+1
++
+1</code></pre>
+<p>まあ、見ての通り、<code>1 + 1</code> の解釈の仕方が違います。
+$a への代入式の方では、1 + 1 がちゃんと式とみなされて、
+加算結果の 2 が $a に代入されています。
+一方、echo の方は、echo コマンドに対して3つの引数 1, &quot;+&quot;, 1 が渡されています。</p>
+<p>要するに、これが式モードとコマンドモードに違いです。
+コマンドと解釈された場合には（コマンドモード）、以下のような挙動になります。</p>
+<ul>
+<li><p>数字以外は &quot;&quot; や '' でくくらなくても文字列になる（数字は数字として解釈される）</p>
+</li>
+<li><p>スペース区切りの引数になる</p>
+</li>
+</ul>
+<p>もう1つ、例として、1+1 の間のスペースをつめてみましょう。</p>
+<pre><code class="language-console">&gt;  $a = 1+1
+&gt;  echo $a
+2
+&gt;  echo 1+1
+1+1</code></pre>
+<p>こっちの場合、$a への代入の方は同じ結果です。
+式として解釈された場合、スペースの有無は関係ありません。
+しかしながら、コマンドモードでは、
+要するに、<code>echo &quot;1+1&quot;</code> と解釈されています。</p>
+<p>ちなみに、&quot;&quot; や '' でくくった部分も式モード中の文字列と同じ扱いで、
+&quot;&quot; や '' の中身だけになります。
+「&quot;test&quot;」というような文字列を作りたい場合は、
+'&quot;test&quot;' とか &quot;'test'&quot; と書きます。</p>
+<pre><code class="language-console">&gt;  echo 'test'
+test
+&gt;  echo &quot;test&quot;
+test
+&gt;  echo '&quot;test&quot;'
+&quot;test&quot;
+&gt;  echo &quot;'test'&quot;
+'test'</code></pre>
+<p>コマンドに関しても同様で、
+代入式の = の後ではコマンドとして実行されて、
+コマンドの後ろは単なる文字列とみなされます。</p>
+<pre><code class="language-console">&gt;  $a = Get-Location
+&gt;  echo $a
+Path
+----
+C:\Users\john\Desktop\temp
+
+&gt;  echo Get-Location
+Get-Location</code></pre>
+<p>ちなみに、コマンドモードでも、() でくくられた部分は式あるいはコマンドとして評価されます。</p>
+<pre><code class="language-console">&gt;  echo (1 + 1)
+2
+&gt;  echo (Get-Location)
+Path
+----
+C:\Users\john\Desktop\temp</code></pre>
+<h2 id="section-9"><a id="sec-generated-title-9"></a> <a id="host"></a>対話型ホスト</h2>
+<p>PowerShell には、
+対話型ホスト（コマンドラインインターフェース）と、
+スクリプトファイルの実行機能があります。
+で、スクリプトの話は次節でするとして、
+ホストプログラムの話を少し。</p>
+<p>PowerShell には、
+以下のような対話型ホストプログラムが付属しています。
+PowerShell をインストールすると、スタートメニューに
+[Windows PowerShell 1.0] → [Windows PowerShell] という項目が追加されているはずなので、
+これをクリックすると対話型ホストが起動します。
+（背景色は変えて使ってます。
+標準だと、確か紺色。）</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/powershell/fig/host.jpg"><img src="/assets/media/ufcpp2000/powershell/fig/host.jpg" alt="PowerShell の対話型ホスト" /></a></p>
+<figcaption>PowerShell の対話型ホスト</figcaption>
+</figure>
+<p>で、この対話型ホスト、結構操作性がよくて快適です。
+システム管理以外の用途でも、
+コマンドプロンプトや Cygwin（Unix 系ツールの Windows への移植版）のシェル（デフォルトでは bash）を使うよりも快適。
+（ただ、XP だと起動が少し遅くていらつくかも。
+メモリをしっかりと積んだ Vista なら SuperFetch が効いてて快適。）</p>
+<p>この対話型ホストプログラムの操作をいくつか、以下に挙げます。</p>
+<table summary="">
+
+	<tr>
+		<th>ユーザの操作</th>
+		<th>動作</th>
+	</tr>
+	<tr>
+		<th colspan="2">基本操作</th>
+	</tr>
+	<tr>
+		<td><p>[→], [←] キー</p></td>
+		<td><p>カーソルを左右に移動。</p></td>
+	</tr>
+	<tr>
+		<td><p>[ctrl]＋[→], [ctrl]＋[←] キー</p></td>
+		<td><p>単語単位でカーソルを移動。</p></td>
+	</tr>
+	<tr>
+		<td><p>[ctrl]＋[End]</p></td>
+		<td><p>カーソル位置とそれより後の文字を削除。</p></td>
+	</tr>
+	<tr>
+		<td><p>[ctrl]＋[Home]</p></td>
+		<td><p>カーソル位置より前の文字を削除。</p></td>
+	</tr>
+	<tr>
+		<td><p>[Tab] キー</p></td>
+		<td><p>コマンドを補完する。（例えば、「Set-L」まで打って [Tab] キーを押すと、「Set-Location」に補完してくれる。Cmdlet に関しては、コマンド名だけでなくて、オプションの補完も可能。）</p></td>
+	</tr>
+	<tr>
+		<td><p>[Back space] キー</p></td>
+		<td><p>カーソル位置の直前の文字を削除。</p></td>
+	</tr>
+	<tr>
+		<td><p>[Delete] キー</p></td>
+		<td><p>カーソル位置の文字を削除。</p></td>
+	</tr>
+	<tr>
+		<td><p>[Insert] キー</p></td>
+		<td><p>挿入/上書きモードの切り替え。</p></td>
+	</tr>
+	<tr>
+		<th colspan="2">履歴</th>
+	</tr>
+	<tr>
+		<td><p>（何も入力していない状態で）[→] キー</p></td>
+		<td><p>直前のコマンドの途中までを入力。</p></td>
+	</tr>
+	<tr>
+		<td><p>[↑], [↓] キー</p></td>
+		<td><p>コマンドの履歴をたどる。</p></td>
+	</tr>
+	<tr>
+		<td><p>[Page Up] キー</p></td>
+		<td><p>記憶している限り一番古い履歴コマンドを表示。</p></td>
+	</tr>
+	<tr>
+		<td><p>[Page Down] キー</p></td>
+		<td><p>直前のコマンドを表示。</p></td>
+	</tr>
+	<tr>
+		<td><p>[F7] キー</p></td>
+		<td><p>履歴ウィンドウみたいなのを出す。</p></td>
+	</tr>
+	<tr>
+		<td><p>[F8] キー</p></td>
+		<td><p>コマンドを何文字か途中まで打った後で [F8] を押すと、 コマンド履歴中で打ちかけのコマンドに合致する物を表示する。 [F8] を押すたびに合致するコマンドを過去にたどる。</p></td>
+	</tr>
+	<tr>
+		<td><p>[F9] キー</p></td>
+		<td><p>番号で履歴を参照するウィンドウみたいなのを出す。 番号は [F7] で出てくる履歴一覧に振られた番号を使う。</p></td>
+	</tr>
+	<tr>
+		<th colspan="2">テキスト選択・コピー・貼り付け</th>
+	</tr>
+	<tr>
+		<td><p>マウスでドラッグ</p></td>
+		<td><p>ウィンドウ内のテキストを選択。</p></td>
+	</tr>
+	<tr>
+		<td><p>ダブルクリック</p></td>
+		<td><p>ダブルクリックした位置にある単語を選択。</p></td>
+	</tr>
+	<tr>
+		<td><p>（テキスト選択中に）右クリック（もしくは [Enter] キー）</p></td>
+		<td><p>選択中のテキストをクリップボードにコピー。</p></td>
+	</tr>
+	<tr>
+		<td><p>（通常時に）右クリック</p></td>
+		<td><p>クリップボードの内容を貼り付け。</p></td>
+	</tr>
+</table>
+<h2 id="section-10"><a id="sec-generated-title-10"></a> <a id="extern"></a>スクリプトファイル</h2>
+<p>対話型で1行1行コマンドを入力していく方法に加えて、
+スクリプト（要するにテキストファイル）に処理内容を記述しておいて、
+そのスクリプトを呼び出すこともできます。</p>
+<h3 id="section-11"><a id="sec-generated-title-11"></a> <a id="policy"></a>スクリプトの実行ポリシー</h3>
+<p>ただ、
+（過去に VBScript を使ったウィルスなんかもあったし、
+当然流れなのかもしれないけど、）
+セキュリティの観点から、
+実行ポリシーが少し厳しかったりもします。
+（主としてシステム管理を意図しているので、
+どうしても厳しいポリシーにせざるを得ない。）</p>
+<p>具体的には、インストール直後の状態だと、
+スクリプトを実行できません。
+ちゃんと信頼できるデジタル署名のあるスクリプトも実行できないし、
+自分で作ったスクリプトすらも実行できない状態です。</p>
+<p>で、これだと流石に不便なので、
+普通は、
+「インターネットからダウンロードしたスクリプトファイルには署名が必要」
+というポリシーに設定しなおしてから使います。
+実行ポリシーの変更は Set-ExecutionPolicy コマンドを使って、以下のようにします。</p>
+<pre><code class="language-console">&gt; Set-ExecutionPolicy RemoteSigned</code></pre>
+<p>（他にどういう実行ポリシーが設定できるかは、
+Set-ExecutionPolicy のヘルプを参照。）</p>
+<p>で、この設定、レジストリの HKEY_LOCAL_MACHINE （コンピュータ全体に設定が適用される。管理者しか変更できない）に保存されるみたいなんですよね。
+要するに、
+PowerShell を「管理者として実行」しておかないと Set-ExecutionPolicy でポリシーを変更できないし、
+ユーザごとにポリシーを変えるということはできない。
+この辺り、あくまでシステム管理用で、
+better コマンドプロンプトとして使う意図をあまり考えてなくて、
+ちょっと不便だったりします。
+（改善を望む声はあるんで、将来的には変わるかも。）</p>
+<h3 id="section-12"><a id="sec-generated-title-12"></a> <a id="execute"></a>スクリプトの実行</h3>
+<p>実行ポリシーを RemoteSigned にしたなら、
+早速スクリプトを実行してみましょう。</p>
+<p>PowerShell スクリプトファイルには、
+拡張子 ps1 を付けます。
+（3文字目は L の小文字じゃなくて、数字の 1。）
+ps1 ファイルの中に実行したいコマンドを書いておいて、
+実行はただ単にファイル名を打つだけです。</p>
+<pre><code class="language-console">&gt;  'echo &quot;test&quot;' | Set-Content a.ps1
+&gt;  Get-Content .\a.ps1
+echo &quot;test&quot;
+&gt;  .\a.ps1
+test</code></pre>
+<p>1つ注意が必要で、
+カレントフォルダ内にあるスクリプトファイルであっても、
+カレントフォルダを示す .\ を付けてやらないと、
+スクリプトが実行できません。</p>
+<p>スクリプトファイルの実行も引数を与えたり、パイプライン化することが可能です。
+そのやり方は関数とほぼ同様なので、
+関数の説明とあわせて別項で説明予定。</p>
+<p>ちなみに、Windows の関連付けとしては、
+ps1 はメモ帳に関連付けられています。
+なので、エクスプローラ上で ps1 ファイルをダブルクリックして実行したりはできません。
+（これもセキュリティの関連からすると妥当な処置かも。）</p>
+<h2 id="section-13"><a id="sec-generated-title-13"></a> <a id="help"></a>ヘルプ</h2>
+<p>Get-Help コマンド名</p>
+<p>Get-Help about_* で構文関係のヘルプも。</p>
+<p>署名関係
+Get-Help Set-AuthenticodeSignature
+Get-Help about_signing</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/powershell/syntax/">PowerShel &#x306E;&#x69CB;&#x6587;</a></li><li><a href="/study/powershell/syntax/variable/">&#x5909;&#x6570;</a></li><li><a href="/study/powershell/syntax/dotnet/">.NET Framework &#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;</a></li><li><a href="/study/powershell/syntax/valuetype/">&#x5024;&#x578B;</a></li><li><a href="/study/powershell/syntax/string/">&#x6587;&#x5B57;&#x5217;</a></li><li><a href="/study/powershell/syntax/array/">&#x914D;&#x5217;</a></li><li><a href="/study/powershell/syntax/xml/">XML</a></li><li><a href="/study/powershell/syntax/flow/">&#x5236;&#x5FA1;&#x69CB;&#x6587;</a></li><li><a href="/study/powershell/syntax/function/">&#x95A2;&#x6570;&#x3001;&#x30D5;&#x30A3;&#x30EB;&#x30BF;&#x3001;&#x30B9;&#x30AF;&#x30EA;&#x30D7;&#x30C8;</a></li><li><a href="/study/powershell/syntax/exception/">&#x4F8B;&#x5916;&#x51E6;&#x7406;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,209 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>[&#x96D1;&#x8A18;] InlineArray | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/datatype/inline-array/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="inlinearray">[雑記] InlineArray</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abstract">概要</a></h2>
+<h5 class="version version12">Ver. 12</h5>
+<p>.NET 8 で、
+<a href="https://learn.microsoft.com/ja-jp/dotnet/api/system.runtime.compilerservices.inlinearrayattribute"><code>InlineArray</code> 属性</a> (<code>System.Runtime.CompilerServices</code> 名前空間) というものが入りました。</p>
+<p>基本的には .NET ランタイム側の機能ですが、
+いくつか、C# 側にもこの <code>InlineArray</code> 向けの特殊対応が入っています。</p>
+<p>ちなみに、この機能は現状、
+<a href="https://github.com/ufcpp/UfcppSample/issues/447">コレクション式</a>の内部実装にこそ使っていますが、
+本稿で書いているようなコードを直接書く必要はほぼありません。
+(実質、本稿はコレクション式の内部実装(の一部)の説明みたいなものです。)</p>
+<h2 id="inlinearray-1"><a id="sec-generated-title-2"></a> <a id="inline-array-attribute">InlineArray 属性</a></h2>
+<p>.NET 8 から、
+以下のように、構造体に属性を付けると構造体のサイズが変わります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="comment">// この属性を付けると、 .NET ランタイムが特別扱いして、構造体のサイズを拡大する。</span>
+<span class="comment">// (コンストラクター引数で Length 指定。)</span>
+[InlineArray(<span class="number">3</span>)]
+<span class="keyword">struct</span> FixedBuffer&lt;T&gt;
+{
+    <span class="comment">// フィールドを1個だけ書く。</span>
+    <span class="comment">// (2個以上書くとコンパイル エラーになる。)</span>
+    <span class="comment">// 構造体のサイズが sizeof(T) &#215; Length になる。</span>
+    <span class="keyword">private</span> T _value;
+}</code></pre>
+<p>inline array という名前通り、「埋め込み配列」として使います。
+(長さ N の配列代わりに、長さ N 個分のサイズを持った構造体を作ります。
+C# の配列はヒープに割り当てられるのに対して、この inline array であればスタック上に値を持てます。)</p>
+<p>要は、以下のような「N 個のフィールドを並べる」みたいな構造体を、ランタイム側で自動的に作ってくれる機能です。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.InteropServices;
+
+<span class="keyword">struct</span> FixedBuffer3&lt;T&gt;
+{
+    <span class="comment">// 所望の個数フィールドを書く。</span>
+    <span class="comment">// (3要素くらいならいいけども、数十とか数百になるときつい。)</span>
+    <span class="keyword">private</span> T _value0;
+    <span class="keyword">private</span> T _value1;
+    <span class="keyword">private</span> T _value2;
+
+    <span class="comment">// 変換とかも自前で書く。</span>
+    <span class="keyword">public</span> Span&lt;T&gt; AsSpan() =&gt; MemoryMarshal.CreateSpan(<span class="keyword">ref</span> _value0, <span class="number">3</span>);
+
+    <span class="keyword">public</span> <span class="keyword">ref</span> T <span class="keyword">this</span>[<span class="keyword">int</span> index] =&gt; <span class="keyword">ref</span> AsSpan()[index];
+}</code></pre>
+<h2 id="stackalloc"><a id="sec-generated-title-3"></a> <a id="vs-stackalloc">stackalloc との違い</a></h2>
+<p>これまでも <a href="/study/csharp/interop/sp_unsafe/#safe-stackalloc"><code>stackalloc</code></a> という機能を使えば、
+一応、スタック上に配列上のデータを置くことはできました。
+ただ、<code>stackalloc</code> には結構強い制限があって使いづらいです。</p>
+<p>一番きつい制限は、参照型、もしくは、参照を含む型に対して使えないことです
+(これを認めようとすると<a href="/study/computer/essential-software/memorymanagement/#garbage-collection">ガベコレ</a>の負担が上がって、パフォーマンス的にかえって不利になるそうです)。
+例えば以下のコードでは、<code>string</code> 以下の型に対してコンパイル エラーになります。</p>
+<pre><code class="language-csharp"><span class="comment">// 構造体に対しては使える。</span>
+Span&lt;<span class="keyword">int</span>&gt; i = <span class="keyword">stackalloc</span> <span class="keyword">int</span>[<span class="number">100</span>];
+Span&lt;DateTimeOffset&gt; d = <span class="keyword">stackalloc</span> DateTimeOffset[<span class="number">100</span>];
+
+<span class="comment">// クラスに対しては使えない。</span>
+<span class="comment">// (コンパイル エラーになる。)</span>
+Span&lt;<span class="keyword">string</span>&gt; s = <span class="keyword">stackalloc</span> <span class="keyword">string</span>[<span class="number">100</span>];
+
+<span class="comment">// クラスや参照を含む構造体に対しても使えない。</span>
+<span class="comment">// (コンパイル エラーになる。)</span>
+Span&lt;ContainsRefType&gt; r1 = <span class="keyword">stackalloc</span> ContainsRefType[<span class="number">100</span>];
+Span&lt;ContainsRefField&gt; r2 = <span class="keyword">stackalloc</span> ContainsRefField[<span class="number">100</span>];
+
+<span class="keyword">struct</span> ContainsRefType
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> String;
+}
+
+<span class="keyword">ref</span> <span class="keyword">struct</span> ContainsRefField
+{
+    <span class="keyword">public</span> <span class="keyword">ref</span> <span class="keyword">int</span> Ref;
+}</code></pre>
+<p>また、<code>stackalloc</code> で確保したスタック領域は、メソッドを抜けるまで解放されません。
+このせいで、ループの内側で間違って <code>stackalloc</code> を使ってしまうと簡単にスタック オーバーフロー(要はメモリ不足)を引き起こします
+(一般に、スタックはヒープよりもだいぶサイズが小さいです。Windows の場合は 1MB 程度)。
+例えば以下のコードを Windows で実行するとスタック オーバーフローします
+(1000 とか 200 とか、そこまで大きくない数字ですら簡単にスタック オーバーフローになります)。</p>
+<pre><code class="language-csharp"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++)
+{
+    _ = <span class="keyword">stackalloc</span> <span class="keyword">long</span>[<span class="number">200</span>];
+}</code></pre>
+<h2 id="c"><a id="sec-generated-title-4"></a> <a id="special-syntax">C# 側特殊対応</a></h2>
+<p>一応、C# 側にもこの InlineArray に対する特殊対応が入っています。
+(一応、C# 12 の新機能。)</p>
+<p>まず、属性を付けた型に対するチェックが働いています。
+すでに前述の例でも書いていますが、
+<code>InlineArray</code> 属性を付けた型にフィールドが2つ以上あるとコンパイル エラーになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+[InlineArray(<span class="number">3</span>)]
+<span class="keyword">struct</span> FixedBuffer&lt;T&gt;
+{
+    <span class="comment">// フィールドを2個以上書くとコンパイル エラーになるのは一応「C# の新機能」。</span>
+    <span class="keyword">private</span> T _value;
+}</code></pre>
+<p>また、この型を使う側に、以下のような特殊対応が入っています。</p>
+<ul>
+<li>インデクサーを直接書ける</li>
+<li><code>Span&lt;T&gt;</code>/<code>ReadOnlySpan&lt;T&gt;</code> に暗黙的に変換できる</li>
+<li><code>foreach</code> で列挙できる</li>
+</ul>
+<pre><code class="language-csharp">FixedBuffer&lt;<span class="keyword">string</span>&gt; buffer = <span class="keyword">new</span>();
+
+<span class="comment">// InlineArray に対して直接インデクサーを書ける。</span>
+buffer[<span class="number">0</span>] = <span class="string">&quot;zero&quot;</span>;
+buffer[<span class="number">1</span>] = <span class="string">&quot;one&quot;</span>;
+
+<span class="comment">// Span/ReadOnlySpan に暗黙的に変換できる。</span>
+Span&lt;<span class="keyword">string</span>&gt; span = buffer;
+span[<span class="number">2</span>] = <span class="string">&quot;two&quot;</span>;
+
+<span class="comment">// foreach で列挙できる。</span>
+<span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> buffer)
+{
+    Console.WriteLine(x);
+}</code></pre>
+<h2 id="inlinearray-2"><a id="sec-generated-title-5"></a> <a id="collection-expressions">コレクション式と InlineArray</a></h2>
+<p>前述の通り、
+<code>InlineArray</code> 属性には <code>[EditorBrowsable(Never)]</code> が付いていて、
+開発者が直接使う想定はあまりありません。</p>
+<p>ただ、この機能は C# 12 時点で、コレクション式の最適化のために使われています。
+<code>Span&lt;T&gt;</code> や <code>ReadOnlySpan&lt;T&gt;</code> 型に対してコレクション式を使うと、
+<code>InlineArray</code> に展開されます。
+例えば以下のようなコードの場合、</p>
+<pre><code class="language-csharp">Span&lt;<span class="keyword">int</span>&gt; i = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];
+
+ReadOnlySpan&lt;<span class="keyword">string</span>&gt; s = [<span class="string">&quot;a&quot;</span>, <span class="string">&quot;abc&quot;</span>, <span class="string">&quot;&quot;</span>];</code></pre>
+<p>以下のようなコードとほぼ同じ挙動になります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+<span class="keyword">var</span> i0 = <span class="keyword">new</span> FixedArray5&lt;<span class="keyword">int</span>&gt;();
+i0[<span class="number">0</span>] = <span class="number">1</span>;
+i0[<span class="number">1</span>] = <span class="number">2</span>;
+i0[<span class="number">2</span>] = <span class="number">3</span>;
+i0[<span class="number">3</span>] = <span class="number">4</span>;
+i0[<span class="number">4</span>] = <span class="number">5</span>;
+Span&lt;<span class="keyword">int</span>&gt; i = i0;
+
+<span class="keyword">var</span> s0 = <span class="keyword">new</span> FixedArray3&lt;<span class="keyword">string</span>&gt;();
+s0[<span class="number">0</span>] = <span class="string">&quot;a&quot;</span>;
+s0[<span class="number">1</span>] = <span class="string">&quot;abc&quot;</span>;
+s0[<span class="number">2</span>] = <span class="string">&quot;&quot;</span>;
+ReadOnlySpan&lt;<span class="keyword">string</span>&gt; s = s0;
+
+[InlineArray(<span class="number">3</span>)]
+<span class="keyword">struct</span> FixedArray3&lt;T&gt;
+{
+    <span class="keyword">private</span> T _value;
+}
+
+[InlineArray(<span class="number">5</span>)]
+<span class="keyword">struct</span> FixedArray5&lt;T&gt;
+{
+    <span class="keyword">private</span> T _value;
+}</code></pre>
+<h2 id="section-1"><a id="sec-generated-title-6"></a> <a id="future">将来展望</a></h2>
+<p>現状では、先ほどの例でいうと <code>FixedArray3&lt;T&gt;</code> と <code>FixedArray5&lt;T&gt;</code> があるように、
+長さごとに別の型を用意せざるを得ない状態です。
+「N 個のフィールドを並べる」コードを手書きするよりはマシですが、
+まだ一時しのぎ的な実装になっていることは否めません。</p>
+<p>根本的に大工事して型システムを改善するなら、
+例えば、以下のように「整数型引数」を導入して、これを使って <code>InlineArray</code> を作りたいという話もなくはないです。</p>
+<pre><code class="language-csharp"><span class="comment">// ※仮定の文法</span>
+<span class="keyword">namespace</span> System;
+
+<span class="keyword">public</span> <span class="keyword">struct</span> InlineArray&lt;T, <span class="keyword">int</span> N&gt;;</code></pre>
+<p>こういう「public にできる(一時しのぎではないちゃんとした) <code>InlineArray</code> 型」があるのなら、
+C# 側でももう少し踏み込んだ文法を導入したかったみたいです。
+候補として挙がっていたのは、<code>int[N]</code> という書き方で「長さ N の <code>InlineArray</code>」を書けるようにするというものです。</p>
+<pre><code class="language-csharp"><span class="comment">// ※仮定の文法</span>
+<span class="keyword">var</span> c = <span class="keyword">new</span> C();
+
+<span class="keyword">int</span>[<span class="number">3</span>] values = c.Values;
+
+<span class="keyword">class</span> C
+{
+    <span class="keyword">private</span> <span class="keyword">int</span>[<span class="number">3</span>] _values;
+    <span class="keyword">public</span> <span class="keyword">int</span>[<span class="number">3</span>] Values =&gt; _values;
+}</code></pre>
+<p>前述の <code>InlineArray&lt;T, int N&gt;</code> みたいな書き方をできるようにするのは結構大変で、
+短期的には実現しそうになく、
+それに依存しそうな <code>int[N]</code> という書き方も残念ながらしばらく実現の見込みはありません。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/datatype/">&#x30C7;&#x30FC;&#x30BF;&#x578B;</a></li><li><a href="/study/csharp/datatype/tuples/">&#x30BF;&#x30D7;&#x30EB;</a></li><li><a href="/study/csharp/datatype/deconstruction/">&#x8907;&#x5408;&#x578B;&#x306E;&#x5206;&#x89E3;</a></li><li><a href="/study/csharp/datatype/typeswitch/">is&#x3001;switch &#x306E;&#x62E1;&#x5F35; (&#x578B;&#x30B9;&#x30A4;&#x30C3;&#x30C1;)</a></li><li><a href="/study/csharp/datatype/patterns/">&#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30DE;&#x30C3;&#x30C1;&#x30F3;&#x30B0;</a></li><li><a href="/study/csharp/datatype/declarationexpressions/">&#x7279;&#x6B8A;&#x306A;&#x5909;&#x6570;&#x5BA3;&#x8A00;</a></li><li><a href="/study/csharp/datatype/record/">&#x30EC;&#x30B3;&#x30FC;&#x30C9;&#x578B;</a></li><li><a href="/study/csharp/datatype/collection-expression/">&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x5F0F;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

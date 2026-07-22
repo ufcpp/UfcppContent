@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>[&#x30B5;&#x30F3;&#x30D7;&#x30EB;] SoundLibrary | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/sample/sm_soundlib/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="soundlibrary">[サンプル] SoundLibrary</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>Wave の読み書き、音声フィルタ、周波数解析などの機能を持つライブラリです。</p>
+<ul>
+<li><p>学生の頃、研究用に使っていたもの。</p>
+<ul>
+<li>結構な規模</li>
+<li><a href="https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Old/SoundLibrary">音声信号処理ライブラリ ソースファイル(github)</a></li>
+</ul>
+</li>
+<li><p>多少問題あり。</p>
+<ul>
+<li><p>C# 1.0 の頃に書いたのでジェネリックスすら未使用。書き変えたいところも多々。</p>
+<ul>
+<li><p>ジェネリックスでフィルタとかを固定小数点演算にも対応させたりしたいんだけど。</p>
+</li>
+<li><p>波形データ生成のあたりもイテレータ使って生成したい。</p>
+</li>
+<li><p>その他、「<a href="/study/sp/">信号処理</a>」の記事を書きつつ、 1から作り直したいくらいの気分だけど・・・。 そもそも記事書き自体止まっているので。</p>
+</li>
+</ul>
+</li>
+<li><p>権利の関係上、ライブラリを使ってる側（実際の研究内容に関係する部分）が公開できない。</p>
+<ul>
+<li><p>なので、サンプル不足が否めない。</p>
+</li>
+<li><p>これを作った当時はテストプログラムもあまり作ってなかったし。</p>
+</li>
+</ul>
+</li>
+<li><p>ソースコードが Shift JIS とかで、UTF8で保存しなおさないと今のコンパイラーだと「認識できないエスケープ シーケンス」エラーになる</p>
+</li>
+</ul>
+</li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/sample/">&#x30B5;&#x30F3;&#x30D7;&#x30EB;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;</a></li><li><a href="/study/csharp/sample/ap_sample/">C# &#x30B5;&#x30F3;&#x30D7;&#x30EB;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;</a></li><li><a href="/study/csharp/sample/sp2_microthread/">[&#x30B5;&#x30F3;&#x30D7;&#x30EB;] &#x30A4;&#x30C6;&#x30EC;&#x30FC;&#x30BF;&#x3068;&#x30DE;&#x30A4;&#x30AF;&#x30ED;&#x30B9;&#x30EC;&#x30C3;&#x30C9;</a></li><li><a href="/study/csharp/sample/sp3_comprehensions/">[&#x30B5;&#x30F3;&#x30D7;&#x30EB;] &#x30AF;&#x30A8;&#x30EA;&#x5F0F;&#x3068;&#x30EA;&#x30B9;&#x30C8;&#x5185;&#x5305;</a></li><li><a href="/study/csharp/sample/sp3_linqreconstruct/">[&#x30B5;&#x30F3;&#x30D7;&#x30EB;] &#x5F0F;&#x6728;&#x304B;&#x3089;&#x30AF;&#x30A8;&#x30EA;&#x5F0F;&#x306E;&#x518D;&#x69CB;&#x7BC9;</a></li><li><a href="/study/csharp/sample/sp3_expressionsample/">[&#x30B5;&#x30F3;&#x30D7;&#x30EB;] &#x5F0F;&#x6728;&#x306E;&#x5229;&#x7528;&#x4F8B;</a></li><li><a href="/study/csharp/sample/sm_genericop/">[&#x30B5;&#x30F3;&#x30D7;&#x30EB;] &#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30C3;&#x30AF;&#x306A;&#x8907;&#x7D20;&#x6570;&#x578B;</a></li><li><a href="/study/csharp/sample/sm_treeview/">[&#x30B5;&#x30F3;&#x30D7;&#x30EB;] &#x5F0F;&#x6728;&#x3092; WPF &#x3067; GUI &#x8868;&#x793A;</a></li><li><a href="/study/csharp/sample/sm_sov/">[&#x30B5;&#x30F3;&#x30D7;&#x30EB;] SOV &#x578B;&#x306E;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x547C;&#x3073;&#x51FA;&#x3057;</a></li><li><a href="/study/csharp/sample/sm_proxy/">[&#x30B5;&#x30F3;&#x30D7;&#x30EB;] &#x900F;&#x904E;&#x30D7;&#x30ED;&#x30AD;&#x30B7;</a></li><li><a href="/study/csharp/sample/sm_daifugou/">[&#x30B5;&#x30F3;&#x30D7;&#x30EB;] &#x5927;&#x5BCC;&#x8C6A;</a></li><li><a href="/study/csharp/sample/sm_silverlight/">[&#x30B5;&#x30F3;&#x30D7;&#x30EB;] Silverlight &#x30B5;&#x30F3;&#x30D7;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

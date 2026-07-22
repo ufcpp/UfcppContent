@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>[&#x96D1;&#x8A18;] GUI &#x3068;&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/async/misc_uithread/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="gui">[雑記] GUI と非同期処理</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>（書きかけ）</p>
+<p>「<a href="/study/csharp/async/sp5_async/">非同期処理</a>」の話とからめて、
+GUI アプリケーション開発と非同期処理の話。</p>
+<h2 id="gui-1"><a id="sec-generated-title-2"></a> <a id="dispatcher"></a>GUI とディスパッチャー</h2>
+<p>（書きかけ、清書時は別ページにするかも）</p>
+<pre><code class="language-text">0.5秒固まったら「使いにくい」、3秒固まったら「バグだ」、10秒固まったら「パソコンが壊れた」と言われる。
+
+↑ 大げさかもしれないけど、かなり真実。
+
+・メッセージ ループ
+クリックとかキー ダウンのイベントは一度キューにたまってる（メッセージ ポンプ）
+ループでキューを見ては GUI の処理してるものがある。
+WinForms とか WPF では隠ぺいされてるけども、内部的には、
+
+while (GetMessage(ref msg, null, 0, 0))
+{
+    TranslateMessage(ref msg);
+    DispatchMessage(ref msg);
+}
+
+DispatchMessage の内部で、最終的に以下のようなメソッドが呼ばれてる。
+
+private static IntPtr WndProc(
+    IntPtr hwnd, int msg, IntPtr wParam,
+    IntPtr lParam, ref bool handled)
+{
+    if (msg == WM_LBUTTONDOWN)
+    {
+        MessageBox.Show(&quot;左クリックされた&quot;);
+        handled = true;
+    }
+    return IntPtr.Zero;
+}
+
+WndProc 内で重たい処理するとフリーズ。
+（結局、イベントハンドラーで重たい処理をするとフリーズ）
+もちろん避けなきゃいけない。
+
+最初に言った通り、0.5秒超えたら（超える可能性あったら）同期処理すべきじゃない。
+
+
+・UI スレッド
+一方で、グラフィックがらみは、パフォーマンス上の理由からマルチスレッド不可。
+UI 要素は作ったスレッドからしかアクセスしちゃダメ。
+
+ということで、
+スレッド立てる → 重たい処理をそっちのスレッドでやる → UI スレッドに制御戻す
+ってやらないとダメ。
+
+UI スレッドに制御戻すために使うのがディスパッチャー（dispatcher: 配送係）
+別スレッドから UI スレッドに、「この処理して」っていうメッセージを配送するって意味。</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/async/">&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/async/sp_thread/">&#x30DE;&#x30EB;&#x30C1;&#x30B9;&#x30EC;&#x30C3;&#x30C9;</a></li><li><a href="/study/csharp/async/asyncvariation/">&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406;&#x306E;&#x7A2E;&#x985E;</a></li><li><a href="/study/csharp/async/asyncinside/">&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406;&#x3092;&#x652F;&#x3048;&#x308B;&#x30A4;&#x30F3;&#x30D5;&#x30E9;</a></li><li><a href="/study/csharp/async/asyncexecutioncontext/">&#x5B9F;&#x884C;&#x30B3;&#x30F3;&#x30C6;&#x30AD;&#x30B9;&#x30C8;</a></li><li><a href="/study/csharp/async/misc_synchronize/">[&#x96D1;&#x8A18;] &#x30B9;&#x30EC;&#x30C3;&#x30C9;&#x9593;&#x306E;&#x7AF6;&#x5408;&#x56DE;&#x907F;</a></li><li><a href="/study/csharp/async/misc_task/">[&#x96D1;&#x8A18;] &#x30B9;&#x30EC;&#x30C3;&#x30C9; &#x30D7;&#x30FC;&#x30EB;&#x3068;&#x30BF;&#x30B9;&#x30AF;</a></li><li><a href="/study/csharp/async/misc_asyncflow/">[&#x96D1;&#x8A18;] &#x975E;&#x540C;&#x671F;&#x5236;&#x5FA1;&#x30D5;&#x30ED;&#x30FC;</a></li><li><a href="/study/csharp/async/sp5_async/">&#x975E;&#x540C;&#x671F;&#x30E1;&#x30BD;&#x30C3;&#x30C9;</a></li><li><a href="/study/csharp/async/sp5_awaitable/">&#x975E;&#x540C;&#x671F;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x306E;&#x5185;&#x90E8;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/async/misc_continuation/">[&#x96D1;&#x8A18;] &#x7D99;&#x7D9A;&#x3068;&#x5148;&#x7269;</a></li><li><a href="/study/csharp/async/asyncstream/">&#x975E;&#x540C;&#x671F;&#x30B9;&#x30C8;&#x30EA;&#x30FC;&#x30E0;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

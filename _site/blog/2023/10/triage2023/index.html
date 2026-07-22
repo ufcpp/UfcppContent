@@ -1,0 +1,164 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>C# 13 &#x5411;&#x3051;&#x30C8;&#x30EA;&#x30A2;&#x30FC;&#x30B8; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2023/10/triage2023/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2023-10-18T21:14:51">2023-10-18</time></span><span>更新: <time datetime="2023-10-18T21:51:26">2023-10-18</time></span></div><h1 id="c-13">C# 13 向けトリアージ</h1>
+<p>.NET 8 も RC 2 な段階になって、ここから GA までの間に仕様が変わるということはほとんどなくなってきました。
+となると、話題はもうその次。来年向け(C# 13 / .NET 9 ターゲット)の話が出てきます。
+C# Design Meeting でも、13向けのトリアージがちらほら始まりました。</p>
+<p>とりあえず現状、2件。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/discussions/7587">LDM Notes for October 9th, 2023</a></li>
+<li><a href="https://github.com/dotnet/csharplang/discussions/7603">LDM Notes for October 16th, 2023</a></li>
+</ul>
+<p>以下のようなものがトリアージされました。</p>
+<h2 id="section">10/9 議事録</h2>
+<h3 id="readonlyspan-initialization-from-static-data-5295">ReadOnlySpan initialization from static data 5295</h3>
+<p><a href="https://github.com/dotnet/csharplang/issues/5295">#5295</a></p>
+<p>C# 7.2 辺りから、以下のような「配列のアロケーションを消す」最適化が掛かります。</p>
+<pre><code class="language-csharp"><span class="comment">// 定数だけで構成された byte 配列は最適化で消える。</span>
+<span class="comment">// new ReadOnlySpan&lt;byte&gt;(静的データのポインター, 4) みたいなコードに展開される。</span>
+ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; data1 = <span class="keyword">new</span> <span class="keyword">byte</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span> };
+
+<span class="comment">// .NET 7 までは byte, sbyte のみだったけど、 .NET 8 からはそれ以外の整数にも最適化がかかるように。</span>
+ReadOnlySpan&lt;<span class="keyword">int</span>&gt; data2 = <span class="keyword">new</span> <span class="keyword">int</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span> };</code></pre>
+<p>けども、見た目はどう見ても配列を作っているので、たびたび「この配列を new するのもったいなくない？」という突っ込みが入りがちです。</p>
+<p>そこで、以下のような「ReadOnlySpan の初期化構文が欲しい」という話がありました。</p>
+<pre><code class="language-csharp">ReadOnlySpan&lt;<span class="keyword">byte</span>&gt; data1 = { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span> };
+
+ReadOnlySpan&lt;<span class="keyword">int</span>&gt; data2 = { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span> };</code></pre>
+<p>ですが、C# 12 で入る予定の<a href="/blog/2023/1/collection-literal/">コレクション式</a>がこれを兼ねるので、この <code>{}</code> を使った書き方はリジェクトになりました。</p>
+<h3 id="embedded-language-indicators-for-raw-string-literals-6247">Embedded Language Indicators for raw string literals 6247</h3>
+<p><a href="https://github.com/dotnet/csharplang/issues/6247">#6247</a></p>
+<pre><code class="language-csharp"><span class="comment">// こんな風に、raw string の先頭行に「文字列リテラルの中身が何か」を示すインジケーターを書きたいという案。</span>
+<span class="keyword">var</span> y = <span class="string">&quot;&quot;</span>&quot;regex
+    \s+
+    <span class="string">&quot;&quot;</span>&quot;;
+
+<span class="comment">// ちなみに今も、以下のように「文字列リテラル直前のコメントに lang = を付ける」という手段でインジケーターを書ける。</span>
+<span class="comment">// Visual Studio はこれを認識して色付けしたり補間したりしてくれる。</span>
+
+<span class="comment">// lang=regex</span>
+<span class="keyword">var</span> y = <span class="string">&quot;&quot;</span>&quot;
+    \s+
+    <span class="string">&quot;&quot;</span>&quot;;</code></pre>
+<p>優先度付くほど強いモチベーションがなさげ。
+Backlog (過去ログ行き)。</p>
+<h3 id="list-patterns-on-enumerables">list-patterns on enumerables</h3>
+<p><a href="https://github.com/dotnet/csharplang/issues/6574">#6574</a></p>
+<p><code>IEnumerable</code> に対して <code>x is []</code> とか書けるようにしたいというやつ。</p>
+<p>時間がなくて12でも入らなかっただけ。
+Working set (作業中)。</p>
+<h3 id="make-generated-program-for-top-level-statements-public-by-default">Make generated `Program`` for top-level statements public by default</h3>
+<p><a href="https://github.com/dotnet/csharplang/issues/6769">#6769</a></p>
+<p><a href="/study/csharp/cheatsheet/ap_ver9/#top-level-statements">トップ レベル ステートメント</a>から生成される Program クラスを public にしたいという話。</p>
+<p>一番のモチベはテストだけど。
+テスト関連、もっと広く要件調査必要。</p>
+<h3 id="callercharacternumberattribute">CallerCharacterNumberAttribute</h3>
+<p><a href="https://github.com/dotnet/csharplang/issues/3992">#3992</a></p>
+<p><a href="/study/csharp/cheatsheet/ap_ver5/#CallerInfo">Caller Info 属性</a>に追加で「ソースコードの何列目か」を取れるものを足したいという話。
+(今、CallerLineNumber で行番号は取れるけども、列を取る手段がない。)</p>
+<p><a href="https://github.com/ufcpp/UfcppSample/issues/456">Interceptor</a>と一環としてやる。</p>
+<h3 id="add-private-and-namespace-accessibility-modifiers-for-top-level-types">Add private and namespace accessibility modifiers for top-level types</h3>
+<p><a href="https://github.com/dotnet/csharplang/issues/6794">#6794</a></p>
+<p>「同一の名前空間内限定でアクセスできる」というアクセスレベルの新設。
+<a href="/study/csharp/cheatsheet/ap_ver11/#file-local">file</a> は狭すぎるし、<a href="/study/csharp/oop/oo_conceal/#protected-internal">internal</a> は広すぎる。</p>
+<p>やる気になってるっぽい(Working set)。</p>
+<h3 id="require-await-to-apply-nullable-postconditions-to-task-returning-calls">Require await to apply nullable postconditions to task-returning calls</h3>
+<p><a href="https://github.com/dotnet/csharplang/issues/6888">#6888</a></p>
+<p>非同期メソッドが絡んだ時に `MemberNotNull`` とかがちゃんと働かない問題。</p>
+<p>作業中。もらったフィードバックに対処が必要。</p>
+<h3 id="is-expression-evaluating-const-expression-should-be-considered-constant">is expression evaluating const expression should be considered constant</h3>
+<p><a href="https://github.com/dotnet/csharplang/issues/6926">#6926</a></p>
+<pre><code class="language-csharp"><span class="keyword">const</span> <span class="keyword">int</span> x = <span class="number">123</span>;
+<span class="keyword">const</span> <span class="keyword">bool</span> y = x == <span class="number">0</span>; <span class="comment">// これは OK。const 同士に対する式の結果は const。</span>
+<span class="keyword">const</span> <span class="keyword">bool</span> z = x <span class="keyword">is</span> <span class="number">0</span>; <span class="comment">// 今ダメ。 == が行けるんなら is も行けていいんじゃない？</span></code></pre>
+<p>Any time (C# チーム内ではやらないけど、コミュニティ貢献受付はできる)。
+実際、<a href="https://github.com/dotnet/csharplang/pull/7589">コミュニティ実装が始まってそう</a>。</p>
+<h2 id="section-1">10/16 議事録</h2>
+<h3 id="breaking-change-warnings">Breaking change warnings</h3>
+<p><a href="https://github.com/dotnet/csharplang/issues/7189">#7189</a></p>
+<p>「C# 14 で破壊的変更になる予定だから注意してね」警告みたいなやつを C# 13 以下に対して出そうかという話。
+(主に、field キーワード導入がモチベ。)</p>
+<p>これについて書いたブログ: <a href="/blog/2023/3/csharp-breaking-change/">C# での破壊的変更の今後の扱い(案)</a></p>
+<p>普通に作業中。
+10/9 のミーティングでは取り上げ忘れてただけ。
+Working set。</p>
+<h3 id="determine-natural-type-of-method-group-by-looking-scope-by-scope">Determine natural type of method group by looking scope-by-scope</h3>
+<p><a href="https://github.com/dotnet/csharplang/issues/7364">#7364</a></p>
+<p><a href="https://github.com/dotnet/csharplang/issues/7429">#7429</a> との重複扱いで close。</p>
+<h3 id="u8-string-interpolation">u8 string interpolation</h3>
+<p><a href="https://github.com/dotnet/csharplang/issues/7072">#7072</a></p>
+<p><code>$&quot;直接 UTF-8 で書き込まれる文字列補間 {x} {y}&quot;u8</code> (u8 接尾辞) みたいなのが欲しいという話は上がってたんだけど。</p>
+<p>.NET 8 の並々ならぬ努力の結果、JIT 最適化がだいぶ賢くなった。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Text.Unicode;
+
+<span class="keyword">int</span> x = <span class="number">123</span>;
+<span class="keyword">int</span> y = <span class="number">456</span>;
+Span&lt;<span class="keyword">byte</span>&gt; dest = <span class="keyword">stackalloc</span> <span class="keyword">byte</span>[<span class="number">100</span>];
+
+Utf8.TryWrite(dest, $<span class="string">&quot;UTF-8 補間 {x} {y}&quot;</span>, <span class="keyword">out</span> <span class="keyword">var</span> written);
+<span class="comment">// ↑ 普通の(UTF-16 な)文字列補間だけど、JIT の努力によって UTF-16 → UTF-8 への変換がほぼノーコストに最適化される。</span></code></pre>
+<p>その結果、 <code>$&quot;&quot;u8</code> の要求減った。
+Backlog 行き。</p>
+<h3 id="lock-statement-pattern">Lock statement pattern</h3>
+<p><a href="https://github.com/dotnet/csharplang/issues/7104">#7104</a></p>
+<p><code>lock (obj)</code> もパターンベースにしたいという話。</p>
+<p>.NET の「任意の object を lock に使える」、「オブジェクトヘッダーに lock 用の syncblock って領域を持ってる」という仕様、オーバーヘッドが大きいので、ちゃんと <a href="https://github.com/dotnet/runtime/issues/34812">`Lock`` 型</a>みたいなのを用意してそれを使って lock したい。</p>
+<p>この <code>Lock</code> 型インスタンスに対して <code>lock (_lock)</code> されたときに、syncblock 使わず、パターンベースで <code>Lock.TryEnter</code> が呼ばれるようにしたい。</p>
+<p>.NET 9 マイルストーンで Working set に。</p>
+<h3 id="stringcharacter-escape-sequence-e-as-a-short-hand-for-u001b">String/Character escape sequence \e as a short-hand for \u001b ()</h3>
+<p><a href="https://github.com/dotnet/csharplang/issues/7400">#7400</a></p>
+<p>エスケープ文字(U+001B)に対するエスケープシーケンス <code>\e</code> を導入したい。</p>
+<p>Any time に(今、<a href="https://github.com/dotnet/csharplang/issues/7400#issuecomment-1765085640">提案者に対してコミュニティ実装するか聞いてる</a>ところ)。</p>
+<h3 id="new-operator-for-canonical-modulus-operations">New operator %% for canonical Modulus operations</h3>
+<p><a href="https://github.com/dotnet/csharplang/issues/7599">#7599</a></p>
+<p>C# の <code>%</code> 演算子 (というか、大体の CPU の div rem 命令) は、オペランドの符号によっては 0～n-1 にならない。
+それに対して、<code>array[x % array.Length]</code> みたいな用途では 0～n-1 になってほしい。</p>
+<p>という、需要はあるものの、C# 言語組み込みでやるべきかどうかは疑問。
+div rem にはいろいろ種類があるんで、メソッド名とかメソッド引数で「どの div か」を明示すべきという話に支持が集まってる。</p>
+<p>なので C# としてはやらない(likely never)。</p>
+<p>代わりにライブラリ追加の提案が runtime の方で進みそう (<a href="https://github.com/dotnet/runtime/issues/93568">#93568</a>)。
+↓提案内容。</p>
+<pre><code class="language-csharp"><span class="keyword">namespace</span> System.Numerics;
+
+<span class="keyword">public</span> <span class="keyword">enum</span> DivisionRounding
+{
+    Truncate = <span class="number">0</span>,        <span class="comment">// Towards Zero</span>
+    Floor = <span class="number">1</span>,           <span class="comment">// Towards -Infinity</span>
+    Ceiling = <span class="number">2</span>,         <span class="comment">// Towards +Infinity</span>
+    AwayFromZero = <span class="number">3</span>,    <span class="comment">// Away from Zero</span>
+    Euclidean = <span class="number">4</span>,       <span class="comment">// floor(x / abs(n)) * sign(n)</span>
+}
+
+<span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">interface</span> IBinaryInteger&lt;TSelf&gt;
+{
+    <span class="comment">// Existing:</span>
+    <span class="keyword">static</span> <span class="keyword">virtual</span> (TSelf Quotient, TSelf Remainder) DivRem(TSelf left, TSelf right);
+
+    <span class="comment">// Proposed:</span>
+    <span class="keyword">static</span> <span class="keyword">virtual</span> TSelf Divide(TSelf left, TSelf right, DivisionRounding mode);
+    <span class="keyword">static</span> <span class="keyword">virtual</span> (TSelf Quotient, TSelf Remainder) DivRem(TSelf left, TSelf right, DivisionRounding mode);
+    <span class="keyword">static</span> <span class="keyword">virtual</span> TSelf Remainder(TSelf left, TSelf right, DivisionRounding mode);
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2023/10/">10&#x6708;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

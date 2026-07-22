@@ -1,0 +1,685 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5C5E;&#x6027; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/dynamic/sp_attribute/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">属性</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p><strong id="attribute" class="keyword">属性</strong>（attribute）とはクラスやメンバーに追加情報を与えるものです。
+例えば、<code>public</code> や <code>private</code> などといったC#のキーワードもある種の属性と考えることが出来ます。
+<code>public</code> ならば「このメンバーはクラス外からも参照可能」、
+<code>private</code> ならば「このメンバーはクラス内のみから参照可能」という追加情報が与えられます。</p>
+<p>C++ などの既存の言語では、このような追加情報を定義する場合、
+言語仕様自体を拡張し、新たにコンパイラを作り直す必要がありました。
+それに対し、C# では自分で属性を定義し、クラスやメンバーに付加することが出来ます。
+すなわち、ライブラリで提供されている属性や自作した属性を用いることで、
+コンパイラに対する指示を行ったり、クラスの利用者に対する情報を残すことが出来ます。</p>
+<p>属性の情報は、以下のような場面で使われます。</p>
+<ul>
+<li><p>条件コンパイルなどの、コンパイラへの指示に使う（Conditional や Obsolete）。</p>
+</li>
+<li><p>作者情報などをメタデータとしてプログラムに埋め込む（AssemblyTitle など）。</p>
+</li>
+<li><p>「<a href="/study/csharp/dynamic/sp_reflection/#reflection">リフレクション</a>」を利用して、プログラム実行時に属性情報を取り出して利用する。</p>
+</li>
+</ul>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>C# では、クラスやメンバーに対して、ユーザーが自分で定義した属性を自由に付けられます。</p>
+</li>
+<li><p>一部の属性は、コンパイラや Visual Studio に対する指示として利用します。 例：</p>
+<ul>
+<li><p>[Obsolete] class OldClass  … 古いバージョンとの互換性のためだけに残してるけど、このクラスはもう使わないで。</p>
+</li>
+<li><p>[EditorBrowsable] T Property; … Visual Studio の IntelliSense（などの、開発ツールの補完機能）で表示するかどうかを設定します。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="use"></a>属性の使用</h2>
+<p>属性は以下のように <code>[]</code> でくくり、
+クラスやメンバーの前に付けて使います。</p>
+<pre><code class="language-csharp">[属性名(属性パラメータ)]
+メンバーの定義</code></pre>
+<p>たとえば以下のような感じ。</p>
+<pre><code class="language-csharp">[DataContract]
+<span class="keyword">class</span> User
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> Id { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">string</span> Name { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+}</code></pre>
+<p>属性名は語尾に <code>Attribute</code> を付けることになっています。
+例えば、標準で用意されている属性には <code>ObsoleteAttribute</code> や
+<code>ConditionalAttribute</code> などといった名前のものがあります。
+また、これらを C# から利用する場合、語尾の <code>Attribute</code> は省略してもかまいません。
+したがって、前者は <code>Obsolete</code>、
+後者は <code>Conditional</code> という名前で使用できます。</p>
+<p>例として、<code>Conditional</code> 属性を使用してみましょう。
+<code>Conditional</code> 属性とは、
+特定の条件下でのみ実行されるメソッドを定義するために使用する属性です。
+例えば、以下のようにして使用します。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Diagnostics;
+
+<span class="keyword">class</span> AttributeTest
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">double</span>[] array = <span class="keyword">new</span> <span class="keyword">double</span>[] { <span class="number">9</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">2</span>, <span class="number">7</span>, <span class="number">1</span>, <span class="number">6</span>, <span class="number">3</span>, <span class="number">8</span> };
+        BubbleSort(array);
+        Output(array);
+    }
+
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> バブルソートを行う。</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+    <span class="keyword">static</span> <span class="keyword">void</span> BubbleSort(<span class="keyword">double</span>[] array)
+    {
+        <span class="keyword">int</span> n = array.Length - <span class="number">1</span>;
+
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; ++i)
+        {
+            <span class="keyword">for</span> (<span class="keyword">int</span> j = n; j &gt; i; --j)
+                <span class="keyword">if</span> (array[j - <span class="number">1</span>] &gt; array[j])
+                    Swap(<span class="keyword">ref</span> array[j - <span class="number">1</span>], <span class="keyword">ref</span> array[j]);
+
+            IntermediateOutput(array); <span class="comment">// ソートの途中段階のデータを表示。</span>
+        }
+    }
+
+    <span class="keyword">static</span> <span class="keyword">void</span> Swap(<span class="keyword">ref</span> <span class="keyword">double</span> x, <span class="keyword">ref</span> <span class="keyword">double</span> y)
+    {
+        <span class="keyword">double</span> tmp = x;
+        x = y;
+        y = tmp;
+    }
+
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> 配列の内容をコンソールに表示する。</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+    <span class="keyword">static</span> <span class="keyword">void</span> Output(<span class="keyword">double</span>[] array)
+    {
+        <span class="keyword">foreach</span> (<span class="keyword">double</span> x <span class="keyword">in</span> array)
+        {
+            Console.Write(<span class="string">&quot;{0} &quot;</span>, x);
+        }
+        Console.Write(<span class="string">&quot;\n&quot;</span>);
+    }
+
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> SHOW_INTERMEDIATE というシンボルが定義されているときのみ</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> 配列の内容をコンソールに表示する。</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+    [Conditional(<span class="string">&quot;SHOW_INTERMEDIATE&quot;</span>)]
+    <span class="keyword">static</span> <span class="keyword">void</span> IntermediateOutput(<span class="keyword">double</span>[] array)
+    {
+        Output(array);
+    }
+}</code></pre>
+<p><code>SHOW_INTERMEDIATE</code> という名前のシンボルが定義されている場合、
+以下のように、ソートの途中段階のデータが表示されます。</p>
+<pre><code class="language-console">1 9 4 5 2 7 3 6 8
+1 2 9 4 5 3 7 6 8
+1 2 3 9 4 5 6 7 8
+1 2 3 4 9 5 6 7 8
+1 2 3 4 5 9 6 7 8
+1 2 3 4 5 6 9 7 8
+1 2 3 4 5 6 7 9 8
+1 2 3 4 5 6 7 8 9
+1 2 3 4 5 6 7 8 9</code></pre>
+<p>一方、<code>SHOW_INTERMEDIATE</code> という名前のシンボルが定義されていない場合、
+以下のように、結果のみが表示されます。</p>
+<pre><code class="language-console">1 2 3 4 5 6 7 8 9</code></pre>
+<p>ちなみに、以下のように <code>,</code> で区切るか、複数の <code>[]</code> を並べることで複数の属性を指定することが出来ます。</p>
+<pre><code class="language-csharp">[Conditional(<span class="string">&quot;DEBUG&quot;</span>), Conditional(<span class="string">&quot;TEST&quot;</span>)]
+<span class="keyword">void</span> DebugOutput(<span class="keyword">string</span> message)</code></pre>
+<pre><code class="language-csharp">[Conditional(<span class="string">&quot;DEBUG&quot;</span>)]
+[Conditional(<span class="string">&quot;TEST&quot;</span>)]
+<span class="keyword">void</span> DebugOutput(<span class="keyword">string</span> message)</code></pre>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="predefined"></a>定義済み属性</h2>
+<p><code>Conditional</code> 以外にも、標準ライブラリによって提供されている定義済み属性がいくつかあります。
+そのうちのいくつかを以下に挙げます。
+「付与した属性を誰が使うか」で分類しています。</p>
+<h3 id="section-5"><a id="sec-generated-title-5"></a> <a id="compiler_attribute"></a>コンパイラが利用</h3>
+<p>コンパイラへの指示になっていて、コンパイル結果に影響を及ぼします。</p>
+<table summary="">
+
+	<tr>
+		<th>属性名</th>
+		<th>効果</th>
+	</tr>
+	<tr>
+		<td><p><code>System.AttributeUsageAttribute</code></p></td>
+		<td><p>属性の用途を指定します。属性クラスを自作する場合(詳細は後述)に使用します。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>System.ObsoleteAttribute</code></p></td>
+		<td><p>時代遅れな(次期バージョンで削除されても文句の言えない)コードであることを示します。 この属性が付いているクラスやメソッドを利用すると、コンパイラが警告を発します。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>System.Diagnostics.ConditionalAttribute</code></p></td>
+		<td><p>特定の条件下でのみ実行されるメソッドを定義するために使用します。<h5 class="version version2">Ver. 2.0</h5>C# 2.0 では、メソッドだけでなく、属性に対しても Conditional 属性を付ける事が可能になりました。</p></td>
+	</tr>
+</table>
+<h3 id="section-6"><a id="sec-generated-title-6"></a> <a id="ide_attirbute"></a>開発ツール</h3>
+<p>Visual Studio などの開発ツールが利用します。
+いずれも、<code>System.ComponentModel</code> 名前空間です。</p>
+<table summary="">
+
+	<tr>
+		<th>属性名</th>
+		<th>効果</th>
+	</tr>
+	<tr>
+		<td><p><code>CategoryAttribute</code><br></br><code>DefaultValueAttribute</code><br></br><code>DescriptionAttribute</code><br></br><code>BrowsableAttribute</code><br></br></p></td>
+		<td><p>コンポーネントクラス(簡単に言うと Windows アプリケーションのボタンやテキストボックス等のこと)のプロパティに対してこれらの属性を指定することで、 Visual Studio のプロパティ エディタで値を編集することが出来るようになります。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/VsProperty.png"><img src="/assets/media/ufcpp2000/csharp/fig/VsProperty.png" alt="Visual Studio のプロパティ エディター" /></a></p>
+<figcaption>Visual Studio のプロパティ エディター</figcaption>
+</figure></td>
+	</tr>
+</table>
+<h3 id="section-7"><a id="sec-generated-title-7"></a> <a id="ves_attribute"></a>実行エンジン</h3>
+<p>.NET Framework の 「<a href="/study/csharp/abstract/ab_dotnet/#il">IL</a>」 実行エンジンが利用します。
+いずれも、<code>System.Runtime.InteropServices</code> 名前空間です。</p>
+<table summary="">
+
+	<tr>
+		<th>属性名</th>
+		<th>効果</th>
+	</tr>
+	<tr>
+		<td><p><code>DllImportAttribute</code><br></br></p></td>
+		<td><p>ネイティブ な DLL からメソッドをインポートします。 （DllImport 属性を付けたメソッドを宣言するだけで、ネイティブ な DLL のメソッドを利用できます。 ネイティブ DLL 側に特別な処理を書く必要は全くありません。）</p></td>
+	</tr>
+	<tr>
+		<td><p><code>ComImportAttribute</code><br></br></p></td>
+		<td><p>Unmanaged な DLL から COM クラスをインポートします。</p></td>
+	</tr>
+</table>
+<h3 id="section-8"><a id="sec-generated-title-8"></a> <a id="lib_attribute"></a>ライブラリ</h3>
+<p>ライブラリが利用します。
+各ライブラリ内部で、「<a href="/study/csharp/dynamic/sp_reflection/#reflection">リフレクション</a>」を使った動的コード生成などを行っています。</p>
+<h5 id="asp.net"><a id="sec-generated-title-9"></a>ASP.NET</h5>
+<table summary="">
+
+	<tr>
+		<th>属性名</th>
+		<th>効果</th>
+	</tr>
+	<tr>
+		<td><p><code>System.Web.Services.WebMethodAttribute</code></p></td>
+		<td><p>XML Web Service を使用してリモートにあるメソッドを呼び出すことが出来ます。</p></td>
+	</tr>
+</table>
+<h5 id="wcfwindows-communication-foundation"><a id="sec-generated-title-10"></a>WCF（Windows Communication Foundation）</h5>
+<table summary="">
+
+	<tr>
+		<th>属性名</th>
+		<th>効果</th>
+	</tr>
+	<tr>
+		<td><p><code>System.ServiceModel.OperationContractAttribute</code><br></br><code>System.ServiceModel.ServiceContractAttribute</code><br></br><code>System.Runtime.Serialization.DataContractAttribute</code></p></td>
+		<td><p>WCF のサービスや、サービスで使うデータに付けます。</p></td>
+	</tr>
+</table>
+<h5 id="section-9"><a id="sec-generated-title-11"></a>データ検証</h5>
+<p><code>System.ComponentModel.DataAnnotations.Validator</code> クラスを使って、
+データが満たすべき条件（null であってはいけないとか、値の範囲とか）を検証します。
+いずれも、<code>System.ComponentModel.DataAnnotations</code> 名前空間です。</p>
+<table summary="">
+
+	<tr>
+		<th>属性名</th>
+		<th>効果</th>
+	</tr>
+	<tr>
+		<td><p><code>RequiredAttribute</code></p></td>
+		<td><p>必須である（null や空文字を認めない）ことを示します。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>RangeAttribute</code></p></td>
+		<td><p>値の範囲を指定します。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>StringLengthAttribute</code></p></td>
+		<td><p>文字列の最大長/最小長を指定します。</p></td>
+	</tr>
+</table>
+<h5 id="section-10"><a id="sec-generated-title-12"></a>テスト</h5>
+<p>Visual Studio 組み込みの単体テスト機能で利用します。
+いずれも、<code>Microsoft.VisualStudio.TestTools.UnitTesting</code> 名前空間です。</p>
+<table summary="">
+
+	<tr>
+		<th>属性名</th>
+		<th>効果</th>
+	</tr>
+	<tr>
+		<td><p><code>TestClassAttribute</code></p></td>
+		<td><p>テスト メソッドを含むクラスを識別するために使用されます。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>TestMethodAttribute</code></p></td>
+		<td><p>テスト メソッドの識別に使用します。</p></td>
+	</tr>
+</table>
+<h3 id="section-11"><a id="sec-generated-title-13"></a> <a id="assembly_attribute"></a>プログラム自体に関する情報</h3>
+<p>一部の属性は、実行ファイルのプロパティに表示されます。
+例えば、以下のようなプログラムにより、
+AssemblyDescription という属性をアセンブリに付けたとします。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Reflection;
+<span class="keyword">using</span> System.Runtime.CompilerServices;
+
+[<span class="keyword">assembly</span>: AssemblyDescription(<span class="string">&quot;assembly 属性のサンプルコードです。&quot;</span>)]
+
+<span class="keyword">class</span> TestAttribute
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+  }
+}</code></pre>
+<p>AssemblyDescription に与えた文字列は、このプログラムのコメントとして、
+explorer から参照することができます。
+このソースコードをコンパイルした結果の実行ファイルのプロパティを開くと、
+以下のようになります。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/assembly0.png"><img src="/assets/media/ufcpp2000/csharp/fig/assembly0.png" alt="実行ファイルのプロパティ" /></a></p>
+<figcaption>実行ファイルのプロパティ</figcaption>
+</figure>
+<h2 id="section-12"><a id="sec-generated-title-14"></a> <a id="target"></a>属性の対象</h2>
+<p>属性を付ける場所によって属性の対象は変わります。
+例えば、クラスの直前に属性を付ければクラスに属性が適用されますし、
+メソッド定義の直前に属性を付ければメソッドに属性が適用されます。
+以下にその例を挙げます。</p>
+<pre><code class="language-csharp">[<span class="keyword">assembly</span>: AssemblyTitle(<span class="string">&quot;Test Attribute&quot;</span>)] <span class="comment">// プログラムそのものが対象</span>
+ 
+[Serializable] <span class="comment">// クラスが対象</span>
+<span class="keyword">public</span> <span class="keyword">class</span> SampleClass
+{
+    [Obsolete(<span class="string">&quot;時期版で削除します。使わないでください。&quot;</span>)] <span class="comment">// メソッドが対象</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> Test([In, Out] <span class="keyword">ref</span> <span class="keyword">int</span> n) <span class="comment">// 引数が対象</span>
+    {
+        n *= <span class="number">2</span>;
+    }
+}</code></pre>
+<p>しかし、属性を付ける位置によっては属性の対象が曖昧になることがあります。
+メソッドそのものとメソッドの戻り値に属性を適用したい場合がその典型例です。
+以下にその例を挙げます。</p>
+<pre><code class="language-csharp">[DllImport(<span class="string">&quot;msvcrt.dll&quot;</span>)]
+[MarshalAs(UnmanagedType.I4)] <span class="comment">// メソッドの戻り値に属性を適用したいんだけど、</span>
+<span class="comment">// コンパイラはそう解釈してくれない。</span>
+<span class="comment">// 戻り値ではなく、メソッド自体に適用していると解釈される。</span>
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">int</span> puts(
+    [MarshalAs(UnmanagedType.LPStr)] <span class="keyword">string</span> m);</code></pre>
+<p>このような曖昧さを解決するため、
+明示的に属性の対象を指定する構文があります。</p>
+<pre><code class="language-csharp">[属性の対象 : 属性名(属性のオプション)]</code></pre>
+<p>先ほどの例を属性の対象を明示的に指定して書き直すと以下のようになります。</p>
+<pre><code class="language-csharp">[<span class="keyword">method</span>: DllImport(<span class="string">&quot;msvcrt.dll&quot;</span>)]
+[<span class="keyword">return</span>: MarshalAs(UnmanagedType.I4)]
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">int</span> puts(
+    [<span class="keyword">param</span>: MarshalAs(UnmanagedType.LPStr)] <span class="keyword">string</span> m);</code></pre>
+<p>属性の対象には以下のようなものがあります。</p>
+<table summary="">
+
+	<tr>
+		<th>対象名</th>
+		<th>説明</th>
+	</tr>
+	<tr>
+		<td><p><code>assembly</code></p></td>
+		<td><p>アセンブリ(簡単に言うと、プログラムの実行に必要なファイルをひとまとめにした物のこと)が対象になります。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>module</code></p></td>
+		<td><p>モジュール(1つの実行ファイルやDLLファイルのこと)が対象になります。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>type</code></p></td>
+		<td><p>クラスや構造体、列挙型やデリゲート(後述)等の型が対象になります。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>field</code></p></td>
+		<td><p>フィールド(要するにメンバー変数のこと)が対象になります。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>method</code></p></td>
+		<td><p>メソッドが対象になります。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>event</code></p></td>
+		<td><p>イベント(後述)が対象になります。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>property</code></p></td>
+		<td><p>プロパティが対象になります。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>param</code></p></td>
+		<td><p>メソッドの引数が対象になります。</p></td>
+	</tr>
+	<tr>
+		<td><p><code>return</code></p></td>
+		<td><p>メソッドの戻り値が対象になります。</p></td>
+	</tr>
+</table>
+<p>このうち、<code>return</code> は先ほど説明したとおり、
+メソッドそのものに対する属性と区別するために必ず付ける必要があります。
+また、<code>assembly</code> および <code>module</code> も指定が必須です。</p>
+<h3 id="section-13"><a id="sec-generated-title-15"></a> <a id="auto-impl"></a>プロパティ、イベントと属性の対象</h3>
+<p><a href="/study/csharp/oop/oo_property/">プロパティ</a>や<a href="/study/csharp/functional/sp_event/">イベント</a>は、
+内部的にはフィールドやメソッドも作られます。
+その結果、属性の指定先もいろいろと増えます。</p>
+<ul>
+<li>プロパティやイベント自身</li>
+<li><code>get</code>/<code>set</code> や、<code>add</code>/<code>remove</code> アクセサーに対応するメソッド</li>
+<li><code>set</code>, <code>add</code>, <code>remove</code> が受け取っている <code>value</code>引数</li>
+<li>自動実装の場合、<a href="/study/csharp/oop/oo_property/#auto">バック フィールド</a>も生成されるので、そのフィールド</li>
+</ul>
+<p>これらに対して、以下のような書き方で属性を付けることができます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> XAttribute : Attribute { }
+
+<span class="keyword">class</span> Sample
+{
+    [X] <span class="comment">// プロパティ自体</span>
+    <span class="keyword">public</span> <span class="keyword">int</span> Property
+    {
+        [<span class="keyword">method</span>:X] <span class="comment">// get に対応するメソッド</span>
+        <span class="keyword">get</span> =&gt; <span class="number">0</span>;
+
+        [<span class="keyword">method</span>: X] <span class="comment">// set に対応するメソッド</span>
+        [<span class="keyword">param</span>: X]  <span class="comment">// set が受け取っている value 引数</span>
+        <span class="keyword">set</span> { }
+    }
+
+    [<span class="keyword">field</span>:X] <span class="comment">// (C# 7.3 から) 自動で生成されるフィールド</span>
+    <span class="keyword">public</span> <span class="keyword">int</span> AutoProperty { <span class="keyword">get</span>; }
+
+    [X] <span class="comment">// イベント自体</span>
+    <span class="keyword">public</span> <span class="keyword">event</span> Action Event
+    {
+        [<span class="keyword">method</span>: X] <span class="comment">// add に対応するメソッド</span>
+        [<span class="keyword">param</span>: X]  <span class="comment">// add が受け取っている value 引数</span>
+        add { }
+
+        [<span class="keyword">method</span>: X] <span class="comment">// remove に対応するメソッド</span>
+        [<span class="keyword">param</span>: X]  <span class="comment">// remove が受け取っている value 引数</span>
+        remove { }
+    }
+
+    [<span class="keyword">field</span>: X] <span class="comment">// 自動で生成されるフィールド</span>
+    <span class="keyword">public</span> <span class="keyword">event</span> Action AutoEvent;
+}</code></pre>
+<h5 class="version version7">Ver. 7.3</h5>
+<p>※この中で、自動プロパティから生成されるフィールドに対する属性付けは、C# 7.3からしかできません。</p>
+<p>C# 7.2 以前では自動プロパティでフィールドに対して属性指定する方法がなく、
+もし必要なら、自動実装をやめて手動でプロパティを実装しなおさなければなりませんでした。</p>
+<p>ちなみに、この「修正」は一応、破壊的変更になります。
+この問題を踏むことはほとんどないとは思いますが、以下のコードは、C# 7.2まではコンパイルできて、7.3ではコンパイルできなくなります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="comment">// 本来フィールドには付けれない属性</span>
+[AttributeUsage(AttributeTargets.Class)]
+<span class="keyword">class</span> XAttribute : Attribute { }
+
+<span class="keyword">class</span> Sample
+{
+    <span class="comment">// C# 7.2 の挙動:</span>
+    <span class="comment">// そもそもこの field 指定が無効。</span>
+    <span class="comment">// 無効なので警告は出しているけども、エラーにはしていなかった。</span>
+    <span class="comment">// 一方で、「フィールドに付けれる属性かどうか」のチェックはしていなかった。</span>
+    <span class="comment">//</span>
+    <span class="comment">// C# 7.3 の挙動:</span>
+    <span class="comment">// field 指定が有効になったことで、チェックが働くように。</span>
+    <span class="comment">// フィールドに付けれる属性ではないのでエラーになる。</span>
+    [<span class="keyword">field</span>:X]
+    <span class="keyword">public</span> <span class="keyword">int</span> AutoProperty { <span class="keyword">get</span>; }
+}</code></pre>
+<h3 id="section-14"><a id="sec-generated-title-16"></a> <a id="primary-constructor">プライマリ コンストラクター</a></h3>
+<h5 class="version version9">Ver. 9</h5>
+<h5 class="version version12">Ver. 12</h5>
+<p>C# 12 からは普通のクラスや構造体にも使えるようになった<a href="/study/csharp/cheatsheet/ap_ver12/#primary-constructor">プライマリ コンストラクター</a>という構文があります。
+(ただし、<a href="/study/csharp/cheatsheet/ap_ver9/#record">レコード型</a>では、
+C# 9 で導入された当初から先行してプライマリ コンストラクターを使えました。)</p>
+<pre><code class="language-csharp"><span class="comment">// クラスの直後に () や引数リストを書ける。</span>
+<span class="keyword">class</span> A();
+<span class="keyword">class</span> B(<span class="keyword">int</span> x);</code></pre>
+<p>通常、クラスの直前に書く属性はクラス自体に対して付与されますが、
+<code>method</code> 指定を付けることでプライマリ コンストラクターに対する属性にできます。
+(ただし、レコード型が対象であっても、この機能が使えるのは C# 12 からです。)</p>
+<pre><code class="language-csharp">[X]         <span class="comment">// これはクラスに対する属性。</span>
+[<span class="keyword">method</span>: X] <span class="comment">// これはプライマリ コンストラクターに対する属性。</span>
+<span class="keyword">class</span> A();
+
+<span class="keyword">class</span> XAttribute : Attribute;</code></pre>
+<p>また、レコード型の場合はプライマリ コンストラクターの引数からプロパティが自動生成されることになりますが、
+以下のように、<code>property</code> や <code>field</code> を付けることで属性の指定先を選べます。</p>
+<pre><code class="language-csharp">record A(
+    [X]           <span class="comment">// これはプライマリ コンストラクターの引数に付く。</span>
+    <span class="comment">// [param: X]    省略せずに書くならこう。</span>
+    [<span class="keyword">property</span>: X] <span class="comment">// これは生成されるプロパティに付く。</span>
+    [<span class="keyword">field</span>: X]    <span class="comment">// これは生成されるプロパティのバッキング フィールドに付く。</span>
+    <span class="keyword">int</span> X
+    );
+
+<span class="keyword">class</span> XAttribute : Attribute;</code></pre>
+<h2 id="section-15"><a id="sec-generated-title-17"></a> <a id="userdefine"></a>属性の自作</h2>
+<em>
+        属性の実態は <code>System.Attribute</code> クラスの派生クラスです
+      </em>。
+<code>System.Attribute</code> クラスを継承したクラスを作成することで、
+新しい属性を自作することが出来ます。
+<p>ここでは例として、クラスの作者を記録しておくための属性 <code>Author</code> を作成します。
+まずは最も基本的な部分を作成します。</p>
+<pre><code class="language-csharp">[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+<span class="keyword">public</span> <span class="keyword">class</span> AuthorAttribute : Attribute
+{
+    <span class="keyword">private</span> <span class="keyword">string</span> Name;       <span class="comment">// 作者名</span>
+    <span class="keyword">public</span> <span class="keyword">string</span> Affiliation; <span class="comment">// 作者所属</span>
+    <span class="keyword">public</span> AuthorAttribute(<span class="keyword">string</span> name) { <span class="keyword">this</span>.Name = name; }
+}</code></pre>
+<p>見てのとおり、何の変哲もないクラスです。
+ただ、<code>System.Attribute</code> を継承していて、
+<code>AttributeUsage</code> 属性が付いています。
+<code>AttributeUsage</code> により、その属性の用途を指定することが出来ます。
+この例の場合、<code>Author</code> 属性は対象が指定されていて、
+クラスまたは構造体にのみ適用できる属性になります。</p>
+<p>次に使用する側の例を挙げます。</p>
+<pre><code class="language-csharp">[Author(<span class="string">&quot;Andrei Hejilsberg&quot;</span>)]
+<span class="keyword">class</span> Test
+{
+  <span class="comment">// 中身は省略</span>
+}</code></pre>
+<p>属性パラメータで指定した引数は属性クラスのコンストラクタに渡されます。
+したがって、この例の場合、<code>AuthorAttribute</code> クラスのコンストラクタに文字列 <code>&quot;Andrei Hejilsberg&quot;</code> が渡されます。
+その結果生成された <code>AuthorAttribute</code> クラスのインスタンス情報がこのクラスのメタデータとして残されます。</p>
+<p>また、属性クラスの public なフィールドやプロパティは<em>名前付きパラメータ</em>と呼ばれる方法で設定することが出来ます。
+例として、先ほど作成した <code>Author</code> 属性の <code>affiliation</code> フィールドを設定してみましょう。</p>
+<pre><code class="language-csharp">[Author(<span class="string">&quot;Andrei Hejilsberg&quot;</span>, Affiliation=<span class="string">&quot;Microsoft&quot;</span>)]
+<span class="keyword">class</span> Test
+{
+  <span class="comment">// 中身は省略</span>
+}</code></pre>
+<p>この例の <code>Affiliation=&quot;Microsoft&quot;</code> の部分が名前付きパラメータです。
+このように、通常の属性パラメータの後ろに <code>,</code> で区切って「<code>フィールド名 = 値</code>」と書くことでフィールドの値を設定できます。
+(プロパティの場合もまったく同様にして値を設定できます。)</p>
+<p><code>Attribute</code> にも <code>AllowMultiple</code> と <code>Inherited</code> という2つの名前付きパラメータがあります。</p>
+<pre><code class="language-csharp">[AttributeUsage(
+   属性の対象,
+   AllowMultiple=複数回適用の可否,
+   Inherited=継承の有無
+)]</code></pre>
+<p><code>AllowMultiple</code> には同じ属性を同じ対象に複数回適用できるかどうかを指定します。
+true の場合は適用可能、false の場合は適用不可になります。
+<code>Inherited</code> には属性が継承されるかどうかを指定します。
+true の場合はクラスの継承時に属性も一緒に継承され、
+false の場合には属性は継承されません。</p>
+<p>先ほどの <code>Author</code> 属性の場合、
+1つのクラスを複数人で開発することもありえますし、
+<code>AllowMultiple</code> は true にすべきでしょう。
+また、派生クラスと基底クラスの作者が同じとは限りませんから、
+<code>Inherited</code> は false とすべきです。
+以上のことを踏まえ、<code>Author</code> 属性を書き直すと以下のようになります。</p>
+<pre><code class="language-csharp">[AttributeUsage(
+  AttributeTargets.Class | AttributeTargets.Struct,
+  AllowMultiple = <span class="keyword">true</span>,
+  Inherited = <span class="keyword">false</span>)]
+<span class="keyword">public</span> <span class="keyword">class</span> AuthorAttribute : Attribute
+{
+  <span class="keyword">private</span> <span class="keyword">string</span> name;       <span class="comment">// 作者名</span>
+  <span class="keyword">public</span> <span class="keyword">string</span> affiliation; <span class="comment">// 作者所属</span>
+  <span class="keyword">public</span> AuthorAttribute(<span class="keyword">string</span> name){<span class="keyword">this</span>.name = name;}
+}</code></pre>
+<h2 id="section-16"><a id="sec-generated-title-18"></a> <a id="get"></a>属性情報の取得</h2>
+<p>リフレクション機能を用いて属性情報を出得することが出来ます。
+具体的には、
+<code>Attribule</code> クラスの <code>GetCustomAttribute </code> メソッドや <code>GetCustomAttributes </code> メソッドを用いて属性を取得します。
+取得したい属性の AllowMultiple パラメータが false の場合は <code>GetCustomAttribute </code> メソッドを、 AllowMultiple パラメータが true の場合や、
+全ての属性を取得したい場合には <code>GetCustomAttributes </code> メソッドを使用します。</p>
+<p>例として、クラス及びそのクラス中の public メソッドに適用された全ての <code>Author</code> 属性を取得するプログラムを以下に示します。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Reflection;
+  
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 作者情報を残すための属性。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+[AttributeUsage(
+    AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Method,
+    AllowMultiple = <span class="keyword">true</span>,
+    Inherited = <span class="keyword">false</span>)]
+<span class="keyword">public</span> <span class="keyword">class</span> AuthorAttribute : Attribute
+{
+    <span class="keyword">private</span> <span class="keyword">string</span> name;
+    <span class="keyword">public</span> AuthorAttribute(<span class="keyword">string</span> name) { <span class="keyword">this</span>.name = name; }
+    <span class="keyword">public</span> <span class="keyword">string</span> Name { <span class="keyword">get</span> { <span class="keyword">return</span> <span class="keyword">this</span>.name; } }
+}
+ 
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> テスト用のクラス。</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> メソッドごとに違う人が開発するなんてほとんどありえないけど、</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> その辺は目をつぶってください。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+[Author(<span class="string">&quot;Stephanie McMahon&quot;</span>)]
+[Author(<span class="string">&quot;Hunter Herst Helmsly&quot;</span>)]
+<span class="keyword">class</span> AuthorTest
+{
+    [Author(<span class="string">&quot;Kurt Angle&quot;</span>)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> A() { }
+    [Author(<span class="string">&quot;Rocky Mavia&quot;</span>)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> B() { }
+    [Author(<span class="string">&quot;Chris Jericho&quot;</span>)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> C() { }
+    [Author(<span class="string">&quot;Glen Jacobs&quot;</span>)]
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> D() { }
+}
+ 
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+ 
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> テストプログラム。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">class</span> AttributeTest
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        GetAllAuthors(<span class="keyword">typeof</span>(AuthorTest));
+    }
+ 
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> クラス自体とクラス中の public メソッドの作者情報を取得する。</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;t&quot;&gt;</span><span class="xmlDocComment">クラスの Type&lt;/param&gt;</span>
+    <span class="keyword">static</span> <span class="keyword">void</span> GetAllAuthors(Type t)
+    {
+        Console.Write(<span class="string">&quot;type name: {0}\n&quot;</span>, t.Name);
+        GetAuthors(t);
+ 
+        <span class="keyword">foreach</span> (MethodInfo info <span class="keyword">in</span> t.GetMethods())
+        {
+            Console.Write(<span class="string">&quot;  method name: {0}\n&quot;</span>, info.Name);
+            GetAuthors(info);
+        }
+    }
+ 
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> クラスやメソッドの作者情報を取得する。</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;info&quot;&gt;</span><span class="xmlDocComment">クラスやメソッドの MemberInfo&lt;/param&gt;</span>
+    <span class="keyword">static</span> <span class="keyword">void</span> GetAuthors(MemberInfo info)
+    {
+        Attribute[] authors = Attribute.GetCustomAttributes(
+            info, <span class="keyword">typeof</span>(AuthorAttribute));
+        <span class="keyword">foreach</span> (Attribute att <span class="keyword">in</span> authors)
+        {
+            AuthorAttribute author = att <span class="keyword">as</span> AuthorAttribute;
+            <span class="keyword">if</span> (author != <span class="keyword">null</span>)
+            {
+                Console.Write(<span class="string">&quot;    author name: {0}\n&quot;</span>, author.Name);
+            }
+        }
+    }
+}</code></pre>
+<pre><code class="language-console">type name: AuthorTest
+    author name: Hunter Herst Helmsly
+    author name: Stephanie McMahon
+  method name: GetHashCode
+  method name: Equals
+  method name: ToString
+  method name: A
+    author name: Kurt Angle
+  method name: B
+    author name: Rocky Mavia
+  method name: C
+    author name: Chris Jericho
+  method name: D
+    author name: Glen Jacobs
+  method name: GetType</code></pre>
+<h2 id="section-17"><a id="sec-generated-title-19"></a> <a id="generic-attribute">ジェネリックな属性</a></h2>
+<h5 class="version version11">Ver. 11</h5>
+<p>C# 11.0 で、属性をジェネリック クラスにできるようになりました。
+これまでだと、以下のように引数で <code>typeof</code> を使って型を渡すことになっていました。</p>
+<pre><code class="language-csharp"><span class="comment">// 属性は非ジェネリックでないとダメ。</span>
+<span class="keyword">class</span> TypeConverter : Attribute
+{
+    <span class="keyword">public</span> TypeConverter(Type type) { }
+}
+
+<span class="comment">// これまでだとこんな感じで引数で typeof を指定する。</span>
+[TypeConverter(<span class="keyword">typeof</span>(MyConverter))]
+<span class="keyword">class</span> MyClass { }</code></pre>
+<p>C# 11.0 以降は以下のようにも書けます。</p>
+<pre><code class="language-csharp"><span class="comment">// ジェネリックにできるように。</span>
+<span class="keyword">class</span> TypeConverter&lt;T&gt; : Attribute { }
+
+<span class="comment">// &lt;&gt; で型引数を指定できる。</span>
+[TypeConverter&lt;MyConverter&gt;]
+<span class="keyword">class</span> MyClass { }</code></pre>
+<p>ただし、型引数は具象型(仮引数が残っていない状態)でなければなりません。</p>
+<pre><code class="language-csharp"><span class="comment">// ただし、型引数は具象型出ないとダメ。</span>
+<span class="comment">// 型仮引数を仮引数のままにはできない。</span>
+<span class="comment">// CS8968 エラーになる。</span>
+[TypeConverter&lt;T&gt;]
+<span class="keyword">class</span> MyClass&lt;T&gt; { }</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/dynamic/">&#x52D5;&#x7684;&#x306A;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/dynamic/sp_reflection/">&#x5B9F;&#x884C;&#x6642;&#x578B;&#x60C5;&#x5831;</a></li><li><a href="/study/csharp/dynamic/sp3_expression/">&#x5F0F;&#x6728;&#xFF08;Expression Trees&#xFF09;</a></li><li><a href="/study/csharp/dynamic/sp4_dynamic/">dynamic</a></li><li><a href="/study/csharp/dynamic/sp4_callsite/">dynamic &#x306E;&#x5185;&#x90E8;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/dynamic/misc_dynamic/">[&#x96D1;&#x8A18;] &#x52D5;&#x7684;&#x30B3;&#x30FC;&#x30C9;&#x751F;&#x6210;&#x306E;&#x30D1;&#x30D5;&#x30A9;&#x30FC;&#x30DE;&#x30F3;&#x30B9;</a></li><li><a href="/study/csharp/dynamic/dyn_usage/">[&#x96D1;&#x8A18;]&#x52D5;&#x7684;&#x306A;&#x51E6;&#x7406;&#x306E;&#x4F7F;&#x3044;&#x65B9;</a></li><li><a href="/study/csharp/dynamic/sp4_multipledispatch/">[&#x96D1;&#x8A18;] &#x591A;&#x91CD;&#x30C7;&#x30A3;&#x30B9;&#x30D1;&#x30C3;&#x30C1;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,434 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x7D99;&#x627F; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/oop/oo_inherit/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">継承</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p><strong id="derive" class="keyword">継承</strong>（inheritance）とはオブジェクト指向の中核を担う概念で、
+あるクラスから性質を受け継いだ新しいクラスを作ることです。
+継承は<em>派生</em>（derivation）とも呼ばれます。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>オブジェクト指向の中核概念その2: 継承。</p>
+</li>
+<li><p>「人間」⊃「学生」のように、包含関係のあるものを表現する方法。</p>
+</li>
+<li><p>「学生は人間を継承する」、「学生は人間から派生する」などと言う。</p>
+</li>
+<li><p class=".. ..">class Person  に対して、class Student : Person  と書く。</p>
+</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="about"></a>継承関係とは</h2>
+<p>継承関係の例として、「人間」と「学生」という2つのクラスについて考えて見ましょう。</p>
+<p>「学生」は「人間」の一部です。
+すなわち、「学生」ならば必ず「人間」としての特徴を備えています。
+それとは逆に「人間」だからといって必ずしも「学生」であるとはいえません。
+つまり、「学生」は「人間」の特別な場合である(「人間⊃学生」という包含関係が成り立つ)といえます。</p>
+<p>例えば、「人間」には「名前」、「年齢」などの属性があります。
+(ここでは簡単化のためこの2つの属性のみを考えます。)
+「学生」は人間の一部分ですから、当然この2つの属性を備えています。
+それに加え、「学生」は「学籍番号」という属性を持っています。</p>
+<p>このように、あるクラス A がクラス B を包含するような関係にあるとき、
+この関係を<em>継承関係</em>と呼び、
+「B は A を継承する」とか「B は A から派生する(導出される)」といいます。
+また、このとき、クラス A のことを「<strong id="supclass" class="keyword">基底クラス</strong>（base class）」
+または「<em>スーパークラス</em>（super class）」と呼び、
+クラス B のことを「<strong id="subclass" class="keyword">派生クラス</strong>（derived class）」
+または「<em>サブクラス</em>（sub class）」と呼びます。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/inheritance.png"><img src="/assets/media/ufcpp2000/csharp/fig/inheritance.png" alt="「人間」と「学生」の包含関係" /></a></p>
+<figcaption>「人間」と「学生」の包含関係</figcaption>
+</figure>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="inherit"></a>クラスの継承</h2>
+<p>C# を始めとするオブジェクト指向言語では、
+このような継承関係を表現するため、
+あるクラスが他のクラスを継承するための構文が用意されています。
+C# でクラスの継承を行うためには、クラス定義の際に以下のように書きます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> 派生クラス名 : 基底クラス名
+{
+  派生クラスの定義
+}</code></pre>
+<p>クラスの継承の例として、先ほどの「人間」と「学生」にあたるクラス
+<code>Person</code> と <code>Student</code> を
+C# でクラス化すると以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Person
+{
+  <span class="keyword">public</span> <span class="keyword">string</span> name; <span class="comment">// 名前</span>
+  <span class="keyword">public</span> <span class="keyword">int</span>    age;  <span class="comment">// 年齢</span>
+}
+
+<span class="keyword">class</span> Student : Person
+{
+  <span class="keyword">public</span> <span class="keyword">int</span>    id;   <span class="comment">// 学籍番号</span>
+}</code></pre>
+<p>クラス利用側のコードは以下のようになります。</p>
+<pre><code class="language-csharp">Person p1 = <span class="keyword">new</span> Person();
+p1.name = <span class="string">&quot;天野舞耶&quot;</span>;
+p1.age  = <span class="number">23</span>;
+
+Student s1 = <span class="keyword">new</span> Student();
+s1.name = <span class="string">&quot;周防達也&quot;</span>; <span class="comment">// Person のメンバーをそのまま利用出来る</span>
+s1.age  = <span class="number">18</span>;
+s1.id   = <span class="number">50012</span>;
+
+Person p2 = s1; <span class="comment">// Student は Person として扱うことが出来る。</span>
+
+Student s2 = p1; <span class="comment">// でも、Person は Student として扱っちゃ駄目。</span>
+<span class="comment">//↑この1行はエラーになる。</span></code></pre>
+<p>C# では、派生クラスのインスタンスは基底クラスの変数に代入することが出来ます。
+これは、例えば、学生ならば必ず人間であるため、「学生は人間として扱うことができる」ということです。
+それとは逆に、基底クラスのインスタンスを派生クラスの変数に代入することは出来ません。
+すなわち、すべて人間が学生というわけではないですから、「人間を無条件に学生として扱ってはいけない」ということです。</p>
+<h2 id="object"><a id="sec-generated-title-5"></a> <a id="object"></a>object型</h2>
+<p>C# では、基底クラスを指定せずに作成した型は全て自動的に <code>object</code> 型を継承することになります。
+(構造体等の値型は明示的に他の型を継承できないので、必ず <code>object</code> を継承します。)
+つまり、C# における全ての型は <code>object</code> の派生クラスになります。</p>
+<p><code>object</code> 型には <code>Equals</code> (他のインスタンスとの比較)や <code>ToString</code> (インスタンスを文字列化する)等の機能があります。</p>
+<h2 id="section-5"><a id="sec-generated-title-6"></a> <a id="ctor"></a>基底クラスのコンストラクタ呼び出し</h2>
+<p>派生クラスのインスタンスが生成される際、
+派生クラスのコンストラクタが呼び出される前に
+基底クラスのコンストラクタが呼び出されます。</p>
+<p>例えば、以下のようなコードを実行すると、
+まず、<code>Base</code> クラスのコンストラクタが呼ばれ、
+その後 <code>Derived</code> クラスのコンストラクタが呼ばれます。</p>
+<pre><code class="language-csharp">_ = <span class="keyword">new</span> Derived();
+
+<span class="keyword">class</span> Base
+{
+    <span class="keyword">public</span> Base()
+    {
+        Console.WriteLine(<span class="string">&quot;Base&quot;</span>);
+    }
+}
+
+<span class="keyword">class</span> Derived : Base
+{
+    <span class="keyword">public</span> Derived()
+    {
+        Console.WriteLine(<span class="string">&quot;Derived&quot;</span>);
+    }
+}</code></pre>
+<pre><code class="language-console">Base
+Derived</code></pre>
+<p>一方で、フィールド初期化子の呼び出し順序は逆で、派生クラス側の初期化子の方が先に実行されます。
+結果的に、実行順序は以下の順序になります。</p>
+<ol>
+<li>派生クラスのフィールド初期化子</li>
+<li>基底クラスのフィールド初期化子</li>
+<li>基底クラスのコンストラクター</li>
+<li>派生クラスのコンストラクター</li>
+</ol>
+<pre><code class="language-csharp">_ = <span class="keyword">new</span> Derived();
+
+<span class="keyword">class</span> Base
+{
+    <span class="comment">// 呼び出される順序を確認するために呼ぶメソッド。</span>
+    <span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">int</span> M(<span class="keyword">string</span> message)
+    {
+        Console.WriteLine(message);
+        <span class="keyword">return</span> <span class="number">0</span>;
+    }
+
+    <span class="keyword">public</span> <span class="keyword">int</span> X = M(<span class="string">&quot;Base フィールド初期化子&quot;</span>);
+
+    <span class="keyword">public</span> Base()
+    {
+        M(<span class="string">&quot;Base コンストラクター&quot;</span>);
+    }
+}
+
+<span class="keyword">class</span> Derived : Base
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> Y = M(<span class="string">&quot;Derived フィールド初期化子&quot;</span>);
+
+    <span class="keyword">public</span> Derived()
+    {
+        M(<span class="string">&quot;Derived コンストラクター&quot;</span>);
+    }
+}</code></pre>
+<pre><code class="language-console">Derived フィールド初期化子
+Base フィールド初期化子
+Base コンストラクター
+Derived コンストラクター</code></pre>
+<p>あと、「<a href="/study/csharp/oop/oo_construct/#initializer-order">コンストラクター</a>」で説明している「初期化の順序との兼ね合い」も改めて問題になります。
+フィールド初期化子でインスタンス メソッドを呼べてしまうと、
+以下のように「基底クラスの未初期化のフィールドを読めてしまう」ということが起きます。
+(クラスが分かれているので、派生がない場合よりも深刻です。)</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Base
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> BaseField;
+
+    <span class="keyword">protected</span> <span class="keyword">int</span> M() =&gt; BaseField;
+}
+
+<span class="keyword">class</span> Derived : Base
+{
+    <span class="comment">// ここで M を呼べてしまうと、未初期化の BaseField を読んでしまう。</span>
+    <span class="keyword">public</span> <span class="keyword">int</span> DerivedField = M();
+}</code></pre>
+<h2 id="section-6"><a id="sec-generated-title-7"></a> <a id="base_ctor"></a>基底クラスのコンストラクタを明示的に呼び出す</h2>
+<p>先ほど行ったように、派生クラスのインスタンスを生成する際、
+自動的に基底クラスのコンストラクタも呼び出されます。
+しかし、この際、呼び出されるコンストラクタは引数なしのコンストラクタになります。</p>
+<p>基底クラスの引数つきのコンストラクタを呼び出すためには、
+以下のように自分でコードを書いて明示的に基底クラスのコンストラクタを呼び出す必要があります。</p>
+<pre><code class="language-csharp">派生クラスのコンストラクタ(引数) : <span class="keyword">base</span>(基底クラスに渡したい引数)
+{
+}</code></pre>
+<p>例として、先ほどの <code>Person</code> クラスと <code>Student</code> クラスにコンストラクタを追加してみましょう。
+ついでに実装の隠蔽も行った結果を以下に示します。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Person
+{
+  <span class="keyword">private</span> <span class="keyword">string</span> name; <span class="comment">// 名前</span>
+  <span class="keyword">private</span> <span class="keyword">int</span>    age;  <span class="comment">// 年齢</span>
+
+  <span class="keyword">public</span> Person(<span class="keyword">string</span> name, <span class="keyword">int</span> age)
+  {
+    <span class="keyword">this</span>.name = name;
+    <span class="keyword">this</span>.age  = age;
+  }
+
+  <span class="keyword">public</span> <span class="keyword">string</span> Name
+  {
+    <span class="keyword">set</span>{<span class="keyword">this</span>.name = value;}
+    <span class="keyword">get</span>{<span class="keyword">return</span> <span class="keyword">this</span>.name;}
+  }
+
+  <span class="keyword">public</span> <span class="keyword">int</span> Age
+  {
+    <span class="keyword">set</span>{<span class="keyword">this</span>.age = value;}
+    <span class="keyword">get</span>{<span class="keyword">return</span> <span class="keyword">this</span>.age;}
+  }
+}
+
+<span class="keyword">class</span> Student : Person
+{
+  <span class="keyword">private</span> <span class="keyword">int</span>    id;   <span class="comment">// 学籍番号</span>
+
+  <span class="keyword">public</span> Student(<span class="keyword">string</span> name, <span class="keyword">int</span> age, <span class="keyword">int</span> id) : <span class="keyword">base</span>(name, age)
+  {
+    <span class="keyword">this</span>.id   = id;
+  }
+
+  <span class="keyword">public</span> <span class="keyword">int</span> Id
+  {
+    <span class="keyword">set</span>{<span class="keyword">this</span>.id = value;}
+    <span class="keyword">get</span>{<span class="keyword">return</span> <span class="keyword">this</span>.id;}
+  }
+}</code></pre>
+<p>この構文は<a href="/study/csharp/oop/oo_construct/#initializer">コンストラクター初期化子</a>の一種です。
+<code>this</code>の方と区別して base 初期化子と呼ぶ場合もあります。</p>
+<h2 id="protected"><a id="sec-generated-title-8"></a> <a id="protected"></a>protected</h2>
+<p>「<a href="/study/csharp/oop/oo_conceal/">実装の隠蔽</a>」で、クラスのメンバーのアクセスレベルについて説明しました。その際、public と private については説明しましたが、ここでは継承と関係の深い protected について説明します。</p>
+<p>public はクラス内外とわずどこからでもアクセス可能なレベルで、
+private はクラス内部からのみアクセス可能なレベルです。
+これらに対し、protected はクラスとそのクラスを継承する派生クラス内からアクセス可能なレベルです(private は派生クラス内からアクセスできない)。
+以下に例を挙げます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Base
+{
+  <span class="keyword">public</span>    <span class="keyword">int</span> public_val;
+  <span class="keyword">protected</span> <span class="keyword">int</span> protected_val;
+  <span class="keyword">private</span>   <span class="keyword">int</span> private_val;
+
+  <span class="keyword">void</span> BaseTest()
+  {
+    public_val    = <span class="number">0</span>; <span class="comment">// OK</span>
+    protected_val = <span class="number">0</span>; <span class="comment">// OK</span>
+    private_val   = <span class="number">0</span>; <span class="comment">// OK</span>
+  }
+}
+
+<span class="keyword">class</span> Derived : Base
+{
+  <span class="keyword">void</span> DerivedTest()
+  {
+    public_val    = <span class="number">0</span>; <span class="comment">// OK</span>
+    protected_val = <span class="number">0</span>; <span class="comment">// OK   (protected は派生クラスからアクセス可能)</span>
+    private_val   = <span class="number">0</span>; <span class="comment">// エラー(private   は派生クラスからアクセス不能)</span>
+  }
+}
+
+<span class="keyword">class</span> Test
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    Base b = <span class="keyword">new</span> Base();
+
+    b.public_val    = <span class="number">0</span>; <span class="comment">// OK</span>
+    b.protected_val = <span class="number">0</span>; <span class="comment">// エラー(protected は外部からアクセス不能)</span>
+    b.private_val   = <span class="number">0</span>; <span class="comment">// エラー(private   は外部からアクセス不能)</span>
+  }
+}</code></pre>
+<h2 id="section-7"><a id="sec-generated-title-9"></a> <a id="conceal"></a>基底クラスのメンバーの隠蔽</h2>
+<p>派生クラスには自由にメンバーを追加することが出来ますが、
+基底クラスの public メンバーと同名のメンバーを再定義してしまうと
+基底クラスのメンバーが新しく追加されたメンバーに隠れてしまいます。
+このような状態を「基底クラスのメンバーを隠蔽する」といいます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Base
+{
+  <span class="keyword">public</span> <span class="keyword">void</span> Test()
+  {
+    Console.Write(<span class="string">&quot;Base.Test()\n&quot;</span>);
+  }
+}
+
+<span class="keyword">class</span> Derived : Base
+{
+  <span class="keyword">public</span> <span class="keyword">void</span> Test() <span class="comment">//基底クラスの Test() と同名のメソッド</span>
+  {
+    Console.Write(<span class="string">&quot;Derived.Test()\n&quot;</span>);
+  }
+}
+
+<span class="keyword">class</span> Test
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    Base b = <span class="keyword">new</span> Base();
+    b.Test(); <span class="comment">// Base の Test が呼ばれる</span>
+
+    Derived d = <span class="keyword">new</span> Derived();
+    d.Test(); <span class="comment">// Derived の Test が呼ばれる</span>
+
+    ((Base)d).Test();
+    <span class="comment">// Base に キャストしてから Test を呼ぶと Base の Test が呼ばれる</span>
+  }
+}</code></pre>
+<pre><code class="language-console">Base.Test()
+Derived.Test()
+Base.Test()</code></pre>
+<p>ここで、プログラマが意図して基底クラスのメンバーの隠蔽を行う分には何の問題もないんですが、
+基底クラスに同名のメソッドがあることに気づかずにメソッドを追加してしまうと、
+意図しない動作を引き起こしてしまうことがあります。
+そこで、C#では基底クラスのメンバーの隠蔽を行う場合、メソッドにnew修飾子を付ける必要があります。
+(new修飾子を付けていない場合、コンパイラが警告を出します。)</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Derived : Base
+{
+  <span class="comment">//基底クラスのメンバーを隠蔽するには new を付ける必要がある。</span>
+  <span class="keyword">public</span> <span class="keyword">new</span> <span class="keyword">void</span> Test()
+  {
+    Console.Write(<span class="string">&quot;Derived.Test()\n&quot;</span>);
+  }
+}</code></pre>
+<h3 id="base"><a id="sec-generated-title-10"></a> <a id="base-access"></a>base アクセス</h3>
+<p>ちなみに、<code>base</code> キーワードを使って基底クラスのメンバーを参照できます。
+この機能を使って、以下のように、隠蔽されたメンバーを呼び出すこともできます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Base
+{
+  <span class="keyword">public</span> <span class="keyword">void</span> Test()
+  {
+    Console.Write(<span class="string">&quot;Base.Test()\n&quot;</span>);
+  }
+}
+
+<span class="keyword">class</span> Derived : Base
+{
+  <span class="keyword">public</span> <span class="keyword">new</span> <span class="keyword">void</span> Test() <span class="comment">//基底クラスの Test() と同名のメソッド</span>
+  {
+    Console.Write(<span class="string">&quot;Derived.Test()\n&quot;</span>);
+  }
+
+  <span class="keyword">public</span> <span class="keyword">void</span> Test2()
+  {
+    <span class="keyword">this</span>.Test(); <span class="comment">// Derived の Test が呼ばれる。</span>
+    <span class="keyword">base</span>.Test(); <span class="comment">// Base の Test が呼ばれる。</span>
+  }
+}</code></pre>
+<p>ちなみに、<a href="/study/csharp/oop/oo_class/#this-access"><code>this</code>アクセス</a>と同様に、<code>base</code>アクセスでも<a href="/study/csharp/oop/oo_indexer/">インデクサー</a>にアクセスできます。
+(一方で、<a href="/study/csharp/functional/sp3_extension/">拡張メソッド</a>の呼び出しには使えません。)</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Base
+{
+    <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="keyword">int</span> <span class="keyword">this</span>[<span class="keyword">int</span> i] =&gt; i;
+}
+ 
+<span class="keyword">class</span> Derived : Base
+{
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">int</span> <span class="keyword">this</span>[<span class="keyword">int</span> i] =&gt; <span class="keyword">base</span>[i]; <span class="comment">// Base のインデクサーが呼ばれる</span>
+}</code></pre>
+<h3 id="baset"><a id="sec-generated-title-11"></a> <a id="non-virtual-base-access"></a>base(T) アクセス</h3>
+<h5 class="version version8">Ver. 未定</h5>
+<p>※ 本節の <code>base(T)</code> の機能は、元々 C# 8.0 で入る予定だったものが、9.0 以降で改めて検討しなおすことになったものです。
+C# 8.0 のプレビュー版で一時的に使える時期はありましたが、リリース版ではいったん削除されています。</p>
+<p>前節の <code>base</code> アクセスでは、継承に階層があるとき、特定のクラスの実装を呼び分けるということはできません。
+常に、「一番近いもの」が選ばれて呼び出されます。</p>
+<p>これに対して、将来的には、<code>base(T)</code> という形で、特定のクラスを明示的に指定できるようになりました。
+(主に<a href="/study/csharp/oop/oo_interface/#dim">インターフェイスのデフォルト実装</a>のための機能でしたが、クラスに対しても認められています。)</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+ 
+<span class="keyword">class</span> A
+{
+    <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="keyword">void</span> M() =&gt; Console.WriteLine(<span class="string">&quot;A.M&quot;</span>);
+}
+ 
+<span class="keyword">class</span> B : A
+{
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> M() =&gt; Console.WriteLine(<span class="string">&quot;B.M&quot;</span>);
+}
+ 
+<span class="keyword">class</span> C : B
+{
+    <span class="comment">// 今までであれば、必ず「自分に近い方の M」が呼ばれる。</span>
+    <span class="comment">// この場合は B.M。</span>
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> M() =&gt; <span class="keyword">base</span>.M();
+ 
+    <span class="comment">// この書き方なら絶対に A.M が呼ばれる。</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> M1() =&gt; <span class="keyword">base</span>(A).M();
+ 
+    <span class="comment">// この書き方なら絶対に B.M が呼ばれる。</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> M2() =&gt; <span class="keyword">base</span>(B).M();
+}</code></pre>
+<p>C# 8.0 から外れたのは、以下のような <code>base</code> の方との挙動の差が問題になったからです。</p>
+<p>前述の通り <code>base</code> は「一番近いものを自動的に選ぶ」という性質があります。
+これは、
+「コンパイルした時には <code>B.M</code> はなかった/あったけど、
+実行時には <code>B.M</code> が追加/削除されている」
+というような状況でも問題なく実行できます。
+<code>B.M</code> があればそれが呼ばれるし、なければ <code>A.M</code> を探しに行きます。</p>
+<p>一方、C# 8.0 に間に合うようにこの <code>base(T)</code> アクセスを実装しようと思うと、「基底をたどって探す」という挙動ができませんでした。
+<code>base(B).M()</code> と書くと、クラス <code>B</code> 自体しか見ません。
+コンパイル時に <code>B</code> 自体に <code>M</code> がなければコンパイル エラーになりますし、
+先ほどの「コンパイルした時にはあったものが削除された」みたいなシチュエーションでは実行時に例外が発生します。</p>
+<p>この挙動の差を埋めようと思うと .NET ランタイム自体にそこそこ大変な修正が必要で、
+後々改めて取り組むことになりました。
+(その後結局あまり進んでいなくて、.NET 7 / C# 11 の時点でも未実装です。)</p>
+<h2 id="sealed"><a id="sec-generated-title-12"></a> <a id="sealed"></a>sealed</h2>
+<p>C# のクラスは基本的に常に継承して派生クラスを作ることができるのですが、
+場合によっては絶対に継承されたくないと言うこともあります。
+このような場合、クラス定義時に sealed （封印された）というキーワードをつけることで、
+継承を禁止することができます。</p>
+<pre><code class="language-csharp"><span class="keyword">sealed</span> <span class="keyword">class</span> SealedClass { }
+
+<span class="keyword">class</span> Derived : SealedClass <span class="comment">// SealedClass は継承不可なので、エラーになる。</span>
+{
+}</code></pre>
+<h2 id="section-8"><a id="sec-generated-title-13"></a> <a id="single"></a>単一継承</h2>
+<p>C#のクラス継承では、1つのクラスしか継承できません。これを単一継承(single inheritance)と呼びます。
+(逆を意味するのは多重継承(multiple inheritance)で、「C#では多重継承を認めていない」などと言ったりもします。)
+つまり、以下のように、2つ以上のクラスを継承しようとするとコンパイル エラーになります。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Base1 { }
+<span class="keyword">class</span> Base2 { }
+<span class="keyword">class</span> Derived : Base1, Base2 { }</code></pre>
+<p>別項で説明する<a href="/study/csharp/oop/oo_interface/">インターフェイス</a>であればこの制限はなく、いくつでも実装できます。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/oop/">&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x6307;&#x5411;</a></li><li><a href="/study/csharp/oop/oo_about/">&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x6307;&#x5411;&#x3068;&#x306F;</a></li><li><a href="/study/csharp/oop/oo_class/">&#x30AF;&#x30E9;&#x30B9;</a></li><li><a href="/study/csharp/oop/oo_construct/">&#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;</a></li><li><a href="/study/csharp/oop/oo_conceal/">&#x5B9F;&#x88C5;&#x306E;&#x96A0;&#x853D;</a></li><li><a href="/study/csharp/oop/oo_property/">&#x30D7;&#x30ED;&#x30D1;&#x30C6;&#x30A3;</a></li><li><a href="/study/csharp/oop/oo_static/">&#x9759;&#x7684;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/study/csharp/oop/moduleinitializer/">&#x30E2;&#x30B8;&#x30E5;&#x30FC;&#x30EB;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/study/csharp/oop/oo_operator/">&#x6F14;&#x7B97;&#x5B50;&#x306E;&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30ED;&#x30FC;&#x30C9;</a></li><li><a href="/study/csharp/oop/oo_indexer/">&#x30A4;&#x30F3;&#x30C7;&#x30AF;&#x30B5;&#x30FC;</a></li><li><a href="/study/csharp/oop/miscimplictinherit/">[&#x4F59;&#x8AC7;] &#x6697;&#x9ED9;&#x7684;&#x306A;&#x6D3E;&#x751F;</a></li><li><a href="/study/csharp/oop/oo_multipleinheritance/">[&#x96D1;&#x8A18;] &#x591A;&#x91CD;&#x7D99;&#x627F;&#x3067;&#x304D;&#x306A;&#x3044;&#x7406;&#x7531;</a></li><li><a href="/study/csharp/oop/oo_polymorphism/">&#x591A;&#x614B;&#x6027;</a></li><li><a href="/study/csharp/oop/misc_as/">[&#x96D1;&#x8A18;] &#x30AD;&#x30E3;&#x30B9;&#x30C8;&#x3068; as</a></li><li><a href="/study/csharp/oop/misc_construct/">[&#x96D1;&#x8A18;] &#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;&#x5185;&#x306E;&#x4EEE;&#x60F3;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x547C;&#x3073;&#x51FA;&#x3057;</a></li><li><a href="/study/csharp/oop/oo_abstract/">&#x62BD;&#x8C61;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x3001;&#x62BD;&#x8C61;&#x30AF;&#x30E9;&#x30B9;</a></li><li><a href="/study/csharp/oop/oo_interface/">&#x30A4;&#x30F3;&#x30BF;&#x30FC;&#x30D5;&#x30A7;&#x30FC;&#x30B9;</a></li><li><a href="/study/csharp/oop/misc_autoimpl/">[&#x96D1;&#x8A18;] &#x62BD;&#x8C61;&#x5B9A;&#x7FA9;&#x3068;&#x81EA;&#x52D5;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/oop/oo_vftable/">[&#x96D1;&#x8A18;] &#x4EEE;&#x60F3;&#x95A2;&#x6570;&#x30C6;&#x30FC;&#x30D6;&#x30EB;</a></li><li><a href="/study/csharp/oop/sp2_generics/">&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/oop/sp4_variance/">&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30AF;&#x30B9;&#x306E;&#x5171;&#x5909;&#x6027;&#x30FB;&#x53CD;&#x5909;&#x6027;</a></li><li><a href="/study/csharp/oop/generic-math-operators/">&#x3010;Generic Math&#x3011; C# 11 &#x3067;&#x306E;&#x6F14;&#x7B97;&#x5B50;&#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 11/19 | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2015/11/pickuproslyn1111/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2015-11-19T15:14:52">2015-11-19</time></span><span>更新: <time datetime="2015-11-19T15:14:52">2015-11-19</time></span></div><h1 id="roslyn-1119">ピックアップRoslyn 11/19</h1>
+<h2 id="section">どこにでも書ける属性</h2>
+<p><a href="https://github.com/dotnet/roslyn/issues/6671">Proposal: Attributes everywhere #6671</a></p>
+<p>属性をどこにでもつけれるようにしたいという話。用途は「コンパイル時限定属性」。</p>
+<p>.NETの型システムで規定されてる実行時属性(.NET ILの制限的に付けれる場所が限られてる)よりも、だいぶフレキシブルにどこにでも付けれて、主に analyzer/fixer/injectorで解析・修正・コード生成したい場所につける目印として使いたい。</p>
+<p>で、通常の属性と少し構文変えるみたい。今の提案では<code>[]</code>の代わりに<code>[[]]</code>。</p>
+<h2 id="jsondictionaryarray">JSON風のdictionary/arrayリテラル</h2>
+<p><a href="https://github.com/dotnet/roslyn/issues/6673">JSON-like syntax for dictionary/array initialization and operation #6673</a></p>
+<p>最初はタイトルが「Support &quot;json literals&quot; in source」になってて、「VBのXMLリテラルと何が違うんだ。C#にはそんなリテラルは入れない」とか文句を言われてたり。そういうのではなく、要するに、<code>{ &quot;key&quot;: value }</code>でDictionaryを、<code>[a, b, c]</code>で配列を作りたいという話。</p>
+<p>C#チームからの提案 issue ページではないものの、元々C# 7のテーマの1つにそういう機能が含まれてたし、実のところ近い実装がすでにあるみたい。</p>
+<p>多少、JSONにそろえるべきか、JSONの嫌なとこまで引きずらない方がいいんじゃないかみたいな議論とか、現状のC#の構文と混ぜた時に大丈夫？みたいな心配はある。</p>
+<h2 id="section-1">式ツリー強化</h2>
+<p><a href="https://github.com/dotnet/roslyn/issues/2134#issuecomment-156205248">https://github.com/dotnet/roslyn/issues/2134#issuecomment-156205248</a></p>
+<p>ずいぶん昔のissueページに、以下のようなコメントがついてた。</p>
+<blockquote>
+<p>In the meantime, I've taken an early stab at providing a runtime library with C#-specific expression nodes that are implemented as reducible expressions. More information at <a href="https://github.com/bartdesmet/ExpressionFutures/tree/master/CSharpExpressions">https://github.com/bartdesmet/ExpressionFutures/tree/master/CSharpExpressions</a>. I'll discuss this with the team in the weeks to come.</p>
+</blockquote>
+<blockquote>
+<p>ところで、初期試作として、C#固有の式ツリー ノードに関するランタイム ライブラリ提供試みてる。式の簡約化もできる実装。詳しくは<a href="https://github.com/bartdesmet/ExpressionFutures/tree/master/CSharpExpressions">https://github.com/bartdesmet/ExpressionFutures/tree/master/CSharpExpressions</a>にて。数週内に、C#チームとディスカッションする。</p>
+</blockquote>
+<p>ですって。</p>
+<p>.NET 4の時に導入された式ツリーは、ILレベルの機能しかなくて、C#と比べるとだいぶ貧相で。動的コード生成とかする人からすると、C#の全機能を式ツリー化できないのは結構不便な状況。今だと、Roslynを使ってコード生成という手もなくはないんだけど、ラムダ式からの式ツリー化ができたりするわけではなく、ちょっと用途が違ったりするので。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2015/11/">2015/11</a></li><li><a href="/blog/2015/11/fullwidthliteralinvb/">Visual Basic&#x306E;&#x5168;&#x89D2;&#x30AD;&#x30FC;&#x30EF;&#x30FC;&#x30C9;</a></li><li><a href="/blog/2015/11/pickuproslyn1108/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 11/8</a></li><li><a href="/blog/2015/11/netcoreconnect/">Connect() &#x3067;&#x306E;&#x767A;&#x8868;&#x3001;.NET Core</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

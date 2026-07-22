@@ -1,0 +1,320 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x8AD6;&#x7406;&#x6F14;&#x7B97; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/computer/basis/logicaloperation/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">論理演算</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>「<a href="/study/computer/basis/gatelevel/">ゲート</a>」では、ディジタル回路の基本となるのは、0か1かを選択する回路（ゲート）だということを説明しました。
+そして次に必要になるのは、そのゲートを組み合わせて、複雑な回路を設計する手法です。</p>
+<p>もちろん、ただやみくもにゲートを並べればいいというものではありません。
+ディジタル回路の設計には、論理演算という数学的理論を利用します。
+本節以降では、この論理演算の基礎と、論理演算を使ったディジタル回路設計（論理レベル設計）について説明していきます。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="sec-logical-operation"></a>論理演算</h2>
+<p>コンピューターの内部では、値はすべて0, 1の2値で表現されます。
+この2値に対するいくつかの演算を<strong id="logical-operation" class="keyword">論理演算</strong>（logical operation）と呼びます。
+論理演算は、もともとは命題の真偽に関する演算を表していました。
+例えば、「AかつBならばCである」というような命題をA∧B→Cという式で表して、真偽に対する演算とみなすものです（このような、論理を数学的に取り扱う学問を数理論理学と呼びます）。</p>
+<p>ここで、真と1、偽と0を同じものとみなすことで、0, 1の2値に対する演算と論理演算を同じものだとみなすことができます。
+（このような背景から、0, 1だけで表現される値を論理値、0, 1に対するいくつかの演算を論理演算と呼び、論理演算の組み合わせで表現される式を論理式と呼びます。）</p>
+<p>例えば、「AかつB」というのは、「AもBも真ならば真、さもなければ偽」という真偽値間の演算とみなせます。
+ここで、真を1、偽を0とみなすことで、0, 1の2値間の演算が得られます。このような演算を論理積と呼びます（図1）。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/LogicalOperation.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/LogicalOperation.png" alt="論理積演算" /></a></p>
+<figcaption>論理積演算</figcaption>
+</figure>
+<p>論理積に加えて、代表的な論理演算に否定と論理和があります。
+否定、論理積、および、論理和は、英単語を用いてそれぞれNOT, AND, OR演算と呼ぶこともあります。
+論理演算の記法にはいくつか流儀がありますが、代表的なものを表1に示します。</p>
+<table summary="否定、論理積、および、論理和演算の記法">
+	<caption>
+		否定、論理積、および、論理和演算の記法
+	</caption>
+	<tr>
+		<td></td>
+		<th>否定</th>
+		<th>論理積</th>
+		<th>論理和</th>
+	</tr>
+	<tr>
+		<th></th>
+		<td><p>NOT A</p></td>
+		<td><p>A AND B</p></td>
+		<td><p>A OR B</p></td>
+	</tr>
+	<tr>
+		<th>読み方</th>
+		<td><p>Aの否定、非A</p></td>
+		<td><p>AかつB</p></td>
+		<td><p>AまたはB</p></td>
+	</tr>
+	<tr>
+		<th>代数的記法</th>
+		<td><p>Ā</p></td>
+		<td><p>AB</p></td>
+		<td><p>A+B</p></td>
+	</tr>
+	<tr>
+		<th>論理学的記法</th>
+		<td><p>¬A</p></td>
+		<td><p>A∧B</p></td>
+		<td><p>A∨B</p></td>
+	</tr>
+	<tr>
+		<th>C言語記法</th>
+		<td><p><code>!A</code></p></td>
+		<td><p><code>A &amp; B</code></p></td>
+		<td><p><code>A | B </code></p></td>
+	</tr>
+</table>
+<p>代数的記法は、整数の加算・乗算と同じ記号を使って論理演算を表すものです。
+AB は、いわば掛け算記号の省略で、省略せずに A×B と書いても同じ意味です。</p>
+<p>一方、論理学的記法は論理学でよく使われる記法です。
+∧ を wedge（楔型）、∨ を vee （V 字型）と呼んだりもします。</p>
+<p>また、プログラミング言語ではキーボードで入力できる記号のみで論理式を表します。
+C言語やJava、C#などでは、NOT, AND, OR演算に対してそれぞれ !, &amp;, | の記号（それぞれ、感嘆符、アンパサンド、縦棒）を用います。</p>
+<p>Web ページ上での表示の都合で、</p>
+<p>それぞれの値がどうなるかを表2に示します。代数的記法は、整数の加算・乗算と同じ記号を使って論理演算を表すものです。</p>
+<table summary="否定、論理積、および、論理和の値">
+	<caption>
+		否定、論理積、および、論理和の値
+	</caption>
+	<tr>
+		<th>A</th>
+		<th>B</th>
+		<th>否定<br></br>Ā</th>
+		<th>論理積<br></br>AB</th>
+		<th>論理和<br></br>A+B</th>
+	</tr>
+	<tr>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+	</tr>
+	<tr>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+	</tr>
+	<tr>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+	</tr>
+	<tr>
+		<td><p>1</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>1</p></td>
+	</tr>
+</table>
+<p>その他、NOT、AND、OR の組み合わせでも実現できますが、特別な記号が割り当てられているいくつかの演算があります。
+このような演算の記法を表3に、演算結果がどうなるかを表4に示します。</p>
+<table summary="否定論理積、否定論理和、排他的論理和、および、等価演算の記法">
+	<caption>
+		否定論理積、否定論理和、排他的論理和、および、等価演算の記法
+	</caption>
+	<tr>
+		<td></td>
+		<th>否定論理積</th>
+		<th>否定論理和</th>
+		<th>排他的論理和</th>
+		<th>等価</th>
+	</tr>
+	<tr>
+		<th></th>
+		<td><p>A NAND B</p></td>
+		<td><p>A NOR B</p></td>
+		<td><p>A XOR B</p></td>
+		<td><p>A XNOR B</p></td>
+	</tr>
+	<tr>
+		<th>代数的記法</th>
+		<td><span class="math">
+            <span class="bar">AB</span>
+          </span></td>
+		<td><span class="math">
+            <span class="bar">A <span class="normal">+</span> B</span>
+          </span></td>
+		<td><span class="math">
+              A <span class="normal">⊕</span> B
+          </span></td>
+		<td><span class="math">
+              A <span class="normal">≡</span> B
+          </span></td>
+	</tr>
+	<tr>
+		<th>論理学的記法</th>
+		<td><p>¬(A∧B)</p></td>
+		<td><p>¬(A∨B)</p></td>
+		<td><p>¬(A⇔B)</p></td>
+		<td><p>A⇔B</p></td>
+	</tr>
+	<tr>
+		<th>C言語記法</th>
+		<td><p><code>!(A &amp; B)</code></p></td>
+		<td><p><code>!(A | B)</code></p></td>
+		<td><p><code>A ^ B </code></p></td>
+		<td><p><code>A == B </code></p></td>
+	</tr>
+</table>
+<table summary="否定論理積、否定論理和、排他的論理和、および、等価演算の値">
+	<caption>
+		否定論理積、否定論理和、排他的論理和、および、等価演算の値
+	</caption>
+	<tr>
+		<th>A</th>
+		<th>B</th>
+		<th>否定論理積<br></br><span class="math">
+            <span class="bar">AB</span>
+          </span></th>
+		<th>否定論理和<br></br><span class="math">
+            <span class="bar">
+              A <span class="normal">+</span> B
+            </span>
+          </span></th>
+		<th>排他的論理和<br></br><span class="math">
+            A <span class="normal">⊕</span> B
+          </span></th>
+		<th>等価<br></br><span class="math">
+            A <span class="normal">≡</span> B
+          </span></th>
+	</tr>
+	<tr>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+	</tr>
+	<tr>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+	</tr>
+	<tr>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+	</tr>
+	<tr>
+		<td><p>1</p></td>
+		<td><p>1</p></td>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+		<td><p>0</p></td>
+		<td><p>1</p></td>
+	</tr>
+</table>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="digital"></a>論理演算とディジタル回路</h2>
+<p>では、どうすれば電子回路を使って論理演算を行えるかについて見ていきましょう。
+「<a href="/study/computer/basis/gatelevel/">ゲート</a>」で説明しましたが、論理演算の実現にはCMOSと呼ばれる構成の電子回路を用いることが多く、ここでもCMOSを例に挙げて説明していきます。</p>
+<p>図2に、CMOSを用いて作られたNAND回路の回路図を示します。
+（ANDやORではなく、NANDな理由は、CMOSを用いて作る場合にはNANDの方がシンプルな回路で実現できるためです。NANDが実現できれば、ANDもORも実現することができます。）</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/CmosNand.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/CmosNand.png" alt="CMOS NAND回路の回路図" /></a></p>
+<figcaption>CMOS NAND回路の回路図</figcaption>
+</figure>
+<p>「<a href="/study/computer/basis/gatelevel/#mosfet-structure">MOSFETの性質</a>」で述べたように、MOSFETと呼ばれる素子は一種のスイッチとして働きます。
+AおよびBの値に応じてスイッチが開閉し、Cの値が図3のように変化します。
+結果として、AもしくはBのいずれか一方でも0のときにはCが1になり、両方が1の時に限りCが0になります（NAND演算の挙動）。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/CmosNandCharacter.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/CmosNandCharacter.png" alt="CMOS NAND回路の動作の例" /></a></p>
+<figcaption>CMOS NAND回路の動作の例</figcaption>
+</figure>
+<p>このように0, 1を選択するためのゲートとなる素子さえあれば、論理演算を行う回路を作成することができます。
+ここでは NAND 演算を例に挙げましたが、同様に、NOT 演算、NOR 演算なども作れます（AND や OR は、NAND、NOR を使っても同様の演算を実現できます）。</p>
+<p>このような、論理演算を行うための回路を<strong id="logical-circuit" class="keyword">論理回路</strong>（logical circuit）と呼びます。</p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="logical-circuit-sign"></a>論理回路記号</h2>
+<p>論理回路には表4に示すような専用の記号が取り決められています。</p>
+<table summary="論理演算を表す回路記号">
+	<caption>
+		論理演算を表す回路記号
+	</caption>
+	<tr>
+		<td></td>
+		<th>回路記号</th>
+	</tr>
+	<tr>
+		<th>否定<br></br><span class="math">
+            <span class="bar">A</span>
+          </span></th>
+		<td><figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/Not.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/Not.png" alt="" /></a></p>
+</figure></td>
+	</tr>
+	<tr>
+		<th>論理積<br></br><span class="math">
+            AB
+          </span></th>
+		<td><figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/And.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/And.png" alt="" /></a></p>
+</figure></td>
+	</tr>
+	<tr>
+		<th>論理和<br></br><span class="math">
+            AB
+          </span></th>
+		<td><figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/Or.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/Or.png" alt="" /></a></p>
+</figure></td>
+	</tr>
+	<tr>
+		<th>排他的論理和<br></br><span class="math">
+            A <span class="normal">⊕</span> B
+          </span></th>
+		<td><figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/Xor.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/Xor.png" alt="" /></a></p>
+</figure></td>
+	</tr>
+	<tr>
+		<th>否定論理積<br></br><span class="math">
+            <span class="bar">AB</span>
+          </span></th>
+		<td><figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/Nand.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/Nand.png" alt="" /></a></p>
+</figure></td>
+	</tr>
+	<tr>
+		<th>否定論理和<br></br><span class="math">
+            <span class="bar">A + B</span>
+          </span></th>
+		<td><figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Logical/Nor.png"><img src="/assets/media/ufcpp2000/computer/fig/Logical/Nor.png" alt="" /></a></p>
+</figure></td>
+	</tr>
+</table>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/computer/basis/">&#x56DE;&#x8DEF;&#x8A2D;&#x8A08;&#xFF08;&#x30B2;&#x30FC;&#x30C8;&#x3001;&#x7D44;&#x307F;&#x5408;&#x308F;&#x305B;&#x56DE;&#x8DEF;&#x3001;&#x9806;&#x5E8F;&#x56DE;&#x8DEF;&#xFF09;</a></li><li><a href="/study/computer/basis/gatelevel/">&#x30B2;&#x30FC;&#x30C8;</a></li><li><a href="/study/computer/basis/combinationalcircuit/">&#x7D44;&#x307F;&#x5408;&#x308F;&#x305B;&#x56DE;&#x8DEF;</a></li><li><a href="/study/computer/basis/sequentialcircuit/">&#x9806;&#x5E8F;&#x56DE;&#x8DEF;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

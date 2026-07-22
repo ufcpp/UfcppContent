@@ -1,0 +1,118 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30A2;&#x30CA;&#x30E9;&#x30A4;&#x30B6;&#x30FC;&#x306E;&#x30D7;&#x30ED;&#x30B8;&#x30A7;&#x30AF;&#x30C8; &#x30C6;&#x30F3;&#x30D7;&#x30EC;&#x30FC;&#x30C8;&#x3068;&#x304B; dotnet new &#x306E;&#x30C6;&#x30F3;&#x30D7;&#x30EC;&#x30FC;&#x30C8;&#x306E;&#x8A71; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2017/12/analyzerconvention/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2017-12-09T23:34:00">2017-12-09</time></span><span>更新: <time datetime="2017-12-09T23:34:00">2017-12-09</time></span></div><h1 id="dotnet-new">アナライザーのプロジェクト テンプレートとか dotnet new のテンプレートの話</h1>
+<p>今日は <code>dotnet new</code>向けのテンプレートを書いてみたという話。</p>
+<p>Visual Studio 標準の &quot;Analyzer  with Code Fix&quot; テンプレートにちょこっと手を入れたやつです。</p>
+<ul>
+<li><a href="https://github.com/ufcpp/AnalyzerConvention">AnalyzerConvention</a></li>
+</ul>
+<h2 id="section">背景</h2>
+<h3 id="section-1">自作アナライザー</h3>
+<p>昔、結構<a href="/study/csharp/package/pkgcodeawarelibrary/">アナライザー</a>を書いてたんですよ。</p>
+<ul>
+<li><a href="https://github.com/ufcpp/ValueChangedGanerator">ValueChangedGanerator</a></li>
+<li><a href="https://github.com/ufcpp/RecordConstructorGenerator">RecordConstructorGenerator</a></li>
+<li><a href="https://github.com/ufcpp/LazyMixin">LazyMixin</a></li>
+<li><a href="https://github.com/ufcpp/BitFields">BitFields</a></li>
+</ul>
+<h3 id="section-2">アナライザーに対する規約ベースのテスト</h3>
+<p>で、アナライザーって、標準のテンプレートだとテストを書くのが結構面倒なので、
+規約ベースで</p>
+<ul>
+<li>所定のパスに解析対象のソースコードを置く</li>
+<li>別のあるパスに Code Fix 結果のソースコードを置く</li>
+</ul>
+<p>みたいな仕組みを作ったことがあります。
+それがこれ。</p>
+<ul>
+<li><a href="https://github.com/ufcpp/ConventionCodeFixVerifier">ConventionCodeFixVerifier</a></li>
+</ul>
+<p>NuGet パッケージにしてあって、パッケージ参照すると標準テンプレートのファイルをいくつか上書きします。</p>
+<h3 id="nuget">新 NuGet</h3>
+<p>ConventionCodeFixVerifier を書いたのはもうだいぶ昔でして、その当時は NuGet も csproj の形式も古かった時代です。</p>
+<p>NuGet はまだ packages.confing とか使ってた頃。
+NuGet はその後、project.json 形式 → csproj 中に PackageReference タグを書くように変化しまして。
+packages.config 時代とは、「プロジェクト中のファイルを上書き」みたいなのをやりたいときの挙動が違います。
+ということで、ConventionCodeFixVerifier も更新しないと今はちゃんと動かないんですが…</p>
+<p>その一方で、NuGet でプロジェクト中のファイルを上書きするのも嫌な運用だなぁとかずっと思っていました。
+むしろ、プロジェクト テンプレートを作るべき事案だろうと。</p>
+<h3 id="sdk-based-csproj">SDK-based csproj</h3>
+<p>あと、Visual Studio 2017で<a href="/blog/2017/5/newcsproj/">csprojの形式も新しくなったじゃないですか</a>。
+SDK-based csproj とか呼ぶみたいなんですけども。
+csproj の中身がかなりすっきりしてたり、この形式を使った場合だけオンになるビルド機能がちらほらあったり。</p>
+<p>なんですけども、つい最近まで、標準の &quot;Analyzer  with Code Fix&quot;テンプレートは旧型式のままだったんですよね。
+しかも未だに packages.config を使ってるという古臭い作り。</p>
+<p>それが嫌すぎて、ここ1年くらいアナライザーを書くのを面倒がって、作りたいものはあったものの放置になったり、
+上記の自作アナライザーの更新も止まっていたり。</p>
+<p>それが、どうも 15.5 で SDK-based な形式に移行したみたい。
+なので僕のやる気も復活した次第です。</p>
+<h3 id="section-3">そうだ、プロジェクト テンプレート作ろう</h3>
+<p>とはいえ、前述の通り、NuGet でプロジェクト中のファイルを上書きするやり方はやめたいわけです。
+でも、Visual Studio のプロジェクト テンプレートって何か作るのめんどくさくて。</p>
+<p>と、迷っていたところで、「<code>dotnet</code> コマンドのやつならマシになってるのでは？」と思って検索した結果、</p>
+<ul>
+<li><a href="https://docs.microsoft.com/ja-jp/dotnet/core/tools/custom-templates">dotnet new のカスタム テンプレート</a></li>
+</ul>
+<p>これを読んでみて、「これなら案外行けそうかも」という気分になったので、こっちで作りました。</p>
+<h2 id="section-4">作ったもの</h2>
+<p>という背景の元作ったのが冒頭の「<a href="https://github.com/ufcpp/AnalyzerConvention">AnalyzerConvention</a>」。</p>
+<h3 id="section-5">導入方法</h3>
+<p>以下のコマンドでテンプレートをインストールできます。</p>
+<pre><code>dotnet new -i AnalyzerProject.Convention
+</code></pre>
+<p><code>dotnet</code>コマンドで使えるテンプレート、NuGet パッケージを作ればいいらしく、<a href="https://www.nuget.org/">nuget.org</a>からのインストールもできます。
+<code>-i</code> オプションがその「nuget.org とかからパッケージを取って来てインストールする」というオプション。</p>
+<p>ちなみに、パッケージ化してnuget.orgに上げたの物:</p>
+<ul>
+<li><a href="https://www.nuget.org/packages/AnalyzerProject.Convention/">https://www.nuget.org/packages/AnalyzerProject.Convention/</a></li>
+</ul>
+<p>これをインストールすれば、その後、以下のコマンドでプロジェクトを生成できます。</p>
+<pre><code>dotnet new AnalyzerConvention
+</code></pre>
+<h3 id="section-6">内容物</h3>
+<p>作ったテンプレートは、</p>
+<ul>
+<li>Visual Studio 15.5 の標準の&quot;Analyzer  with Code Fix&quot;テンプレート通りにプロジェクト新規作成</li>
+<li>それに<a href="https://github.com/ufcpp/ConventionCodeFixVerifier">ConventionCodeFixVerifier</a>を上書き
+<ul>
+<li>ただし、もう V1 (古い規約)対応は切りました</li>
+</ul>
+</li>
+<li>テスト プロジェクトを <a href="https://www.nuget.org/packages/xunit/">XUnit</a> に移行</li>
+</ul>
+<p>というもの。</p>
+<p>標準テンプレートがベースなので、「クラス名を全部大文字にする」っていうクソ Code Fix のままです。</p>
+<h3 id="sourcename">おまけ: SourceName</h3>
+<p>この<code>dotnet</code>コマンドのテンプレート、<a href="https://github.com/ufcpp/AnalyzerConvention/blob/master/src/content/.template.config/template.json">設定ファイル</a>の&quot;<code>sourceName</code>&quot;のところに書いた文字列を、<code>new</code>したときのフォルダー名(もしくは<code>-n</code>/<code>--name</code>オプションで指定した名前)で置換する仕組みみたいです。</p>
+<p>この<code>sourceName</code>を何にしようか迷った結果…</p>
+<p>Ạṇạḷỵẓẹṛ</p>
+<p>に。</p>
+<p>Analyzer に見えますけども、よく見ると全文字、下にドットが付いています。
+Unicode の「Latin Extended Additional」辺りに入っている文字。
+これなら普通のソースコードと混ざらないだろうと。</p>
+<p>「混ざらない」って目的は無事果たしたんですけども、ファイル名とかフォルダー名も Unicode になっちゃってて…
+nupkgって実体はただのZIPファイルなわけですけども、文字化けしてないかが多少不安…
+日本語Windows以外で動かなくなってたりしたらどうしよう…</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2017/12/">12&#x6708;</a></li><li><a href="/blog/2017/12/vs15_5/">Visual Studio 15.5 Release</a></li><li><a href="/blog/2017/12/fastutf8string/">Rune &#x3068; fast Utf8String</a></li><li><a href="/blog/2017/12/%E3%83%90%E3%82%B0%E5%A0%B1%E5%91%8A%E7%A5%AD%E3%82%8A/">&#x30D0;&#x30B0;&#x5831;&#x544A;&#x796D;&#x308A;</a></li><li><a href="/blog/2017/12/msnetcompilers/">&#x30D3;&#x30EB;&#x30C9;&#x3067;&#x4F7F;&#x3046; C# &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30E9;&#x30FC;&#x3092;&#x5DEE;&#x3057;&#x66FF;&#x3048;&#x308B;</a></li><li><a href="/blog/2017/12/noncopyable/">&#x30B3;&#x30D4;&#x30FC;&#x7981;&#x6B62;(non-copyable)&#x69CB;&#x9020;&#x4F53;&#x30A2;&#x30CA;&#x30E9;&#x30A4;&#x30B6;&#x30FC;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

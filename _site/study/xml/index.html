@@ -1,0 +1,158 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>XML,XSL | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/xml/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content subject"><h1 id="xmlxsl">XML,XSL</h1>
+<p>当初、このサイトは XML で書いたものを XSLT で変換して HTML ファイルを生成していました。ここではその XML, XSL の説明と、実際の XSLT ファイルの内容を記載しています。</p>
+<p>XSL の現物の一覧↓。</p>
+<table summary="XSL 一覧">
+	<caption>
+		XSL 一覧
+	</caption>
+<thead>	<tr>
+		<th>XSL ファイル</th>
+		<th>説明</th>
+	</tr>
+</thead><tbody>	<tr>
+		<td><p><a href="/assets/media/ufcpp2000/xml/xslfiles/main.xsl">main.xsl</a></p></td>
+		<td><p>XML から直接参照するのはこの XSL ファイル。 他の XSL ファイルのインクルードと、 パラメータの設定を行う。</p></td>
+	</tr>
+	<tr>
+		<td><p><a href="/assets/media/ufcpp2000/xml/xslfiles/general.xsl">general.xsl</a></p></td>
+		<td><p>未定義タグはそのまま出力。 HTML のタグをそのまま使うため。</p></td>
+	</tr>
+	<tr>
+		<td><p><a href="/assets/media/ufcpp2000/xml/xslfiles/document.xsl">document.xsl</a></p></td>
+		<td><p>document タグ（一般ページの root 要素）を定義。</p></td>
+	</tr>
+	<tr>
+		<td><p><a href="/assets/media/ufcpp2000/xml/xslfiles/index.xsl">index.xsl</a></p></td>
+		<td><p>index タグ（索引ページの root 要素）を定義。</p></td>
+	</tr>
+	<tr>
+		<td><p><a href="/assets/media/ufcpp2000/xml/xslfiles/section.xsl">section.xsl</a></p></td>
+		<td><p>ドキュメント中の章割り・章の参照。</p></td>
+	</tr>
+	<tr>
+		<td><p><a href="/assets/media/ufcpp2000/xml/xslfiles/keyword.xsl">keyword.xsl</a></p></td>
+		<td><p>キーワードの定義・参照。</p></td>
+	</tr>
+	<tr>
+		<td><p><a href="/assets/media/ufcpp2000/xml/xslfiles/figure.xsl">figure.xsl</a></p></td>
+		<td><p>キャプションつきの図表の定義。</p></td>
+	</tr>
+	<tr>
+		<td><p><a href="/assets/media/ufcpp2000/xml/xslfiles/source.xsl">source.xsl</a></p></td>
+		<td><p>ソースファイルやコンソール出力の標示用。</p></td>
+	</tr>
+	<tr>
+		<td><p><a href="/assets/media/ufcpp2000/xml/xslfiles/exercise.xsl">exercise.xsl</a></p></td>
+		<td><p>演習問題の定義・参照・一覧作成。</p></td>
+	</tr>
+	<tr>
+		<td><p><a href="/assets/media/ufcpp2000/xml/xslfiles/link.xsl">link.xsl</a></p></td>
+		<td><p>リンク集作成。</p></td>
+	</tr>
+	<tr>
+		<td><p><a href="/assets/media/ufcpp2000/xml/xslfiles/qanda.xsl">qanda.xsl</a></p></td>
+		<td><p>Q＆A 作成。</p></td>
+	</tr>
+	<tr>
+		<td><p><a href="/assets/media/ufcpp2000/xml/xslfiles/mathenv.xsl">mathenv.xsl</a></p></td>
+		<td><p>数式の記述用。</p></td>
+	</tr>
+	<tr>
+		<td><p><a href="/assets/media/ufcpp2000/xml/xslfiles/variable.xsl">variable.xsl</a></p></td>
+		<td><p>数式中で使う変数の定義・参照用。</p></td>
+	</tr>
+	<tr>
+		<td><p><a href="/assets/media/ufcpp2000/xml/xslfiles/amazon.xsl">amazon.xsl</a></p></td>
+		<td><p>Amazon アフィリエイト生成用</p></td>
+	</tr>
+</tbody></table>
+    
+<a href="/assets/media/ufcpp2000/xsd/xsd.zip">XSD ファイルをまとめた ZIP ファイル</a>
+<h2 id="section">章</h2>
+<h3 id="xsl"><a id="xslsummary"></a><a href="/study/xml/xslsummary/">XSL概要</a></h3>
+<ul>
+<li><a href="/study/xml/xslsummary/about/">概要</a></li>
+<li><a href="/study/xml/xslsummary/logical/">論理マークアップとデザインの変更</a></li>
+<li><a href="/study/xml/xslsummary/math/">XML で数式を書こう</a></li>
+<li><a href="/study/xml/xslsummary/xsd/">XSD</a></li>
+</ul>
+<h3 id="section-1"><a id="summary"></a><a href="/study/xml/summary/">スタイルシートの説明</a></h3>
+<ul>
+<li><a href="/study/xml/summary/document/">ドキュメント</a></li>
+<li><a href="/study/xml/summary/nomenu/">ドキュメントのパラメータ</a></li>
+<li><a href="/study/xml/summary/general/">未定義タグ</a></li>
+<li><a href="/study/xml/summary/section/">章の参照</a></li>
+<li><a href="/study/xml/summary/keyword/">キーワードの参照</a></li>
+<li><a href="/study/xml/summary/variable/">変数</a></li>
+<li><a href="/study/xml/summary/figure/">図表</a></li>
+<li><a href="/study/xml/summary/source/">ソースファイル</a></li>
+</ul>
+<h3 id="section-2"><a id="links"></a><a href="/study/xml/links/">リンク集</a></h3>
+<ul>
+<li><a href="/study/xml/links/link/">リンク集（WEB関連、XML/XSLT）</a></li>
+</ul>
+<h3 id="xml"><a id="ref"></a><a href="/study/xml/ref/">数式表現用XML</a></h3>
+<ul>
+<li><a href="/study/xml/ref/abs/">絶対値</a></li>
+<li><a href="/study/xml/ref/aleph/">アレフ</a></li>
+<li><a href="/study/xml/ref/arg/">偏角</a></li>
+<li><a href="/study/xml/ref/bar/">バー</a></li>
+<li><a href="/study/xml/ref/brace/">括弧</a></li>
+<li><a href="/study/xml/ref/bracket/">括弧</a></li>
+<li><a href="/study/xml/ref/branch/">条件分岐</a></li>
+<li><a href="/study/xml/ref/conjugate/">複素共役</a></li>
+<li><a href="/study/xml/ref/d/">微分のd</a></li>
+<li><a href="/study/xml/ref/ddt/">時間微分</a></li>
+<li><a href="/study/xml/ref/differential/">微分</a></li>
+<li><a href="/study/xml/ref/doubleint/">重積分記号</a></li>
+<li><a href="/study/xml/ref/e/">指数関数の底</a></li>
+<li><a href="/study/xml/ref/font/">書体</a></li>
+<li><a href="/study/xml/ref/fourier/">フーリエ変換など</a></li>
+<li><a href="/study/xml/ref/frac/">分数</a></li>
+<li><a href="/study/xml/ref/int/">積分記号</a></li>
+<li><a href="/study/xml/ref/limit/">lim</a></li>
+<li><a href="/study/xml/ref/log/">指数・対数</a></li>
+<li><a href="/study/xml/ref/matrix/">行列</a></li>
+<li><a href="/study/xml/ref/oint/">周回積分記号</a></li>
+<li><a href="/study/xml/ref/operator/">演算子</a></li>
+<li><a href="/study/xml/ref/paren/">()括弧</a></li>
+<li><a href="/study/xml/ref/pddt/">時間偏微分</a></li>
+<li><a href="/study/xml/ref/pddt_second/">2階時間偏微分</a></li>
+<li><a href="/study/xml/ref/pi/">Π</a></li>
+<li><a href="/study/xml/ref/re/">実部・虚部</a></li>
+<li><a href="/study/xml/ref/res/">留数</a></li>
+<li><a href="/study/xml/ref/sigma/">∑</a></li>
+<li><a href="/study/xml/ref/sin/">三角関数</a></li>
+<li><a href="/study/xml/ref/sqbracket/">[]括弧</a></li>
+<li><a href="/study/xml/ref/subsup/">上付き・下付き文字</a></li>
+<li><a href="/study/xml/ref/symbol/">記号</a></li>
+<li><a href="/study/xml/ref/tripleint/">3重積分記号</a></li>
+<li><a href="/study/xml/ref/va/">ベクトル解析用記号</a></li>
+<li><a href="/study/xml/ref/vec/">ベクトル</a></li>
+<li><a href="/study/xml/ref/vervec/">縦ベクトル</a></li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/">study</a></li><li><a href="/study/csharp/">C# &#x306B;&#x3088;&#x308B;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30DF;&#x30F3;&#x30B0;&#x5165;&#x9580;</a></li><li><a href="/study/dotnet/">&#x30AF;&#x30E9;&#x30B9;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li><li><a href="/study/il/">IL&#xFF08;.NET &#x306E;&#x4E2D;&#x9593;&#x8A00;&#x8A9E;&#xFF09;</a></li><li><a href="/study/powershell/">Windows PowerShell</a></li><li><a href="/study/computer/">&#x30B3;&#x30F3;&#x30D4;&#x30E5;&#x30FC;&#x30BF;&#x306E;&#x57FA;&#x790E;&#x77E5;&#x8B58;</a></li><li><a href="/study/algorithm/">&#x30A2;&#x30EB;&#x30B4;&#x30EA;&#x30BA;&#x30E0;&#x3068;&#x30C7;&#x30FC;&#x30BF;&#x69CB;&#x9020;</a></li><li><a href="/study/sp/">&#x4FE1;&#x53F7;&#x51E6;&#x7406;</a></li><li><a href="/study/dsl/">DSL (Domain Specific Language)</a></li><li><a href="/study/stl/">C&#x2B;&#x2B; STL</a></li><li><a href="/study/office/">Office &#x95A2;&#x9023;</a></li><li><a href="/study/miscprog/">&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30DF;&#x30F3;&#x30B0;&#x96D1;&#x8A18;</a></li><li><a href="/study/misc/">&#x96D1;&#x8A18;</a></li><li><a href="/study/en/">&#x82F1;&#x8A9E;&#x30BD;&#x30FC;&#x30B9;&#x7F6E;&#x304D;&#x5834;</a></li><li><a href="/study/math/">&#x6570;&#x5B66;</a></li><li><a href="/study/physics/">&#x7269;&#x7406;</a></li><li><a href="/study/xml/xslsummary/">XSL&#x6982;&#x8981;</a></li><li><a href="/study/xml/summary/">&#x30B9;&#x30BF;&#x30A4;&#x30EB;&#x30B7;&#x30FC;&#x30C8;&#x306E;&#x8AAC;&#x660E;</a></li><li><a href="/study/xml/links/">&#x30EA;&#x30F3;&#x30AF;&#x96C6;</a></li><li><a href="/study/xml/ref/">&#x6570;&#x5F0F;&#x8868;&#x73FE;&#x7528;XML</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,438 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x69CB;&#x9020;&#x4F53; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/resource/rm_struct/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">構造体</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>「<a href="/study/csharp/structured/st_struct/">データの構造化</a>」で少し触れて以来、ずっとクラスだけを使って説明してきましたが、ここで、C#における「もう1つの複合型」である構造体について説明します。</p>
+<p>根本的な差は、次項で説明する「<a href="/study/csharp/resource/oo_reference/#valtype">値型</a>」か「<a href="/study/csharp/resource/oo_reference/#reftype">参照型</a>」かの違いに起因します。構造体は値型で、そのためにクラスと比べていくつか用途に制限がかかります。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="restriction"></a>構造体の制限</h2>
+<p>とりあえず、クラスと構造体を並べて書いてみましょう。</p>
+<h4 id="section-3"><a id="sec-generated-title-3"></a>構造体</h4>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">struct</span> SampleStruct : InterfaceA, InterfaceB
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> A { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> B { <span class="keyword">get</span>; }
+
+    <span class="keyword">public</span> SampleStruct(<span class="keyword">int</span> a, <span class="keyword">int</span> b) { A = a; B = b; }
+
+    <span class="keyword">public</span> <span class="keyword">static</span> SampleStruct <span class="keyword">operator</span>-(SampleStruct x)
+        =&gt; <span class="keyword">new</span> SampleStruct(-x.A, -x.B);
+}
+
+<span class="keyword">public</span> <span class="keyword">interface</span> InterfaceA { <span class="keyword">int</span> A { <span class="keyword">get</span>; } }
+<span class="keyword">public</span> <span class="keyword">interface</span> InterfaceB { <span class="keyword">int</span> B { <span class="keyword">get</span>; } }</code></pre>
+<h4 id="section-4"><a id="sec-generated-title-4"></a>クラス</h4>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">sealed</span> <span class="keyword">class</span> SampleClass : BaseClass, InterfaceA, InterfaceB
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> A { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> B { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+    <span class="keyword">public</span> SampleClass() { }
+    <span class="keyword">public</span> SampleClass(<span class="keyword">int</span> a, <span class="keyword">int</span> b) { A = a; B = b; }
+
+    <span class="keyword">public</span> <span class="keyword">static</span> SampleClass <span class="keyword">operator</span> -(SampleClass x)
+        =&gt; <span class="keyword">new</span> SampleClass(-x.A, -x.B);
+
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> X() { }
+
+    ~SampleClass() { }
+}
+
+<span class="keyword">public</span> <span class="keyword">class</span> BaseClass
+{
+    <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="keyword">void</span> X() { }
+}
+
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> StaticClass
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">string</span> Hex(<span class="keyword">int</span> x) =&gt; x.ToString(<span class="string">&quot;X&quot;</span>);
+}</code></pre>
+<p>単純に、クラスの方ができることは多いです。</p>
+<p>クラスにしかできないことは以下の通り。</p>
+<ul>
+<li>他のクラスから派生(他のクラスを継承)する
+<ul>
+<li>継承に関連する修飾子(<code>abstract</code>, <code>sealed</code>, <code>virtual</code>, <code>override</code>など)を使えるもクラスだけ</li>
+</ul>
+</li>
+<li>静的クラス</li>
+<li>引数なしのコンストラクターの定義(C# 9.0 まで)</li>
+<li>ファイナライザーの定義</li>
+</ul>
+<p>一方、クラス・構造体どちらでもできることは以下のとおりです。</p>
+<ul>
+<li>引数なしコンストラクターとファイナライザー以外のメンバー定義</li>
+<li>インターフェイスの実装(複数も可)</li>
+<li>(構造体自身には<code>static</code>修飾子を付けれないものの)静的メンバーの定義自体は可能</li>
+</ul>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="usage"></a>構造体の用途</h2>
+<p>「できること」でいうと、構造体はクラスの完全下位互換で、メリットがないように見えます。構造体の利点を理解するには、次項の<a href="/study/csharp/resource/oo_reference/">値型と参照型</a>についての知識が必要になります。</p>
+<p>おおまかに言うと、</p>
+<ul>
+<li>クラスと構造体ではメモリの使い方が違う</li>
+<li>小さなデータ構造に対しては構造体が有利
+<ul>
+<li>使い方にもよりますが、大まかなガイドラインとしては16バイト程度が境界と言われています</li>
+</ul>
+</li>
+</ul>
+<p>というものです。</p>
+<p>この性質と、前節で説明した制限とを併せて考えると、構造体の利用を検討するのは、</p>
+<ul>
+<li>データ構造が16バイト未満</li>
+<li>継承が必要ない</li>
+</ul>
+<p>という状況下になります。</p>
+<h2 id="section-6"><a id="sec-generated-title-6"></a> <a id="default"></a>構造体の既定値</h2>
+<p>これも<a href="/study/csharp/resource/oo_reference/#valtype">値型</a>の性質になりますが、
+クラス(<code>new</code>するまでメモリ領域を確保しない)と違って、
+構造体は宣言した時点でデータを記録するためのメモリ領域が確保されます。</p>
+<p>クラス型のフィールドの場合は、<code>new</code>するなり他のインスタンスを代入するなりして初期化するまでの間、
+<code>null</code> (何のインスタンスも指していない状態)が入ります。</p>
+<p>一方、構造体の場合、いわゆる「0初期化」状態になっています。
+全てのメンバーに対して、0、もしくはそれに類する以下のような値が入ります。</p>
+<ul>
+<li>数値型(<code>int</code>, <code>double</code>など)の場合は0
+<ul>
+<li>列挙型も、0 に相当する値</li>
+</ul>
+</li>
+<li><code>bool</code> 型の場合は <code>false</code></li>
+<li>参照型(<code>string</code>、配列、クラス、デリゲートなど)や<a href="/study/csharp/resource/sp2_nullable/#nullableType">Null許容型</a>の場合は <code>null</code></li>
+</ul>
+<p>これら、0初期化状態にある値を、<em>構造体の既定値</em>(default value)と呼びます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">struct</span> Sample
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> I;
+    <span class="keyword">public</span> <span class="keyword">double</span> D;
+    <span class="keyword">public</span> <span class="keyword">bool</span> B;
+    <span class="keyword">public</span> <span class="keyword">string</span> S;
+}
+
+<span class="keyword">public</span> <span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> Sample s;
+
+    <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+    {
+        Console.WriteLine(s.I);
+        Console.WriteLine(s.D);
+        Console.WriteLine(s.B);
+        Console.WriteLine(s.S);
+    }
+}</code></pre>
+<pre><code class="language-console">0
+0
+False</code></pre>
+<h2 id="section-7"><a id="sec-generated-title-7"></a> <a id="parameterless-ctor"></a>引数なしコンストラクター</h2>
+<p>C# 9.0 まで、構造体のメンバーとして引数なしのコンストラクターを書くことはできませんでした。
+これは、<code>new T()</code>を<a href="/study/csharp/resource/rm_default/#default-keyword">既定値</a>(0初期化)として使っていたせいです。</p>
+<p>例えば以下のコードでは、<code>Point</code>クラスには引数なしのコンストラクターを定義していませんが、
+<code>new Point()</code>という書き方で 0 初期化を行っています。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">struct</span> Point
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> Point(<span class="keyword">int</span> x, <span class="keyword">int</span> y) { X = x; Y = y; }
+    <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString() =&gt; $<span class="string">&quot;({X}, {Y})&quot;</span>;
+}
+
+<span class="keyword">public</span> <span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+    {
+        <span class="keyword">var</span> p1 = <span class="keyword">new</span> Point(); <span class="comment">// 既定値、つまり、「XもYも0に初期化」という意味で使われる</span>
+        <span class="keyword">var</span> p2 = <span class="keyword">new</span> Point(<span class="number">10</span>, <span class="number">20</span>);
+        <span class="keyword">var</span> p3 = <span class="keyword">default</span>(Point); <span class="comment">// C# 2.0～9.0 まで、p1と同じ意味</span>
+
+        Console.WriteLine(p1);
+        Console.WriteLine(p2);
+        Console.WriteLine(p3);
+    }
+}</code></pre>
+<pre><code class="language-console">(0, 0)
+(10, 20)
+(0, 0)</code></pre>
+<h5 class="version version2">Ver. 2.0</h5>
+<p>ちなみに、C# 2.0 以降では、構造体の既定値は、<code>new T()</code>という書き方の他に、<code>default(T)</code>という書き方もできます。
+(主に<a href="/study/csharp/oop/sp2_generics/">ジェネリック</a>のために導入された構文です。)</p>
+<p>既定値について、詳しくは別項「<a href="/study/csharp/resource/rm_default/#default-constructor">既定値</a>」で説明します。</p>
+<h5 class="version version10">Ver. 10</h5>
+<p>C# 2.0 で <code>default(T)</code> を使った既定値(0初期化)ができるようになって、
+「<code>new T()</code> と書く場合は引数なしコンストラクターを呼ぶ」という仕様に変えたい
+(構造体にも引数なしコンストラクターを書けるようにして、<code>new T()</code> と <code>default(T)</code> を区別する)
+という話は前々からありました。</p>
+<p>C# 10.0 で、ついにその案が採用されることになり、
+引数なしコンストラクターを書けるようになりました。
+例えば以下のようなコードが書けるようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> A
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X;
+    <span class="keyword">public</span> A() =&gt; X = <span class="number">1</span>;
+}</code></pre>
+<p>これで、<code>new A()</code> で <code>X</code> が1になります。</p>
+<h3 id="new-default"><a id="sec-generated-title-8"></a> <a id="new-or-default"></a>new() と default</h3>
+<p>背景説明の通り、<code>new()</code> と <code>default</code> の意味が変わったので注意が必要です。
+この例の構造体 <code>A</code> の場合、以下のような挙動になります。</p>
+<pre><code class="language-csharp">Console.WriteLine(<span class="keyword">new</span> A().X); <span class="comment">// コンストラクターが呼ばれて、X == 1 になってる。</span>
+Console.WriteLine(<span class="keyword">default</span>(A).X); <span class="comment">// コンストラクターも呼ばれず 0 初期化で、X == 0 になってる。</span></code></pre>
+<p>C# 7.1/9.0 で、<code>new()</code> や <code>default</code> に<a href="/study/csharp/start/misctyperesolution/#target-type">ターゲット型からの推論</a>が働くようになったので、以下のようにも書けます。</p>
+<pre><code class="language-csharp">A a = <span class="keyword">new</span>();
+Console.WriteLine(a.X); <span class="comment">// 1</span>
+
+a = <span class="keyword">default</span>;
+Console.WriteLine(a.X); <span class="comment">// 0</span></code></pre>
+<p><code>default</code> を書く以外に、配列の要素も既定値(0初期化)になるので注意が必要です。</p>
+<pre><code class="language-csharp"><span class="comment">// 配列の要素は暗黙的に default…</span>
+Console.WriteLine((<span class="keyword">new</span> A[<span class="number">1</span>])[<span class="number">0</span>].X); <span class="comment">// default(A) と同じ扱いで、X == 0 になってる。</span></code></pre>
+<p>ちなみに、ジェネリクス越しでも <code>new()</code> と <code>default</code> の呼び分けが掛かります。</p>
+<pre><code class="language-csharp">Console.WriteLine(New&lt;A&gt;().X); <span class="comment">// 1</span>
+Console.WriteLine(Default&lt;A&gt;().X); <span class="comment">// 0</span>
+
+<span class="keyword">static</span> T New&lt;T&gt;() <span class="keyword">where</span> T : <span class="keyword">new</span>() =&gt; <span class="keyword">new</span>();
+<span class="keyword">static</span> T? Default&lt;T&gt;() =&gt; <span class="keyword">default</span>;</code></pre>
+<p>また、これまで <code>default</code> と同じ意味だった <code>new()</code> が、引数なしコンストラクターの有無で違う意味になるのでこの点にも注意が必要です。
+例えば、一般の構造体で<a href="/study/csharp/structured/st_function/#default-parameter">オプション引数</a>を使いたい場合、
+既定値しか使えません。
+引数なしコンストラクターがない場合には <code>new()</code> も既定値扱いですが、
+ある場合には <code>new()</code> を渡せなくなります。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> m(
+    NoCtor n1 = <span class="keyword">new</span>(),
+    NoCtor n2 = <span class="keyword">default</span>,
+    Ctor c1 = <span class="keyword">new</span>(), <span class="comment">// この行だけコンパイル エラー</span>
+    Ctor c2 = <span class="keyword">default</span>
+    )
+{ }
+
+<span class="keyword">struct</span> NoCtor { }
+<span class="keyword">struct</span> Ctor { <span class="keyword">public</span> Ctor() { } }</code></pre>
+<h3 id="section-8"><a id="sec-generated-title-9"></a> <a id="field-initialize"></a>フィールド初期化子</h3>
+<p>C# 10.0 で構造体に引数なしコンストラクターが使えるようになったことに伴って、
+フィールド初期化子も使えるようになりました。
+以下のようなコードは C# 10.0 から書けるようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> FieldInitializer
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X = <span class="number">1</span>;
+    <span class="keyword">public</span> <span class="keyword">int</span> Y = <span class="number">2</span>;
+
+    <span class="keyword">public</span> FieldInitializer() { }
+}</code></pre>
+<p><code>new()</code> だけで、<code>X</code>、<code>Y</code> の値がそれぞれ1、2に初期化されます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> f = <span class="keyword">new</span> FieldInitializer();
+Console.WriteLine(f.X); <span class="comment">// 1</span>
+Console.WriteLine(f.Y); <span class="comment">// 2</span></code></pre>
+<p>(※ 初期案では、明示的なコンストラクター定義もなしでフィールド初期化子を書けるようにする予定でした。
+この際、フィールド初期化子を書くとコンパイラーが引数なしコンストラクターを生成していました。
+C# 10 リリース当初はその案に基づいた実装になっていましたが、
+ちょっと問題があって撤回され、明示的にコンストラクターを書かなければならなくなりました。)</p>
+<h3 id="section-9"><a id="sec-generated-title-10"></a> <a id="accessibility"></a>引数なしコンストラクターのアクセシビリティ</h3>
+<p><code>new()</code> が <code>default</code> と同じ意味になるのか、
+それとも引数なしコンストラクターの呼び出しになるのか紛らわしくなるので、
+構造体の引数なしコンストラクターは public 以外を認めていません。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> A
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X;
+    <span class="keyword">private</span> A() =&gt; X = <span class="number">0</span>; <span class="comment">// エラー</span>
+}
+
+<span class="keyword">struct</span> B
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X;
+    <span class="keyword">internal</span> B() =&gt; X = <span class="number">0</span>; <span class="comment">// エラー</span>
+}</code></pre>
+<h2 id="section-10"><a id="sec-generated-title-11"></a> <a id="definite-assignment"></a>確実な初期化</h2>
+<p>※ C# 10 までの仕様になります。</p>
+<p><code>new T()</code> や<code>default(T)</code>で作る「既定値」とは違って、
+引数付きのコンストラクターを使う場合は、コンストラクター内で全てのメンバーをきっちり自分の手で初期化する必要がありました。</p>
+<p>例えば、以下のコードは、コンストラクター内で <code>_z</code> の初期化を忘れているのでコンパイル エラーになっていました。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> Sample
+{
+    <span class="keyword">int</span> _x;
+    <span class="keyword">int</span> _y;
+    <span class="keyword">int</span> _z;
+
+    <span class="keyword">public</span> Sample(<span class="keyword">int</span> x, <span class="keyword">int</span> y)
+    {
+        _x = x;
+        _y = y;
+        <span class="comment">// C# 10 以前はコンパイル エラー</span>
+    }
+}</code></pre>
+<p>(クラスの場合はこういう制限はなく、明示的に初期化しなかったフィールドは既定値(0)で初期化されます。)</p>
+<p>また、全てのフィールドを初期化するまで、プロパティやメソッドなどの関数メンバーを呼べないという制約もありました。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> Sample
+{
+    <span class="keyword">int</span> _x;
+    <span class="keyword">int</span> _y;
+
+    <span class="keyword">public</span> Sample(<span class="keyword">int</span> x, <span class="keyword">int</span> y)
+    {
+        M(); <span class="comment">// エラー: _x, _y の初期化より前に呼んじゃダメ。</span>
+        _x = x;
+        _y = y;
+        M(); <span class="comment">// この順ならOK。</span>
+    }
+
+    <span class="keyword">void</span> M() { }
+}</code></pre>
+<p>(同じくクラスの場合は制限はなし。既定値(0)が使われるだけ。)</p>
+<h3 id="section-11"><a id="sec-generated-title-12"></a> <a id="auto-default">構造体のフィールドの既定値初期化</a></h3>
+<h5 class="version version11">Ver. 11.0</h5>
+<p>C# 11 では、構造体でもフィールドの明示的な初期化が不要になりました。
+(クラスと構造体の差が1つなくなりました。)</p>
+<p>前節のコードとほぼ同じですが、 C# 11 にすれば以下のようなコードがコンパイルできるようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> Sample
+{
+    <span class="keyword">int</span> _x;
+    <span class="keyword">int</span> _y;
+    <span class="keyword">int</span> _z;
+
+    <span class="keyword">public</span> Sample(<span class="keyword">int</span> x, <span class="keyword">int</span> y)
+    {
+        M(); <span class="comment">// C# 11 では初期化よりも先に読んでも平気。_x, _y にもこの時点でいったん 0 が入ってる。</span>
+
+        _x = x;
+        _y = y;
+        <span class="comment">// C# 11 では _z に 0 が自動で入る。</span>
+    }
+
+    <span class="keyword">void</span> M() =&gt; Console.WriteLine($<span class="string">&quot;{_x}, {_y}, {_z}&quot;</span>);
+}</code></pre>
+<h3 id="section-12"><a id="sec-generated-title-13"></a> <a id="auto-property"></a>自動プロパティの扱い変更</h3>
+<h5 class="version version6">Ver. 6</h5>
+<p>前節の「確実な初期化」と絡んで、C# 5.0までのC#では、自動プロパティの初期化が非常に面倒でした。</p>
+<p>C# 5.0 以前の場合、以下のコードはコンパイル エラーを起こします。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">struct</span> Point
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; }
+
+    <span class="keyword">public</span> Point(<span class="keyword">int</span> x, <span class="keyword">int</span> y)
+    {
+        <span class="comment">// C# 5.0 まではエラーになる</span>
+        X = x;
+        Y = y;
+    }
+}</code></pre>
+<p>エラーを起こす原因は、以下の組み合わせのせいです。</p>
+<ul>
+<li>自動プロパティを定義すると、コンパイラーが対応するフィールド(バック フィールド)を作る</li>
+<li>構造体の制約のせいで、バック フィールドが初期化されるまで、プロパティの読み書きできない</li>
+<li>でも、自動プロパティの場合、プロパティを介さずにバック フィールドを初期化する方法がない</li>
+</ul>
+<p>このせいで、構造体と自動プロパティは相性が悪く、以下のように、自動プロパティを使わない書き方に書き換える必要がありました。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">struct</span> Point
+{
+    <span class="keyword">private</span> <span class="keyword">int</span> _x;
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span> { <span class="keyword">return</span> _x; } }
+
+    <span class="keyword">private</span> <span class="keyword">int</span> _y;
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span> { <span class="keyword">return</span> _y; } }
+
+    <span class="keyword">public</span> Point(<span class="keyword">int</span> x, <span class="keyword">int</span> y)
+    {
+        _x = x;
+        _y = y;
+    }
+}</code></pre>
+<p>これに対して、C# 6では、最初のコードがコンパイルできるようになっています。
+C#の仕様書に以下の1文が追加されたことによります。</p>
+<ul>
+<li>自動プロパティを型の中から使う場合、そのバック フィールドに対する読み書きに置き換える</li>
+</ul>
+<p>この仕様が追加されたことで、先ほどのコードはバック フィールドの初期化と見なされ、構造体の制約に引っかからなくなりました。</p>
+<p>ちなみに、C# 6の場合は get のみの自動プロパティ(get-only auto-property)という構文が追加されて、先ほどのコードはさらに、以下のように書けるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">struct</span> Point
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; }
+
+    <span class="keyword">public</span> Point(<span class="keyword">int</span> x, <span class="keyword">int</span> y)
+    {
+        X = x;
+        Y = y;
+    }
+}</code></pre>
+<h2 id="section-13"><a id="sec-generated-title-14"></a> <a id="memberwise"></a>メンバー毎コピー、メンバー毎比較</h2>
+<p>構造体の変数への代入は、全メンバーのコピーになります。
+また、構造体には自動的に<code>Equals</code>メソッドが実装されて、メンバー毎の比較(全メンバー一致の場合に一致)になります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">public</span> <span class="keyword">class</span> Program
+{
+    <span class="keyword">public</span> <span class="keyword">struct</span> Point
+    {
+        <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; }
+        <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; }
+
+        <span class="keyword">public</span> Point(<span class="keyword">int</span> x, <span class="keyword">int</span> y) { X = x; Y = y; }
+        <span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">string</span> ToString() =&gt; $<span class="string">&quot;({X}, {Y})&quot;</span>;
+    }
+
+    <span class="keyword">static</span> <span class="keyword">void</span> Main(<span class="keyword">string</span>[] args)
+    {
+        <span class="keyword">var</span> x = <span class="keyword">new</span> Point(<span class="number">1</span>, <span class="number">2</span>);
+        <span class="keyword">var</span> y = x;
+
+        Console.WriteLine(y); <span class="comment">// x のメンバー毎コピー = (1, 2)</span>
+
+        <span class="comment">// メンバー毎比較(全メンバー一致なら一致)</span>
+        Console.WriteLine(x.Equals(<span class="keyword">new</span> Point(<span class="number">1</span>, <span class="number">2</span>))); <span class="comment">// true</span>
+        Console.WriteLine(x.Equals(<span class="keyword">new</span> Point(<span class="number">1</span>, <span class="number">3</span>))); <span class="comment">// false</span>
+    }
+}</code></pre>
+<h2 id="section-14"><a id="sec-generated-title-15"></a> <a id="struct-modifier"></a>構造体に対する特別な修飾子</h2>
+<p>ここでは紹介だけになりますが、構造体にだけ付けることができる特別な修飾子があります。</p>
+<ul>
+<li><a href="/study/csharp/resource/readonlyness/#readonly-struct">readonly</a></li>
+<li><a href="/study/csharp/resource/refstruct/">ref</a></li>
+</ul>
+<p>詳細についてはそれぞれリンク先を参照してください。</p>
+<p>ちなみに、現状では、<code>ref</code> には語順に制約があって、
+<code>struct</code>もしくは<code>partial</code>の直前に来る必要があります(緩和も検討されています)。
+要するに、<code>readonly ref struct</code>はOKですが、<code>ref readonly struct</code>はエラーになります。</p>
+<p>いくつか実例を挙げます。</p>
+<pre><code class="language-csharp"><span class="comment">// OK</span>
+<span class="keyword">readonly</span> <span class="keyword">public</span> <span class="keyword">ref</span> <span class="keyword">struct</span> Ok1 { }
+<span class="keyword">readonly</span> <span class="keyword">public</span> <span class="keyword">ref</span> <span class="keyword">partial</span> <span class="keyword">struct</span> Ok2 { }
+<span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">ref</span> <span class="keyword">partial</span> <span class="keyword">struct</span> Ok3 { }
+
+<span class="comment">// コンパイル エラー</span>
+<span class="keyword">ref</span> <span class="keyword">readonly</span> <span class="keyword">struct</span> Ng1 { }
+<span class="keyword">readonly</span> <span class="keyword">ref</span> <span class="keyword">public</span> <span class="keyword">struct</span> Ng2 { }
+<span class="keyword">readonly</span> <span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">ref</span> <span class="keyword">struct</span> Ng3 { }
+<span class="keyword">public</span> <span class="keyword">ref</span> <span class="keyword">readonly</span> <span class="keyword">partial</span> <span class="keyword">struct</span> Ng4 { }
+<span class="keyword">public</span> <span class="keyword">ref</span> <span class="keyword">partial</span> <span class="keyword">readonly</span> <span class="keyword">struct</span> Ng5 { }</code></pre>
+<p>おそらく、以下のような型の入れ子とメソッド定義の区別を楽にするための制限(あくまでコンパイラー都合)と思われます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Sample
+{
+    <span class="comment">// 以下のエラー行、エラー内容は「readonly の後ろには型名が必要」になる</span>
+    <span class="keyword">ref</span> <span class="keyword">readonly</span> <span class="keyword">struct</span> InnerStruct { }
+    <span class="keyword">ref</span> <span class="keyword">readonly</span> <span class="keyword">int</span> Method(<span class="keyword">in</span> <span class="keyword">int</span> x) =&gt; <span class="keyword">ref</span> x;
+}</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/resource/">&#x30E1;&#x30E2;&#x30EA;&#x3068;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x7BA1;&#x7406;</a></li><li><a href="/study/csharp/resource/rm_gc/">C# &#x306E;&#x30E1;&#x30E2;&#x30EA;&#x7BA1;&#x7406;</a></li><li><a href="/study/csharp/resource/oo_reference/">&#x5024;&#x578B;&#x3068;&#x53C2;&#x7167;&#x578B;</a></li><li><a href="/study/csharp/resource/readonlyness/">readonly &#x306E;&#x6CE8;&#x610F;&#x70B9;</a></li><li><a href="/study/csharp/resource/rm_default/">&#x65E2;&#x5B9A;&#x5024;</a></li><li><a href="/study/csharp/resource/sp_ref/">&#x53C2;&#x7167;&#x6E21;&#x3057;</a></li><li><a href="/study/csharp/resource/span/">Span&lt;T&gt;&#x69CB;&#x9020;&#x4F53;</a></li><li><a href="/study/csharp/resource/refstruct/">ref&#x69CB;&#x9020;&#x4F53;</a></li><li><a href="/study/csharp/resource/misc_heap/">[&#x96D1;&#x8A18;] &#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x3068;&#x30D2;&#x30FC;&#x30D7;</a></li><li><a href="/study/csharp/resource/rmboxing/">&#x30DC;&#x30C3;&#x30AF;&#x30B9;&#x5316;</a></li><li><a href="/study/csharp/resource/sp2_nullable/">null&#x8A31;&#x5BB9;&#x5024;&#x578B;(Nullable&amp;lt;T&amp;gt; &#x578B;)</a></li><li><a href="/study/csharp/resource/nullablereferencetype/">null &#x8A31;&#x5BB9;&#x53C2;&#x7167;&#x578B;</a></li><li><a href="/study/csharp/resource/rm_nullusage/">null &#x306E;&#x53D6;&#x308A;&#x6271;&#x3044;</a></li><li><a href="/study/csharp/resource/oo_dispose/">&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x7834;&#x68C4;</a></li><li><a href="/study/csharp/resource/rm_destructor/">&#x30D5;&#x30A1;&#x30A4;&#x30CA;&#x30E9;&#x30A4;&#x30B6;&#x30FC;</a></li><li><a href="/study/csharp/resource/rm_disposable/">[&#x96D1;&#x8A18;] Dispose &#x306B;&#x307E;&#x3064;&#x308F;&#x308B;&#x4F59;&#x8AC7;</a></li><li><a href="/study/csharp/resource/rmweakreference/">&#x3010;&#x96D1;&#x8A18;&#x3011;&#x5F31;&#x53C2;&#x7167;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

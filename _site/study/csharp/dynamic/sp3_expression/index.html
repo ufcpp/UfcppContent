@@ -1,0 +1,732 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5F0F;&#x6728;&#xFF08;Expression Trees&#xFF09; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/dynamic/sp3_expression/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="expression-trees">式木（Expression Trees）</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<h5 class="version version3">Ver. 3.0</h5>
+<p>「<a href="/study/csharp/functional/sp3_lambda/#lambda">ラムダ式</a>」は、Expression 型の変数に代入すると、
+匿名デリゲート（実行可能なコード）ではなく<strong id="expressiontree" class="keyword">式木</strong>（式の意味を表す木構造データ）としてコンパイルされます。
+例えば、以下の2つのコードは同じ意味になります。</p>
+<pre><code class="language-csharp">Expression&lt;Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;&gt; e = x =&gt; x + <span class="number">5</span></code></pre>
+<pre><code class="language-csharp"><span class="keyword">var</span> x = Expression.Parameter(<span class="keyword">typeof</span>(<span class="keyword">int</span>), <span class="string">&quot;x&quot;</span>);
+<span class="keyword">var</span> e = 
+  Expression.Lambda&lt;Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;&gt;(
+    Expression.Add(x, Expression.Constant(<span class="number">5</span>)),
+    x);</code></pre>
+<p>ここでは、
+どういうラムダ式を書くと、どういう式木が得られるのかを簡単に説明していきます。</p>
+<p>サンプルコード →</p>
+<p><a href="https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/TypesForTest.cs">TypesForTest.cs</a>
+、</p>
+<p><a href="https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/ExpressionTest.cs">ExpressionTest.cs</a>
+。</p>
+<h2 id="section-1"><a id="sec-generated-title-2"></a> <a id="constraints"></a>式木にできるラムダ式の条件</h2>
+<p>まず先に、式木を使う上での制約について。
+ラムダ式ならば何でも式木にできるというわけではありません。</p>
+<p>ラムダ式には、以下に例示するような2つの記法、
+1文だけのタイプとブロックを持つタイプがあります。</p>
+<pre><code class="language-csharp">Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; f = x =&gt; x + <span class="number">5</span></code></pre>
+<pre><code class="language-csharp">Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; f = x =&gt;
+  {
+    <span class="keyword">int</span> p = <span class="number">1</span>;
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; x; ++i)
+      p *= x;
+    <span class="keyword">return</span> p;
+  }</code></pre>
+<p>前者は、ただ1つだけの式からなっていて、  や return を省略できます。
+後者は、 ブロック内に複数の文を並べてかけます。</p>
+<p>このうち、<em>式木にできるのは前者（1文だけのラムダ式）だけです</em>。</p>
+<p>そうなると、結構強い制約がかかってきます。
+例えば、for, while, switch などの制御構文や、x = 0 といったような代入式は式木にできません。
+あと、インクリメント・デクリメントも、実質的には加減算＋代入なので、式木にできません。
+また、ラムダ式内でローカル変数を定義できません。</p>
+<p>一方、C# 3.0 で導入されたオブジェクト初期化子（object initializer）（参考：「<a href="/study/csharp/functional/sp3_lambda/#init">初期化子</a>」）を使えば、結構複雑な式も書けたりします。
+例えば以下のような感じ。</p>
+<pre><code class="language-csharp">Expression&lt;Func&lt;LineSegment&gt;&gt; e = () =&gt; 
+  <span class="keyword">new</span> LineSegment
+  {
+    Start = { X = <span class="number">0</span>, Y = <span class="number">0</span> },
+    End   = { X = <span class="number">1</span>, Y = <span class="number">1</span> },
+  };</code></pre>
+<h2 id="expression"><a id="sec-generated-title-3"></a> <a id="Expression"></a>Expression 型</h2>
+<p>前節の例でちょこっと出てきた Expression.Lambda や Expression.Add メソッドによって生成されるのは、
+LambdaExpression 型や BinaryExpression 型の変数になりますが、
+これらは全て、Expression 型の派生クラスになります。</p>
+<p>Expression 型の派生クラスは、直接 new することはできず、
+Expression 型の static メソッド（Lambda や Add）を使って生成します。</p>
+<p>Expression 型は NodeType というプロパティを持っていて、
+例えば、加算なら NodeType == ExpressionType.Add になります。</p>
+<p>生成用の static メソッド、
+具体的な型、
+NodeType がそれぞればらばらで、少し複雑なんですが、
+いくつか先に例を示します。</p>
+<table summary="Expression 型の例">
+	<caption>
+		Expression 型の例
+	</caption>
+	<tr>
+		<th>対応するコード</th>
+		<th>生成メソッド</th>
+		<th>NodeType</th>
+		<th>型</th>
+	</tr>
+	<tr>
+		<td><ul>
+<li></li>
+</ul></td>
+		<td><p>Add</p></td>
+		<td><p>Add</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>new</p></td>
+		<td><p>New</p></td>
+		<td><p>New</p></td>
+		<td><p>NewExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>() =&gt; 0</p></td>
+		<td><p>Lambda&lt;Func&lt;int&gt;&gt;</p></td>
+		<td><p>Lambda</p></td>
+		<td><p>LambdaExpression&lt;Func&lt;int&gt;&gt;</p></td>
+	</tr>
+</table>
+<p>実装上、ほとんどのものが、生成メソッドの名前と、NodeType 列挙子の名前はそろえてあるようです。
+（条件演算子とメンバーアクセスだけ例外。
+条件演算子は Expression.Condition で生成するけど、NodeType は Conditional。
+メンバーアクセスは Expression.MakeMemberAccess で生成するけど、NodeType は MemberAccess。）</p>
+<h2 id="section-2"><a id="sec-generated-title-4"></a> <a id="prepare"></a>下準備</h2>
+<p>百聞は一見にしかずということで、
+次節以降では、ラムダ式と式木の対応関係を実例を挙げて紹介していきます。
+それに先立って、いくつか補助関数や変数を用意しておきます。</p>
+<p>まず、Expression 型を作りやすくするために
+（型推論が働きやすくするために）、
+以下のような補助関数を用意します。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">partial</span> <span class="keyword">class</span> Make
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> Expression&lt;Func&lt;TR&gt;&gt; Expression&lt;TR&gt;(Expression&lt;Func&lt;TR&gt;&gt; e)
+    {
+        <span class="keyword">return</span> e;
+    }
+
+    <span class="keyword">public</span> <span class="keyword">static</span> Expression&lt;Func&lt;T1, TR&gt;&gt; Expression&lt;T1, TR&gt;(Expression&lt;Func&lt;T1, TR&gt;&gt; e)
+    {
+        <span class="keyword">return</span> e;
+    }
+
+    <span class="keyword">public</span> <span class="keyword">static</span> Expression&lt;Func&lt;T1, T2, TR&gt;&gt; Expression&lt;T1, T2, TR&gt;(Expression&lt;Func&lt;T1, T2, TR&gt;&gt; e)
+    {
+        <span class="keyword">return</span> e;
+    }
+
+    <span class="keyword">public</span> <span class="keyword">static</span> Expression&lt;Func&lt;T1, T2, T3, TR&gt;&gt; Expression&lt;T1, T2, T3, TR&gt;(Expression&lt;Func&lt;T1, T2, T3, TR&gt;&gt; e)
+    {
+        <span class="keyword">return</span> e;
+    }
+
+    <span class="keyword">public</span> <span class="keyword">static</span> Expression&lt;Func&lt;T1, T2, T3, T4, TR&gt;&gt; Expression&lt;T1, T2, T3, T4, TR&gt;(Expression&lt;Func&lt;T1, T2, T3, T4, TR&gt;&gt; e)
+    {
+        <span class="keyword">return</span> e;
+    }
+}</code></pre>
+<p>また、（簡易的にではありますが、）
+2つの式木が一致するかどうかを判定する関数を用意します。</p>
+<pre><code class="language-csharp"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 式木の構造が一致してれば、少なくとも ToString の結果は一致するので、</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> それで2つの式木の一致性を判定。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">static</span> <span class="keyword">void</span> SimpleCheck(Expression e1, Expression e2)
+{
+    <span class="keyword">if</span> (e1.ToString() != e2.ToString())
+    {
+        Console.Write(<span class="string">&quot;not match: {0}, {1}\n&quot;</span>, e1, e2);
+    }
+}</code></pre>
+<p>さらに、Expression.Parameter は頻繁に出てくるものなので、
+あらかじめ Parameter を作って変数に代入しておきます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> ParameterExpression intX = Expression.Parameter(<span class="keyword">typeof</span>(<span class="keyword">int</span>), <span class="string">&quot;x&quot;</span>);
+<span class="keyword">static</span> ParameterExpression intY = Expression.Parameter(<span class="keyword">typeof</span>(<span class="keyword">int</span>), <span class="string">&quot;y&quot;</span>);
+<span class="keyword">static</span> ParameterExpression boolX = Expression.Parameter(<span class="keyword">typeof</span>(<span class="keyword">bool</span>), <span class="string">&quot;x&quot;</span>);
+<span class="keyword">static</span> ParameterExpression boolY = Expression.Parameter(<span class="keyword">typeof</span>(<span class="keyword">bool</span>), <span class="string">&quot;y&quot;</span>);</code></pre>
+<p>それから、テスト用に、Point, LineSegment, Polyline などの型を定義します →</p>
+<p><a href="https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/TypesForTest.cs">TypesForTest.cs</a>
+。</p>
+<h2 id="section-3"><a id="sec-generated-title-5"></a> <a id="lambda"></a>ラムダ式</h2>
+<p>サンプル：
+<a href="https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/ExpressionTest.cs">ExpressionTest.cs</a>
+中の Lambda() メソッド。</p>
+<p>ラムダ式そのものは LambdaExpression 型か、
+Expression&lt;T&gt; ジェネリック型（LambdaExpression のサブクラス）になります。</p>
+<p>Lambda メソッドに、ラムダ式の本体（Body）とパラメータリスト（Paramters）を渡して生成します。
+ちなみに、パラメータと定数はそれぞれ、Parameter、Constant メソッドで生成します。</p>
+<p>（以後、サンプルコード中では、
+SimpleCheck メソッドの1つ目の引数と2つ目の引数が同じ式木になっています。）</p>
+<pre><code class="language-csharp">SimpleCheck(
+  Make.Expression((<span class="keyword">int</span> x) =&gt; <span class="number">0</span>),
+  Expression.Lambda&lt;Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;&gt;(
+    Expression.Constant(<span class="number">0</span>), <span class="comment">// Body</span>
+    intX) <span class="comment">// Paremters[0]</span>
+  );</code></pre>
+<p>ちなみに、ラムダ式中にさらに式木が含まれていた場合、
+その式木は Quote で囲まれます。</p>
+<pre><code class="language-csharp">SimpleCheck(
+  Make.Expression(() =&gt;
+    (Expression&lt;Func&lt;<span class="keyword">int</span>&gt;&gt;)(() =&gt; <span class="number">0</span>)
+  ).Body,
+  Expression.Convert(
+    Expression.Quote(
+      (Expression&lt;Func&lt;<span class="keyword">int</span>&gt;&gt;)(() =&gt; <span class="number">0</span>)),
+  <span class="keyword">typeof</span>(Expression&lt;Func&lt;<span class="keyword">int</span>&gt;&gt;))
+);</code></pre>
+<table summary="Lambda, Paramter, Constant, Quote">
+	<caption>
+		Lambda, Paramter, Constant, Quote
+	</caption>
+	<tr>
+		<th>対応するコード</th>
+		<th>生成メソッド</th>
+		<th>型</th>
+	</tr>
+	<tr>
+		<td><p>ラムダ式</p></td>
+		<td><p>Lambda</p></td>
+		<td><p>LambdaExpression（とその派生クラス）</p></td>
+	</tr>
+	<tr>
+		<td><p>定数</p></td>
+		<td><p>Constant</p></td>
+		<td><p>ConstantExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>パラメータ</p></td>
+		<td><p>Parameter</p></td>
+		<td><p>ParameterExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>式木</p></td>
+		<td><p>Quote</p></td>
+		<td><p>UnaryExpression</p></td>
+	</tr>
+</table>
+<h2 id="section-4"><a id="sec-generated-title-6"></a> <a id="arithmetic"></a>算術演算</h2>
+<p><code>+</code> や <code>-</code> などの C# 組込み演算子には、それぞれ対応する式木があります。</p>
+<h3 id="section-5"><a id="sec-generated-title-7"></a> <a id="unaryarithmetic"></a>単項演算</h3>
+<p>サンプル：
+<a href="https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/ExpressionTest.cs">ExpressionTest.cs</a>
+中の ArithmeticUnaryOperator() メソッド。</p>
+<p>算術演算には、オーバーフローのチェックを行うかどうかで2つのバージョンがあります。</p>
+<pre><code class="language-csharp">SimpleCheck(
+  Make.Expression((<span class="keyword">int</span> x) =&gt; -x).Body,
+  Expression.Negate(intX)
+);
+SimpleCheck(
+  Make.Expression((<span class="keyword">int</span> x) =&gt; <span class="keyword">checked</span>(-x)).Body,
+  Expression.NegateChecked(intX)
+);</code></pre>
+<p>int などに単項 + を適用すると、最適化されて + が消えてしまうので注意。
+ユーザ定義型の + の場合はちゃんと + が残ります。</p>
+<pre><code class="language-csharp"><span class="comment">// ↓これは最適化がかかって +x が x になる。</span>
+SimpleCheck(
+  Make.Expression((<span class="keyword">int</span> x) =&gt; +x).Body,
+  intX
+);
+SimpleCheck(
+  Make.Expression((CustomUnaryPlus x) =&gt; +x).Body,
+  Expression.UnaryPlus(Expression.Parameter(<span class="keyword">typeof</span>(CustomUnaryPlus), <span class="string">&quot;x&quot;</span>))
+);</code></pre>
+<table summary="単項算術演算">
+	<caption>
+		単項算術演算
+	</caption>
+	<tr>
+		<th>対応するコード</th>
+		<th>生成メソッド</th>
+		<th>型</th>
+	</tr>
+	<tr>
+		<td><p>単項 +</p></td>
+		<td><p>UnaryPlus</p></td>
+		<td><p>UnaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>単項 -</p></td>
+		<td><p>Negate</p></td>
+		<td><p>UnaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>checked(-x)</p></td>
+		<td><p>NegateChecked</p></td>
+		<td><p>UnaryExpression</p></td>
+	</tr>
+</table>
+<h3 id="section-6"><a id="sec-generated-title-8"></a> <a id="binaryarithmetic"></a>2項演算</h3>
+<p>サンプル：
+<a href="https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/ExpressionTest.cs">ExpressionTest.cs</a>
+中の ArithmeticBinaryOperator() メソッド。</p>
+<p>単項 - と同じく、+, -, * にはオーバーフローをチェックするかどうかで2バージョンあります。</p>
+<p>ちなみに、C# の言語仕様では、オーバーフローのチェックを行うのは整数に対してのみです。
+double などの浮動小数点数では、たとえ checked がついていても、オーバーフローのチェックは行われません。</p>
+<pre><code class="language-csharp"><span class="comment">// たとえ checked がついていても、</span>
+<span class="comment">// double 同士の演算はオーバーフローをチェックしない</span>
+SimpleCheck(
+  Make.Expression((<span class="keyword">double</span> x, <span class="keyword">double</span> y) =&gt; <span class="keyword">checked</span>(x + y)).Body,
+  Expression.Add(
+    Expression.Parameter(<span class="keyword">typeof</span>(<span class="keyword">double</span>), <span class="string">&quot;x&quot;</span>),
+    Expression.Parameter(<span class="keyword">typeof</span>(<span class="keyword">double</span>), <span class="string">&quot;y&quot;</span>))
+);</code></pre>
+<p>あと、C# には、べき乗算子はありませんが、
+式木にはべき乗を表す Power ノードがあります。
+（VB などではべき乗演算子があるため。）
+（ユーザ定義型で、べき乗の意味で ^ 演算子をオーバーロードしても、
+^ の式木への変換結果は ExclusiveOr になります。）</p>
+<table summary="2項算術演算（unchecked）">
+	<caption>
+		2項算術演算（unchecked）
+	</caption>
+	<tr>
+		<th>対応するコード</th>
+		<th>生成メソッド</th>
+		<th>型</th>
+	</tr>
+	<tr>
+		<td><p>加算 +</p></td>
+		<td><p>Add</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>減算 -</p></td>
+		<td><p>Subtract</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>乗算 *</p></td>
+		<td><p>Multiply</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>除算 /</p></td>
+		<td><p>Divide</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>剰余 %</p></td>
+		<td><p>Modulo</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>べき乗（C# には対応する演算子なし）</p></td>
+		<td><p>Power</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+</table>
+<table summary="2項算術演算（checked）">
+	<caption>
+		2項算術演算（checked）
+	</caption>
+	<tr>
+		<th>対応するコード</th>
+		<th>生成メソッド</th>
+		<th>型</th>
+	</tr>
+	<tr>
+		<td><p>checked(+)</p></td>
+		<td><p>AddChecked</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>checked(-)</p></td>
+		<td><p>SubtractChecked</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>checked(*)</p></td>
+		<td><p>MultiplyChecked</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+</table>
+<h2 id="section-7"><a id="sec-generated-title-9"></a> <a id="comparison"></a>比較演算</h2>
+<p>サンプル：
+<a href="https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/ExpressionTest.cs">ExpressionTest.cs</a>
+中の ComparisonOperator() メソッド。</p>
+<table summary="比較演算">
+	<caption>
+		比較演算
+	</caption>
+	<tr>
+		<th>対応するコード</th>
+		<th>生成メソッド</th>
+		<th>型</th>
+	</tr>
+	<tr>
+		<td><p>==</p></td>
+		<td><p>Equal</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>!=</p></td>
+		<td><p>NotEqual</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>&lt;</p></td>
+		<td><p>LessThan</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>&lt;=</p></td>
+		<td><p>LessThanOrEqual</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>&gt;</p></td>
+		<td><p>GreaterThan</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>&gt;=</p></td>
+		<td><p>GreaterThanOrEqual</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+</table>
+<h2 id="section-8"><a id="sec-generated-title-10"></a> <a id="logical"></a>論理演算</h2>
+<p>サンプル：
+<a href="https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/ExpressionTest.cs">ExpressionTest.cs</a>
+中の LogicalOperator() メソッド。</p>
+<p>通常の &amp;, |, ^ がそれぞれ And, Or, ExclusiveOr で、
+「<a href="/study/csharp/start/st_operator/#shortcircuit">短絡評価</a>」版 &amp;&amp;, || がそれぞれ AndAlso, OrElse です。</p>
+<p>bool に対する論理否定 ! と、整数型に対するビット反転 ^ はいずれも Not になります。</p>
+<table summary="">
+	<caption>
+		
+	</caption>
+	<tr>
+		<th>対応するコード</th>
+		<th>生成メソッド</th>
+		<th>型</th>
+	</tr>
+	<tr>
+		<td><p>論理積 &amp;</p></td>
+		<td><p>And</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>論理和 |</p></td>
+		<td><p>Or</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>排他的論理和 ^</p></td>
+		<td><p>ExclusiveOr</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>論理否定 !・ビット反転 ^</p></td>
+		<td><p>Not</p></td>
+		<td><p>UnaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>短絡評価 And &amp;&amp;</p></td>
+		<td><p>AndAlso</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>短絡評価 Or ||</p></td>
+		<td><p>OrElse</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+</table>
+<h2 id="section-9"><a id="sec-generated-title-11"></a> <a id="misc"></a>その他の2項・3項演算</h2>
+<p>サンプル：
+<a href="https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/ExpressionTest.cs">ExpressionTest.cs</a>
+中の OtherOperator() メソッド。</p>
+<p>ヌル結合演算子 a ?? b は、a != null ? a : b には展開されるわけではなく、
+ちゃんと Coalesce という式木ノードがあります。</p>
+<p>大半の演算子は 生成メソッド名と NodeType の名前が一致するのに、
+条件演算子は微妙に違うので注意。</p>
+<table summary="その他の2項・3項演算">
+	<caption>
+		その他の2項・3項演算
+	</caption>
+	<tr>
+		<th>対応するコード</th>
+		<th>生成メソッド</th>
+		<th>NodeType</th>
+		<th>型</th>
+	</tr>
+	<tr>
+		<td><p>左シフト &lt;&lt;</p></td>
+		<td><p>LeftShift</p></td>
+		<td><p>LeftShift</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>右シフト &gt;&gt;</p></td>
+		<td><p>RightShift</p></td>
+		<td><p>RightShift</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>ヌル結合演算 ??</p></td>
+		<td><p>Coalesce</p></td>
+		<td><p>Coalesce</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>条件演算子 ? :</p></td>
+		<td><p>Condition</p></td>
+		<td><p>Conditional</p></td>
+		<td><p>ConditionalExpression</p></td>
+	</tr>
+</table>
+<h2 id="section-10"><a id="sec-generated-title-12"></a> <a id="type"></a>型変換・判定</h2>
+<p>サンプル：
+<a href="https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/ExpressionTest.cs">ExpressionTest.cs</a>
+中の () メソッド。</p>
+<p>int から short にキャストする際などには、オーバーフローが発生する可能性があるので、
+キャストには算術演算と同様に checked 版と unchecked 版があります。
+（as 演算子はそういう挙動はしないので、checked 版なし。）</p>
+<table summary="型変換・判定">
+	<caption>
+		型変換・判定
+	</caption>
+	<tr>
+		<th>対応するコード</th>
+		<th>生成メソッド</th>
+		<th>型</th>
+	</tr>
+	<tr>
+		<td><p>as</p></td>
+		<td><p>TypeAs</p></td>
+		<td><p>UnaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>is</p></td>
+		<td><p>TypeIs</p></td>
+		<td><p>TypeBinaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>キャスト</p></td>
+		<td><p>Convert</p></td>
+		<td><p>UnaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>checked キャスト</p></td>
+		<td><p>ConvertChecked</p></td>
+		<td><p>UnaryExpression</p></td>
+	</tr>
+</table>
+<h2 id="section-11"><a id="sec-generated-title-13"></a> <a id="memberaccess"></a>メンバー参照</h2>
+<p>サンプル：
+<a href="https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/ExpressionTest.cs">ExpressionTest.cs</a>
+中の MemberAccess() メソッド。</p>
+<p>フィールド（メンバー変数）・プロパティの参照が MemberAcess、
+配列の長さの参照が ArrayLength、
+配列の要素参照が ArrayIndex です。</p>
+<p>配列の長さ参照は、C# では Length プロパティの参照で表しますが、
+言語によっては配列長参照演算子があるからか、ArrayLength というノードタイプが用意されています。
+（配列の Length プロパティの参照は、MemberAccess ではなく ArrayLength になります。）</p>
+<table summary="">
+	<caption>
+		
+	</caption>
+	<tr>
+		<th>対応するコード</th>
+		<th>生成メソッド</th>
+		<th>NodeType</th>
+		<th>型</th>
+	</tr>
+	<tr>
+		<td><p>フィールド・プロパティ参照</p></td>
+		<td><p>MakeMemberAccess</p></td>
+		<td><p>MemberAccess</p></td>
+		<td><p>MemberExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>配列長参照</p></td>
+		<td><p>ArrayLength</p></td>
+		<td><p>ArrayLength</p></td>
+		<td><p>UnaryExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>配列要素参照</p></td>
+		<td><p>ArrayIndex</p></td>
+		<td><p>ArrayIndex</p></td>
+		<td><p>BinaryExpression</p></td>
+	</tr>
+</table>
+<h2 id="section-12"><a id="sec-generated-title-14"></a> <a id="new"></a>インスタンス生成</h2>
+<p>サンプル：
+<a href="https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/ExpressionTest.cs">ExpressionTest.cs</a>
+中の New() メソッド。</p>
+<p>new Point(1, 2) みたいな普通のコンストラクタ呼び出しは New になります。</p>
+<p>new int[] { 1, 2 } のような形式の配列生成は ArrayNewInit、
+new int[2] のような形式のものは ArrayBounds です。</p>
+<p X="1," Y="2">new Point  のような、初期化子を使った初期化は MemberInit になります。
+MemberInit ノードは New プロパティと Bindings プロパティを持っていて、
+New がコンストラクタ呼び出し、Bindings が初期化子ーによるメンバー初期化を表します。</p>
+<table summary="インスタンス生成">
+	<caption>
+		インスタンス生成
+	</caption>
+	<tr>
+		<th>対応するコード</th>
+		<th>生成メソッド</th>
+		<th>型</th>
+	</tr>
+	<tr>
+		<td><p>コンストラクタ呼び出し</p></td>
+		<td><p>New</p></td>
+		<td><p>NewExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>配列（要素指定）</p></td>
+		<td><p>NewArrayInit</p></td>
+		<td><p>NewArrayExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>配列（配列長指定）</p></td>
+		<td><p>NewArrayBounds</p></td>
+		<td><p>NewArrayInit</p></td>
+	</tr>
+	<tr>
+		<td><p>初期化子による初期化</p></td>
+		<td><p>MemberInit</p></td>
+		<td><p>MemberInitExpression</p></td>
+	</tr>
+</table>
+<p>MemberInit の Bindings は、
+以下のような単純なものは MemberAssingment（Expressin.Bind メソッドで生成）、</p>
+<pre><code class="language-csharp"><span class="keyword">new</span> Point { X = <span class="number">1</span>, Y = <span class="number">2</span> }</code></pre>
+<p>以下のような、再帰構造を持つものは MemberMemberBinding（Expression.MemberBind で生成）、</p>
+<pre><code class="language-csharp"><span class="keyword">new</span> LineSegment
+{
+  Start = { X = <span class="number">1</span>, Y = <span class="number">1</span> },
+  End = { X = <span class="number">2</span>, Y = <span class="number">2</span> }
+}</code></pre>
+<p>以下のようなリスト形式のものは ListBinding（Expression.ListBind で生成）</p>
+<pre><code class="language-csharp"><span class="keyword">new</span> Polyline
+{
+  Vertices = {
+    <span class="keyword">new</span> Point{ X = <span class="number">1</span>, Y = <span class="number">1</span> },
+    <span class="keyword">new</span> Point{ X = <span class="number">2</span>, Y = <span class="number">2</span> },
+  }
+}</code></pre>
+<p>になります。</p>
+<h2 id="section-13"><a id="sec-generated-title-15"></a> <a id="call"></a>メソッド・デリゲート呼び出し</h2>
+<p>サンプル：
+<a href="https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/ExpressionTest.cs">ExpressionTest.cs</a>
+中の Call() メソッド。</p>
+<p>メソッドの呼び出しは Call、デリゲート・ラムダ式の呼び出しは Invoke になります。</p>
+<table summary="">
+	<caption>
+		
+	</caption>
+	<tr>
+		<th>対応するコード</th>
+		<th>生成メソッド</th>
+		<th>型</th>
+	</tr>
+	<tr>
+		<td><p>メソッド呼び出し</p></td>
+		<td><p>Call</p></td>
+		<td><p>MethodCallExpression</p></td>
+	</tr>
+	<tr>
+		<td><p>デリゲート呼び出し</p></td>
+		<td><p>Invoke</p></td>
+		<td><p>InvocationExpression</p></td>
+	</tr>
+</table>
+<h2 id="section-14"><a id="sec-generated-title-16"></a> <a id="ast"></a>式木 4.0（構文木）</h2>
+<h5 class="version version4">Ver. 4.0</h5>
+<p>.NET Framework 4 で、式木が大幅にバージョンアップしました。
+式木と言いつつ（Expression クラスではあるものの）、実際には、
+複文、条件分岐、ループなども使えるようになっています。</p>
+<p>要するに、構文木（syntax tree）相当の機能は揃っています。
+これまでとの互換性から式木（expression tree）を名乗っているだけで、
+実際には DLR で使っている構文木の全機能を備えています。</p>
+<p>以下に、.NET 4 の式木の例を示します。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Linq.Expressions;
+
+<span class="keyword">public</span> <span class="keyword">class</span> Program
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> x = Expression.Parameter(<span class="keyword">typeof</span>(<span class="keyword">int</span>), <span class="string">&quot;x&quot;</span>);
+        <span class="keyword">var</span> i = Expression.Parameter(<span class="keyword">typeof</span>(<span class="keyword">int</span>), <span class="string">&quot;i&quot;</span>);
+        <span class="keyword">var</span> endLoop = Expression.Label(<span class="string">&quot;EndLoop&quot;</span>);
+
+        <span class="keyword">var</span> body = Expression.Block(
+            <span class="keyword">typeof</span>(<span class="keyword">int</span>),
+            <span class="keyword">new</span>[] { x },
+            Expression.Assign(x, Expression.Constant(<span class="number">0</span>)),
+            Expression.Loop(
+                Expression.Block(
+                    Expression.AddAssign(x, i),
+                    Expression.SubtractAssign(i, Expression.Constant(<span class="number">1</span>)),
+                    Expression.IfThen(
+                        Expression.LessThan(i, Expression.Constant(<span class="number">0</span>)),
+                        Expression.Break(endLoop))),
+                endLoop),
+            x);
+
+        <span class="keyword">var</span> e = Expression.Lambda&lt;Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;&gt;(body, i);
+
+        <span class="keyword">var</span> f = e.Compile();
+
+        Console.WriteLine(f(<span class="number">2</span>));
+        Console.WriteLine(f(<span class="number">4</span>));
+        Console.WriteLine(f(<span class="number">6</span>));
+    }
+}</code></pre>
+<p>これで、以下のコードに相当する式木が作れます。</p>
+<pre><code class="language-csharp">Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; f = i =&gt;
+    {
+        <span class="keyword">int</span> x = <span class="number">0</span>;
+        <span class="keyword">for</span> (; ;)
+        {
+            x += i;
+            i -= <span class="number">1</span>;
+            <span class="keyword">if</span> (i &lt;= <span class="number">0</span>) <span class="keyword">break</span>;
+        }
+        <span class="keyword">return</span> x;
+    };</code></pre>
+<p>（ループは永久ループに相当する LoopExpression しかなくて、for や while 相当のコードを書くには、上記のように if と break を使います。）</p>
+<p>ただし、このラムダ式を <code>Expression&lt;Func&lt;int, int&gt;&gt;</code> に代入することはできません。
+C# の仕様自体は C# 3.0 の時から変わっていなくて、
+単文のラムダ式しか式木にできません。</p>
+<h2 id="section-15"><a id="sec-generated-title-17"></a> <a id="link"></a>式木の利用例（リンク）</h2>
+<p>このサイト内にある式木関連のサンプルにリンク：</p>
+<ul>
+<li><p>「<a href="/study/csharp/sample/sp3_expressionsample/">[サンプル] 式木の利用例</a>」</p>
+</li>
+<li><p>「<a href="/study/csharp/sample/sm_treeview/">[サンプル] 式木を WPF で GUI 表示</a>」</p>
+</li>
+<li><p>「<a href="/study/csharp/sample/sp3_linqreconstruct/">[サンプル] 式木からクエリ式の再構築</a>」</p>
+</li>
+<li><p>「<a href="/study/csharp/sample/sp3_comprehensions/">[サンプル] クエリ式とリスト内包</a>」</p>
+</li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/dynamic/">&#x52D5;&#x7684;&#x306A;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/dynamic/sp_reflection/">&#x5B9F;&#x884C;&#x6642;&#x578B;&#x60C5;&#x5831;</a></li><li><a href="/study/csharp/dynamic/sp_attribute/">&#x5C5E;&#x6027;</a></li><li><a href="/study/csharp/dynamic/sp4_dynamic/">dynamic</a></li><li><a href="/study/csharp/dynamic/sp4_callsite/">dynamic &#x306E;&#x5185;&#x90E8;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/dynamic/misc_dynamic/">[&#x96D1;&#x8A18;] &#x52D5;&#x7684;&#x30B3;&#x30FC;&#x30C9;&#x751F;&#x6210;&#x306E;&#x30D1;&#x30D5;&#x30A9;&#x30FC;&#x30DE;&#x30F3;&#x30B9;</a></li><li><a href="/study/csharp/dynamic/dyn_usage/">[&#x96D1;&#x8A18;]&#x52D5;&#x7684;&#x306A;&#x51E6;&#x7406;&#x306E;&#x4F7F;&#x3044;&#x65B9;</a></li><li><a href="/study/csharp/dynamic/sp4_multipledispatch/">[&#x96D1;&#x8A18;] &#x591A;&#x91CD;&#x30C7;&#x30A3;&#x30B9;&#x30D1;&#x30C3;&#x30C1;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

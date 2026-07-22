@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D5;&#x30A1;&#x30A4;&#x30CA;&#x30E9;&#x30A4;&#x30B6;&#x30FC; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2025/5/%E3%83%95%E3%82%A1%E3%82%A4%E3%83%8A%E3%83%A9%E3%82%A4%E3%82%B6%E3%83%BC/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2025-05-17T17:19:14">2025-05-17</time></span><span>更新: <time datetime="2025-05-17T17:30:04">2025-05-17</time></span></div><h1 id="section">ファイナライザー</h1>
+<p>以下の <code>~Class1</code> のこと、（C# の言語機能名として)なんと呼びますか？</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Class1
+{
+    <span class="keyword">public</span> Class1() { }
+    ~Class1() { }
+}</code></pre>
+<p>すごく今更ながら、8年くらい前からこれの呼び名が変わってたらしいというのを最近気づいたという話になります。</p>
+<p>ちなみに結果だけ言うと、旧称がデストラクター(destructor)、今はファイナライザー(finalizer)です。</p>
+<h2 id="section-1">他の言語とかの話</h2>
+<p>C# がかつてこいつのことをデストラクターと読んでいたのは C++ 由来です。
+ただ…</p>
+<ul>
+<li>文法は確かに同じで、C++ も <code>~Class1</code> な文法がある
+<ul>
+<li>これのことをデストラクターと呼ぶ</li>
+<li>ただし、挙動は C# のものと違っていて、呼ばれるタイミングは「変数のスコープを抜けるとき」</li>
+</ul>
+</li>
+<li>C# は文法こそ同じなものの、実際にはそれはファイナライザーだった
+<ul>
+<li>Java の <code>finalize</code> メソッド(ファイナライザーって呼ばれてる)と同じ挙動
+<ul>
+<li>GC 回収されるタイミングで呼ばれる</li>
+</ul>
+</li>
+<li>C# もコンパイル結果的には <code>object.Finalize</code> メソッドのオーバーロードとして実装
+<ul>
+<li><code>GC.SuppressFinalize</code> って名前のメソッドもある</li>
+</ul>
+</li>
+<li>.NET の仕様書上も呼び名はファイナライザー</li>
+</ul>
+</li>
+</ul>
+<p>文法だけ同じな C++ 由来の名前(デストラクター)で、意味合いとしては違うもの(ファイナライザー)という地雷。</p>
+<p>しかも、「.NET の仕様書はファイナライザーと呼んでいるものを、C# のレベルではデストラクターと呼んでいた」という2個目の地雷。</p>
+<h2 id="deconstruct">Deconstruct との兼ね合い</h2>
+<p>さかのぼること2016年末、うちのブログでも書いてましたね、これの話。</p>
+<ul>
+<li><a href="/blog/2016/12/tipsdeconstruct/">小ネタ 「deconstruct」という単語</a></li>
+</ul>
+<p>ここにある通り、発端は C# 7 の頃(20217年3月頃正式リリース)に導入した<a href="/study/csharp/cheatsheet/ap_ver7/#deconstruction">分解</a>構文でして。
+「Deconstruct って英単語は微妙じゃない？」という話から派生して、
+「誰だよ、<code>~Class1</code> のことをデストラクターって言ったの」という話題にまで及びまして。</p>
+<p>このブログの最後で「デストラクターって呼び名は微妙なので変えることも視野に入ってるみたい」と書いていますが、
+実際、その後変更されたみたいですね。
+Microsoft Learn (前記のブログの時代は MSDN だったもの)の文章の大元になってる <a href="https://github.com/dotnet/docs/tree/main/docs">dotnet/docs</a> リポジトリを見てみた感じ、
+割と早い段階から finalizer に置き換わっていました。</p>
+<h2 id="section-2">ということで直します</h2>
+<p>前述のブログの話があったので長いこと自分も口頭ではファイナライザーって呼んでたりはしたんですが。
+Learn が案外ちゃんとドキュメントの修正を早期に入れていたことには気づいておらず。
+気が付いたら8年くらい放置してましたね…</p>
+<p>うちのサイトも長らく放置で各所にデストラクターと書いたままなんで、直します…
+(すぐにやるとは言っていない。)</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2025/5/">5&#x6708;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

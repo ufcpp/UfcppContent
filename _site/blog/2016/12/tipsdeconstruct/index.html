@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5C0F;&#x30CD;&#x30BF; &#x300C;deconstruct&#x300D;&#x3068;&#x3044;&#x3046;&#x5358;&#x8A9E; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2016/12/tipsdeconstruct/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2016-12-17T02:30:36">2016-12-17</time></span><span>更新: <time datetime="2016-12-17T02:35:40">2016-12-17</time></span></div><h1 id="deconstruct">小ネタ 「deconstruct」という単語</h1>
+<p>今日も、小ネタなような、C#7思い出話なような。</p>
+<p>C# 7で、<a href="/study/csharp/datatype/deconstruction/">分解</a>という機能が入ったわけですが、英語だと deconstruction という単語になります。</p>
+<p>分解という機能のおさらいですが、以下のような書き方でタプルなどの型のメンバーを抽出できる機能です。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> (x, y) = tuple;</code></pre>
+<p>これ、他のプログラミング言語だと、destructuring とか呼ばれたりしています。
+といっても、文法上正式に destructuring と呼ばれているわけではないんですが(大体の言語は文法上は単に「pattern」とか呼ばれる機能)…
+まあ、解説ページなんかでは destructuring と呼ばれます。</p>
+<p>で、今日、何が言いたいかというと、</p>
+<ul>
+<li>deconstruct  : デコンストラクト</li>
+<li>destructuring: デストラクト</li>
+</ul>
+<p>並べるとわかりますかね。
+「con」の有無。
+<span style="color:#a00000">de</span><span style="color:#00a000">con</span><span style="color:#0000a0">struct </span>
+と
+<span style="color:#a00000">de</span><span style="color:#0000a0">struct</span>uring。</p>
+<p>用語として多少もめてたりするみたいです。</p>
+<ul>
+<li>他の言語に合わせてdestucturingであるべきじゃないか。</li>
+<li>construct (con(共) + struct(築))の逆はdestruct (de(脱) + struct(築))じゃないのか</li>
+<li>でも、destuctureだと<a href="/study/csharp/oop/oo_construct/#dtor">デストラクター</a>と紛らわしくないか。</li>
+<li>C#のデストラクターって、あれ、実際にはfinalizerだし。誰だよ、destructorって名前にしたやつ</li>
+</ul>
+<p>みたいな雰囲気。</p>
+<p>日本語だとたぶん、僕みたいに「分解」とかに訳しちゃうんでそんなに変でもないんですが、
+英語だとdestructorとdeconstructionが並ぶことになるんで気持ち悪いみたいですね。</p>
+<p>まあ、デストラクターも分解も、どちらもコンストラクターの逆ではあります。</p>
+<p><img src="/assets/media/1109/construction.png" alt="コンストラクターの仕事" /></p>
+<p>ちなみに、コンストラクター、初期化子、デストラクター、分解の例をまとめて挙げると以下のような感じ。</p>
+<p><img src="/assets/media/1110/example.png" alt="constructor, initialiser, destructor, deconstructionの例" /></p>
+<p>そもそも英語でdestroyの名詞形がdestructionなのが良くないかも。
+「destruct」で切った場合、それはdestroy(破壊)のことなのかdestructure(脱構造化)のことなのかそもそもわからず。</p>
+<p>それに、C#で破棄用の構文をデストラクターと呼ぶのはC++から持ってきた言葉なわけですけど、
+これ、やっぱりJavaみたいにfinalizerって呼んでおくべきだったのかも。
+デストラクターに関しては、分解が絡まなくても元々名前には悩んでいるみたいです。</p>
+<ul>
+<li>.NET的には finalizer って呼び名になってる。destructor って呼び名はC#だけ</li>
+<li>ECMAに出しているC#仕様書上は finalizer って呼び名になっているらしい</li>
+<li>MSDN上に出してるC#仕様書は destructor になってる
+<ul>
+<li>今、ECMA版とMSDN版の統合を考えてるんで、なおのこと問題に</li>
+</ul>
+</li>
+<li><a href="https://github.com/dotnet/roslyn">Roslyn</a> の API 中でも destructor という単語を使ってる
+<ul>
+<li>これがあるんで、単純に文章上だけの変更ってわけではなくて、ソースコードにも影響あり</li>
+</ul>
+</li>
+</ul>
+<p>とりあえず、現状のC#チームの希望的には以下のような雰囲気です。</p>
+<ul>
+<li>分解は deconstruction のまま(de + con 付き)</li>
+<li>デストラクターって呼び名は微妙なので変えることも視野に入ってるみたい</li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2016/12/">2016/12</a></li><li><a href="/blog/2016/12/tipstryroslyn/">C#&#x5C0F;&#x30CD;&#x30BF;&#x96C6;: C#&#x3092;Web&#x4E0A;&#x3067;&#x8A66;&#x3059;</a></li><li><a href="/blog/2016/12/tipsildasm/">&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x3092;&#x8997;&#x3044;&#x3066;&#x307F;&#x3088;&#x3046;</a></li><li><a href="/blog/2016/12/tipscorefxlab/">&#x5C0F;&#x30CD;&#x30BF; corefxlab&#x3068;System.Memory</a></li><li><a href="/blog/2016/12/tipsevalorder/">&#x5C0F;&#x30CD;&#x30BF; &#x5F0F;&#x306E;&#x8A55;&#x4FA1;&#x9806;&#x5E8F;</a></li><li><a href="/blog/2016/12/tipsobjectinitializer/">&#x5C0F;&#x30CD;&#x30BF; &#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2016/12/tipscollectioninitializer/">&#x5C0F;&#x30CD;&#x30BF; &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/blog/2016/12/tipsindexedforeach/">&#x5C0F;&#x30CD;&#x30BF; &#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;&#x4ED8;&#x304D; foreach</a></li><li><a href="/blog/2016/12/tipsuniontypes/">&#x5C0F;&#x30CD;&#x30BF; &#x30C1;&#x30A7;&#x30C3;&#x30AF;&#x4F8B;&#x5916;&#x3068;Union&#x578B;</a></li><li><a href="/blog/2016/12/tipscontextfreetask/">&#x5C0F;&#x30CD;&#x30BF; &#x540C;&#x671F;&#x30B3;&#x30F3;&#x30C6;&#x30AD;&#x30B9;&#x30C8;&#x3092;&#x62FE;&#x308F;&#x306A;&#x3044;Task&#x578B;</a></li><li><a href="/blog/2016/12/tipsformattingcharacter/">&#x5C0F;&#x30CD;&#x30BF; &#x30D5;&#x30A9;&#x30FC;&#x30DE;&#x30C3;&#x30C8;&#x6587;&#x5B57;&#x8B58;&#x5225;&#x5B50;</a></li><li><a href="/blog/2016/12/tipsimplicitmembers/">&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/blog/2016/12/tipstadpoleoperator/">&#x5C0F;&#x30CD;&#x30BF; &#x96A0;&#x3057;&#x6F14;&#x7B97;&#x5B50;(&#xFF1F;)</a></li><li><a href="/blog/2016/12/tipsnulloperation/">&#x5C0F;&#x30CD;&#x30BF; null&#x95A2;&#x4FC2;&#x306E;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/blog/2016/12/vs2017rc2/">Updating Visual Studio 2017 Release Candidate</a></li><li><a href="/blog/2016/12/patternmatching/">&#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30DE;&#x30C3;&#x30C1;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/pickuproslyn1214/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/14</a></li><li><a href="/blog/2016/12/tipsgeneratedil/">&#x5C0F;&#x30CD;&#x30BF; &#x69CB;&#x6587;&#x7CD6;&#x8863;&#x3068;&#x3001;&#x305D;&#x3046;&#x3067;&#x306F;&#x306A;&#x3044;&#x69CB;&#x6587;&#x3068;</a></li><li><a href="/blog/2016/12/tipsprimitives/">&#x5C0F;&#x30CD;&#x30BF; &#x30D7;&#x30EA;&#x30DF;&#x30C6;&#x30A3;&#x30D6;&#x578B;</a></li><li><a href="/blog/2016/12/tipsapisurface/">&#x5C0F;&#x30CD;&#x30BF; private&#x30E1;&#x30F3;&#x30D0;&#x30FC;&#x306F;API&#x306E;&#x4E00;&#x90E8;&#x304B;</a></li><li><a href="/blog/2016/12/tipsstringmarshal/">&#x5C0F;&#x30CD;&#x30BF; string&#x578B;&#x306E;&#x30DE;&#x30FC;&#x30B7;&#x30E3;&#x30EA;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2016/12/tipsnumargs/">&#x5C0F;&#x30CD;&#x30BF; &#x5F15;&#x6570;&#x306E;&#x500B;&#x6570;&#x306E;&#x4E0A;&#x9650;</a></li><li><a href="/blog/2016/12/tipsotherlangs/">&#x5C0F;&#x30CD;&#x30BF; C# &#x3068;&#x4ED6;&#x306E;&#x8A00;&#x8A9E;&#x3068;&#x306E;&#x5DEE;&#x3068;&#x3044;&#x3046;&#x3068;</a></li><li><a href="/blog/2016/12/tipsconcurrentcollections/">&#x5C0F;&#x30CD;&#x30BF; Concurrent &#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/blog/2016/12/discards/">discards</a></li><li><a href="/blog/2016/12/tipssmallheapallocation/">&#x5C0F;&#x30CD;&#x30BF; &#x5C0F;&#x3055;&#x306A;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x30B9;&#x30BF;&#x30C3;&#x30AF;&#x5272;&#x308A;&#x5F53;&#x3066;</a></li><li><a href="/blog/2016/12/tipsparallelism/">&#x5C0F;&#x30CD;&#x30BF; &#x4E26;&#x5217;&#x5316;</a></li><li><a href="/blog/2016/12/tipsdowhile/">&#x5C0F;&#x30CD;&#x30BF; do-while</a></li><li><a href="/blog/2016/12/tipsatan2/">&#x5C0F;&#x30CD;&#x30BF; atan2</a></li><li><a href="/blog/2016/12/tipsnormaldistribution/">&#x5C0F;&#x30CD;&#x30BF; &#x6B63;&#x898F;&#x5206;&#x5E03;&#x306E;&#x4E38;&#x307F;</a></li><li><a href="/blog/2016/12/lookbackattheyear/">&#x4ECA;&#x5E74;&#x306E;&#x632F;&#x308A;&#x8FD4;&#x308A;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Windows 10 Mobile&#x4EBA;&#x67F1;&#x4E2D; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2015/12/continuum/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2015-12-22T12:38:09">2015-12-22</time></span><span>更新: <time datetime="2015-12-22T12:38:09">2015-12-22</time></span></div><h1 id="windows-10-mobile">Windows 10 Mobile人柱中</h1>
+<p>最近、「<a href="http://togetter.com/li/895212">Surface Book買わない人</a>」として有名なわけですが。だって、ノートPCとか重たくて持てない。スマホでいいよ、スマホで。</p>
+<p>ということで、今週中、「リビングで<a href="http://www.itmedia.co.jp/pcuser/articles/1510/04/news014.html">Windows 10 Mobile</a>を使って作業しよう強化週間を実施しております。</p>
+<h2 id="continuum">Continuum</h2>
+<p>最大の動機は、手元に<a href="http://gigazine.net/news/20151007-windows-10-continuum/">Continuum</a>対応端末があることです。
+要するに、<a href="https://www.microsoft.com/en-us/mobile/phone/lumia950-xl-dual-sim/">Lumia 950 XL</a>を買ったから。</p>
+<p>Continuumは、Windows 10 Mobile最大の売りになるかもしれない機能で、スマホとPCで同じアプリを同じように使える機能。普段スマホ上ではスマホ サイズに起動しますが、ディスプレイにつなぐとPCサイズなアプリとしてちゃんと起動するというもの。</p>
+<p>Continuum対応のWindows 10 Mobile機をディスプレイにつなぐと、ディスプレイには見慣れたWindows 10 PCのような画面が現れます。スマホ側はタッチパッドみたいな状態になって、ディスプレイ側に出ているアプリを操作(モード切り替えできて、スマホ側は別のアプリを起動して使うことも可能)。キーボードやマウス(Bluetoothや、USBハブ越しに接続可能)もつないで、かなりPCに近い操作ができます。</p>
+<p><img src="/assets/media/1046/dsc_0490.jpg" alt="Lumia 950 XLをディスプレイにつないで見たところ" />
+↑Lumia 950 XLをディスプレイにつないで見たところ。画面に出ているPowerPointはLumia上で動いているもの。</p>
+<p><img src="/assets/media/1047/dsc_0492.jpg" alt="Lumia 950 XLにBluetoothキーボードを接続" />
+↑Lumia 950 XLにBluetoothキーボードを接続。マウスも行けます。これで、かなりPC的に操作可能。</p>
+<p>Continuum (連続体)という名前通り、スマホ、タブレットとPCを連続的につなぐものです。</p>
+<h3 id="uwp-office">ただしUWPに限る - とりあえずOfficeは対応済み</h3>
+<p>ただし、Continuumで使えるアプリには制限があって、今のところ<a href="http://www.itmedia.co.jp/pcuser/articles/1506/24/news051_2.html">UWPアプリのみ対応</a>。
+さんざん言われているように、「Windows Phoneはアプリが少ないから困る」問題があるわけです。</p>
+<p>まあ、とりあえず、OfficeはUWP化されました。これが結構大きくて、原稿書きや表計算であれば結構使える状態です。まあ、まだまだ「時々フリーズ」みたいな不具合は出ますが、機能的には「人柱はできるレベル」になったかなぁと個人的に感じています。ちなみに、書いてるドキュメントの自動保存とかはずいぶん発達していて、「フリーズして作業紛失」みたいなので困ったことは、最近ではめっきりなくなっています。</p>
+<h3 id="section">連続的につなぐもの</h3>
+<p>「スマホでいいよ、スマホで」って、割かし今の日本を指す的確な言葉だと思うんですよね。ちょっと前に、「<a href="http://www.j-cast.com/2015/09/17245160.html">日本の若年層、PC普及率が先進国で最低レベル</a>」とかいう話題も出たわけですが。これ見てみんな思ったであろうことは「だってスマホで十分だから」でしょう。</p>
+<p>これに関して個人的な意見としては、「日本はおかしい」とか「日本は遅れてる」じゃなくて、むしろ「日本は先を行ってる」だと思うんですよね。理由は以下の2点。</p>
+<ul>
+<li>高機能携帯端末はいずれ他の国でも普及率上がる</li>
+<li>携帯型が好まれる背景には家の狭さがあるものの、都市部集中傾向も世界中で見られる
+<ul>
+<li>車社会のアメリカですら。参考: 「<a href="http://newclassic.jp/4976">「くたばれ、Google」、その意味とは？</a>」、「<a href="http://www.sbbit.jp/article/cont1/30284">クールなスタートアップは今、シリコンバレーを目指さない </a>]</li>
+</ul>
+</li>
+</ul>
+<p>そこで問題になるのが、<a href="http://www.excite.co.jp/News/society_g/20141108/Taishu_12091.html">スマホ ネイティブだからPC使えない問題</a>。
+スマホではコンテンツ消費はできるけど、コンテンツ生産は難しい。生産者が育たないってやつ。
+割かしわかりやすいデジタル デバイドの1つです(もう今、スマホはまず必需品なので持ってるとして、スマホ + PCとか買える家庭だけが有利)。</p>
+<p>「Continuumがつなぐのはこの溝ではないか」というのが、自分がContinuumに一番期待しているところです。
+「スマホだとコンテンツ生産者が育たないからPCを買いなさい」なんてのは<a href="http://www.huffingtonpost.jp/2015/12/14/japan-health-marie_n_8802310.html">マリー アントワネット的発想の一種</a>。
+そうじゃなくて、もう、スマホ側伸ばす方が現実的な段階に来たのかなと思います。</p>
+<h3 id="book">まあ、Bookも買えばいいじゃない</h3>
+<p>さて、まあ、別に「マリー アントワネット側」な発想してもいいんですけど。買いたいだって？買えばいいじゃない。</p>
+<p>特に買いたいと思わない真の理由は、自分がひきこもりだからなわけですが。つまるところ、PCの前にしかいない。外出と書いて「トイレ行き」を指す。まれに遠出(※家の外に出ること)する時くらいはスマホで十分なわけです。一刻も早くおうちに帰りたい。</p>
+<p>実際、自分が家・職場の外にいる時間のうち、多少なりともノートPCがほしいなと思うような場面は勉強会くらいなわけです。
+普段、例えば、電車の中で文章打ちみたいなことも結構しますが、その用途ももう長らくスマホでやっています(というか、15年以上、ガラケー時代からケータイで文章打ってたり)。
+勉強会も、視聴者側参加の場合はセッション聞いた感想やら補足やらをtwitterに垂れ流すくらいなので、それもスマホで十分です。
+これまでの唯一の問題だった登壇側も、<a href="/blog/2015/12/roommetrotokyo10/">Continuumを使ってクリアできることが先週確認できました</a>。</p>
+<h3 id="mobility">家庭内mobility</h3>
+<p>しかし、「家の中ですらひきこもり」というのがまた問題なわけです。ぶっちゃけていうと家族との時間すらなくなる。旦那/お父さんが書斎にこもってPC作業しててみなさいよ、まず「邪魔しちゃ悪い」感じになって、家族と顔合わせない。
+なので、よっぽど切羽詰まった作業でもしてない限り、リビングでだらだらと作業したいなと思うわけです。</p>
+<p>という背景の中、メイン機のデスクトップPC、やむなく遠出(※家から出ること)するときのためのスマホに加えて、近場に出かける(※PC前から動くこと。家の中含む)という第3の要件が発生。家庭内でのmobilityが必要。
+この微妙な中間要件用に3台目を持てというのか…っていう話になるわけです。できればここもスマホに集約したい。</p>
+<p>ちなみにまあ、職場に放置気味な<a href="http://amzn.to/22mVjQT">Surface 3</a>も持ってたりするので、実はそれを家に持って帰って来ればいい話なんですが。それはそれで、めったに使わないものを放置しておくスペースってのが必要で結構ストレスがでかいというのが、これまでの経験的に率直な感想。普段使いのものをそのまま使いたい。そして今は、普段使いのもの = スマホ。</p>
+<h2 id="windows-10-mobile-1">始めてみよう、Windows 10 Mobile作業</h2>
+<p>と言うわけで、家庭内Mobilityの確保のためにWindows 10 Mobile作業の人柱をやってみようということにしました。</p>
+<h3 id="continuum-1">Continuum の使い方</h3>
+<p>とりあえずContinuumの使い方から。</p>
+<h4 id="section-1">対応機種</h4>
+<p>対応機種は、今のところ輸入端末のみ、日本では<a href="http://neo.nuans.jp/">NuAns NEO</a>が対応するかも(※ハードウェア的にWindowsに正式サポートされるかどうかきわどいラインらしいものの)ということで期待されています。来年には他にも出そろってくれるのかなぁ。</p>
+<p>比較としてSurfaceで考えると、そんなに評価の高くない初代Surface (2012年10月)から、結構売れだしたSurface 3 (2015年5月)までに2年半とかかかってるので、
+これから1・2年は人柱な感じかもしれませんが。</p>
+<h4 id="section-2">追加で必要なもの</h4>
+<p>Continuumの記事を見るに、なんかドックみたいなものが写真に移りこんでるので、何か専用のハードウェアが追加で要るのかと勘違いしがちですが、別に必須じゃありません。</p>
+<p>あのドックは、</p>
+<ul>
+<li>給電</li>
+<li>USBハブ</li>
+<li>HDMI出力</li>
+</ul>
+<p>の複合品。電池動作で頑張るなら給電は要らないし、キーボード・マウスをBluetoothで行くならUSBハブも特に不要。問題は、映像の出力くらいですね。ちなみに、Lumia 950は<a href="http://www.pc-koubou.jp/blog/miracast.php">Miracast</a>使えるみたいなので、ディスプレイ側が対応していればHDMI出力も要らないはずです。</p>
+<p>ということで、以下のいずれかがあればContinuumを使えます。</p>
+<ul>
+<li>Miracast対応ディスプレイ、あるいは、<a href="http://amzn.to/1NA9RoI">Miracastレシーバー</a></li>
+<li><a href="http://amzn.to/1RZygHf">USB-C から HDMI への変換ケーブル</a></li>
+</ul>
+<p>Miracast対応ディスプレイに関しては、いまどきは多くのテレビが対応してるみたいですね。試しに電気屋で「ワイヤレス ディスプレイに接続する」設定画面開いてみたら、家電フロアのテレビが大量に応答してました。</p>
+<h3 id="section-3">実際の導入状況</h3>
+<p>とりあえず勉強会登壇用途のために<a href="http://amzn.to/1RZygHf">USB-C から HDMI への変換ケーブル</a>を買いました。これは結構満足。</p>
+<p>家庭内Mobilityに関しては、リビングにディスプレイを置くのかという問題をどう回避しようかで悩み中。
+リビングなので、Miracast対応テレビを置くという手もあるんですが。前提が「家族と」なので、テレビは家族に取られてるもんだと思った方がよさそう。追加でMiracast対応ディスプレイを買うのは、「たまにしか使わないものをどこに置いておくのか」問題に抵触するのでこれもまた微妙。</p>
+<p>結局、さしあたって、Bluetoothキーボードだけつないで、スマホ画面中で作業という苦行を試してみています。散々Continuumの宣伝しておいて、実はContinuum使ってないという。まあ、Windows 10 MobileでOfficeがまともになったので…</p>
+<p>ディスプレイをどうしよう問題も継続的に悩むとして、先にキーボードとかスマホ スタンドとかをどうしようという辺りを検討という感じです。</p>
+<ul>
+<li><a href="http://amzn.to/1O65P8Z">Universal Foldable Keyboard</a>: 昨日買ってみた。ソファー上とか、安定しない場所で使うには微妙かなぁという感想。折れ目が固定されないんで常にふにふに。折り畳みは結構すっきりしてるんで、これは勉強会に持っていく用途の方がいいかも。</li>
+<li><a href="http://amzn.to/1QI8QhW">KEYS-TO-GO</a>: Foldable Keyboardを買いに行った時にいろいろ触って試してみて、一番いいなと思ったのはむしろこれ。実際にLumiaにつないで使ってないので何とも言えないものの。</li>
+<li><a href="http://amzn.to/1QI97l8">Wedge Mobile Keyboard</a>: そういや昔試しに買ってみて眠ってるWedge Keyboardが家にある… 家庭内Mobilityくらいの近距離用途なら、これくらいのサイズのものが一番いいかも。スマホ スタンドになるカバーも付いてるし。</li>
+<li><a href="http://amzn.to/1QI9nk4">PCスタンド</a>: 昨日、床作業・ソファー作業が結構きつかったんで買うかどうか迷ってるのがこの手のPCスタンド。邪魔かなぁ… 普段の置き場に困るよなぁ…</li>
+</ul>
+<h2 id="section-4">まとめ</h2>
+<p>デスクトップ前にしかいないのにノートPCとか要るわけないじゃない。スマホでいいよ、スマホで。</p>
+<p>PCが売れない、スマホが原因でPCスキルが上がらないことが問題視されている今、スマホでPC並の作業をできるようになることに期待しています。</p>
+<p>そういう視点で、Windows 10 Mobile作業の人柱始めました。まだそろえる道具どうするか検討中ですが、Continuumには引き続き期待。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2015/12/">12&#x6708;</a></li><li><a href="/blog/2015/12/unityasync0introduction/">Unity&#x4E0A;&#x3067;async/await: &#x306F;&#x3058;&#x3081;&#x306B;</a></li><li><a href="/blog/2015/12/unityasync1background/">Unity&#x4E0A;&#x3067;async/await: &#x80CC;&#x666F;</a></li><li><a href="/blog/2015/12/unityasync2currentstatus/">Unity&#x4E0A;&#x3067;async/await: &#x73FE;&#x72B6;</a></li><li><a href="/blog/2015/12/unityasync3retrospective/">Unity&#x4E0A;&#x3067;async/await: &#x8AB2;&#x984C;&#x3068;&#x611F;&#x60F3;</a></li><li><a href="/blog/2015/12/asyncawaitpost/">async/await &#x305D;&#x306E;&#x5F8C;/&#x8FFD;&#x8A18;</a></li><li><a href="/blog/2015/12/csprojprojectjson/">.csproj &#x2B; project.json</a></li><li><a href="/blog/2015/12/systemormicrosoft/">System&#x304B;Microsoft&#x304B;&#x3001;&#x516C;&#x5F0F;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;&#x306E;&#x540D;&#x524D;</a></li><li><a href="/blog/2015/12/pickuproslyn1218/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/18</a></li><li><a href="/blog/2015/12/roommetrotokyo10/">&#x3081;&#x3068;&#x3079;&#x3084;&#x6771;&#x4EAC; #10 &#x306B;&#x3066;&#x767B;&#x58C7;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

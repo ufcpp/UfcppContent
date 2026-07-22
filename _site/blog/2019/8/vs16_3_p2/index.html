@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Visual Studio 16.2.2 &#xFF06; 16.3 Preview 2 | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2019/8/vs16_3_p2/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2019-08-14T20:57:21">2019-08-14</time></span><span>更新: <time datetime="2019-08-14T21:06:06">2019-08-14</time></span></div><h1 id="visual-studio-16.2.2-16.3-preview-2">Visual Studio 16.2.2 ＆ 16.3 Preview 2</h1>
+<p>Visual Studio 2019 16.2.2 と 16.3 Preview 2 と、あと、 .NET Core 3.0 Preview 8 が出てますね。</p>
+<ul>
+<li><a href="https://docs.microsoft.com/ja-jp/visualstudio/releases/2019/release-notes#16.2.2">Visual Studio 2019 version 16.2.2</a></li>
+<li><a href="https://docs.microsoft.com/ja-jp/visualstudio/releases/2019/release-notes-preview#16.3.0-pre.2.0">Visual Studio 2019 version 16.3 Preview 2</a></li>
+<li><a href="https://devblogs.microsoft.com/dotnet/announcing-net-core-3-0-preview-8/">Announcing .NET Core 3.0 Preview 8</a></li>
+</ul>
+<p>16.2.2 は脆弱性の修正だけっぽいですかね、リリース ノートを見るに。
+.NET Core 3.0 Preview 8 も「最終リリースに向けて磨いてるとこ」みたいなことを言っているので大きな変更はないはず。</p>
+<p>16.3 Preview 2 はこまごまと結構追加が。</p>
+<h2 id="preview-2">16.3 Preview 2</h2>
+<p>僕的に気になるのはまあ .NET/C# がらみくらいなわけですが、
+それも今回はそこそこ差分あり。</p>
+<h3 id="ide">IDE 機能</h3>
+<p>「<a href="https://docs.microsoft.com/ja-jp/visualstudio/releases/2019/release-notes-preview#net-productivity-163P2">.NET Productivity</a>」に書かれてる通り、</p>
+<ul>
+<li>1行内に大量にメソッドチェーンでつないでる奴を複数行にばらす整形</li>
+<li>先に <code>new DateTime</code> みたいなインスタンス生成を書いてから IDE 機能でローカル変数を導入</li>
+</ul>
+<p>とかがあるみたいです。</p>
+<p>あと、これは IDE 機能なのか C# 機能なのかどっちに分類していいのかわからないですけど、
+<a href="/study/csharp/misc/sp_xmldoc/">doc コメント</a>内で <code>&lt;em&gt;</code> とか <code>&lt;strong&gt;</code> とかのスタイル変更タグが使えるようになったみたいです。</p>
+<p><img src="/assets/media/1178/quickinfostyle.png" alt="doc コメントにスタイル反映" /></p>
+<p>詳しくはこの PR を参照: <a href="https://github.com/dotnet/roslyn/pull/35667">Implement Quick Info styles #35667</a></p>
+<h3 id="target-typed-switch">target-typed switch 式</h3>
+<p>C# 8.0 の変更は大部分もう<a href="/study/csharp/resource/nullablereferencetype/">null 許容参照型</a>がらみだけ…
+という状況下において、1個だけ他の変更がありました。</p>
+<p><a href="/study/csharp/datatype/typeswitch/#switch-expression">switch 式</a>でターゲットからの型推論が効くようになりました。
+要するに以下のようなコードが 16.3 Preview 2 からコンパイルできるようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Program
+{
+    <span class="keyword">class</span> Base { }
+    <span class="keyword">class</span> A : Base { }
+    <span class="keyword">class</span> B : Base { }
+ 
+    <span class="keyword">static</span> Base M(<span class="keyword">bool</span> b) =&gt; b <span class="keyword">switch</span>
+    {
+        <span class="comment">// 条件ごとに型が違うので、これまでは switch 式の結果の型が確定できなかった。</span>
+        <span class="comment">// ターゲット(この場合戻り値の Base)からの型推論で型を確定するようになった。</span>
+        <span class="keyword">true</span> =&gt; <span class="keyword">new</span> A(),
+        _ =&gt; <span class="keyword">new</span> B(),
+    };
+}</code></pre>
+<p>まあ元々「スケジュール的に厳しいけど C# 8.0 正式リリース時点で入れておかないと後からの変更は破壊的になるので避けたい」って言ってたやつです。
+ほんとにぎりぎり間に合わせて来た感じ。</p>
+<h2 id="null">null 許容参照型がらみ</h2>
+<p>さらっと動作確認。</p>
+<ul>
+<li><a href="https://gist.github.com/ufcpp/95fd288be27f0df5fae8ab5a093d36a4">16.3 Preview 2 時点でいくつか確認</a></li>
+</ul>
+<p><a href="https://github.com/dotnet/roslyn/issues/35816">計画に上がってたもの</a>大体一通り実装されてそうな雰囲気。
+今度こそ<a href="/study/csharp/resource/nullablereferencetype/">null 許容参照型のページ</a>を埋めるの本気出さなきゃ…</p>
+<p>ちなみに、<a href="/study/csharp/resource/nullablereferencetype/#null-forgiving">一昨日書いたばかりの文章</a>を<a href="https://twitter.com/ufcpp/status/1161458417598287874">さっそく書き換える</a>というタイミングのよさ。</p>
+<p>「この挙動で本当にいいの？」みたいなものもあったりはするんですが…
+<a href="https://github.com/dotnet/roslyn/milestone/44">「vNext」マイルストーン</a>が付いていたりするので、C# 8.0 時点ではあきらめていそうです。
+例えば以下のようなやつ。</p>
+<ul>
+<li><a href="https://github.com/dotnet/roslyn/issues/36039">Should nullability attributes affect method bodies and OHI? #36039</a></li>
+</ul>
+<p>要するに、<code>MaybeNull</code> とかの属性は、外から見ると正しく働くものの、メソッドの中から見ると妥協的という感じ。
+とりあえずどっちが重要かと言われると「外から」の方なので、重要なところだけは最低限実装したという。</p>
+<p>ただ、<code>DoesNotReturnIf</code> が期待通り動いていないのはなんかおかしい感じが。
+<a href="https://github.com/dotnet/roslyn/pull/36810">関連 Pull Request</a> も通ってるので動作してそうなものなんですけども。
+マージしたタイミングの問題ですかね…</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2019/8/">8&#x6708;</a></li><li><a href="/blog/2019/8/pickuproslyn0803/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/3: Records &#x306A;&#x3069;</a></li><li><a href="/blog/2019/8/pickuproslyn0831/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 8/31: &#x30C8;&#x30EA;&#x30A2;&#x30FC;&#x30B8;&#x796D;&#x308A;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

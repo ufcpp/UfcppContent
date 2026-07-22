@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 10/8: C# 7.1 &#x306E; default &#x5F0F;&#x306E;&#x30D0;&#x30B0; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2017/10/pickuproslyn1008/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2017-10-08T15:09:42">2017-10-08</time></span><span>更新: <time datetime="2017-10-08T15:12:34">2017-10-08</time></span></div><h1 id="roslyn-108-c-7.1-default">ピックアップRoslyn 10/8: C# 7.1 の default 式のバグ</h1>
+<p>昨日の <a href="https://csugjp.connpass.com/event/66004/">.NET Conf 2017 Tokyo</a>でちょこっと話したりしたんですが、C# 7.1のバグを踏み抜いたという話。
+(正確には同僚が踏んじゃったバグを僕がバグ報告入れた)</p>
+<p>割と手短に示せるバグで、以下のような例がわかりやすいんですが、nullable型な引数のデフォルト値として、<a href="/study/csharp/cheatsheet/ap_ver7_1/#default-expr"><code>default</code>式</a>を使ったとき、値が <code>null</code> にならないとおかしいはずなのに 0 になるという問題。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">void</span> Main()
+{
+    <span class="keyword">int</span>? x = <span class="keyword">default</span>; <span class="comment">// null</span>
+    <span class="keyword">int</span> y = <span class="keyword">default</span>; <span class="comment">// 0</span>
+
+    Console.WriteLine(x); <span class="comment">// null</span>
+    Console.WriteLine(y); <span class="comment">// 0</span>
+    A(); <span class="comment">// 0 !!</span>
+    A(<span class="keyword">default</span>); <span class="comment">// null !!</span>
+}
+
+<span class="keyword">static</span> <span class="keyword">void</span> A(<span class="keyword">int</span>? x = <span class="keyword">default</span>) <span class="comment">// 0 !!</span>
+{
+    Console.WriteLine(x);
+}</code></pre>
+<h2 id="section">バグ報告</h2>
+<p>結構わかりやすいバグだから既出かなぁとか思いつつも<a href="https://github.com/dotnet/csharplang/issues/970">バグ報告</a>をいれてみたんですが。
+案外初出だったらしく、かつ、さすがにまずそうなバグなので「破壊的変更になるけども直す」という感じですぐに修正作業が始まったみたいです。</p>
+<p>一応、C# 7.1 (Visual Studio 15.3 (2017 Update 3))は、プレビュー版が出てからだと数か月経っていますし、正式リリース(8/14)からも2か月弱経ってるわけですが。気付かないもんですね、こういうバグ… まあ、デフォルト値が <code>null</code> の時には普通 <code>null</code> って書きますもんね、<code>default</code>を使わず。</p>
+<p>ちなみに、類似のバグとして、<code>default</code>式はCode Fix の挙動も怪しかったりします。</p>
+<p><img src="/assets/media/1140/defaultcodefix.png" alt="IDE0034 Code Fix (変な挙動してる)" /></p>
+<p><code>object x = default(int)</code> (0になるはず)を、<code>object x = default</code> (null になっちゃうので、意味が変わる)にリファクタリングしようとしてしまう問題。</p>
+<p>こちらは、既出のバグで先月くらいにはバグ報告されています。かつ、IDE のリファクタリングの問題なので、コンパイル結果自体が怪しい先ほどのバグと比べると幾分かマシ。</p>
+<h2 id="section-1">初のマイナーリリースで自信なさげ？</h2>
+<p>C# 7.1は、実質的には初のマイナーリリースですし、半年という短いサイクルで新バージョンをリリースしたというのも、C# チーム的には初の試みです。</p>
+<p>そのせいか、ちょっと自信なさげな感じもあるんですよね…</p>
+<p>例えば、C# チームから「C# 7.1 がリリースされました」的なブログが出ていなかったりしますし。</p>
+<p>例えば、Visuals Studio 15.3では規定動作では C# 7.1 を使えませんし(<a href="/blog/2017/8/visualstudio15_3/">LangVersion latest オプションの指定が必要</a>)。</p>
+<p>まあ、何事も初の試みは大変ってことですかね…</p>
+<h2 id="default"><code>default</code> の型推論はそんなの大変なのか</h2>
+<p>ちなみに、パッと見の感覚で言うと、このバグは不思議に思えるというか、なんでそんなバグを起こしちゃうのか謎というか。
+「<code>int? x = default</code> って書かれてたら、ローカル変数だろうと引数のデフォルト値だろうと<code>default(int?)</code>だろ」という感じなんですが。</p>
+<p>まあたぶんなんですけど、nullable型とか、値型のデフォルト値とかは結構いろんな特殊対応が入っていて、
+思ったほどコンパイラーのコードは単純じゃないのではないかと思われます。</p>
+<p>例えば、値型のデフォルト値なんですが、以下のような感じになっています。</p>
+<pre><code class="language-csharp"><span class="comment">// 以下の3つの X は全部同じ意味</span>
+<span class="keyword">static</span> <span class="keyword">void</span> X(DateTime d = <span class="keyword">default</span>(DateTime)) { }
+<span class="keyword">static</span> <span class="keyword">void</span> X(DateTime d = <span class="keyword">new</span> DateTime()) { }
+
+<span class="comment">// これは現在の C# ではコンパイルできない</span>
+<span class="comment">// C# 3.0 までデフォルト引数を認めていなかったので、VB との相互運用のために使っていた書き方</span>
+<span class="comment">// 属性には定数しか含められず、かつ、構造体の規定値は .NET 的には「定数」ではない</span>
+<span class="comment">// 代わりに null を入れてある</span>
+[DefaultParameterValue(<span class="keyword">null</span>)]
+<span class="keyword">static</span> <span class="keyword">void</span> X(DateTime d) { }</code></pre>
+<p>IL へのコンパイル結果としても以下のような感じ。</p>
+<pre><code class="language-cil">.method private hidebysig static
+    void X(
+        [opt] valuetype[mscorlib] System.DateTime d
+    ) cil managed
+{
+    .param [1] = nullref // DateTime 構造体なのに null 扱い
+    .maxstack 8
+    IL_0000: ret
+}</code></pre>
+<p>本来 <code>null</code> を代入できないはずの <code>DateTime</code> 構造体に対して、<code>null</code> でデフォルト値を代用している状態です。</p>
+<p>nullable 型に対しても、以下のような感じで、null の扱いがちょっと特殊になっています。</p>
+<pre><code class="language-csharp"><span class="comment">// 以下の2行は同じ意味</span>
+<span class="keyword">int</span>? x = <span class="keyword">null</span>;
+<span class="keyword">int</span>? x = <span class="keyword">new</span> <span class="keyword">int</span>?(); <span class="comment">// null というより、(false, 0) みたいな値</span></code></pre>
+<p>なんかこの辺りが合わさった結果、<code>default</code>式の型推論に失敗したんじゃないかなぁと思います。</p>
+<h2 id="section-2">修正による破壊的変更</h2>
+<p>このバグを修正すると破壊的変更になります。
+もしも、「0 になるものだ」という前提で <code>int? x = default</code> を書いている人がすでにいた場合、
+そのコードの挙動が狂います。</p>
+<p>C# は基本的には破壊的変更に対して非常に保守的な言語で、
+「直したいけども破壊的変更になるから直せない」みたいな言語仕様も結構あります。
+ただ、「明らかにバグ」というものに対してはさすがに破壊的変更が許容されることが結構多いです。</p>
+<p>一応、マイクロソフト内に「compat council」(互換性協議会)みたいなグループがあって、そこでの審議をしているそうです。
+そのcouncilで破壊的変更を許容するかどうかは、バグの深刻度と実際の影響範囲のバランス等を見て決めていると思われます。</p>
+<p>今回の場合で言うと、</p>
+<ul>
+<li><code>int? x = default</code> が 0 になるものだという前提でコードを書いているやつがどのくらいいるか？ → あんまりいなさそう
+<ul>
+<li>そもそも数か月の間誰にも気づかれなかったわけで</li>
+<li>普通は <code>int? x = null</code> か <code>int? x = 0</code> と書く(わざわざ <code>int? x = default(int?)</code> とか <code>int? x = default(int)</code> とか書かない)</li>
+<li>LangVersion latest オプションが必要なため、そもそも C# 7.1 の利用率自体がまだそこまで上がっていないと思われる</li>
+</ul>
+</li>
+<li>いくらなんでも挙動がひどい
+<ul>
+<li>ローカル変数の <code>int? x = default;</code> だと <code>null</code> なのに、引数のデフォルト値の<code>(int? x = default)</code> だと 0</li>
+<li><code>X()</code> だと 0 なのに、<code>X(default)</code> だと <code>null</code></li>
+</ul>
+</li>
+</ul>
+<p>という感じなので、
+さすがにほぼノータイムでcompat councilを通過したみたい。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2017/10/">10&#x6708;</a></li><li><a href="/blog/2017/10/pickuproslyn1009/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 10/9</a></li><li><a href="/blog/2017/10/visualstudio15_5/">Visual Studio 15.5 Preview</a></li><li><a href="/blog/2017/10/graphemesplitter/">&#x7D75;&#x6587;&#x5B57;&#x306E;&#x9023;&#x7D50;&#x3068;&#x3001;&#x66F8;&#x8A18;&#x7D20;&#x30AF;&#x30E9;&#x30B9;&#x30BF;&#x30FC;&#x5224;&#x5B9A;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,172 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x306F;&#x3058;&#x3081;&#x306B; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/intro/introduction/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">はじめに</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<ul>
+<li><p>C# はいい言語ですよ。</p>
+</li>
+<li><p>C# の文法を知りたいだけなら Microsoft の公式文書だけで十分。</p>
+<ul>
+<li>ここではもう一歩踏み込んで「そもそもなぜそういう機能が必要なのか」という部分に焦点を当てた説明をします。</li>
+</ul>
+</li>
+<li><p>プログラミング言語を覚えることは手段であって目的ではない。</p>
+<ul>
+<li><p>なるべく簡単な言語を使った方がいいです。</p>
+</li>
+<li><p>大切なのは「難しい言語を使えること」ではなく、「どんな言語を使ってでも、作りたいものを作れること」。</p>
+</li>
+<li><p>楽に、いろんなことを幅広く実現できるのが C# ！</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="about"></a>当コンテンツの内容について</h2>
+<p>.NET Framework Technical Preview 版配布開始から約2年、
+2001年末にようやく .NET Framework 正式版が発表されました。
+また、2002年2月には日本語版も配布開始され、同4月には Visual C# .NET 日本語版も発売されました。
+ここに来てようやく日本でも C# や .NET が話題になり始め、雑誌やウェブ上の掲示板などでの話題も盛り上がってきました。
+そして、
+C# は「C++ の柔軟性と Visual Basic(VB) の生産性を併せ持つ言語」として開発されていることもあり、
+今まで VB を用いてプログラム開発を行っていた人や、
+新規にプログラミングを始めようという人が C# の勉強をはじめようとしています。</p>
+<p>Microsoft の提供する C# のドキュメントでは、
+C# では「なにができるか」「どうすればできるか」という部分については詳細まで書かれていて非常に分かりやすいのですが、
+「なぜこういった機能が必要なのか」という部分までは書かれていません。
+そのため、C++ や Java などについての知識が十分にあれば、
+Microsoft の提供するドキュメントだけでも容易に C# について理解することができるのですが、
+プログラミングの初心者やこれからプログラミングを始めようという人にとっては、
+このドキュメントだけではプログラミングの勉強をするには不十分です。</p>
+<p>また、C# に関する解説書籍、ウェブサイトでも、
+C 言語や Java などの知識を有することを前提とし、
+1から C# を学ぶにはハードルの高いものが多いです。</p>
+<p>そこで当サイトでは、これからプログラミングを始めようという人が C# の勉強をできるように、
+C# で「何ができるか」「どうすればできるか」そして「なぜそのような機能が必要なのか」という部分まで説明していこうと思っています。</p>
+<p>あるいは、プログラミング初心者の方でなくても、
+C++ や Java と比べて追加された機能や、逆に削除された機能に関して、
+「なぜ追加・削除されたのか」が分かってもらえるような説明を心がけるつもりです。</p>
+<h3 id="c"><a id="sec-generated-title-3"></a> <a id="whycs"></a>C# によるプログラミング入門</h3>
+<p>よく訊かれる質問、
+特に、主として C 言語を利用しているプログラマの方からの質問なのですが、
+「C# は初入門の言語として適切か」と言うものを受けることがあります。</p>
+<p>多いのは、
+「C 言語 → C++ というように段階を経て学んでいくべきなのではないか」という意見です。
+「Java や C# だと、class や static など、最初に説明しないといけない“おまじない”が多いし・・・」とか、
+「Java や C# などのオブジェクト指向言語を学ぶにしても、
+その基本は構造化プログラミング言語だし」というのが、これらの意見の理由です。</p>
+<p>この質問に対する（僕個人の私的な）答えですが、
+結論から言うと、初めから C# を学ぶ方がいいと思います。</p>
+<p>例えば、C 言語なら最初から理解するのが難しい“おまじない”の部分がないかと言うとそんなはずもなく、
+#include などはやはり“おまじない”ですし、
+Java や C# などの新参の言語は、構造化プログラミング言語としても見た場合でもかなり優秀な言語です。</p>
+<p>むしろ、C 言語など、長い歴史を持つ言語は、
+昔からの悪習を引きずっていて、
+下手に学ぶと悪い癖が付いたまま抜けなくなる危険性の方が高いです。</p>
+<p>習得難易度の低さの面からも、
+悪習を身に着けないためという意味でも、
+最初に C#、そして、必要に応じて C 言語などの抽象度の低い言語を学ぶ方がいいと思います。
+（ちなみに、参考として抽象度の低い言語を学ぶという発想なら、
+アセンブリ言語の勉強するのもお勧め。）</p>
+<p>（2008年追記：
+最近、会社の同僚が「C++ ロストジェネレーション論」というのを唱え始めた。
+C++ 全盛期、Java 登場以前の90年代にプログラミングを始めた人は、
+C++ のせいで過剰にプログラミングを怖がったり、
+過去の悪習にとらわれて変な癖がついたりしてかわいそう。
+まるで就職氷河期の失われた世代のようだという話。
+あながちトンデモな話でもない気がする。
+）</p>
+<h2 id="section-3"><a id="sec-generated-title-4"></a> <a id="content"></a>サンプル コードについて</h2>
+<h5 id="section-4"><a id="sec-generated-title-5"></a>言語選択</h5>
+<p>ページ中のサンプル コードを C# 以外の言語にも対応させてみました。
+VB（Visual Basic）、F#、C++/CLI などに対応します。
+（タブ名が C++ になっているものは、ネイティブ（のみ）の C++ ではなく、C++/CLI だと思ってください。）</p>
+<p>注意: 段階的に書き換え中です。
+参考: 「<a href="/study/csharp/start/st_basis/">C#のプログラムの基本構造</a>」。</p>
+<div class="tab-container">
+<ul>
+	<li>C#</li>
+	<li>VB</li>
+	<li>F#</li>
+	<li>C++</li>
+</ul>
+<div>
+<pre><code class="language-csharp"><span class="comment">// C#</span>
+Console.WriteLine(<span class="string">&quot;Hello World&quot;</span>);</code></pre>
+</div>
+<div>
+<pre><code class="language-vbnet"><span class="comment">&#39; Visual Basic</span>
+Console.WriteLine(<span class="string">&quot;Hello World&quot;</span>)</code></pre>
+</div>
+<div>
+<pre><code class="language-fsharp"><span class="comment">// F#</span>
+Console.Write <span class="string">&quot;Hello World&quot;</span></code></pre>
+</div>
+<div>
+<pre><code class="language-cpp"><span class="comment">// C++/CLI</span>
+Console::WriteLine(L<span class="string">&quot;Hello World&quot;</span>);</code></pre>
+</div>
+</div>
+<h5 id="section-5"><a id="sec-generated-title-6"></a>凡例</h5>
+<p>当コンテンツ中でサンプル コードは以下のようなスタイルで書いています。</p>
+<pre><code class="language-csharp"><span class="comment">// サンプルコード</span>
+<span class="keyword">if</span>(条件文)
+{
+  <span class="keyword">int</span> n = <span class="number">0</span>;
+  <span class="keyword">string</span> s = <span class="string">&quot;sample&quot;</span>;
+}</code></pre>
+<p><span class="reserved">C# のキーワード</span>や、<span class="comment">コメント</span>、<span class="string">文字列</span>は色付けして強調表示してあります。
+また、<span class="input">条件文</span>などその時々に応じて適当に書き換える必要のある部分は太字で強調表示してあります。</p>
+<p>また、ユーザーからの入力や、サンプルコードの出力は以下のようなスタイルで書いています。</p>
+<pre><code class="language-console">sample input/output
+# ↓ この行に対するコメント
+ユーザーからの入力</code></pre>
+<p>サンプルコードとは異なる背景色で囲み、<span class="input">ユーザーからの入力</span>は太字で強調表示してあります。</p>
+<p>さらに、本文中、サンプルコード中を問わず、<em>重要な部分</em>は背景色を色付けし強調表示してあります。</p>
+<h2 id="section-6"><a id="sec-generated-title-7"></a> <a id="bsmark"></a>\ 記号についての注意</h2>
+<p>￥記号問題
+（同じ文字コードに、日本では ￥、英語圏では ＼ の半角が割り当たっている）
+のせいで、
+「\」が「￥」の半角で表示される場合と「＼」の半角になる場合があるようですが、
+どちらも同じものです。</p>
+<p>￥記号問題に関する詳細は、
+<a href="http://ja.wikipedia.org/wiki/%EF%BF%A5%E8%A8%98%E5%8F%B7">Wikipedia の￥記号の記事</a>を参照してください。</p>
+<h2 id="section-7"><a id="sec-generated-title-8"></a> <a id="variants"></a>表記ゆれ</h2>
+<p>このサイトはもう15年以上にわたって更新していますし、
+C# 関連の用語の和訳が正式に決まる前から記事を書くことが多いので、
+結構表記ゆれが多いです。
+その点ご容赦願います。</p>
+<p>例えば以下のようなものは表記ゆれしています</p>
+<ul>
+<li>expression tree: 式ツリー、式木</li>
+<li>statement: ステートメント、文</li>
+<li>string interpolation: 文字列補間、文字列挿入</li>
+</ul>
+<p>極力元の英単語を併記するようにしているので、もし思った通りのものが見つからなかった場合、その元の英単語での検索も試みてください。</p>
+<h2 id="section-8"><a id="sec-generated-title-9"></a> <a id="availability"></a>当コンテンツ複製・利用について</h2>
+<p>当コンテンツの内容は個人的・教育的目的での複製・利用はご自由にして頂いて構いません。
+利用に際して、誤字等を見つけた場合や、ご意見・ご要望・ご不満等がございましたら、
+その内容を教えていただければこちらとしても助かりますので、
+そうして頂きますようにお願い致します。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/intro/">&#x307E;&#x3048;&#x304C;&#x304D;</a></li><li><a href="/study/csharp/intro/getstarted/">&#x306F;&#x3058;&#x3081;&#x3066;&#x306E;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30DF;&#x30F3;&#x30B0;</a></li><li><a href="/study/csharp/intro/howeasy/">[&#x96D1;&#x8A18;] &#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30DF;&#x30F3;&#x30B0;&#x8A00;&#x8A9E;&#x306E;&#x7C21;&#x5358;&#x3055;&#x30FB;&#x96E3;&#x3057;&#x3055;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

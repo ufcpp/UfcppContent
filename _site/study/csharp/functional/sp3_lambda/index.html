@@ -1,0 +1,347 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30E9;&#x30E0;&#x30C0;&#x5F0F; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/functional/sp3_lambda/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">ラムダ式</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<h5 class="version version3">Ver. 3.0</h5>
+<p><strong id="lambda" class="keyword">ラムダ式</strong>（lambda expression）と言うのは、
+関数型言語と呼ばれるような種類のプログラミング言語における用語なのですが、
+関数（メソッド）を整数などの変数と全く同列に扱う手法のことです。</p>
+<p>C# 3.0 で導入されたラムダ式は、
+以下のようなものだと思ってください。</p>
+<ol>
+<li><p>「<a href="/study/csharp/functional/sp_delegate/#delegate">デリゲート</a>」に対して代入すると、「<a href="/study/csharp/functional/sp_delegate/#anonymous">匿名メソッド式</a>」と同じ扱いになる。</p>
+</li>
+<li><p>Expression 型の変数に代入すると、式木（expression tree）データになる。</p>
+</li>
+</ol>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>C# 3.0 で導入されたラムダ式には、2通りの意味があります。</p>
+<ul>
+<li><p>匿名メソッドを 2.0 の頃の記法より簡単に書ける。</p>
+</li>
+<li><p>上述の匿名メソッドと同じ記法で式木を作れる。</p>
+</li>
+</ul>
+</li>
+<li><p>例：<code>Func&lt;int, int&gt; square = x =&gt; x * x;</code></p>
+</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="anonymous"></a>匿名メソッドの記法の簡略化</h2>
+<p>まず、1つ目。
+ラムダ式は、
+C# 2.0 の匿名メソッドをさらに簡便な記法で書けるようにするものとして使われます。
+先に概要を書いてしまうと、以下のような感じ。</p>
+<ul>
+<li><p return="">匿名メソッドの定義から、delegate とか  とかの記述を省略できる。</p>
+</li>
+<li><p>型推論機構が働く。</p>
+</li>
+</ul>
+<p>（2.0 の）匿名メソッド構文でできることはラムダ式でもできます。
+C# 3.0 の開発者も、「もし、ラムダ式が先に導入されていれば、匿名メソッドの構文は不要だった」と言っています。</p>
+<p>C# 2.0 までの匿名メソッドは、例えば、以下のような書き方をしていました。</p>
+<pre><code class="language-csharp"><span class="keyword">delegate</span>(<span class="keyword">int</span> n)
+{
+  <span class="keyword">return</span> n &gt; <span class="number">0</span>;
+}</code></pre>
+<p>この匿名メソッドをラムダ式を使って書き直すと、以下のようになります。</p>
+<pre><code class="language-csharp">(<span class="keyword">int</span> n) =&gt; { <span class="keyword">return</span> n &gt; <span class="number">0</span>; };</code></pre>
+<p> の中身が単文の場合には、 と return も省略できます。</p>
+<pre><code class="language-csharp">(<span class="keyword">int</span> n) =&gt; n &gt; <span class="number">0</span>;</code></pre>
+<p>要するに、記法としては、以下のようになります。</p>
+<pre><code class="language-csharp">引数リスト =&gt; 式</code></pre>
+<p>ちなみに、文脈的に引数の型が明らかな場合、
+型は省略できます。
+（var と似たような型推定機能が働く。）
+例えば、以下のようなデリゲートがあるとき、</p>
+<pre><code class="language-csharp"><span class="keyword">delegate</span> <span class="keyword">bool</span> Pred(<span class="keyword">int</span> n);</code></pre>
+<p>このデリゲートに対する代入式中にラムダ式を書く場合、
+引数の型は int であることが明らかなので、
+int を省略して以下のように書くことができます。
+（n の型はコンパイラが推論してくれます。）</p>
+<pre><code class="language-csharp">Pred p = n =&gt; n &gt; <span class="number">0</span>;</code></pre>
+<p>あと、いちいちデリゲートを定義するのは面倒なので、
+.NET Framework 3.5 では、Func という名前のデリゲートが標準で用意されています。
+Func は「<a href="/study/csharp/oop/sp2_generics/#generics">ジェネリック</a>」を使って定義されていて、
+例えば、上述の例の Pred デリゲートのように、
+int 型の引数を1つとって、bool 型を返すようなデリゲートを以下のように表現できます。</p>
+<pre><code class="language-csharp">Func&lt;<span class="keyword">int</span>, <span class="keyword">bool</span>&gt;</code></pre>
+<p>式が複数になる場合は省略せずに  でくくります。
+（この場合は、 の中身は匿名デリゲートと同じ書き方をする。return も書く必要あり。）</p>
+<pre><code class="language-csharp">Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>, <span class="keyword">int</span>&gt; f =
+  (x, y) =&gt;
+  {
+    <span class="keyword">int</span> sum = x + y;
+    <span class="keyword">int</span> prod = x * y;
+    <span class="keyword">return</span> sum * prod;
+  };</code></pre>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="expression"></a>式木</h2>
+<p>一方、2つ目に関してですが、こちらは完全に新機能で、ラムダ式特有のものです。
+匿名メソッドと違って、
+ラムダ式は本当に<strong id="exp_tree" class="keyword">式木</strong>（expression tree）データとして扱うこともできます。</p>
+<p>上述の例の
+<code>Pred p = n =&gt; n &gt; 0;</code> のように、
+デリゲートに代入する場合には、
+ラムダ式は匿名メソッドと同じ扱い、
+すなわち、コンパイル後には実行コードの状態になっています。</p>
+<p>これに対して、ラムダ式を
+Expression 型の変数に代入すると、式木データとして扱うことができ、
+以下のように式中の項を取り出したりといった操作が可能です。</p>
+<pre><code class="language-csharp">Expression&lt;Func&lt;<span class="keyword">int</span>, <span class="keyword">bool</span>&gt;&gt; e = n =&gt; n &gt; <span class="number">0</span>;
+BinaryExpression lt = (BinaryExpression)e.Body;
+ParameterExpression en = (ParameterExpression)lt.Left;
+ConstantExpression zero = (ConstantExpression)lt.Right;</code></pre>
+<p>インタプリタ型の関数型言語には、実行コードとデータを区別しないものがあって、
+ラムダ式をあるときには実行コードとして、またあるときにはデータとして利用するということができました。
+C# では「実行コードとデータを区別しない」というわけにはいかないですし、
+デリゲートに代入するか Expression 型に代入するかによってコンパイル結果を変えることで、
+関数型言語と似たような動作を実現しています。</p>
+<p>ただし、ラムダ式をデリゲートに代入する場合と違って、
+式木には少し制約があります。
+式木にできるのは、単文の（ を使わない）ラムダ式だけです。
+以下の例では、1つ目のラムダ式はコンパイル可能ですが、2つ目はエラーになります。</p>
+<pre><code class="language-csharp"><span class="comment">// ↓ これは OK</span>
+Expression&lt;Func&lt;<span class="keyword">int</span>, <span class="keyword">bool</span>&gt;&gt; p = n =&gt; n &gt; <span class="number">0</span>;
+
+<span class="comment">// ↓ これは「式木に変換できません」と怒られる</span>
+Expression&lt;Func&lt;<span class="keyword">int</span>, <span class="keyword">int</span>, <span class="keyword">int</span>&gt;&gt; f =
+  (x, y) =&gt;
+  {
+      <span class="keyword">int</span> sum = x + y;
+      <span class="keyword">int</span> prod = x * y;
+      <span class="keyword">return</span> sum * prod;
+  };</code></pre>
+<p>要するに、単文で書けるものしか式木にできません。
+したがって、四則演算やメソッドコールは式木にできるんですが、
+for や while などの制御構文は式木にできません。
+（Expression 型にも、for や while に相当するノードはない。）</p>
+<p>ちなみに、LINQ to SQL では、
+このラムダ式を式木として扱う機能を使って、LINQ クエリ式の条件式などを式木データとして受け取って、
+それを SQL クエリに変換してデータベースに問い合わせをかけるというようなことをしているようです。</p>
+<p>例えば、以下のようなクエリ式を書いたとすると、</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> q =
+  <span class="keyword">from</span> c <span class="keyword">in</span> db
+  <span class="keyword">where</span> c.City == <span class="string">&quot;London&quot;</span>
+  <span class="keyword">select</span> <span class="keyword">new</span> {c.City};
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> city <span class="keyword">in</span> q)
+  ...</code></pre>
+<p>db.Where や db.Select では、
+データベースサーバに対して以下のような SQL を発行するしくみになっています。</p>
+<pre><code class="language-sql"><span class="keyword">SELECT</span> <span class="keyword">TOP</span> 1 [t0].[City]
+<span class="keyword">FROM</span> [Customers] <span class="keyword">AS</span> [t0]
+<span class="keyword">WHERE</span> [t0].[City] = @p0</code></pre>
+<p>こういう動作は、<code>c.City == &quot;London&quot;</code> の部分をデリゲート（要するに実行コード）として受け取っていてはできません。式木データとして受け取って、その中身を見ながら SQL 文を作ります。</p>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="init"></a>初期化子</h2>
+<h3 id="section-6"><a id="sec-generated-title-6"></a> <a id="object-initializer"></a>オブジェクト初期化子</h3>
+<p>C# 3.0 では、オブジェクトの初期化を以下のような記法でできるようになりました。
+このような記法を<strong id="objectinit" class="keyword">オブジェクト初期化子</strong> （object initializer）と呼びます。</p>
+<pre><code class="language-csharp">Point p = <span class="keyword">new</span> Point{ X = <span class="number">0</span>, Y = <span class="number">1</span> };</code></pre>
+<p>ちなみに、このコードの実行結果は以下のようなコードと等価です。</p>
+<pre><code class="language-csharp">Point p = <span class="keyword">new</span> Point();
+p.X = <span class="number">0</span>;
+p.Y = <span class="number">1</span>;</code></pre>
+<p>この等価なコードを見ればわかると思いますが、
+オブジェクト初期化子で指定できるのは public なメンバー変数またはプロパティのみです。
+（初期化子を書く場所によっては protected や internal も可。
+とにかく、初期化子を書いた場所からアクセスできる変数・プロパティのみ。）</p>
+<p>ただし、初期化子を使うと、
+プロパティへの値の代入を単文で書けるようになります。
+これで何が嬉しいかというと、<em>クラスのメンバー変数の初期化や、式木への代入が可能になります</em>。</p>
+<pre><code class="language-csharp">Expression&lt;Func&lt;Point&gt;&gt; f = () =&gt; <span class="keyword">new</span> Point { X = <span class="number">0</span>, Y = <span class="number">0</span> };
+<span class="comment">// ↑式木には単文のラムダ式しか代入できない。</span>
+
+<span class="comment">// 要するに、以下のような書き方はコンパイルエラーになる。</span>
+Expression&lt;Func&lt;Point&gt;&gt; f = () =&gt;
+{
+  <span class="keyword">var</span> p = <span class="keyword">new</span> Point();
+  p.X = <span class="number">0</span>;
+  p.Y = <span class="number">0</span>;
+  <span class="keyword">return</span> p;
+}</code></pre>
+<pre><code class="language-csharp"><span class="keyword">class</span> Triangle
+{
+    <span class="keyword">public</span> Point A = <span class="keyword">new</span> Point { X = <span class="number">0</span>, Y = <span class="number">0</span> };
+    <span class="keyword">public</span> Point B = <span class="keyword">new</span> Point { X = <span class="number">1</span>, Y = <span class="number">0</span> };
+    <span class="keyword">public</span> Point C = <span class="keyword">new</span> Point { X = <span class="number">0</span>, Y = <span class="number">1</span> };
+    <span class="comment">// ↑メンバー変数の初期化に複文は書けないの。</span>
+}</code></pre>
+<h4 id="section-7"><a id="sec-generated-title-7"></a> <a id="trailing-comma"></a>末尾コンマ</h4>
+<p>オブジェクト初期化子では、<a href="/study/csharp/structured/st_array/#use">配列の初期化子</a>と同様に、末尾のコンマはあってもなくてもかまいません。
+以下の2行は同じ意味になります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> p1 = <span class="keyword">new</span> Point { X = <span class="number">0</span>, Y = <span class="number">1</span> };
+<span class="keyword">var</span> p2 = <span class="keyword">new</span> Point { X = <span class="number">0</span>, Y = <span class="number">1</span>, };</code></pre>
+<p>これは、後述するコレクション初期化子やインデックス初期化子でも同様です。</p>
+<h3 id="section-8"><a id="sec-generated-title-8"></a> <a id="collection-initializer"></a>コレクション初期化</h3>
+<p>また、コレクションの初期化を以下のような記法でできるようになりました。
+こちらは<strong id="collectioninit" class="keyword">コレクション初期化子</strong>（collection initializer）と呼びます。</p>
+<pre><code class="language-csharp">List&lt;<span class="keyword">int</span>&gt; list = <span class="keyword">new</span> List&lt;<span class="keyword">int</span>&gt; {<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>};</code></pre>
+<p>要するに、配列と同じような初期化記法を、任意のコレクションクラス（System.Collections.IEnumerable インターフェースを実装していて、Add メソッドを持つクラス）に対して行うことができます。
+ちなみに、このコードは以下のようなコードと等価です。</p>
+<pre><code class="language-csharp">List&lt;<span class="keyword">int</span>&gt; list = <span class="keyword">new</span> List&lt;<span class="keyword">int</span>&gt;();
+list.Add(<span class="number">1</span>);
+list.Add(<span class="number">2</span>);
+list.Add(<span class="number">3</span>);</code></pre>
+<p>このようなリスト型のコレクションだけでなく、
+IDictionary&lt;TKey,TValue&gt; のような辞書クラスに対しても、
+以下のような記法で初期化ができます。
+（この場合、2引数の Add メソッドが呼ばれます。）</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> map = Dictionary&lt;<span class="keyword">string</span>, <span class="keyword">int</span>&gt;
+{
+  { <span class="string">&quot;One&quot;</span>, <span class="number">1</span> },
+  { <span class="string">&quot;Two&quot;</span>, <span class="number">2</span> },
+  { <span class="string">&quot;Three&quot;</span>, <span class="number">3</span> },
+  { <span class="string">&quot;Four&quot;</span>, <span class="number">4</span> },
+};</code></pre>
+<h5 class="version version12">Ver. 12</h5>
+<p>C# 12 からはコレクション初期化子に代わって、以下のようにコレクションを作ることができるようになりました。
+これをコレクション式といいます。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span>[] a = [<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">9</span>];</code></pre>
+<p>コレクション初期化子との差や、コレクション式のメリットなどは「<a href="/study/csharp/datatype/collection-expression/">コレクション式</a>」で説明します。</p>
+<h3 id="section-9"><a id="sec-generated-title-9"></a> <a id="index-initializer"></a>インデックス初期化</h3>
+<h5 class="version version6">Ver. 6.0</h5>
+<p>C# 6.0 から、<a href="#object-initializer">オブジェクト初期化子</a>に、インデクサーを混ぜれるようになりました。
+これを<strong id="key-index-initializer" class="keyword">インデックス初期化子</strong>(index initializer)といいます。</p>
+<p>例えば <code>Dictionary</code>(<code>System.Collections.Generic</code>名前空間)に対して以下のような書き方ができます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> dic = <span class="keyword">new</span> Dictionary&lt;<span class="keyword">string</span>, <span class="keyword">int</span>&gt;
+{
+    [<span class="string">&quot;one&quot;</span>] = <span class="number">1</span>,
+    [<span class="string">&quot;two&quot;</span>] = <span class="number">2</span>,
+};</code></pre>
+<p>プロパティへの代入とインデクサーへの代入を混在させることもできます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Sample
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> Name { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+ 
+    <span class="keyword">public</span> <span class="keyword">int</span> <span class="keyword">this</span>[<span class="keyword">string</span> key]
+    {
+        <span class="keyword">get</span> { <span class="keyword">return</span> <span class="number">0</span>; }
+        <span class="keyword">set</span> { }
+    }
+}
+ 
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> s = <span class="keyword">new</span> Sample
+        {
+            Name = <span class="string">&quot;sample&quot;</span>,
+            [<span class="string">&quot;X&quot;</span>] = <span class="number">1</span>,
+            [<span class="string">&quot;Y&quot;</span>] = <span class="number">2</span>,
+        };
+    }
+}</code></pre>
+<h3 id="section-10"><a id="sec-generated-title-10"></a> <a id="recursive"></a>再帰初期化</h3>
+<p>ちなみに、再帰的な構造を持ったクラスの初期化もできます。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Collections.Generic;
+
+<span class="keyword">class</span> Point
+{
+    <span class="keyword">public</span> <span class="keyword">double</span> X { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">double</span> Y { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+}
+
+<span class="keyword">class</span> Color
+{
+    <span class="keyword">public</span> <span class="keyword">byte</span> R { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">byte</span> G { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">byte</span> B { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+}
+
+<span class="keyword">class</span> Geometry
+{
+    <span class="keyword">public</span> List&lt;Point&gt; Vertices = <span class="keyword">new</span> List&lt;Point&gt;();
+    <span class="keyword">public</span> List&lt;<span class="keyword">int</span>&gt; Indices = <span class="keyword">new</span> List&lt;<span class="keyword">int</span>&gt;();
+}
+
+<span class="keyword">class</span> Model
+{
+    <span class="keyword">public</span> Geometry Geometry = <span class="keyword">new</span> Geometry();
+    <span class="keyword">public</span> Color Color = <span class="keyword">new</span> Color();
+}
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        Model m = <span class="keyword">new</span> Model
+        {
+            Color = { R = <span class="number">128</span>, G = <span class="number">128</span>, B = <span class="number">128</span> },
+            Geometry =
+            {
+                Vertices =
+                {
+                    <span class="keyword">new</span> Point { X = <span class="number">0</span>, Y = <span class="number">0</span>},
+                    <span class="keyword">new</span> Point { X = <span class="number">1</span>, Y = <span class="number">0</span>},
+                    <span class="keyword">new</span> Point { X = <span class="number">1</span>, Y = <span class="number">1</span>},
+                    <span class="keyword">new</span> Point { X = <span class="number">0</span>, Y = <span class="number">1</span>},
+                },
+                Indices = { <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">3</span> },
+            },
+        };
+
+        <span class="comment">//Model m = new Model();</span>
+        <span class="comment">//m.Color.R = 128;</span>
+    }
+}</code></pre>
+<p>ただし、再帰的な初期化をするためには、メンバーが参照型（class）である必要があります。
+例えば、上記の例で、Color が class ではなく struct だった場合、
+コンパイルエラーになります。</p>
+<p>また、この記法ででの初期化は、以下のようなコードと等価で、Color、Geometry、Indices などに対してインスタンスを new してくれたりはしないので注意が必要です。
+コンストラクターもしくはメンバー初期化子での初期化が必要です。</p>
+<pre><code class="language-csharp">        Model m = <span class="keyword">new</span> Model();
+        <span class="comment">// ↓ m = new Model() の時点で Color が初期化されていないと NullReferenceException。</span>
+        m.Color.R = <span class="number">128</span>;
+        m.Color.G = <span class="number">128</span>;
+        m.Color.B = <span class="number">128</span>;
+        m.Geometry.Vertices.Add(<span class="keyword">new</span> Point { X = <span class="number">0</span>, Y = <span class="number">0</span> });
+        m.Geometry.Vertices.Add(<span class="keyword">new</span> Point { X = <span class="number">1</span>, Y = <span class="number">0</span> });
+        m.Geometry.Vertices.Add(<span class="keyword">new</span> Point { X = <span class="number">1</span>, Y = <span class="number">1</span> });
+        m.Geometry.Vertices.Add(<span class="keyword">new</span> Point { X = <span class="number">0</span>, Y = <span class="number">1</span> });
+        m.Geometry.Indices.Add(<span class="number">0</span>);
+        m.Geometry.Indices.Add(<span class="number">1</span>);
+        m.Geometry.Indices.Add(<span class="number">2</span>);
+        m.Geometry.Indices.Add(<span class="number">0</span>);
+        m.Geometry.Indices.Add(<span class="number">2</span>);
+        m.Geometry.Indices.Add(<span class="number">3</span>);</code></pre>
+<p>さもなくば、以下のように、おとなしく new を書きましょう。</p>
+<pre><code class="language-csharp">        Model m = <span class="keyword">new</span> Model
+        {
+            Color = <span class="keyword">new</span> Color { R = <span class="number">128</span>, G = <span class="number">128</span>, B = <span class="number">128</span> },
+            Geometry = <span class="keyword">new</span> Geometry
+            {
+                Vertices = <span class="keyword">new</span> List&lt;Point&gt;
+                {
+                    <span class="keyword">new</span> Point { X = <span class="number">0</span>, Y = <span class="number">0</span>},
+                    <span class="keyword">new</span> Point { X = <span class="number">1</span>, Y = <span class="number">0</span>},
+                    <span class="keyword">new</span> Point { X = <span class="number">1</span>, Y = <span class="number">1</span>},
+                    <span class="keyword">new</span> Point { X = <span class="number">0</span>, Y = <span class="number">1</span>},
+                },
+                Indices = <span class="keyword">new</span> List&lt;<span class="keyword">int</span>&gt; { <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">3</span> },
+            },
+        };</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/functional/">&#x95A2;&#x6570;&#x6307;&#x5411;</a></li><li><a href="/study/csharp/functional/fun_functional/">&#x95A2;&#x6570;&#x6307;&#x5411;</a></li><li><a href="/study/csharp/functional/sp_delegate/">&#x30C7;&#x30EA;&#x30B2;&#x30FC;&#x30C8;</a></li><li><a href="/study/csharp/functional/misc_delegate/">[&#x96D1;&#x8A18;] &#x30C7;&#x30EA;&#x30B2;&#x30FC;&#x30C8;&#x306E;&#x5229;&#x7528;&#x4F8B;</a></li><li><a href="/study/csharp/functional/miscdelegateinternal/">[&#x96D1;&#x8A18;] &#x30C7;&#x30EA;&#x30B2;&#x30FC;&#x30C8;&#x306E;&#x5185;&#x90E8;</a></li><li><a href="/study/csharp/functional/fun_localfunctions/">&#x30ED;&#x30FC;&#x30AB;&#x30EB;&#x95A2;&#x6570;&#x3068;&#x533F;&#x540D;&#x95A2;&#x6570;</a></li><li><a href="/study/csharp/functional/sp2_anonymousmethod/">[&#x96D1;&#x8A18;] &#x533F;&#x540D;&#x95A2;&#x6570;&#x306E;&#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;</a></li><li><a href="/study/csharp/functional/sp_event/">&#x30A4;&#x30D9;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/functional/misceventsubscribe/">&#x3010;&#x96D1;&#x8A18;&#x3011;&#x30A4;&#x30D9;&#x30F3;&#x30C8;&#x306E;&#x8CFC;&#x8AAD;&#x3068;&#x305D;&#x306E;&#x89E3;&#x9664;</a></li><li><a href="/study/csharp/functional/sp3_functional/">&#x95A2;&#x6570;&#x578B;&#x8A00;&#x8A9E;&#x30FB;&#x52D5;&#x7684;&#x8A00;&#x8A9E;&#x7684;&#x306A;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/functional/sp3_extension/">&#x62E1;&#x5F35;&#x30E1;&#x30BD;&#x30C3;&#x30C9;</a></li><li><a href="/study/csharp/functional/fun_whyextensions/">&#x30AF;&#x30E9;&#x30B9;&#x306E;&#x6A5F;&#x80FD;&#x62E1;&#x5F35;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

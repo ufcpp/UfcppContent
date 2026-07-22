@@ -1,0 +1,169 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>IIR&#x30D5;&#x30A3;&#x30EB;&#x30BF; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/sp/digital_filter/iir/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="iir">IIRフィルタ</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="schedule"></a>執筆予定</h2>
+<pre><code class="language-text">概要、IIRフィルタの特徴
+ フィードバックあり
+ IRが無限に続く
+ 長所
+  FIRより低次でいい特性がえられる
+ 短所
+  設計が難しい
+  不安定になることもあり
+  誤差が蓄積
+
+伝達関数、ブロック図を出して説明
+ 素直に実装すると・・・
+ 記憶領域削減のために中間変数を導入して・・・
+
+次数が高くなると誤差とかオーバーフローの問題が顕著になってくるので、
+通常は因数分解して2次ずつに分ける。
+2次IIRを直列接続したり、
+部分分数分解して並列接続して実装。
+
+設計
+ アナログで設計(アナログプロトタイプ)。
+ s→z変換でディジタルに。</code></pre>
+<h2 id="section-1"><a id="sec-generated-title-2"></a> <a id="abstract"></a>概要</h2>
+<p><strong id="iir" class="keyword">IIRフィルタ</strong>とは</p>
+<h2 id="section-2"><a id="sec-generated-title-3"></a> <a id="abstract"></a>フィルタ設計</h2>
+<p>IIR フィルタの設計手法は大きく分けて2種類あります。</p>
+<ol>
+<li><p>アナログフィルタ設計手法に基づいてフィルタ設計を行う。 その後、<span class="math">s→z</span>変換でディジタルフィルタに変換する。</p>
+</li>
+<li><p>任意の周波数特性を与えて、その特性に近づくように数値計算でフィルタ設計。</p>
+</li>
+</ol>
+<p>ローパスフィルタなど、
+特によく用いられるフィルタは、アナログ信号処理の時代から設計手法が確立されています。
+そのため、アナログフィルタ設計手法を用いて設計し、
+アナログ領域からディジタル領域に変換する手法と組み合わせてディジタルフィルタを設計することができます（1. の手法）。</p>
+<p>これに対し、ディジタルフィルタでは、数値解析的な反復計算手法により、
+任意の周波数特性を近似するようなフィルタ設計も存在します（2. の手法）。
+フィルタの振幅特性のみを近似する手法（Yule-Walker 法）や、
+フィルタのインパルス応答の時間波形を近似する手法（Prony 法、Steiglitz-McBride反復法）
+などがあります。</p>
+<h3 id="section-3"><a id="sec-generated-title-4"></a> <a id="analog"></a>アナログプロトタイプ設計</h3>
+<p>アナログ設計手法に基づくディジタル設計手法（1. の手法）で、
+ディジタルフィルタの元となるアナログフィルタのことをアナログプロトタイプと呼びます。
+有名なものとしては、以下のようなアナログフィルタがあります。
+詳細は次章以降で説明します。</p>
+<ul>
+<li><p>双2次（Biquadratic）フィルタ</p>
+</li>
+<li><p>ローパスフィルタ</p>
+<ul>
+<li><p>Butterworthフィルタ</p>
+</li>
+<li><p>Chebyshevフィルタ（Chebyshev I型フィルタ）</p>
+</li>
+<li><p>逆Chebyshevフィルタ（Chebyshev II型フィルタ）</p>
+</li>
+<li><p>連立Chebyshevフィルタ（楕円フィルタ）</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>通常、カットオフ周波数を 1 として設計して、 s → z 変換時にカットオフ周波数を変える。</p>
+<h3 id="sz"><a id="sec-generated-title-5"></a> <a id="s-z-trans"></a>s→z変換</h3>
+<p>通常、アナログフィルタ設計は<span class="math">s</span>領域で、ディジタルフィルタ設計は<span class="math">z</span>領域で行う。 <span class="math">s</span>領域とは、連続信号<span class="math">f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span></span>をラプラス変換し、伝達関数<span class="math">F<span class="paren" style="font-size:em;">(</span>s<span class="paren" style="font-size:em;">)</span></span>で表したものをさし、 <span class="math">z</span>領域とは、離散信号<span class="math">f<span class="paren" style="font-size:em;">[</span>t<span class="paren" style="font-size:em;">]</span></span>をZ変換し、伝達関数<span class="math">F<span class="paren" style="font-size:em;">(</span>z<span class="paren" style="font-size:em;">)</span></span>で表したものをさす。</p>
+<p>双1次変換などがある。</p>
+<h2 id="section-4"><a id="sec-generated-title-6"></a> <a id="z"></a>伝達関数とブロック図</h2>
+<p>伝達関数</p>
+<div class="math">
+Y
+＝
+<table class="frac" summary="fraction"><tr><td class="num"><table class="sigma" summary="sum"><tr><td class="sigmasub">N－1</td></tr><tr><td class="sigma">∑</td></tr><tr><td class="sigmasub">i＝0</td></tr></table>
+B<sub>i</sub>
+z<sup>－i</sup></td></tr><tr><td><table class="sigma" summary="sum"><tr><td class="sigmasub">N－1</td></tr><tr><td class="sigma">∑</td></tr><tr><td class="sigmasub">i＝0</td></tr></table>
+A<sub>i</sub>
+z<sup>－i</sup></td></tr></table>
+X
+</div>
+実装の都合上、式を以下のように変形。
+<div class="math">
+Y
+＝
+c
+<table class="frac" summary="fraction"><tr><td class="num">
+1 ＋
+<table class="sigma" summary="sum"><tr><td class="sigmasub">N－1</td></tr><tr><td class="sigma">∑</td></tr><tr><td class="sigmasub">i＝1</td></tr></table>
+b<sub>i</sub>
+z<sup>－i</sup></td></tr><tr><td>
+1 －
+<table class="sigma" summary="sum"><tr><td class="sigmasub">N－1</td></tr><tr><td class="sigma">∑</td></tr><tr><td class="sigmasub">i＝1</td></tr></table>
+a<sub>i</sub>
+z<sup>－i</sup></td></tr></table>
+X
+</div>
+中間変数 <span class="math">T</span> を導入。
+<div class="math">
+T
+＝
+c X
+＋
+<table class="sigma" summary="sum"><tr><td class="sigmasub">N－1</td></tr><tr><td class="sigma">∑</td></tr><tr><td class="sigmasub">i＝1</td></tr></table>
+a<sub>i</sub>
+z<sup>－i</sup>
+T
+</div><div class="math">
+Y
+＝
+T
+＋
+<table class="sigma" summary="sum"><tr><td class="sigmasub">N－1</td></tr><tr><td class="sigma">∑</td></tr><tr><td class="sigmasub">i＝1</td></tr></table>
+b<sub>i</sub>
+z<sup>－i</sup>
+T
+</div>
+これで、図1みたいなブロック図で実装可能に。
+（省メモリ。）
+<figure>
+<p><a href="/assets/media/ufcpp2000/sp/iir01.png"><img src="/assets/media/ufcpp2000/sp/iir01.png" alt="IIRフィルタ" /></a></p>
+<figcaption>IIRフィルタ</figcaption>
+</figure>
+<p>2次ずつに分解</p>
+<div class="math">
+Y
+＝
+c
+<table class="sigma" summary="sum"><tr><td class="sigmasub">K－1</td></tr><tr><td class="sigma">∑</td></tr><tr><td class="sigmasub">k＝0</td></tr></table><table class="frac" summary="fraction"><tr><td class="num">
+1 ＋ b<sub>k,1</sub> z<sup>－1</sup> ＋ b<sub>k,2</sub> z<sup>－2</sup></td></tr><tr><td>
+1 － a<sub>k,1</sub> z<sup>－1</sup> － a<sub>k,2</sub> z<sup>－2</sup></td></tr></table>
+X
+</div>
+この式で、図2みたいになる。
+この方は演算誤差の蓄積が少ないらしい。
+<figure>
+<p><a href="/assets/media/ufcpp2000/sp/iir02.png"><img src="/assets/media/ufcpp2000/sp/iir02.png" alt="直列接続2次IIRフィルタ" /></a></p>
+<figcaption>直列接続2次IIRフィルタ</figcaption>
+</figure>
+<p>伝達関数を部分分数分解してIIRフィルタを並列接続することもある。
+直列接続よりももっと誤差蓄積少。</p>
+<p>図1の方式での実装:
+<a href="/assets/media/ufcpp2000/sp/src/IirFilter.cs">IirFilter.cs</a></p>
+<p>図2の方式での実装:
+<a href="/assets/media/ufcpp2000/sp/src/SerialIirFilter.cs">SerialIirFilter.cs</a></p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/sp/digital_filter/">&#x30C7;&#x30A3;&#x30B8;&#x30BF;&#x30EB;&#x30D5;&#x30A3;&#x30EB;&#x30BF;</a></li><li><a href="/study/sp/digital_filter/filter/">&#x30C7;&#x30A3;&#x30B8;&#x30BF;&#x30EB;&#x30D5;&#x30A3;&#x30EB;&#x30BF;</a></li><li><a href="/study/sp/digital_filter/program/">&#x30C7;&#x30A3;&#x30B8;&#x30BF;&#x30EB;&#x30D5;&#x30A3;&#x30EB;&#x30BF;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30DF;&#x30F3;&#x30B0;</a></li><li><a href="/study/sp/digital_filter/fir/">FIR&#x30D5;&#x30A3;&#x30EB;&#x30BF;</a></li><li><a href="/study/sp/digital_filter/transform/">&#x5468;&#x6CE2;&#x6570;&#x5909;&#x63DB;</a></li><li><a href="/study/sp/digital_filter/biquad/">&#x53CC;2&#x6B21;&#x30D5;&#x30A3;&#x30EB;&#x30BF;</a></li><li><a href="/study/sp/digital_filter/analoglpf/">&#x30A2;&#x30CA;&#x30ED;&#x30B0;&#x30D5;&#x30A3;&#x30EB;&#x30BF;&#x8A2D;&#x8A08;&#x306B;&#x57FA;&#x3065;&#x304F; IIR LPF &#x8A2D;&#x8A08;</a></li><li><a href="/study/sp/digital_filter/butterworth/">&#x30D0;&#x30BF;&#x30FC;&#x30EF;&#x30FC;&#x30B9;&#x30D5;&#x30A3;&#x30EB;&#x30BF;</a></li><li><a href="/study/sp/digital_filter/chebyshev/">&#x30C1;&#x30A7;&#x30D3;&#x30B7;&#x30A7;&#x30D5;&#x30D5;&#x30A3;&#x30EB;&#x30BF;</a></li><li><a href="/study/sp/digital_filter/chebyshev2/">&#x9006;&#x30C1;&#x30A7;&#x30D3;&#x30B7;&#x30A7;&#x30D5;&#x30D5;&#x30A3;&#x30EB;&#x30BF;</a></li><li><a href="/study/sp/digital_filter/elliptic/">&#x6955;&#x5186;&#x30D5;&#x30A3;&#x30EB;&#x30BF;</a></li><li><a href="/study/sp/digital_filter/ellipticrational/">&#x30C1;&#x30A7;&#x30D3;&#x30B7;&#x30A7;&#x30D5;&#x6709;&#x7406;&#x95A2;&#x6570;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

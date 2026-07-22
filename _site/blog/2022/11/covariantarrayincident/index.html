@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5171;&#x5909;&#x914D;&#x5217;&#x4E8B;&#x6545; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2022/11/covariantarrayincident/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2022-11-24T23:50:02">2022-11-24</time></span><span>更新: <time datetime="2022-11-24T23:50:02">2022-11-24</time></span></div><h1 id="section">共変配列事故</h1>
+<p>またちょっと Gist に書き捨ててたコードが増えてきたので供養ブログをしばらく書いていこうかと。</p>
+<p>(今年はまだ少な目。一人アドベントカレンダーな量にはならず。)</p>
+<h2 id="section-1">配列の共変性</h2>
+<p>悪名高いんですが、C# のというか、.NET の配列は<a href="/study/csharp/oop/sp4_variance/#covariant-array">共変</a>だったりします。</p>
+<pre><code class="language-csharp"><span class="comment">// ↓.NET 的に許されていはいるものの、 items[0] = new Base(); が例外を起こすので今となってはあんまり使いたくない機能。</span>
+<span class="comment">// 意図的に使うことはめったにないものの…</span>
+Base[] items = <span class="keyword">new</span> Derived[<span class="number">1</span>];
+
+<span class="comment">// これは問題ない</span>
+items[<span class="number">0</span>] = <span class="keyword">new</span> Derived();
+
+<span class="comment">// これも問題ない。 Base に Derived を代入するのは安全。</span>
+Base item = items[<span class="number">0</span>];
+
+<span class="comment">// これがダメ。</span>
+<span class="comment">// 実行時例外が出る。</span>
+items[<span class="number">0</span>] = <span class="keyword">new</span> Base();
+
+<span class="keyword">class</span> Base { }
+<span class="keyword">class</span> Derived : Base { }</code></pre>
+<p>実行時例外出ることわかってるんだからコンパイル時に禁止しろと…
+(みんな言ってる。何度でも言ってる。)</p>
+<p><code>IEnumerable&lt;T&gt;</code> や <code>ReadOnlySpan&lt;T&gt;</code> がある現在では本当に意味不明な仕様なんですが、
+まあ、 .NET の最初期(.NET Framework 1.0)の頃はジェネリクスすらなかったので、
+やむなくこんな仕様を入れたんだと思います。</p>
+<p>ちなみに、実のところ Java も配列が共変で、.NET はそれに右に倣えな感じは多少あります(初期にジェネリクスがなかったのも共通)。</p>
+<h2 id="section-2">事故発生</h2>
+<p>まあ、この仕様は昔の名残丸出しの気持ち悪い仕様なので、意図的に使うことはほとんどないんですが。
+時々事故るんですよねぇ。</p>
+<p><code>Base[] items = new Derived[1];</code> とかいうわかりやすいコードならやらないのであって、
+型推論が絡むと時々間違っちゃう。</p>
+<pre><code class="language-csharp"><span class="comment">// 配列の型推論はソース側(右辺側)からしかやらない。</span>
+<span class="comment">// となると…</span>
+Base[] items = <span class="keyword">new</span>[] { <span class="keyword">new</span> Derived() };
+
+<span class="comment">// 1. new[]{} の中身が Derived である</span>
+<span class="comment">// 2. 中身からの型推論で、右辺の型は Derived[] になる</span>
+<span class="comment">// 3. Base[] に Derive[] を代入(共変)している</span>
+
+<span class="comment">// はい、アウト。実行時例外が出る。</span>
+items[<span class="number">0</span>] = <span class="keyword">new</span> Base();
+
+<span class="keyword">class</span> Base { }
+<span class="keyword">class</span> Derived : Base { }</code></pre>
+<p>数年に1度はやっちゃう…</p>
+<p>ちなみに今年やったのはもうちょっと複雑で、要点を抜き出すと以下のようなコードでした。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> testData = <span class="keyword">new</span>[]
+{
+    <span class="comment">// たくさん new A() が並んでる。</span>
+    <span class="keyword">new</span> A
+    {
+        Child = <span class="keyword">new</span>()
+        {
+            Items = <span class="keyword">new</span>[] <span class="comment">// これの推論結果は Base[] なのでセーフ。</span>
+            {
+                <span class="keyword">new</span> Base(), <span class="keyword">new</span> Derived(),
+            },
+        },
+    },
+    <span class="keyword">new</span> A
+    {
+        Child = <span class="keyword">new</span>()
+        {
+            Items = <span class="keyword">new</span>[] <span class="comment">// これが Derived[] になってアウト。</span>
+            {
+                <span class="keyword">new</span> Derived(), <span class="keyword">new</span> Derived(),
+            },
+        },
+    },
+    <span class="comment">// たくさん new A() が並んでる。</span>
+};
+
+<span class="comment">// いろいろあって最終的に B.Items が Deserialize に渡る。</span>
+<span class="comment">// こっちは平気だけど…</span>
+Serializer.Deserialize(testData[<span class="number">0</span>].Child!.Items!);
+
+<span class="comment">// こっちは実行時例外起こす。</span>
+Serializer.Deserialize(testData[<span class="number">1</span>].Child!.Items!);
+
+<span class="keyword">class</span> Serializer
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Deserialize&lt;T&gt;(T[] value)
+    {
+        <span class="comment">// ちなみに、共変配列が来てるとここの Span へのキャストのタイミングで実行時例外。</span>
+        Deserialize((Span&lt;T&gt;)value);
+    }
+
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> Deserialize&lt;T&gt;(Span&lt;T&gt; value)
+    {
+        <span class="keyword">foreach</span> (<span class="keyword">ref</span> <span class="keyword">var</span> x <span class="keyword">in</span> value)
+        {
+            <span class="comment">// x = ...</span>
+        }
+    }
+}
+
+<span class="keyword">class</span> A { <span class="keyword">public</span> B? Child; }
+<span class="keyword">class</span> B { <span class="keyword">public</span> Base[]? Items; }
+
+<span class="keyword">class</span> Base { }
+<span class="keyword">class</span> Derived : Base { }</code></pre>
+<p>来年には入るかもと目されている<a href="/blog/2021/12/collection-literal/">コレクション リテラル</a>ではこんな問題起こさないように設計されていそうで。
+この時ばかりはかなり本気で、一刻も早くコレクション リテラルに来てほしいと思いました。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2022/11/">11&#x6708;</a></li><li><a href="/blog/2022/11/vsnetfx/">Visual Studio &#x306E; .NET Core &#x5316;&#x307E;&#x3060;&#x30FC;&#xFF1F;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

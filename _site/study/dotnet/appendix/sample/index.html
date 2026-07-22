@@ -1,0 +1,246 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30B5;&#x30F3;&#x30D7;&#x30EB;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/dotnet/appendix/sample/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">サンプルプログラム</h1>
+<h2 id="xaml"><a id="sec-generated-title-1"></a> <a id="xaml"></a>XAML 雛形</h2>
+<p>ボタンを押したらメッセージボックスが表示されるだけの単純なものです。
+Visual Studio を使わずに、コマンドラインで MSBuild を使って XAML Windows アプリケーションを作りたい場合の雛形にどうぞ。</p>
+<p><a href="/assets/sample/XamlApplication.zip">ファイル一式（ZIP 圧縮）</a></p>
+<h2 id="section-1"><a id="sec-generated-title-2"></a> <a id="lineart"></a>ラインアート</h2>
+<p>C# でもやってるんですけど（「<a href="/study/csharp/sample/ap_sample/#lineart">ラインアート</a>」）、
+僕は GUI 開発環境の提供されているプログラミング言語を新しく覚えるたびにラインアートを作っています。
+（比較とか勉強のため、とりあえず作る。）</p>
+<p>（でも、「<a href="http://ja.wikipedia.org/wiki/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%BB%E3%83%BC%E3%83%90%E3%83%BC">スクリーンセーバー</a>っていったらラインアート」ってのも、
+もうだいぶ昔の話ですが。
+最近は 3D テキストか Windows ロゴ？
+まあ、Windows の出荷時のデフォルト設定で、
+「スクリーンセーバーを使用しない」にするだけで、
+全世界で消費される電力がかなり減るって言うような話を聞いたこともあるんですが。）</p>
+<p>で、コードなしの Loose XAML だけでラインアートを作れそうな感じがしたんでやってみました。</p>
+<p><a href="/assets/media/ufcpp2000/dotnet/sample/LineArt.xaml">LineArt.xaml</a>
+。</p>
+<h2 id="section-2"><a id="sec-generated-title-3"></a> <a id="bubble3d"></a>3次元バブルチャート（雛形）</h2>
+<p>バブルチャートの3次元版、ようするに、
+値に応じた大きさのバブルを3次元に表示するプログラムが欲しかったので作ったもの。
+現状の WPF の System.Windows.Media.Media3D では、三角メッシュしか使えないみたいなので、
+バブルは球状じゃなくて正8面体で妥協。</p>
+<p>今回使った機能は、以下のような感じ。</p>
+<ul>
+<li><p>3D メッシュ MeshGeometry3D で正8面体を作成。</p>
+</li>
+<li><p>ScaleTransform3D で正8面体の所望の大きさに拡大・縮小。</p>
+</li>
+<li><p>TranslateTransform3D で正8面体を所望の場所に移動。</p>
+</li>
+<li><p>球状に配置されてるのが分かりやすく見えるように、中心に点光源 PointLight を配置。</p>
+</li>
+<li><p>裏面も見えるように環境光 AmbientLight を設定。</p>
+</li>
+<li><p>前後を分かりやすくするために、方向性光源 DirectionalLight で、前から赤い光、後ろから青い光を当てる。</p>
+</li>
+<li><p>アニメーション機能 Storyboard ＆ DoubleAnimation を使ってカメラを回転。</p>
+</li>
+</ul>
+<p><a href="/assets/sample/BubbleChart3D.zip">ソースファイル(zip形式書庫)</a> … テスト用に、球面上のランダムな位置にランダムな大きさの正8面体を200個ほど配置したもの。</p>
+<p><a href="/assets/sample/viewport3d.xaml">XAML ファイル</a> … コードビハインドなしの、XAML のみ。固定位置に同じサイズの正8面体を6つ配置したもの。（セキュリティ権限上、ブラウザ中で直接実行付加。一度ローカルに保存してください。）</p>
+<h2 id="section-3"><a id="sec-generated-title-4"></a> <a id="convexclosure"></a>凸包計算プログラム</h2>
+<p>後輩に、「任意に与えられた点を全て囲む面積最小の長方形を求めたいんですが」と言われてノリで作ったもの。
+せっかくだからサンプルプログラムとして公開。</p>
+<p><a href="/assets/sample/ConvexClosure.zip">ファイル一式（ZIP 圧縮）</a></p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/dotnet/fig/convex.png"><img src="/assets/media/ufcpp2000/dotnet/fig/convex.png" alt="画面コピー" /></a></p>
+<figcaption>画面コピー</figcaption>
+</figure>
+<h3 id="section-4"><a id="sec-generated-title-5"></a> <a id="algorithm"></a>計算アルゴリズム</h3>
+<p>「全点囲む最小の長方形」は以下の条件を満たしてそう。</p>
+<ul>
+<li><p>与えられた点列の凸包を囲む面積最小の長方形を求めれば OK。</p>
+</li>
+<li><p>凸包を囲む長方形が面積最小のとき、長方形のどれか1辺は、凸包の少なくとも1辺に接している。</p>
+</li>
+</ul>
+<p>なので、以下のような処理で「全点囲む最小の長方形」を計算可能。</p>
+<ol>
+<li><p>与えられた点列の凸包を求める。</p>
+</li>
+<li><p>1辺の方向を与えたときに、その向きで面積最小の長方形を求める。</p>
+</li>
+<li><p>凸包の全ての辺の方向について、2. を計算。</p>
+</li>
+</ol>
+<p>1 は、Graham 走査という有名なアルゴリズムがあるのでそれを利用。
+2 は、向きが決まっていれば、辺から点までの距離が法線との内積で求まるので、
+面積最小の長方形は簡単に求まる。</p>
+<h3 id="gui"><a id="sec-generated-title-6"></a> <a id="gui"></a>GUI プログラム</h3>
+<p>↑のアルゴリズムの確認のために、
+以下のような GUI プログラムを作成。</p>
+<ul>
+<li><p>ウィンドウ内を左クリックしたとき、その位置に新しい点を追加。</p>
+</li>
+<li><p>右クリックしたとき、その位置に一番近い点を削除。</p>
+</li>
+<li><p>点列に対して、凸包、全点を囲う最小の長方形を求めて、 それぞれをウィンドウ中に表示。</p>
+</li>
+</ul>
+<p>GUI の作成には Windows Presentation Foundation を使用。
+点や凸包は、
+System.Windows.Shapes 名前空間内の、
+Ellipse や Polyline を使用。</p>
+<h3 id="section-5"><a id="sec-generated-title-7"></a> <a id="ref"></a>参考</h3>
+<p>ちなみに、最初プログラムを作った目的は、
+求めたい長方形が本当に凸包に接してるのか、証明するのが面倒だし、
+総当りで試してみようというものです。
+(長方形を0.01ラジアン刻みとかで回転させて、
+その向きの面積最小の長方形を総当りで求めて、
+最小のものを選択。)</p>
+<p>その後、後輩が調べてきた所によると、
+「全点囲む最小の長方形」はやっぱり凸包の辺に接してるみたい。
+証明の書かれた論文あり↓</p>
+<ul>
+<li>
+<ol type="A" start="8">
+<li>Freeman, R. Shapira: &quot;Determining the minimum-area encasing rectangle for an arbitrary closed curve,&quot; Communications of the ACM, Vol. 18, Issue 7, pp. 409 - 413, (July 1975).</li>
+</ol>
+</li>
+</ul>
+<p>あと、凸包を囲う長方形の求め方、
+もっと効率いい方法がありそう↓</p>
+<ul>
+<li>
+<ol type="A" start="14">
+<li>Adlai, et. al.: &quot;Algorthmic pradigms: examples in computational geometry II,&quot; ACM SIGCSE Bulletin archive, Vol. 22, Issue 1, pp. 186 - 191, (Feb. 1990).</li>
+</ol>
+</li>
+</ul>
+<h2 id="multi-line-fitting"><a id="sec-generated-title-8"></a> <a id="fitting"></a>Multi-line fitting</h2>
+<p>最小二乗法でフィッティングできるようなデータ列が2種類異常混ざっているような場合に、
+n 本の回帰直線を求めるプログラム。</p>
+<p><a href="/assets/sample/MultiLineFitting.zip">ファイル一式（ZIP 圧縮）</a></p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/dotnet/fig/fitting.png"><img src="/assets/media/ufcpp2000/dotnet/fig/fitting.png" alt="画面コピー" /></a></p>
+<figcaption>画面コピー</figcaption>
+</figure>
+<p>注：
+画面コピーは結構うまく行った例。
+実際にうまく行くかどうかはデータ列次第です。
+混ざってるのが2種類（回帰直線2本）くらいなら割とうまく行きますが、
+6本でここまでうまく行くことはそう多くない。
+あと、回帰直線を何本くらい使えばうまくクラスタリングできるかを自動計算したりという機能はないです。</p>
+<h3 id="section-6"><a id="sec-generated-title-9"></a> <a id="fitting_algorithm"></a>計算アルゴリズム</h3>
+<p>クラスタリングと最小二乗法を組み合わせで実装しています。</p>
+<p>要するに、
+回帰直線をクラスタ重心と考えて、</p>
+<ul>
+<li><p>各点に対して一番近い回帰直線を探して帰属情報を更新</p>
+</li>
+<li><p>クラスタごとに最小二乗法で回帰直線を求めなおす</p>
+</li>
+</ul>
+<p>の2つの処理を反復。</p>
+<p>でも、クラスタ重心が点の場合と比べると、局所解に陥りやすいみたいです。
+それを解決するような研究報告例あり↓。</p>
+<p>乾 健太郎，金子 俊一，五十嵐 悟：
+“LMedSクラスタリングに基づく複数直線のロバスト回帰，”
+Technical report of IEICE. PRMU,
+Vol.99, No.449(19991119) pp. 81-86.</p>
+<h2 id="section-7"><a id="sec-generated-title-10"></a> <a id="dynamics"></a>曲面上の物体の運動シミュレーション</h2>
+<p>せっかく Orcas（Visual Studio の次期バージョンのコードネーム）の新β版が出たことだし
+（2007/4末）、
+なにか WPF を使ったプログラミングをしてみたくて作ったもの。</p>
+<p>ちょうど最近、
+「<a href="/study/physics/">物理</a>」の辺りを更新していたことだし、
+3次元空間中の曲面上の物体の運動をシミュレーションして、
+Viewport3D を使って3次元表示するプログラムを作ってみた。
+（参考：「<a href="/study/physics/dynamics/surface/">曲面上の運動</a>」。）</p>
+<p><a href="/assets/sample/Dynamics.zip">ファイル一式（ZIP 圧縮）</a></p>
+<p>Orcas で作ったので、Visual Studio 2005 だとコンパイルが通らないかも。
+多分、using System.Linq とかをコメントアウトするくらいでコンパイルできると思いますが。</p>
+<h3 id="section-8"><a id="sec-generated-title-11"></a> <a id="numerical"></a>数値計算</h3>
+<p>ソリューション内にいくつかのプロジェクトがあって、
+数値計算がらみは MyMath プロジェクト中にまとめています。</p>
+<h5 id="lambda"><a id="sec-generated-title-12"></a>Lambda 計算</h5>
+<p>拘束面の式（
+<span class="math">
+x<span class="paren" style="font-size:em;">(</span>u, v<span class="paren" style="font-size:em;">)</span><span class="normal">=</span><span class="normal">1.5</span> v <span class="normal">cos</span> u
+</span>
+とか）だけ与えれば、
+<span class="math">
+<table class="frac" summary="differential"><tr><td class="num">∂x</td></tr><tr><td>∂u</td></tr></table>
+</span> とか、
+「<a href="/study/physics/dynamics/hamilton/#hamiltonian">ハミルトニアン</a>」やその導関数は自動的に計算してくれるものを作りました。</p>
+<p>そのために、
+以下のような感じで使える Lambda 計算的なライブラリを作りました。
+（MyMath.Lambda 名前空間内。）</p>
+<pre><code class="language-powershell">Variable u <span class="powershellOperator">=</span> new Variable(<span class="string">&quot;u&quot;</span>);
+Variable v <span class="powershellOperator">=</span> new Variable(<span class="string">&quot;v&quot;</span>);
+<span class="keyword">Function</span> x <span class="powershellOperator">=</span> 1.5 <span class="powershellOperator">*</span> v <span class="keyword">Function</span>.Cos(u);
+<span class="keyword">Function</span> x_u <span class="powershellOperator">=</span> x.Differentiate(u);
+
+double uu <span class="powershellOperator">=</span> 0.1;
+double vv <span class="powershellOperator">=</span> 2;
+double xx <span class="powershellOperator">=</span> x_u.GetValue(u.Set(uu)<span class="powershellOperator">,</span> v.Set(vv));</code></pre>
+<p>ただ、あまり賢くはないです。
+<code>(u * v) / u</code> が約分されて <code>v</code> になってくれたりはしないので、
+分母の値が小さくなりすぎて精度が落ちることがしばしばあります。
+あと、分母分子が共に 0 になって、結果が NaN になることもたまにあります。</p>
+<h5 id="section-9"><a id="sec-generated-title-13"></a>微分方程式の数値解</h5>
+<p>4次のルンゲクッタ法を使ってハミルトンの微分方程式を解いています。
+（MyMath.DifferentialEquation 名前空間内。）</p>
+<h3 id="section-10"><a id="sec-generated-title-14"></a> <a id="plot3d"></a>3次元プロット</h3>
+<p>数値計算結果を3次元的に表示するユーザコントロールを作りました。
+（Plot3D プロジェクト。）</p>
+<p>Viewport3D（参考：「<a href="/study/dotnet/wpf/wpf_uielement/#Media3D">3次元モデル</a>」）を使って、
+拘束面と物体を表示します。</p>
+<p>拘束面の裏面も見えるようにするために、
+面と物体を回転させています。
+コントロール上を右クリックすると、回転を一時停止・再開できます。
+また、左クリックで、カメラの向きをある程度変化させることができます。</p>
+<h3 id="gui-1"><a id="sec-generated-title-15"></a> <a id="dynamics_sample"></a>サンプル GUI プログラム</h3>
+<p>実例として、下図に示すようなプログラムを作りました。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/dotnet/fig/Dynamics.jpg"><img src="/assets/media/ufcpp2000/dotnet/fig/Dynamics.jpg" alt="実行画面" /></a></p>
+<figcaption>実行画面</figcaption>
+</figure>
+<p>この実行画面の例では、
+拘束面の方程式を</p>
+<div class="math">
+        x<span class="paren" style="font-size:em;">(</span>u, v<span class="paren" style="font-size:em;">)</span><span class="normal">=</span><span class="normal">1.5</span> v <span class="normal">cos</span> u
+      </div><div class="math">
+        y<span class="paren" style="font-size:em;">(</span>u, v<span class="paren" style="font-size:em;">)</span><span class="normal">=</span><span class="normal">1.5</span> v <span class="normal">sin</span> u
+      </div><div class="math">
+        z<span class="paren" style="font-size:em;">(</span>u, v<span class="paren" style="font-size:em;">)</span><span class="normal">=</span><span class="normal">exp</span> v
+        <span class="normal">+</span><span class="normal">0.2</span><span class="normal">cos</span><span class="normal">5</span>πv
+        <span class="normal">−</span><span class="normal">2</span>
+      </div>
+ポテンシャルを <span class="math">
+          φ <span class="normal">=</span> z
+        </span> として物体の運動をシミュレーションしています。
+<p>ちなみに、Lambda 計算の精度の問題で、
+時々数値計算結果がおかしくなることがあります。
+というか、拘束面の式にあまりに複雑なものを指定すると、
+すぐにおかしくなります。
+まあ、実用目的じゃなくてデモ用だと思ってご容赦ください。</p>
+<h3 id="section-11"><a id="sec-generated-title-16"></a> <a id="new_version"></a>バージョンアップ</h3>
+<p>何点か改善 → 「<a href="/study/csharp/sample/sm_treeview/">[サンプル] 式木を WPF で GUI 表示</a>」。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/dotnet/appendix/">&#x4ED8;&#x9332;</a></li><li><a href="/study/dotnet/appendix/keywords/">&#x91CD;&#x8981;&#x8A9E;&#x53E5;&#x4E00;&#x89A7;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

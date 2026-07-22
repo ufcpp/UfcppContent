@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>.NET &#x306E;&#x30AB;&#x30EB;&#x30C1;&#x30E3;&#x30FC;&#x4F9D;&#x5B58; API &#x554F;&#x984C; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2021/8/invariantculture/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2021-08-22T20:38:16">2021-08-22</time></span><span>更新: <time datetime="2021-08-22T20:38:16">2021-08-22</time></span></div><h1 id="net-api">.NET のカルチャー依存 API 問題</h1>
+<p>以下のコード、実行環境によって出力結果が変わります。</p>
+<pre><code class="language-csharp">Console.WriteLine(<span class="keyword">new</span> DateTime(<span class="number">2021</span>, <span class="number">8</span>, <span class="number">22</span>));</code></pre>
+<p>日本語 Windows 環境だと <code>2021/08/22 0:00:00</code> と表示されると思いますが、
+OS 設定でカルチャーを変更すると別の書式になります。
+例えば、en-US カルチャーにすると <code>8/22/2021 12:00:00 AM</code> になります。
+要するに、<code>DateTime.ToString</code> は OS のカルチャー依存になっています。</p>
+<p>問題点はいくつかあるんですが…</p>
+<ul>
+<li><code>ToString</code> みたいなよく使うメソッドの既定動作がカルチャー依存</li>
+<li><a href="https://docs.microsoft.com/ja-jp/aspnet/core/blazor/host-and-deploy/webassembly?view=aspnetcore-5.0">WebAssembly</a> みたいな、カルチャー情報を使いたくない環境がある</li>
+<li>カルチャー非依存にしたければ北米カルチャーを強要されがち</li>
+<li>北米カルチャーが思った以上に世界から浮いてる</li>
+</ul>
+<p>今日はこの辺りの話を書きたいと思います。</p>
+<h2 id="section"><a id="why-now">なぜ今</a></h2>
+<p>国際化対応をしたことがある人ならたぶん、 .NET Framework 1.0 リリース当初であったり、
+さらに言うと C# のリリース前、Windows アプリは Visual Basic (無印)や C++ を使って書いていた頃からこの手の問題には悩まされていたと思います。</p>
+<p>ところが最近(去年くらいから)、別に国際化対応をしなくても悩むことが出てきました。</p>
+<h3 id="icu"><a id="dotnet-icu">ICU 化</a></h3>
+<p>元々、(Windows 向けの) .NET Framework では NLS (National Language Support)という Windows 組み込みの多言語対応データを使って国際化対応をしていました。</p>
+<p>一方、マルチプラットフォームの .NET Core (.NET 5 以降は単に「.NET」と呼ぶようになったやつ)が出たことで、
+Windows 以外では ICU (International Components for Unicode) という Unicode 標準に基づくライブラリを使うことになりました。
+多くの Unix 系 OS では標準搭載、あるいは、割かし簡単な手間で ICU を組み込むことができるようになっています。
+Windows 10 でも、2017年のアップデート以降、標準で ICU が入るようになりました。</p>
+<p>.NET Core 3.1 までは、実は、Windows は NLS を、他の OS では ICU を使っていたことで、
+実行環境によって微妙に実行結果が変わることがありました。
+この挙動があまり望ましくないということで、
+.NET 5 (2020年11月リリース)からは <a href="https://docs.microsoft.com/ja-jp/dotnet/core/extensions/globalization-icu">Windows でも ICU を使うように変更されました</a>。</p>
+<p>その結果、.NET Core 3.1 から .NET 5 にアップデートすると、微妙に文字列処理に変化があったりします。
+(NLS に戻すオプションもあるので、まずそうならそのオプションを指定することになります。)</p>
+<p><a href="https://github.com/dotnet/runtime/issues/43736">軽く騒動もあった</a>んですが、
+そこで初めて、「えっ、このメソッドもカルチャー依存だったんだ…」みたいな事実に気づいたという方も多いんじゃないかともいます。</p>
+<p>ちなみに日本語でも、「<a href="https://github.com/dotnet/runtime/issues/54987">IgnoreCase を付けると &quot;つ&quot; と &quot;っ&quot; が Equals 扱いになった</a>」みたいなことが起きています。
+(.NET 5 リリースのから今年7月まで気づかれてなかったっぽい。)</p>
+<h3 id="os-icu"><a id="no-icu-env">OS 搭載の ICU に頼れない環境</a></h3>
+<p>ICU のデータはフルに持つと結構なでかさになります。
+.NET アプリの実行に必要な分だけ抜き出しても 1.4MB くらいあります。</p>
+<p>まあ 1.4MB くらいのサイズであれば、サーバー OS ではそれほどきついサイズではないので、「たいてい OS が持ってる」を前提にしても問題ありませんでした。
+問題は iOS や WebAssembly 実行で、
+これらの環境ではアプリごとに ICU データを同梱して配布する必要があります。
+WebAssembly なんかはブラウザーでダウンロードして実行する前提なので、
+1.4MB もバカにならないサイズになります。
+(だいたいはブラウザー自身、iOS であれば WebKit が ICU 依存なので、データとしては ICU を持っているはずなんですけどね… そのデータをアプリ開発者が参照する手段はないです。)</p>
+<p>ということで、.NET も <a href="https://docs.microsoft.com/ja-jp/aspnet/core/blazor/host-and-deploy/webassembly?view=aspnetcore-5.0">Blazor WebAssembly</a> とかに注力している昨今、
+「カルチャー依存をなくしたい」という要望も強くなってきました。</p>
+<p>Blazor では、</p>
+<ul>
+<li>EFIGS (西欧向けのフランス語、イタリア語、ドイツ語、スペイン語だけを持つ)のデータだけを持つ</li>
+<li>CJK (データがでかくなりがちな日中韓)のデータだけ抜く</li>
+<li>完全にカルチャーを抜く(<a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.globalization.cultureinfo.currentculture"><code>CurrentCulture</code></a> を取ろうとしても <a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.globalization.cultureinfo.invariantculture"><code>InvariantCulture</code></a> が返ってくる)</li>
+</ul>
+<p>みたいなモードが選べるようになっていたりします。
+完全にカルチャーを抜くモードは Blazor に限らず、<a href="https://github.com/dotnet/runtime/blob/main/docs/design/features/globalization-invariant-mode.md"><code>InvariantGlobalization</code> というオプション</a>を指定することでどのタイプの .NET アプリでも同じモードで実行できます。</p>
+<h2 id="section-1"><a id="culture-dependent-apis">謎のカルチャー依存</a></h2>
+<p>ということで今になってカルチャー依存問題を踏んでいるわけですが。
+ここでもう1個問題になるのが、「えっ、このメソッドもカルチャー依存だったの？」みたいな意外さ。</p>
+<p>冒頭の例でも書きましたが、ただの <code>ToString</code> すらカルチャー依存です。
+.NET が Windows 限定で、しかもアプリと言えば Windows GUI アプリだった時代にはこれでもよかったんですが…</p>
+<p>当然ですが、Web アプリだとこの挙動は結構イラっとします。
+クラウド インスタンスを新規で立ててカルチャー設定を忘れて <code>ToString</code> の結果が変わるみたいなやつ。</p>
+<p>先ほど「<a href="https://github.com/dotnet/runtime/issues/43736">軽く騒動もあった</a>」と紹介したやつなんて結構ひどくて、「<a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.string.indexof"><code>IndexOf</code></a> と <a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.string.contains"><code>Contains</code></a> で結果が違う」という状態です。
+なんでこんなことになるかというと、<code>IndexOf</code> は <code>CurrentCulture</code> 依存で、<code>Contains</code> は <a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.stringcomparison">Ordinal</a> 比較だからです。
+混ざってるのはさすがにつらい…</p>
+<p>古くからある API ほどカルチャー依存で、新しめの API は <code>Ordinal</code> もしくは <code>InvariantCulture</code> 利用に変わっています。</p>
+<p>ちなみに、「実行環境によって結果が変わる」という問題がある他にも、
+パフォーマンス上の差もあります。
+そもそも <code>CurrentCulture</code> 取得がそこそこ負担が掛かる処理というのもありますし、
+<code>Ordinal</code> (文字コード通りに単なる数値比較するだけ)と比べてカルチャー依存処理(&quot;a&quot; と &quot;à&quot; や、&quot;か&quot; と &quot;が&quot; 等の関係性を考慮)する方が重たいに決まっています。</p>
+<p>「<a href="https://docs.microsoft.com/ja-jp/dotnet/fundamentals/code-analysis/quality-rules/ca1304">カルチャー依存の API を呼ぶときは明示的にカルチャー指定しろよ</a>」というアナライザーがあったりするので、できればこの設定は有効にしておいた方がいいかもしれません。</p>
+<h2 id="invariant"><a id="invariant-culture">Invariant とは…</a></h2>
+<p>で、まあ、<code>Ordinal</code> でいいものは <code>Ordinal</code> にするとして。
+どうしてもカルチャー依存なものは <code>InvariantCulture</code> にするとして。
+次の問題は <code>InvariantCulture</code> が invariant (不変な) という名前を名乗っているくせに北米基準という点。</p>
+<p>以下のようなコードを書くと、北米フォーマットになります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Globalization;
+Console.WriteLine(<span class="keyword">new</span> DateTime(<span class="number">2021</span>, <span class="number">8</span>, <span class="number">22</span>).ToString(CultureInfo.InvariantCulture));</code></pre>
+<p>90年代の IT 業界にはあるあるだったんですけどね、「北米がデフォルト」な動作。
+Java なんかでも、<code>println(new Date())</code> すると <code>Sun Aug 22 08:18:22 UTC 2021</code> とかになりますよね、たぶん。</p>
+<p>元をたどるとこの「未設定なら北米準拠にする」みたいなの、
+「&quot;C&quot; ロケール」とか言われてるみたいですね。
+古い C 言語多言語対応ライブラリがそういう挙動だったからという。</p>
+<p>一方の2000年代言語だと yyyy-MM-dd フォーマットなことが多いんですが(Go とか Rust とか)…</p>
+<p>まあ、日本人にとって困るのはたぶん日付のフォーマットくらいだと思います。
+小数点は北米と同じなので。
+ところがまあ、小数点・桁区切り記号に . を使うか , を使うかは、<a href="https://twitter.com/ufcpp/status/1426474277541322760">結構世界で2分されているみたい</a>なので注意が必要です。</p>
+<h2 id="section-2"><a id="usa">北米フォーマット</a></h2>
+<p>日本にいると「欧米」なんていう区切りで一括りにしてしまいがちなんですが…
+アメリカ合衆国、結構異端ですからね。</p>
+<ul>
+<li><a href="https://twitter.com/ufcpp/status/1426473850632491009">ヤードポンド利用国</a></li>
+<li><a href="https://twitter.com/ufcpp/status/1426473940453494786">ファーレンハイト利用国</a></li>
+<li><a href="https://twitter.com/ufcpp/status/1426474093096833027">MM/dd/yyyy 利用国</a></li>
+</ul>
+<p>英語圏の中でも <a href="https://imgur.com/MQ7LVC3">Arbitrary Retarded Rollercoaster</a>(勝手で遅れたジェットコースター)とか言われてるネタ画像出てきますからね、これ。
+ちなみに、「アメリカはおかしい」って主張に対して「違うよ、アメリカの中でも合衆国だけだよ、一緒にしないで」までがセット。</p>
+<p>それを見て「さすがに言いすぎじゃない？」って思って調べるとマジで1国だけ浮いているという。
+特に日付。 dd-MM-yyyy (リトル エンディアン)と yyyy-MM-dd (ビッグ エンディアン)はどちらも分からなくはないものの、
+さすがに MM-dd-yyyy (ミドル エンディアン？？？)はちょっと…</p>
+<p>もちろん元々イギリスの文化なんですけども、当のイギリスはメートル法に改宗済み。
+(といっても、法律上メートル法に変わってはいても、人が急に変われるわけもなく街中にはヤードポンドが残ってるそうですが。)
+日付はぶれ気味(当人たちも混乱する)なので、Aug 22 みたいに書かないと MM-dd なのか dd-MM なのかわからなくなるから避けるみたいです。</p>
+<p>という感じなので、そんな異端児をもって Invariant とか言われましても困ります… という感じになります。</p>
+<p>最近、<a href="https://www.youtube.com/channel/UCY-z_9mau6X-Vr4gk2aWtMQ">C# 配信</a>をしていて、文字列処理の話をするたびに
+「ヤードポンドの国なので」という話になるのはこういう背景から。
+実害を受けるのは日付の MM-dd-yyyy 書式だけなんですけども、 MM-dd-yyyy の国 ≒ ヤードポンドの国 ≒ ファーレンハイトの国 という。</p>
+<h2 id="iso-8601"><a id="">ISO 8601 フォーマット</a></h2>
+<p>と言うことで最近至った結論として、文字列処理は、</p>
+<ul>
+<li><code>Ordinal</code> にできるならそれを、何らかのカルチャーに依存するなら <code>InvariantCulture</code> にする</li>
+<li>その上で、日付だけはフォーマットを明示的に指定</li>
+</ul>
+<p>でやらないと事故る。</p>
+<p>そこでまあ、ちょうど C# 10.0 で <a href="/study/csharp/start/st_string/#string-interpolation"><code>$&quot;{X}&quot;</code></a> の<a href="https://github.com/ufcpp/UfcppSample/issues/355">カスタマイズをパフォーマンスを落とさずにできる仕様が入る</a>ので、
+それを使って <code>InvariantCulture</code> 指定、かつ、日付だけは <code>O</code> 書式(<a href="https://ja.wikipedia.org/wiki/ISO_8601">ISO 8601</a>形式)を常に指定するコードを書いてみたり。</p>
+<ul>
+<li><a href="https://github.com/ufcpp/UfcppSample/commit/930db8d2430417b412dfcdbefce6fa5b4323a4ee">Iso8601.Format</a></li>
+</ul>
+<p>ちょうどカルチャー依存で困る時期だったので、ちょうど C# 10.0 でこの機能が入ったのは助かるかも。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2021/8/">8&#x6708;</a></li><li><a href="/blog/2021/8/net6p7/">.NET 6 Preview 7 &amp; Visual Studio 2020 Preview 3</a></li><li><a href="/blog/2021/8/newprojecttemplate/">&#x6700;&#x521D;&#x306E; C# &#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;(.NET 6 &#x65B0;&#x30C6;&#x30F3;&#x30D7;&#x30EC;&#x30FC;&#x30C8;)</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

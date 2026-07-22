@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x57FA;&#x790E;&#x7684;&#x306A;&#x30BD;&#x30D5;&#x30C8;&#x30A6;&#x30A7;&#x30A2; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/computer/essential-software/essentialsoftware/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">基礎的なソフトウェア</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="d32e4"></a>ハードウェアとプログラミング言語の間に</h2>
+<p>「<a href="/study/computer/#basis">回路設計（ゲート、組み合わせ回路、順序回路）</a>」と「<a href="/study/computer/#general">汎用コンピューター</a>」で、
+汎用コンピューターを構成するハードウェアの話は一通り終わりました。</p>
+<p>しかし、Java や C# などのいわゆる高級言語のレベルと、
+ハードウェアのレベルの間にはまだ大きな隔たりがあります。
+この隔たりを埋めるには、以下のようなものの説明が必要になります。</p>
+<ul>
+<li><p>オペレーティング・システムやフレームワークと呼ばれるような、 基礎的で汎用的に使える処理を担ってくれるソフトウェア。</p>
+</li>
+<li><p>人間の直感に近い構文でソフトウェアを記述できる言語（＝ 高級言語）を、「<a href="/study/computer/general/cpu/">CPU</a>」で説明したような「<a href="/study/computer/general/cpu/#machine-language">機械語</a>」に変換するソフトウェア（＝ コンパイラー）。</p>
+</li>
+</ul>
+<h2 id="api"><a id="sec-generated-title-2"></a> <a id="framework"></a>APIとライブラリ、フレームワーク</h2>
+<p>（書きかけ）</p>
+<p>この章タイトルを「OS」とせず、基礎的なソフトウェア（ページのURLなんかは「essential」、不可欠なもの）にしてるのは：</p>
+<p>高級言語の標準ライブラリみたいなものが提供する機能、
+多くはOSのAPIの薄いラッパー。</p>
+<p>ほんとにライブラリ（単純なプログラム）として提供される機能もあれば、
+OSに丸投げなものもあれば、
+ランタイム（その言語で書かれたプログラムを実行するのに必要な、実行時（run-time）ライブラリ/フレームワークの総称）層が提供してる機能も。</p>
+<p>高級言語っていうレイヤーから見ると、
+OSとかフレームワークとかミドルウェアとかライブラリって呼ばれるものの区別はあいまい。</p>
+<p>ある機能に対して、
+ある構成のコンピューターでは専用のハードウェアを持っててハードウェア実行してるけども、
+別の構成ではソフトウェア的にエミュレートしてるなんてこともあるのでなおさら。</p>
+<p>高級言語レベルのある文法が、
+単なるシンタックス・シュガーなこともあるし、
+大部分をライブラリに頼った機能なこともあるし、
+OS の助けが必要なこともあるし、
+場合によってはハードウェア的な補助が必要なこともある。</p>
+<h2 id="section-2"><a id="sec-generated-title-3"></a> <a id="d32e57"></a>高級言語</h2>
+<p>「<a href="/study/computer/general/cpu/#instruction-set">CPU の命令の種類</a>」で説明したように、
+原理的には、演算、データの移動、および、実行制御の3種類がそれっていればソフトウェアを作成できます。
+CPUの機械語とほぼ直接に対応関係のあるアセンブリ言語は、この3種類に相当する機能を持っていることになります。</p>
+<p>しかしながら、実際の開発ではアセンブリ言語を直接書くことはまずなくて、
+人の直感に近い文法でプログラムを記述できる「高級言語」を用いることになります。
+ここでいう「高級」という言葉は、CPUの実際の構造から離れ、人の直感に近づけるという意味になります。
+本章から先は、プログラミング言語が進歩し、徐々に高級になる（人の直感に近づく）過程を説明していくことになります。</p>
+<h3 id="how-what"><a id="sec-generated-title-4"></a> <a id="from-how-to-what"></a>how から what へ</h3>
+<p>アセンブリ言語は「CPUをどう動かすか」（how）を記述するものです。
+一方、開発者にとって重要なのは「何をしたいか」（what）なわけですが、
+アセンブリ言語を使って開発する場合、このwhatからhowへの変換が非常に大変な作業になります。
+例えば、「データ列の和を求めたい」という目的（what）があったとして、
+これを「データ列の先頭アドレスをロードして、間接参照して、加算して、ポインターを1進めて…」といった具合に、
+手順（how）に起こしていく必要があります。</p>
+<p>これに対して、可能な限り「何をしたいか」（what）をそのまま記述するだけでプログラムを動かしたいと思うのは自然な流れです。
+例えば先ほどの例でいうと、「データ列の和を求めよ」という記述をするだけでプログラムが動いて欲しいということです。
+このように、howからwhatに近づけて、人間の直感に近い自然な言葉でプログラムを作れることを目指すものを高級言語（high-level language）と呼びます。
+逆に、「CPUをどう動かすか」（すなわちアセンブリ言語）に近いほど低級（low-level）だといいます。
+（高級/低級というのは、あくまで人の直感に近いかCPUの挙動に近いかということを表す語で、値段の高低や技術的な難易度を表すものではありません。）</p>
+<p>実際には、「データ列の和を求めよ」よりはもう少し機械的に解釈しやすい文法が必要ですし、
+今主流となっている高級言語の多くが英語ベースの文法になっているので、
+あくまで一例ですが、dataという変数にデータ列が格納されているものとして、以下のような記述になります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> sum = data.Sum();</code></pre>
+<p>このhowとwhatの違いを図1に並べてみましょう。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/computer/fig/Essential/HowOrWhat.png"><img src="/assets/media/ufcpp2000/computer/fig/Essential/HowOrWhat.png" alt="アセンブリ言語と高級言語、how と what" /></a></p>
+<figcaption>アセンブリ言語と高級言語、how と what</figcaption>
+</figure>
+<p>もちろん、高級と低級という概念は2値的なものではなく、プログラミング言語の進化の歴史は、
+徐々に高級になっていく（徐々に人の直感に近づいていく）歴史だと言えます。
+詳しくは 「<a href="/study/csharp/">C# によるプログラミング入門</a>」 など説明していくことになりますが、例えば以下のような要望が少しずつ実装されてきました。</p>
+<ul>
+<li><p>2×3＋4×5というように、数学でよく使う記法通りに（もしくはそれに似た）計算式を書きたい</p>
+<ul>
+<li><p>多くの高級言語では、キーボードから打てる文字だけを使って、2 * 3 + 4 * 5というように書きます</p>
+</li>
+<li><p>括弧を付けなくても、加算より乗算を先に計算します</p>
+</li>
+</ul>
+</li>
+<li><p>データをひとまとめにしたい</p>
+<ul>
+<li>例えば、住所録を作る際に、名前と住所をセットにした「個人」を表す「型」を作りたい</li>
+</ul>
+</li>
+<li><p>自作した型を、数値などの組み込みの型と同列に扱いたい</p>
+<ul>
+<li>数値の場合には+などの演算子を使えるのだから、自作の型でも同様に演算子を使いたい</li>
+</ul>
+</li>
+</ul>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/computer/essential-software/">&#x57FA;&#x790E;&#x7684;&#x306A;&#x30BD;&#x30D5;&#x30C8;&#x30A6;&#x30A7;&#x30A2;</a></li><li><a href="/study/computer/essential-software/operatingsystem/">&#x30AA;&#x30DA;&#x30EC;&#x30FC;&#x30C6;&#x30A3;&#x30F3;&#x30B0;&#x30FB;&#x30B7;&#x30B9;&#x30C6;&#x30E0;</a></li><li><a href="/study/computer/essential-software/memorymanagement/">&#x30E1;&#x30E2;&#x30EA;&#x7BA1;&#x7406;</a></li><li><a href="/study/computer/essential-software/compiler/">&#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30E9;&#x30FC;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

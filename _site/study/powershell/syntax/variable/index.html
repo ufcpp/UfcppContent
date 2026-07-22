@@ -1,0 +1,425 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5909;&#x6570; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/powershell/syntax/variable/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">変数</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>説明が長くなりそうなので分割。
+ここでは、主に変数の取り扱いについて説明します。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="variable"></a>変数</h2>
+<p>「<a href="/study/powershell/syntax/basic/">基礎知識</a>」でも説明したように、
+$ から始まる単語は変数になります。</p>
+<pre><code class="language-console">&gt;  $a = 1
+&gt;  $a
+1</code></pre>
+<p a="">「$ ＋ アルファベット」という書き方以外に、
+「${任意の記号}」という書き方もできます。
+$ というように、中身がアルファベットなら $a と同じ意味になってあまり意味はないんですが、
+<span class="math">\({#\)</span>%&amp;'(} というような、任意の記号を含む変数名を付けることができます。</p>
+<h2 id="variant-object"><a id="sec-generated-title-3"></a> <a id="object"></a>Variant ではなく Object</h2>
+<p>変数にはどんな型の値でも代入できますが、
+Variant ではなく Object です。</p>
+<p>（Variant ってのは、要するに、
+「型の定まってない型」、「どんな型にでもなれる型」です。
+型があいまいになるのでプログラミングミスの原因。
+あと、型判定とか型変換のためのオーバーヘッドも生じる。
+Object の方は、
+C 言語的にいうと (void *) みたいなもので、
+どんな型の値も格納できるものの、
+中身の型が変わることはありません。
+）</p>
+<p>Object の中身はちゃんと型を持っています。
+1 を代入したなら System.Int32 ですし、
+&quot;test&quot; を代入したなら System.String になります。
+PowerShell 上のオブジェクトは全て .NET Framework のオブジェクトで、
+GetType() などのメソッドやプロパティを使うことができます。</p>
+<p>（
+ただ、数値や文字列に対しては Variant 的な動作をしていて、
+特殊な自動変換が働いて「どんな型にでもなれる型」になっています。
+でも、特殊な型変換機構が働くのは、数値や文字列などの基本的な型のみ。
+それ以外の型に関しては、暗黙的コンストラクタ呼び出しで型変換をしているみたい。
+）</p>
+<p>（
+あと、C# でいうところの unboxing は自動的にやってくれるので、
+object a = &quot;test&quot;;
+((string)a).ToUpper();
+みたいなキャストは必要ありません。
+）</p>
+<pre><code class="language-console">&gt;  $a = 1
+&gt;  $a.GetType().Name
+Int32
+&gt;  $a = &quot;test&quot;
+&gt;  $a.Length
+4
+&gt;  $a.ToUpper()
+TEST
+&gt;  $a.GetType().Name
+String</code></pre>
+<p>オブジェクトが全部 .NET Framework のものなので、
+.NET Framework SDK のヘルプを読むことで、
+数値や文字列に対してどういう操作が可能なのかとかを調べることができます。</p>
+<h2 id="section-3"><a id="sec-generated-title-4"></a> <a id="cast"></a>型変換</h2>
+<p>値や変数の前に [型名] を付けると、型変換ができます。
+例えば、実数を整数に変換するには以下のようにします。</p>
+<pre><code class="language-console">&gt;  $a = [int]1.2
+&gt;  $a
+1</code></pre>
+<p>無理な変換をしようとするとエラーになります。</p>
+<pre><code class="language-console">&gt;  $a = [int]&quot;test&quot;
+値 &quot;test&quot; を型 &quot;System.Int32&quot; に変換できません。</code></pre>
+<p>でも、結構柔軟に型変換してくれます。
+例えば、&quot;128&quot; というような文字列は、
+C# なんかだと int.Parse メソッドを使って整数に変換する必要がありますが、
+PowerShell では [int] で変換できます。</p>
+<pre><code class="language-console">&gt;  $a = [int]&quot;128&quot;
+&gt;  $a
+128
+&gt;  $a.GetType().Name
+Int32</code></pre>
+<h2 id="section-4"><a id="sec-generated-title-5"></a> <a id="typespesific"></a>型の指定</h2>
+<p>変数の型は明示的に指定することもできます。
+指定方法は、例えば以下のような感じで、
+代入時に [型名] を変数の前に付けます。</p>
+<pre><code class="language-console">&gt;  [int]$a = 1</code></pre>
+<p>型を指定すると、指定した型以外は代入できなくなります。</p>
+<pre><code class="language-console">&gt;  [int]$a = 0
+&gt;  $a = &quot;test&quot; 
+# ↓ エラー
+値 &quot;test&quot; を型 &quot;System.Int32&quot; に変換できません。
+&gt;  $a = 1.1 
+# ↓ 整数に型変換される
+&gt;  $a
+1</code></pre>
+<p>一度型を指定すると、その変数はもうずっとその型の値しか代入できません。
+別の型の値を代入したければ、
+後述する 「<a href="/study/powershell/cmdlet/cmd_variable/#remove_variable">Remove-Variable</a>」 Cmdlet でいったん変数を削除する必要があります。</p>
+<h2 id="section-5"><a id="sec-generated-title-6"></a> <a id="type"></a>型</h2>
+<p>先ほども説明したように、
+PowerShell 上のオブジェクトは全て .NET Framework のオブジェクトになっています。
+整数なら System.Int32 ですし、
+小数なら System.Double、
+文字列なら System.String です。</p>
+<p>ただし、PowerShell では System 名前空間は省略可能です。
+あと、大文字と小文字を区別しないので、
+それぞれ、int32, double, string という名前で型を指定できます。</p>
+<p>また、System.Int32 には int、
+System.Int64 には long、
+System.Boolean には bool という別名が付いています。
+（どうもこの3つだけっぽい。
+uint や short はない。
+UInt32 や Int16 と書く必要あり。）</p>
+<p>あと、特殊な型 void というものがあるようです。
+（void は C 言語や C# などで、関数の戻り値がないことを示すキーワード。）
+[void] を使うと、値を消してしまうことができるみたい。</p>
+<pre><code class="language-console">&gt;  [void]1
+&gt;  [void]$a
+&gt;  [void]$a.GetType()</code></pre>
+<p>まあ、この例みたいな使い方にはあまり意味はありませんが、
+関数（例えば、実行の成否を bool で返してくるような）の戻り値を無視したいときなどに使います。</p>
+<h2 id="section-6"><a id="sec-generated-title-7"></a> <a id="scope"></a>スコープ</h2>
+<p>PowerShell の変数はスコープを持っています。
+普通に宣言した変数はローカルスコープを持っていて、
+関数やブロックの外部からは参照できません。</p>
+<p>: をはさんで変数名の前にスコープ名を書くことで、
+ローカル以外のスコープの変数を読み書きできます。
+（例えば、グローバルスコープの変数 a には、
+$global:a という書き方でアクセスする。）</p>
+<p>スコープは以下の4種類あります。</p>
+<table summary="スコープの種類">
+	<caption>
+		スコープの種類
+	</caption>
+	<tr>
+		<th>グローバル</th>
+		<td><p>global</p></td>
+		<td><p>どこからでも（スクリプトファイル外からでも）読み書き可能</p></td>
+	</tr>
+	<tr>
+		<th>スクリプト</th>
+		<td><p>script</p></td>
+		<td><p>同一スクリプトファイル内なら、どこからでも読み書き可能</p></td>
+	</tr>
+	<tr>
+		<th>ローカル</th>
+		<td><p>local</p></td>
+		<td><p>現在のブロック内か、子ブロック（ブロック中にさらにブロックを書く）から読み書き可能</p></td>
+	</tr>
+	<tr>
+		<th>プライベート</th>
+		<td><p>private</p></td>
+		<td><p>現在のブロック内からのみ読み書き可能（子要素も除く）</p></td>
+	</tr>
+</table>
+<p>また、これらの名前付きスコープの他に、
+別項で説明する 「<a href="/study/powershell/cmdlet/cmd_variable/#set_variable">Set-Variable</a>」, 「<a href="/study/powershell/cmdlet/cmd_variable/#set_variable">Set-Variable</a>」 Cmdlet を使うと、
+「2レベル上の親ブロック中のスコープ」というように、
+レベルを指定しての変数の読み書きも可能です。</p>
+<p>あと、スコープとは違うんですが、
+スコープと同じような「$env:変数名」という書式で環境変数を取得することもできます。
+例えば、path 環境変数を取得したければ以下のように書きます。</p>
+<pre><code class="language-console">&gt;  $env:path
+C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Wind....</code></pre>
+<p>↑どうも、env: はファイルシステムのドライブとかと同列の扱いらしい。
+C ドライブを C: とか書くのと同じ。
+で、「${C:...\ファイル名}」みたいな記法で、ファイルの読み書きもできる模様。</p>
+<pre><code class="language-console">&gt;  ${C:\Users\Public\test.txt} = &quot;test&quot;
+&gt;  ${C:\Users\Public\test.txt}
+&quot;test&quot;
+&gt;  Get-Content C:\Users\Public\test.txt
+&quot;test&quot;</code></pre>
+<p>ただし、
+C:\ からフルパス書かないと駄目みたい。
+（要するに、構文としては ${ドライブレター:パス} でないと駄目。）
+まあ、あんまり便利な記法にも見えないし、
+普通に Get-Content, Set-Content を使った方がいいかも。</p>
+<h2 id="section-7"><a id="sec-generated-title-8"></a> <a id="operator"></a>演算子</h2>
+<p>整数の加減乗除・剰余に関しては、
+C# と同じ
+<code>+ - * / %</code>
+という記号を使って演算が可能です。
+また、文字列にも + や * 演算子が使えます。
+（詳しくは次節で説明。）</p>
+<p>これら5つの演算子に対しては、
+対応する代入演算子
+<code>+= -= *= /= %=</code>
+も存在します。
+（$a = $a + 1 と $a += 1 は同じ意味。）</p>
+<p>ちなみに、代入演算子は複数並べて書くこともできます。</p>
+<pre><code class="language-console">&gt;  $a = $b = $c = 1
+&gt;  $a,$b,$c
+1
+1
+1
+&gt;  $a += $b += $c += 1
+&gt;  $a,$b,$c
+4
+3
+2</code></pre>
+<p>一方、
+&amp; や &gt; などの記号は特殊な意味を持っているので、
+<code>+ - * / %</code> の5つ以外に関しては
+「-eq」や「-lt」というように、</p>
+<ul>
+<li>から始まる文字列を使って演算子を表します。</li>
+</ul>
+<h3 id="object"><a id="sec-generated-title-9"></a> <a id="typeoperator"></a>Object に対する演算子</h3>
+<p>整数や文字列、配列に対する演算子は、
+それぞれの項で説明するとして、
+ここでは任意の型に共通する演算だけ説明しておきます。</p>
+<p>まず、変数が存在するかどうかを確認するために、
+-eq 演算子を使って null 値との比較が可能です。
+null というのは変数が空っぽの状態のことで、
+PowerShell では、$null という名前の特殊な変数で表します。</p>
+<pre><code class="language-console">&gt;  Remove-Variable a
+&gt;  $a
+&gt;  $a -eq $null
+True
+&gt;  $a = 0
+&gt;  $a -eq $null
+False</code></pre>
+<p>ちなみに、$() とか [void]0 でも null 値を作ることができたりします。</p>
+<p>それから、-is と -isnot 演算子を使って、変数に格納されている値の型を確かめることができます。
+（左辺に変数、右辺に [型名] を書きます。）</p>
+<pre><code class="language-console">&gt;  $a = 1
+&gt;  $a -is [int]
+True
+&gt;  $a -isnot [int]
+False
+&gt;  $a -is [string]
+False
+&gt;  $a -isnot [string]
+True</code></pre>
+<p>また、-as で型変換もできます。
+[型名] による型変換とちがって、
+変換できない場合にはエラーを起こすのではなく null 値を返します。</p>
+<pre><code class="language-console">&gt;  $a = &quot;test&quot; -as [int]
+&gt;  $a -eq $null
+True
+&gt;  $a = 1.2 -as [int]
+&gt;  $a
+1</code></pre>
+<h3 id="section-8"><a id="sec-generated-title-10"></a> <a id="priority"></a>演算子の優先順位</h3>
+<p>演算子には結合の優先度があります。
+例えば、（まあ、多くのプログラミング言語がそうであるように、）</p>
+<ul>
+<li>より * の方が優先度が上で、
+1 + 2 * 3 + 1 と書くと 1 + (2 * 3) の意味になります。</li>
+</ul>
+<p>まだ現時点で説明していない演算子もありますが、
+とりあえずリファレンスに書いてある優先度一覧を示します。</p>
+<table summary="">
+
+	<tr>
+		<th>優先度</th>
+		<th>演算子</th>
+		<th>補足</th>
+	</tr>
+	<tr>
+		<td><p>高</p></td>
+		<td><p>( ) </p></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td rowspan="17"></td>
+		<td><p>@</p></td>
+		<td><p>配列生成</p></td>
+	</tr>
+	<tr>
+		<td><p>$</p></td>
+		<td><p>変数、式評価演算子</p></td>
+	</tr>
+	<tr>
+		<td><p>!</p></td>
+		<td><p>論理否定</p></td>
+	</tr>
+	<tr>
+		<td><p>[ ]</p></td>
+		<td><p>配列インデックス</p></td>
+	</tr>
+	<tr>
+		<td><p>.</p></td>
+		<td><p>メンバー参照の .</p></td>
+	</tr>
+	<tr>
+		<td><p>&amp; .</p></td>
+		<td><p>実行演算子、ソース演算子</p></td>
+	</tr>
+	<tr>
+		<td><p>++ --</p></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><p>単項 + -</p></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><p>,</p></td>
+		<td><p>配列化<sup>†</sup></p></td>
+	</tr>
+	<tr>
+		<td><p>..</p></td>
+		<td><p>配列化<sup>†</sup></p></td>
+	</tr>
+	<tr>
+		<td><ul>
+<li>/ %</li>
+</ul></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><p>2項 + -</p></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><p>比較演算子</p></td>
+		<td><p><sup>††</sup></p></td>
+	</tr>
+	<tr>
+		<td><p>-band -bor -bxor</p></td>
+		<td><p><sup>†</sup></p></td>
+	</tr>
+	<tr>
+		<td><p>-and -or</p></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><p>|</p></td>
+		<td><p>パイプライン</p></td>
+	</tr>
+	<tr>
+		<td><p>&gt; &gt;&gt;</p></td>
+		<td><p>リダイレクト</p></td>
+	</tr>
+	<tr>
+		<td><p>低</p></td>
+		<td><p>代入演算子</p></td>
+		<td></td>
+	</tr>
+</table>
+<p><sup>†</sup>
+リファレンスには書いてないけど、多分この位置</p>
+<p><sup>††</sup>
+多分、-as -is -replace -contains -f は比較演算子のところに含まれてると思う。</p>
+<h2 id="section-9"><a id="sec-generated-title-11"></a> <a id="shell_var"></a>シェル変数</h2>
+<p>PowerShell が既定で持っている変数（シェル変数）がいくつかあります。</p>
+<h3 id="section-10"><a id="sec-generated-title-12"></a> <a id="auto"></a>自動変数</h3>
+<p>いくつか、PowerShell 自体が自動的に値を設定している<strong id="auto_var" class="keyword">自動変数</strong>があります。
+（ユーザは変更できない。）</p>
+<p>「<a href="/study/powershell/cmdlet/cmd_variable/#get_variable">Get-Variable</a>」 Cmdlet を引数なしで呼び出せば、
+現在使われている変数一覧が取得できるので、
+PowerShell を起動直後に Get-Variable すればどういう自動変数があるのかが分かります。</p>
+<p>以下、いくつか代表的なものを挙げます。
+（詳細は、Get-Help Cmdlet を使って「Get-Help about_automatic_variables」で見れます。）</p>
+<table summary="自動変数">
+	<caption>
+		自動変数
+	</caption>
+	<tr>
+		<th>変数名</th>
+		<th>説明</th>
+	</tr>
+	<tr>
+		<td><pre><code></code></pre></td>
+		<td><p>前のコマンド ラインの最後のトークン。</p></td>
+	</tr>
+	<tr>
+		<td><p>$^</p></td>
+		<td><p>前のコマンド ラインの最初のトークン。</p></td>
+	</tr>
+	<tr>
+		<td><p>$?</p></td>
+		<td><p>最後のコマンドの論理値状態。</p></td>
+	</tr>
+	<tr>
+		<td><p>$_</p></td>
+		<td><p>現在のパイプライン オブジェクト。</p></td>
+	</tr>
+	<tr>
+		<td><p>$args</p></td>
+		<td><p>スクリプトまたは関数の引数。</p></td>
+	</tr>
+	<tr>
+		<td><p>$input</p></td>
+		<td><p>スクリプトにパイプで連結されているオブジェクトの列挙子。</p></td>
+	</tr>
+	<tr>
+		<td><p>$Matches</p></td>
+		<td><p>-match 演算子で検出された一致結果の連想配列。</p></td>
+	</tr>
+	<tr>
+		<td><p>$HOME</p></td>
+		<td><p>ユーザーのホーム ディレクトリ。</p></td>
+	</tr>
+	<tr>
+		<td><p>$Error</p></td>
+		<td><p>前のコマンドのエラーの配列。</p></td>
+	</tr>
+	<tr>
+		<td><p>$MyInvocation</p></td>
+		<td><p>スクリプトファイル自身に関する情報</p></td>
+	</tr>
+</table>
+<h3 id="section-11"><a id="sec-generated-title-13"></a> <a id="user"></a>ユーザ設定変数</h3>
+<p>履歴の最大保持数など、
+ユーザが設定できるシェル変数（<strong id="user_var" class="keyword">ユーザ設定変数</strong>）もあります。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/powershell/syntax/">PowerShel &#x306E;&#x69CB;&#x6587;</a></li><li><a href="/study/powershell/syntax/basic/">&#x57FA;&#x790E;&#x77E5;&#x8B58;</a></li><li><a href="/study/powershell/syntax/dotnet/">.NET Framework &#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;</a></li><li><a href="/study/powershell/syntax/valuetype/">&#x5024;&#x578B;</a></li><li><a href="/study/powershell/syntax/string/">&#x6587;&#x5B57;&#x5217;</a></li><li><a href="/study/powershell/syntax/array/">&#x914D;&#x5217;</a></li><li><a href="/study/powershell/syntax/xml/">XML</a></li><li><a href="/study/powershell/syntax/flow/">&#x5236;&#x5FA1;&#x69CB;&#x6587;</a></li><li><a href="/study/powershell/syntax/function/">&#x95A2;&#x6570;&#x3001;&#x30D5;&#x30A3;&#x30EB;&#x30BF;&#x3001;&#x30B9;&#x30AF;&#x30EA;&#x30D7;&#x30C8;</a></li><li><a href="/study/powershell/syntax/exception/">&#x4F8B;&#x5916;&#x51E6;&#x7406;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

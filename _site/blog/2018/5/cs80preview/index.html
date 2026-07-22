@@ -1,0 +1,210 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>C# vNext Preview | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2018/5/cs80preview/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2018-05-12T20:00:42">2018-05-12</time></span><span>更新: <time datetime="2018-05-12T20:05:45">2018-05-12</time></span></div><h1 id="c-vnext-preview">C# vNext Preview</h1>
+<p>以下のページで、C# 8.0のプレビュー公開を始めたみたです。</p>
+<ul>
+<li><a href="https://github.com/dotnet/csharplang/wiki/vNext-Preview">vNext Preview</a></li>
+</ul>
+<h2 id="section">インストール</h2>
+<p>これまででも、まだ Visual Studio プレビュー版にも組み込まれていないような機能の類も、VSIX (Visual Studio 拡張)や NuGet 参照でコンパイラーだけ差し替えることで使えたりはしました。
+<a href="https://dotnet.myget.org/gallery/roslyn">roslyn のデイリー ビルド</a>を「パッケージ ソース」にして、Microsoft.Net.Compilers パッケージを参照すれば行けます。</p>
+<p>ただ、このやり方だと、IDEのC#エディターの IntelliSense は最新版になりません。
+ビルドを実行するとコンパイルは通るんですが、エディター上ではエラーの赤線だらけになります。</p>
+<p>で、今回公開された<a href="https://github.com/dotnet/csharplang/wiki/vNext-Preview">vNext Preview</a>は、インストールとアンインストール用のスクリプトが入っています。基本的には中身は VSIX なんですが、たくさんの VSIX が入っていて、依存順が複雑だとかでそれぞれ個別に入れるのは無理っぽい感じです。
+なので、</p>
+<ul>
+<li>Visual Studio を全て落とす</li>
+<li>インストール スクリプト(PowerShell)を実行する</li>
+<li>もし、Visual Studio のバージョンアップをする際には、一度 vNext Preview をアンインストールしてから</li>
+</ul>
+<p>という手順を踏んでほしいとのこと。</p>
+<h2 id="section-1">少し先の機能</h2>
+<p>最近だと、Visual Studio 自体が、あるバージョンをリリースしてほとんどすぐに、<a href="https://www.visualstudio.com/ja/vs/preview/">次のバージョンのプレビュー</a>を公開しています。
+インストールも割と簡単で、正式リリース版との共存もできます。</p>
+<p>そして、C# もそれでプレビューを体験できたりしました。
+Visual Studio のリリース周期は最近3～4か月ごとなので、そのくらい先のものであればそんなに苦労することなく試せます。</p>
+<p>一方、今回インストール用スクリプトを用意して提供しているのは、
+要するに2バージョン以上先での提供予定のものを早めに試してもらいたいということでしょう。
+久々のメジャー バージョンアップですし、ちょっと大き目な機能も入る予定です。</p>
+<h2 id="c-8.0">C# 8.0 プレビューの現状</h2>
+<p>とはいえ、こないだ公開された「5月4日ビルド版」では、2個しか C# 8.0 の新機能が入っていなかったりはします。
+入っているのは、</p>
+<ul>
+<li>再帰パターン</li>
+<li>ranges</li>
+</ul>
+<p>の2つ。</p>
+<h3 id="section-2">再帰パターン</h3>
+<p>C# 7.0 で<a href="/study/csharp/datatype/typeswitch/">パターン マッチング</a>が入ったわけですが、
+C# 7.0 時点では、元々計画に挙がってたうちの一部分(型パターン、型スイッチ)だけが実装されています。</p>
+<p>C# 8.0 では、7.0 のときに先送りされた再帰パターンが入る予定です。</p>
+<p>例えば以下のようなクラスがあったとして、</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Base { }
+<span class="keyword">class</span> A : Base
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> A(<span class="keyword">int</span> x, <span class="keyword">int</span> y) =&gt; (X, Y) = (x, y);
+}
+<span class="keyword">class</span> B : Base
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> Name { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Value { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> B(<span class="keyword">string</span> name, <span class="keyword">int</span> value) =&gt; (Name, Value) = (name, value);
+    <span class="keyword">public</span> <span class="keyword">void</span> Deconstruct(<span class="keyword">out</span> <span class="keyword">string</span> name) =&gt; name = Name;
+    <span class="keyword">public</span> <span class="keyword">void</span> Deconstruct(<span class="keyword">out</span> <span class="keyword">string</span> name, <span class="keyword">out</span> <span class="keyword">int</span> value) =&gt; (name, value) = (Name, Value);
+}</code></pre>
+<p>以下のようなコードなら C# 7.0 でも書けました。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">int</span> M(Base obj)
+{
+    <span class="keyword">switch</span> (obj)
+    {
+        <span class="keyword">case</span> A a: <span class="keyword">return</span> a.X * a.Y;
+        <span class="keyword">case</span> B b when b.Name == <span class="string">&quot;one&quot;</span>: <span class="keyword">return</span> b.Value;
+        <span class="keyword">case</span> B b when b.Name == <span class="string">&quot;two&quot;</span>: <span class="keyword">return</span> <span class="number">2</span> * b.Value;
+        <span class="keyword">case</span> B b when b.Name == <span class="string">&quot;three&quot;</span>: <span class="keyword">return</span> <span class="number">3</span> * b.Value;
+        <span class="keyword">default</span>: <span class="keyword">throw</span> <span class="keyword">new</span> IndexOutOfRangeException();
+    }
+}</code></pre>
+<p>C# 8.0 では以下のような、再帰的なパターンが使えるようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">int</span> M(Base obj)
+{
+    <span class="keyword">switch</span> (obj)
+    {
+        <span class="keyword">case</span> A { X: <span class="keyword">var</span> x, Y: <span class="keyword">var</span> y }: <span class="keyword">return</span> x * y;
+        <span class="keyword">case</span> B (<span class="string">&quot;one&quot;</span>) { Value: <span class="keyword">var</span> v }: <span class="keyword">return</span> v;
+        <span class="keyword">case</span> B (<span class="string">&quot;two&quot;</span>) { Value: <span class="keyword">var</span> v }: <span class="keyword">return</span> <span class="number">2</span> * v;
+        <span class="keyword">case</span> B (<span class="string">&quot;three&quot;</span>) { Value: <span class="keyword">var</span> v }: <span class="keyword">return</span> <span class="number">3</span> * v;
+        <span class="keyword">default</span>: <span class="keyword">throw</span> <span class="keyword">new</span> IndexOutOfRangeException();
+    }
+}</code></pre>
+<p><code>B(&quot;one&quot;)</code> みたいな、<code>()</code> の部分は位置指定パターンと言って、<code>Deconstruct</code> メソッドが呼ばれています(「<a href="/study/csharp/datatype/deconstruction/">分解</a>」と同じ仕組み)。
+残りの <code>{}</code> の部分はプロパティ パターンと言って、プロパティに対する <code>X is var x</code> などに展開されます。</p>
+<h4 id="switch">switch 式</h4>
+<p>また、<code>switch</code> 式も追加されます。
+式です。<code>=&gt;</code> の後ろとかにも書けます。
+今のところは以下のような構文になる予定。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">int</span> M(Base obj)
+    =&gt; obj <span class="keyword">switch</span>
+    {
+        A { X: <span class="keyword">var</span> x, Y: <span class="keyword">var</span> y } =&gt; x * y,
+        B (<span class="string">&quot;one&quot;</span>) { Value: <span class="keyword">var</span> v } =&gt; v,
+        B (<span class="string">&quot;two&quot;</span>) { Value: <span class="keyword">var</span> v } =&gt; <span class="number">2</span> * v,
+        B (<span class="string">&quot;three&quot;</span>) { Value: <span class="keyword">var</span> v } =&gt; <span class="number">3</span> * v,
+        _ =&gt; <span class="keyword">throw</span> <span class="keyword">new</span> IndexOutOfRangeException()
+    };</code></pre>
+<h4 id="section-3"></h4>
+<p>ちなみに、プロパティ パターン (<code>{}</code> を使ったパターン)には null チェックが伴うそうです。</p>
+<pre><code class="language-csharp"><span class="keyword">string</span> s = <span class="keyword">null</span>;
+
+<span class="comment">// null は型情報を持ってなかったり。たとえ、静的な型が一致していても is は常に false。</span>
+<span class="keyword">if</span> (s <span class="keyword">is</span> <span class="keyword">string</span>) Console.WriteLine(<span class="string">&quot;ここは絶対通らない&quot;</span>);
+
+<span class="comment">// is string x みたいな変数宣言を伴ってても同じ。</span>
+<span class="keyword">if</span> (s <span class="keyword">is</span> <span class="keyword">string</span> x) Console.WriteLine(<span class="string">&quot;ここも通らない&quot;</span>);
+
+<span class="comment">// が、var パターンは常に true。見た目 is string に似てるけど、結果が違う。</span>
+<span class="keyword">if</span> (s <span class="keyword">is</span> <span class="keyword">var</span>  y) Console.WriteLine(<span class="string">&quot;ここは通る&quot;</span>);
+
+<span class="comment">// で、プロパティ パターンを使って、null チェック付きの var に近いことができる。</span>
+<span class="keyword">if</span> (s <span class="keyword">is</span> { }) Console.WriteLine(<span class="string">&quot;ここは通らない&quot;</span>);</code></pre>
+<h4 id="switch-1">タプル switch</h4>
+<p>あと、タプルに対する switch では、<code>()</code> を1重に省略できます。</p>
+<pre><code class="language-csharp"><span class="keyword">static</span> <span class="keyword">int</span> M(<span class="keyword">int</span> x, <span class="keyword">int</span> y)
+{
+    <span class="comment">// 本来は、switch ((x, y))</span>
+    <span class="keyword">switch</span> (x, y)
+    {
+        <span class="keyword">case</span> (<span class="number">1</span>, <span class="number">1</span>): <span class="keyword">return</span> <span class="number">1</span>;
+        <span class="keyword">case</span> (<span class="number">1</span>, <span class="number">2</span>): <span class="keyword">return</span> <span class="number">2</span>;
+        <span class="keyword">case</span> (<span class="number">2</span>, <span class="number">1</span>): <span class="keyword">return</span> <span class="number">3</span>;
+        <span class="keyword">case</span> (<span class="number">2</span>, <span class="number">2</span>): <span class="keyword">return</span> <span class="number">4</span>;
+        <span class="keyword">default</span>: <span class="keyword">return</span> <span class="number">0</span>;
+    }
+}</code></pre>
+<h3 id="ranges">ranges</h3>
+<p>ranges は、<code>1..3</code> みたいな書き方で「1から3まで(ただし3は含まない)のインデックス」みたいな範囲を表す記法です。
+<code>Range</code>構造体と<code>Index</code>構造体に展開される予定で、
+<a href="https://raw.githubusercontent.com/dotnet/csharplang/master/proposals/ranges.cs">この<code>range.cs</code></a>みたいな定義が必要です。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="keyword">var</span> data = <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span> };
+
+        <span class="comment">// 1～4番目 → { 2, 3, 4 }</span>
+        Write(data[<span class="number">1</span>..<span class="number">4</span>]);
+        <span class="comment">// ↑は、↓と同じ結果</span>
+        Write(data.AsSpan().Slice(<span class="number">1</span>, <span class="number">4</span> - <span class="number">1</span>));
+
+        <span class="comment">// 2～(Length - 2)番目 = 最初と最後の2要素を飛ばす → { 3, 4, 5, 6 }</span>
+        Write(data[<span class="number">2</span>..^<span class="number">2</span>]);
+        <span class="comment">// ↑は、↓と同じ結果</span>
+        Write(data.AsSpan().Slice(<span class="number">2</span>, (data.Length - <span class="number">2</span>) - <span class="number">2</span>));
+
+        <span class="comment">// 5～末尾 → { 6, 7, 8 }</span>
+        Write(data[<span class="number">5</span>..]);
+
+        <span class="comment">// 先頭～3 → { 1, 2, 3 }</span>
+        Write(data[..<span class="number">3</span>]);
+
+        <span class="comment">// 全体</span>
+        Write(data[..]);
+    }
+
+    <span class="keyword">static</span> <span class="keyword">void</span> Write(Span&lt;<span class="keyword">int</span>&gt; s)
+    {
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> x <span class="keyword">in</span> s)
+        {
+            Console.Write(x);
+            Console.Write(<span class="string">&quot; &quot;</span>);
+        }
+        Console.WriteLine();
+    }
+}</code></pre>
+<p>正直、<code>Slice(start, length)</code> みたいな記法との差が少なすぎて、便利さで言うとそこまで大きくはないんですが。
+以下のような要件があるので、それなりに必要性はあります。</p>
+<ul>
+<li><code>Slice(x, y)</code> みたいな書き方では、第2引数が「長さ」なのか「終端インデックス」なのかで迷う</li>
+<li>「末尾から n 番目」みたいなのは<code>data.Length - n</code> みたいな書き方が必要でしんどい</li>
+<li>特に多次元データの時に <code>data[a..b, c..d, e..f]</code> みたいに書きたい</li>
+</ul>
+<p>現時点では、以下の実装はないみたいです。</p>
+<ol>
+<li>start, length 型の ranges (「a を始点に長さ b」みたいなやつ)</li>
+<li>inclusive ranges (「a～b まで(bも<em>含む</em>)」みたいなやつ)</li>
+<li>ユーザー定義の <code>..</code> 演算子</li>
+</ol>
+<p>このうち、C# 8.0 正式リリースまでに入るかもしれないのは1の start, length 型 ranges くらい。
+残りは「その先また改めて検討」のはずです。</p>
+<h4 id="section-4">一時的な「拡張インデクサー」</h4>
+<p>ちなみに、このプレビューでは、「拡張インデクサー」みたいなものが一時的に入っています
+(<code>T[]</code>、<code>Span&lt;T&gt;</code>、<code>string</code>に対する<code>Range</code>型引数のインデクサーを拡張として追加しています)。
+これはほんとに一時的な対処で、C# 8.0でこの文法で「拡張インデクサー」が使えるわけではありません。</p>
+<p>正式には、「<a href="https://github.com/dotnet/csharplang/issues/110">Type Class</a>」という別提案が出ていて、これ待ちです。
+もしかしたらこれも C# 8.0 で入るかも。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2018/5/">5&#x6708;</a></li><li><a href="/blog/2018/5/metricspace/">C# &#x306B;&#x3082;&#x578B;&#x30AF;&#x30E9;&#x30B9;(Shapes)&#x304C;&#x6B32;&#x3057;&#x3044;&#x2026; &#x8DDD;&#x96E2;&#x7A7A;&#x9593;&#x4E0A;&#x306E;&#x30A2;&#x30EB;&#x30B4;&#x30EA;&#x30BA;&#x30E0;&#x5B9F;&#x88C5;</a></li><li><a href="/blog/2018/5/vs157/">Visual Studio 15.7 &#x30EA;&#x30EA;&#x30FC;&#x30B9; &#x306A;&#x3069;</a></li><li><a href="/blog/2018/5/pickuproslyn0520/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 5/20: 5&#x6708;&#x306E; Design Notes</a></li><li><a href="/blog/2018/5/pickuproslyn0524/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 5/24</a></li><li><a href="/blog/2018/5/netcore21/">.NET Core 2.1 &#x6B63;&#x5F0F;&#x30EA;&#x30EA;&#x30FC;&#x30B9;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

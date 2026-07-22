@@ -1,0 +1,185 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x914D;&#x5217;&#x306E;&#x30C0;&#x30A6;&#x30F3;&#x30AD;&#x30E3;&#x30B9;&#x30C8; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2018/12/arraydowncast/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2018-12-15T12:21:16">2018-12-15</time></span><span>更新: <time datetime="2018-12-15T12:24:23">2018-12-15</time></span></div><h1 id="section">配列のダウンキャスト</h1>
+<p>今日は <a href="/blog/2018/12/unsafe/"><code>Unsafe</code> クラス</a>を使った配列の最適化の話。</p>
+<h2 id="object"><code>object[]</code></h2>
+<p>.NET Framework 1.x 時代からある古い API の中にはいくつか、
+本当は <code>T</code> 型の配列なのに <code>object[]</code> で戻り値を返してくるようなメソッドがいくつかあります。
+<code>object[]</code>とまでは言わないものの、基底クラスの配列で返すメソッドは多いです。</p>
+<p>1.x 時代には<a href="/study/csharp/oop/sp2_generics/">ジェネリクス</a>がなかったせいなんですが、今となっては不便ではあります。</p>
+<h3 id="section-1">例: マルチキャスト デリゲート</h3>
+<p>例を1個。
+C# のデリゲートは、複数のメソッドを <code>+=</code> で繋いで、一斉に呼び出すという機能があり、
+これを<a href="/study/csharp/functional/sp_delegate/#malticast">マルチキャスト デリゲート</a>と言います。
+例えば以下のコードは、</p>
+<pre><code class="language-csharp">Action f = <span class="keyword">null</span>;
+ 
+<span class="keyword">foreach</span> (<span class="keyword">var</span> i <span class="keyword">in</span> <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> })
+{
+    f += () =&gt; Console.WriteLine($<span class="string">&quot;lambda {i} invoked&quot;</span>);
+}
+ 
+f();</code></pre>
+<p>以下のような結果を出力します。</p>
+<pre><code class="language-csharp">lambda <span class="number">1</span> invoked
+lambda <span class="number">2</span> invoked
+lambda <span class="number">3</span> invoked
+lambda <span class="number">4</span> invoked
+lambda <span class="number">5</span> invoked</code></pre>
+<p>基本的には<a href="/study/csharp/functional/sp_event/">イベント</a>のための機能で、
+戻り値は想定していません。<code>void</code>戻り値以外のメソッドに使おうとするとトラブります。
+以下のようなコードを書いたとすると、</p>
+<pre><code class="language-csharp">Func&lt;<span class="keyword">int</span>&gt; f = <span class="keyword">null</span>;
+ 
+<span class="keyword">foreach</span> (<span class="keyword">var</span> i <span class="keyword">in</span> <span class="keyword">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> })
+{
+    f += () =&gt;
+    {
+        Console.WriteLine($<span class="string">&quot;lambda {i} invoked&quot;</span>);
+        <span class="keyword">return</span> i;
+    };
+}
+ 
+Console.WriteLine($<span class="string">&quot;f returns {f()}&quot;</span>);</code></pre>
+<p>最後の行の出力は</p>
+<pre><code class="language-csharp">f returns <span class="number">5</span></code></pre>
+<p>になります。要するに、最後の1個の戻り値以外は消えてなくなります。
+全ての戻り値を取りたければ以下のように、
+個々のデリゲートを配列で受け取って、1つ1つ呼び出すようなコードを書きます。</p>
+<pre><code class="language-csharp">Delegate[] list = f.GetInvocationList();
+<span class="keyword">foreach</span> (Func&lt;<span class="keyword">int</span>&gt; item <span class="keyword">in</span> list)
+    Console.WriteLine($<span class="string">&quot;f returns {item()}&quot;</span>);</code></pre>
+<p><code>f</code> が <code>Func&lt;int&gt;</code> なんだから、<code>Func&lt;int&gt;[]</code> で一覧を取りたいところなんですが、
+残念ながら <code>GetInvocationList</code> の結果は <code>Delegate[]</code> で帰ってきます。
+それを再び <code>Func&lt;int&gt;</code> にダウンキャストして使うことになります。</p>
+<p>特に、<a href="https://gist.github.com/ufcpp/a72f63d11962f7a5a9a5981b6be31f74"><code>Task</code>戻り値のデリゲートを <code>await</code> したいとき</a>とかに必須の手段です。</p>
+<h2 id="section-2">配列ダウンキャスト</h2>
+<p>そしてここからが本題。</p>
+<p>基底クラスの配列から、元の派生クラスの要素を列挙したい場合、どうするのが最速でしょうか。
+<code>string[]</code> と <code>object[]</code> でベンチマークを取ってみます。</p>
+<p>ベンチマーク全体は <a href="https://gist.github.com/ufcpp/efb726420adc6f8183a5c7a92ff17a61">Gist</a> に置いておきます。
+要点を抜き出すと…</p>
+<p>比較用データ: 同じ <code>string</code> 配列を、<code>string[]</code> のフィールドと <code>object[]</code> にフィールドに格納して使います。</p>
+<pre><code class="language-csharp"><span class="keyword">string</span>[] _stringData = <span class="keyword">new</span> <span class="keyword">string</span>[] { <span class="string">&quot;a&quot;</span>, <span class="string">&quot;ab&quot;</span>, <span class="string">&quot;abc&quot;</span>, <span class="string">&quot;abcd&quot;</span>, <span class="string">&quot;abcde&quot;</span>, <span class="string">&quot;abcdef&quot;</span>, <span class="string">&quot;abcdefg&quot;</span> };
+<span class="keyword">object</span>[] _objectData = <span class="keyword">new</span> <span class="keyword">string</span>[] { <span class="string">&quot;a&quot;</span>, <span class="string">&quot;ab&quot;</span>, <span class="string">&quot;abc&quot;</span>, <span class="string">&quot;abcd&quot;</span>, <span class="string">&quot;abcde&quot;</span>, <span class="string">&quot;abcdef&quot;</span>, <span class="string">&quot;abcdefg&quot;</span> };</code></pre>
+<p>これを、以下の3パターン(+ 参考までに1パターン)のコードに与えてみます。</p>
+<p>(1) MemberwiseCast: 要素ごとにダウンキャスト</p>
+<pre><code class="language-csharp"><span class="keyword">foreach</span> (<span class="keyword">string</span> s <span class="keyword">in</span> _objectData)
+    sum += s.Length;</code></pre>
+<p>(2) ArrayCast: 最初に配列自体をダウンキャスト</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> data = (<span class="keyword">string</span>[])_objectData;
+<span class="keyword">foreach</span> (<span class="keyword">var</span> s <span class="keyword">in</span> data)
+    sum += s.Length;</code></pre>
+<p>(3) UnsafeStructCast: 謎の最適化</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">struct</span> Wrap&lt;T&gt; { <span class="keyword">public</span> T Value; }</code></pre>
+<pre><code class="language-csharp"><span class="keyword">var</span> data = Unsafe.As&lt;<span class="keyword">object</span>[], Wrap&lt;<span class="keyword">string</span>&gt;[]&gt;(<span class="keyword">ref</span> _objectData);
+<span class="keyword">foreach</span> (<span class="keyword">var</span> s <span class="keyword">in</span> data)
+    sum += s.Value.Length;</code></pre>
+<p>(参考) Static: 最初から <code>string[]</code> の方を列挙</p>
+<pre><code class="language-csharp"><span class="keyword">foreach</span> (<span class="keyword">var</span> s <span class="keyword">in</span> _stringData)
+    sum += s.Length;</code></pre>
+<p>比較の結果、以下のような感じになります。</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th style="text-align: right;">Mean</th>
+<th style="text-align: right;">Error</th>
+<th style="text-align: right;">StdDev</th>
+<th style="text-align: right;">Scaled</th>
+<th style="text-align: right;">ScaledSD</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MemberwiseCast</td>
+<td style="text-align: right;">8.552 ns</td>
+<td style="text-align: right;">0.1170 ns</td>
+<td style="text-align: right;">0.1094 ns</td>
+<td style="text-align: right;">2.56</td>
+<td style="text-align: right;">0.04</td>
+</tr>
+<tr>
+<td>ArrayCast</td>
+<td style="text-align: right;">7.074 ns</td>
+<td style="text-align: right;">0.0952 ns</td>
+<td style="text-align: right;">0.0844 ns</td>
+<td style="text-align: right;">2.11</td>
+<td style="text-align: right;">0.03</td>
+</tr>
+<tr>
+<td>UnsafeStructCast</td>
+<td style="text-align: right;">3.589 ns</td>
+<td style="text-align: right;">0.0200 ns</td>
+<td style="text-align: right;">0.0167 ns</td>
+<td style="text-align: right;">1.07</td>
+<td style="text-align: right;">0.01</td>
+</tr>
+<tr>
+<td>Static</td>
+<td style="text-align: right;">3.346 ns</td>
+<td style="text-align: right;">0.0249 ns</td>
+<td style="text-align: right;">0.0233 ns</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+</tbody>
+</table>
+<p>お分かりいただけるだろうか。
+1要素ごとにキャストのオーバーヘッドが掛かっていそうな (1) が遅いのは当然として。
+最初に1回だけオーバーヘッドが掛かってあとは大丈夫そうに見える (2) がだいぶ遅いという。
+そして、「謎の最適化」を自称しているだけあって (3) が倍くらい速い。</p>
+<h2 id="wrapt">謎の最適化 <code>Wrap&lt;T&gt;</code></h2>
+<p>ということで、この謎の最適化が速くなる原理について。</p>
+<p><a href="/study/csharp/oop/sp4_variance/#covariant-array">.NET の配列には共変性</a>があります。</p>
+<pre><code class="language-csharp"><span class="keyword">string</span>[] derivedItems = { <span class="string">&quot;Aleph&quot;</span>, <span class="string">&quot;Beth&quot;</span>, <span class="string">&quot;Gimel&quot;</span> };
+<span class="keyword">object</span>[] baseItems = derivedItems; <span class="comment">// この代入は明示的なキャストなしでできる</span></code></pre>
+<p>だいたいこいつが犯人。</p>
+<p>この状況で、<code>baseItems[i] = 10;</code> とか書いてしまうとまずいことになります。
+なので、<code>baseItems[i]</code> に対していちいち型チェックが挿入されていて、
+本来の型と違う型の値を代入しようとすると例外が飛びます。
+その型チェックのコストが、前節の (2) が遅くなる原因。</p>
+<p>ちなみに、共変性は参照型にしか働かないので、例えば以下のようなコードはコンパイル エラーになります。<code>int</code> は値型なので、共変ではなくなります。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span>[] derivedItems = { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span> };
+<span class="keyword">object</span>[] baseItems = derivedItems; <span class="comment">// この代入は(キャストの有無によらず)認められない</span></code></pre>
+<p>謎の最適化 (3) が速くなる理由はここにあります。
+<code>Wrap&lt;T&gt;</code>構造体を介することで、共変性がなくなっています。
+そして、共変じゃないことがわかっているので、型チェックが挟まらなくなる。
+結果的に速い。
+ただし、本来変換できないはずの <code>object[]</code> から <code>Wrap&lt;string&gt;[]</code> への嘘ダウンキャストが必要になるので、<code>Unsafe</code> クラスが必須です。</p>
+<p>(ちなみに、<code>Wrap&lt;T&gt;</code>構造体は<code>T</code>型のフィールド1つだけの構造体なので、
+<code>object</code>と<code>Wrap&lt;object&gt;</code>のメモリ上での構造は全く同じになります。
+なので、今回のような嘘ダウンキャストしても「メモリ上の配置が同じだから同じコードで動く」みたいな感じになります。)</p>
+<p>割かしひどい話です。
+<code>Unsafe</code> クラスを避けれるなら避けたいわけでして。
+最初から「共変性は使わないから型チェックしないでくれ」と指示できるような、
+配列に代わる手段が求められます。
+ということで出ている提案が以下のようなもの。</p>
+<ul>
+<li><a href="https://github.com/dotnet/corefx/issues/23689">Invariant Arrays</a></li>
+</ul>
+<p>まあ、採用される気配ないんですけども…
+普通に coreclr 内にさっきの「謎の最適化」と同種のコード入ってたりするんですけども。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2018/12/">12&#x6708;</a></li><li><a href="/blog/2018/12/pickuproslyn1201/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/1</a></li><li><a href="/blog/2018/12/tupleelementcase/">&#x30BF;&#x30D7;&#x30EB;&#x8981;&#x7D20;&#x540D;&#x306E;&#x5927;&#x6587;&#x5B57;&#x30FB;&#x5C0F;&#x6587;&#x5B57;</a></li><li><a href="/blog/2018/12/directorybuild/">Directory.Build.*</a></li><li><a href="/blog/2018/12/runtimefeature/">RuntimeFeature &#x30AF;&#x30E9;&#x30B9;</a></li><li><a href="/blog/2018/12/vs2019p1/">Visual Studio 2019 Preview 1</a></li><li><a href="/blog/2018/12/cs8misc/">C# 8.0 &#x5C0F;&#x3055;&#x306A;&#x4FEE;&#x6B63;</a></li><li><a href="/blog/2018/12/cs8ranges/">C# 8.0 Ranges</a></li><li><a href="/blog/2018/12/cs8nrt/">C# 8.0 null&#x8A31;&#x5BB9;&#x53C2;&#x7167;&#x578B;</a></li><li><a href="/blog/2018/12/cs8switchexpr/">C# 8.0 switch &#x5F0F;</a></li><li><a href="/blog/2018/12/cs8patterns/">C# 8.0 &#x30D1;&#x30BF;&#x30FC;&#x30F3; &#x30DE;&#x30C3;&#x30C1;&#x30F3;&#x30B0;</a></li><li><a href="/blog/2018/12/cs8asyncstreams/">C# 8.0 Async streams</a></li><li><a href="/blog/2018/12/cs8notyet/">C# 8.0 &#x305D;&#x306E;&#x4ED6; (Preview 1&#x3067;&#x306E;&#x672A;&#x5B9F;&#x88C5;&#x6A5F;&#x80FD;)</a></li><li><a href="/blog/2018/12/arrayindexer/">&#x914D;&#x5217;&#x306E;&#x30A4;&#x30F3;&#x30C7;&#x30AF;&#x30B5;&#x30FC;</a></li><li><a href="/blog/2018/12/unsafe/">System.Runtime.CompilerServices.Unsafe</a></li><li><a href="/blog/2018/12/staticdatareadonlyspan/">&#x9759;&#x7684;&#x306A;&#x30C7;&#x30FC;&#x30BF;&#x306E; ReadOnlySpan &#x6700;&#x9069;&#x5316;</a></li><li><a href="/blog/2018/12/devirtualization/">Devirtualization (&#x8131;&#x4EEE;&#x60F3;&#x5316;)</a></li><li><a href="/blog/2018/12/guardeddevirtualization/">Guarded Devirtualization</a></li><li><a href="/blog/2018/12/fastenumerator/">IEnumerator &#x306E;&#x5225;&#x5B9F;&#x88C5;</a></li><li><a href="/blog/2018/12/howtoenumerate/">foreach &#x306E;&#x639B;&#x3051;&#x65B9;&#x3044;&#x308D;&#x3044;&#x308D;</a></li><li><a href="/blog/2018/12/pickuproslyn1221/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 12/21 &amp; Connect() Japan &#x30D5;&#x30A9;&#x30ED;&#x30FC;&#x30A2;&#x30C3;&#x30D7;</a></li><li><a href="/blog/2018/12/arrayindex/">&#x914D;&#x5217;&#x30A4;&#x30F3;&#x30C7;&#x30C3;&#x30AF;&#x30B9;&#x306F;0&#x4EE5;&#x4E0A;</a></li><li><a href="/blog/2018/12/jitintrinsics/">JIT Intrinsics</a></li><li><a href="/blog/2018/12/statictypeof/">&#x9759;&#x7684;&#x306A; typeof/sizeof</a></li><li><a href="/blog/2018/12/unicodecategory/">&#x66F8;&#x8A18;&#x7D20;&#x5206;&#x5272;/Unicode &#x30AB;&#x30C6;&#x30B4;&#x30EA;&#x30FC;&#x5224;&#x5B9A;</a></li><li><a href="/blog/2018/12/spanify/">Span&lt;T&gt; &#x5229;&#x7528;&#x306B;&#x3088;&#x308B;&#x6700;&#x9069;&#x5316;</a></li><li><a href="/blog/2018/12/futurememorymanagement/">&#x5C06;&#x6765;&#x306E;&#x30E1;&#x30E2;&#x30EA;&#x7BA1;&#x7406;</a></li><li><a href="/blog/2018/12/unsafenogarantee/">Unsafe &#x30AF;&#x30E9;&#x30B9;(&#x4FDD;&#x8A3C;&#x5916;)</a></li><li><a href="/blog/2018/12/unsafegarantee/">Unsafe &#x30AF;&#x30E9;&#x30B9;(&#x4FDD;&#x8A3C;&#x306E;&#x3042;&#x308B;&#x5229;&#x7528;&#x4F8B;)</a></li><li><a href="/blog/2018/12/unsaferuntime/">&#x4EEE;&#x60F3;&#x30C6;&#x30FC;&#x30D6;&#x30EB;&#x306E;&#x4E2D;&#x8EAB;&#x3092;&#x306E;&#x305E;&#x304D;&#x898B;</a></li><li><a href="/blog/2018/12/tieredcompilation/">&#x6BB5;&#x968E;&#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB; (Tiered Compilation)</a></li><li><a href="/blog/2018/12/hdintrinsic/">Hardware Intrinsics</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

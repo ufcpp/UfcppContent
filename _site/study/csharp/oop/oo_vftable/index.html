@@ -1,0 +1,438 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>[&#x96D1;&#x8A18;] &#x4EEE;&#x60F3;&#x95A2;&#x6570;&#x30C6;&#x30FC;&#x30D6;&#x30EB; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/oop/oo_vftable/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">[雑記] 仮想関数テーブル</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>「<a href="/study/csharp/oop/oo_polymorphism/#virtual_method">仮想メソッド</a>」というものがどういう仕組みで実現されているのかを説明します。</p>
+<p>（C / C++ の知識がある程度必要なので、
+その辺りが全く分からない場合には内容が高度すぎるので読み飛ばし推奨。）</p>
+<p>「<a href="/study/csharp/abstract/ab_dotnet/#dotnet">.NET Framework</a>」 の 「<a href="/study/csharp/abstract/ab_dotnet/#il">IL</a>」 は、
+仮想メソッド呼び出し用の命令を持っていたりします。
+ですが、一般的な PC に使われている CPU が「仮想メソッド呼出し命令」みたいなものを持っているわけではなく、
+.NET Framework が適切な命令に置き換えて仮想メソッド呼び出しを実現してくれています。</p>
+<p>（要するに、C# プログラマにとっては気にする必要のない部分です。
+このページの内容は、「でも中身の分からないものを使うのはなんとなく不安」という人向けです。）</p>
+<p>一般に、仮想メソッド呼び出し（C++ など、言語によっては仮想関数呼び出しという言い方をします）は、
+<strong id="vftable" class="keyword">仮想関数テーブル</strong>（virtual function table）というものを用いて実現されています。</p>
+<p>ここでは、C++ の仮想関数呼び出しを、
+それとほぼ透過な（非オブジェクト指向言語の） C 言語コードに置き換えることで、
+仮想関数テーブルの実装方法を示します。
+（C# と C だとちょっと「遠い親戚」過ぎるので、このページのサンプルには C++ を使います。）</p>
+<p>↓サンプルプログラムのソース。</p>
+<p>*
+<a href="/assets/media/ufcpp2000/csharp/source/VFTable.zip">ソース一式（ZIP 圧縮）</a></p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="theme"></a>題材と元ソース</h2>
+<p>ここでは、「<a href="/study/csharp/oop/oo_polymorphism/">多態性</a>」の演習問題と同じような題材
+（Shape クラスを継承した Rectangle と Circle クラスを作る）
+で説明をします。</p>
+<p>まず、元となる C++ のソースを示すと以下のような感じ。</p>
+<pre><code class="language-cpp">#pragma once
+
+<span class="keyword">class</span> Shape
+{
+<span class="keyword">public</span>:
+  <span class="keyword">virtual</span> <span class="keyword">double</span> GetArea() = 0;
+  <span class="keyword">virtual</span> <span class="keyword">double</span> GetPerimeter() = 0;
+};
+
+<span class="keyword">class</span> Rectangle : <span class="keyword">public</span> Shape
+{
+<span class="keyword">public</span>:
+  Rectangle(<span class="keyword">double</span> w, <span class="keyword">double</span> h);
+  <span class="keyword">virtual</span> <span class="keyword">double</span> GetArea();
+  <span class="keyword">virtual</span> <span class="keyword">double</span> GetPerimeter();
+
+<span class="keyword">private</span>:
+  <span class="keyword">double</span> width;
+  <span class="keyword">double</span> height;
+};
+
+<span class="keyword">class</span> Circle : <span class="keyword">public</span> Shape
+{
+<span class="keyword">public</span>:
+  Circle(<span class="keyword">double</span> r);
+  <span class="keyword">virtual</span> <span class="keyword">double</span> GetArea();
+  <span class="keyword">virtual</span> <span class="keyword">double</span> GetPerimeter();
+
+<span class="keyword">private</span>:
+  <span class="keyword">double</span> radius;
+};</code></pre>
+<pre><code class="language-cpp">#include <span class="string">&quot;ShapeCpp.h&quot;</span>
+
+Rectangle::Rectangle(<span class="keyword">double</span> w, <span class="keyword">double</span> h)
+{
+  <span class="keyword">this</span>-&gt;width = w;
+  <span class="keyword">this</span>-&gt;height = h;
+}
+
+<span class="keyword">double</span> Rectangle::GetArea()
+{
+  <span class="keyword">return</span> <span class="keyword">this</span>-&gt;width * <span class="keyword">this</span>-&gt;height;
+}
+
+<span class="keyword">double</span> Rectangle::GetPerimeter()
+{
+  <span class="keyword">return</span> 2 * (<span class="keyword">this</span>-&gt;width + <span class="keyword">this</span>-&gt;height);
+}
+
+Circle::Circle(<span class="keyword">double</span> r)
+{
+  <span class="keyword">this</span>-&gt;radius = r;
+}
+
+<span class="keyword">double</span> Circle::GetArea()
+{
+  <span class="keyword">return</span> 3.14159265358979 * <span class="keyword">this</span>-&gt;radius * <span class="keyword">this</span>-&gt;radius;
+}
+
+<span class="keyword">double</span> Circle::GetPerimeter()
+{
+  <span class="keyword">return</span> 2 * 3.14159265358979 * <span class="keyword">this</span>-&gt;radius;
+}</code></pre>
+<p>要するに、Shape クラスは図形を表していて、面積と周囲を求めるメソッドを持っています。
+Rectangle、Circle はそれぞれ、矩形・円を表すクラスです。</p>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="method"></a>メンバー関数と仮想関数テーブル</h2>
+<p>まず、Shape クラスの宣言に相当する C 言語コードを作ってみます。</p>
+<pre><code class="language-csharp"><span class="comment">//----------------------------------------------------------------</span>
+<span class="comment">// class Shape に相当</span>
+
+typedef <span class="keyword">struct</span> TagShape
+{
+  <span class="keyword">void</span>** vftable;
+} Shape;
+
+<span class="preprocessorKeyword">#define</span> VF_GetArea 1
+<span class="preprocessorKeyword">#define</span> VF_GetPerimeter 2
+
+typedef <span class="keyword">double</span> TypeGetArea(Shape* <span class="keyword">this</span>);
+typedef <span class="keyword">double</span> TypeGetPerimeter(Shape* <span class="keyword">this</span>);
+
+<span class="keyword">extern</span> <span class="keyword">void</span>* ShapeVftable[];
+<span class="keyword">void</span> ShapeCtor(Shape* <span class="keyword">this</span>);
+<span class="keyword">void</span> ShapeDtor(Shape* <span class="keyword">this</span>);</code></pre>
+<p>まず、非 OOP 言語にはメンバー関数（メソッド）なんてものはありません。
+C++ で、</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Person
+{
+<span class="keyword">public</span>:
+  <span class="keyword">int</span> GetAge();
+};
+
+Person p;
+p.GetAge();</code></pre>
+<p>と言うように書いていたものは、
+C 言語では、</p>
+<pre><code class="language-csharp">typedef <span class="keyword">struct</span> TagPerson
+{
+} Person;
+
+<span class="keyword">int</span> PersonGetAge(Person* p);
+
+Person p;
+PersonGetAge(&amp;p);</code></pre>
+<p>と書く必要があります。
+（typedef してるのは、C 言語と C++ の仕様の違いのためで、
+このページの内容とはあまり関係ないので説明は割愛。）</p>
+<p>で、ShapeVftable というのが、仮想関数を実現するためのキモである仮想関数テーブルというやつです。
+実体は以下のようになっています。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span>* ShapeVftable[] = 
+{
+  <span class="string">&quot;class Shape&quot;</span>,
+  <span class="number">0</span>,
+  <span class="number">0</span>
+};</code></pre>
+<p>void* の配列になっていて、
+配列の1番目はクラスの型情報、
+2番目、3番目が GetArea, GetPerimeter メンバー関数の実体をさすポインターです。
+今回の場合、Shape の GetArea, GetPerimeter は純粋仮想関数
+（C# でいうところの「<a href="/study/csharp/oop/oo_abstract/#abmethod">抽象メソッド</a>」 ）なので、
+0（ヌルポインター、実体がないことを示す）になっています。</p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="ctor"></a>コンストラクタ</h2>
+<p>ShapeCtor, ShapeDtor はそれぞれコンストラクタ、デストラクタに相当する関数です。
+（当然、Ctor, Dtor は Constructor, Destructor の略。）
+C++ とは違って、これらを自動的に読んでくれる仕組みは持っていないので、
+自分で呼び出してやる必要があります。
+例えば、C++ の、</p>
+<pre><code class="language-csharp"><span class="comment">// 実際には、Shape は抽象クラスなので new できないけども。</span>
+
+s = <span class="keyword">new</span> Shape();
+
+delete s;</code></pre>
+<p>と同じ事をしようと思うと、以下のような書き方が必要になります。</p>
+<pre><code class="language-csharp">s = (Shape*)malloc(<span class="keyword">sizeof</span>(Shape));
+ShapeCtor(s);
+
+ShapeDtor(s);
+free(s);</code></pre>
+<p>ちなみに、元の Shape クラスがコンストラクタ・デストラクタで特に何もしていないので、
+ShapeCtor, ShapeDtor の中身もほぼ空っぽになります。
+ただし、ShapeCtor の中では1つだけやっておかないといけないことがあります。
+前節で説明した仮想関数テーブルの実体 ShapeVftable を、
+Shape の vftable メンバー変数に代入します。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> ShapeCtor(Shape* <span class="keyword">this</span>)
+{
+  <span class="keyword">this</span>-&gt;vftable = ShapeVftable;
+}
+
+<span class="keyword">void</span> ShapeDtor(Shape* <span class="keyword">this</span>)
+{
+}</code></pre>
+<p>この vftable は、仮想関数呼び出しの際に利用します。</p>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="inherit"></a>クラスの継承</h2>
+<p>続いて、Rectangle クラスの宣言に相当する C 言語コードを示します。</p>
+<pre><code class="language-csharp"><span class="comment">//----------------------------------------------------------------</span>
+<span class="comment">// class Rectangle に相当</span>
+
+typedef <span class="keyword">struct</span> TagRectangle
+{
+  Shape <span class="keyword">base</span>;
+
+  <span class="keyword">double</span> width;
+  <span class="keyword">double</span> height;
+} Rectangle;
+
+<span class="keyword">extern</span> <span class="keyword">void</span>* RectangleVftable[];
+<span class="keyword">void</span> RectangleCtor(Rectangle* <span class="keyword">this</span>, <span class="keyword">double</span> w, <span class="keyword">double</span> h);
+<span class="keyword">void</span> RectangleDtor(Rectangle* <span class="keyword">this</span>);
+<span class="keyword">double</span> RectangleGetArea(Rectangle* <span class="keyword">this</span>);
+<span class="keyword">double</span> RectangleGetPerimeter(Rectangle* <span class="keyword">this</span>);</code></pre>
+<p>Shape のときと同じく、
+仮想関数テーブル RectangleVftable、
+コンストラクタ RectangleCtor、
+デストラクタ RectangleDtor を持っています。
+それに加え、
+GetArea, GetPerimiter メンバー関数に相当する、
+RectangleGetArea, RectangleGetPerimeter があります。</p>
+<p>クラスのメンバー変数（Rectangle の場合は width と height）は、
+そのまま構造体のメンバー変数になります。</p>
+<p>問題は「<a href="/study/csharp/oop/oo_inherit/#derive">継承</a>」なんですが、
+これは、単に、親クラスを1つ目のメンバー変数として持つことによって実現します。
+例えば、</p>
+<pre><code class="language-csharp">Rectangle* r = (Rectangle*)malloc(<span class="keyword">sizeof</span>(Rectangle));
+Shape* s = (Shape*)r;
+
+<span class="keyword">if</span> (s-&gt;vftable == r-&gt;<span class="keyword">base</span>.vftable)
+  printf(<span class="string">&quot;true&quot;</span>);</code></pre>
+<p>というようなコードを書いた場合、
+ちゃんと、 true という文字列が出力されるはずです。
+（&amp;r と &amp;r-&gt;base が同じアドレスを表している。）</p>
+<h2 id="section-6"><a id="sec-generated-title-6"></a> <a id="inherit_impl"></a>派生クラスの実装</h2>
+<p>Rectangle クラスの仮想関数テーブルの実体 RectangleVftable は以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span>* RectangleVftable[] =
+{
+  <span class="string">&quot;class Rectangle&quot;</span>,
+  RectangleGetArea,
+  RectangleGetPerimeter
+};</code></pre>
+<p>Shape のときと同じく、
+配列の1つ目がクラスに関する情報で、
+2つ目、3つ目がそれぞれ GetArea, GetPerimeter に相当する関数へのポインターです。
+Shape のときと違って、GetArea, GetPerimeter が実体を持っているので、
+0 以外のちゃんとした値がセットされています。</p>
+<p>コンストラクタに相当する関数 RectangleCtor で、
+vftable メンバーに RectangleVftable を代入します。
+ここで、1つ注意が必要なのは、
+C++ と違って基底クラスのコンストラクタを自動的に呼んでくれるような機能はないので、
+プログラマが明示的に ShapeCtor を呼び出す必要があります。
+（デストラクタも同様。）</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> RectangleCtor(Rectangle* <span class="keyword">this</span>, <span class="keyword">double</span> w, <span class="keyword">double</span> h)
+{
+  ShapeCtor(&amp;<span class="keyword">this</span>-&gt;<span class="keyword">base</span>);
+
+  <span class="keyword">this</span>-&gt;<span class="keyword">base</span>.vftable = RectangleVftable;
+
+  <span class="keyword">this</span>-&gt;width = w;
+  <span class="keyword">this</span>-&gt;height = h;
+}
+
+<span class="keyword">void</span> RectangleDtor(Rectangle* <span class="keyword">this</span>)
+{
+  ShapeDtor(&amp;<span class="keyword">this</span>-&gt;<span class="keyword">base</span>);
+}</code></pre>
+<p>ちなみに、RectangleGetArea, RectangleGetPerimeter の実体は以下のような感じ。
+元の C++ の Rectangle クラスの GetArea, GetPerimeter とほぼ同じです。
+（関数の引数に Rectangle* this が増えているだけ。）</p>
+<pre><code class="language-csharp"><span class="keyword">double</span> RectangleGetArea(Rectangle* <span class="keyword">this</span>)
+{
+  <span class="keyword">return</span> <span class="keyword">this</span>-&gt;width * <span class="keyword">this</span>-&gt;height;
+}
+
+<span class="keyword">double</span> RectangleGetPerimeter(Rectangle* <span class="keyword">this</span>)
+{
+  <span class="keyword">return</span> <span class="number">2</span> * (<span class="keyword">this</span>-&gt;width + <span class="keyword">this</span>-&gt;height);
+}</code></pre>
+<h2 id="section-7"><a id="sec-generated-title-7"></a> <a id="call"></a>仮想関数の呼び出し</h2>
+<p>Circle クラスの実装は Rectangle とほぼ同様なので説明は省略。
+次は、仮想関数呼び出しの C 言語化を行います。</p>
+<p>C++ で、以下のようなコードを考えます。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> print(Shape* s)
+{
+  printf(<span class="string">&quot;%s\n%f\n%f\n\n&quot;</span>,
+    typeid(*s).name(),
+    s-&gt;GetArea(),
+    s-&gt;GetPerimeter());
+}
+
+<span class="keyword">void</span> TestCpp()
+{
+  Shape* s;
+  
+  s = <span class="keyword">new</span> Rectangle(<span class="number">2</span>, <span class="number">3</span>);
+  print(s);
+  delete s;
+
+  s = <span class="keyword">new</span> Circle(<span class="number">1</span>.<span class="number">41421356</span>);
+  print(s);
+  delete s;
+}</code></pre>
+<p>Rectangle, Circle のインスタンスそれぞれについて、
+クラス名、面積、周囲を求めて表示しています。</p>
+<p>これに相当する C 言語コードは以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">void</span> print(Shape* s)
+{
+  printf(<span class="string">&quot;%s\n%f\n%f\n\n&quot;</span>,
+    (<span class="keyword">char</span>*)s-&gt;vftable[<span class="number">0</span>],
+    ((TypeGetArea*)s-&gt;vftable[VF_GetArea])(s),
+    ((TypeGetPerimeter*)s-&gt;vftable[VF_GetPerimeter])(s));
+}
+
+<span class="keyword">void</span> TestC(<span class="keyword">void</span>)
+{
+  Shape* s;
+
+  s = (Shape*)malloc(<span class="keyword">sizeof</span>(Rectangle));
+  RectangleCtor((Rectangle*)s, <span class="number">2</span>, <span class="number">3</span>);
+  print(s);
+  RectangleDtor((Rectangle*)s);
+  free(s);
+
+  s = (Shape*)malloc(<span class="keyword">sizeof</span>(Circle));
+  CircleCtor((Circle*)s, <span class="number">1</span>.<span class="number">41421356</span>);
+  CircleDtor((Circle*)s);
+  print(s);
+  free(s);
+}</code></pre>
+<p>これで、先ほどの C++ コードと同じ出力が得られます。</p>
+<p>このままだと分かりにくいので、
+仮想関数呼び出しと、型情報の取得の部分だけを取り出してみましょう。
+まずは C++。</p>
+<pre><code class="language-csharp">typeid(*s).name(),
+s-&gt;GetArea(),
+s-&gt;GetPerimeter());</code></pre>
+<p>続いて C 言語版。</p>
+<pre><code class="language-csharp">(<span class="keyword">char</span>*)s-&gt;vftable[<span class="number">0</span>],
+((TypeGetArea*)s-&gt;vftable[VF_GetArea])(s),
+((TypeGetPerimeter*)s-&gt;vftable[VF_GetPerimeter])(s));</code></pre>
+<p>型情報の取得は簡単ですね。
+仮想関数テーブルの先頭に型情報を入れたので、それを取り出すだけです。</p>
+<p>仮想関数の呼び出しは少々面倒なんですが、
+要するに、</p>
+<ul>
+<li><p>仮想関数テーブルには関数ポインターが入っているので、それを取り出す。</p>
+</li>
+<li><p>その関数ポインターを介して、メンバー関数の実体を呼ぶ。</p>
+</li>
+</ul>
+<p>ということをしています。</p>
+<p>vftable はコンストラクタに相当する関数
+ShapeCtor, RectangleCtor, CircleCtor の中で、
+それぞれ ShapeVftable, RectangleVftable, CircleVftable に初期化されています。
+なので、</p>
+<pre><code class="language-csharp">Shape* s = (Shape*)malloc(<span class="keyword">sizeof</span>(Rectangle));
+RectangleCtor((Rectangle*)s, <span class="number">2</span>, <span class="number">3</span>);
+
+((TypeGetArea*)s-&gt;vftable[VF_GetArea])(s),</code></pre>
+<p>というコードでは、
+s は Shape のポインター型の変数ですが、
+正しく RectangleGetArea を呼び出すことができます。</p>
+<h2 id="section-8"><a id="sec-generated-title-8"></a> <a id="cost"></a>仮想関数呼び出しのコスト</h2>
+<h3 id="section-9"><a id="sec-generated-title-9"></a> <a id="computationalcost"></a>演算コスト</h3>
+<p>ここで、通常の関数呼び出しと仮想関数呼び出しの比較をしてみましょう。</p>
+<p>もし、GetArea が仮想関数ではなかった場合、
+（C 言語版の）RectangleGetArea の呼び出しは以下のようになります。</p>
+<pre><code class="language-csharp">Shape* s = (Shape*)malloc(<span class="keyword">sizeof</span>(Rectangle));
+RectangleCtor((Rectangle*)s, <span class="number">2</span>, <span class="number">3</span>);
+
+RectangleGetArea((Rectangle*)s);</code></pre>
+<p>一方、仮想関数呼び出しは以下のようになります。</p>
+<pre><code class="language-csharp">Shape* s = (Shape*)malloc(<span class="keyword">sizeof</span>(Rectangle));
+RectangleCtor((Rectangle*)s, <span class="number">2</span>, <span class="number">3</span>);
+
+((TypeGetArea*)s-&gt;vftable[VF_GetArea])(s),</code></pre>
+<p>その差は、仮想関数テーブル vftable の参照を行うかどうかということになります。
+要するに、
+「<em>仮想関数呼び出しの演算コストはテーブルの参照1回分</em>」
+ということです。</p>
+<p>このコストを小さいと見るか大きいと見るかは状況次第ですが、
+当たり障りのない言い方をすると、
+「<em>微々たるコストだけども、避けれるなら避けたい</em>」
+といった所です。</p>
+<p>ちなみに、メンバー関数に virtual キーワードが付いていても、
+必ずしも仮想関数呼び出しになるわけではありません。
+例えば、以下のようなコード（要するに、ポインターや参照を使っていない）では、
+コンパイル時にどのメンバー関数を呼び出せばいいのかが確定するので、
+通常のメンバー関数呼び出しになります。</p>
+<pre><code class="language-csharp">Rectangle r(<span class="number">2</span>, <span class="number">3</span>);
+r.GetArea();</code></pre>
+<p>当然、仮想関数であることのメリットも一切受けないことになるので、
+状況による使い分けが必要です。</p>
+<h3 id="section-10"><a id="sec-generated-title-10"></a> <a id="memorycost"></a>メモリコスト</h3>
+<p>メモリの観点から見ると、
+仮想関数を使うためには仮想関数テーブル分のメモリが必要になります。
+具体的なメモリの量は、</p>
+<ul>
+<li><p>仮想関数1つに付き、関数ポインター1つ分。</p>
+</li>
+<li><p>インスタンス1つに付き、vftable 分（これもポインター1つ分）。</p>
+</li>
+</ul>
+<p>となります。
+ポインターのサイズは、処理系によりますが、
+今だと大体は4バイトもしくは8バイトです。
+クラス自体のサイズの大小に関係なく、常にこの4～8バイト分のサイズ増加があります。
+なので、小さいクラスほど、相対的に vftable のコストが大きくなります。</p>
+<p>C++ の仕様では、クラス中に1つでも仮想関数があると、
+vftable が自動生成されます。
+逆に、1つも仮想関数がなければ vftable は生成されません。
+（したがって、型情報（typeid）も使えなくなります。）
+「必要がなければ（特に小さいクラスでは）仮想関数は使うな」ということなんですが、
+「すでに仮想関数が1つあるのに、2つ目の仮想関数の追加をためらう理由はそれほどない」
+と言えます。</p>
+<h3 id="c-java"><a id="sec-generated-title-11"></a> <a id="csharp"></a>C# や Java では</h3>
+<p>C# や Java では、
+型情報の取得のために、仮想メソッド（C++ でいうと仮想関数）が1つもない場合でも、
+有無を言わせず vftable 相当の物が自動生成されます。
+Java ではこのコストを避ける方法はありません。</p>
+<p>C# の場合には、
+1つも仮想関数が必要ないのなら、class ではなくて struct にすることで、
+vftable 分のメモリを節約することができます。
+（値型は継承不可、仮想メソッド定義不可。
+したがって、仮想関数テーブル相当の物は必要ない。）
+（「1つも必要ない」というよりは、
+「将来的にも絶対に1つも必要としない自信がある」場合に struct を使います。）</p>
+<p>（struct を含む）値型を object 型の変数に代入すると、
+ちゃんと ToString などの仮想メソッド呼び出しができるわけですが、
+これは object への代入の際に仮想関数テーブルに相当する情報を追加する処理が行われるためです。
+この処理を boxing と呼びます。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/oop/">&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x6307;&#x5411;</a></li><li><a href="/study/csharp/oop/oo_about/">&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x6307;&#x5411;&#x3068;&#x306F;</a></li><li><a href="/study/csharp/oop/oo_class/">&#x30AF;&#x30E9;&#x30B9;</a></li><li><a href="/study/csharp/oop/oo_construct/">&#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;</a></li><li><a href="/study/csharp/oop/oo_conceal/">&#x5B9F;&#x88C5;&#x306E;&#x96A0;&#x853D;</a></li><li><a href="/study/csharp/oop/oo_property/">&#x30D7;&#x30ED;&#x30D1;&#x30C6;&#x30A3;</a></li><li><a href="/study/csharp/oop/oo_static/">&#x9759;&#x7684;&#x30E1;&#x30F3;&#x30D0;&#x30FC;</a></li><li><a href="/study/csharp/oop/moduleinitializer/">&#x30E2;&#x30B8;&#x30E5;&#x30FC;&#x30EB;&#x521D;&#x671F;&#x5316;&#x5B50;</a></li><li><a href="/study/csharp/oop/oo_operator/">&#x6F14;&#x7B97;&#x5B50;&#x306E;&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30ED;&#x30FC;&#x30C9;</a></li><li><a href="/study/csharp/oop/oo_indexer/">&#x30A4;&#x30F3;&#x30C7;&#x30AF;&#x30B5;&#x30FC;</a></li><li><a href="/study/csharp/oop/oo_inherit/">&#x7D99;&#x627F;</a></li><li><a href="/study/csharp/oop/miscimplictinherit/">[&#x4F59;&#x8AC7;] &#x6697;&#x9ED9;&#x7684;&#x306A;&#x6D3E;&#x751F;</a></li><li><a href="/study/csharp/oop/oo_multipleinheritance/">[&#x96D1;&#x8A18;] &#x591A;&#x91CD;&#x7D99;&#x627F;&#x3067;&#x304D;&#x306A;&#x3044;&#x7406;&#x7531;</a></li><li><a href="/study/csharp/oop/oo_polymorphism/">&#x591A;&#x614B;&#x6027;</a></li><li><a href="/study/csharp/oop/misc_as/">[&#x96D1;&#x8A18;] &#x30AD;&#x30E3;&#x30B9;&#x30C8;&#x3068; as</a></li><li><a href="/study/csharp/oop/misc_construct/">[&#x96D1;&#x8A18;] &#x30B3;&#x30F3;&#x30B9;&#x30C8;&#x30E9;&#x30AF;&#x30BF;&#x30FC;&#x5185;&#x306E;&#x4EEE;&#x60F3;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x547C;&#x3073;&#x51FA;&#x3057;</a></li><li><a href="/study/csharp/oop/oo_abstract/">&#x62BD;&#x8C61;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x3001;&#x62BD;&#x8C61;&#x30AF;&#x30E9;&#x30B9;</a></li><li><a href="/study/csharp/oop/oo_interface/">&#x30A4;&#x30F3;&#x30BF;&#x30FC;&#x30D5;&#x30A7;&#x30FC;&#x30B9;</a></li><li><a href="/study/csharp/oop/misc_autoimpl/">[&#x96D1;&#x8A18;] &#x62BD;&#x8C61;&#x5B9A;&#x7FA9;&#x3068;&#x81EA;&#x52D5;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/oop/sp2_generics/">&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/oop/sp4_variance/">&#x30B8;&#x30A7;&#x30CD;&#x30EA;&#x30AF;&#x30B9;&#x306E;&#x5171;&#x5909;&#x6027;&#x30FB;&#x53CD;&#x5909;&#x6027;</a></li><li><a href="/study/csharp/oop/generic-math-operators/">&#x3010;Generic Math&#x3011; C# 11 &#x3067;&#x306E;&#x6F14;&#x7B97;&#x5B50;&#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

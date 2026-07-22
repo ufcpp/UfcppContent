@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x74B0;&#x5883;&#x306E;&#x30AB;&#x30B9;&#x30BF;&#x30DE;&#x30A4;&#x30BA; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/powershell/misc/customize/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">環境のカスタマイズ</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>プロファイルディレクトリに色々ファイルを置くことでカスタマイズができるみたい。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="dir"></a>プロファイルディレクトリ</h2>
+<p>PowerShell Home
+C:\WINDOWS\system32\windowspowershell\v1.0
+ここはユーザは直接触らない</p>
+<p>$env:ALLUSERSPROFILE 以下の
+\My Documents\WindowsPowerShell</p>
+<p>$env:userprofile 以下の
+\My Documents\WindowsPowerShell</p>
+<h2 id="profile.ps1"><a id="sec-generated-title-3"></a> <a id="d36e22"></a>profile.ps1</h2>
+<p>プロファイルディレクトリ内に profile.ps1 を置いておくと、
+PowerShell のホスト起動時に読み込まれる。</p>
+<pre><code class="language-text">      profile.ps1 に書いておくと便利そうな TIPS
+
+      ?eq など
+      http://d.hatena.ne.jp/newpops/20070111/p1
+
+      Windows.Forms をロードしておく
+      http://d.hatena.ne.jp/newpops/20061229/p1
+    </code></pre>
+<h2 id="display.xml"><a id="sec-generated-title-4"></a> <a id="d36e31"></a>Display.xml</h2>
+<h2 id="section-3"><a id="sec-generated-title-5"></a> <a id="d36e33"></a>ホストの配色</h2>
+<pre><code class="language-powershell"><span class="powershellVariable">$Host</span>.UI.RawUI.BackgroundColor <span class="powershellOperator">=</span> <span class="string">&#39;White&#39;</span>
+<span class="powershellVariable">$Host</span>.UI.RawUI.ForegroundColor <span class="powershellOperator">=</span> <span class="string">&#39;Black&#39;</span>
+<span class="powershellVariable">$Host</span>.PrivateData.DebugBackgroundColor <span class="powershellOperator">=</span> <span class="string">&#39;Gray&#39;</span>
+<span class="powershellVariable">$Host</span>.PrivateData.DebugForegroundColor <span class="powershellOperator">=</span> <span class="string">&#39;Yellow&#39;</span>
+<span class="powershellVariable">$Host</span>.PrivateData.ErrorBackgroundColor <span class="powershellOperator">=</span> <span class="string">&#39;White&#39;</span>
+<span class="powershellVariable">$Host</span>.PrivateData.ErrorForegroundColor <span class="powershellOperator">=</span> <span class="string">&#39;Red&#39;</span>
+<span class="powershellVariable">$Host</span>.PrivateData.ProgressBackgroundColor <span class="powershellOperator">=</span> <span class="string">&#39;DarkCyan&#39;</span>
+<span class="powershellVariable">$Host</span>.PrivateData.ProgressForegroundColor <span class="powershellOperator">=</span> <span class="string">&#39;Yellow&#39;</span>
+<span class="powershellVariable">$Host</span>.PrivateData.VerboseBackgroundColor <span class="powershellOperator">=</span> <span class="string">&#39;Gray&#39;</span>
+<span class="powershellVariable">$Host</span>.PrivateData.VerboseForegroundColor <span class="powershellOperator">=</span> <span class="string">&#39;Yellow&#39;</span>
+<span class="powershellVariable">$Host</span>.PrivateData.WarningBackgroundColor <span class="powershellOperator">=</span> <span class="string">&#39;Gray&#39;</span>
+<span class="powershellVariable">$Host</span>.PrivateData.WarningForegroundColor <span class="powershellOperator">=</span> <span class="string">&#39;Yellow&#39;</span></code></pre>
+<h2 id="prompt"><a id="sec-generated-title-6"></a> <a id="d36e42"></a>prompt 関数</h2>
+<p>プロンプトとして表示されてる「PS パス名 &gt;」の部分は、実は prompt 関数の出力。
+prompt 関数を書き換えることで変更可能。</p>
+<h2 id="tabexpansion"><a id="sec-generated-title-7"></a> <a id="d36e48"></a>TabExpansion 関数</h2>
+<p>TabExpansion 関数で、タブ補完の挙動を変えれるみたい。</p>
+<p><a href="http://blogs.msdn.com/powershell/archive/2006/04/26/584551.aspx">http://blogs.msdn.com/powershell/archive/2006/04/26/584551.aspx</a></p>
+<p>頑張れば bash 風のタブ補完も可能？</p>
+<h2 id="types.ps1xml"><a id="sec-generated-title-8"></a> <a id="d36e60"></a>types.ps1xml</h2>
+<p PSHOME="">&quot;$\types.ps1xml&quot;
+で .NET Framework の型を拡張可能
+System.Array に Count プロパティを足したり</p>
+<h2 id="display.xml-1"><a id="sec-generated-title-9"></a> <a id="d36e66"></a>Display.xml</h2>
+<p>Format-List での表示項目とかの設定。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/powershell/misc/">&#x305D;&#x306E;&#x4ED6;</a></li><li><a href="/study/powershell/misc/psdrive/">&#x30D7;&#x30ED;&#x30D0;&#x30A4;&#x30C0;&#x3068;&#x30C9;&#x30E9;&#x30A4;&#x30D6;</a></li><li><a href="/study/powershell/misc/keywords/">&#x91CD;&#x8981;&#x8A9E;&#x53E5;&#x30FB;Cmdlet &#x4E00;&#x89A7;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

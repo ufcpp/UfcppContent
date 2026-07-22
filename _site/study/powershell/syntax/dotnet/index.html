@@ -1,0 +1,200 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>.NET Framework &#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/powershell/syntax/dotnet/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="net-framework">.NET Framework オブジェクト</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="new"></a>オブジェクトの作成</h2>
+<p>これまでに説明した通り、
+1 は System.Int32 だし、 &quot;test&quot; は System.String で、
+全部 .NET Framework のオブジェクトです。
+これらは、PowerShell 中で 1 とか &quot;test&quot; と書くだけで作れますが、
+その他にも、New-Object Cmdlet を使って .NET Framework の任意のオブジェクトを作ることができます。
+（ちなみに、New-Object は COM オブジェクトも同様に作れる。）</p>
+<p>例えば、以下のようにして、System.DateTime クラスのインスタンスを作成できます。
+（PowerShell では System. は省略可能ということになってる。）</p>
+<pre><code class="language-console">&gt;  $a = New-Object DateTime 2007, 4, 1
+&gt;  $a
+
+2007年4月1日 0:00:00</code></pre>
+<h2 id="section-1"><a id="sec-generated-title-2"></a> <a id="dot"></a>プロパティ、メソッドのアクセス</h2>
+<p>あと、まあ、説明するまでもなく今まで散々つかっちゃっていますが、
+. を使ってオブジェクトのプロパティやメソッドにアクセスできます。</p>
+<pre><code class="language-console">&gt;  $a = New-Object DateTime 2007, 4, 1
+&gt;  $a.DayOfWeek
+Sunday</code></pre>
+<pre><code class="language-console">&gt;  $a = &quot;test&quot;
+&gt;  $a.ToUpper()
+TEST</code></pre>
+<p>それから、
+static メソッドも
+[型名]::メソッド名
+という構文で呼び出すことができます。
+例えば、System.Math クラスにはさまざまな数学関連の関数・定数があるわけですが、
+以下のようにして呼び出すことができます。</p>
+<pre><code class="language-console">&gt;  [Math]::Atan(1) * 4
+3.14159265358979
+&gt;  [Math]::PI
+3.14159265358979</code></pre>
+<h2 id="ref-out"><a id="sec-generated-title-3"></a> <a id="ref"></a>ref, out</h2>
+<p>.NET Framework には引数の参照渡しのために、
+引数に ref とか out とかを指定できるんですが
+（参考： 「<a href="/study/csharp/resource/sp_ref/">引数の参照渡し</a>」）、
+PowerShell では [ref] [out] というように、[] を使って指定します。</p>
+<p>例えば、System.Int.TryParse は以下のようにして呼び出します。</p>
+<pre><code class="language-console">&gt;  $a = 0
+&gt;  [int]::TryParse(&quot;128&quot;, [ref]$a)
+True
+&gt;  $a
+128</code></pre>
+<h2 id="section-2"><a id="sec-generated-title-4"></a> <a id="note_method"></a>メソッド呼び出しの注意点</h2>
+<p>1つ気をつけないといけない点があります。
+コマンドや function、スクリプトブロック等では a b c と括弧なしのスペース区切りで引数を渡すのに対して、
+メソッドコールは (a, b, c) と () 付き , 区切りで引数を渡します。
+（関数やスクリプトブロックについては別項で説明。）</p>
+<pre><code class="language-console">&gt;  function Pow
+{
+  [Math]::Pow($args[0], $args[1])
+}
+
+&gt;  Pow 2 3
+# ↓ PowerShell の関数呼び出し
+8
+&gt;  [Math]::Pow(2, 3)
+# ↓ メソッド呼び出し
+8</code></pre>
+<pre><code class="language-console">&gt;  $a = {$args[0] * $args[1]}
+&gt;  &amp;$a 2 5
+# ↓ スクリプトブロック呼び出し
+10
+&gt;  $b = @{}
+&gt;  $b.test = {$args[0] * $args[1]}
+&gt;  &amp;$b.test 2 5
+# ↓ メソッドっぽく見えるけど違う
+10</code></pre>
+<p>たちが悪いことに、
+PowerShell の関数に対して
+「func(2, 3)」と書いてもエラーにはなりません。</p>
+<pre><code class="language-console">&gt;  function ToString
+{
+  foreach($x in $args){$x.ToString()}
+}
+
+&gt;  ToString 2 3
+# ↓ 2つの整数が引数
+2
+3
+&gt;  ToString(2, 3)
+# ↓ 1つの配列が引数
+System.Object[]</code></pre>
+<p>要するに、ToString(2, 3) は以下のコードと同じ意味になります。</p>
+<pre><code class="language-console">&gt;  $a = @(2, 3)
+&gt;  ToString $a</code></pre>
+<p>あと、
+New-Object Cmdlet では、以下のように、一見 , 区切りで引数を与えているように見えますが、
+これも実は単に、New-Object が第2引数に配列を取るというだけです。
+（, は配列化演算子。）</p>
+<pre><code class="language-console">&gt;  $a = New-Object DateTime 2007, 4, 1</code></pre>
+<h2 id="section-3"><a id="sec-generated-title-5"></a> <a id="load_assemblly"></a>アセンブリのロード</h2>
+<p>System.Reflection.Assembly の Load とか LoadFile を使ってアセンブリをロード。</p>
+<h5 id="dll"><a id="sec-generated-title-6"></a>自作 DLL のロード</h5>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">namespace</span> Ufcpp
+{
+  <span class="keyword">public</span> <span class="keyword">class</span> Test
+  {
+    <span class="keyword">string</span> s;
+
+    <span class="keyword">public</span> Test() : <span class="keyword">this</span>(<span class="string">&quot;test&quot;</span>){}
+
+    <span class="keyword">public</span> Test(<span class="keyword">string</span> s) { <span class="keyword">this</span>.s = s; }
+
+    <span class="keyword">public</span> <span class="keyword">string</span> <span class="keyword">this</span>[<span class="keyword">object</span> o]
+    {
+      <span class="keyword">get</span> { <span class="keyword">return</span> <span class="keyword">this</span>.s + o.ToString(); }
+    }
+  }
+}</code></pre>
+<pre><code class="language-console">&gt; csc /target:library a.cs
+&gt; [void][Reflection.Assembly]::LoadFile($($(pwd).path + '\a.dll'))</code></pre>
+<h5 id="section-4"><a id="sec-generated-title-7"></a>標準アセンブリのロード</h5>
+<p>標準アセンブリで、
+PowerShell がデフォルトでロードしていないもののロード。</p>
+<p>例えば、System.Drawing.Bitmap クラスを使いたければ、
+System.Drawing のロードが必要で、</p>
+<pre><code class="language-console">&gt; [void][Reflection.Assembly]::LoadWithPartialName('System.Drawing')
+&gt; $bmp = [Drawing.Image]::FromFile($((pwd).Path + '\' + $filename))</code></pre>
+<h2 id="section-5"><a id="sec-generated-title-8"></a> <a id="cast"></a>型変換</h2>
+<p>どうも、[型名] を使った型変換は、コンストラクタを呼んでるっぽい。</p>
+<p>（
+数値とか文字列とかの型変換は明らかに特殊なことをしてるけど、
+.NET Framework オブジェクトの型変換は、多分、コンストラクタ呼び出しに置きかえられてると思う。
+）</p>
+<p>前節で作った Ufcpp.Test クラスは、string を引数とするコンストラクタを持っていますが、
+その結果、文字列からの型変換が可能↓。</p>
+<pre><code class="language-console">&gt; $a = [Ufcpp.Test]'abc'
+&gt; $a['test']
+abstest</code></pre>
+<p>その他、Collection クラス同士の相互型変換が出来たり。</p>
+<h2 id="com"><a id="sec-generated-title-9"></a> <a id="com"></a>COM の利用</h2>
+<p>.NET Framework では、
+過去の資産を活用するために、
+.NET から COM オブジェクトを利用する機構が用意されていました。</p>
+<p>PowerShell でも同様に、COM を利用することができます。
+COM オブジェクトは、New-Object コマンドに -Com オプションを付けるだけで作ることができます。
+例えば、Excel</p>
+<pre><code class="language-console">&gt; $a = New-Object -comobject Excel.Application
+&gt; $b = $a.Workbooks.Add()
+&gt; $c = $b.Worksheets.Item(1)
+&gt; $cell = $c.Cells.Item(1, 1)
+&gt; $cell.Interior.Color = 0xff0000
+&gt; $b.SaveAs($((pwd).Path + '\' + $filename))</code></pre>
+<h5 id="section-6"><a id="sec-generated-title-10"></a>サンプル</h5>
+<p>ビットマップを読み出して、
+ビットマップのドットに応じてExcel のセルの背景色塗りつぶしでドット絵を描く PowerShell スクリプト。</p>
+<p>減色処理とかはしてないんで、
+元々 Excel の色数に合わせて減色した画像を入力しないとまともな絵は出ない。</p>
+<pre><code class="language-powershell"><span class="keyword">param</span>(<span class="powershellOperator">[</span><span class="powershellType">string</span><span class="powershellOperator">]</span><span class="powershellVariable">$inName</span><span class="powershellOperator">,</span> <span class="powershellOperator">[</span><span class="powershellType">string</span><span class="powershellOperator">]</span><span class="powershellVariable">$outName</span>)
+
+<span class="powershellOperator">[</span><span class="powershellType">void</span><span class="powershellOperator">]</span><span class="powershellOperator">[</span><span class="powershellType">Reflection.Assembly</span><span class="powershellOperator">]</span><span class="powershellOperator">::</span>LoadWithPartialName(<span class="string">&#39;System.Drawing&#39;</span>)
+<span class="powershellVariable">$bmp</span> <span class="powershellOperator">=</span> <span class="powershellOperator">[</span><span class="powershellType">Drawing.Image</span><span class="powershellOperator">]</span><span class="powershellOperator">::</span>FromFile($((pwd).Path <span class="powershellOperator">+</span> &#39;\&#39; <span class="powershellOperator">+</span> <span class="powershellVariable">$inName</span>))
+
+<span class="powershellVariable">$a</span> <span class="powershellOperator">=</span> <span class="powershellCommand">New-Object</span> <span class="powershellParameter">-comobject</span> Excel.Application
+<span class="powershellVariable">$b</span> <span class="powershellOperator">=</span> <span class="powershellVariable">$a</span>.Workbooks.Add()
+<span class="powershellVariable">$c</span> <span class="powershellOperator">=</span> <span class="powershellVariable">$b</span>.Worksheets.Item(1)
+
+<span class="keyword">for</span> (<span class="powershellVariable">$y</span> <span class="powershellOperator">=</span> 0; <span class="powershellVariable">$y</span> <span class="powershellOperator">-lt</span> <span class="powershellVariable">$bmp</span>.Height; <span class="powershellOperator">++</span><span class="powershellVariable">$y</span>)
+{
+  <span class="keyword">for</span> (<span class="powershellVariable">$x</span> <span class="powershellOperator">=</span> 0; <span class="powershellVariable">$x</span> <span class="powershellOperator">-lt</span> <span class="powershellVariable">$bmp</span>.Width; <span class="powershellOperator">++</span><span class="powershellVariable">$x</span>)
+  {
+    <span class="powershellVariable">$color</span> <span class="powershellOperator">=</span> <span class="powershellVariable">$bmp</span>.GetPixel(<span class="powershellVariable">$x</span><span class="powershellOperator">,</span> <span class="powershellVariable">$y</span>)
+    <span class="powershellVariable">$cell</span> <span class="powershellOperator">=</span> <span class="powershellVariable">$c</span>.Cells.Item(<span class="powershellVariable">$y</span> <span class="powershellOperator">+</span> 1<span class="powershellOperator">,</span> <span class="powershellVariable">$x</span> <span class="powershellOperator">+</span> 1)
+
+    <span class="powershellVariable">$cell</span>.Interior.Color <span class="powershellOperator">=</span> <span class="powershellVariable">$color</span>.ToArgb()
+  }
+}
+<span class="powershellVariable">$c</span>.UsedRange.RowHeight <span class="powershellOperator">=</span> 5
+<span class="powershellVariable">$c</span>.UsedRange.ColumnWidth <span class="powershellOperator">=</span> 5 <span class="powershellOperator">/</span> 8.33
+
+<span class="powershellVariable">$b</span>.SaveAs($((pwd).Path <span class="powershellOperator">+</span> &#39;\&#39; <span class="powershellOperator">+</span> <span class="powershellVariable">$outName</span>))</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/powershell/syntax/">PowerShel &#x306E;&#x69CB;&#x6587;</a></li><li><a href="/study/powershell/syntax/basic/">&#x57FA;&#x790E;&#x77E5;&#x8B58;</a></li><li><a href="/study/powershell/syntax/variable/">&#x5909;&#x6570;</a></li><li><a href="/study/powershell/syntax/valuetype/">&#x5024;&#x578B;</a></li><li><a href="/study/powershell/syntax/string/">&#x6587;&#x5B57;&#x5217;</a></li><li><a href="/study/powershell/syntax/array/">&#x914D;&#x5217;</a></li><li><a href="/study/powershell/syntax/xml/">XML</a></li><li><a href="/study/powershell/syntax/flow/">&#x5236;&#x5FA1;&#x69CB;&#x6587;</a></li><li><a href="/study/powershell/syntax/function/">&#x95A2;&#x6570;&#x3001;&#x30D5;&#x30A3;&#x30EB;&#x30BF;&#x3001;&#x30B9;&#x30AF;&#x30EA;&#x30D7;&#x30C8;</a></li><li><a href="/study/powershell/syntax/exception/">&#x4F8B;&#x5916;&#x51E6;&#x7406;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

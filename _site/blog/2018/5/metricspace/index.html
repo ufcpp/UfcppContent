@@ -1,0 +1,436 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>C# &#x306B;&#x3082;&#x578B;&#x30AF;&#x30E9;&#x30B9;(Shapes)&#x304C;&#x6B32;&#x3057;&#x3044;&#x2026; &#x8DDD;&#x96E2;&#x7A7A;&#x9593;&#x4E0A;&#x306E;&#x30A2;&#x30EB;&#x30B4;&#x30EA;&#x30BA;&#x30E0;&#x5B9F;&#x88C5; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2018/5/metricspace/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2018-05-03T16:46:26">2018-05-03</time></span><span>更新: <time datetime="2018-05-04T04:10:15">2018-05-04</time></span></div><h1 id="c-shapes">C# にも型クラス(Shapes)が欲しい… 距離空間上のアルゴリズム実装</h1>
+<p>今日は C# で「距離の計算」を汎用的に、かつ、高パフォーマンスでやりたいという話。
+というか、やりたいのはやまやまなんだけど、高パフォーマンスを目指すとなかなか大変なことになるという話。
+<a href="/blog/2017/2/pickuproslyn0223/">Shapes</a>が来れば楽になるはずだけども、計画上だいぶ先の話なので、待っていると厳しいので大変なのを我慢したという話でもあります。</p>
+<p>サンプル コードの全体像: <a href="https://github.com/ufcpp/UfcppSample/tree/master/Demo/2018/MetricSpace">MetricSpace</a></p>
+<h2 id="section"><a id="distance">距離</a></h2>
+<p>2つの何らかの情報の距離を求めたいことは結構あります。</p>
+<ul>
+<li><a href="https://ja.wikipedia.org/wiki/%E3%83%87%E3%83%BC%E3%82%BF%E3%83%BB%E3%82%AF%E3%83%A9%E3%82%B9%E3%82%BF%E3%83%AA%E3%83%B3%E3%82%B0">近いもの同士でグルーピングしたい</a></li>
+<li><a href="https://ja.wikipedia.org/wiki/%E6%9C%80%E7%9F%AD%E7%B5%8C%E8%B7%AF%E5%95%8F%E9%A1%8C">最短経路を求めたい</a></li>
+<li><a href="https://docs.unity3d.com/jp/current/Manual/OcclusionCulling.html">一定範囲に入っているものだけを取り出したい</a></li>
+</ul>
+<p>汎用性が要らないなら簡単な話で、以下のようなコードで書けます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Euclidean
+{
+    <span class="comment">// a と b の長さが同じとか、いくつか前提を置いちゃってるけども、最低限のコード</span>
+    <span class="comment">// a, b を N 次元空間上の点とみなして、その間の距離の2乗、</span>
+    <span class="comment">// 要するに「差の2乗和」を求める。</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">float</span> DistanceSquared(<span class="keyword">float</span>[] a, <span class="keyword">float</span>[] b)
+    {
+        <span class="keyword">var</span> d = 0f;
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; a.Length; i++)
+        {
+            <span class="keyword">var</span> dif = b[i] - a[i];
+            d += dif * dif;
+        }
+        <span class="keyword">return</span> d;
+    }
+}</code></pre>
+<p>ここで、汎用性を気にすると以下のような要望が出てきます。</p>
+<ul>
+<li>数値の型: <code>float</code>以外にも使いたい</li>
+<li>数値の「組」の型: 配列じゃなくしたい</li>
+<li>距離計算の方法: 2乗和(いわゆる<a href="https://ja.wikipedia.org/wiki/%E3%83%A6%E3%83%BC%E3%82%AF%E3%83%AA%E3%83%83%E3%83%89%E8%B7%9D%E9%9B%A2">ユークリッド距離</a> )だけが距離じゃない</li>
+</ul>
+<h2 id="section-1"><a id="arithmetic">数値の型</a></h2>
+<p>距離計算に使う演算は、和、差、積程度です。
+あと、「同じ点かどうか」は知りたいことが多いので、等値比較はしたいでしょう。
+距離を計算したあと、「一定範囲に収まっているかどうか」を判定することが多いので、大小比較くらいは必要です。</p>
+<p>とはいえ、<code>float</code>に限らず、数値型ならどの型でもこの条件くらいは満たします。
+実際例えば、「四角いマス目の上の点」みたいなのを考えると<code>float</code>よりも<code>int</code>が使いたくなります。
+精度が必要な場合には<code>double</code>や<code>decimal</code>を使いたくなるでしょうし、省メモリ都合で<code>short</code>を使いたい場合もあるでしょう。</p>
+<p>となったときに問題になるのが、C# では、数値の四則演算を素直にジェネリックにできないこと。
+以下のコードはコンパイルできません。</p>
+<pre><code class="language-csharp"><span class="comment">// int や double でも使いたいからと言って、以下のようには書けない。</span>
+<span class="comment">// ジェネリックな型 T には +, -, * が定義されていない。</span>
+<span class="keyword">class</span> Euclidean&lt;T&gt;
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> T DistanceSquared(T[] a, T[] b)
+    {
+        T d = <span class="number">0</span>;
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; a.Length; i++)
+        {
+            <span class="keyword">var</span> dif = b[i] - a[i];
+            d += dif * dif;
+        }
+        <span class="keyword">return</span> d;
+    }
+}</code></pre>
+<p>しょうがなく、以下のように書いたりします。</p>
+<pre><code class="language-csharp"><span class="keyword">interface</span> IArithmetic&lt;T&gt;
+{
+    T Zero { <span class="keyword">get</span>; }
+    T Add(T a, T b);
+    T Subtract(T a, T b);
+    T Multiply(T a, T b);
+}
+
+<span class="keyword">class</span> Euclidean&lt;T&gt;
+{
+    <span class="comment">// 四則演算用のインターフェイスを外からもらう</span>
+    IArithmetic&lt;T&gt; _arithmetic;
+    <span class="keyword">public</span> Euclidean(IArithmetic&lt;T&gt; arithmetic) =&gt; _arithmetic = arithmetic;
+
+
+    <span class="comment">// static にするのはあきらめる</span>
+    <span class="keyword">public</span> T DistanceSquared(T[] a, T[] b)
+    {
+        <span class="keyword">var</span> arith = _arithmetic;
+        <span class="comment">// IArithmetic&lt;T&gt; 越しに 0 をもらったり、四則演算したり</span>
+        <span class="keyword">var</span> d = arith.Zero;
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; a.Length; i++)
+        {
+            <span class="keyword">var</span> dif = arith.Subtract(b[i], a[i]);
+            <span class="keyword">var</span> sq = arith.Multiply(dif, dif);
+            d = arith.Add(d, sq);
+        }
+        <span class="keyword">return</span> d;
+    }
+}</code></pre>
+<p>が、これだと、</p>
+<ul>
+<li><code>IArithmetic&lt;T&gt;</code>や<code>Euclidean&lt;T&gt;</code>のインスタンスを持ちまわすのが大変面倒</li>
+<li>仮想呼び出しのせいで<a href="/study/csharp/structured/miscinlining/">インライン化</a>が効かなくなってものすごく遅い</li>
+</ul>
+<p>という問題があります。</p>
+<p>で、ちょっとしたトリックなんですが、<a href="/study/csharp/oop/sp2_generics/#pseudo-static">値型ジェネリックを使うとインライン化が効く</a>という黒魔術がありまして。
+以下のように書けば倍は速くなります。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Euclidean&lt;T, TArithmetic&gt;
+    <span class="comment">// 構造体にして、型引数で受け取る</span>
+    <span class="keyword">where</span> TArithmetic : <span class="keyword">struct</span>, IArithmetic&lt;T&gt;
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> T DistanceSquared(T[] a, T[] b)
+    {
+        <span class="comment">// default を使って IArithmetic&lt;T&gt; を作る</span>
+        <span class="keyword">var</span> arith = <span class="keyword">default</span>(TArithmetic);
+        <span class="comment">// あとは先ほどと同じ</span>
+        <span class="keyword">var</span> d = arith.Zero;
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; a.Length; i++)
+        {
+            <span class="keyword">var</span> dif = arith.Subtract(b[i], a[i]);
+            <span class="keyword">var</span> sq = arith.Multiply(dif, dif);
+            d = arith.Add(d, sq);
+        }
+        <span class="keyword">return</span> d;
+    }
+}
+
+<span class="keyword">struct</span> FloatArithmetic : IArithmetic&lt;<span class="keyword">float</span>&gt;
+{
+    <span class="keyword">public</span> <span class="keyword">float</span> Zero =&gt; <span class="number">0</span>;
+    <span class="keyword">public</span> <span class="keyword">float</span> Add(<span class="keyword">float</span> a, <span class="keyword">float</span> b) =&gt; a + b;
+    <span class="keyword">public</span> <span class="keyword">float</span> Multiply(<span class="keyword">float</span> a, <span class="keyword">float</span> b) =&gt; a - b;
+    <span class="keyword">public</span> <span class="keyword">float</span> Subtract(<span class="keyword">float</span> a, <span class="keyword">float</span> b) =&gt; a * b;
+}
+
+<span class="comment">// IntArithmetic, DoubleArithmetic, ...</span>
+<span class="comment">// 使いたい型の分だけ同じ IArithmetic&lt;T&gt; を書く</span>
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// FloatArithmetic の時点で T は float で確定なんだけど、残念ながら型推論はされない</span>
+        <span class="comment">// 常にこの2つの型引数をペアで渡さないといけない</span>
+        Euclidean&lt;<span class="keyword">float</span>, FloatArithmetic&gt;.DistanceSquared(<span class="keyword">new</span>[] { 1f, 2f }, <span class="keyword">new</span>[] { 3f, 4f });
+    }
+}</code></pre>
+<p>一応これで、最初の <code>float</code> 専用で書いたコードに近いパフォーマンスになります。
+まあ、面倒も多々あって、特に大変なのが、型引数を常にペアで渡さないと行けなくなる部分です。
+この先、さらにどんどん面倒になって行くんですが、もうすでにこの時点で相当面倒です…</p>
+<h2 id="section-2"><a id="fixed-array">数値の「組」の型</a></h2>
+<p>次の課題は、配列を避けたいという点。
+前述の例でも、メソッド呼び出しの際に <code>new[] { 1f, 2f }</code> とか書いていますが、
+配列は<a href="/study/computer/essential-software/memorymanagement/#heap">ヒープ</a>を使ってしまうので、
+今回のような用途ではパフォーマンス上、あまり好ましくありません。</p>
+<p>今回の用途だと、</p>
+<ul>
+<li>要素数が常に固定</li>
+<li>しかも、よく使うのはせいぜい2次元か3次元</li>
+</ul>
+<p>ということで、配列の代わりに以下のような構造体を使いたくなったりします。</p>
+<pre><code class="language-csharp"><span class="keyword">struct</span> Array1&lt;T&gt;
+{
+    <span class="keyword">public</span> T Item1;
+}
+
+<span class="keyword">struct</span> Array2&lt;T&gt;
+{
+    <span class="keyword">public</span> T Item1;
+    <span class="keyword">public</span> T Item2;
+}
+
+<span class="keyword">struct</span> Array3&lt;T&gt;
+{
+    <span class="keyword">public</span> T Item1;
+    <span class="keyword">public</span> T Item2;
+    <span class="keyword">public</span> T Item3;
+}
+
+<span class="comment">// 以下、必要なだけ ArrayN を用意</span></code></pre>
+<p>で、以下の理由から、こいつに対しても先ほどと同様の「値型ジェネリックを使ったトリック」が必要になります。</p>
+<ul>
+<li>固定長の配列なんだから、長さを静的に取得したい</li>
+<li>構造体は、自身のフィールドを <code>ref</code> 戻り値で返せない</li>
+</ul>
+<pre><code class="language-csharp"><span class="keyword">struct</span> Array2&lt;T&gt;
+{
+    <span class="keyword">public</span> T Item1;
+    <span class="keyword">public</span> T Item2;
+
+    <span class="comment">// これをジェネリックに使いたければトリックが必要</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> Length =&gt; <span class="number">2</span>;
+
+    <span class="comment">// ただでさえ、safe にインデックス アクセスを実現する方法はないんだけど…</span>
+    <span class="comment">// そもそも、C# の構造体は ref Item1 したものを、ref 戻り値では返せない仕様</span>
+    <span class="keyword">public</span> <span class="keyword">ref</span> T <span class="keyword">this</span>[<span class="keyword">int</span> index] =&gt; <span class="keyword">ref</span> Unsafe.Add&lt;T&gt;(<span class="keyword">ref</span> Item1, index);
+}</code></pre>
+<p>その結果、行きつく先は以下のようなコードになります。</p>
+<pre><code class="language-csharp"><span class="comment">// 配列自体用。これは大して意味は持ってない。誤用防止程度</span>
+<span class="keyword">public</span> <span class="keyword">interface</span> IFixedArray&lt;T&gt; { }
+
+<span class="comment">// 値型ジェネリック トリック用</span>
+<span class="keyword">public</span> <span class="keyword">interface</span> IFixedArrayAccessor&lt;T, TArray&gt;
+    <span class="keyword">where</span> TArray : <span class="keyword">struct</span>, IFixedArray&lt;T&gt;
+{
+    TArray New();
+    <span class="keyword">ref</span> T At(<span class="keyword">ref</span> TArray array, <span class="keyword">int</span> i);
+    <span class="keyword">int</span> Length { <span class="keyword">get</span>; }
+}
+
+<span class="keyword">public</span> <span class="keyword">struct</span> Fixed2&lt;T&gt; : IFixedArrayAccessor&lt;T, Fixed2&lt;T&gt;.Array&gt;
+{
+    <span class="keyword">public</span> <span class="keyword">struct</span> Array : IFixedArray&lt;T&gt;
+    {
+        <span class="keyword">public</span> T Item1; <span class="keyword">public</span> T Item2;
+        <span class="keyword">public</span> Array(T item1, T item2) =&gt; (Item1, Item2) = (item1, item2);
+        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">implicit</span> <span class="keyword">operator</span> Array((T, T) value) =&gt; <span class="keyword">new</span> Array(value.Item1, value.Item2);
+    }
+
+    <span class="keyword">public</span> Array New() =&gt; <span class="keyword">default</span>;
+    <span class="keyword">public</span> <span class="keyword">int</span> Length =&gt; <span class="number">2</span>;
+    <span class="keyword">public</span> <span class="keyword">unsafe</span> Span&lt;T&gt; AsSpan(<span class="keyword">ref</span> Array array) =&gt; <span class="keyword">new</span> Span&lt;T&gt;(Unsafe.AsPointer(<span class="keyword">ref</span> array.Item1), <span class="number">2</span>);
+    <span class="keyword">public</span> <span class="keyword">ref</span> T At(<span class="keyword">ref</span> Array array, <span class="keyword">int</span> i) =&gt; <span class="keyword">ref</span> AsSpan(<span class="keyword">ref</span> array)[i];
+    <span class="comment">// 範囲チェックをさぼる(危険でいい)なら以下の書き方でも OK</span>
+    <span class="comment">//public ref T At(ref Array array, int i) =&gt; ref Unsafe.Add(ref array.Item1, i);</span>
+}</code></pre>
+<p>この時点で結構悩ましいコードですが、されにこれを距離計算に組み込むと以下のようになります。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Euclidean&lt;T, TArithmetic, TArray, TArrayAccessor&gt;
+    <span class="keyword">where</span> TArithmetic : <span class="keyword">struct</span>, I/OArithmetic&lt;T&gt;
+    <span class="keyword">where</span> TArray : <span class="keyword">struct</span>, IFixedArray&lt;T&gt;
+    <span class="keyword">where</span> TArrayAccessor : <span class="keyword">struct</span>, IFixedArrayAccessor&lt;T, TArray&gt;
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> T DistanceSquared(TArray a, TArray b)
+    {
+        <span class="keyword">var</span> arith = <span class="keyword">default</span>(TArithmetic);
+        <span class="keyword">var</span> accessor = <span class="keyword">default</span>(TArrayAccessor);
+        <span class="keyword">var</span> d = arith.Zero;
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; accessor.Length; i++)
+        {
+            <span class="keyword">var</span> dif = arith.Subtract(accessor.At(<span class="keyword">ref</span> b, i), accessor.At(<span class="keyword">ref</span> a, i));
+            <span class="keyword">var</span> sq = arith.Multiply(dif, dif);
+            d = arith.Add(d, sq);
+        }
+        <span class="keyword">return</span> d;
+    }
+}
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// これも、Fixed2&lt;float&gt; を使う時点で残りの型引数確定なんだけど、残念ながら型推論はされない</span>
+        <span class="comment">// 常にこの4つの型引数が必要</span>
+        Euclidean&lt;<span class="keyword">float</span>, FloatArithmetic, Fixed2&lt;<span class="keyword">float</span>&gt;.Array, Fixed2&lt;<span class="keyword">float</span>&gt;&gt;.DistanceSquared((<span class="number">1</span>, <span class="number">2</span>), (<span class="number">3</span>, <span class="number">4</span>));
+    }
+}</code></pre>
+<p>型引数が4つに増えました。
+しかし、実際のところ意味がある情報は、<code>float</code>、「2次元」の2つだけです。
+気持ち的には <code>Euclidean&lt;float, 2&gt;</code> とだけ書きたいですが、C# では叶いません。</p>
+<h2 id="section-3"><a id="metric">距離計算の方法</a></h2>
+<p>最後に、距離の計算自体も汎用化してみましょう。</p>
+<p>距離にもいろいろあります。
+ぶっちゃけ、「非負」「三角不等式が成り立つ」の2点だけ満たしていれば何でも距離です。
+<a href="https://ja.wikipedia.org/wiki/%E3%83%A6%E3%83%BC%E3%82%AF%E3%83%AA%E3%83%83%E3%83%89%E8%B7%9D%E9%9B%A2">ユークリッド距離</a>以外でそこそこよく使うものだと以下のようなものがあります。</p>
+<ul>
+<li><a href="https://ja.wikipedia.org/wiki/%E3%83%9E%E3%83%B3%E3%83%8F%E3%83%83%E3%82%BF%E3%83%B3%E8%B7%9D%E9%9B%A2">マンハッタン距離</a>
+<ul>
+<li>絶対値の和</li>
+<li>京都やマンハッタンの街みたいに碁盤の目になっている都市での2点間の距離</li>
+<li>「一定距離にある点」をつなぐと、ダイアモンド型になる</li>
+</ul>
+</li>
+<li><a href="https://ja.wikipedia.org/wiki/%E3%83%81%E3%82%A7%E3%83%93%E3%82%B7%E3%82%A7%E3%83%95%E8%B7%9D%E9%9B%A2">チェビシェフ距離</a>
+<ul>
+<li>絶対値の最大値</li>
+<li>チェスや将棋みたいに、斜めにも動ける駒にとっての盤面の距離</li>
+<li>「一定距離にある点」をつなぐと、四角になる</li>
+</ul>
+</li>
+</ul>
+<p>これも、汎用化するだけならインターフェイスを1個用意するだけなんですが、
+パフォーマンスを考えると値型ジェネリックを使うことになります。
+行きつく先が以下のようなコード。</p>
+<pre><code class="language-csharp"><span class="keyword">interface</span> IMetric&lt;T, TArray&gt;
+    <span class="keyword">where</span> TArray : <span class="keyword">struct</span>, IFixedArray&lt;T&gt;
+{
+    T DistanceSquared(TArray a, TArray b);
+}
+
+<span class="keyword">struct</span> EuclideanMetric&lt;T, TArithmetic, TArray, TArrayAccessor&gt; : IMetric&lt;T, TArray&gt;
+    <span class="keyword">where</span> TArithmetic : <span class="keyword">struct</span>, IArithmetic&lt;T&gt;
+    <span class="keyword">where</span> TArray : <span class="keyword">struct</span>, IFixedArray&lt;T&gt;
+    <span class="keyword">where</span> TArrayAccessor : <span class="keyword">struct</span>, IFixedArrayAccessor&lt;T, TArray&gt;
+{
+    <span class="keyword">public</span> T DistanceSquared(TArray a, TArray b)
+    {
+        <span class="keyword">var</span> arith = <span class="keyword">default</span>(TArithmetic);
+        <span class="keyword">var</span> accessor = <span class="keyword">default</span>(TArrayAccessor);
+        <span class="keyword">var</span> d = arith.Zero;
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; accessor.Length; i++)
+        {
+            <span class="keyword">var</span> dif = arith.Subtract(accessor.At(<span class="keyword">ref</span> b, i), accessor.At(<span class="keyword">ref</span> a, i));
+            <span class="keyword">var</span> sq = arith.Multiply(dif, dif);
+            d = arith.Add(d, sq);
+        }
+        <span class="keyword">return</span> d;
+    }
+}
+
+<span class="comment">// Manhattan とか Chebychev とかも同様に作る</span>
+
+<span class="keyword">class</span> Program
+{
+    <span class="comment">// 近い方の点を求める</span>
+    <span class="keyword">static</span> TArray Nearest&lt;T, TArray, TMetric&gt;(TArray origin, TArray a, TArray b)
+        <span class="keyword">where</span> T : IComparable&lt;T&gt;
+        <span class="keyword">where</span> TArray : <span class="keyword">struct</span>, IFixedArray&lt;T&gt;
+        <span class="keyword">where</span> TMetric : <span class="keyword">struct</span>, IMetric&lt;T, TArray&gt;
+    {
+        <span class="keyword">var</span> metric = <span class="keyword">default</span>(TMetric);
+
+        <span class="keyword">var</span> da = metric.DistanceSquared(origin, a);
+        <span class="keyword">var</span> db = metric.DistanceSquared(origin, b);
+
+        <span class="keyword">return</span> da.CompareTo(db) &lt;= <span class="number">0</span> ? a : b;
+    }
+
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// 型引数は3つと思いきや、Euclidean がさらに4つ求めるので合計7つ</span>
+        <span class="comment">// 常にこの7つの型引数が必要</span>
+        <span class="keyword">var</span> n = Nearest&lt;<span class="keyword">float</span>, Fixed2&lt;<span class="keyword">float</span>&gt;.Array, EuclideanMetric&lt;<span class="keyword">float</span>, FloatArithmetic, Fixed2&lt;<span class="keyword">float</span>&gt;.Array, Fixed2&lt;<span class="keyword">float</span>&gt;&gt;&gt;(
+            (<span class="number">0</span>, <span class="number">0</span>), (<span class="number">1</span>, <span class="number">2</span>), (<span class="number">3</span>, <span class="number">4</span>));
+
+        Console.WriteLine((n.Item1, n.Item2));
+    }
+}</code></pre>
+<p>型引数だけで画面の横幅目いっぱい使うようなメソッドができました…
+もちろん、意味がある部分は<code>float</code>, <code>2</code>, <code>Euclidean</code>だけで、残りは冗長です。</p>
+<h2 id="section-4"><a id="instantiation">ごまかし</a></h2>
+<p><a href="https://github.com/ufcpp/KdTree/">というようなコードを書くことに最近迫られまして</a>。
+(元々公開されていたリポジトリからフォークして、上記のようなトリックを仕込んでパフォーマンス向上する作業をした。)
+汎用化を捨てたり、パフォーマンスをあきらめてもよかったんですが。
+なんとなくきっちりやっちゃいまして。</p>
+<p>最初はしょうがなく7つの冗長な型引数を書いてたんですが、
+やっぱりすぐにつらくなって断念。
+代わりに、以下のようなごまかしコードを書くことになりました。</p>
+<pre><code class="language-csharp"><span class="comment">// ジェネリックな型を1個用意しておいて、派生で型引数を与えておく</span>
+<span class="comment">// 数値の型</span>
+<span class="keyword">class</span> FloatPoint : Point&lt;<span class="keyword">float</span>, FloatArithmetic&gt; { }
+<span class="keyword">class</span> DoublePoint : Point&lt;<span class="keyword">double</span>, DoubleArithmetic&gt; { }
+<span class="keyword">class</span> IntPoint : Point&lt;<span class="keyword">int</span>, IntArithmetic&gt; { }
+<span class="keyword">class</span> ShortPoint : Point&lt;<span class="keyword">short</span>, ShortArithmetic&gt; { }
+
+<span class="keyword">class</span> Point&lt;T, TArithmetic&gt;
+    <span class="keyword">where</span> T : IComparable&lt;T&gt;
+    <span class="keyword">where</span> TArithmetic : <span class="keyword">struct</span>, IArithmetic&lt;T&gt;
+{
+    <span class="comment">// 数値の「組」の型</span>
+    <span class="keyword">public</span> <span class="keyword">class</span> _1 : Dimension&lt;Fixed1&lt;T&gt;.Array, Fixed1&lt;T&gt;&gt; { }
+    <span class="keyword">public</span> <span class="keyword">class</span> _2 : Dimension&lt;Fixed2&lt;T&gt;.Array, Fixed2&lt;T&gt;&gt; { }
+    <span class="keyword">public</span> <span class="keyword">class</span> _3 : Dimension&lt;Fixed3&lt;T&gt;.Array, Fixed3&lt;T&gt;&gt; { }
+    <span class="keyword">public</span> <span class="keyword">class</span> _4 : Dimension&lt;Fixed4&lt;T&gt;.Array, Fixed4&lt;T&gt;&gt; { }
+
+    <span class="keyword">public</span> <span class="keyword">class</span> Dimension&lt;TArray, TArrayAccessor&gt;
+        <span class="keyword">where</span> TArray : <span class="keyword">struct</span>, IFixedArray&lt;T&gt;
+        <span class="keyword">where</span> TArrayAccessor : <span class="keyword">struct</span>, IFixedArrayAccessor&lt;T, TArray&gt;
+    {
+        <span class="comment">// 距離計算の方法</span>
+        <span class="keyword">public</span> <span class="keyword">class</span> Euclidean : Metric&lt;EuclideanMetric&lt;T, TArithmetic, TArray, TArrayAccessor&gt;&gt; { }
+        <span class="keyword">public</span> <span class="keyword">class</span> Manhattan : Metric&lt;ManhattanMetric&lt;T, TArithmetic, TArray, TArrayAccessor&gt;&gt; { }
+        <span class="keyword">public</span> <span class="keyword">class</span> Chebyshev : Metric&lt;ChebyshevMetric&lt;T, TArithmetic, TArray, TArrayAccessor&gt;&gt; { }
+
+        <span class="keyword">public</span> <span class="keyword">class</span> Metric&lt;TMetric&gt;
+            <span class="keyword">where</span> TMetric : <span class="keyword">struct</span>, IMetric&lt;T, TArray&gt;
+        {
+            <span class="keyword">public</span> <span class="keyword">static</span> TArray Nearest(TArray origin, TArray a, TArray b)
+            {
+                <span class="keyword">var</span> metric = <span class="keyword">default</span>(TMetric);
+
+                <span class="keyword">var</span> da = metric.DistanceSquared(origin, a);
+                <span class="keyword">var</span> db = metric.DistanceSquared(origin, b);
+
+                <span class="keyword">return</span> da.CompareTo(db) &lt;= <span class="number">0</span> ? a : b;
+            }
+
+            <span class="comment">// その他、距離空間に対するアルゴリズムをこの中に書く</span>
+        }
+    }
+}
+
+<span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// 使う側に関してはだいぶ短く書けた</span>
+        <span class="keyword">var</span> n = FloatPoint._2.Euclidean.Nearest(
+            (<span class="number">0</span>, <span class="number">0</span>), (<span class="number">1</span>, <span class="number">2</span>), (<span class="number">3</span>, <span class="number">4</span>));
+
+        Console.WriteLine((n.Item1, n.Item2));
+    }
+}</code></pre>
+<p>一応、使う側のコードはだいぶ短くなり、許容範囲になったかなと思います。
+ただ、これはこれで、以下のような問題があって、妥協的です。</p>
+<ul>
+<li>使いたい型、固定長配列の次元、距離計算の方法が増えるたびに、この派生クラスも追加しないといけない</li>
+<li>クラスの中に入っているので、他のアセンブリで型を追加できない</li>
+</ul>
+<p>根本解決できるようなプログラミング言語を求めるなら、
+ジェネリック型引数の推論をもっと頑張ってもらうとか、<code>float</code>に対する<code>FloatArithmetic</code>みたいなもののペアリングとかの仕様が必要になります。</p>
+<p>型の推論は、かなり頑張っている言語もあって、そういう言語ではもうちょっと手短にコードを書けるんですが、
+その代わりにコンパイル時間が指数的に跳ね上がったり、
+コンパイル エラーが出たときにエラー メッセージが読めた代物じゃなくなったりという弊害があったりします…</p>
+<p><code>float</code>に対する<code>FloatArithmetic</code>、
+<code>TArray</code>に対する<code>TArrayAccessor</code>みたいなものは、ShapeとかType Classとか呼ばれたりするんですが、
+こいつは<a href="/blog/2017/2/pickuproslyn0223/">将来的に C# に入りそうな雰囲気</a>があります。</p>
+<p>これが来てくれればだいぶこの手の作業は楽になるんですが。
+現状は明確なマイルストーンが切られておらず、「7.X はおろか、8.X でも無理」という扱いです。
+最短で、9.0 とかで入ると仮定しても2年以上は先でしょうか…
+なので待ってられないので、しょうがなくこんなコードを書くことに…</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2018/5/">5&#x6708;</a></li><li><a href="/blog/2018/5/vs157/">Visual Studio 15.7 &#x30EA;&#x30EA;&#x30FC;&#x30B9; &#x306A;&#x3069;</a></li><li><a href="/blog/2018/5/cs80preview/">C# vNext Preview</a></li><li><a href="/blog/2018/5/pickuproslyn0520/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 5/20: 5&#x6708;&#x306E; Design Notes</a></li><li><a href="/blog/2018/5/pickuproslyn0524/">&#x30D4;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;Roslyn 5/24</a></li><li><a href="/blog/2018/5/netcore21/">.NET Core 2.1 &#x6B63;&#x5F0F;&#x30EA;&#x30EA;&#x30FC;&#x30B9;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

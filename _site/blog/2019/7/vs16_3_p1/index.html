@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>Visual Studio 16.2 GA &#x3068; 16.3 Preview 1 | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/blog/2019/7/vs16_3_p1/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content blog-entry"><div class="entry-meta"><span>公開: <time datetime="2019-07-27T15:50:55">2019-07-27</time></span><span>更新: <time datetime="2019-07-27T15:50:55">2019-07-27</time></span></div><h1 id="visual-studio-16.2-ga-16.3-preview-1">Visual Studio 16.2 GA と 16.3 Preview 1</h1>
+<p>一昨日、Visual Studio 2019 16.2 の Generally Available と 16.3 の Preview 1 が出ました。
+あと、.NET Core 3.0 Preview 7 も出ました。</p>
+<ul>
+<li><a href="https://devblogs.microsoft.com/visualstudio/visual-studio-2019-version-16-2-generally-available-and-16-3-preview-1/">Visual Studio 2019 version 16.2 Generally Available and 16.3 Preview 1</a></li>
+<li><a href="https://devblogs.microsoft.com/dotnet/announcing-net-core-3-0-preview-7/">Announcing .NET Core 3.0 Preview 7</a></li>
+</ul>
+<p>16.2 の機能:</p>
+<ul>
+<li>テスト エクスプローラーの UI が見やすくなった</li>
+</ul>
+<p>16.3 Preview 1 の機能:</p>
+<ul>
+<li>起動画面でのプロジェクト検索や、プロジェクト テンプレートの検索がしやすくなった</li>
+<li>.NET Core 3.0 や C# 8.0 のサポート追加
+<ul>
+<li><code>LangVersion</code> を <code>8.0</code> や <code>preview</code> にしなくても C# 8.0 が有効</li>
+</ul>
+</li>
+</ul>
+<p>.NET Core 3.0 Preview 7</p>
+<ul>
+<li>Go Live (自己責任で、製品環境で使ってもいい状態)になった</li>
+<li>インストール サイズ改善
+<ul>
+<li>インストーラーの状態で3割減、インストール後のディスク サイズで 75%減</li>
+<li>Alpine の Docker イメージのサイズが 148MB に</li>
+</ul>
+</li>
+</ul>
+<h2 id="net-core-3.0c-8.0">.NET Core 3.0/C# 8.0</h2>
+<p>ようやく、.NET Core 3.0/C# 8.0 が最終形になってきました。
+前述の通り、Visual Studio 16.3 ではもう C# 8.0 が default です。
+<code>LangVersion</code>の明示は要らなくなりました。</p>
+<p>.NET Core 3.0 が Go Live になったので、今後、Generally Available になるまであまり変化はないはずです。</p>
+<p>素直に「もう完成してる」「バグ修正を除けばもう変化はない」と言えればすっきりするんですけどね…
+<a href="https://github.com/ufcpp/UfcppSample/issues/255">null 許容参照型</a>がらみがどうもまだリリースされ切っていないようで。</p>
+<p>(まあ、null 許容参照型の変化は文法には関係なくて、「C# コンパイラーが属性をどう扱うか」で「警告の有無が変わる」というものです。
+一応、文法自体はもうさすがに今後 C# 8.0 の正式リリースまでに変化することはないと思います。)</p>
+<h3 id="null">null 許容参照型</h3>
+<p>ブログ的に Visual Studio 16.2 Preview 4 (7月19日に出てた)の話はすっ飛ばしちゃいましたが、
+16.2 Preview 4 辺りでだいぶ null 許容参照型の実装は進んでいました。
+ただ、ちゃんと実装されているようなされていないような…</p>
+<p>例えば以下のようなコード。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Diagnostics.CodeAnalysis;
+ 
+<span class="keyword">public</span> <span class="keyword">class</span> Program
+{
+    <span class="keyword">static</span> <span class="keyword">void</span> Main()
+    {
+        <span class="comment">// MaybeNull が付いているので、string だけど null が返ることがある</span>
+        <span class="keyword">var</span> a = MaybeNull&lt;<span class="keyword">string</span>&gt;();
+        Console.WriteLine(a.Length); <span class="comment">// 警告</span>
+ 
+        <span class="comment">// NotNull が付いているので、string? だけど null は返ってこない</span>
+        <span class="keyword">var</span> b = NotNull&lt;<span class="keyword">string</span>?&gt;();
+        Console.WriteLine(b.Length);
+    }
+ 
+    [<span class="keyword">return</span>: MaybeNull]
+    <span class="keyword">static</span> T MaybeNull&lt;T&gt;() =&gt; <span class="keyword">default</span>; <span class="comment">// ただ、ここで警告出ちゃう(出ないのが正しいはず)</span>
+ 
+    [<span class="keyword">return</span>: NotNull]
+    <span class="keyword">static</span> T NotNull&lt;T&gt;() <span class="keyword">where</span> T : <span class="keyword">class</span>? =&gt; <span class="keyword">default</span>;
+}</code></pre>
+<p><code>MabyNull</code>/<code>NotNull</code> 属性、使う側は対応しているけど、メソッド定義側が対応していなかったり。
+この辺りは Visual Studio 16.3 Preview 1 でも変化なし。</p>
+<p><a href="/study/csharp/resource/nullablereferencetype/">C# によるプログラミング入門に null 許容参照型のページを追加</a>し始めてるんですけど、
+まだリリースに含まれていない挙動が多くて書きづらい…
+(先週こっそり書き始めてこっそりもうページはあるんですけど、背景説明だけで力尽きてる。)</p>
+<p><a href="https://github.com/dotnet/roslyn/issues/35816">roslyn 上の issue</a> からたどるに、
+実装自体はあって、結構 merge 済みのものも多いんですけども。
+まだリリースには反映されていないようです。</p>
+<p>あと、<a href="https://github.com/dotnet/coreclr/issues/25488">今からマイルストーンを 3.0 に変えて大丈夫なの？という issue</a>もあったり。
+(型引数に対して属性を付けたい、付けれないと null 許容参照型で困るという話。)</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/blog/2019/7/">7&#x6708;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

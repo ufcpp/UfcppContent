@@ -1,0 +1,902 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><html lang="ja-JP" xmlns:ufcpp="http://ufcpp.net/study/document"><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"><meta http-equiv="Content-Language" content="ja-JP"><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta http-equiv="Content-Style-Type" content="text/css"><meta http-equiv="Content-Script-Type" content="text/javascript"><meta name="Author" content="IWANAGA Nobuyuki"><link rel="stylesheet" href="../main.css"><link rel="stylesheet" href="../document.css"><link rel="stylesheet" href="../mathstyle.css"><link rel="stylesheet" href="../figure.css"><link rel="stylesheet" href="../source.css"><link rel="stylesheet" href="../source.css"><link rel="stylesheet" href="../source.css"><link rel="stylesheet" href="../link.css"><link rel="stylesheet" href="../qanda.css"><meta name="keywords" content="関数,関数メンバー,メソッド,戻り値,引数,戻り値,return,実引数,仮引数,オーバーロード,expression-bodied (本体が式の)関数,C#,.NET Framework"><title>関数
+(C# によるプログラミング入門)
+</title><link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/base/jquery-ui.css" rel="stylesheet"><script src="http://www.google.com/jsapi"></script><script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script><script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js" type="text/javascript"></script></head><body class="Menu"><div class="Main"><div class="CommonHeader"><p class="head">
+
+<a href="../../index.html"><img src="../common/sitelogo.jpg" width="450" height="65" alt="++C++; // 未確認飛行 C"></a>
+
+<a href="http://www.atmarkit.co.jp/fdotnet/chushin/introsl_04/introsl_04_01.html"><img src="../common/sl.jpg" width="64" height="64" alt="避けて通れない「非同期処理」を克服しよう"></a>
+
+
+
+</p><script type="text/javascript">
+google_ad_client = "ca-pub-0946654941616827";
+google_ad_slot = "4805833742";
+google_ad_width = 728;
+google_ad_height = 90;
+
+</script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script></div><div class="Header"><p><a href="../../index.html">Top</a> ≫ <a href="../index.html">総合 目次</a> ≫ <a href="index.html">C# によるプログラミング入門</a></p><h1 id="pagetitle">関数</h1><p><a href="http://b.hatena.ne.jp/entry/http://ufcpp.net/study/csharp/st_function.html" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://ufcpp.net/study/csharp/st_function.html" data-text="関数" data-count="horizontal" data-lang="ja">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script><iframe src="http://www.facebook.com/plugins/like.php?href=http://ufcpp.net/study/csharp/st_function.html&amp;layout=button_count&amp;show_faces=false&amp;width=50&amp;action=like&amp;colorscheme=light&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:105px; height:21px;" allowTransparency="true"></iframe><script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script><g:plusone size="small" xmlns:g="http://base.google.com/ns/1.0" /></p><h4>目次</h4><ul><li><a href="#abst">概要</a></li><li><a href="#sec-function-member">補足: 関数メンバー</a></li><li><a href="#definition">関数定義</a></li><li><a href="#void">引数が複数ある関数、引数のない関数、戻り値のない関数</a><ul><li><a href="#state">補足: 状態</a></li></ul></li><li><a href="#parameter">補足: 引数</a><ul><li><a href="#default-parameter">オプション引数と名前付き引数</a></li><li><a href="#actual-formal">実引数と仮引数</a></li><li><a href="#special-case">特殊な引数</a></li></ul></li><li><a href="#overload">関数のオーバーロード</a></li><li><a href="#sec-expression-bodied">expression-bodied な関数</a></li><li><a href="#exercise">演習問題</a></li></ul><h4>キーワード</h4><ul><li><a href="#function">関数</a></li><li><a href="#function-member">関数メンバー</a></li><li><a href="#method">メソッド</a></li><li><a href="#return">戻り値</a></li><li><a href="#paramter">引数</a></li><li><a href="#return-value">戻り値</a></li><li><a href="#return">return</a></li><li><a href="#actual-parameter">実引数</a></li><li><a href="#formal parameter">仮引数</a></li><li><a href="#overload">オーバーロード</a></li><li><a href="#expression-bodied">expression-bodied (本体が式の)関数</a></li></ul><div class="CommonHeader"><script type="text/javascript">
+google_ad_client = "ca-pub-0946654941616827";
+google_ad_slot = "3329100549";
+google_ad_width = 728;
+google_ad_height = 90;
+
+</script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script></div></div><div class="Middle"><div class="Body"><h2><a id="abst">概要</a></h2><p>
+            同じプログラムコードを複数の場所で何度も利用したい場合があります。
+            例えば、今まで説明してきた中で、たびたび「入力を促すメッセージを出力して、整数を入力してもらう」という場面が出てきました。
+            そのために何度も同じようなソースコードを書いてきました。
+        </p><p>
+            
+	「<a href="../csharp/st_loop.html">反復処理</a>」
+のところでも説明しましたが、
+            同じコードを複数の箇所に書くのはプログラムを管理していく上で好ましくありません。
+            そこで、こういう頻繁に使われる機能をまとめて、何度も呼び出せるようにしたのが<a id="function"><em>関数</em></a>（function）です。
+        </p><p>
+            (追記したい)
+            何度も出てくる処理でなくても、
+            処理に名前が付く単位で関数化すべき。
+            明確な名前を付ける(名前が付く単位で区切る)のがよいコードを書くコツ。
+        </p><h5>ポイント</h5><ul>
+            <li>
+                何度も出てくる処理は関数化する。
+            </li>
+            <li>
+                数学の「関数」から取った名前。プログラミング用語的には、他に、サブルーチン、プロシージャ（手続き）、メソッド等といった呼び方がある。
+            </li>
+            <li>
+                C# の機能の呼び名としては、このページで説明しているものは正確には「メソッド」という。
+                <ul>
+                    <li>
+                        とりあえず現時点では、メソッド ＝ 関数 と思っておいて OK。
+                    </li>
+                    <li>
+                        C# の場合、関数的な挙動をするものがいくつかあって、そのうち、一番「関数らしい関数」がメソッド。
+                    </li>
+                </ul>
+            </li>
+        </ul><h5>サンプル</h5><p>
+            <a href="https://github.com/ufcpp/UfcppSample/tree/master/StructuredProgramming/Function">https://github.com/ufcpp/UfcppSample/tree/master/StructuredProgramming/Function</a>
+        </p><h2><a id="sec-function-member">補足: 関数メンバー</a></h2><p>
+            C# の場合、このページで説明するような「関数」的な動作、
+            すなわち、何らかの値を受け取って、処理して、結果の値を返すような挙動をするものがいくつかあります。
+            具体的には、以下のようなものがあります。
+        </p><ul>
+            <li>
+                メソッド
+                <ul>
+                    <li>
+                        拡張メソッド(参考: 
+	「<a href="../csharp/sp3_extension.html">拡張メソッド</a>」
+)</li>
+                </ul>
+            </li>
+            <li>
+                コンストラクター(参考: 
+	「<a href="../csharp/oo_construct.html">コンストラクターとデストラクター</a>」
+)</li>
+            <li>プロパティ(参考: 
+	「<a href="../csharp/oo_property.html">プロパティ</a>」
+)</li>
+            <li>
+                インデクサー(参考: 
+	「<a href="../csharp/oo_indexer.html">インデクサー</a>」
+)</li>
+            <li>
+                イベント(参考: 
+	「<a href="../csharp/sp_event.html">イベント</a>」
+)</li>
+            <li>演算子(参考: 
+	「<a href="../csharp/oo_operator.html">演算子のオーバーロード</a>」
+)</li>
+            <li>ユーザー定義の型変換(参考: 
+	「<a href="../csharp/oo_operator.html">演算子のオーバーロード</a>」
+)</li>
+            <li>
+                デストラクター(参考: 
+	「<a href="../csharp/oo_construct.html">コンストラクターとデストラクター</a>」
+)</li>
+        </ul><p>
+            これらを合わせて、<a id="function-member"><em>関数メンバー</em></a>(function member)と呼びます。
+            このページで説明しているものは、C# の機能名としては、正確には<a id="method"><em>メソッド</em></a>といいます。
+        </p><p>
+            また、数学の関数を引き合いに出して説明していますが、
+            数学の関数のイメージと一番合うのは、「静的メソッド」というものです
+            (メソッドにもインスタンス メソッドと静的メソッドの2種類があります)。
+            これについては、
+	「<a href="../csharp/oo_static.html">静的メンバー</a>」
+で説明します。
+        </p><p>
+            このページでの説明(つまり、メソッドに対する説明)の多くは、メソッド以外の関数メンバーにも当てはまります。
+            引数の書き方、関数本体の書き方、戻り値の返し方などは、すべての関数メンバーで共通です。
+            (引数や戻り値が指定できない関数メンバーもありますが、指定できる場合には、書き方が同じです。)
+        </p><h2><a id="definition">関数定義</a></h2><p>
+            C# では、以下のようにして関数(C# 用語としては、正確にはメソッド)を定義します。
+        </p><pre class="source" xml:space="preserve" title="関数の書式">
+<span class="input">戻り値の型</span> <span class="input">関数名</span>(<span class="input">引数一覧</span>)
+{
+    <span class="input">関数本体(具体的な処理)</span>
+}
+</pre><p>
+            <span style="color:#702080; font:italic; background:#b0b0c0; padding:0em 0.4em 0em 0.1em;">Ver. 6.0</span>
+            C# 6.0 では、関数本体の部分が1つの式だけからなる場合、以下のような書き方をすることができるようになりました。
+            これを、expression-bodied (本体が式の)関数と呼びます。
+        </p><pre class="source" xml:space="preserve" title="関数の書式">
+<span class="input">戻り値の型</span> <span class="input">関数名</span>(<span class="input">引数一覧</span>) =&gt; <span class="input">関数本体の式</span>
+</pre><p>
+            関数という名前は、数学用語の関数からきています。
+            数学の関数は、ある値を入力すると、一定のルールに従った出力が得られます。
+            また、入力することの出来る値の範囲や、出力として得られる値の範囲はしっかりと決められています。
+        </p><p>
+            C#の関数も同じように、入力出来る値と、出力される値の型をあらかじめ決めておかなければ行けません。
+            例えば、実数(浮動小数点数)を入力して、その値のsinを求めるような関数を作りたい場合、
+            以下のようにして関数を作ることが出来ます。
+        </p><pre class="source" xml:space="preserve" title="関数の例 sin関数">
+<span class="comment">// sin x を求める関数。
+// テイラー展開を利用。
+// かなり適当に作ってるので、この方法ではそんなに精度はよくない。</span>
+<span class="reserved">double</span> Sin(<span class="reserved">double</span> x)
+{
+  <span class="reserved">double</span> xx = -x * x;
+  <span class="reserved">double</span> fact = 1;
+  <span class="reserved">double</span> sin = x;
+  <span class="reserved">for</span>(<span class="reserved">int</span> i=1; i&lt;100;)
+  {
+    fact *= i; ++i; fact *= i; ++i;
+    x *= xx;
+    sin += x / fact;
+  }
+  <span class="reserved">return</span> sin;
+}
+</pre><p>
+            まず、コメントの部分を除いて1番最初の、「<code>
+                <span class="reserved">double</span> Sin(<span class="reserved">double</span> x)
+            </code>」の部分を細かく見ていくと、
+            先頭の「<code>
+                <span class="reserved">double</span>
+            </code>」が関数の出力(これを<a id="return"><em>戻り値</em></a>という)の型、
+            次の「<code>Sin</code>」が関数の名前、
+            <code>()</code>の中にある「<code>
+                <span class="reserved">double</span> x
+            </code>」が入力の型と入力された値を保持するための変数(これを<a id="paramter"><em>引数</em></a>(paramter)といいます)です。
+        </p><p>
+            その後に続く<code>{}</code>の中身が関数の内部で行う処理です。
+            そして、出力にしたい値(これを<a id="return-value"><em>戻り値</em></a>(return value)といいます)は<a id="return"><em>return</em></a>というキーワードの後ろに書きます。
+        </p><p>
+            作成した関数を呼び出すには、
+        </p><pre class="source" xml:space="preserve" title="関数の書式">
+<span class="input">変数</span> = <span class="input">関数名</span>(<span class="input">入力</span>)
+</pre><p>
+            というように書きます。
+            以下に関数を呼び出す例を挙げます。
+        </p><h4 class="sample">サンプル</h4><pre class="source" xml:space="preserve" title="sin関数を使ったサンプル">
+<span class="reserved">using</span> System;
+
+<span class="reserved">class</span> SinSample
+{
+  <span class="reserved">static void</span> Main()
+  {
+    <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;10; ++i)
+    {
+      <span class="reserved">double</span> x = 0.01 * i;
+
+<em>      <span class="reserved">double</span> y = Sin(x); <span class="comment">// 関数呼び出し</span></em>
+
+      Console.Write(<span class="literal">"sin({0:f2}) = {1:f6}\n"</span>, x, y);
+    }
+  }
+
+  <span class="comment">/// &lt;summary&gt;
+  /// sin(x) の値を求める。
+  /// 実装は割りと適当。
+  /// &lt;/summary&gt;</span>
+<em>  <span class="reserved">static double</span> Sin(<span class="reserved">double</span> x) <span class="comment">// 関数定義</span></em>
+  {
+    <span class="reserved">double</span> xx = -x * x;
+    <span class="reserved">double</span> fact = 1;
+    <span class="reserved">double</span> sin = x;
+    <span class="reserved">for</span>(<span class="reserved">int</span> i=1; i&lt;100;)
+    {
+      fact *= i; ++i; fact *= i; ++i;
+      x *= xx;
+      sin += x / fact;
+    }
+    <span class="reserved">return</span> sin;
+  }
+}
+</pre><pre class="console" xml:space="preserve">
+sin(0.00) = 0.000000
+sin(0.01) = 0.010000
+sin(0.02) = 0.019999
+sin(0.03) = 0.029996
+sin(0.04) = 0.039989
+sin(0.05) = 0.049979
+sin(0.06) = 0.059964
+sin(0.07) = 0.069943
+sin(0.08) = 0.079915
+sin(0.09) = 0.089879
+</pre><p>
+            <code>Sin</code> 関数の定義の部分の前についている <code>
+                <span class="reserved">static</span>
+            </code> というキーワードについては、
+            
+	「<a href="../csharp/oo_static.html">静的メンバー</a>」
+で説明します。
+        </p><p>
+            もう一つ違う例を挙げて見ましょう。
+            今まで、実数の入力は以下のようにして行っていました。
+        </p><pre class="source" xml:space="preserve" title="値の入力">
+Console.Write(<span class="literal">"ユーザーに入力を促すメッセージ"</span>);
+x = <span class="reserved">double</span>.Parse(Console.ReadLine());
+</pre><p>
+            実数を入力する必要のある場面ごとにこのようなコードを書くのは面倒ですし、
+            これを関数化して見ましょう。
+            まず、単純に関数化した結果を以下に示します。
+        </p><pre class="source" xml:space="preserve" title="値を入力する部分を関数化">
+<span class="reserved">double</span> GetDouble(<span class="reserved">string</span> message)
+{
+  Console.Write(message);
+  <span class="reserved">double</span> x = <span class="reserved">double</span>.Parse(Console.ReadLine());
+  <span class="reserved">return</span> x;
+}
+</pre><p>
+            今までずっと無視してきていたのですが、実はこのままでは、実数に出来ない文字列を入力してしまうとエラーが発生して、以下のようなエラーメッセージを表示してプログラムが途中で止まってしまいます。
+        </p><pre class="console" xml:space="preserve" title="不正な値が入力されたときのエラーメッセージ">
+未処理の例外 : System.FormatException: 入力文字列の形式が正しくありません。
+  at System.Number.ParseDouble(String s, NumberStyles style, NumberFormatInfo info)
+  at System.Double.Parse(String s, NumberStyles style, IFormatProvider provider)
+  at StatementSample2.Main()
+</pre><p>
+            本当は例外処理(後述)というものを行ってこのようなエラーが出たときの対処を行わないといけません。
+            そこで、この例外処理を行うように変更を加えてみましょう。
+            (例外処理については
+	「<a href="../csharp/oo_exception.html">例外処理</a>」
+参照。
+            <code>try</code>と<code>catch</code>は例外処理を行うための構文です。)
+        </p><pre class="source" xml:space="preserve" title="値を入力する関数に例外処理を追加">
+<span class="reserved">double</span> GetDouble(<span class="reserved">string</span> message)
+{
+  <span class="reserved">double</span> x;
+  <span class="reserved">while</span>(<span class="reserved">true</span>)
+  {
+    <span class="reserved">try</span>
+    {
+      <span class="comment">// 入力を促すメッセージを表示して、値を入力してもらう</span>
+      Console.Write(message);
+      x = <span class="reserved">double</span>.Parse(Console.ReadLine());
+    }
+    <span class="reserved">catch</span>(Exception)
+    {
+      <span class="comment">// 不正な入力が行われた場合の処理</span>
+      Console.Write(
+        <span class="literal">"error : 正しい値が入力されませんでした\n入力しなおしてください\n"</span>);
+      <span class="reserved">continue</span>;
+    }
+    <span class="reserved">break</span>;
+  }
+  <span class="reserved">return</span> x;
+}
+</pre><p>
+            この修正した関数を用いて
+	「<a href="../csharp/st_variable.html">変数と式</a>」
+の最後で示したサンプルを書き換えてみましょう。
+        </p><h4 class="sample">サンプル</h4><pre class="source" xml:space="preserve" title="値の入力部分を関数化したサンプル">
+<span class="reserved">using</span> System;
+
+<span class="reserved">class</span> StatementSample2
+{
+  <span class="reserved">static void</span> Main()
+  {
+    <span class="reserved">double</span> x, y, z; <span class="comment">// 変数を宣言。
+
+    // x, y にユーザーの入力した値を代入。</span>
+    x = GetDouble(<span class="literal">"input x : "</span>);
+    y = GetDouble(<span class="literal">"input y : "</span>);
+
+    <span class="comment">// 入力された値を元に計算</span>
+    z = x * x + y * y; <span class="comment">// z に x と y の二乗和を代入</span>
+    x /=  z;           <span class="comment">// x =  x / z; と同じ。</span>
+    y /= -z;           <span class="comment">// y = -y / z; と同じ。
+
+    // 計算結果を出力</span>
+    Console.Write(<span class="literal">"({0}, {1})"</span>, x, y);
+  }
+
+  <span class="comment">/// &lt;summary&gt;
+  /// 入力を促すメッセージを表示して、実数を入力してもらう。
+  /// 正しく実数として解釈できる文字が入力されるまで繰り返す。
+  /// &lt;param name="message"&gt; 入力を促すメッセージ &lt;/param&gt;
+  /// &lt;return&gt; 入力された値 &lt;/return&gt;
+  /// &lt;/summary&gt;</span>
+  <span class="reserved">static double</span> GetDouble(<span class="reserved">string</span> message)
+  {
+    <span class="reserved">double</span> x;
+    <span class="reserved">while</span>(<span class="reserved">true</span>)
+    {
+      <span class="reserved">try</span>
+      {
+        <span class="comment">// 入力を促すメッセージを表示して、値を入力してもらう</span>
+        Console.Write(message);
+        x = <span class="reserved">double</span>.Parse(Console.ReadLine());
+      }
+      <span class="reserved">catch</span>(Exception)
+      {
+        <span class="comment">// 不正な入力が行われた場合の処理</span>
+        Console.Write(
+          <span class="literal">"error : 正しい値が入力されませんでした\n入力しなおしてください\n"</span>);
+        <span class="reserved">continue</span>;
+      }
+      <span class="reserved">break</span>;
+    }
+    <span class="reserved">return</span> x;
+  }
+}
+</pre><h2><a id="void">引数が複数ある関数、引数のない関数、戻り値のない関数</a></h2><p>
+            数学の関数では、例えば「f(x, y、z) = x<sup>2</sup>+y<sup>2</sup>+z<sup>2</sup>」といったように、入力が複数ある場合があります。
+            C#の関数でもこのように引数が複数ある関数を作れます。
+            引数を複数使いたい場合、数学の関数と同じように、関数を定義する際に、以下のように複数の引数を <code>,</code> で区切って並べます。
+            このように、引数を <code>,</code> で区切って並べたものを<em>引数リスト</em>といいます。
+        </p><pre class="source" xml:space="preserve" title="引数が複数ある関数の例">
+<span class="reserved">double</span> Norm(<span class="reserved">double</span> x, <span class="reserved">double</span> y, <span class="reserved">double</span> z)
+{
+  <span class="comment">// ノルムの計算</span>
+  <span class="reserved">return</span> x*x + y*y + z*z;
+}
+</pre><p>
+            数学ではあまり考えられませんが、C#では引数のない関数も定義できます。
+            引数のない関数は、以下のように、引数リストを空にして定義します。
+        </p><pre class="source" xml:space="preserve" title="引数のない関数の例">
+<span class="reserved">ulong</span> seed = 4275646295673547UL;
+<span class="reserved">ulong</span> Random()
+{
+  <span class="comment">// 線形合同法による疑似乱数の生成</span>
+  <span class="reserved">unchecked</span>{seed = seed * 1566083941UL + 1;}
+  <span class="reserved">return</span> seed;
+}
+</pre><p>
+            同様に戻り値のない関数も定義できます。
+            戻り値のない関数は、以下のように、戻り値の型を <em>
+                <code>void</code>
+            </em> (「空の、何もない」という意味)というものにしておきます。
+        </p><pre class="source" xml:space="preserve" title="戻り値のない関数の例">
+<span class="reserved">void</span> WriteArray(<span class="reserved">int</span>[] array)
+{
+  Console.Write(<span class="literal">"{"</span>);
+  <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;array.Length-1; ++i)
+  {
+    Console.Write(<span class="literal">"{0}, "</span>, array[i]);
+  }
+  Console.Write(array[array.Length-1] + <span class="literal">"}\n"</span>);
+}
+</pre><p>
+            戻り値のない物でも「関数」と呼ぶのはC言語やC++言語から受け継いだ習慣です。
+            その他の言語では、
+            戻り値のないものは「<em>サブルーチン</em>」とか「<em>プロシージャ</em>」といって関数と区別する場合もあります。
+        </p><h4 class="sample">サンプル</h4><pre class="source" xml:space="preserve" title="さまざまな関数のサンプル">
+<span class="reserved">using</span> System;
+
+<span class="reserved">class</span> FunctionSample
+{
+  <span class="reserved">static void</span> Main()
+  {
+    <span class="reserved">int</span>[] array = <span class="reserved">new int</span>[3];
+
+    <span class="comment">// 乱数を使って値を生成</span>
+    <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;array.Length; ++i)
+    {
+      array[i] = (<span class="reserved">int</span>)(Random() &gt;&gt; 58); <span class="comment">// [0,63] の整数乱数生成</span>
+    }
+
+    <span class="comment">// ノルムを計算</span>
+    <span class="reserved">double</span> norm = Norm(array[0], array[1], array[2]);
+
+    <span class="comment">// 値の出力</span>
+    WriteArray(array);
+    Console.Write(<span class="literal">"norm = {0}\n"</span>, norm);
+  }
+
+  <span class="reserved">static ulong</span> seed = 4275646293455673547UL;
+  <span class="comment">/// &lt;summary&gt;
+  /// 線形合同法による乱数の生成
+  /// &lt;/summary&gt;</span>
+  <span class="reserved">static ulong</span> Random()
+  {
+    <span class="reserved">unchecked</span>{seed = seed * 1566083941UL + 1;}
+    <span class="reserved">return</span> seed;
+  }
+
+  <span class="comment">/// &lt;summary&gt;
+  /// 入力した3つの値のノルムを計算
+  /// &lt;summary&gt;</span>
+  <span class="reserved">static double</span> Norm(<span class="reserved">double</span> x, <span class="reserved">double</span> y, <span class="reserved">double</span> z)
+  {
+    <span class="reserved">return</span> x*x + y*y + z*z;
+  }
+
+  <span class="comment">/// &lt;summary&gt;
+  /// 配列を , で各要素を区切って、{}で括った形式で出力
+  /// &lt;summary&gt;</span>
+  <span class="reserved">static void</span> WriteArray(<span class="reserved">int</span>[] array)
+  {
+    Console.Write(<span class="literal">"{"</span>);
+    <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;array.Length-1; ++i)
+    {
+      Console.Write(<span class="literal">"{0}, "</span>, array[i]);
+    }
+    Console.Write(array[array.Length-1] + <span class="literal">"}\n"</span>);
+  }
+}
+</pre><pre class="console" xml:space="preserve">
+{40, 31, 39}
+norm = 4082
+</pre><h3><a id="state">補足: 状態</a></h3><p>
+                この例の Random は、数学の関数と違って、「状態」(state)を持っています。
+                一般に、数学の関数は、引数と戻り値の関係だけを説明していて、同じ引数を与えた場合、常に同じ戻り値が返ります。
+                一方、この例は、関数の外にある seed という変数に値を記録・書き換え(これを「状態を持つ」という)していて、呼ぶたびに状態が変わり、違う戻り値を返します。
+            </p><p>
+                ちなみに、この関数の外にある変数のことは、C# 的にはフィールド(field)と呼びます。詳しくは
+	「<a href="../csharp/st_struct.html">データの構造化</a>」
+で説明します。
+            </p><h2><a id="parameter">補足: 引数</a></h2><p>
+            引数についてはいくつか補足があります。
+        </p><h3><a id="default-parameter">オプション引数と名前付き引数</a></h3><p>
+                <span style="color:#aa00aa; font:italic; background:#eeaaee; padding:0em 0.4em 0em 0.1em;">Ver. 4.0</span>
+            </p><p>
+                C# 4 から、引数に規定値(default value)を与えて、呼び出し時に省略できたり(optional)、名前付き(named)で引数を書けるようになりました。
+            </p><pre class="source" xml:space="preserve" title="規定値付きのメソッド定義">
+<span class="reserved">class</span> OptionalParameterSample
+{
+    <span class="reserved">public static void</span> Sample()
+    {
+        <span class="comment">// 引数の省略(optional parameter)</span>
+        <span class="reserved">var</span> s1 = Sum();     <span class="comment">// Sum(0, 0, 0); と同じ意味。</span>
+        <span class="reserved">var</span> s2 = Sum(<span class="literal">1</span>);    <span class="comment">// Sum(1, 0, 0); と同じ意味。</span>
+        <span class="reserved">var</span> s3 = Sum(<span class="literal">1</span>, <span class="literal">2</span>); <span class="comment">// Sum(1, 2, 0); と同じ意味。</span>
+
+        <span class="comment">// 名前付きで引数を与える(named parameter)</span>
+        <span class="reserved">var</span> s4 = Sum(x: 1, y: 2, z: 3); <span class="comment">// Sum(1, 2, 3); と同じ意味。</span>
+        <span class="reserved">var</span> s5 = Sum(z: 3);             <span class="comment">// Sum(0, 0, 3); と同じ意味。</span>
+    }
+
+    <span class="reserved">static int</span> Sum(<span class="reserved">int</span> x = <span class="literal">0</span>, <span class="reserved">int</span> y = <span class="literal">0</span>, <span class="reserved">int</span> z = <span class="literal">0</span>)
+    {
+        <span class="reserved">return</span> x + y + z;
+    }
+}
+</pre><p>
+                詳しくは、
+	「<a href="../csharp/sp4_optional.html">オプション引数・名前付き引数</a>」
+で説明します。
+            </p><p>
+                リンク先の余談、
+
+	「<a href="../csharp/sp4_optional.html#fyi">余談： なんでいまさら？</a>」
+ で説明していますが、引数の規定値には「後から値を変えにくい」という問題があるので、仕様の際には注意が必要です。
+                とはいえ、後から値を変えることもそう多くなく、便利に使える機能です。
+            </p><h3><a id="actual-formal">実引数と仮引数</a></h3><p>
+                引数という言葉は、「引数として渡す値」と「引数を受け取るための変数」という2つの意味で使われます。
+                区別が必要な場合、前者を<a id="actual-parameter"><em>実引数</em></a>(actual parameter)、後者を<a id="formal parameter"><em>仮引数</em></a>(formal parameter)と呼びます。
+            </p><p>
+                例えば、先ほどの例で言うと、以下のように、Norm 関数に渡す 3, 4, 5 などの数値が実引数、
+                Norm 関数の定義側にある x, y, z などの変数が仮引数です。
+            </p><pre class="source" title="" xml:space="preserve">
+<span class="reserved">static void</span> Main()
+{
+    <span class="reserved">var</span> norm = Norm(3, 4, 5); <span class="comment">// 3, 4, 5 が実引数</span>
+}
+
+<span class="reserved">static double</span> Norm(<span class="reserved">double</span> x, <span class="reserved">double</span> y, <span class="reserved">double</span> z) <span class="comment">// x, y, z が仮引数</span>
+{
+    <span class="reserved">return</span> x * x + y * y + z * z;
+}
+</pre><h5>余談: paramter と argument</h5><p>
+                少し余談になりますが、引数は、英語だと parameter 以外に、argument (ここでは「独立変数」の意味。数学用語としての argument)という単語を使うこともあります。
+                (ちなみに、parameter も、数学用語としては「媒介変数」という訳語になります。)
+            </p><p>
+                流儀によっては、実引数の意味で argument、仮引数の意味で parameter といように単語で呼び分けることもあるようです。
+                (どちらがどちらだったかわからなくなるので、あまり推奨はされません。結局、actual argument, formal argument という言い方もします。)
+            </p><h3><a id="special-case">特殊な引数</a></h3><p>
+                C# には、いくつか特殊な引数があります。
+                詳しくは別項で説明しています。
+            </p><ul>
+                <li>
+                    ref, out: 
+	「<a href="../csharp/sp_ref.html">引数の参照渡し</a>」
+
+                </li>
+                <li>
+                    params: 
+	「<a href="../csharp/sp_params.html">可変長引数</a>」
+
+                </li>
+                <li>
+                    this: 
+	「<a href="../csharp/sp3_extension.html">拡張メソッド</a>」
+
+                </li>
+            </ul><h2><a id="overload">関数のオーバーロード</a></h2><p>
+            関数を作る際、関数の名前が同じで引数リストだけが異なる関数を複数作ることが出来ます。
+            例えば、以下のように同じ名前の関数を作成することが出来ます。
+        </p><pre class="source" xml:space="preserve" title="引数リストだけが異なる同じ名前の関数の例">
+<span class="reserved">void</span> WriteTypeAndValue(<span class="reserved">string</span> s)
+{
+  Console.Write(<span class="literal">"文字列 : {0}\n"</span>, s);
+}
+
+<span class="reserved">void</span> WriteTypeAndValue(<span class="reserved">int</span> n)
+{
+  Console.Write(<span class="literal">"整数   : {0}\n"</span>, n);
+}
+
+<span class="reserved">void</span> WriteTypeAndValue(<span class="reserved">double</span> x)
+{
+  Console.Write(<span class="literal">"実数   : {0}\n"</span>, x);
+}
+</pre><p>
+            このように、引数リストだけが異なる関数を作ることを関数の<a id="overload"><em>オーバーロード</em></a>(overload : 過負荷、上積み)といいます。
+        </p><h4 class="sample">サンプル</h4><pre class="source" xml:space="preserve" title="関数のオーバーロードのサンプル">
+<span class="reserved">using</span> System;
+
+<span class="reserved">class</span> OverloadSample
+{
+  <span class="reserved">static void</span> Main()
+  {
+    WriteTypeAndValue(<span class="literal">"サンプル"</span>); <span class="comment">// WriteTypeAndValue(string) が呼ばれる</span>
+    WriteTypeAndValue(13);         <span class="comment">// WriteTypeAndValue(int)    が呼ばれる</span>
+    WriteTypeAndValue(3.14159265); <span class="comment">// WriteTypeAndValue(double) が呼ばれる</span>
+  }
+
+  <span class="comment">/// &lt;summary&gt;
+  /// 型名と値を出力する(string 版)。
+  /// &lt;/summary&gt;</span>
+  <span class="reserved">static void</span> WriteTypeAndValue(<span class="reserved">string</span> s)
+  {
+    Console.Write(<span class="literal">"文字列 : {0}\n"</span>, s);
+  }
+
+  <span class="comment">/// &lt;summary&gt;
+  /// 型名と値を出力する(int 版)。
+  /// &lt;/summary&gt;</span>
+  <span class="reserved">static void</span> WriteTypeAndValue(<span class="reserved">int</span> n)
+  {
+    Console.Write(<span class="literal">"整数   : {0}\n"</span>, n);
+  }
+
+  <span class="comment">/// &lt;summary&gt;
+  /// 型名と値を出力する(double 版)。
+  /// &lt;/summary&gt;</span>
+  <span class="reserved">static void</span> WriteTypeAndValue(<span class="reserved">double</span> x)
+  {
+    Console.Write(<span class="literal">"実数   : {0}\n"</span>, x);
+  }
+}</pre><pre class="console" xml:space="preserve">
+文字列 : サンプル
+整数   : 13
+実数   : 3.14159265
+</pre><h2><a id="sec-expression-bodied">expression-bodied な関数</a></h2><p>
+            <span style="color:#702080; font:italic; background:#b0b0c0; padding:0em 0.4em 0em 0.1em;">Ver. 6.0</span>
+            C# 6.0 では、関数本体の部分が1つの式だけからなる場合、以下のような書き方をすることができるようになりました。
+            これを、<a id="expression-bodied"><em>expression-bodied (本体が式の)関数</em></a>(expression-bodied function)と呼びます。
+        </p><p>
+            例えば、先ほど例に出した2つの関数、Random と Norm は以下のように書くこともできます。
+        </p><pre class="source" title="" xml:space="preserve">
+<span class="reserved">static ulong</span> Random() =&gt; <span class="reserved">unchecked</span>(seed = seed * 1566083941UL +  1 );
+
+<span class="reserved">static double</span> Norm(<span class="reserved">double</span> x, <span class="reserved">double</span> y, <span class="reserved">double</span> z) =&gt; x * x + y * y + z * z;
+</pre><p>
+            
+        </p><h2><a id="exercise">演習問題</a></h2><h3><a id="ex_func0">問題 1</a></h3><question>
+                <p>
+                    int 型の配列に格納されている値の最大値、最小値および平均値を求める関数をそれぞれ作成せよ。
+                </p>
+                <pre class="source" xml:space="preserve" title="">
+<span class="comment">/// &lt;summary&gt;
+/// 配列中の値の最大値を求める。
+/// &lt;/summary&gt;
+/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
+/// &lt;returns&gt;最大値&lt;/returns&gt;</span>
+<span class="reserved">static int</span> Max(<span class="reserved">int</span>[] a)
+
+<span class="comment">/// &lt;summary&gt;
+/// 配列中の値の最小値を求める。
+/// &lt;/summary&gt;
+/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
+/// &lt;returns&gt;最小値&lt;/returns&gt;</span>
+<span class="reserved">static int</span> Min(<span class="reserved">int</span>[] a)
+
+<span class="comment">/// &lt;summary&gt;
+/// 配列中の値の平均値を求める。
+/// &lt;/summary&gt;
+/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
+/// &lt;returns&gt;平均値&lt;/returns&gt;</span>
+<span class="reserved">static double</span> Average(<span class="reserved">int</span>[] a)
+</pre>
+            </question><p><a href="exercise.html#ex_func0">解答</a></p><h3><a id="ex_func1">問題 2</a></h3><question>
+                <p>
+                    double 型の値 x の整数冪を求める関数 Power を作成せよ。
+                </p>
+                <pre class="source" xml:space="preserve" title="Power の仕様">
+<span class="comment">/// &lt;summary&gt;
+/// x の整数冪を求める。
+/// &lt;/summary&gt;
+/// &lt;param name="x"&gt;仮数 x&lt;/param&gt;
+/// &lt;param name="n"&gt;指数 n&lt;/param&gt;
+/// &lt;returns&gt;x の n 乗&lt;/returns&gt;</span>
+<span class="reserved">static double</span> Power(
+  <span class="reserved">double</span> x,
+  <span class="reserved">int</span> n)
+</pre>
+            </question><p><a href="exercise.html#ex_func1">解答</a></p><h3><a id="ex_func2">問題 3</a></h3><question>
+                <p>
+                    配列に格納されている値の最大値を求める関数を、
+                    <code>int[]</code> に対するものと
+                    <code>double[]</code> に対するものの2種類作成せよ。
+                </p>
+            </question><p><a href="exercise.html#ex_func2">解答</a></p></div><div class="Ad"><div style="text-align:center;">
+
+
+
+
+
+<div style="margin-top:10pt;">
+<script type="text/javascript" src="../common/googlecolor.js">
+</script>
+<script type="text/javascript">
+google_ad_client = "pub-0946654941616827";
+google_ad_slot = "5079031097";
+google_ad_width = 160;
+google_ad_height = 600;
+
+</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</div>
+
+
+<div style="margin-top:10pt;">
+<SCRIPT charset="utf-8" type="text/javascript" src="http://ws.amazon.co.jp/widgets/q?rt=tf_mfw&amp;ServiceVersion=20070822&amp;MarketPlace=JP&amp;ID=V20070822/JP/cunflc-22/8001/d4869e13-8d5a-43b3-bdd0-f8372da0ca84"> </SCRIPT> <NOSCRIPT><A HREF="http://ws.amazon.co.jp/widgets/q?rt=tf_mfw&amp;ServiceVersion=20070822&amp;MarketPlace=JP&amp;ID=V20070822%2FJP%2Fcunflc-22%2F8001%2Fd4869e13-8d5a-43b3-bdd0-f8372da0ca84&amp;Operation=NoScript">Amazon.co.jp ウィジェット</A></NOSCRIPT>
+</div>
+
+
+<div style="margin-top:10pt;">
+<script type="text/javascript" src="../common/googlecolor.js">
+</script>
+<script type="text/javascript">
+google_ad_client = "pub-0946654941616827";
+google_ad_slot = "8981007993";
+google_ad_width = 160;
+google_ad_height = 90;
+</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</div>
+
+</div></div></div><div class="Footer"><div class="CommonHeader"><div>
+<script type="text/javascript">
+
+
+amazon_ad_tag = "cunflc-22";
+amazon_ad_width = "728"; amazon_ad_height = "90";
+amazon_ad_link_target = "new"; amazon_color_link = "2B91AF"; amazon_color_price = "A31515";
+</script>
+
+<script type="text/javascript" src="http://www.assoc-amazon.jp/s/ads.js"></script>
+</div></div><p>
+Since: 2001/11/17.
+
+ Last Update: 2015/2/16.
+</p><p><a href="#pagetitle">このページの先頭に戻る</a></p><p><a href="index.html" accesskey="i">C# によるプログラミング入門 目次に戻る(<span class="accesskey">i</span>)</a></p><p><a href="st_array.html" accesskey="p">＜＜ 前(<span class="accesskey">p</span>) 「配列」</a></p><p><a href="sp_params.html" accesskey="n">＞＞ 次(<span class="accesskey">n</span>) 「可変長引数」</a></p></div><div class="CommonHeader"><div id="MicrosoftTranslatorWidget" style="width: 360px; min-height: 57px; border-color: #404040; background-color: #A0A0A0;"><noscript><a href="http://www.microsofttranslator.com/bv.aspx?a=http%3a%2f%2fufcpp.net%2f">このページを翻訳します</a><br>提供: <a href="http://www.microsofttranslator.com">Microsoft® Translator</a></noscript></div><script type="text/javascript"> /*  */ setTimeout(function() { var s = document.createElement("script"); s.type = "text/javascript"; s.charset = "UTF-8"; s.src = "http://www.microsofttranslator.com/Ajax/V2/Widget.aspx?mode=notify&from=ja&layout=ts"; var p = document.getElementsByTagName('head')[0] || document.documentElement; p.insertBefore(s, p.firstChild); }, 0); /*  */ </script><p class="foot">
+<a href="http://ufcpp.net/index.html#contact" accesskey="q">[お問い合わせ](<span class="accesskey">q</span>)</a>
+</p></div></div><div class="MenuList"><div class="CommonMenu"></div><div class="MenuIndex"><ul class="documentIndex"><li><h2 onClick="$('#indexlist-intro').slideToggle();" class="indexSection"><a id="index-intro">▶ まえがき</a></h2><ul id="indexlist-intro" class="index">
+        <li><a href="../csharp/introduction.html">はじめに</a></li>
+        <li><a href="../csharp/getstarted.html">はじめてのプログラミング</a></li>
+        <li><a href="../csharp/howeasy.html">[雑記] プログラミング言語の簡単さ・難しさ</a></li>
+    </ul></li><li><h2 onClick="$('#indexlist-cheatsheet').slideToggle();" class="indexSection"><a id="index-cheatsheet">▶ C# の機能一覧（索引的なもの）</a></h2><ul id="indexlist-cheatsheet" class="index">
+        <li><a href="../csharp/list_expression.html">C# の式と文の一覧</a></li>
+        <li><a href="../csharp/list_type.html">C# の型とメンバー</a></li>
+        <li><a href="../csharp/list_versions.html">バージョン</a></li>
+        <li><a href="../csharp/ap_ver2.html" id="index-spec2">C# 2.0 の新機能</a></li>
+        <li><a href="../csharp/ap_ver3.html" id="index-spec3">C# 3.0 の新機能</a></li>
+        <li><a href="../csharp/ap_ver4.html" id="index-spec4">C# 4.0 の新機能</a></li>
+        <li><a href="../csharp/ap_ver5.html" id="index-spec5">C# 5.0 の新機能</a></li>
+        <li><a href="../csharp/ap_ver6.html" id="index-spec6">C# 6.0 の新機能</a></li>
+        <li><a href="../csharp/ListFxLangVersion.html"> C#の言語バージョンと.NET Frameworkバージョン</a></li>
+        <li><a href="../csharp/ap_modern.html">使わなくなった機能・新しい機能</a></li>
+    </ul></li><li><h2 onClick="$('#indexlist-abstract').slideToggle();" class="indexSection"><a id="index-abstract">▶ C# の概要</a></h2><ul id="indexlist-abstract" class="index">
+        <li><a href="../csharp/ab_csharp.html">C# とは</a></li>
+        <li><a href="../csharp/ab_dotnet.html">.NET Framework とは</a></li>
+        <li><a href="../csharp/ab_devenv.html">C# 開発環境</a></li>
+        <li><a href="../csharp/getstarted_csharp.html">はじめての C# 実演編</a></li>
+    </ul></li><li><h2 onClick="$('#indexlist-start').slideToggle();" class="indexSection"><a id="index-start">▶ 基礎</a></h2><ul id="indexlist-start" class="index">
+        <li><a href="../csharp/st_basis.html">C#のプログラムの基本構造</a></li>
+        <li><a href="../csharp/st_compile.html">プログラムの作成・実行</a></li>
+        <li><a href="../csharp/st_comment.html">コメント</a></li>
+        <li><a href="../csharp/st_consoleio.html">値の入出力</a></li>
+        <li><a href="../csharp/st_variable.html">変数と式</a></li>
+        <li><a href="../csharp/misc_identifier.html">[雑記] 識別子名に使える文字</a></li>
+        <li><a href="../csharp/st_embeddedtype.html">組込み型</a></li>
+        <li><a href="../csharp/st_string.html">特殊な文字列リテラル</a></li>
+        <li><a href="../csharp/st_operator.html">組込み演算子</a></li>
+        <li><a href="../csharp/st_cast.html">組込み型変換</a></li>
+        <li><a href="../csharp/sp_checked.html">オーバーフローのチェック</a></li>
+        <li><a href="../csharp/sp_const.html">定数</a></li>
+        <li><a href="../csharp/sp3_inference.html">型推論と匿名型</a></li>
+        <li><a href="../csharp/sp3_var.html">[雑記] 型推論の是非</a></li>
+    </ul></li><li><h2 onClick="$('#indexlist-structured').slideToggle();" class="indexSection"><a id="index-structured">▶ 構造化</a></h2><ul id="indexlist-structured" class="index">
+        <li><a href="../csharp/st_structured.html">構造化</a></li>
+        <li><a href="../csharp/st_control.html">制御フロー</a></li>
+        <li><a href="../csharp/st_branch.html">条件分岐</a></li>
+        <li><a href="../csharp/st_loop.html">反復処理</a></li>
+        <li><a href="../csharp/st_array.html">配列</a></li>
+        <li><a href="../csharp/st_function.html">関数</a></li>
+        <li><a href="../csharp/sp_params.html">可変長引数</a></li>
+        <li><a href="../csharp/sp4_optional.html">オプション引数・名前付き引数</a></li>
+        <li><a href="../csharp/st_command.html">コマンドライン引数</a></li>
+        <li><a href="../csharp/st_library.html">ライブラリ</a></li>
+        <li><a href="../csharp/st_enum.html">列挙型</a></li>
+        <li><a href="../csharp/st_struct.html">データの構造化</a></li>
+        <li><a href="../csharp/sp_namespace.html">名前空間</a></li>
+        <li><a href="../csharp/oo_exception.html">例外処理</a></li>
+        <li><a href="../csharp/misc_exception.html">[雑記] 例外の使い方</a></li>
+        <li><a href="../csharp/misc_stacktrace.html">[雑記] 例外のスタックトレース</a></li>
+    </ul></li><li><h2 onClick="$('#indexlist-oop').slideToggle();" class="indexSection"><a id="index-oop">▶ オブジェクト指向</a></h2><ul id="indexlist-oop" class="index">
+        <li><a href="../csharp/oo_about.html">オブジェクト指向とは</a></li>
+        <li><a href="../csharp/oo_class.html">クラス</a></li>
+        <li><a href="../csharp/oo_construct.html">コンストラクターとデストラクター</a></li>
+        <li><a href="../csharp/oo_conceal.html">実装の隠蔽</a></li>
+        <li><a href="../csharp/oo_property.html">プロパティ</a></li>
+        <li><a href="../csharp/oo_static.html">静的メンバー</a></li>
+        <li><a href="../csharp/oo_operator.html">演算子のオーバーロード</a></li>
+        <li><a href="../csharp/oo_indexer.html">インデクサー</a></li>
+        <li><a href="../csharp/oo_inherit.html">継承</a></li>
+        <li><a href="../csharp/oo_polymorphism.html">多態性</a></li>
+        <li><a href="../csharp/misc_as.html">[雑記] キャストと as</a></li>
+        <li><a href="../csharp/misc_construct.html">[雑記] コンストラクター内の仮想メソッド呼び出し</a></li>
+        <li><a href="../csharp/oo_abstract.html">抽象メソッド、抽象クラス</a></li>
+        <li><a href="../csharp/oo_interface.html">インターフェース</a></li>
+        <li><a href="../csharp/misc_autoimpl.html">[雑記] 抽象定義と自動実装</a></li>
+        <li><a href="../csharp/oo_vftable.html">[雑記] 仮想関数テーブル</a></li>
+        <li><a href="../csharp/sp2_generics.html">ジェネリック</a></li>
+        <li><a href="../csharp/sp4_variance.html">ジェネリクスの共変性・反変性</a></li>
+    </ul></li><li><h2 onClick="$('#indexlist-functional').slideToggle();" class="indexSection"><a id="index-functional">▶ 関数指向</a></h2><ul id="indexlist-functional" class="index">
+        <li><a href="../csharp/fun_functional.html">関数指向</a></li>
+        <li><a href="../csharp/sp_delegate.html">デリゲート</a></li>
+        <li><a href="../csharp/misc_delegate.html">[雑記] デリゲートの利用例</a></li>
+        <li><a href="../csharp/sp2_anonymousmethod.html">[雑記] 匿名デリゲートのコンパイル結果</a></li>
+        <li><a href="../csharp/sp3_lambda.html">ラムダ式</a></li>
+        <li><a href="../csharp/sp_event.html">イベント</a></li>
+        <li><a href="../csharp/MiscEventSubscribe.html">【雑記】イベントの購読とその解除</a></li>
+        <li><a href="../csharp/sp3_functional.html">関数型言語・動的言語的な機能</a></li>
+        <li><a href="../csharp/sp3_extension.html">拡張メソッド</a></li>
+        <li><a href="../csharp/fun_WhyExtensions.html">クラスの機能拡張</a></li>
+    </ul></li><li><h2 onClick="$('#indexlist-resource').slideToggle();" class="indexSection"><a id="index-resource">▶ メモリとリソース管理</a></h2><ul id="indexlist-resource" class="index">
+        <li><a href="../csharp/rm_gc.html">C# のメモリ管理</a></li>
+        <li><a href="../csharp/oo_reference.html">値型と参照型</a></li>
+        <li><a href="../csharp/rm_default.html">規定値</a></li>
+        <li><a href="../csharp/sp_ref.html">引数の参照渡し</a></li>
+        <li><a href="../csharp/misc_heap.html">[雑記] スタックとヒープ</a></li>
+        <li><a href="../csharp/RmBoxing.html">ボックス化</a></li>
+        <li><a href="../csharp/sp2_nullable.html">Nullable 型</a></li>
+        <li><a href="../csharp/rm_nullusage.html">null の使い方</a></li>
+        <li><a href="../csharp/oo_dispose.html">リソースの破棄</a></li>
+        <li><a href="../csharp/rm_disposable.html">[雑記] Dispose にまつわる余談</a></li>
+        <li><a href="../csharp/RmWeakReference.html">【雑記】弱参照</a></li>
+    </ul></li><li><h2 onClick="$('#indexlist-data').slideToggle();" class="indexSection"><a id="index-data">▶ データ処理</a></h2><ul id="indexlist-data" class="index">
+        <li><a href="../csharp/sp_foreach.html">foreach</a></li>
+        <li><a href="../csharp/sp2_iterator.html">イテレーター</a></li>
+        <li><a href="../csharp/sp2_itpattern.html">[雑記] 内部イテレータと外部イテレータ</a></li>
+        <li><a href="../csharp/da_about.html">データ処理</a></li>
+        <li><a href="../csharp/sp3_linq.html">LINQ</a></li>
+        <li><a href="../csharp/sp3_stdquery.html">標準クエリ演算子（クエリ式関係）</a></li>
+        <li><a href="../csharp/sp3_stdqueryo.html">標準クエリ演算子（その他）</a></li>
+        <li><a href="../csharp/sp3_lazylist.html">[雑記] LINQ と遅延評価</a></li>
+        <li><a href="../csharp/sp3_ormismatch.html">[雑記] O/R インピーダンスミスマッチ</a></li>
+        <li><a href="../csharp/sp3_ormismatch2.html">[雑記] O/R インピーダンスミスマッチ（クラスの継承）</a></li>
+        <li><a href="../csharp/sp3_linqtosql.html">[雑記] LINQ to SQL 実践編</a></li>
+        <li><a href="../csharp/sp3_iqueryable.html">[雑記] IQueryable の実装</a></li>
+        <li><a href="../csharp/misc_immutabledata.html">不変(immutable)なコレクション</a></li>
+    </ul></li><li><h2 onClick="$('#indexlist-dynamic').slideToggle();" class="indexSection"><a id="index-dynamic">▶ 動的な処理</a></h2><ul id="indexlist-dynamic" class="index">
+        <li><a href="../csharp/sp_reflection.html">実行時型情報</a></li>
+        <li><a href="../csharp/sp_attribute.html">属性</a></li>
+        <li><a href="../csharp/sp3_expression.html">式木（Expression Trees）</a></li>
+        <li><a href="../csharp/sp4_dynamic.html">dynamic</a></li>
+        <li><a href="../csharp/sp4_callsite.html">dynamic の内部実装</a></li>
+        <li><a href="../csharp/misc_dynamic.html">[雑記] 動的コード生成のパフォーマンス</a></li>
+        <li><a href="../csharp/dyn_usage.html">[雑記]動的な処理の使い方</a></li>
+        <li><a href="../csharp/sp4_multipledispatch.html">[雑記] 多重ディスパッチ</a></li>
+    </ul></li><li><h2 onClick="$('#indexlist-interop').slideToggle();" class="indexSection"><a id="index-interop">▶ 相互運用</a></h2><ul id="indexlist-interop" class="index">
+        <li><a href="../csharp/sp_unsafe.html">unsafe</a></li>
+        <li><a href="../csharp/sp_makeref.html">型付き参照</a></li>
+        <li><a href="../csharp/sp_pinvoke.html">プラットフォーム呼び出し</a></li>
+        <li><a href="../csharp/sp4_cominterop.html">COM 相互運用時の特別処理</a></li>
+    </ul></li><li><h2 onClick="$('#indexlist-async').slideToggle();" class="indexSection"><a id="index-async">▶ 非同期処理</a></h2><ul id="indexlist-async" class="index">
+        <li><a href="../csharp/sp_thread.html">マルチスレッド</a></li>
+        <li><a href="../csharp/AsyncVariation.html">非同期処理の種類</a></li>
+        <li><a href="../csharp/AsyncInside.html">非同期処理を支えるインフラ</a></li>
+        <li><a href="../csharp/AsyncExecutionContext.html">実行コンテキスト</a></li>
+        <li><a href="../csharp/misc_synchronize.html">[雑記] スレッド間の競合回避</a></li>
+        <li><a href="../csharp/misc_task.html">[雑記] スレッド プールとタスク</a></li>
+        <li><a href="../csharp/misc_asyncflow.html">[雑記] 非同期制御フロー</a></li>
+        <li><a href="../csharp/sp5_async.html">非同期処理</a></li>
+        <li><a href="../csharp/sp5_awaitable.html">非同期メソッドの内部実装</a></li>
+        <li><a href="../csharp/misc_continuation.html">[雑記] 継続と先物</a></li>
+        <li><a href="../csharp/misc_uithread.html">[雑記] GUI と非同期処理</a></li>
+    </ul></li><li><h2 onClick="$('#indexlist-misc').slideToggle();" class="indexSection"><a id="index-misc">▶ その他</a></h2><ul id="indexlist-misc" class="index">
+        <li><a href="../csharp/sp_preprocess.html">プリプロセス</a></li>
+        <li><a href="../csharp/sp_xmldoc.html">XML Document</a></li>
+        <li><a href="../csharp/ap_safec.html">“Safe C” としての C#</a></li>
+        <li><a href="../csharp/ap_compatibility.html">互換性の維持</a></li>
+        <li><a href="../csharp/misc_roslyn.html">[雑記] .NET Compiler Platform</a></li>
+    </ul></li><li><h2 onClick="$('#indexlist-framework').slideToggle();" class="indexSection"><a id="index-framework">▶ フレームワーク / 実行環境</a></h2><ul id="indexlist-framework" class="index">
+        <li><a href="../csharp/FwInfrastructure.html">実行基盤</a></li>
+        <li><a href="../csharp/FwManaged.html">マネージ コード</a></li>
+        <li><a href="../csharp/FwReferenceAssemblies.html">参照アセンブリ</a></li>
+        <li><a href="../csharp/FwAppDomain.html">AppDomain</a></li>
+        <li><a href="../csharp/FwWinRT.html">WinRT</a></li>
+    </ul></li><li><h2 onClick="$('#indexlist-lib').slideToggle();" class="indexSection"><a id="index-lib">▶ 標準ライブラリ</a></h2><ul id="indexlist-lib" class="index">
+        <li><a href="../csharp/lib_string.html">文字列関係</a></li>
+        <li><a href="../dotnet/bcl_regex.html">正規表現（文字列パターン マッチング）</a></li>
+        <li><a href="../dotnet/bcl_format.html">文字列の書式設定</a></li>
+        <li><a href="../csharp/lib_file.html">ファイル操作</a></li>
+        <li><a href="../csharp/lib_drawing.html">グラフィック</a></li>
+        <li><a href="../csharp/lib_forms.html">GUI アプリケーション</a></li>
+        <li><a href="../csharp/lib_other.html">その他のライブラリ</a></li>
+        <li><a href="../csharp/lib_dotnet3.html">.NET Framework 3.0 / 3.5</a></li>
+        <li><a href="../csharp/lib_parallel.html">並列処理ライブラリ</a></li>
+    </ul></li><li><h2 onClick="$('#indexlist-sample').slideToggle();" class="indexSection"><a id="index-sample">▶ サンプルプログラム</a></h2><ul id="indexlist-sample" class="index">
+        <li><a href="../csharp/ap_sample.html">C# サンプルプログラム</a></li>
+        <li><a href="../csharp/sm_soundlib.html">[サンプル] SoundLibrary</a></li>
+        <li><a href="../csharp/sp2_microthread.html">[サンプル] イテレータとマイクロスレッド</a></li>
+        <li><a href="../csharp/sp3_comprehensions.html">[サンプル] クエリ式とリスト内包</a></li>
+        <li><a href="../csharp/sp3_linqreconstruct.html">[サンプル] 式木からクエリ式の再構築</a></li>
+        <li><a href="../csharp/sp3_expressionsample.html">[サンプル] 式木の利用例</a></li>
+        <li><a href="../csharp/sm_genericop.html">[サンプル] ジェネリックな複素数型</a></li>
+        <li><a href="../csharp/sm_treeview.html">[サンプル] 式木を WPF で GUI 表示</a></li>
+        <li><a href="../csharp/sm_sov.html">[サンプル] SOV 型のメソッド呼び出し</a></li>
+        <li><a href="../csharp/sm_proxy.html">[サンプル] 透過プロキシ</a></li>
+        <li><a href="../csharp/sm_daifugou.html">[サンプル] 大富豪</a></li>
+        <li><a href="../csharp/sm_silverlight.html">[サンプル] Silverlight サンプル</a></li>
+    </ul></li><li><h2 onClick="$('#indexlist-cs4j').slideToggle();" class="indexSection"><a id="index-cs4j">▶ 他のプログラミング言語経験者向け</a></h2><ul id="indexlist-cs4j" class="index">
+        <li><a href="../csharp/java_cheatsheet.html">Java 開発者向けチート シート</a></li>
+        <li><a href="../csharp/ab_csspec.html">C# の特徴（C++、Java 利用者向け）</a></li>
+        <li><a href="../csharp/cmp_type.html">C++とJavaとの組込み型の比較</a></li>
+        <li><a href="../csharp/ap_visualbasic.html">C# と Visual Basic</a></li>
+    </ul></li><li><h2 onClick="$('#indexlist-appendix').slideToggle();" class="indexSection"><a id="index-appendix">▶ 付録</a></h2><ul id="indexlist-appendix" class="index">
+        <li><a href="../csharp/ap_term.html">その他の用語</a></li>
+        <li><a href="../csharp/ap_related.html">関連技術</a></li>
+        <li><a href="../csharp/ap_reserved.html">キーワード（予約語）一覧</a></li>
+        <li><a href="../csharp/keywords.html">重要語句一覧</a></li>
+        <li><a href="../csharp/exercise.html">演習問題</a></li>
+        <li><a href="../csharp/link.html">リンク集（C#）</a></li>
+        <li><a href="../csharp/ap_reverse.html">逆引き辞書</a></li>
+        <li><a href="../csharp/version_index.html">バージョンごとの目次（旧目次）</a></li>
+    </ul></li><li><h2 onClick="$('#indexlist-seealso').slideToggle();" class="indexSection"><a id="index-seealso">▶ 関連ページ（サイト内）</a></h2><ul id="indexlist-seealso" class="index">
+        <li><a href="../computer/index.html">コンピュータの基礎知識</a></li>
+        <li><a href="../dotnet/index.html">.NET Framework</a></li>
+        <li><a href="../silverlight/index.html">Silverlight</a></li>
+        <li><a href="../aspx/index.html">ASP.NET</a></li>
+        <li><a href="../powershell/index.html">Windows PowerShell</a></li>
+        <li><a href="../algorithm/index.html">アルゴリズムとデータ構造 （C# によるサンプルプログラムあり）</a></li>
+        <li><a href="../digital_filter/index.html">ディジタルフィルタ （C# によるサンプルプログラムあり）</a></li>
+    </ul></li><li><h2 onClick="$('#indexlist-seealso2').slideToggle();" class="indexSection"><a id="index-seealso2">▶ 関連</a></h2><ul id="indexlist-seealso2" class="index">
+        <li><a href="http://www.egroups.co.jp/group/dotnet-csharp">.NET/C# 初心者のためのメーリングリスト</a></li>
+    </ul></li></ul></div><div class="CommonMenu"><div style="font-size:80%;text-align:right;vertical-align:middle;">
+<script type="text/javascript">
+
+var format = "総数: $1\n今日: $2\n昨日: $3";
+
+</script>
+<script type="text/javascript" src="http://ufcpp.net/aspx/CounterJs.aspx">
+ 
+</script>
+<noscript>
+<p>
+総数: <img src="http://ufcpp.net/aspx/Counter.aspx" width="60" height="15" alt="総アクセス数">
+</p>
+</noscript>
+</div></div></div><script src="http://www.google-analytics.com/urchin.js" type="text/javascript"> </script><script type="text/javascript">
+
+_uacct = "UA-887343-1";
+urchinTracker();
+
+</script></body></html>

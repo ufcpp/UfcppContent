@@ -1,0 +1,675 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x7D44;&#x8FBC;&#x307F;&#x578B; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/start/st_embeddedtype/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">組込み型</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>プログラミング言語にあらかじめ用意されている変数の型を組込み型といいます。
+ここでは、C# の組み込み型について説明します。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>整数（int）や文字列（string）などは、C# 言語に組み込まれた型です</p>
+</li>
+<li><p>整数、浮動小数点数、文字、文字列、10進小数、論理値</p>
+</li>
+</ul>
+<h2 id="c"><a id="sec-generated-title-3"></a> <a id="type"></a>C# の型</h2>
+<p>C# の型は、以下のように分類されます。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/TypeClassification.png"><img src="/assets/media/ufcpp2000/csharp/fig/TypeClassification.png" alt="C# の型の分類" /></a></p>
+<figcaption>C# の型の分類</figcaption>
+</figure>
+<p>このうち、本項で説明するのは「組み込み型」のところになります。</p>
+<p>他に関しては後々説明していきます。</p>
+<ul>
+<li><p>構造体:「<a href="/study/csharp/structured/st_struct/">データの構造化</a>」、「<a href="/study/csharp/resource/rm_struct/">構造体</a>」</p>
+</li>
+<li><p>列挙型:「<a href="/study/csharp/structured/st_enum/">列挙型</a>」</p>
+</li>
+<li><p>クラス:「<a href="/study/csharp/structured/st_struct/">データの構造化</a>」、「<a href="/study/csharp/oop/oo_class/">クラス</a>」</p>
+</li>
+<li><p>インターフェイス:「<a href="/study/csharp/oop/oo_interface/">インターフェース</a>」</p>
+</li>
+<li><p>デリゲート:「<a href="/study/csharp/functional/sp_delegate/">デリゲート</a>」</p>
+</li>
+<li><p>Null 許容型:「<a href="/study/csharp/resource/sp2_nullable/">Nullable 型</a>」</p>
+</li>
+<li><p>配列:「<a href="/study/csharp/structured/st_array/">配列</a>」</p>
+</li>
+</ul>
+<h3 id="section-3"><a id="sec-generated-title-4"></a> <a id="embedded"></a>組込み型の種類</h3>
+<p>C# には以下のような組込み型が用意されています。</p>
+<table summary="">
+
+	<tr>
+		<td colspan="3"></td>
+		<th>符号付き</th>
+		<th>符号無し</th>
+	</tr>
+	<tr>
+		<th rowspan="9">単純型</th>
+		<th rowspan="5">整数型</th>
+		<th>8ビット整数</th>
+		<td><p><code>sbyte</code></p></td>
+		<td><p><code>byte</code></p></td>
+	</tr>
+	<tr>
+		<th>16ビット整数</th>
+		<td><p><code>short</code></p></td>
+		<td><p><code>ushort</code></p></td>
+	</tr>
+	<tr>
+		<th>32ビット整数</th>
+		<td><p><code>int</code></p></td>
+		<td><p><code>uint</code></p></td>
+	</tr>
+	<tr>
+		<th>64ビット整数</th>
+		<td><p><code>long</code></p></td>
+		<td><p><code>ulong</code></p></td>
+	</tr>
+	<tr>
+		<th>文字型</th>
+		<td colspan="2"><p>char</p></td>
+	</tr>
+	<tr>
+		<th rowspan="2">浮動小数点型</th>
+		<th>単精度</th>
+		<td colspan="2"><p><code>float</code></p></td>
+	</tr>
+	<tr>
+		<th>倍精度</th>
+		<td colspan="2"><p><code>double</code></p></td>
+	</tr>
+	<tr>
+		<th colspan="2">デシマル（10進小数）</th>
+		<td colspan="2"><p><code>decimal</code></p></td>
+	</tr>
+	<tr>
+		<th colspan="2">論理値型</th>
+		<td colspan="2"><p><code>bool</code></p></td>
+	</tr>
+	<tr>
+		<th colspan="3">文字列型</th>
+		<td colspan="2"><p><code>string</code></p></td>
+	</tr>
+	<tr>
+		<th colspan="3">オブジェクト型</th>
+		<td colspan="2"><p><code>object</code></p></td>
+	</tr>
+</table>
+<p>※ C# 9.0 以降はこれに加えて、サイズが環境によって変わる <a href="/study/csharp/cheatsheet/ap_ver9/#nint"><code>nint</code>、<code>nuint</code></a> という型もあります。</p>
+<h3 id="section-4"><a id="sec-generated-title-5"></a> <a id="literal"></a>リテラル</h3>
+<p><code>int x = 10;</code> というように書くとき、10 のような値をそのまま書いた部分のことをリテラル（literal: 「文字通りの」という意味。見たまんまの定数）と呼びます。
+組み込み型には、型ごとにリテラルの書き方があります。</p>
+<p>ちなみに、リテラルのことは「定数」とは訳しません。
+通常、「定数」は constant の訳語です（参考: 「<a href="/study/csharp/start/sp_const/">定数</a>」）。
+literal を和訳する場合には、直定数と訳されます。</p>
+<h2 id="section-5"><a id="sec-generated-title-6"></a> <a id="integer"></a>整数型</h2>
+<p>数学では無限の桁数の数字を扱えますが、コンピュータの内部では値を記憶しておく場所が限られているため、扱える値の範囲も限られています。
+当然、桁の大きな値ほど大きな記憶領域を必要とします。
+また、符号の有無によっても扱える値の範囲は変わります。</p>
+<p>以下にC#の整数型の一覧を挙げます。</p>
+<table summary="">
+
+	<tr>
+		<th>型名</th>
+		<th>記憶領域サイズ</th>
+		<th>符合の有無</th>
+		<th>扱える値の範囲</th>
+	</tr>
+	<tr>
+		<td><code>
+                        <span class="reserved">byte</span>
+                    </code></td>
+		<td><p>1バイト</p></td>
+		<td><p>なし</p></td>
+		<td><p>0 ～ 255</p></td>
+	</tr>
+	<tr>
+		<td><code>
+                        <span class="reserved">sbyte</span>
+                    </code></td>
+		<td><p>1バイト</p></td>
+		<td><p>あり</p></td>
+		<td><p>-128 ～ 127</p></td>
+	</tr>
+	<tr>
+		<td><code>
+                        <span class="reserved">short</span>
+                    </code></td>
+		<td><p>2バイト</p></td>
+		<td><p>あり</p></td>
+		<td><p>-32,768 ～ 32,767</p></td>
+	</tr>
+	<tr>
+		<td><code>
+                        <span class="reserved">ushort</span>
+                    </code></td>
+		<td><p>2バイト</p></td>
+		<td><p>なし</p></td>
+		<td><p>0 ～ 65,535</p></td>
+	</tr>
+	<tr>
+		<td><code>
+                        <span class="reserved">int</span>
+                    </code></td>
+		<td><p>4バイト</p></td>
+		<td><p>あり</p></td>
+		<td><p>-2,147,483,648 ～ 2,147,483,647</p></td>
+	</tr>
+	<tr>
+		<td><code>
+                        <span class="reserved">uint</span>
+                    </code></td>
+		<td><p>4バイト</p></td>
+		<td><p>なし</p></td>
+		<td><p>0 ～ 4,294,967,295</p></td>
+	</tr>
+	<tr>
+		<td><code>
+                        <span class="reserved">long</span>
+                    </code></td>
+		<td><p>8バイト</p></td>
+		<td><p>あり</p></td>
+		<td><p>-9,223,372,036,854,775,808 ～ 9,223,372,036,854,775,807</p></td>
+	</tr>
+	<tr>
+		<td><code>
+                        <span class="reserved">ulong</span>
+                    </code></td>
+		<td><p>8バイト</p></td>
+		<td><p>なし</p></td>
+		<td><p>0 ～ 18,446,744,073,709,551,615</p></td>
+	</tr>
+</table>
+<p><code>int</code> は integer (整数)の略で、<code>short</code> と <code>long</code> の意味は名前通り、記憶領域サイズの長い/短いの違いです。
+<code>byte</code> も名前通りで「1バイトの変数」という意味です。
+<code>sbyte</code> の「s」は signed の s で符号付きを意味します。
+また、<code>uint, ushort, ulong</code> の「u」は unsigned の u で符号無しを意味します。</p>
+<p>ちなみに、8バイトよりも大きな整数値を扱いたい場合、<code>BigInteger</code>構造体(<code>System.Numerics</code>名前空間)という物を使います。
+(<a href="/study/csharp/resource/rm_struct/">構造体</a>や<a href="/study/csharp/structured/sp_namespace/">名前空間</a>については別項にて説明します。)</p>
+<p>また、C# 9.0 で追加された <code>nint</code>、<code>nuint</code> は、
+32ビット CPU で使う場合は <code>int</code>、<code>uint</code> と同じで、
+64ビット CPU で使う場合は <code>long</code>、<code>ulong</code> と同じ範囲の値を使えます。
+ただし、どちらのタイプの CPU で実行するかは事前にはわからないので、
+ソースコード中に書けるリテラルとしては32ビット分(<code>int</code>、<code>uint</code> と同じ)しか使えません。</p>
+<h3 id="section-6"><a id="sec-generated-title-7"></a> <a id="intl"></a>整数リテラル</h3>
+<p>C# のソースコード中に直接整数値を書き込むと整数リテラルとみなされます。
+また、整数値の後ろに「u」か「U」を付けると符号なし整数とみなされ、
+「l」か「L」を付けると <code>long</code> 型のリテラルとみなされます。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span>   k = <span class="number">351</span>;    <span class="comment">// 整数リテラル</span>
+<span class="keyword">uint</span>  l = 86U;    <span class="comment">// 符号なし</span>
+<span class="keyword">long</span>  m = 1879L;  <span class="comment">// Lを付けるとlongとみなされる</span>
+<span class="keyword">ulong</span> n = 2419UL; <span class="comment">// UとLを付けるとulongとみなされる</span></code></pre>
+<h2 id="section-7"><a id="sec-generated-title-8"></a> <a id="char"></a>文字型</h2>
+<p>コンピュータは基本的に数値しか扱えません。
+そのため、文字もコンピュータの内部では整数値として扱われています。
+どの文字に対して何番の数字を割り当てるかは、標準化団体によって取り決めがなされています。
+このような取り決めによって文字に割り当てられた整数値を<em>文字コード</em>といいます。</p>
+<p>C# では、内部的に Unicode という2バイトの文字コードが使われています。
+（正確には UCS-2。サロゲートなしの UTF-16。
+残念ながら、UTF-32 ではないので、一部の文字（サロゲート ペア）の表現に2文字分の領域を使います。）</p>
+<p>とにかく、C# の文字型 <code>
+<span class="reserved">char</span>
+</code> (characterの略)は2バイトの数値として扱われます。</p>
+<h3 id="section-8"><a id="sec-generated-title-9"></a> <a id="charl"></a>文字リテラル</h3>
+<p>文字リテラルは <code>
+<span class="string">'a'</span>
+</code> といったように <code>'</code> (シングルクォーテーション)で囲んで表現します。</p>
+<p>前述の通り、C# の <code>char</code>型 UTF-16 なので、文字リテラルも2バイトの数値です。
+<a href="#integer"><code>short</code> や <code>ushort</code></a>とは、互いに桁落ちなく変換することもできます。</p>
+<pre><code class="language-csharp"><span class="keyword">short</span> x = (<span class="keyword">short</span>)<span class="string">&#39;a&#39;</span>; <span class="comment">// 97 と同じ意味</span>
+<span class="keyword">char</span> c = (<span class="keyword">char</span>)<span class="number">97</span>;    <span class="comment">// &#39;a&#39; と同じ意味</span></code></pre>
+<p>また、<code>'</code> 自身を表す文字リテラルは <code>
+<span class="string">'''</span>
+</code> というように書きます。</p>
+<pre><code class="language-csharp"><span class="keyword">char</span> c = <span class="string">&#39;a&#39;</span>;                       <span class="comment">// 文字リテラル</span></code></pre>
+<h3 id="section-9"><a id="sec-generated-title-10"></a> <a id="escape-sequence"></a>エスケープ シーケンス</h3>
+<p>C# では <code>\</code> 記号(バックスラッシュ。日本語環境だと ¥ マークで表示されることもあり)が特別な意味を持っていて、<code>\</code> に続く数文字を一定のルールで別の文字に置き換えます。
+以下のような用途で使います。</p>
+<ul>
+<li><code>''</code> 中で <code>'</code> 自体を書くなど、本来書けない場所に記号を書く</li>
+<li>改行文字やタブ文字など、不可視だけどそれなりの頻度で使いたい文字を目に見える形で書く</li>
+</ul>
+<p>(今となってはほとんど使わないような文字も、古くからの名残で数文字あります。
+通信で文字くらいしか送れなかった時代の名残であったり、
+文字ではないもののキーボードにボタンがあるものであったりです。)</p>
+<p>この <code>\</code> 記号から始まる特殊記法を、
+「書けない文字を書くための回避策(escape)」、「数文字(sequence)使って1文字を表す」という意味で、<strong id="key-escape" class="keyword">エスケープ シーケンス</strong>(escape sequence)と言います。</p>
+<p>C# は以下のようなエスケープ シーケンスを持っています。</p>
+<table>
+<thead>
+<tr>
+<th>使う文字</th>
+<th>意味</th>
+<th>Unicode の値(16進数)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\'</code></td>
+<td><code>'</code> (引用符)。文字リテラル(<code>''</code>) 中に <code>'</code> を書くために使う</td>
+<td>27</td>
+</tr>
+<tr>
+<td><code>\&quot;</code></td>
+<td><code>&quot;</code> (2重引用符)。文字列リテラル(<code>&quot;&quot;</code>) 中に <code>&quot;</code> を書くために使う</td>
+<td>22</td>
+</tr>
+<tr>
+<td><code>\\</code></td>
+<td><code>\</code> (バックスラッシュ)。エスケープ シーケンスにでない意味で <code>\</code> を書くために使う</td>
+<td>5C</td>
+</tr>
+<tr>
+<td><code>\0</code></td>
+<td>null 文字(文字列の終端を表したり、特別な使い方をする文字)</td>
+<td>00</td>
+</tr>
+<tr>
+<td><code>\a</code></td>
+<td>アラート音(ビープ音を鳴らすのに使ってた)</td>
+<td>07</td>
+</tr>
+<tr>
+<td><code>\b</code></td>
+<td>バックスペース(1文字前文字を消す)</td>
+<td>08</td>
+</tr>
+<tr>
+<td><code>\f</code></td>
+<td>フォーム フィード(タイプライターで用紙送りに使ってたコード)</td>
+<td>0C</td>
+</tr>
+<tr>
+<td><code>\n</code></td>
+<td>改行(new line)</td>
+<td>0A</td>
+</tr>
+<tr>
+<td><code>\r</code></td>
+<td>復帰(carriage return)。行頭に戻る処理<sup>※</sup></td>
+<td>0D</td>
+</tr>
+<tr>
+<td><code>\t</code></td>
+<td>水平タブ</td>
+<td>09</td>
+</tr>
+<tr>
+<td><code>\v</code></td>
+<td>垂直タブ</td>
+<td>0B</td>
+</tr>
+<tr>
+<td><code>\e</code></td>
+<td>【<a href="/study/csharp/cheatsheet/ap_ver13/">C# 13</a> 以降】エスケープ文字</td>
+<td>1B</td>
+</tr>
+<tr>
+<td><code>\u</code></td>
+<td>Unicode の値直打ち(4桁)</td>
+<td>後述</td>
+</tr>
+<tr>
+<td><code>\U</code></td>
+<td>Unicode の値直打ち(8桁)</td>
+<td>後述</td>
+</tr>
+<tr>
+<td><code>\x</code></td>
+<td>Unicode の値直打ち(任意桁)</td>
+<td>後述</td>
+</tr>
+</tbody>
+</table>
+<p><sup>※</sup>Windows で改行が <code>\r\n</code> なのは、行頭に戻る + 次行に移る の組み合わせが必要だった時代の名残り。今となっては <code>\n</code> だけで改行を表せるので <code>\r</code> は 微妙な文字。</p>
+<p><code>\u</code>、<code>\U</code>、<code>\x</code> は実際には <code>\u0061</code>、<code>\U0001F60A</code>、 <code>\x61</code> などというように、後ろに16進数の値を伴います。
+この、後ろに書かれた16進数の数値を文字コードに持つ文字に置き換わります。
+例えば16進数で61というのはアルファベットの a を表すコードで、要するに <code>\u0061</code> は <code>a</code> と同じ意味になります。</p>
+<pre><code class="language-csharp">Console.WriteLine(<span class="string">&#39;\u0061&#39;</span>); <span class="comment">// 文字 a</span>
+Console.WriteLine(<span class="string">&quot;\U0001F60A&quot;</span>); <span class="comment">// 絵文字の &#128522;</span>
+Console.WriteLine(<span class="string">&#39;\x61&#39;</span>); <span class="comment">// 文字 a。4桁固定じゃないということ以外は \u と同じ</span></code></pre>
+<p><code>\u</code>、<code>\U</code>、<code>\x</code>の3つの差は、後ろに続く16進数の長さの差です。</p>
+<ul>
+<li><code>\u</code> … 4桁固定。61であっても <code>\u0061</code> というように0を埋めて4桁にする必要がある</li>
+<li><code>\U</code> … 8桁固定。同様に0埋めして8桁にする必要がある</li>
+<li><code>\x</code> … 任意桁</li>
+</ul>
+<p>前述の通り、C# の文字は UTF-16 になっていて2バイトの数値です。
+これは Unicode が2バイト固定だった(65536文字ですべての文字を表せるとおごっていた)時代の名残で、今となっては <code>char</code> では表せない文字がたくさんあります。
+(日本の常用漢字が2136文字ですし、1990年代以前には文字は2バイトもあれば十分だと思われていました。)</p>
+<p><code>\U</code> (16進数8桁 = 4バイト)はそういう2バイトに収まらない文字を表すのに使います。
+例えば絵文字がそうで、😊 の文字コードは 1F60A なので、C# では <code>\U0001F60A</code> と書くことができます。
+<code>char</code> では値が収まらないので、文字リテラル(<code>''</code>)中には書けません。
+後述する<a href="#stringl">文字列リテラル</a>の中で使います。
+(無意味ですが、0で埋めてわざわざ <code>\U00000061</code> などと書くなら、<code>char</code> として有効な値なので文字リテラルの中にも書けます。)</p>
+<p><code>\x</code> は、後ろに続く16進数が任意桁である点だけが <code>\u</code> との差です。
+任意桁数な代わりに、区切りがはっきりしている場面でしか使えません。
+例えば、<code>\u0061b</code> (文字コード 61 の後ろに文字 b)なら <code>ab</code> と同じ意味なりますが、
+<code>\x61b</code>と書いてしまうとこれは文字コード 61B (アラビア語の文字です)の意味になります。</p>
+<p>ちなみに、<code>\u</code> と <code>\U</code> は文字・文字列リテラルの外で、<a href="/study/csharp/start/misc_identifier/">識別子</a>にも使えます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> \u0061 = <span class="number">1</span>; <span class="comment">// var a = 1; と同じ意味</span>
+Console.WriteLine(a); <span class="comment">// 1</span>
+Console.WriteLine(\U00000061); <span class="comment">// 記法が違ってもやっぱり a の意味で解釈されるので 1 が表示される</span>
+Console.WriteLine(nameof(\u0061)); <span class="comment">// a と表示される</span></code></pre>
+<h2 id="section-10"><a id="sec-generated-title-11"></a> <a id="float"></a>浮動小数点型(実数型)</h2>
+<p>整数型のところでも述べたように、コンピュータの中では有限桁の数しか扱えませんので、
+厳密にはコンピュータの中で「実数型」というものは扱うことが出来ません。
+しかし、科学技術計算などでは、非常に大きな数や、非常に小さな数を扱いたい場面がしばしばあります。</p>
+<p>そこで、「1.4982654×10<sup>58</sup>」というように、
+指数表記を使って数を表すことを考えます。
+こうすることで、非常に大きな数や、非常に小さな数を限られた桁数で表現することが出来ます。
+小数点の位置を変えて数を表現するので、このような形式の数を<em>浮動小数点数</em>(floating point number)といいます。
+コンピュータの内部では、実数はこのように浮動小数点数として（近似的に）扱われています。</p>
+<p>以下にC#の浮動小数点型の一覧を挙げます。</p>
+<table summary="">
+
+	<tr>
+		<th>型名</th>
+		<th>記憶領域サイズ</th>
+		<th>精度</th>
+		<th>扱える値の範囲</th>
+	</tr>
+	<tr>
+		<td><code>
+                        <span class="reserved">float</span>
+                    </code></td>
+		<td><p>4バイト</p></td>
+		<td><p>7桁</p></td>
+		<td><p>±1.5 × 10<sup>-45</sup>～ ±3.4 × 10<sup>38</sup></p></td>
+	</tr>
+	<tr>
+		<td><code>
+                        <span class="reserved">double</span>
+                    </code></td>
+		<td><p>8バイト</p></td>
+		<td><p>15桁</p></td>
+		<td><p>±5.0 × 10<sup>-324</sup>～ ±1.7 × 10<sup>308</sup></p></td>
+	</tr>
+</table>
+<p><code>float</code>は floating-point (浮動小数点)の略で、<code>double</code>は double-precision floating-point (倍精度浮動小数点)という意味です。</p>
+<p>ちなみに、浮動小数点数の内部的な形式（何ビット目がどういう意味を持つか）は標準規格化されていて、
+ほとんどの CPU やプログラミング言語では IEEE 754 という名前の規格を使っています。</p>
+<h3 id="section-11"><a id="sec-generated-title-12"></a> <a id="floatl"></a>浮動小数点リテラル</h3>
+<p>C# のソースコード中に小数を書き込むと浮動小数点リテラルとみなされます。
+数値の後ろに「f」か「F」を付けると <code>float</code> 型とみなされ、
+「d」か「D」を付けると <code>double</code> 型とみなされ、
+また、浮動小数点リテラルは指数表記(2.56×10<sup>4</sup>といった形式。2.56の部分を仮数部、10の肩に乗っている4のことを指数部といいます)でも書くことが出来ます。
+指数表記のリテラルの書き方は [仮数部]e[指数部] (例えば、2.56×10<sup>4</sup>は<code>2.56e4</code>と書く)です。</p>
+<pre><code class="language-csharp"><span class="keyword">double</span> x = <span class="number">2</span>.<span class="number">2362</span>;  <span class="comment">// 浮動小数点リテラル</span>
+<span class="keyword">float</span>  y = <span class="number">2</span>.7183f; <span class="comment">// fを付けると単精度</span>
+<span class="keyword">double</span> z = <span class="number">6</span>.02e23; <span class="comment">// 指数表記 6.02&#215;10^23</span></code></pre>
+<h2 id="section-12"><a id="sec-generated-title-13"></a> <a id="decimal"></a>デシマル（10進小数）</h2>
+<p>float や double などの浮動小数点数は、コンピュータの内部では2進小数になっています。
+表1に、2進小数と10進小数の対応関係の例をいくつか挙げます。</p>
+<table summary="2進小数と10進小数">
+	<caption>
+		2進小数と10進小数
+	</caption>
+	<tr>
+		<th>2進小数</th>
+		<th>10進小数</th>
+	</tr>
+	<tr>
+		<td><p>0.1</p></td>
+		<td><p>0.5</p></td>
+	</tr>
+	<tr>
+		<td><p>0.01</p></td>
+		<td><p>0.25</p></td>
+	</tr>
+	<tr>
+		<td><p>0.11</p></td>
+		<td><p>0.75</p></td>
+	</tr>
+	<tr>
+		<td><p>0.001</p></td>
+		<td><p>0.125</p></td>
+	</tr>
+	<tr>
+		<td><p>0.000110011…</p></td>
+		<td><p>0.1</p></td>
+	</tr>
+</table>
+<p>これで何が問題になるかというと、
+実は、（10進数での）0.1 すら、浮動小数点数では正確に（有限桁で）表すことができません。</p>
+<p>元々誤差がつき物な科学技術計算などではこれが問題になることもないんですが、
+例えば、金融などの分野では、「1.1ドル（1ドル10セント）」が正確に表せないとなると大問題になります。</p>
+<p>そこで、C# では10進小数を表すための decimal という型が用意されています。</p>
+<pre><code class="language-csharp"><span class="keyword">decimal</span> m = <span class="number">99</span>.9m;  <span class="comment">// mを付けるとdecimalになる</span></code></pre>
+<p>一見、浮動小数点と似ていますが（小数点の位置が動くという意味では decimal も浮動小数点なんですが）、
+float、double と比べて以下のような特徴があります。</p>
+<ul>
+<li><p>内部的に10進数になっているので、0.1m と書けば正確に 0.1 になる。</p>
+</li>
+<li><p><code>float</code>や<code>double</code>と比べて、精度が高い代わりに、表現できる数の範囲が狭い(つまり、指数部の桁が少ない)</p>
+</li>
+<li><p>サイズが16バイトと、他の数値型と比べて大きい。</p>
+</li>
+</ul>
+<p>表現できる数の範囲を以下に示します（比較のため、改めて浮動小数点数の値の範囲も示します）。</p>
+<table summary="">
+
+	<tr>
+		<th>型名</th>
+		<th>記憶領域サイズ</th>
+		<th>精度</th>
+		<th>扱える値の範囲</th>
+	</tr>
+	<tr>
+		<td><code>
+                        <span class="reserved">float</span>
+                    </code></td>
+		<td><p>4バイト</p></td>
+		<td><p>7桁</p></td>
+		<td><p>±1.5 × 10<sup>-45</sup>～ ±3.4 × 10<sup>38</sup></p></td>
+	</tr>
+	<tr>
+		<td><code>
+                        <span class="reserved">double</span>
+                    </code></td>
+		<td><p>8バイト</p></td>
+		<td><p>15桁</p></td>
+		<td><p>±5.0 × 10<sup>-324</sup>～ ±1.7 × 10<sup>308</sup></p></td>
+	</tr>
+	<tr>
+		<td><code>
+                        <span class="reserved">decimal</span>
+                    </code></td>
+		<td><p>16バイト</p></td>
+		<td><p>28桁</p></td>
+		<td><p>1.0 × 10<sup>-28</sup>～ 7.9 × 10<sup>28</sup></p></td>
+	</tr>
+</table>
+<p>double 型と比べて、大きな数を表すことは出来ない代わりに、表現できる桁数が多くなっています。
+そのため、<code>float</code> や <code>double</code> とはまったくの別物として扱われ、
+互いに暗黙的な型変換ができなくなっています。</p>
+<p>2008年に IEEE 754 規格が更新されて、10進小数にも標準規格ができました。
+しかし、C# の誕生よりも後なため、C# の decimal 型の内部表現はこの IEEE 754-2008 規格と互換性がありません。</p>
+<h3 id="section-13"><a id="sec-generated-title-14"></a> <a id="decimall"></a>デシマルリテラル</h3>
+<p>小数の後ろに「m」か「M」を付けると <code>decimal</code> 型とみなされます。</p>
+<pre><code class="language-csharp"><span class="keyword">decimal</span> m = <span class="number">99</span>.9m;  <span class="comment">// mを付けるとdecimalになる</span></code></pre>
+<h2 id="section-14"><a id="sec-generated-title-15"></a> <a id="bool"></a>論理値型</h2>
+<p>論理値とは条件式が正しいか間違っているかをあらわすものです。
+正しい状態(<em>真</em>または true という)と、
+間違った状態(偽または false という)の2つの値を持ちます。</p>
+<p>C# では論理値型は <code>
+<span class="reserved">bool</span>
+</code> (boolean の略。論理代数を考案した George Bool という人物にちなんで論理値のことを英語で boolean という)といいます。</p>
+<h3 id="section-15"><a id="sec-generated-title-16"></a> <a id="booll"></a>論理値リテラル</h3>
+<p>論理値リテラルは真を表す <code>
+<span class="reserved">true</span>
+</code> と、
+偽を表す <code>
+<span class="reserved">false</span>
+</code> の2つです。</p>
+<pre><code class="language-csharp"><span class="keyword">bool</span> b = x==<span class="number">1</span>;  <span class="comment">// x が 1 ならば true 、そうでなければ false になる。</span>
+<span class="keyword">bool</span> t = <span class="keyword">true</span>;  <span class="comment">// 直接 true を代入</span>
+<span class="keyword">bool</span> f = <span class="keyword">false</span>; <span class="comment">// 直接 false を代入</span></code></pre>
+<p>ちなみに、1行目を見ての通り、== などの比較演算の結果は bool 値になります。</p>
+<h2 id="section-16"><a id="sec-generated-title-17"></a> <a id="string"></a>文字列型</h2>
+<p>文字列は名前通り、文字の列なわけですから、<code>
+<span class="reserved">char</span>
+</code> 型の配列で十分な気もします。
+実際、C言語などのプログラミング言語では文字列は <code>char</code> 型の配列として扱われています。
+しかし、文字列には、連結、検索、置換、数値への変換など、文字の配列には無い機能が必要になります。
+そのため、C# では <code>
+<span class="reserved">string</span>
+</code> という文字列用の型が用意されています。</p>
+<h3 id="section-17"><a id="sec-generated-title-18"></a> <a id="stringl"></a>文字列リテラル</h3>
+<p>文字列リテラルは <code>
+<span class="string">&quot;文字列の例&quot;</span>
+</code> といったように <code>&quot;</code> (ダブルクォーテーション)で囲んで表現します。</p>
+<p>また、文字列リテラル中で <code>&quot;</code> を使うためには、
+文字リテラル中の'と同様にエスケープシーケンスを使って
+<code>
+<span class="string">&quot;&lt;a href=&quot;index.html&quot;&gt;&quot;</span>
+</code> というように表現します。</p>
+<pre><code class="language-csharp"><span class="keyword">string</span> s = <span class="string">&quot;C#入門&quot;</span>;                <span class="comment">// 文字列リテラル</span>
+<span class="keyword">string</span> x = <span class="string">&quot;\uff9f\u0434\uff9f&quot;</span>;    <span class="comment">// Unicodeを直入力。 ﾟдﾟ ←これ。</span></code></pre>
+<h3 id="section-18"><a id="sec-generated-title-19"></a> <a id="verbatim-string"></a>逐語的文字列リテラル</h3>
+<p>※ C# 11 からは「<a href="/study/csharp/start/st_string/#raw-string">生文字列</a>]」という同用途の別構文があります。こちらの方が書きこごちがよかったりするので、こちらの記事もご確認ください。</p>
+<p>文字列リテラルの書き方にはもう1種類あって、<code><span class="string">@&quot;@-quoted string&quot;</span></code> というように、
+'' や &quot;&quot; の前に @ (アットマーク)を付けると \ とそれに続く文字がエスケープシーケンスとはみなされず、
+普通に \ 記号として解釈されます。これを逐語的文字列リテラル（verbatim string literal）といいます。</p>
+<pre><code class="language-csharp"><span class="keyword">string</span> path = <span class="stringCSharpVerbatim">@&quot;C:\windows\system&quot;</span>; <span class="comment">// 逐語的リテラル（@-quoted string）。 \ 記号がそのまま解釈される。</span></code></pre>
+<p>ちなみに、逐語的文字列リテラルの場合、<em>複数行に渡る文章を書くことも出来ます</em>。
+改行の位置にはちゃんと改行文字が入ります。</p>
+<pre><code class="language-csharp"><span class="keyword">string</span> multiLineString =
+<span class="stringCSharpVerbatim">@&quot;@-quoted string では、
+文章を複数行に渡って書くことができます。
+&quot;</span>;
+Console.Write(multiLineString);</code></pre>
+<p>こういう逐語的文字列リテラルの使い方のことを <em>here 文字列</em>と言ったりもします。
+（エスケープなし、改行も含めて全部見たまま「ここに書いた通り」という意味。）</p>
+<p>また、逐語的文字列リテラル中で &quot; （ダブルクォーテーション）を使いたい場合は、&quot;&quot; というように、2つ並べて書きます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> s = <span class="stringCSharpVerbatim">@&quot;
+var s = &quot;&quot;here 文字列中の引用符&quot;&quot;;
+&quot;</span>;
+Console.WriteLine(s);</code></pre>
+<pre><code class="language-console">var s = &quot;here 文字列中の引用符&quot;;</code></pre>
+<h3 id="section-19"><a id="sec-generated-title-20"></a> <a id="special-string"></a>特殊な文字列</h3>
+<h5 class="version version6">Ver. 6</h5>
+<p>C# 6 で、文字列関連の機能が増えました。
+詳しくは、「<a href="/study/csharp/start/st_string/">特殊な文字列リテラル</a>」 で説明します。</p>
+<h2 id="section-20"><a id="sec-generated-title-21"></a> <a id="object"></a>オブジェクト型</h2>
+<p><code>object</code> はオブジェクト型と呼ばれ、任意の型の値を格納できる型です。</p>
+<p>C# では、組込み型・ユーザー定義型を問わずすべての型は <code>object</code> から派生しています。
+(ユーザー定義型や派生については後ほど説明します。)</p>
+<h3 id="null"><a id="sec-generated-title-22"></a> <a id="null"></a>null</h3>
+<p>string 型や object 型は、有効な値の他に、無効な（まだ初期化されていない）状態を表す null という値を持つことができます。</p>
+<pre><code class="language-csharp"><span class="keyword">object</span> notInitializedVariable = <span class="keyword">null</span>;</code></pre>
+<p>null （無効な値）を代入できるのは、参照型か Nullable 型のみになります
+（参考： 「<a href="/study/csharp/resource/oo_reference/">値型と参照型</a>」、「<a href="/study/csharp/resource/sp2_nullable/">Nullable 型</a>」）。</p>
+<h2 id="net"><a id="sec-generated-title-23"></a> <a id="dotnet"></a>.NET の型</h2>
+<p>.NET では、組み込み型を可能な限り他の型（詳細は後述）と区別しないようにしています。
+int のような組み込み型も、「.NET の標準ライブラリ中の型の1つ」に見えるように作られています。</p>
+<p>ということで、C# の組込み型も、実際には、.NET の標準ライブラリで定義されている型の別称になっています。
+（頻繁に使うので、C# の予約語として省略形を提供している。）
+以下に、C# の組込み型名と .NET の標準ライブラリで定義されている型との対応表を示します。</p>
+<table>
+	<tr>
+		<th>C#</th>
+		<th>.NET 標準ライブラリ</th>
+	</tr>
+	<tr>
+		<td><p><code>bool    </code></p></td>
+		<td><p><code>System.Boolean </code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>byte    </code></p></td>
+		<td><p><code>System.Byte    </code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>sbyte   </code></p></td>
+		<td><p><code>System.SByte   </code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>short   </code></p></td>
+		<td><p><code>System.Int16   </code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>ushort  </code></p></td>
+		<td><p><code>System.UInt16  </code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>int     </code></p></td>
+		<td><p><code>System.Int32   </code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>uint    </code></p></td>
+		<td><p><code>System.UInt32  </code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>long    </code></p></td>
+		<td><p><code>System.Int64   </code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>ulong   </code></p></td>
+		<td><p><code>System.UInt64  </code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>nint     </code></p></td>
+		<td><p><code>System.IntPtr   </code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>nuint    </code></p></td>
+		<td><p><code>System.UIntPtr  </code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>char    </code></p></td>
+		<td><p><code>System.Char    </code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>float   </code></p></td>
+		<td><p><code>System.Single  </code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>double  </code></p></td>
+		<td><p><code>System.Double  </code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>decimal </code></p></td>
+		<td><p><code>System.Decimal </code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>string  </code></p></td>
+		<td><p><code>System.String  </code></p></td>
+	</tr>
+	<tr>
+		<td><p><code>object  </code></p></td>
+		<td><p><code>System.Object  </code></p></td>
+	</tr>
+</table>
+<p>特別扱いを受けないという意味では、「C# には組み込み型はない」とも言えるでしょう。
+ただし、実際のところ、ここで紹介したような「組み込み型」は、コンパイルの挙動的には結構特別扱いされています。</p>
+<h2 id="section-21"><a id="sec-generated-title-24"></a> <a id="default-value"></a>既定値</h2>
+<p>C# では、変数を明示的に初期化しなかった場合に与えられる、既定値（default value）というものが決まってます。
+（Main メソッドなどの内部で使う変数（＝ローカル変数と言います）の場合は、必ず明示的な初期化が必要です。
+一方で、今後説明していくような、クラスのフィールドや、配列の要素では、明示的に初期値を与えず、既定値で初期化することができます。）</p>
+<p>既定値は、現時点では 0 （数値の場合）もしくは <code>null</code> （string や object の場合）とだけ覚えておいてください。</p>
+<p>既定値を得るための default 式というものもあります。例えば、以下のように書くと、int の規定値（0）が得られます。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> n = <span class="keyword">default</span>(<span class="keyword">int</span>);</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/start/">&#x57FA;&#x790E;</a></li><li><a href="/study/csharp/start/st_basis/">C#&#x306E;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x57FA;&#x672C;&#x69CB;&#x9020;</a></li><li><a href="/study/csharp/start/st_compile/">&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x4F5C;&#x6210;&#x30FB;&#x5B9F;&#x884C;</a></li><li><a href="/study/csharp/start/st_comment/">&#x30B3;&#x30E1;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/start/st_consoleio/">&#x5024;&#x306E;&#x5165;&#x51FA;&#x529B;</a></li><li><a href="/study/csharp/start/st_variable/">&#x5909;&#x6570;&#x3068;&#x5F0F;</a></li><li><a href="/study/csharp/start/misc_identifier/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x540D;&#x306B;&#x4F7F;&#x3048;&#x308B;&#x6587;&#x5B57;</a></li><li><a href="/study/csharp/start/misc_unicode/">[&#x96D1;&#x8A18;] C# &#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x3068; Unicode</a></li><li><a href="/study/csharp/start/stnumber/">&#x6570;&#x5024;</a></li><li><a href="/study/csharp/start/st_string/">&#x7279;&#x6B8A;&#x306A;&#x6587;&#x5B57;&#x5217;&#x30EA;&#x30C6;&#x30E9;&#x30EB;</a></li><li><a href="/study/csharp/start/improvedinterpolatedstring/">C# 10.0 &#x306E;&#x88DC;&#x9593;&#x6587;&#x5B57;&#x5217;&#x306E;&#x6539;&#x5584;</a></li><li><a href="/study/csharp/start/st_operator/">&#x7D44;&#x8FBC;&#x307F;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/study/csharp/start/st_cast/">&#x7D44;&#x8FBC;&#x307F;&#x578B;&#x5909;&#x63DB;</a></li><li><a href="/study/csharp/start/sp_checked/">&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30D5;&#x30ED;&#x30FC;&#x306E;&#x30C1;&#x30A7;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/start/sp_const/">&#x5B9A;&#x6570;</a></li><li><a href="/study/csharp/start/sp3_inference/">&#x578B;&#x63A8;&#x8AD6;(&#x6697;&#x9ED9;&#x7684;&#x578B;&#x4ED8;&#x3051;)&#x3068;&#x533F;&#x540D;&#x578B;</a></li><li><a href="/study/csharp/start/sp3_var/">[&#x96D1;&#x8A18;] &#x578B;&#x63A8;&#x8AD6;&#x306E;&#x662F;&#x975E;</a></li><li><a href="/study/csharp/start/st_scope/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x306E;&#x30B9;&#x30B3;&#x30FC;&#x30D7;&#x3068;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x5BFF;&#x547D;</a></li><li><a href="/study/csharp/start/misctyperesolution/">[&#x96D1;&#x8A18;] &#x578B;&#x306E;&#x6C7A;&#x5B9A;</a></li><li><a href="/study/csharp/start/miscreservedattribute/">[&#x96D1;&#x8A18;] &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x306B;&#x5F71;&#x97FF;&#x3092;&#x53CA;&#x307C;&#x3059;&#x5C5E;&#x6027;</a></li><li><a href="/study/csharp/start/definiteassignment/">[&#x96D1;&#x8A18;] &#x660E;&#x78BA;&#x306A;&#x4EE3;&#x5165;&#x30EB;&#x30FC;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

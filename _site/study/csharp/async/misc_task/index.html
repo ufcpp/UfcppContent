@@ -1,0 +1,242 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>[&#x96D1;&#x8A18;] &#x30B9;&#x30EC;&#x30C3;&#x30C9; &#x30D7;&#x30FC;&#x30EB;&#x3068;&#x30BF;&#x30B9;&#x30AF; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/async/misc_task/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">[雑記] スレッド プールとタスク</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<h5 class="version version4">Ver. 4.0</h5>
+<p>C# 3.0 で導入されたラムダ式と、
+.NET 4 で導入された Task、Parallel、ParallelEnumerable などのクラスを使うことで、
+非同期処理や並列処理が簡潔に記述できるようになりました。</p>
+<p>また、C# 5.0 では非同期処理用の新構文が追加される予定です。
+参考： 「<a href="/study/csharp/async/sp5_async/">非同期処理</a>」</p>
+<p>このページでは、これら非同期処理の基礎となる Task クラスや、その背後にあるスレッド プールというものについて説明していきます。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>スレッドはそれなりに高コストなので使い回しをしたい → スレッド プール。</p>
+</li>
+<li><p>スレッド プールを使った非同期処理を行うには、.NET Framework 4 で導入された Task クラスが便利です。</p>
+</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="task"></a>タスク</h2>
+<p>スレッドを使った非同期処理を行いたい動機としては、以下の2つが挙げられます。</p>
+<ul>
+<li><p>非ブロッキング処理: I/O 待ちとかで UI スレッドをフリーズさせないようにする（図1）</p>
+</li>
+<li><p>並列処理: マルチコアを活かした並列処理でパフォーマンス向上（図2）</p>
+</li>
+</ul>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/task1.png"><img src="/assets/media/ufcpp2000/csharp/fig/task1.png" alt="UI スレッドを止めないためのタスク" /></a></p>
+<figcaption>UI スレッドを止めないためのタスク</figcaption>
+</figure>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/task2.png"><img src="/assets/media/ufcpp2000/csharp/fig/task2.png" alt="並列処理のためのタスク" /></a></p>
+<figcaption>並列処理のためのタスク</figcaption>
+</figure>
+<p>どちらの場合でも、非同期で行いたい処理のほとんどは小さい処理になります。
+（1つの処理を長時間し続けるよりは、細々とした処理を大量に扱う場合が多い。）</p>
+<p>この細々とした処理の1つ1つのことを<strong id="key_task" class="keyword">タスク</strong>（task）と呼びます。
+このページで説明する、.NET 4 の Task クラスもこの「タスク」を表すクラスです。</p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="thread"></a>スレッド</h2>
+<p>まず、非同期処理の基本となるスレッドについて説明しておきましょう。</p>
+<p><strong id="key_thread" class="keyword">スレッド</strong>（thread）は、CPU の数を超えて複数の処理を同時に実行するための仕組みです。
+例えば、単一 CPU で4つの処理を実行する場合の例を図3に示します。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/contextswitch.png"><img src="/assets/media/ufcpp2000/csharp/fig/contextswitch.png" alt="単一 CPU での複数スレッド実行の例" /></a></p>
+<figcaption>単一 CPU での複数スレッド実行の例</figcaption>
+</figure>
+<p>同時に実行するといっても、本当に並列に動いているわけではありません。
+一定間隔で OS が処理を奪い、別のスレッドに切り替えることで、見かけ上の同時実行を実現しています。
+（ハードウェア割り込みというものを使っていて、例えあるスレッドがフリーズしていても、強制的に OS に処理が移るようになっています。）
+（ちなみに、このようなスレッドの切り替えをコンテキスト スイッチ（context switch: 実行文脈の切り替え）と呼びます。）</p>
+<p>このような挙動を実現するためには、以下のように、それなりのコストがかかります。</p>
+<ul>
+<li><p>メモリ確保: スレッドごとに別のスタックを確保する必要があります（Windows の場合、1MB 程度）。 また、CPU のレジスターの内容を退避しておくための領域（1kB 程度）が必要です。</p>
+</li>
+<li><p>スレッドの生成/破棄イベント: スレッドの生成時には、上記のメモリ確保に加えて、 新たにスレッドが生成されたという「<a href="/study/csharp/functional/sp_event/#event">イベント</a>」がロード済みの DLL に対して通知されます。</p>
+</li>
+<li><p>レジスターの退避/復帰: スレッドの切り替え時には、実行中 CPU レジスターの内容を退避や復帰が必要になります。</p>
+</li>
+</ul>
+<h3 id="section-5"><a id="sec-generated-title-5"></a> <a id="preemptive"></a>余談: プリエンプティブ マルチタスクと強調的マルチタスク</h3>
+<p>タスクのスケジューリング（どうやってタスクの同時実行を行うか、タスク切り替え方の管理方法）には大きく分けて2種類あります。</p>
+<ul>
+<li><p>プリエンプティブ（preemptive: 専売権、優先権）マルチタスク: スレッドがどんな処理をしていようと、一定間隔で OS が必ず処理を奪い取り、コンテキスト スイッチを行います。 通常、タイマーを使ったハードウェア割り込みを利用していて、 例えスレッドがフリーズしていても強制的にコンテキスト スイッチ可能です。</p>
+</li>
+<li><p>強調的（cooperative）マルチタスク: 各スレッドに自己申告で、一定間隔で OS に処理権を返してもらいます。 あくまで自己申告なので公平性に欠ける（申告しなければずっと同じスレッドが処理をし続ける）上に、 もしスレッドがフリーズした場合に OS 全体がフリーズします。 不便な反面、コンテキスト スイッチによる負荷が少ないという利点があります。</p>
+</li>
+</ul>
+<p>本節で説明したスレッドというものは、前者のプリエンプティブ マルチタスクになります。</p>
+<p>また、次節で説明するスレッド プールは、両者の併用になります。
+プリエンプティブなスレッドの上に、協調的にスレッドを使いまわすような仕組みを作ることで、
+公平性を残しつつ、コンテキスト スイッチの負荷を最小限に抑えます。</p>
+<h2 id="section-6"><a id="sec-generated-title-6"></a> <a id="thread_pool"></a>スレッド プール</h2>
+<p>前述の通り、スレッドは、生成も切り替えも、それなりに（そして、多くの人が思っている以上に）コストがかかります。
+スレッドの増加はパフォーマンスへの影響が非常に大きく、スレッドの数は最小限に抑えたいです。</p>
+<p>そこで、実際には、スレッドを直接使うのではなく、
+1度作ったスレッドを可能な限り使いまわすような仕組みを使います。
+このようなスレッドの使い回しの仕組みを<strong id="key_thread_pool" class="keyword">スレッド プール</strong>（thread pool）と呼びます。</p>
+<p>スレッド プールとは、以下のような仕組みです。</p>
+<ul>
+<li><p>一定数のスレッドを常に立てておく。 （CPU 数と同じ数だけスレッドが動いている状態が理想。）</p>
+</li>
+<li><p>タスクを待たせておくためのキューを持つ。</p>
+</li>
+<li><p>現在処理中のタスクが終わり次第、次のタスクをキューから取り出して実行する。</p>
+</li>
+</ul>
+<p>ちなみに、BeginInvoke によるデリゲートの非同期呼び出し（「<a href="/study/csharp/functional/sp_delegate/#async">非同期呼び出し</a>」参照）や、
+後述する Task クラスは内部的にこのスレッド プールを使っています。
+その他、<a href="http://msdn.microsoft.com/ja-jp/library/system.threading.timer.aspx">Timer</a> クラスによるタイマー処理や、
+<a href="http://msdn.microsoft.com/ja-jp/library/system.net.webclient.aspx">WebClient</a> クラスなどによる I/O 待ちの非同期処理でもスレッド プールが利用されます。</p>
+<h3 id="net-framework-4"><a id="sec-generated-title-7"></a> <a id="thread_pool4"></a>.NET Framework 4 のスレッド プール</h3>
+<p>スレッド プールの仕組みは昔からありましたが、
+.NET Framework 4 では性能改善のためにスレッド プールの再設計・実装が行われました。
+（具体的には、後述するワーク スティーリングという仕組みで性能改善を図ります。）</p>
+<p>.NET Framework 4 のスレッド プールでは、図4に示すように、スレッドごとにローカルなキューを持っています。</p>
+<figure>
+<p><a href="/assets/media/ufcpp2000/csharp/fig/taskqueue.png"><img src="/assets/media/ufcpp2000/csharp/fig/taskqueue.png" alt="スレッドごとにローカル キューを持つ" /></a></p>
+<figcaption>スレッドごとにローカル キューを持つ</figcaption>
+</figure>
+<h5 id="section-7"><a id="sec-generated-title-8"></a>タスクの追加</h5>
+<p>タスク実行用のスレッド（ワーカー スレッド（worker thread）と呼びます）から新しいタスクを追加する場合、
+タスクはローカル キューに投入されます。
+一方、ワーカー スレッド以外からのタスクの追加はグローバル キューに投入されます。</p>
+<h5 id="section-8"><a id="sec-generated-title-9"></a>タスクの取り出し</h5>
+<p>各スレッドは、現在のタスクが完了すると、まず、ローカル キューを見に行きます。
+ローカル キューにタスクがなければ、次に、他のスレッドのキューを見に行き、
+もしそちらにタスクがあれば、タスクを奪い取ります。
+このような挙動をワーク スティーリング（work stealing: 仕事を奪い取る）と呼びます。</p>
+<p>また、全てのスレッドのローカル キューが空ならば、グローバル キューからタスクを取り出して実行します。</p>
+<p>ここで、ローカル キューからの取り出しと、他スレッドからのスティーリングとでは、
+タスクの取り出しの向きを変えます。
+ローカルの場合には FILO（first in last out: 先入れ後出し）、
+スティーリングの場合には FIFO（first in first out: 先入れ先出し）になっています。
+このことで、以下のような効果が得られます。</p>
+<ul>
+<li><p>取り出しの位置を変えることで、「<a href="/study/csharp/async/sp_thread/#lock">ロック</a>」を最小限にとどめる。</p>
+</li>
+<li><p>ローカルを FILO にすることで、 近い処理が同じスレッド内で実行される可能性が高くなり、 メモリのキャッシュが効きやすくなる。</p>
+</li>
+</ul>
+<h2 id="task"><a id="sec-generated-title-10"></a> <a id="task-class"></a>Task クラス</h2>
+<p>.NET Framework 4 では、スレッド プールをより使いやすくするために、Task（System.Threading.Tasks 名前空間）というクラスが導入されました。
+Task クラスは以下のような機能を持っています。</p>
+<h5 id="section-9"><a id="sec-generated-title-11"></a>非同期処理の結果取得</h5>
+<p>非同期処理の結果を使いたい場合があります。
+Task クラスからの結果の受け取り方には2通りの方法があります。</p>
+<p>1つは、ContinueWith メソッドを使って、タスク完了時にその先続けて行いたい処理を渡します。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> t = Task.Factory.StartNew(() =&gt;
+{
+    <span class="comment">// 何か重たい計算をして、その計算結果を返す。</span>
+    <span class="keyword">return</span> HeavyWork();
+});
+ 
+<span class="comment">// 計算が完了したら、そのあと続けたい処理を呼び出してもらう。</span>
+t.ContinueWith(x =&gt; Console.WriteLine(x.Result));</code></pre>
+<p>もう1つは、タスクの完了を同期的に（完了するまで処理を止めて）待ちます。
+Result プロパティを読もうとしたとき、タスクがまだ完了していない場合、
+完了するまで待つことになります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> t = Task.Factory.StartNew(() =&gt;
+{
+    <span class="comment">// 何か重たい計算をして、その計算結果を返す。</span>
+    <span class="keyword">return</span> HeavyWork();
+});
+ 
+<span class="comment">// 同期的に完了を待つ。</span>
+Console.WriteLine(t.Result);</code></pre>
+<h5 id="section-10"><a id="sec-generated-title-12"></a>統一的なキャンセル</h5>
+<p>非同期実行中のタスクを途中でキャンセルするための仕組みとして、
+CancellationToken 構造体というものが標準で用意されています。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> cts = <span class="keyword">new</span> CancellationTokenSource();
+ 
+<span class="keyword">var</span> t = Task.Factory.StartNew(() =&gt;
+{
+    Thread.Sleep(<span class="number">500</span>);
+    Console.WriteLine(<span class="string">&quot;done&quot;</span>);
+}, cts.Token);
+ 
+<span class="comment">// t をキャンセル</span>
+cts.Cancel();</code></pre>
+<h5 id="section-11"><a id="sec-generated-title-13"></a>子タスク</h5>
+<p>タスクの中で別の新しいタスクを作りたい場合があります。
+オプションなしの場合、それぞれのタスクは無関係に動くことになります。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> t = Task.Factory.StartNew(() =&gt;
+    {
+        Console.WriteLine(<span class="string">&quot;タスク1開始&quot;</span>);
+        Task.Factory.StartNew(() =&gt;
+        {
+            Console.WriteLine(<span class="string">&quot;タスク2開始&quot;</span>);
+        });
+    });
+ 
+t.Wait(); <span class="comment">// 今のままだと、タスク2の完了は待たない</span>
+Console.WriteLine(<span class="string">&quot;完了&quot;</span>);</code></pre>
+<pre><code class="language-console">タスク1開始
+完了</code></pre>
+<p>これに対して、オプションを指定することで、タスクに親子関係を作ることができます。
+Task.Wait による完了待ちは、子タスクの完了まで含めて待ちます。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> t = Task.Factory.StartNew(() =&gt;
+    {
+        Console.WriteLine(<span class="string">&quot;タスク1開始&quot;</span>);
+        Task.Factory.StartNew(() =&gt;
+        {
+            Console.WriteLine(<span class="string">&quot;タスク2開始&quot;</span>);
+        }, TaskCreationOptions.AttachedToParent); <span class="comment">// 子タスク化</span>
+    });
+ 
+t.Wait(); <span class="comment">// 子タスクの完了まで待つ</span>
+Console.WriteLine(<span class="string">&quot;完了&quot;</span>);</code></pre>
+<pre><code class="language-console">タスク1開始
+タスク2開始
+完了</code></pre>
+<h5 id="section-12"><a id="sec-generated-title-14"></a>柔軟なスケジューリング</h5>
+<p>Task クラスでは、タスク開始時に TaskScheduler を渡すことで、
+タスクの実行方法をある程度柔軟に制御できます。</p>
+<p>特に指定しない場合、タスクはスレッド プール上で実行されます。
+一方、「<a href="/study/csharp/async/misc_uithread/">[雑記] GUI と非同期処理</a>」で説明するように、
+ある特定のスレッド上で実行する必要がある処理もあり、
+その特定スレッドにタスクを投かんするような仕組みが必要です。
+そういう場合に、TaskScheduler を利用します。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> t = <span class="keyword">new</span> Task(() =&gt; { <span class="comment">/* 中略 */</span> });
+
+<span class="comment">// タスクの実行場所を制御するために明示的に TaskScheduler を指定</span>
+t.Start(TaskScheduler.FromCurrentSynchronizationContext());</code></pre>
+<h3 id="task-1"><a id="sec-generated-title-15"></a> <a id="task_usage"></a>Task クラスの用途</h3>
+<p>Task クラスは以下のような場面で使われます。</p>
+<h5 id="section-13"><a id="sec-generated-title-16"></a>並列処理</h5>
+<p>.NET Framework 4で導入された、Parallel クラスや ParallelEnumerable クラス（通称 Parallel LINQ）などの並列処理を用ライブラリは、
+Task クラスの上に実装されています。
+並列処理の詳細は「<a href="/study/csharp/lib/lib_parallel/">並列処理ライブラリ</a>」にて説明します。</p>
+<h5 id="section-14"><a id="sec-generated-title-17"></a>先物と継続</h5>
+<p>「<a href="/study/csharp/async/misc_continuation/">[雑記] 継続と先物</a>」参照。</p>
+<h5 id="section-15"><a id="sec-generated-title-18"></a>データ フロー</h5>
+<p>（書きかけ）</p>
+<pre><code class="language-text">並列、非ブロッキング処理と、あともう1つ、データ フロー
+http://blogs.msdn.com/b/pfxteam/archive/2010/10/28/10081950.aspx
+
+Actor とか Agent って言われるもの
+非同期に動き続けてる Agent が何個かいて、データをやり取りしながら各々が自律的にデータ処理
+producer/consumer パターン</code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/async/">&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/async/sp_thread/">&#x30DE;&#x30EB;&#x30C1;&#x30B9;&#x30EC;&#x30C3;&#x30C9;</a></li><li><a href="/study/csharp/async/asyncvariation/">&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406;&#x306E;&#x7A2E;&#x985E;</a></li><li><a href="/study/csharp/async/asyncinside/">&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406;&#x3092;&#x652F;&#x3048;&#x308B;&#x30A4;&#x30F3;&#x30D5;&#x30E9;</a></li><li><a href="/study/csharp/async/asyncexecutioncontext/">&#x5B9F;&#x884C;&#x30B3;&#x30F3;&#x30C6;&#x30AD;&#x30B9;&#x30C8;</a></li><li><a href="/study/csharp/async/misc_synchronize/">[&#x96D1;&#x8A18;] &#x30B9;&#x30EC;&#x30C3;&#x30C9;&#x9593;&#x306E;&#x7AF6;&#x5408;&#x56DE;&#x907F;</a></li><li><a href="/study/csharp/async/misc_asyncflow/">[&#x96D1;&#x8A18;] &#x975E;&#x540C;&#x671F;&#x5236;&#x5FA1;&#x30D5;&#x30ED;&#x30FC;</a></li><li><a href="/study/csharp/async/sp5_async/">&#x975E;&#x540C;&#x671F;&#x30E1;&#x30BD;&#x30C3;&#x30C9;</a></li><li><a href="/study/csharp/async/sp5_awaitable/">&#x975E;&#x540C;&#x671F;&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x306E;&#x5185;&#x90E8;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/async/misc_continuation/">[&#x96D1;&#x8A18;] &#x7D99;&#x7D9A;&#x3068;&#x5148;&#x7269;</a></li><li><a href="/study/csharp/async/misc_uithread/">[&#x96D1;&#x8A18;] GUI &#x3068;&#x975E;&#x540C;&#x671F;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/async/asyncstream/">&#x975E;&#x540C;&#x671F;&#x30B9;&#x30C8;&#x30EA;&#x30FC;&#x30E0;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

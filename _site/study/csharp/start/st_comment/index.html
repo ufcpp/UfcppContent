@@ -1,0 +1,234 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30B3;&#x30E1;&#x30F3;&#x30C8; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/start/st_comment/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">コメント</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>プログラムには自然言語で注釈を入れましょう。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>コメント： プログラムとは関係ない、自然言語で書かれた注釈。</p>
+</li>
+<li><p><code>/* 複数行にわたるコメント */</code></p>
+</li>
+<li><p><code>// 行末までのコメント</code></p>
+</li>
+<li><p>注意： 可能な限りコメントなんて書かなくても分かりやすいきれいなコードを書くのが理想的。</p>
+</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="comment"></a>コメント</h2>
+<p>C# などの、自然言語に近い形で書けるプログラミング言語(このようなものを高級言語と呼ぶ)は、
+人間が理解しやすい形でプログラムを記述するために作られたものですが、
+やはり、自然言語による説明なしでは、理解のしやすさに限界があります。
+プログラムのソースを理解しやすくするためには、人間の言葉で処理の概要や変数の意味などを書いておくのが一番です。</p>
+<p>そのため、C# などの高級言語では、プログラムの流れとはまったく関係なく、人間の言葉で注釈を入れておくための仕組みを用意してあります。
+このように、プログラム中に自然言葉で注釈を入れることを<strong id="comment" class="keyword">コメント</strong>といいます。</p>
+<p>C#では、コメントの書き方には2通りあります。
+1つは <em>
+<code>/*</code> と <code>*/</code> でコメントを囲う
+</em>方法で、もう1つは<em>
+<code>//</code> の後ろにコメントを書く
+</em>方法です。
+<code>/*</code> と <code>*/</code> で囲われた文字列は、コメントとして扱われ、コンパイラに無視されます。
+このコメントは複数行にわたって書くことも可能です。
+ただし、<code>/*</code> と <code>*/</code> を2重にして使うことは出来ません。
+また、<code>//</code> の後ろに続く文字列もコメントとして扱われます。
+行末までがコメントとなります(そのため、複数行にわたるコメントは書けません)。
+<code>/* */</code> と違い、コメントを閉じ忘れるということが無いので便利です。</p>
+<pre><code class="language-csharp"><span class="comment">/*
+ この部分はコメントです。
+ 複数行にわたるコメントを書くことも可能です。
+*/</span>
+
+<span class="comment">// このようなコメントもかけます。</span>
+<span class="comment">// 行末までがコメントになります。</span>
+
+<span class="comment">/*
+ でも、このコメントを
+  /* こんな風に */</span>
+ 2重に使っちゃだめ。
+ このコメントはエラーになります。
+*/</code></pre>
+<p>どんなにプログラミングの得意な人でも、コメントのまったく入っていないソースファイルの内容を理解するのは困難です。
+自分で書いたソースですら、数ヶ月も経つとどこに何を書いたのか分からなくなることがしばしばあります。
+そういうことにならないためにも、ソースファイル中にはしっかりとコメントを入れるようにしましょう。</p>
+<p>以下にコメントを挿入すべきポイントを示す例を挙げます。
+プログラム中には現時点ではまだ説明していないことも使っていますので、
+プログラムの内容自体は理解できないと思いますが、
+ポイントとなる点は背景色を変えて強調してありますので、
+とりあえずそこだけ流し読みしてみてください。</p>
+<h5 id="section-4"><a id="sec-generated-title-4"></a>サンプル</h5>
+<p>コメントの付け方の例を示します。
+サンプルとはいえ、コメント入れ過ぎかも。</p>
+<em>
+        ※おそらく、この例で「妥当な」コメントは /// から始まるドキュメンテーション コメントのみです。
+      </em>
+<p>C# みたいな、割と意図どおりにプログラムコードを書ける言語において、
+「コメントが付き過ぎ」あるいは「コメント書かなきゃ分からない」ってのは、
+コードの出来が悪い可能性が高いです。
+過剰なコメント（変数の説明や、処理の区切り）を入れたくなるようなときは、リファクタリングのしどきだと思ってください。</p>
+<div class="tab-container">
+<ul>
+	<li>C#</li>
+	<li>VB</li>
+</ul>
+<div>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="comment">// クラスの前にはそのクラスの説明を書いたほうがいい。</span>
+
+<span class="comment">//「///」から始まるコメントはC#では特別な意味を持つ。</span>
+<span class="comment">// 詳しくは「XML Documentation」で説明する。</span>
+
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> コメント付けのサンプルプログラム。</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> ここでは例として配列で与えられたデータ列の平均値と分散を求めて表示する。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="keyword">class</span> CommentSample
+{
+  <span class="keyword">static</span> <span class="keyword">void</span> Main()
+  {
+    <span class="comment">// 変数名の後に変数の説明を書いたりすることも。</span>
+    <span class="comment">// ほんとは、コメントが無くても意味の分かる変数名を付けるべき。</span>
+
+    <span class="keyword">var</span> dataSource = <span class="keyword">new</span>[] {
+      <span class="number">455</span>,  <span class="number">58</span>,   <span class="number">8</span>,   <span class="number">7</span>, <span class="number">987</span>,  <span class="number">56</span>,   <span class="number">2</span>,  <span class="number">64</span>, <span class="number">698</span>,  <span class="number">79</span>,
+       <span class="number">98</span>,  <span class="number">79</span>,  <span class="number">45</span>, <span class="number">465</span>, <span class="number">167</span>,  <span class="number">97</span>,  <span class="number">94</span>, <span class="number">657</span>, <span class="number">237</span>, <span class="number">587</span>,
+      <span class="number">687</span>, <span class="number">654</span>, <span class="number">647</span>,   <span class="number">4</span>, <span class="number">654</span>, <span class="number">984</span>,   <span class="number">8</span>, <span class="number">489</span>,   <span class="number">7</span>,  <span class="number">22</span> }; <span class="comment">// データ列</span>
+    <span class="keyword">double</span> mean; <span class="comment">// 平均値</span>
+    <span class="keyword">double</span> variance;  <span class="comment">// 分散</span>
+
+    <span class="comment">// 処理の区切りごとに、処理の内容の簡単な説明を書いたり。</span>
+    <span class="comment">// これも、できれば、コメントなんて書かなくても分かりやすい簡潔な処理を書く方がいい。</span>
+    <span class="comment">// (「関数の前にだけ説明があれば十分」と言うのが理想。</span>
+    <span class="comment">//   要するに、処理の区切りごとに関数に分かれてる方がいい。</span>
+    <span class="comment">// コメントが必要そうな処理の区切りがあったら、そこを関数化する。)</span>
+
+    <span class="comment">// データ列 dataSource の平均値と分散を求める</span>
+    CalcMean(dataSource, <span class="keyword">out</span> mean, <span class="keyword">out</span> variance);
+
+    <span class="comment">// 結果の表示</span>
+    Console.WriteLine(<span class="string">&quot;平均 : {0}, 分散 : {1}&quot;</span>, mean, variance);
+  }
+
+  <span class="comment">// 関数の前にはその関数の説明を書く。</span>
+
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+  <span class="xmlDocTag">///</span><span class="xmlDocComment"> 配列に入ったデータの平均値と分散を求める</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;data&quot;&gt;</span><span class="xmlDocComment">与えられたデータ列&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;mean&quot;&gt;</span><span class="xmlDocComment">dataの平均値(出力)&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;variance&quot;&gt;</span><span class="xmlDocComment">dataの分散(出力)&lt;/param&gt;</span>
+  <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> CalcMean(<span class="keyword">int</span>[] data, <span class="keyword">out</span> <span class="keyword">double</span> mean, <span class="keyword">out</span> <span class="keyword">double</span> variance)
+  {
+    <span class="keyword">int</span> sum = <span class="number">0</span>;     <span class="comment">// 合計</span>
+    <span class="keyword">int</span> sq_sum = <span class="number">0</span>;  <span class="comment">// 二乗の合計</span>
+
+    <span class="comment">// データ列の合計と二乗の合計を求める</span>
+    <span class="keyword">foreach</span>(<span class="keyword">int</span> n <span class="keyword">in</span> data)
+    {
+      sum += n;
+      sq_sum += n*n;
+    }
+    <span class="comment">// 平均値と分散を計算</span>
+    mean = (<span class="keyword">double</span>)sum / data.Length;
+    variance = (<span class="keyword">double</span>)sq_sum / data.Length - mean*mean;
+  }
+}</code></pre>
+</div>
+<div>
+<pre><code class="language-vbnet"><span class="comment">&#39; VB の場合は &#39; の後ろがコメント。</span>
+<span class="comment">&#39; を3つ付けるとドキュメンテーション コメント。</span>
+
+<span class="comment">&#39;&#39;&#39; &lt;summary&gt;</span>
+<span class="comment">&#39;&#39;&#39; コメント受けのサンプル プログラム</span>
+<span class="comment">&#39;&#39;&#39; 「&#39;&#39;&#39;」から始まるコメントは VB では特別な意味を持つ。</span>
+<span class="comment">&#39;&#39;&#39; 詳しくは「XML Documentation」で説明する。</span>
+<span class="comment">&#39;&#39;&#39; &lt;/summary&gt;</span>
+<span class="keyword">Module</span> Program
+
+    <span class="keyword">Sub</span> Main()
+        <span class="keyword">Dim</span> dataSource = <span class="keyword">New</span> <span class="keyword">Integer</span>() {
+            455, 58, 8, 7, 987, 56, 2, 64, 698, 79,
+            98, 79, 45, 465, 167, 97, 94, 657, 237, 587,
+            687, 654, 647, 4, 654, 984, 8, 489, 7, 22
+        }
+
+        <span class="keyword">Dim</span> mean <span class="keyword">As</span> <span class="keyword">Double</span>
+        <span class="keyword">Dim</span> variance <span class="keyword">As</span> <span class="keyword">Double</span>
+
+        CalcMean(dataSource, mean, variance)
+
+        Console.WriteLine(<span class="string">&quot;平均 : {0}, 分散 : {1}&quot;</span>, mean, variance)
+    <span class="keyword">End</span> <span class="keyword">Sub</span>
+
+    <span class="comment">&#39;&#39;&#39; &lt;summary&gt;</span>
+    <span class="comment">&#39;&#39;&#39; 配列に入ったデータの平均値と分散を求める。</span>
+    <span class="comment">&#39;&#39;&#39; &lt;/summary&gt;</span>
+    <span class="comment">&#39;&#39;&#39; &lt;param name=&quot;data&quot;&gt;与えられたデータ。&lt;/param&gt;</span>
+    <span class="comment">&#39;&#39;&#39; &lt;param name=&quot;mean&quot;&gt;data の平均値。&lt;/param&gt;</span>
+    <span class="comment">&#39;&#39;&#39; &lt;param name=&quot;variance&quot;&gt;data の分散。&lt;/param&gt;</span>
+    <span class="comment">&#39;&#39;&#39; &lt;remarks&gt;&lt;/remarks&gt;</span>
+    <span class="keyword">Sub</span> CalcMean(<span class="keyword">ByVal</span> data <span class="keyword">As</span> <span class="keyword">Integer</span>(), <span class="keyword">ByRef</span> mean <span class="keyword">As</span> <span class="keyword">Double</span>, <span class="keyword">ByRef</span> variance <span class="keyword">As</span> <span class="keyword">Double</span>)
+        <span class="keyword">Dim</span> <span class="keyword">sum</span> = 0
+        <span class="keyword">Dim</span> squareSum = 0
+
+        <span class="keyword">For</span> <span class="keyword">Each</span> x <span class="keyword">In</span> data
+            <span class="keyword">sum</span> += x
+            squareSum += x
+        <span class="keyword">Next</span>
+
+        mean = <span class="keyword">CType</span>(<span class="keyword">sum</span>, <span class="keyword">Double</span>) / data.Length
+        variance = <span class="keyword">CType</span>(squareSum, <span class="keyword">Double</span>) / data.Length - mean * mean
+    <span class="keyword">End</span> <span class="keyword">Sub</span>
+
+<span class="keyword">End</span> <span class="keyword">Module</span></code></pre>
+</div>
+</div>
+<pre><code class="language-console">平均 : 303.2, 分散 : 99802.0266666667</code></pre>
+<p>ここで、<code>/**</code> もしくは <code>///</code> で始まるコメントには特殊な意味があります。
+これらはドキュメンテーション コメントと呼ばれるもので、「<a href="/study/csharp/misc/sp_xmldoc/">XML Document</a>」で説明します。</p>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="whereToUse"></a>コメントの使いどころ</h2>
+<p>コメントの理想形は、ドキュメンテーション コメントだけを残すような状態です。
+コードで表現できるものはコードで表現すべきです。</p>
+<p>その他、どうしてもコメントが必要になる状況として、以下のようなものがあります。</p>
+<h5 id="section-6"><a id="sec-generated-title-6"></a>理由を書く</h5>
+<p>コメント（自然言語での注釈）は、「プログラム コードとして表現できないこと」を書くために使います。
+how（どうやってプログラムを動かす）はコードで表現できるので、コメントとして書きません。
+最近の高級言語の表現力は高く、what（何がしたいか）もコメントに書く必要性は低いはずです。
+一番コメントとして残しておきたいのは、why（なぜそういうコードを書くことにしたか）でしょう。</p>
+<p>特に、泥臭い bad know-how 的なコメントが多くなるでしょう。
+例えば、以下のようなものです。</p>
+<ul>
+<li><p>本当はもう少しきれいに書く方法があるんだけども、パフォーマンス上の理由からわざと見づらいコードにしている。</p>
+</li>
+<li><p>どうもライブラリのバグらしいので回避策として。</p>
+</li>
+<li><p>あまりよくないコードだけどもとりあえず。余裕があるときに直す<sup>※</sup>。</p>
+</li>
+</ul>
+<p>※ こうならないように、余裕持たなきゃだめですよ。</p>
+<p>ソース コード上のコメントではなく、
+進行管理ツール（TFS（Team Foundation Server）や Jenkins など）のタスク化/チケット化すべきものも多々あります。
+ツールが使えるなら、「後で直す」的なものはチケット化しましょう。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/start/">&#x57FA;&#x790E;</a></li><li><a href="/study/csharp/start/st_basis/">C#&#x306E;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x57FA;&#x672C;&#x69CB;&#x9020;</a></li><li><a href="/study/csharp/start/st_compile/">&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x4F5C;&#x6210;&#x30FB;&#x5B9F;&#x884C;</a></li><li><a href="/study/csharp/start/st_consoleio/">&#x5024;&#x306E;&#x5165;&#x51FA;&#x529B;</a></li><li><a href="/study/csharp/start/st_variable/">&#x5909;&#x6570;&#x3068;&#x5F0F;</a></li><li><a href="/study/csharp/start/misc_identifier/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x540D;&#x306B;&#x4F7F;&#x3048;&#x308B;&#x6587;&#x5B57;</a></li><li><a href="/study/csharp/start/misc_unicode/">[&#x96D1;&#x8A18;] C# &#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x3068; Unicode</a></li><li><a href="/study/csharp/start/st_embeddedtype/">&#x7D44;&#x8FBC;&#x307F;&#x578B;</a></li><li><a href="/study/csharp/start/stnumber/">&#x6570;&#x5024;</a></li><li><a href="/study/csharp/start/st_string/">&#x7279;&#x6B8A;&#x306A;&#x6587;&#x5B57;&#x5217;&#x30EA;&#x30C6;&#x30E9;&#x30EB;</a></li><li><a href="/study/csharp/start/improvedinterpolatedstring/">C# 10.0 &#x306E;&#x88DC;&#x9593;&#x6587;&#x5B57;&#x5217;&#x306E;&#x6539;&#x5584;</a></li><li><a href="/study/csharp/start/st_operator/">&#x7D44;&#x8FBC;&#x307F;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/study/csharp/start/st_cast/">&#x7D44;&#x8FBC;&#x307F;&#x578B;&#x5909;&#x63DB;</a></li><li><a href="/study/csharp/start/sp_checked/">&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30D5;&#x30ED;&#x30FC;&#x306E;&#x30C1;&#x30A7;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/start/sp_const/">&#x5B9A;&#x6570;</a></li><li><a href="/study/csharp/start/sp3_inference/">&#x578B;&#x63A8;&#x8AD6;(&#x6697;&#x9ED9;&#x7684;&#x578B;&#x4ED8;&#x3051;)&#x3068;&#x533F;&#x540D;&#x578B;</a></li><li><a href="/study/csharp/start/sp3_var/">[&#x96D1;&#x8A18;] &#x578B;&#x63A8;&#x8AD6;&#x306E;&#x662F;&#x975E;</a></li><li><a href="/study/csharp/start/st_scope/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x306E;&#x30B9;&#x30B3;&#x30FC;&#x30D7;&#x3068;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x5BFF;&#x547D;</a></li><li><a href="/study/csharp/start/misctyperesolution/">[&#x96D1;&#x8A18;] &#x578B;&#x306E;&#x6C7A;&#x5B9A;</a></li><li><a href="/study/csharp/start/miscreservedattribute/">[&#x96D1;&#x8A18;] &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x306B;&#x5F71;&#x97FF;&#x3092;&#x53CA;&#x307C;&#x3059;&#x5C5E;&#x6027;</a></li><li><a href="/study/csharp/start/definiteassignment/">[&#x96D1;&#x8A18;] &#x660E;&#x78BA;&#x306A;&#x4EE3;&#x5165;&#x30EB;&#x30FC;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

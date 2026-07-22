@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x6570;&#x5F0F;&#x5165;&#x529B; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/office/word/wordmath/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">数式入力</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>Word 2007 以降の数式エディターは結構優秀。
+数式入力で TeX を駆逐できる日も近いかもしれない。</p>
+<p>ちなみに、行形式に関しては別途 Word で資料を書いたので、参考にしてみてください。</p>
+<ul>
+<li><p><a href="http://cid-5c622397e11c979d.skydrive.live.com/self.aspx/ufcpp/MsOffice/WordMath.docx">Word の数式の基本</a>（docx 形式）</p>
+<ul>
+<li><p><a href="http://cid-5c622397e11c979d.skydrive.live.com/self.aspx/ufcpp/MsOffice/WordMath.xps">XPS 版</a></p>
+</li>
+<li><p><a href="http://cid-5c622397e11c979d.skydrive.live.com/self.aspx/ufcpp/MsOffice/WordMath.pdf">PDF 版</a></p>
+</li>
+</ul>
+</li>
+<li><p><a href="http://cid-5c622397e11c979d.skydrive.live.com/self.aspx/ufcpp/MsOffice/WordMathAcl.xlsx">ASCII → Unicode 変換表</a>（xlsx 形式）</p>
+</li>
+</ul>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="noMouse"></a>デモ： キーボードだけで入力可能</h2>
+<p>マウスで数式入力するのってなんであんなにストレスフルなんでしょうね。
+でも、安心を。
+Word 2007 で一新された数式エディターは、キーボードだけで数式を入力できます。</p>
+<p>入力しているところを撮影した動画↓。</p>
+<iframe width="480" height="390" src="http://www.youtube.com/embed/15mTBajM9QM" frameborder="0" allowfullscreen=""></iframe><iframe width="480" height="390" src="http://www.youtube.com/embed/k5dxDqpz0qs" frameborder="0" allowfullscreen=""></iframe>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="linear"></a>行形式</h2>
+<p>Word 2007 以降の数式エディターでは、<strong id="linear_format" class="keyword">行形式</strong>（linear format）と呼ばれる素のテキストで数式を入力することができます。
+行形式は以下のような特徴を持っています。</p>
+<ul>
+<li><p>Unicode を使って1行で書ける。</p>
+<ul>
+<li>数式以外との混在が可能。 TeX のように $ 記号で数式とその他の区切る必要がない。</li>
+</ul>
+</li>
+<li><p>Word の入力補助によって、\ 記号やスペースを駆使することで ASCII 文字だけで入力できる。</p>
+</li>
+<li><p>入力しやすさ、テキストとして表示したときの可読性、組版した結果の正確さのバランス重視。</p>
+<ul>
+<li>数式の意味を厳密に取り扱うには MathML の方が適切と思われる。</li>
+</ul>
+</li>
+</ul>
+<p>例として、二次方程式の解と指数関数のテイラー展開式を入力すると、以下の表のようになります。</p>
+<table summary="Word の数式入力の例">
+	<caption>
+		Word の数式入力の例
+	</caption>
+	<tr>
+		<td></td>
+		<th>Word 上での入力</th>
+		<th>行形式</th>
+		<th>組版結果</th>
+	</tr>
+	<tr>
+		<th>二次方程式の解</th>
+		<td><p>x=(-b+-\sqrt<span class="color"> </span>(b^2<span class="color"> </span>-4ac)<span class="color"> </span>)/2a<span class="color"> </span></p></td>
+		<td><p>x=(-b±√(b^2-4ac))/2a</p></td>
+		<td><figure>
+<p><a href="/assets/media/ufcpp2000/office/fig/eq01.png"><img src="/assets/media/ufcpp2000/office/fig/eq01.png" alt="" /></a></p>
+</figure></td>
+	</tr>
+	<tr>
+		<th>指数関数のテイラー展開式</th>
+		<td><p>f(x)<span class="color"> </span>=\sum<span class="color"> </span>_(n=0)^\infty<span class="color"> </span><span class="color"> </span>1/n!<span class="color"> </span>x^n<span class="color"> </span></p></td>
+		<td><p>f(x)=∑_(n=1)^∞▒〖1/n! x^n 〗</p></td>
+		<td><figure>
+<p><a href="/assets/media/ufcpp2000/office/fig/eq02.png"><img src="/assets/media/ufcpp2000/office/fig/eq02.png" alt="" /></a></p>
+</figure></td>
+	</tr>
+</table>
+<p>注： 「Word 上での入力」の列の青色の部分でスペースを入力します。
+また、テイラー展開式の行形式の ▒ となっているところは Unicode の MEDIUM SHADE 文字（U+2592）です。</p>
+<h2 id="latex"><a id="sec-generated-title-4"></a> <a id="latexNext"></a>今風の LaTeX</h2>
+<p>この行形式ですが、結構 TeX っぽいと思うかもしれません。
+割とその通りで、かなり LaTeX を研究して作っているそうです。</p>
+<p>ちなみに、LaTeX の開発者である <a href="http://ja.wikipedia.org/wiki/%E3%83%AC%E3%82%B9%E3%83%AA%E3%83%BC%E3%83%BB%E3%83%A9%E3%83%B3%E3%83%9D%E3%83%BC%E3%83%88">Leslie Lamport</a> 氏は<a href="http://research.microsoft.com/en-us/um/people/lamport/">今、Microsoft にお勤めだそうです</a>。</p>
+<h5 id="unicode-latex"><a id="sec-generated-title-5"></a>Unicode で書き直した LaTeX</h5>
+<p>ただ、LaTeX っぽい記述を、対応する Unicode 文字に変換してしまうところが実はポイント。
+元の ASCII テキストが残らないのを嫌う人もいるとは思いますが、\alpha/\beta よりは α/β の方が、行形式の可読性高いよねという。
+大元の発想は、「TeX って Unicode 文字使って書き直したら可読性高くなるんじゃね？」ということらしいです。</p>
+<p>ちなみに、\alpha を α に変換する処理は、数式エディターの機能というか、実は Office のオートコレクト機能だったりします。
+興味のある方はユーザーフォルダー以下にある、 &quot;AppData\Roaming\Microsoft\Office\MSO0127.acl&quot; を見てみてください。
+（acl ＝ Auto Correct List。）
+これの中に変換される文字一覧が入っています。</p>
+<h5 id="section-4"><a id="sec-generated-title-6"></a>ヒューリスティック</h5>
+<p>LaTeX だと厳密に  指定しないといけないのが結構面倒なんですよね。
+Word のは、経験則に則って、() を省略した時の挙動が文脈で変わるようにできてて、
+それが（余計なお世話と感じるかもしれないけど）慣れると案外気持ちよく数式書けるようになります。</p>
+<p>例えば、∫の後ろの () は消えなくて、/ の前後の () は消える。
+それは、実際に数式を書くとき、そう書くことが多いから。</p>
+<h5 id="section-5"><a id="sec-generated-title-7"></a>リアルタイムレンダリング</h5>
+<p>あと、やっぱり一番大きいのはこれですかね。打ってるそばから変換されていくところ。
+書いてるところと表示されてるところが離れてると、なんだかんだ言ってストレスですからねぇ。</p>
+<h2 id="section-6"><a id="sec-generated-title-8"></a> <a id="ref"></a>参考</h2>
+<ol>
+<li><p><a href="http://www.unicode.org/notes/tn28/UTN28-PlainTextMath-v2.pdf">Unicode Nearly Plain-Text Encoding of Mathematics</a>（数式エディター開発者が Unicode コンソーシアムで発表した論文）</p>
+</li>
+<li><p><a href="http://blogs.msdn.com/murrays/">Murray Sargent: Math in Office</a>（数式エディター開発者ブログ）</p>
+</li>
+</ol>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/office/word/">Word &#x7F8E;&#x6587;&#x66F8;&#x4F5C;&#x6210;&#x5165;&#x9580;</a></li><li><a href="/study/office/word/wordintro/">&#x307E;&#x3048;&#x304C;&#x304D;</a></li><li><a href="/study/office/word/word2007/">Word 2007&#x3001;Word 2010</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,325 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>DSL &#x3078;&#x306E;&#x30A2;&#x30D7;&#x30ED;&#x30FC;&#x30C1;&#xFF08;&#x5185;&#x90E8;&#x8A00;&#x8A9E;&#xFF09; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/dsl/dsl-1/dslapproachi/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="dsl">DSL へのアプローチ（内部言語）</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>前節では、「DSL を作ってから、それを使って開発」というのがはやりつつありますが、
+言語作りといってもそれほど大げさな話ではないというような話をしました。
+また、DSL のアプローチとして、
+「ちょっと凝った設定ファイル」とか「ちょっと凝ったライブラリ」というような流れがあるということも話しました。</p>
+<p>このページでは、「ちょっと凝ったライブラリ」の方、
+すなわち、内部言語的なアプローチを、
+具体例を挙げて紹介します。</p>
+<h2 id="section-1"><a id="sec-generated-title-2"></a> <a id="inner"></a>内部言語</h2>
+<p>何かプログラムを作る際、
+まずはライブラリを整備してからプログラムを作ることが多々あります。
+そして、
+ライブラリを作っていると、
+元言語の文法の制約を越えたいと思うことがときどきあります。
+時には、マクロやプリプロセスを使って無理やり言語の制約を越えたものを作ろうとするライブラリもあります。</p>
+<p>でも、そういうやり方の場合、
+無理やり感はぬぐえないことが多くて、
+最終的には新しい言語や文法を作ろうという流れになります。</p>
+<p>ここで、「1つの独立した新しい言語を作る」というのと、
+「元言語に新しい文法を追加する」というのの2つの流れがあるわけです。
+一般論として言うと、
+ライブラリの提供する機能があまり汎用的ではない場合には、ドメイン特化言語（DSL）として元言語から分離して「汎用言語＋DSL混在開発」する。
+汎用的ならば元言語を言語拡張するのが自然な流れかと思います。</p>
+<p>ここでは、そういう流れの過程として、
+以下のようなものを紹介したいと思います。</p>
+<ul>
+<li><p>あくまで元言語のライブラリとして提供されるもの</p>
+</li>
+<li><p>言語自体がメタプログラミングのための機能を有するもの</p>
+</li>
+<li><p>言語の拡張</p>
+</li>
+<li><p>言語内に別言語を埋め込み</p>
+</li>
+</ul>
+<h2 id="section-2"><a id="sec-generated-title-3"></a> <a id="library"></a>ライブラリ</h2>
+<p>元言語の文法に準拠して、ライブラリ提供という形で、
+元言語のモデリングパラダイムを越えようとしているようなものもあったり。</p>
+<p>形としてはライブラリであったりマクロであったりはするものの、
+新しいパラダイムを作ろうとしていたり、
+1つの言語として扱うに足りるものもあります。</p>
+<p>大体こういうのはパラダイムシフトの途中段階で起きる過渡的な現象で、
+新しいパラダイムが世に受け入れられれば、
+最終的には新しい言語になることが多いです。
+（逆に、受け入れられず人知れず消えていくことも多々。）</p>
+<h5 id="c-template"><a id="sec-generated-title-4"></a>C++ template</h5>
+<p>まず、マクロとして提供されていたものが、後に言語拡張として新しい構文になった例として、
+C++ の template があります。</p>
+<p>C++ 自身も、その起源は C 言語に対するプリプロセスで実現されていていました。</p>
+<h5 id="systemc"><a id="sec-generated-title-5"></a>SystemC</h5>
+<p>SystemC は C++ のライブラリとして提供されてるハードウェア設計言語。
+ソフトウェア的に動作検証もできるし、
+ハードウェア記述を生成することも可能。</p>
+<p>あくまで C++ のライブラリでしかないんですが、
+C++ の目的（ソフトウェア開発）と異なる目的（ハードウェア設計）に使うし、
+C++ のパラダイム（オブジェクト指向）よりも抽象度の高いモデル（システムレベル設計）を扱おうとしているので、
+1つの言語として扱われることが多いです。</p>
+<p>最初に書いたとおり、
+こういう元言語よりも抽象度の高い新しいパラダイムを目指す物は、
+いずれは独立した言語になっていくものなんですが。
+それを目指した SpecC という言語が政治的・商業的理由で失敗していたり、
+対象とする分野（ハードウェア設計）が開発者人口の少ない所なのが災いして、
+SystemC が業界標準の地位に納まりそうな雰囲気。</p>
+<h5 id="openmp"><a id="sec-generated-title-6"></a>OpenMP</h5>
+<p>C/C++ に並列プログラミング機能を追加するためのライブラリ。
+ライブラリと、
+#pragma （対応していないコンパイラには無視される）擬似命令を使って記述。
+OpenMP に対応していないコンパイラでコンパイルすると、
+並列化されないだけで動作結果は一致するように書ける。</p>
+<p>PS3 とかの、Cell プロセッサ向け開発環境はこれを使ってるらしい。</p>
+<p>並列化プログラミングパラダイムなんて、まさに過渡的な状況の真っ只中。
+どういう書式がプログラマーにとって書きやすいのかとか、
+パフォーマンスがよくなるかとか、
+まだ研究段階というかきっちりと固まっていない感じ。
+なので、#pragma を使ったりといった、「対応していないコンパイラへの配慮」みたいなものが必要なんだと思います。</p>
+<h2 id="section-3"><a id="sec-generated-title-7"></a> <a id="meta"></a>メタプログラミング</h2>
+<p>言語によっては、言語内に別のミニ言語を構築できるような機能を持つものがあります。
+その手の言語では、
+ライブラリ作りと言語作りの境目があいまいで、
+まず目的に応じたライブラリ ＝ ミニ言語（要するに DSL）を構築してから、
+そのミニ言語を使ってプログラミングを行うというのが日常茶飯事です。</p>
+<p>LISP などの関数型言語や、Ruby などの動的スクリプト言語が好んでこういうアプローチを取りたがるんですが、
+こういう機能を<strong id="meta_prog" class="keyword">メタプログラミング</strong>といいます。</p>
+<h3 id="section-4"><a id="sec-generated-title-8"></a> <a id="meta_sample"></a>メタプログラミングの例</h3>
+<p>まあ、サイト内に解説があることですし、
+ここでは 「<a href="/study/powershell/intro/abstract/#powershell">PowerShell</a>」 を使った例をあげてみます。
+（参考： 「<a href="/study/powershell/">Windows PowerShell</a>」。）</p>
+<p>詳細は PowerShell の解説の方を読んでいただくとして、
+PowerShell には本来、クラスを定義するための構文がありません。
+（.NET Framework のクラスを呼び出す機能だけ持っていて、
+自作のクラスを使いたい場合には、C# などを使って書いたものを読み込んで使う。）</p>
+<p>ですが、ちょっとしたライブラリを書くことで、
+以下のような構文でクラスもどきを作ることができます。</p>
+<pre><code class="language-powershell"><span class="powershellCommand">Def-Class</span> Point {
+  var x
+  var y
+
+  new {
+    <span class="keyword">param</span>(<span class="powershellVariable">$x</span> <span class="powershellOperator">=</span> 0<span class="powershellOperator">,</span> <span class="powershellVariable">$y</span> <span class="powershellOperator">=</span> 0)
+    <span class="powershellVariable">$_</span>.x <span class="powershellOperator">=</span> <span class="powershellVariable">$x</span>
+    <span class="powershellVariable">$_</span>.y <span class="powershellOperator">=</span> <span class="powershellVariable">$y</span>
+  }
+
+  method abs {
+    <span class="powershellOperator">[</span><span class="powershellType">Math</span><span class="powershellOperator">]</span><span class="powershellOperator">::</span>Sqrt(<span class="powershellVariable">$_</span>.x <span class="powershellOperator">*</span> <span class="powershellVariable">$_</span>.x <span class="powershellOperator">+</span> <span class="powershellVariable">$_</span>.y <span class="powershellOperator">*</span> <span class="powershellVariable">$_</span>.y)
+  }
+
+  method scale {
+    <span class="keyword">param</span>(<span class="powershellVariable">$a</span>)
+    <span class="powershellVariable">$_</span>.x <span class="powershellOperator">=</span> <span class="powershellVariable">$a</span> <span class="powershellOperator">*</span> <span class="powershellVariable">$_</span>.x
+    <span class="powershellVariable">$_</span>.y <span class="powershellOperator">=</span> <span class="powershellVariable">$a</span> <span class="powershellOperator">*</span> <span class="powershellVariable">$_</span>.y
+  }
+}</code></pre>
+<p>メンバー変数として x, y を持っていて、
+絶対値を求めるメソッド abs と、定数倍するメソッド scale があります。
+また、new がコンストラクタになります。</p>
+<p>このクラスを利用する側は以下のような感じ。</p>
+<pre><code class="language-powershell"><span class="powershellVariable">$x</span> <span class="powershellOperator">=</span> <span class="powershellCommand">New-Instance</span> Point
+<span class="powershellVariable">$y</span> <span class="powershellOperator">=</span> <span class="powershellCommand">New-Instance</span> Point 3 4
+
+<span class="keyword">function</span> show(<span class="powershellVariable">$x</span>)
+{
+  <span class="string">&#39;({0}, {1}), abs = {2}&#39;</span> <span class="powershellParameter">-f</span> <span class="powershellVariable">$x</span>.x<span class="powershellOperator">,</span> <span class="powershellVariable">$x</span>.y<span class="powershellOperator">,</span> (<span class="powershellCommand">Call-Method</span> <span class="powershellVariable">$x</span> abs)
+}
+
+show <span class="powershellVariable">$x</span>
+show <span class="powershellVariable">$y</span>
+
+<span class="powershellCommand">Call-Method</span> <span class="powershellVariable">$y</span> scale 2
+show <span class="powershellVariable">$y</span></code></pre>
+<p>（PowerShell in Action って本にこういう話があるらしい。
+ここで例に挙げたコードは、その話を聞いて自作してみたもの。
+その本を読んだことはないんでこれであってるかわからないけど。）</p>
+<p>これを実現するための“ちょっとしたライブラリ”の中身はこんな感じ → <a href="/assets/src/LibClass.ps1">LibClass.ps1</a>。
+（あと、上述のクラス定義・利用の例はこちら → <a href="/assets/src/TestLibClass.ps1">TestLibClass.ps1</a>。）</p>
+<p>Def-Class や New-Instance、var、method などの正体はいずれも関数だったりします。
+まあ、見ての通り、結構無理やりです。</p>
+<p>この“無理やり”を面白いと思うか、
+単なる自己満足と捕らえるか、
+あるいは、
+むしろ無茶苦茶なコード生みかねない欠点と考えるか、結構人それぞれなんですが。</p>
+<h3 id="section-5"><a id="sec-generated-title-9"></a> <a id="meta_problem"></a>メタプログラミングの問題</h3>
+<p>こういうメタプログラミングという発想は、
+非常に熱狂的な信者がいる一方で、
+一般にはあまりはやってはいません。
+もちろん、ミニ言語作成の難易度が高いという問題もありますが、
+メタプログラミングの問題はそれだけではないと思います。</p>
+<h5 id="section-6"><a id="sec-generated-title-10"></a>普通のプログラミング言語としては貧弱</h5>
+<p>1つの問題は、
+普通のプログラミングがやりやすい言語と、
+メタプログラミングしやすい言語は違うというものです。</p>
+<p>LISP なんかは、信者の方曰く「メタプログラミングができる非常に強力な言語」という話ですが、
+逆に、普通のプログラミングがしにくい言語です。
+元々持っている構文が貧弱で、
+むしろ、「メタプログラミングしてからじゃないとろくに使えない言語」という側面もあります。</p>
+<h5 id="section-7"><a id="sec-generated-title-11"></a>複数の設計方針の混在</h5>
+<p>もう1つ、こちらの方が深刻だと思うんですが、
+言語内に複数の設計方針が混在してしまうという問題もあります。</p>
+<p>例えば、先ほどの例だと、本来は自前でクラスを定義するという概念を持たないはずの PowerShell でクラスが定義できる状態になっています。
+まあ、この例の場合、PowerShell は元々 .NET Framework のクラスを使えるので、
+それほど変には思わないとは思いますが。
+やろうと思えばもっと奇抜な構文を作ったりもできます。</p>
+<p>やれることが多いというのは利点であると同時に欠点でもあります。
+なんでも自由にさせるよりも、
+ある程度のガイドラインで束縛した方が生産性が高かったりします。</p>
+<h5 id="section-8"><a id="sec-generated-title-12"></a>方言の発生</h5>
+<p>上述のような奇抜な構文作りは、さらに悪いことに、
+みんな好き勝手に構文を作れるわけです。</p>
+<p>人によって、パラダイムも違う、コーディングルールも違う、
+下手すると、まったく同じことやるのに2つの別の構文ができるなんてことも起こりうる。
+ミニ言語を作った本人はいいですが、
+それ以外の人にとってはたまったものじゃない。</p>
+<p>新しい言語っていうのは、作るのはもちろん、覚えて使うってのも結構な重労働です。
+普通のライブラリの使い方でも覚えるのは大変なのに、
+構文からして奇抜なものなんてなかなか覚えられません。</p>
+<h5 id="section-9"><a id="sec-generated-title-13"></a>ツールによるサポート</h5>
+<p>最近では、プログラミングは IDE（Integraged Development Environment： 統合開発環境）などのツールのサポートを受ける前提で作られています。
+ツールが優秀になっていて、サポートを受けながらなら学習も利用もずいぶん楽になっています。</p>
+<p>このような背景のもと、ツールまで含めた設計が必要なため、
+DSL 作成のハードルが高くなっています。
+また、「せっかく手間や学習コストを減らすために DSL を作ったのに、ツールのサポートがないから結局汎用言語の方が楽」
+という事態も起こっています。</p>
+<h2 id="section-10"><a id="sec-generated-title-14"></a> <a id="extend"></a>言語拡張</h2>
+<p>C++ の template なんかがそうですが、
+マクロなどを使って構築された言語もどきは、
+有用性が認められれば最終的には新しい言語になったり、
+元言語に新構文として取り入れられたりします。
+内部言語的アプローチの1つの終着点は、このような言語構文の拡張だと思います。</p>
+<p>ただ、そういう構文が本当に有用かどうかの判断には長い時間がかかります。
+あまりよく吟味せずに新構文を追加すると、
+言語仕様が無駄に膨れ上がって逆に使いにくくなる可能性もあります。</p>
+<p>「<a href="/study/dsl/dsl/mdd/">モデル化</a>」で言ったように、
+よいモデルというのは、必要十分で過不足のないものです。
+何でもかんでもやろうとすると複雑すぎて逆に何もできなくなります。
+また、わざわざ言語を拡張しなくても、
+別言語にして混在開発する手もあるので、
+言語拡張は慎重に行うべきです。</p>
+<p>DSL（ドメイン特化言語）という言葉がはやってる昨今、
+特定用途向けになりそうなものは別言語化、
+汎用的に使えそうなものは言語拡張というのが大まかな方針になりそう。</p>
+<h5 id="linq"><a id="sec-generated-title-15"></a>LINQ</h5>
+<p>言語拡張で、最近話題のものというとまずは C# 3.0 の LINQ（Language Integrated Query）。</p>
+<p>詳細は「<a href="/study/csharp/cheatsheet/ap_ver3/">C# 3.0 の新機能</a>」を見てもらうとして、
+簡単に言うと、
+C# や VB などのプログラミング言語に SQL 風のデータベース問い合わせ言語を統合するものです。
+（バージョン的には C# 3.0、VB9 から。）</p>
+<p>これ、もろに「<a href="#meta_problem">メタプログラミングの問題</a>」でいったような「言語設計方針の混在」なんですよね。
+オブジェクト指向プログラミング（OOP）パラダイムとリレーショナルデータベース（RDB）パラダイムの混在。
+いいことずくめでもなく、混乱の原因になるかもしれないものです。</p>
+<p>ただ、LINQ の場合、元々「OOP と RDB の壁を取り払いたい」という要望があってのもので、
+目指すところは「混在」ではなくて「統合」です。
+また、C# や VB のコンパイラ自体にデータベース問い合わせ機能を追加するんじゃなくて、
+SQL 風クエリをデータベースライブラリのメソッド呼び出しに変換するだけ、
+実際の問い合わせはライブラリまかせ、という仕様です。
+さらに、SQL 言語はもうかなり長い歴史を持っていますし、
+今後言語仕様に劇的な変化がありそうにもないです。</p>
+<p>LINQ は、
+「必要性・要望が高い」、
+「コンパイラの負担を抑えた実装が可能」、
+「SQL 言語の仕様がかなりしっかり固まっている」
+という3点があって初めて追加された構文だと思います。</p>
+<h5 id="vb9-xml"><a id="sec-generated-title-16"></a>VB9 の XML 統合</h5>
+<p>VB9 では、（C# 3.0 にも追加された）LINQ に加えて、
+「XML 統合」もありました。
+要するに、以下のような感じで VB のソースコード中に XML を埋め込むことができます。</p>
+<pre><code class="language-vbnet"><span class="keyword">Dim</span> doc = 
+  &lt;configuration&gt;
+    &lt;window
+      width=<span class="string">&quot;480&quot;</span>
+      height=<span class="string">&quot;360&quot;</span>
+      /&gt;
+  &lt;/configuration&gt;</code></pre>
+<p>こういう書き方で、XDocument 型のインスタンスが生成されるみたい。</p>
+<p>XML 統合も、LINQ と同じくある程度の要望はあります。
+これも、単なる構文糖で、実際はライブラリ呼び出しに変換されます。
+また、今のところは、データの表現方式として XML がかなり標準的な地位を持っています。</p>
+<p>でも、LINQ（クエリ統合）と比べると需要は小さいですし、
+今はともかく将来的にも XML が標準であり続けるか、
+あるいは仕様の拡張があったりしないか、
+というのを考えると、この言語拡張は結構リスキーなんですよね。
+XML 統合が VB9 にはあって C# 3.0 にはないのはそういう理由からです。</p>
+<h2 id="section-11"><a id="sec-generated-title-17"></a> <a id="inline"></a>インラインコード</h2>
+<p>C/C++ にはインラインアセンブラといって、アセンブリ言語を C 言語コード中に埋め込める機能があります。
+（標準機能ではないですが、ほとんどのコンパイラがこの機能を持っています。）
+これも一種の言語内言語ですよね。
+これはドメイン特化ではなく、
+異なる抽象度の混在開発が目的ですが。</p>
+<p>（一般に、抽象度が低い方が細かいチューニングができて、ピーク性能はよくなります。
+プログラム全体をアセンブリ言語のような抽象度の低いもので書くのは、
+労力に見合わないし、人的ミスによってかえってパフォーマンスが落ちたりしますが、
+ボトルネックになっている部分だけ抽象度を下げることで性能向上を目指します。
+）</p>
+<p>まあ、「限界までチューニングを求められる分野」というのを特殊な開発領域だと考えるなら、
+この抽象度混在開発もドメイン特化型開発の一種とみなせます。</p>
+<h5 id="perl-inline"><a id="sec-generated-title-18"></a>Perl の inline 文</h5>
+<p>Perl には、ほんとにソース内に別言語を埋め込める仕組みがあるみたい。</p>
+<ul>
+<li><p>まず、<code>install Inline::言語名</code>でモジュールをインストールする</p>
+</li>
+<li><p>ソース中に、<code>use Inline 言語名</code>をいうような記述を書くことで、 ソース中に別言語を含められる</p>
+</li>
+</ul>
+<p>別言語を言語内に埋め込んではあるんですが、
+実際には外部のコンパイラ・インタプリタ呼び出すみたいです。
+（見た目は内部言語的、実質は外部言語的。）
+要するに、
+コンパイル → 作った実行モジュールのロード・関数のコールみたいな部分を自動化してくれる機能。</p>
+<p>でも、こういう方式は、
+やりすぎるとソースファイルの中身が何なのか分からないカオスな状態になります。
+異なるパラダイムが1つのソースに混在するのはやはりあまりよいものではありません。</p>
+<p>最近は、こういうソースファイル中への別言語の埋め込みよりも、
+.NET Framework などのような共通基盤を用意して、
+異なる言語間の橋渡しをする方が主流です。</p>
+<h5 id="fortress"><a id="sec-generated-title-19"></a>Fortress の構文拡張</h5>
+<p>Fortress には syntax expander（直訳するなら構文拡張器？）ってのがあるみたい。</p>
+<p>Fortress の構文拡張では、まず、
+パース（構文解析）用の関数を自分で書かないといけません。
+例えば、Fortress プログラム中に SQL ライクな構文を追加するために、
+SQL のパーサ parseSql 関数を書くとします。
+そして、以下のようにして、syntax expander を定義します。</p>
+<pre><code class="language-csharp">syntax sql e end = parseSql(e)</code></pre>
+<p>すると、
+Fortress のソース中に、以下のような構文が書けるようになります。</p>
+<pre><code class="language-csharp">sql
+  SELECT x FROM points
+end</code></pre>
+<p>sql ～ end の間のブロックの中身が parseSql 関数に渡されて、
+それに基づいて parseSql 内で処理が行われるっぽい。</p>
+<p>これも、やってることはコンパイラの自作＆自作言語の埋め込みみたいなものですね。
+（見た目は内部言語的、実質は外部言語的。）
+「<a href="#meta_prog">メタプログラミング</a>」機能でもあります。</p>
+<p>はっきりいって、数値計算用の言語でパーサ書くなんてナンセンスですけど。
+（Fortess は数値計算用。
+自称では「general purpose」って言ってますけど、どうみても汎用プログラミングには必要なさそうな機能もてんこ盛り。）
+外部コンパイラを呼び出す Perl の inline 構文の方がまだ使いやすそう。</p>
+<p>まあ、Fortress の売りは、
+「数学記号に近い記法でプログラムを書けること」です。
+数学記号は、一般に、プログラミング言語よりも自由な書き方をしますので、
+Fortress の組み込みの機能で対応できないような数学記号に対応するために備わっている機能じゃないかと思います。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/dsl/dsl-1/">DSL (Domain Specific Language)</a></li><li><a href="/study/dsl/dsl-1/dsl/">DSL &#x6982;&#x8981;</a></li><li><a href="/study/dsl/dsl-1/dslapproacho/">DSL &#x3078;&#x306E;&#x30A2;&#x30D7;&#x30ED;&#x30FC;&#x30C1;&#xFF08;&#x5916;&#x90E8;&#x8A00;&#x8A9E;&#xFF09;</a></li><li><a href="/study/dsl/dsl-1/general/">&#x6C4E;&#x7528;&#x8A00;&#x8A9E;&#x306E;&#x9032;&#x5316;</a></li><li><a href="/study/dsl/dsl-1/dslother/">DSL &#x304C;&#x3089;&#x307F;&#x306E;&#x305D;&#x306E;&#x4ED6;&#x8AF8;&#x3005;</a></li><li><a href="/study/dsl/dsl-1/dslconclusion/">DSL &#x3092;&#x53D6;&#x308A;&#x5DFB;&#x304F;&#x72B6;&#x6CC1;&#x3068;&#x3053;&#x308C;&#x304B;&#x3089;</a></li><li><a href="/study/dsl/dsl-1/model/">&#x30C9;&#x30E1;&#x30A4;&#x30F3;&#x7279;&#x5316;&#x30E2;&#x30C7;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

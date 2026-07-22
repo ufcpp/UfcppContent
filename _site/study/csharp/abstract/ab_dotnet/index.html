@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>.NET &#x3068;&#x306F; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/abstract/ab_dotnet/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="net">.NET とは</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>C# は「.NET 上で動く言語」（正確には Common Language Infrastructure (CLI) 規格上で動く言語）です。
+（規格上は、C# と .NET は独立していますが、実質的には一体的に開発されています。）</p>
+<p>.NET は、Microsoft が Windows 向けに作った .NET Framework という開発プラットフォームが起源です。
+その後、Linux や Mac OS などを含むクロスプラットフォーム向けに再開発され、こちらは .NET Core と名づけられました。
+これらを総称して(あるいは統合して) .NET と呼びます。</p>
+<p>また、(.NET Framework の発表からほどなくして、 .NET Core より前から)
+.NET Framework 互換プラットフォームとして Mono というプロジェクトがあります。
+Mono は現在では iOS や Android 上でも動いていて、<a href="https://docs.microsoft.com/ja-jp/xamarin/">Xamarin</a> や <a href="https://unity.com/">Unity</a>の根幹となっています。</p>
+<p>2019年現在、Mono と .NET Core の統合作業が行われています。
+統合された暁にはこれを指して「.NET」と呼ばれる予定です。</p>
+<h2 id="net-framework"><a id="sec-generated-title-2"></a> <a id="framework"></a>.NET Framework</h2>
+<p>Microsoft <strong id="dotnet" class="keyword">.NET Framework</strong> とは Microsft が提供する、（2000年6月に発表された）開発プラットフォームです。</p>
+<p>.NET Framework では、プログラムはネイティブコードではなく、<strong id="il" class="keyword">IL</strong> (Intermediate Language)と呼ばれる中間コードにコンパイルされます。
+この IL を実行するための環境（の仕様）を <strong id="cli" class="keyword">CLI</strong> (Common Language Infrastructure)といいます。
+IL は、この CLI 仕様にそった実装さえされていれば任意のプラットフォームで実行することが出来ます。</p>
+<p>また、IL は CLI によってファイル、メモリ、ネットワーク接続などのリソースを管理されていて、
+メモリの解放し忘れなどによるリソースリークを防ぐことが出来ます。</p>
+<p>.NET Framework に対応したすべての言語は IL にコンパイルされます。
+現在、.NET Framework に対応している言語は Microsoft が提供している C#、VB.NET、F#、C++/CLI (C++を.NETに適応するように改良したもの) や、
+サードパーティの提供する Perl や Python など、20種類以上のものがあります。
+.NET Framework では、これらすべての言語で同じライブラリを利用できますし、
+異なる言語で書かれたプログラムを呼び出すことが出来ます。
+例えば、C++/CLI で書かれたクラスを継承した新しいクラスを VB.NET で作り、そのクラスを C# から呼び出すといったことも可能です。</p>
+<p>また、.NET Framework を用いることでプログラマは COM やレジストリなどの知識がなくても分散アプリケーションの作成、配布が容易に行えます。</p>
+<p>VB、JScript、C++ などの既存の言語は、.NET Framework に対応出来るように拡張されています。
+一方、<strong id="csharp" class="keyword">C#</strong> は初めから .NET Framework 上で使うことを想定して設計された言語です。</p>
+<p>そのほかにも .NET Framework はさまざまな特徴を備えています。
+表1に、.NET Framework の特徴を簡単にまとめます。
+詳細については
+<a href="http://www.microsoft.com/japan/developer/net/framework/dnmag_framework.asp">MSDN</a>
+をご覧ください。</p>
+<table summary=".NET Framework の特徴">
+	<caption>
+		.NET Framework の特徴
+	</caption>
+	<tr>
+		<td><p>言語の統合（共通型システム）</p></td>
+		<td><p>C++、VB、C#など複数の言語を統合する。例えば、VBで作成したクラスの派生クラスをC++で作成することも可能である。</p></td>
+	</tr>
+	<tr>
+		<td><p>プログラミングの簡素化</p></td>
+		<td><p>COMやレジストリの知識を必要としない。</p></td>
+	</tr>
+	<tr>
+		<td><p>さまざまなプラットフォームでの実行</p></td>
+		<td><p>Common Language Infrastructure (CLI)をサポートする任意のプラットフォームで実行することが出来る。将来的にはWindows以外のプラットフォーム用のCLRも作成される可能性がある。</p></td>
+	</tr>
+	<tr>
+		<td><p>自動リソース管理</p></td>
+		<td><p>ファイル、メモリ、ネットワーク接続などのリソースの利用状況を自動的に追跡し、アプリケーションによるリソースリークを防ぐ。</p></td>
+	</tr>
+	<tr>
+		<td><p>充実したライブラリ/フレームワーク</p></td>
+		<td><p>ウェブ サーバー、デスクトップ クライアント、データベース アクセス、ゲーム等々、 さまざまな種類のプログラムを作るためのフレームワークが整っています。</p></td>
+	</tr>
+</table>
+<h2 id="net-core"><a id="sec-generated-title-3"></a> <a id="netcore"></a>.NET Core</h2>
+<p>2014年頃から Microsoft はオープンソース化の動きを見せるようになりました。
+今では、GitHub 最大のコミット数を誇る会社になっています。</p>
+<p>その流れに沿って、これまで(Microsoft 自身では) Windows でしか提供してこなかった .NET を Linux や Mac OS でも動くように、
+オープンでクロスプラットフォームに作り直すことになり、.NET Core と名づけました。</p>
+<p>(ちなみに、当時も Mono は Linux でも Mac OS でも動いていましたが、
+当時の情勢としてはモバイル(iOS/Android)に注力していて、
+Linux/Mac OSでの安定性・パフォーマンスはそれほど良くなく、
+.NET Core は Mono とは別に新たに作り直しています。
+ただし、以前から .NET Framework の基本ライブラリのソースコードはオープンソース化されつつあり、
+Mono も徐々に .NET Framework のソースコードを取り込みつつある状況だったので、まったくの別物というわけではありません。)</p>
+<p>2016年6月の .NET Core 1.0 リリース時点では「最低限動くもの」という感じで、
+標準提供されているライブラリは .NET Framework のサブセットでした。
+しかし、2019年9月リリースの .NET Core 3.0 では(Windows でしか動かないものはありますが)主要なものが一通り移植され、
+新規開発では .NET Framework ではなく .NET Core を使うことが推奨されています。</p>
+<h2 id="net-1"><a id="sec-generated-title-4"></a> <a id="dotnet"></a>.NET</h2>
+<p>前述の通り、作り直しのために一度は分岐した .NET Framework と .NET Core ですが、
+現在は再統合の流れ(というより、.NET Core を推奨して、.NET Framework は保守モード)になっています。
+また、.NET Core と Mono の統合も進められています。</p>
+<p>.NET Framework は 4.8 が最終バージョンとなります。
+.NET Core に一本化されるため、.NET Core 3.1 の次のバージョンからは「.NET」という呼称に変わります。</p>
+<p>ちなみに、.NET Framework 4.X との混乱を避けて、
+.NET Core 3.1 の次は .NET 5 となる予定です。</p>
+<h2 id="net-framework-1"><a id="sec-generated-title-5"></a> <a id="version"></a>.NET Framework のバージョン</h2>
+<p>移転: 「<a href="/study/csharp/cheatsheet/list_versions/">バージョン</a>」</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/abstract/">C# &#x306E;&#x6982;&#x8981;</a></li><li><a href="/study/csharp/abstract/ab_csharp/">C# &#x3068;&#x306F;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

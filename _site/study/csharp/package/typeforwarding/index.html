@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x578B;&#x30D5;&#x30A9;&#x30EF;&#x30FC;&#x30C7;&#x30A3;&#x30F3;&#x30B0; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/package/typeforwarding/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">型フォワーディング</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>.NETでは、「アセンブリ＋名前」の組み合わせで型の所在を検索します。
+その結果、異なるアセンブリでまったく同じ名前の型を定義しても、それぞれ別の型として扱われます。
+これは、人的ミスの削減や、悪意あるコードへの耐性につながる一方で、
+型の定義場所を移動させたいときに困ります。</p>
+<p>そこで.NETは、型の検索の際に、別のアセンブリに転送する仕組みを提供しています。
+これを型フォワーディング(type forwarding: 型の転送)と呼びます。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>サンプル</h5>
+<ul>
+<li><a href="https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Package/TypeForwarding">https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Package/TypeForwarding</a></li>
+</ul>
+<h2 id="typeforwardedto"><a id="sec-generated-title-3"></a> <a id="TypeForwardedTo"></a>TypeForwardedTo属性</h2>
+<p>型フォワーディングには、<code>TypeForwardedTo</code>属性(<code>System.Runtime.CompilerServices</code>)というものを使います。</p>
+<p>例えば、ActualLibraryという名前のライブラリがあって、この中に以下のようなクラスが定義されているとします。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> Class1
+{
+    <span class="keyword">public</span> <span class="keyword">string</span> Name =&gt; GetType().Assembly.GetName().Name + <span class="string">&quot; / &quot;</span> + nameof(Class1);
+}</code></pre>
+<p>このActualLibraryを参照して、以下のような.csファイルを含む、TypeForwardingLibraryという名前のライブラリを作ります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Runtime.CompilerServices;
+
+[<span class="keyword">assembly</span>: TypeForwardedTo(typeof(Class1))]</code></pre>
+<p>これで、アプリが「TypeForwardingLibraryにあるはずのClass1」を使おうとすると、
+実際には「ActualLibraryで定義されたClass1」が返ってきます。</p>
+<p><img src="/assets/media/1022/typeforwarding.png" alt="型フォワーディング" /></p>
+<p>これで、例えば、「元々ライブラリAにあった型を、ライブラリBに移した」という場合でも、
+Aに<code>TypeForwardedTo</code>属性を書いておけば、互換性を崩さずに型を移動できます。</p>
+<p>で、型の転送ができて何が嬉しいかというと、主に2通りの用途が考えられます。</p>
+<ul>
+<li>モジュール分割</li>
+<li>バックポーティング</li>
+</ul>
+<!-- original-page-break -->
+<h2 id="section-3"><a id="sec-generated-title-4"></a> <a id="modular"></a>モジュール分割</h2>
+<ul>
+<li><a href="https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Package/TypeForwarding/VersioningSamples">サンプル</a></li>
+</ul>
+<p>ありがちな技術的負債の1つに、単一のライブラリに債務を詰め込み過ぎるというのがあります。</p>
+<p>取り急ぎ開発を進めていると、クラスの置き場に困ってついつい1つのライブラリになんでもかんでも置いてしまうということがあります。
+そして、後から振り返ると、別々のライブラリに分けたくなったりします。</p>
+<p>例えば、以下の様な状態です。</p>
+<p><img src="/assets/media/1023/monolithic.png" alt="詰め込み過ぎたライブラリ" /></p>
+<p>「よく使う処理を拡張メソッドにして、ライブラリ化しよう」と試みて、気がつけば、文字列関連、ネットワーク関連、数値処理関連など、全然違う債務を1箇所に詰め込み過ぎてしまっています。
+こういう状態を「一枚岩」(monolithic)であると言います。</p>
+<p>そして、このライブラリの利用者が増えてきた頃に、「文字列関連だけが使いたい」「ネットワーク関連だけが使いたい」など、個別の要求が出てきます。</p>
+<p>反省して複数のライブラリに分割することになったとして、問題は既存のユーザーです。
+「アセンブリ＋名前」で型を探すわけで、別ライブラリに移動してしまうと互換性を崩します。</p>
+<p>そこで、型フォワーディングの出番です。
+詰め込み過ぎたライブラリを別のライブラリに分割した上で、元のライブラリには<code>TypeForwardedTo</code>属性だけを書きます。</p>
+<p><img src="/assets/media/1024/modular.png" alt="詰め込み過ぎたライブラリをモジュール分割" /></p>
+<p>これで、互換性は崩さずに型を移動できます。</p>
+<p>修正後のように、債務ごとに綺麗に分かれた状態を「モジュール型」(modular)と言います。
+一枚岩な状態は、依存関係が大きくなりすぎたり、部分的な更新ができなかったりといった問題を抱えることになるので、
+モジュール型な状態を保つよう心がけるべきです。</p>
+<h3 id="section-4"><a id="sec-generated-title-5"></a> <a id="transpose"></a>余談: 逆のやり方</h3>
+<p>ちなみに、<code>TypeForwardedTo</code>属性を付けるのを逆にすることもできます。</p>
+<p>上記の例で言うと、</p>
+<ul>
+<li>将来的にライブラリを StringClassLibrary, HttpClassLibrary, NumericClassLibrary の3つに分けることに決まった</li>
+<li>が、今は分けてる余裕ない。MonolithicClassLibraryは今のままで維持したい</li>
+<li>なので、新しく作ったStringClassLibrary, HttpClassLibrary, NumericClassLibrary の側に<code>TypeForwardedTo</code>属性をつけて、MonolithicClassLibraryに型を転送する</li>
+</ul>
+<p>というやり方もできます。</p>
+<p>内部的には一枚岩のままなので、根本的には問題解決しません(依存関係は大きいままだし、部分更新できない)が、
+「将来こう分割するよ」という予告にはなります。</p>
+<h3 id="net"><a id="sec-generated-title-6"></a> <a id="modular-dotnet"></a>余談: .NET 標準ライブラリのモジュール化</h3>
+<p>「初期段階で一枚岩に作ってしまって、後からモジュール分割」という流れ、
+.NET Frameworkの標準ライブラリが典型例だったりします。</p>
+<p>.NET Framework 4までは、標準ライブラリ中のクラスの大半がmscorlib.dllというアセンブリに詰め込まれていました。
+それが、.NET Framework 4.5で、System.Net.dll, System.Threading.dll, System.Linq.dll… など、債務ごとに分割されました。</p>
+<p>ちなみに、方法としては前節の「<a href="#transpose">逆のやり方</a>」でやっています。
+mscorlib.dll自体は元のままで、モジュール分割した側のアセンブリに<code>TypeForwardedTo</code>属性が入っています。</p>
+<p>一方で、2015年に、Windowsデスクトップ向けの.NET Frameworkとは別に、
+クロスプラットフォーム向けの「.NET Core」というバージョンの別実装が出てきました。</p>
+<ul>
+<li><a href="https://github.com/dotnet/coreclr">.NET Core Runtime (CoreCLR)</a></li>
+<li><a href="https://github.com/dotnet/corefx">.NET Core Libraries (CoreFX)</a></li>
+</ul>
+<p>こっちのバージョンでは、最初からモジュール分割済みの実装が行われています。</p>
+<!-- original-page-break -->
+<h2 id="section-5"><a id="sec-generated-title-7"></a> <a id="backporting"></a>バックポーティング</h2>
+<ul>
+<li><a href="https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Package/TypeForwarding/FormattableString">サンプル</a></li>
+</ul>
+<p><a href="/study/csharp/cheatsheet/listfxlangversion/">C#の言語バージョンと.NET Frameworkバージョン</a>で書いていますが、
+C#の新しめの機能を、古いバージョンの.NET上で動かすためには、
+いくつかライブラリのバックポーティング(新しいバージョンで追加された機能を、古いバージョンに向けて移植する作業)が必要なものがあります。</p>
+<p>ここで問題になるのが、バージョンの混在です。</p>
+<p>C# 5.0の<a href="/study/csharp/async/sp5_async/">async/await</a>を例にとって話しましょう。
+まず、以下のように、.NET 4.5で完結している場合にはそもそもバックポーティングが必要なく、何の問題もありません。</p>
+<p><img src="/assets/media/1025/async45.png" alt=".NET 4.5 での async/await" /></p>
+<p>一方で、例えばAsyncBridgeという名前でバックポーティング用のライブラリを用意したとします。
+これを使う場合でも.NET 3.5で完結するなら、以下のように特に問題は置きません。</p>
+<p><img src="/assets/media/1026/async35.png" alt=".NET 3.5 での async/await バックポーティング" /></p>
+<p>問題は、.NET 4.5向けライブラリと.NET 3.5向けライブラリの混在です。
+.NET 4.5向けのものは標準ライブラリ(System.Threading.Tasks.dll)の<code>Task</code>クラスを参照し、
+.NET 3.5向けのものはバックポーティング(AsyncBridge.dll)の<code>Task</code>クラスを参照している状態になります。
+同名の別実装があると、どちらを参照すればいいのかわからなくなって色々と問題を起こします
+(回避方法もなくはないものの、基本的にはコンパイルできなくなります)。</p>
+<p>この問題の解決にも型フォワーディングが使えます。
+以下のように、標準ライブラリへの型フォワーディングを書いたAsyncBridge.dllを用意します。</p>
+<p><img src="/assets/media/1027/asyncmixed.png" alt="標準ライブラリとバックポーティングの混在" /></p>
+<p>つまり、以下のような実装が必要になります。</p>
+<ul>
+<li>.NET 3.5向けに、標準ライブラリをバックポーティング実装を書いた AsyncBridge.dll を作る
+<ul>
+<li>.NET 3.5アプリからはこれを参照する</li>
+</ul>
+</li>
+<li>.NET 4.5向けに、標準ライブラリへの型フォワーディングを書いた AsyncBridge.dll を作る
+<ul>
+<li>.NET 4.5アプリからはこれを参照する</li>
+</ul>
+</li>
+</ul>
+<p>ちなみに、<a href="https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Package/TypeForwarding/FormattableString">サンプル</a>では、async/awaitではなく、もっと実装が簡単な<a href="/study/csharp/start/st_string/#FormatableString">FormatableString</a>の実装例を書いています。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/package/">&#x30D1;&#x30C3;&#x30B1;&#x30FC;&#x30B8;&#x7BA1;&#x7406;</a></li><li><a href="/study/csharp/package/project/">&#x30D7;&#x30ED;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x5206;&#x5272;</a></li><li><a href="/study/csharp/package/toplevelaccessibility/">&#x30C8;&#x30C3;&#x30D7; &#x30EC;&#x30D9;&#x30EB;&#x306E;&#x30A2;&#x30AF;&#x30BB;&#x30B7;&#x30D3;&#x30EA;&#x30C6;&#x30A3;</a></li><li><a href="/study/csharp/package/pkgcodeawarelibrary/">Code-Aware&#x306A;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

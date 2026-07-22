@@ -1,0 +1,237 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5909;&#x6570;&#x3068;&#x5F0F; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/start/st_variable/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">変数と式</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>数学では、“整数 <span class="math">n</span>”とか、“実数 <span class="math">x</span>”などといった変数を用意し、
+“<span class="math">
+ax<sup><span class="normal">2</span></sup><span class="normal">+</span> bx <span class="normal">+</span> c
+</span>”といった式を用いて計算を行います。
+それと同じようにプログラミングでも、まず、変数を用意し、式を並べて計算を行っていきます。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p><code>int x</code>… int が型で、x が変数名。</p>
+</li>
+<li><p><code>int x = 1 + 2;</code>… 式も数学っぽく書ける。</p>
+</li>
+<li><p>リテラル: 文字通りの定数。0 とか。</p>
+</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="variable"></a>変数</h2>
+<p>数学では“整数”とか“実数”といったさまざまな種類の「型」が存在します。
+「<span style="font-style:italic;">n</span> は整数に使うことが多い」といったような暗黙の了解も存在しますが、基本的には、「整数 <span style="font-style:italic;">n</span>」といったように、「型」を明示します。</p>
+<p>数学の場合と同様に、プログラミング言語にも変数の「<strong id="type" class="keyword">型</strong>（type）」というものが存在します。
+特に、<em>C# では各変数は必ず「型」を明示的に指定して宣言してやる必要があります</em>。
+(この書き方を<strong id="var-decl" class="keyword">変数宣言</strong>と言います。)
+。
+以下に例を挙げます。</p>
+<pre><code class="language-csharp"><span class="keyword">bool</span>   b; <span class="comment">// 論理値型の変数 b</span>
+<span class="keyword">int</span>    n; <span class="comment">// 整数型の変数 n</span>
+<span class="keyword">double</span> x; <span class="comment">// 実数型の変数 x</span>
+<span class="keyword">char</span>   c; <span class="comment">// 文字型の変数 c</span>
+<span class="keyword">string</span> s; <span class="comment">// 文字列型の変数 s</span></code></pre>
+<p>左側の <code>bool</code> や <code>int</code> などが変数の「型」で、
+その右側の <code>b</code> や <code>n</code> などが変数名になります。
+<code>int</code> や <code>double</code>、<code>string</code>などは、C# にもともと用意された変数の「型」(これを<em>組込み型 (embedded type)</em>という)です。</p>
+<p>C#の組込み型の型名については「<a href="/study/csharp/start/st_embeddedtype/">組込み型</a>」で説明します。</p>
+<p>ちなみに、C# には、変数から値を読みだす前に、必ず何らかの値を代入する必要があります。
+詳しくは「<a href="/study/csharp/start/definiteassignment/">[雑記] 明確な代入ルール</a>」で説明します。</p>
+<h5 class="version version7">Ver. 7.0</h5>
+<p>C# 6.0 までは、変数宣言は単独で書く必要がありましたが、
+C# 7.0 以降、<a href="#expression">式</a>の途中で変数宣言をできる構文がいくつか追加されています。
+詳しくは「<a href="/study/csharp/datatype/declarationexpressions/">特殊な変数宣言</a>」で説明します。</p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="literal"></a>リテラル</h2>
+<p><strong id="literal" class="keyword">リテラル</strong>(literal: “文字通りの定数”という意味。直定数などと訳されることもある。)とは、要するに、「10」や「4.56」というように、直接ソースファイル中に値が書かれた定数のことです。</p>
+<pre><code class="language-csharp"><span class="keyword">bool</span>   b = <span class="keyword">true</span>;    <span class="comment">// 論理値リテラル</span>
+<span class="keyword">int</span>    n = <span class="number">26983</span>;   <span class="comment">// 整数リテラル</span>
+<span class="keyword">double</span> x = <span class="number">10</span>.<span class="number">362</span>;  <span class="comment">// 実数リテラル</span>
+<span class="keyword">char</span>   c = <span class="string">&#39;a&#39;</span>;     <span class="comment">// 文字リテラル</span>
+<span class="keyword">string</span> s = <span class="string">&quot;文字列&quot;</span>; <span class="comment">// 文字列リテラル</span></code></pre>
+<p>ここで使われている <code>=</code> は代入を意味し、左辺の変数に右辺の値を代入するものです。
+詳しくは次節の式と文で説明します。</p>
+<p>リテラルの書き方の詳細は「<a href="/study/csharp/start/st_embeddedtype/">組込み型</a>」で説明します。</p>
+<p>ちなみに、定数（constant）というとリテラルとは別の意味で使われます
+（参考: 「<a href="/study/csharp/start/sp_const/">定数</a>」）。</p>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="updates"></a>いろいろな変数宣言の仕方</h2>
+<p>C# のアップデートで、いろいろな変数宣言の仕方が追加されています。</p>
+<h3 id="section-6"><a id="sec-generated-title-6"></a> <a id="infer"></a>型推論</h3>
+<h5 class="version version3">Ver. 3.0</h5>
+<p>C# 3.0 から、<strong id="var" class="keyword">var</strong> キーワードを使って、型を明示せずに変数を定義できるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> b = <span class="keyword">true</span>;    <span class="comment">// 論理値</span>
+<span class="keyword">var</span> n = <span class="number">26983</span>;   <span class="comment">// 整数</span>
+<span class="keyword">var</span> x = <span class="number">10</span>.<span class="number">362</span>;  <span class="comment">// 実数</span>
+<span class="keyword">var</span> c = <span class="string">&#39;a&#39;</span>;     <span class="comment">// 文字</span>
+<span class="keyword">var</span> s = <span class="string">&quot;文字列&quot;</span>; <span class="comment">// 文字列</span></code></pre>
+<p>このとき、変数の型は右辺の値から推論されます。
+この例の場合、b は論理値ですし、n は整数になります。</p>
+<p>var キーワードを使った変数の定義は、あくまで型推論です。
+右辺値がない（推論の手がかりがない）場合には var を使うことは出来ません。
+また、「どんな型でも代入できる変数」を作れるわけではありません。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> x; <span class="comment">// これはコンパイルエラー</span>
+x = <span class="number">1</span>;</code></pre>
+<p>また、var で宣言した変数の型が途中で変わることもりません。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> n = <span class="number">0</span>; <span class="comment">// この時点で n は int になるので、</span>
+n = <span class="string">&quot;&quot;</span>;    <span class="comment">// これはコンパイルエラー</span></code></pre>
+<p>ちなみに、var の利用には賛否両論あったりします。
+参考：「<a href="/study/csharp/start/sp3_var/">[雑記] 型推論の是非</a>」。</p>
+<h3 id="dynamic"><a id="sec-generated-title-7"></a> <a id="dynamic"></a>dynamic</h3>
+<h5 class="version version4">Ver. 4.0</h5>
+<p>C# 4.0 では、動的な型の扱いもできるようになりました。
+（詳しくは「<a href="/study/csharp/dynamic/sp4_dynamic/">dynamic</a>」参照。）</p>
+<p>ただし、動的な型は C# において必要とされる場面はあまりなく、dynamic の利用場面はそれほど多くありません。
+以下のような場合に利用することになるでしょう。</p>
+<ul>
+<li><p>.NET 以前の古いコード（COM など）との連携（参考:「<a href="/study/csharp/interop/sp_pinvoke/#COM">COM</a>」</p>
+</li>
+<li><p>動的言語との連携</p>
+</li>
+</ul>
+<p>この例のように、dynamic は主に「連携」のための機能です。</p>
+<h3 id="section-7"><a id="sec-generated-title-8"></a> <a id="tuple"></a>タプル</h3>
+<h5 class="version version7">Ver. 7.0</h5>
+<p>C# 7.0 で<a href="/study/csharp/datatype/tuples/">タプル</a>という機能が追加されて、
+複数の変数をまとめたり、同時に宣言したりできるようになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">var</span> (x, y) = (<span class="number">1</span>, <span class="number">2</span>);
+<span class="keyword">var</span> (sum, dif) = (x + y, x - y);</code></pre>
+<p><code>()</code>の中に複数の値を並べている部分がタプルです。
+この例のように、<code>x</code>, <code>y</code> などの変数を同時に宣言したり、
+<code>x + y</code>, <code>x - y</code> の計算を一緒に行ったりできます。</p>
+<h2 id="section-8"><a id="sec-generated-title-9"></a> <a id="identifier"></a>識別子名</h2>
+<p>変数など、プログラマが自由に名前を付けることの出来るものを<strong id="identifier" class="keyword">識別子</strong>(identifier)と呼びます。</p>
+<p>詳細は「<a href="/study/csharp/start/misc_identifier/">[雑記] 識別子名に使える文字</a>」にて説明しますが、
+識別子の名前に使える文字には制限があります。
+細かいことは抜きにして実用の範囲で考えると、
+<em>
+先頭には <code>_</code> もしくはアルファベット(ソースファイルを Unicode で保存すれば仮名漢字も)、
+先頭以外にはそれに加えて数字を使える
+</em>と覚えておけば問題ありません。
+（ちなみに、Unicode で保存しても全角の記号文字（＊とか＄とか）は変数名には使えません。）</p>
+<p>ただし、int や if というような、C# のキーワードになっているものは、
+そのままでは識別子として利用できません。</p>
+<h5 id="section-9"><a id="sec-generated-title-10"></a>逐語的識別子</h5>
+<p>先頭に @ を付けることで、
+キーワードも識別子として利用可能になります。
+たとえば、<code>@this</code> や <code>@for</code> と書くことで、それぞれ this、for という名前の変数を作ることができます。
+この <code>@</code> 付きの識別子を逐語的識別子（verbatim identifier）と呼びます。</p>
+<p>C# ではキーワードになっていても、他のプログラミング言語ではキーワードでない場合があります。
+逐語的識別子は、このような、他のプログラミング言語との連携を想定したものです。
+例えば、this という単語が識別子でない言語の場合、this という名前の変数を作ることができます。
+この変数を C# から参照したければ、@this というように書きます（C# では、this はキーワード）。</p>
+<p>ちなみに、この先頭の @ 記号は、識別子名の一部としては認識されません。
+例えば、x と @x は全く同じ識別子名として認識されます。</p>
+<h2 id="section-10"><a id="sec-generated-title-11"></a> <a id="expression"></a>式と演算子</h2>
+<p>変数の用意が出来たら式を立てて計算を行っていきます。
+それでは具体的な例を見ながら説明して行くことにしましょう。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> a = <span class="number">3</span>, b = <span class="number">5</span>, c, d; <span class="comment">// 整数型の変数を4つ用意</span>
+c = (a + b) / <span class="number">2</span>;        <span class="comment">// c に a と b の平均値を代入</span>
+d = a * b;              <span class="comment">// d に a と b の積を代入</span></code></pre>
+<p>この、<code>c = (a + b) / 2</code> とか <code>d = a * b</code> という部分が<strong id="expression" class="keyword">式</strong>（expression）です。
+式は、変数、リテラル、演算子などで構成されます。</p>
+<p><strong id="operator" class="keyword">演算子</strong>（operator）とは、数学でよく使う ＋－×÷ などのことです。
+(ただし、C# では、<em>
+掛け算のために <code>*</code> を、割り算のために <code>/</code> を使います
+</em>。また、代入のための <code>=</code> も演算子の一種です。)
+C# では、数学などで使う記法とほぼ同じ書き方で四則演算などが行えます。
+加減算よりも乗除算のほうが計算の優先順位が高いのも数学と同じです。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> a = <span class="number">5</span> * <span class="number">2</span> + <span class="number">3</span> * <span class="number">4</span>; <span class="comment">// 掛け算が先。a の値は (5&#215;2) ＋ (3&#215;4) で 22 になる。</span></code></pre>
+<p>C# の演算子の一覧と優先順位は「<a href="/study/csharp/start/st_operator/">組込み演算子</a>」で説明します。</p>
+<h2 id="section-11"><a id="sec-generated-title-12"></a> <a id="statement"></a>文</h2>
+<p><strong id="statement" class="keyword">文</strong>(statement)とはプログラムの処理の単位のことです。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> c, d;         <span class="comment">// 宣言文: 変数を用意。</span>
+<span class="keyword">int</span> a = <span class="number">3</span>, b = <span class="number">5</span>; <span class="comment">// 宣言文: 変数の宣言と同時に初期化もできる。</span>
+c = (a + b) / <span class="number">2</span>;  <span class="comment">// 代入文: c に a と b の平均値を代入</span>
+d = a * b;        <span class="comment">// 代入文: d に a と b の積を代入</span></code></pre>
+<p>例えば上の例では、4つの文があります。
+C# では、文と文は <code>;</code> (セミコロン)で区切られます。
+最初の2つの文は変数の準備と初期化を、残り2つの文は計算を行ってその結果の代入を行います。</p>
+<p>また、複数の文を <code></code> で括ることで一塊の文とみなすことができます。</p>
+<pre><code class="language-csharp">{
+  c = (a + b) / <span class="number">2</span>;
+  d = a * b;
+} <span class="comment">// 2つの文を1つのグループに</span></code></pre>
+<p>このようにグループ化された文を<em>複文</em>または<strong id="block" class="keyword">ブロック</strong>(block)といいます。</p>
+<h5 id="section-12"><a id="sec-generated-title-13"></a>サンプル</h5>
+<pre><code class="language-csharp"><span class="keyword">using</span> System;
+
+<span class="keyword">class</span> StatementSample
+{
+   <span class="keyword">static</span> <span class="keyword">void</span> Main()
+   {
+      <span class="keyword">double</span> x, y, z;  <span class="comment">// 変数を宣言。</span>
+
+      <span class="comment">// xにユーザーの入力した値を代入。</span>
+      Console.Write(<span class="string">&quot;input x : &quot;</span>);
+      x = <span class="keyword">double</span>.Parse(Console.ReadLine());
+
+      <span class="comment">// yにユーザーの入力した値を代入。</span>
+      Console.Write(<span class="string">&quot;input y : &quot;</span>);
+      y = <span class="keyword">double</span>.Parse(Console.ReadLine());
+
+      <span class="comment">// 入力された値を元に計算</span>
+      z = x * x + y * y; <span class="comment">// z に x と y の二乗和を代入</span>
+      x /=  z;           <span class="comment">// x =  x / z; と同じ。</span>
+      y /= -z;           <span class="comment">// y = -y / z; と同じ。</span>
+
+      <span class="comment">// 計算結果を出力</span>
+      Console.Write(<span class="string">&quot;({0}, {1})&quot;</span>, x, y);
+   }
+}</code></pre>
+<pre><code class="language-console">input x : 3
+input y : 4
+(0.12, -0.16)</code></pre>
+<h3 id="section-13"><a id="sec-generated-title-14"></a> <a id="sentencse"></a>余談: 平叙文</h3>
+<p>statement という単語の訳語が「文」なのは少し不正確だったりします。
+（なので、カタカナ語でステートメントと表現することも多いです。）
+一般に、「文」というと、英単語としては sentense になりますが、sentense に対する分類として、以下のようなものがあります。</p>
+<ul>
+<li><p>平叙文（statement）</p>
+</li>
+<li><p>疑問文（question）</p>
+</li>
+<li><p>命令文（command）</p>
+</li>
+<li><p>感嘆文（exclamation）</p>
+</li>
+</ul>
+<p>プログラミング言語における statement はこの意味の statement で、平叙文、すなわち、「普通に何かを述べる文」という意味です。</p>
+<p>「何かを表明する」という意味合いが強くて、
+例えば、政策や企業理念などを端的に表す言葉を statement と呼んだりします。</p>
+<h2 id="section-14"><a id="sec-generated-title-15"></a> <a id="var-expression"></a>式の中での変数宣言</h2>
+<h5 class="version version7">Ver. 7</h5>
+<p>変数の宣言は、前述の通り、以下のような書き方が必要でした。
+これらは宣言文(declaration statement)と言って、ステートメントの一種です。</p>
+<pre><code class="language-csharp"><span class="keyword">bool</span>   b; <span class="comment">// 論理値型の変数 b</span>
+<span class="keyword">int</span>    n; <span class="comment">// 整数型の変数 n</span>
+<span class="keyword">double</span> x; <span class="comment">// 実数型の変数 x</span>
+<span class="keyword">char</span>   c; <span class="comment">// 文字型の変数 c</span>
+<span class="keyword">string</span> s; <span class="comment">// 文字列型の変数 s</span></code></pre>
+<p>ステートメントは、式(<code>x + y</code>みたいなやつ)と比べると、書ける場所が限られていて、使い勝手が悪いです。</p>
+<p>これに対して、C# 7で、2つ、式の途中で変数宣言できる構文が追加されました。</p>
+<ul>
+<li><a href="/study/csharp/datatype/typeswitch/#is">is式</a></li>
+<li><a href="/study/csharp/resource/sp_ref/#out-var">出力変数宣言</a></li>
+</ul>
+<p>詳細はそれぞれのリンク先で説明しています。
+また、今後(C# 7よりもさらに先)、変数宣言できる場所がもっと増える可能性があります。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/start/">&#x57FA;&#x790E;</a></li><li><a href="/study/csharp/start/st_basis/">C#&#x306E;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x57FA;&#x672C;&#x69CB;&#x9020;</a></li><li><a href="/study/csharp/start/st_compile/">&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x4F5C;&#x6210;&#x30FB;&#x5B9F;&#x884C;</a></li><li><a href="/study/csharp/start/st_comment/">&#x30B3;&#x30E1;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/start/st_consoleio/">&#x5024;&#x306E;&#x5165;&#x51FA;&#x529B;</a></li><li><a href="/study/csharp/start/misc_identifier/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x540D;&#x306B;&#x4F7F;&#x3048;&#x308B;&#x6587;&#x5B57;</a></li><li><a href="/study/csharp/start/misc_unicode/">[&#x96D1;&#x8A18;] C# &#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x3068; Unicode</a></li><li><a href="/study/csharp/start/st_embeddedtype/">&#x7D44;&#x8FBC;&#x307F;&#x578B;</a></li><li><a href="/study/csharp/start/stnumber/">&#x6570;&#x5024;</a></li><li><a href="/study/csharp/start/st_string/">&#x7279;&#x6B8A;&#x306A;&#x6587;&#x5B57;&#x5217;&#x30EA;&#x30C6;&#x30E9;&#x30EB;</a></li><li><a href="/study/csharp/start/improvedinterpolatedstring/">C# 10.0 &#x306E;&#x88DC;&#x9593;&#x6587;&#x5B57;&#x5217;&#x306E;&#x6539;&#x5584;</a></li><li><a href="/study/csharp/start/st_operator/">&#x7D44;&#x8FBC;&#x307F;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/study/csharp/start/st_cast/">&#x7D44;&#x8FBC;&#x307F;&#x578B;&#x5909;&#x63DB;</a></li><li><a href="/study/csharp/start/sp_checked/">&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30D5;&#x30ED;&#x30FC;&#x306E;&#x30C1;&#x30A7;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/start/sp_const/">&#x5B9A;&#x6570;</a></li><li><a href="/study/csharp/start/sp3_inference/">&#x578B;&#x63A8;&#x8AD6;(&#x6697;&#x9ED9;&#x7684;&#x578B;&#x4ED8;&#x3051;)&#x3068;&#x533F;&#x540D;&#x578B;</a></li><li><a href="/study/csharp/start/sp3_var/">[&#x96D1;&#x8A18;] &#x578B;&#x63A8;&#x8AD6;&#x306E;&#x662F;&#x975E;</a></li><li><a href="/study/csharp/start/st_scope/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x306E;&#x30B9;&#x30B3;&#x30FC;&#x30D7;&#x3068;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x5BFF;&#x547D;</a></li><li><a href="/study/csharp/start/misctyperesolution/">[&#x96D1;&#x8A18;] &#x578B;&#x306E;&#x6C7A;&#x5B9A;</a></li><li><a href="/study/csharp/start/miscreservedattribute/">[&#x96D1;&#x8A18;] &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x306B;&#x5F71;&#x97FF;&#x3092;&#x53CA;&#x307C;&#x3059;&#x5C5E;&#x6027;</a></li><li><a href="/study/csharp/start/definiteassignment/">[&#x96D1;&#x8A18;] &#x660E;&#x78BA;&#x306A;&#x4EE3;&#x5165;&#x30EB;&#x30FC;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

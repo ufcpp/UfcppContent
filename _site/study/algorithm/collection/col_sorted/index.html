@@ -1,0 +1,190 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x30BD;&#x30FC;&#x30C8;&#x6E08;&#x307F;&#x914D;&#x5217; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/algorithm/collection/col_sorted/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">ソート済み配列</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abstract"></a>概要</h2>
+<p>コレクションを使う際、
+要素の並び順には意味がない場合があります。
+例えば、辞書のような用途を考えてください。
+辞書の中に要素が含まれているかを検索できればそれでよくて、
+要素が挿入された順序などはあまり意味がありません。</p>
+<p>一般に、「<a href="/study/algorithm/collection/col_array/#array">配列リスト</a>」等の、順序構造を保つコレクションを使った場合、
+コレクション中に要素が含まれているかどうかを検索するのには、
+要素数 n に比例した計算量（O(n)）が必要です。
+しかしながら、（挿入された順序を保てない代わりに）要素の検索に特化したコレクションを使うことで、
+高速に（計算量 O(log n) で）検索が可能です。</p>
+<p>例えば、単なる配列（あるいは「<a href="/study/algorithm/collection/col_array/#array">配列リスト</a>」）であっても、
+常にソート済みに保っておくならば、
+2分検索法という高速な検索アルゴリズムが適用できます。
+ここで説明する<strong id="sorted" class="keyword">ソート済み配列</strong>（sorted array）は、
+その2分検索法を使ったコレクションです。</p>
+<h2 id="section-2"><a id="sec-generated-title-2"></a> <a id="bin_search"></a>2分検索法</h2>
+<p>例えば、配列中の要素を検索しようと思うと、
+普通は以下のようになります。</p>
+<pre><code class="language-csharp"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 要素を検索する。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;array&quot;&gt;</span><span class="xmlDocComment">検索対象&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;elem&quot;&gt;</span><span class="xmlDocComment">検索したい要素&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">要素の位置（見つからなかった場合は配列長）&lt;/returns&gt;</span>
+<span class="keyword">static</span> <span class="keyword">int</span> Search(<span class="keyword">int</span>[] array, <span class="keyword">int</span> elem)
+{
+  <span class="keyword">int</span> i;
+  <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; array.Length; ++i)
+    <span class="keyword">if</span> (array[i] == elem)
+      <span class="keyword">break</span>;
+  <span class="keyword">return</span> i;
+}</code></pre>
+<p>見ての通り、前から順に調べていって、見つかった所で処理を打ち切っています。
+要素がどこに含まれているのか分からないので、
+平均的には配列長÷2 くらいの計算量が必要です。</p>
+<p>これに対して、
+配列がソートされた状態にある場合に限り、
+以下のようなアルゴリズムで高速な検索が可能です。</p>
+<pre><code class="language-csharp"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+<span class="xmlDocTag">///</span><span class="xmlDocComment"> 要素を2分検索する。</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;array&quot;&gt;</span><span class="xmlDocComment">検索対象（ソートされている必要あり）&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name=&quot;elem&quot;&gt;</span><span class="xmlDocComment">検索したい要素&lt;/param&gt;</span>
+<span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocComment">要素の位置（見つからなかった場合は配列長）&lt;/returns&gt;</span>
+<span class="keyword">static</span> <span class="keyword">int</span> BinarySearch(<span class="keyword">int</span>[] array, <span class="keyword">int</span> elem)
+{
+  <span class="keyword">if</span> (array.Length == <span class="number">0</span>) <span class="keyword">return</span> <span class="number">0</span>;
+
+  <span class="keyword">int</span> l = <span class="number">0</span>;
+  <span class="keyword">int</span> r = array.Length - <span class="number">1</span>;
+  <span class="keyword">while</span> (l &lt; r)
+  {
+    <span class="keyword">int</span> m = (l + r) / <span class="number">2</span>;
+    <span class="keyword">if</span> (array[m] &lt; elem) l = m + <span class="number">1</span>;
+    <span class="keyword">else</span> <span class="keyword">if</span> (array[m] &gt; elem) r = m - <span class="number">1</span>;
+    <span class="keyword">else</span> <span class="keyword">return</span> m;
+  }
+  <span class="keyword">if</span> (array[l] == elem) <span class="keyword">return</span> l;
+  <span class="keyword">return</span> array.Length;
+}</code></pre>
+<p>検索対象の配列がソートされた状態にあるんだから、
+検索範囲のど真ん中にある値だけ見れば、
+次に調べるべき範囲が真ん中よりも右にあるのか左にあるのかが分かります。
+このことを利用して、検索範囲を2分の1ずつ縮めていっています。
+したがって、
+ループの回数は最悪でも log<sub>2</sub>(配列長) になり、
+計算量 O(log n) になります。
+このようなアルゴリズムを<strong id="binary" class="keyword">2分検索法</strong>（binary search）と呼びます。</p>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="sorted_array"></a>ソート済み配列</h2>
+<p>「<a href="#binary">2分検索法</a>」を使えば、
+検索が計算量 O(log n) を作ることができます。</p>
+<p>要するに、要素を挿入・削除するさいに、
+常に配列をソート済みの状態に保ちます。
+ただし、ソート済みに保ったままで要素の挿入・削除をするためには O(n) 必要で、
+ソート済み配列が高速なのはあくまで検索のみになります。</p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="character"></a>特徴</h2>
+<p>ソート済み配列は以下のような利点を持っています。</p>
+<ul>
+<li><p>検索が極めて高速。計算量 O(log n) の検索アルゴリズムの中でも、オーバーヘッドが少なく、特に高速です。</p>
+</li>
+<li><p>使用メモリ量に関しても、オーバーヘッドがほとんどなく、効率がいい。</p>
+</li>
+</ul>
+<p>ただし、以下のような欠点もあります。</p>
+<ul>
+<li>要素の挿入・削除は O(n)。</li>
+</ul>
+<p>このような特徴から、
+要素数が比較的少ない場合、
+あるいは、
+要素の挿入・削除の機会が少なく検索の比率の高い場合に用いられます。</p>
+<h2 id="section-5"><a id="sec-generated-title-5"></a> <a id="impl"></a>実装方法</h2>
+<p>要素の挿入・削除もありますし、
+内部実装には「<a href="/study/algorithm/collection/col_array/#array">配列リスト</a>」を使いましょう。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> SortedArray&lt;T&gt; : IEnumerable&lt;T&gt;
+  <span class="keyword">where</span> T: IComparable&lt;T&gt;
+{
+  ArrayList&lt;T&gt; buffer;
+}</code></pre>
+<p>要素の検索には「<a href="#binary">2分検索法</a>」を使います。
+ここでは、要素が含まれている位置を返すメソッド IndexOf を例示します。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">int</span> IndexOf(T elem)
+{
+  <span class="keyword">if</span> (<span class="keyword">this</span>.buffer.Count == <span class="number">0</span>)
+    <span class="keyword">return</span> <span class="number">0</span>;
+
+  <span class="keyword">int</span> r = <span class="keyword">this</span>.buffer.Count - <span class="number">1</span>;
+  <span class="keyword">int</span> l = <span class="number">0</span>;
+  <span class="keyword">while</span> (l &lt; r)
+  {
+    <span class="keyword">int</span> m = (r + l) &gt;&gt; <span class="number">1</span>;
+    <span class="keyword">int</span> comp = <span class="keyword">this</span>.buffer[m].CompareTo(elem);
+    <span class="keyword">if</span> (comp &gt; <span class="number">0</span>) r = m - <span class="number">1</span>;
+    <span class="keyword">else</span> <span class="keyword">if</span> (comp &lt; <span class="number">0</span>) l = m + <span class="number">1</span>;
+    <span class="keyword">else</span> <span class="keyword">return</span> m;
+  }
+
+  <span class="keyword">if</span>(<span class="keyword">this</span>.buffer[l].CompareTo(elem) == <span class="number">0</span>)
+    <span class="keyword">return</span> l;
+  <span class="keyword">return</span> <span class="keyword">this</span>.buffer.Count;
+}</code></pre>
+<p>要素の挿入時にも、2分検索を使って要素の挿入位置を探します。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">void</span> Insert(T elem)
+{
+  <span class="keyword">if</span> (<span class="keyword">this</span>.buffer.Count == <span class="number">0</span>)
+  {
+    <span class="keyword">this</span>.buffer.InsertLast(elem);
+    <span class="keyword">return</span>;
+  }
+
+  <span class="keyword">int</span> r = <span class="keyword">this</span>.buffer.Count - <span class="number">1</span>;
+  <span class="keyword">int</span> l = <span class="number">0</span>;
+  <span class="keyword">int</span> comp;
+  <span class="keyword">while</span> (l &lt; r)
+  {
+    <span class="keyword">int</span> m = (r + l) &gt;&gt; <span class="number">1</span>;
+    comp = <span class="keyword">this</span>.buffer[m].CompareTo(elem);
+    <span class="keyword">if</span> (comp &gt; <span class="number">0</span>) r = m - <span class="number">1</span>;
+    <span class="keyword">else</span> <span class="keyword">if</span> (comp &lt; <span class="number">0</span>) l = m + <span class="number">1</span>;
+    <span class="keyword">else</span> <span class="keyword">return</span>; <span class="comment">// 重複不可</span>
+  }
+
+  comp = <span class="keyword">this</span>.buffer[l].CompareTo(elem);
+  <span class="keyword">if</span>(comp &lt; <span class="number">0</span>)
+    <span class="keyword">this</span>.buffer.Insert(l + <span class="number">1</span>, elem);
+  <span class="keyword">else</span> <span class="keyword">if</span>(comp &gt; <span class="number">0</span>)
+    <span class="keyword">this</span>.buffer.Insert(l, elem);
+}</code></pre>
+<p>削除も同様です。
+2分検索を使って要素の位置を探して、その要素を削除します。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">void</span> Erase(T elem)
+{
+  <span class="keyword">int</span> i = <span class="keyword">this</span>.IndexOf(elem);
+  <span class="keyword">if</span> (i &lt; <span class="keyword">this</span>.buffer.Count)
+    <span class="keyword">this</span>.buffer.Erase(i);
+}</code></pre>
+<p>挿入・削除するさい、要素の位置を探すのは2分検索法が使えて高速ですが、
+配列リストへの挿入・削除自体は O(n) です。</p>
+<h2 id="section-6"><a id="sec-generated-title-6"></a> <a id="sample"></a>サンプルソース</h2>
+<p>C# サンプルソースを示します。</p>
+<p><a href="https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Collections/SortedArray.cs">https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Collections/SortedArray.cs</a></p>
+<p>（ISet 「<a href="/study/csharp/oop/oo_interface/#interface">インターフェース</a>」 は、
+<a href="/assets/src/Set.cs">Set.cs</a> で定義しています。）</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/algorithm/collection/">&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</a></li><li><a href="/study/algorithm/collection/collection/">&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x6982;&#x8981;</a></li><li><a href="/study/algorithm/collection/col_array/">&#x914D;&#x5217;&#x30EA;&#x30B9;&#x30C8;</a></li><li><a href="/study/algorithm/collection/col_circular/">&#x5FAA;&#x74B0;&#x30D0;&#x30C3;&#x30D5;&#x30A1;</a></li><li><a href="/study/algorithm/collection/col_flist/">&#x7247;&#x65B9;&#x5411;&#x9023;&#x7D50;&#x30EA;&#x30B9;&#x30C8;</a></li><li><a href="/study/algorithm/collection/col_blist/">&#x53CC;&#x65B9;&#x5411;&#x9023;&#x7D50;&#x30EA;&#x30B9;&#x30C8;</a></li><li><a href="/study/algorithm/collection/col_hash/">&#x30CF;&#x30C3;&#x30B7;&#x30E5;&#x30C6;&#x30FC;&#x30D6;&#x30EB;</a></li><li><a href="/study/algorithm/collection/col_tree/">2&#x5206;&#x63A2;&#x7D22;&#x6728;</a></li><li><a href="/study/algorithm/collection/col_stack/">&#x30B9;&#x30BF;&#x30C3;&#x30AF;</a></li><li><a href="/study/algorithm/collection/col_queue/">&#x5F85;&#x3061;&#x884C;&#x5217;</a></li><li><a href="/study/algorithm/collection/col_heap/">&#x512A;&#x5148;&#x5EA6;&#x4ED8;&#x304D;&#x5F85;&#x3061;&#x884C;&#x5217;</a></li><li><a href="/study/algorithm/collection/col_set/">&#x30BB;&#x30C3;&#x30C8;</a></li><li><a href="/study/algorithm/collection/col_dic/">&#x8F9E;&#x66F8;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

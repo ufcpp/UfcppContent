@@ -1,0 +1,299 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>&#x5B9A;&#x6570; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/start/sp_const/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">定数</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>全く変化しない値を、異なる場所で何度も使いたい事があります。
+このような場合、「<a href="/study/csharp/start/st_variable/#literal">リテラル</a>」を何箇所にも分散させて書くのではなく、<code>const</code> というキーワードを用いて定義した定数を使うべきです。</p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>const キーワードを使って、定数（値が絶対に変わらない / 変えれない変数）を定義できます。</p>
+<ul>
+<li><p>見た目は変数と同じように使えますが、値の変更はできません。</p>
+</li>
+<li><p>コンパイル結果は「<a href="/study/csharp/start/st_variable/#literal">リテラル</a>」を直接書いた場合と同様になります。</p>
+</li>
+</ul>
+</li>
+<li><p>定数は、宣言時に値をリテラルで初期化できるものにしか使えません。（new できない。）</p>
+</li>
+<li><p>より柔軟な初期化ができる readonly （読み取り専用）変数というものもあります。</p>
+</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="constant"></a>変化しない値</h2>
+<p>例えば、以下のようなコードを見てください。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span>[] array = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">5</span>];
+
+<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">5</span>; ++i)
+  array[i] = <span class="keyword">int</span>.Parse(Console.ReadLine());
+
+<span class="keyword">int</span> sum = <span class="number">0</span>;
+<span class="keyword">int</span> sq_sum = <span class="number">0</span>;
+
+<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">5</span>; ++i)
+{
+  <span class="keyword">int</span> n = array[i];
+  sum += n;
+  sq_sum += n*n;
+}
+
+<span class="keyword">double</span> mean = sum / <span class="number">5</span>;
+<span class="keyword">double</span> <span class="keyword">var</span>  = sq_sum / <span class="number">5</span> - mean*mean;
+
+Console.Write(<span class="string">&quot;平均: {0}\n分散: {1}\n&quot;</span>, mean, <span class="keyword">var</span>);</code></pre>
+<p>値を5つ入力してもらって、その平均と分散を求めるものです。
+5 という「<a href="/study/csharp/start/st_variable/#literal">リテラル</a>」が4箇所出てきていますね。</p>
+<p>さて、ではここで、データの数を5つではなくて6つに変更することになったとします。
+5 というリテラルを全部 6 に置き換える必要があるわけですが、
+たった4つでも結構面倒です。
+まして、もっと数が多かったことを考えてみましょう。
+数が増えるにつれて、忘れず全部修正するのが困難になります。</p>
+<p>なので、普通はリテラルを直接使うということはしません。
+例えば、以下のように、5 と言う値を一度変数に代入して使うことを考えます。</p>
+<pre><code class="language-csharp"><span class="keyword">int</span> NUM = <span class="number">5</span>;
+<span class="keyword">int</span>[] array = <span class="keyword">new</span> <span class="keyword">int</span>[NUM];
+
+<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;NUM; ++i)
+  array[i] = <span class="keyword">int</span>.Parse(Console.ReadLine());
+
+<span class="keyword">int</span> sum = <span class="number">0</span>;
+<span class="keyword">int</span> sq_sum = <span class="number">0</span>;
+
+<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;NUM; ++i)
+{
+  <span class="keyword">int</span> n = array[i];
+  sum += n;
+  sq_sum += n*n;
+}
+
+<span class="keyword">double</span> mean = sum / (<span class="keyword">double</span>)NUM;
+<span class="keyword">double</span> <span class="keyword">var</span>  = sq_sum / (<span class="keyword">double</span>)NUM - mean*mean;
+
+Console.Write(<span class="string">&quot;平均: {0}\n分散: {1}\n&quot;</span>, mean, <span class="keyword">var</span>);</code></pre>
+<p>これで、もしデータの個数を変更する必要が生じても、
+<code>int NUM = 5;</code> の1行だけの修正で解決します。</p>
+<h2 id="const"><a id="sec-generated-title-4"></a> <a id="const"></a>const</h2>
+<p>ところが、このコードにもちょっとだけ問題があります。
+1つは、定数なのか、途中で値が変わるものなのかが分からないことです。
+変数なので、途中で値が書き換えられてしまってもエラーにはなりません。
+また、ソースファイルの見易さの観点からも、
+定数は定数であることが一目で分かる方が好ましいです。</p>
+<p>2つ目の問題は、効率面にあります。
+書き換える必要のある変数よりも、
+その必要のない定数の方が、プログラムの実行効率が高くなります。
+したがって、上述のような方法（一度変数に値を格納）すると、
+多少ですが実行効率が悪くなるという欠点があります。</p>
+<em>
+        そこで、C# では、const というキーワードを用いることで、
+        変数のように扱える定数を定義することが出来ます。
+      </em>
+通常、<strong id="constant" class="keyword">定数</strong>（constant）とだけいうと、
+「[リテラル](st_variable.md#literal)」ではなく、
+こちらのことを指します。
+（リテラルの方は直定数と訳す。）
+<pre><code class="language-csharp"><span class="keyword">const</span> <span class="keyword">int</span> NUM = <span class="number">5</span>;
+<span class="keyword">int</span>[] array = <span class="keyword">new</span> <span class="keyword">int</span>[NUM];
+
+<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;NUM; ++i)
+  array[i] = <span class="keyword">int</span>.Parse(Console.ReadLine());
+
+<span class="keyword">int</span> sum = <span class="number">0</span>;
+<span class="keyword">int</span> sq_sum = <span class="number">0</span>;
+
+<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;NUM; ++i)
+{
+  <span class="keyword">int</span> n = array[i];
+  sum += n;
+  sq_sum += n*n;
+}
+
+<span class="keyword">double</span> mean = sum / (<span class="keyword">double</span>)NUM;
+<span class="keyword">double</span> <span class="keyword">var</span>  = sq_sum / (<span class="keyword">double</span>)NUM - mean*mean;
+
+Console.Write(<span class="string">&quot;平均: {0}\n分散: {1}\n&quot;</span>, mean, <span class="keyword">var</span>);</code></pre>
+<p>const を付けて宣言された定数は、宣言文中における初期化時にのみ値を代入できます。
+定数というくらいですから、当然、
+その他の場所で値を書き換えることは出来ません。</p>
+<pre><code class="language-csharp"><span class="keyword">const</span> <span class="keyword">int</span> NUM = <span class="number">5</span>; <span class="comment">// 宣言時の初期化のみ可能</span>
+NUM = <span class="number">6</span>; <span class="comment">// ここでエラーになる</span></code></pre>
+<p>また、const を付けた定数を用いたソースコードは、
+リテラルを使ったソースコードと同等のコンパイル結果になります。
+従って、リテラルの直書きと比べて効率が落ちることはありません。</p>
+<p>ただし、const キーワードは、int などの数値型、string 型、または列挙型に対してのみ使用できます。
+（あと、値が null 限定で参照型にも使える。）
+インスタンスを new キーワードで生成するようなものには const キーワードは使えません。</p>
+<h2 id="const-1"><a id="sec-generated-title-5"></a> <a id="const_member"></a>const メンバー</h2>
+<p>const を使った定数は、
+メソッド中（ローカル）だけでなく、
+クラスのメンバーにする事も出来ます。
+（「<a href="/study/csharp/oop/oo_class/#class">クラス</a>」に関しては別章参照: 「<a href="/study/csharp/oop/oo_class/">クラス</a>」。）</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> Math
+{
+  <span class="keyword">public</span> <span class="keyword">const</span> <span class="keyword">double</span> PI = <span class="number">3</span>.<span class="number">1415926535897932</span>;
+}</code></pre>
+<p>const メンバーはクラスに属します。
+（「<a href="/study/csharp/oop/oo_static/#static-member">静的メンバー</a>」と同じ扱い。
+<code>ClassName.Member</code> という形式で参照。）
+例えば、上述の例、<code>PI</code> の場合、<code>Math.PI</code> という形式で参照します。</p>
+<h3 id="const-2"><a id="sec-generated-title-6"></a> <a id="versioning"></a>const のバージョニング問題</h3>
+<p>ちなみに、private な場合は const メンバー変数で問題ないのですが、
+public にする場合にはあまり const メンバー変数は使わない方がいいです。</p>
+<p>単一のプロジェクトで使っている分には何の問題もありませんが、
+もし、ライブラリで定数を定義して、別プロジェクトのアプリから参照するような場合には注意が必要です。
+定数は、コンパイル時にリテラルと全く同じように値が展開されてしまうため、
+定数を定義しているライブラリの方だけでなく、参照しているアプリ側も再コンパイルしないと、値の変化が反映されません。</p>
+<p>このような問題を、バージョン アップしたときの挙動が怪しくなるという意味で、
+バージョニング問題（versioning problem）と呼びます。</p>
+<p>したがって、
+数学の定数である π のように、
+値が変わること自体まずありえないような定数なら全然問題ないのですが、
+もしも変更がありうる場合には、
+たとえ定数であっても static な「<a href="/study/csharp/oop/oo_property/#property">プロパティ</a>」にしておく方がいいです。
+でないと、値が変わったときに、利用側でも再コンパイルが必要になってしまいます。</p>
+<h2 id="readonly"><a id="sec-generated-title-7"></a> <a id="readonly"></a>readonly</h2>
+<p>クラスのメンバーに対しては、
+const 以外に、もう1つ定数のようなものを実現する方法があります。
+readonly というキーワードを用いて、<strong id="ro" class="keyword">読取り専用</strong>（read only）の変数を定義できます。
+const との違いは以下のようになります。</p>
+<table summary="">
+
+	<tr>
+		<th>const</th>
+		<th>readonly</th>
+	</tr>
+	<tr>
+		<td><p>ローカル変数にも使える</p></td>
+		<td><p>クラスのメンバー変数のみ。</p></td>
+	</tr>
+	<tr>
+		<td><p>常に静的変数と同じ扱い。</p></td>
+		<td><p>static の有無を変えられる。</p></td>
+	</tr>
+	<tr>
+		<td><p>宣言時にのみ初期化可能。</p></td>
+		<td><p>コンストラクタ内で値を書き換え可能。</p></td>
+	</tr>
+	<tr>
+		<td><p>コンパイル結果はリテラルと同等。</p></td>
+		<td><p>コンパイル結果は変数と同等。</p></td>
+	</tr>
+	<tr>
+		<td><p>インスタンスを new で生成するようなものには使えない。</p></td>
+		<td><p>new 可能。</p></td>
+	</tr>
+</table>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+  <span class="keyword">readonly</span> <span class="keyword">int</span> num;
+
+  <span class="keyword">public</span> A(<span class="keyword">int</span> num)
+  {
+    <span class="keyword">this</span>.num = num; <span class="comment">// コンストラクタ内では書き換え可能。</span>
+  }
+
+  <span class="keyword">public</span> <span class="keyword">void</span> Method(<span class="keyword">int</span> num)
+  {
+    <span class="keyword">int</span> x = <span class="keyword">this</span>.num; <span class="comment">// 読み取りは可能。</span>
+    <span class="keyword">this</span>.num = num;   <span class="comment">// 書き込み不可。エラー！</span>
+  }
+}</code></pre>
+<h3 id="const-readonly"><a id="sec-generated-title-8"></a> <a id="prefer-readonly"></a>注意: const の問題とreadonlyやプロパティ</h3>
+<p>ちなみに、const を使った定数は、
+（コンパイル結果がリテラルを使った結果と同じく）
+プログラム中に直接値が埋め込まれてしまうため、
+値を変更した際には、参照側（クラス利用側）のコードも再コンパイルする必要が生じます。
+なので、<code>Math.PI</code>（数学定数π）のように、本当に不変で、
+絶対に変わることのない値以外は public const なメンバー変数にすべきではありません。
+（private なものや、ローカル変数に対する const は OK。）</p>
+<p>その代替として、<code>readonly</code>なフィールドや、<a href="/study/csharp/oop/oo_property/#get-only">get-onlyなプロパティ</a>が使えます。</p>
+<pre><code class="language-csharp"><span class="keyword">class</span> A
+{
+    <span class="comment">// const はあんまり public にしたくない</span>
+    <span class="comment">// 今後絶対に値を変更しないという自信がない限りは使わない方がいい</span>
+    <span class="keyword">public</span> <span class="keyword">const</span> <span class="keyword">int</span> X = <span class="number">1</span>;
+
+    <span class="comment">// readonly フィールドや、get-only プロパティ越しに公開することを推奨</span>
+    <span class="comment">// (プロパティの方がより推奨)</span>
+    <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">int</span> Y = <span class="number">1</span>;
+    <span class="keyword">public</span> <span class="keyword">int</span> Z =&gt; <span class="number">1</span>;
+}</code></pre>
+<h3 id="readonly-1"><a id="sec-generated-title-9"></a> <a id="struct-class-readonly"></a>readonly の注意点</h3>
+<p>現時点では触れられませんが、クラスや構造体を説明した後に、改めて<code>readonly</code>に関する注意点があります。
+詳細は「<a href="/study/csharp/resource/readonlyness/">readonly の注意点</a>」を参照してください。</p>
+<h2 id="section-4"><a id="sec-generated-title-10"></a> <a id="constant-expressions"></a>定数にできるもの</h2>
+<p>C# で <code>const</code> を使った定数にできるものには以下のようなものがあります。</p>
+<ul>
+<li><a href="/study/csharp/start/st_embeddedtype/#literal">リテラル</a></li>
+<li><a href="/study/csharp/structured/st_enum/">列挙型</a>の値</li>
+<li>他の <code>const</code> メンバー</li>
+<li>上記同士の<a href="/study/csharp/start/st_variable/#expression">式</a>(四則演算とか)</li>
+</ul>
+<p>例えば、以下のように複数のリテラル、定数を組み合わせたものも再び定数にできます。</p>
+<pre><code class="language-csharp"><span class="comment">// enum</span>
+<span class="keyword">const</span> DayOfWeek D1 = DayOfWeek.Friday;
+<span class="keyword">const</span> DayOfWeek D2 = DayOfWeek.Wednesday;
+
+<span class="comment">// int のリテラル同士の掛け算。</span>
+<span class="keyword">const</span> <span class="keyword">int</span> I = <span class="number">3</span> * <span class="number">5</span>;
+
+<span class="comment">// 他の定数を参照。</span>
+<span class="keyword">const</span> <span class="keyword">int</span> J = <span class="number">2</span> * I;
+
+<span class="comment">// 参照しているものが全部定数なら多少複雑な式でも OK。</span>
+<span class="keyword">const</span> <span class="keyword">double</span> X = (<span class="keyword">int</span>)(J % <span class="number">2</span> == <span class="number">0</span> ? D1 : D2) * <span class="number">1</span>.<span class="number">25</span>;
+
+<span class="comment">// 文字列も const にできる。</span>
+<span class="keyword">const</span> <span class="keyword">string</span> S = <span class="string">&quot;abc&quot;</span> + <span class="string">&quot;def&quot;</span>;
+
+<span class="comment">// その他の型では、null だけ const にできる。</span>
+<span class="keyword">const</span> <span class="keyword">object</span> N = <span class="keyword">null</span>;</code></pre>
+<p>ちなみに、特殊なものでは <a href="/study/csharp/start/st_string/#nameof-operator"><code>nameof</code> 演算子</a>は完全にリテラルと同列の扱いを受けるので、<code>const</code> に使えます。</p>
+<pre><code class="language-csharp"><span class="keyword">const</span> <span class="keyword">string</span> A = nameof(A); <span class="comment">// &quot;A&quot; と同じ結果になる。</span>
+<span class="keyword">const</span> <span class="keyword">string</span> B = A + nameof(B); <span class="comment">// 他の const + リテラル という扱い。</span></code></pre>
+<h3 id="const-3"><a id="sec-generated-title-11"></a> <a id="constant-string-interpolation"></a>const 文字列補間</h3>
+<h5 class="version version10">Ver. 10</h5>
+<p>C# 10.0 からは、<a href="/study/csharp/start/st_string/#string-interpolation">文字列補間</a>でも、<code>{}</code> の中身が <code>const</code> 文字列な場合に限り、補完結果も <code>const</code> にできます。
+例えば以下のような <code>const</code> 文字列を作れます。</p>
+<pre><code class="language-csharp"><span class="keyword">const</span> <span class="keyword">string</span> A = <span class="string">&quot;Abc&quot;</span>;
+<span class="keyword">const</span> <span class="keyword">string</span> B = <span class="string">&quot;Xyz&quot;</span>;
+<span class="keyword">const</span> <span class="keyword">string</span> C = $<span class="string">&quot;{nameof(A)}: {A}, {nameof(B)}: {B}&quot;</span>; <span class="comment">// &quot;A: Abc, B: Xyz&quot;</span></code></pre>
+<p>この例のように <code>nameof</code> との組み合わせはそれなりに需要があるかと思います。</p>
+<p>一方で、<code>{}</code> の中身が文字列でない場合、たとえ <code>const</code> であっても文字列補間結果は <code>const</code> にできなくなります。</p>
+<pre><code class="language-csharp"><span class="keyword">const</span> <span class="keyword">int</span> A = <span class="number">1</span>;
+<span class="keyword">const</span> <span class="keyword">string</span> C = $<span class="string">&quot;{A}&quot;</span>; <span class="comment">// A が文字列じゃないので $&quot;&quot; の結果を const にできない。</span></code></pre>
+<p>第一印象としては <code>const</code> にできてもよさげに見えるんですが…
+これは、文字列補間の結果が一定にならないためです。
+例えば、以下のように、浮動小数点数を文字列化した結果は国によって異なります。</p>
+<pre><code class="language-csharp"><span class="keyword">using</span> System.Globalization;
+
+<span class="comment">// 東南アジアの多くの国は . を小数点に使う。</span>
+Thread.CurrentThread.CurrentCulture = <span class="keyword">new</span> CultureInfo(<span class="string">&quot;ja-jp&quot;</span>);
+Console.WriteLine(<span class="number">1</span>.<span class="number">234</span>);
+
+<span class="comment">// 大陸ヨーロッパの多くの国は , を小数点に使う。</span>
+Thread.CurrentThread.CurrentCulture = <span class="keyword">new</span> CultureInfo(<span class="string">&quot;fr-fr&quot;</span>);
+Console.WriteLine(<span class="number">1</span>.<span class="number">234</span>);</code></pre>
+<pre><code class="language-csharp"><span class="number">1</span>.<span class="number">234</span>
+<span class="number">1</span>,<span class="number">234</span></code></pre>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/start/">&#x57FA;&#x790E;</a></li><li><a href="/study/csharp/start/st_basis/">C#&#x306E;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x57FA;&#x672C;&#x69CB;&#x9020;</a></li><li><a href="/study/csharp/start/st_compile/">&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x4F5C;&#x6210;&#x30FB;&#x5B9F;&#x884C;</a></li><li><a href="/study/csharp/start/st_comment/">&#x30B3;&#x30E1;&#x30F3;&#x30C8;</a></li><li><a href="/study/csharp/start/st_consoleio/">&#x5024;&#x306E;&#x5165;&#x51FA;&#x529B;</a></li><li><a href="/study/csharp/start/st_variable/">&#x5909;&#x6570;&#x3068;&#x5F0F;</a></li><li><a href="/study/csharp/start/misc_identifier/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x540D;&#x306B;&#x4F7F;&#x3048;&#x308B;&#x6587;&#x5B57;</a></li><li><a href="/study/csharp/start/misc_unicode/">[&#x96D1;&#x8A18;] C# &#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x3068; Unicode</a></li><li><a href="/study/csharp/start/st_embeddedtype/">&#x7D44;&#x8FBC;&#x307F;&#x578B;</a></li><li><a href="/study/csharp/start/stnumber/">&#x6570;&#x5024;</a></li><li><a href="/study/csharp/start/st_string/">&#x7279;&#x6B8A;&#x306A;&#x6587;&#x5B57;&#x5217;&#x30EA;&#x30C6;&#x30E9;&#x30EB;</a></li><li><a href="/study/csharp/start/improvedinterpolatedstring/">C# 10.0 &#x306E;&#x88DC;&#x9593;&#x6587;&#x5B57;&#x5217;&#x306E;&#x6539;&#x5584;</a></li><li><a href="/study/csharp/start/st_operator/">&#x7D44;&#x8FBC;&#x307F;&#x6F14;&#x7B97;&#x5B50;</a></li><li><a href="/study/csharp/start/st_cast/">&#x7D44;&#x8FBC;&#x307F;&#x578B;&#x5909;&#x63DB;</a></li><li><a href="/study/csharp/start/sp_checked/">&#x30AA;&#x30FC;&#x30D0;&#x30FC;&#x30D5;&#x30ED;&#x30FC;&#x306E;&#x30C1;&#x30A7;&#x30C3;&#x30AF;</a></li><li><a href="/study/csharp/start/sp3_inference/">&#x578B;&#x63A8;&#x8AD6;(&#x6697;&#x9ED9;&#x7684;&#x578B;&#x4ED8;&#x3051;)&#x3068;&#x533F;&#x540D;&#x578B;</a></li><li><a href="/study/csharp/start/sp3_var/">[&#x96D1;&#x8A18;] &#x578B;&#x63A8;&#x8AD6;&#x306E;&#x662F;&#x975E;</a></li><li><a href="/study/csharp/start/st_scope/">[&#x96D1;&#x8A18;] &#x8B58;&#x5225;&#x5B50;&#x306E;&#x30B9;&#x30B3;&#x30FC;&#x30D7;&#x3068;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x5BFF;&#x547D;</a></li><li><a href="/study/csharp/start/misctyperesolution/">[&#x96D1;&#x8A18;] &#x578B;&#x306E;&#x6C7A;&#x5B9A;</a></li><li><a href="/study/csharp/start/miscreservedattribute/">[&#x96D1;&#x8A18;] &#x30B3;&#x30F3;&#x30D1;&#x30A4;&#x30EB;&#x7D50;&#x679C;&#x306B;&#x5F71;&#x97FF;&#x3092;&#x53CA;&#x307C;&#x3059;&#x5C5E;&#x6027;</a></li><li><a href="/study/csharp/start/definiteassignment/">[&#x96D1;&#x8A18;] &#x660E;&#x78BA;&#x306A;&#x4EE3;&#x5165;&#x30EB;&#x30FC;&#x30EB;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

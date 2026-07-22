@@ -1,0 +1,354 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>[&#x96D1;&#x8A18;] &#x52D5;&#x7684;&#x30B3;&#x30FC;&#x30C9;&#x751F;&#x6210;&#x306E;&#x30D1;&#x30D5;&#x30A9;&#x30FC;&#x30DE;&#x30F3;&#x30B9; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/dynamic/misc_dynamic/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="section">[雑記] 動的コード生成のパフォーマンス</h1>
+<h2 id="section-1"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>.NET Framework のバージョンが上がるたびに色々と追加され、
+今や、動的コード生成にもさまざまなやり方が。
+ということで、並べて比較してみたいと思います。</p>
+<p>「動的 ＝ リフレクション ＝ むちゃくちゃ遅い」というイメージをもたれる方も多いと思いますが、
+実際のところ、1度生成したコードをキャッシュしておくなどの工夫をすれば、意外と許容範囲なパフォーマンスが得られます。</p>
+<p>（GUI の描画部分やネットワーク通信部分の遅延と比べれば、演算部分の数倍程度の差は取るに足らない場合が多く、
+過剰に気にする必要はありません（もちろん、状況次第）。）</p>
+<p>比較コード含めたソースコード一式：
+<a href="/assets/media/ufcpp2000/csharp/source/DynamicPerformance.zip">DynamicPerformance.zip</a></p>
+<h5 id="section-2"><a id="sec-generated-title-2"></a>ポイント</h5>
+<ul>
+<li><p>毎回リフレクションを呼び出すのはやっぱりかなり（2～3桁）遅い。</p>
+</li>
+<li><p>キャッシュ機構を使えば、静的なコードの数倍程度までは速くできる。</p>
+</li>
+<li><p>C# 4.0 の dynamic は適切にキャッシュしてくれているので、十分速い。</p>
+</li>
+</ul>
+<h2 id="section-3"><a id="sec-generated-title-3"></a> <a id="methodology"></a>比較の仕方</h2>
+<p>以下のような操作をベースに。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> Static
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> Sum(Point p)
+    {
+        <span class="keyword">return</span> p.X + p.Y;
+    }
+}
+
+<span class="keyword">public</span> <span class="keyword">class</span> Point
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> X { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Y { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+}</code></pre>
+<p>これを動的実行できるように変更していきます。
+（Point 以外の型であっても、int 型の2つのプロパティ X, Y を持っていればなんでも受け付けるようにする。）</p>
+<h2 id="section-4"><a id="sec-generated-title-4"></a> <a id="reflection"></a>リフレクション</h2>
+<p>リフレクションを使って、毎度 type.GetProperty するやり方。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> Refrection
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> Sum(<span class="keyword">object</span> p)
+    {
+        <span class="keyword">var</span> t = p.GetType();
+        <span class="keyword">var</span> propX = t.GetProperty(<span class="string">&quot;X&quot;</span>);
+        <span class="keyword">var</span> propY = t.GetProperty(<span class="string">&quot;Y&quot;</span>);
+        <span class="keyword">var</span> x = propX.GetValue(p, <span class="keyword">null</span>);
+        <span class="keyword">var</span> y = propY.GetValue(p, <span class="keyword">null</span>);
+        <span class="keyword">return</span> (<span class="keyword">int</span>)x + (<span class="keyword">int</span>)y;
+    }
+}</code></pre>
+<h5 id="section-5"><a id="sec-generated-title-5"></a>利点</h5>
+<ul>
+<li><p>.NET Framework 1.0 でも動く。</p>
+</li>
+<li><p>以上。</p>
+</li>
+</ul>
+<h5 id="section-6"><a id="sec-generated-title-6"></a>欠点</h5>
+<ul>
+<li><p>遅い。文字通り、桁外れに遅い。</p>
+</li>
+<li><p>静的なバージョンと比べてだいたい2～3桁遅い。「倍」じゃなくて「桁」って単位で遅い。</p>
+</li>
+</ul>
+<p>正直、今この選択肢はないと思う。</p>
+<h2 id="il"><a id="sec-generated-title-7"></a> <a id="ilgenerator"></a>IL 生成</h2>
+<h5 class="version version2">Ver. 2.0</h5>
+<p>.NET Framework 2.0 で、DynamicMethod を使った動的コード生成ができるようになりました。
+ただし、やってることは MSIL レベルでのコード生成なので、アセンブリ言語でコードを書くような感じになります。</p>
+<p>ポイントは、一度生成したコードをキャッシュとして持っておくことです。
+さすがに、動的コード生成自体はそれなりに重たい処理なので、
+キャッシュしなければあまりいいパフォーマンスはでません。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> GenerateIL
+{
+    <span class="keyword">private</span> <span class="keyword">static</span> Dictionary&lt;Type, Func&lt;<span class="keyword">object</span>, <span class="keyword">int</span>&gt;&gt; cache = <span class="keyword">new</span> Dictionary&lt;Type,Func&lt;<span class="keyword">object</span>,<span class="keyword">int</span>&gt;&gt;();
+
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> Sum(<span class="keyword">object</span> p)
+    {
+        <span class="keyword">var</span> t = p.GetType();
+        Func&lt;<span class="keyword">object</span>, <span class="keyword">int</span>&gt; d;
+
+        <span class="keyword">if</span> (!cache.TryGetValue(t, <span class="keyword">out</span> d))
+        {
+            d = CreateMethod(t);
+            cache[t] = d;
+        }
+
+        <span class="keyword">return</span> d(p);
+    }
+
+    <span class="keyword">private</span> <span class="keyword">static</span> Func&lt;<span class="keyword">object</span>, <span class="keyword">int</span>&gt; CreateMethod(Type t)
+    {
+        DynamicMethod dm = <span class="keyword">new</span> DynamicMethod(<span class="string">&quot;Sum&quot;</span>, <span class="keyword">typeof</span>(<span class="keyword">int</span>), <span class="keyword">new</span>[] { <span class="keyword">typeof</span>(<span class="keyword">object</span>) });
+        ILGenerator il = dm.GetILGenerator();
+
+        LocalBuilder x = il.DeclareLocal(t);
+
+        <span class="comment">// var x = (Point)p;</span>
+        il.Emit(OpCodes.Ldarg_0);
+        il.Emit(OpCodes.Castclass, t);
+        il.Emit(OpCodes.Stloc, x);
+
+        <span class="comment">// p.X</span>
+        il.Emit(OpCodes.Ldloc, x);
+        il.EmitCall(OpCodes.Callvirt, t.GetProperty(<span class="string">&quot;X&quot;</span>).GetGetMethod(), <span class="keyword">null</span>);
+
+        <span class="comment">// p.Y</span>
+        il.Emit(OpCodes.Ldloc, x);
+        il.EmitCall(OpCodes.Callvirt, t.GetProperty(<span class="string">&quot;Y&quot;</span>).GetGetMethod(), <span class="keyword">null</span>);
+
+        <span class="comment">// +</span>
+        <span class="comment">// ちなみに、今回の場合は「p.X は必ず int」という前提なのでコード生成は楽だけど、</span>
+        <span class="comment">// もしこれがユーザー定義型で、 + もユーザー定義の operator+ だったら、OpCodes.Add じゃなくて Call に変えなきゃいけない。</span>
+        <span class="comment">// かなり面倒。</span>
+        il.Emit(OpCodes.Add);
+
+        il.Emit(OpCodes.Ret);
+
+        <span class="keyword">var</span> f = <span class="keyword">typeof</span>(Func&lt;,&gt;);
+        <span class="keyword">var</span> gf = f.MakeGenericType(<span class="keyword">typeof</span>(<span class="keyword">object</span>), <span class="keyword">typeof</span>(<span class="keyword">int</span>));
+        <span class="keyword">var</span> d = (Func&lt;<span class="keyword">object</span>, <span class="keyword">int</span>&gt;)dm.CreateDelegate(gf);
+
+        <span class="keyword">return</span> d;
+    }
+}</code></pre>
+<h5 id="section-7"><a id="sec-generated-title-8"></a>利点</h5>
+<ul>
+<li><p>コード生成はそれなりに速い。</p>
+</li>
+<li><p>.NET Framework 2.0 で使える。</p>
+</li>
+</ul>
+<h5 id="section-8"><a id="sec-generated-title-9"></a>欠点</h5>
+<ul>
+<li><p>アセンブリ言語を書ける人でないと無理。</p>
+</li>
+<li><p>自分でキャッシュの仕組みを書かなきゃいけない。</p>
+</li>
+</ul>
+<p>静的なバージョンと比べた場合、数倍程度の遅さで済みます。
+（ただし、今回のようなメソッドの中身が単純なケースでは、静的なバージョンはインライン展開されることで相当に高速化されます。
+この最適化まで見越すと、静的バージョンと動的バージョンで1桁程度の差になる場合もあります。）</p>
+<p>ただ、アセンブリ言語で書くようなものなのが相当にきつく、かなり「最後の手段」。
+「コード生成はそれなりに速い」といっても、コード生成の部分が呼ばれるのは最初の1回きりなので、
+そこがいくら速かろうと、全体としては大した影響にはならず。
+また、後述する式木と比べて「何倍」とかいうオーダーで速いわけではないです。
+.NET Framework 3.5 以降が使えるのであれば、あえて使う必要性はないと思います。</p>
+<h2 id="section-9"><a id="sec-generated-title-10"></a> <a id="expressiontree"></a>式木</h2>
+<h5 class="version version3">Ver. 3.0</h5>
+<p>.NET Framework 3.5 （C# 3.0）で「<a href="/study/csharp/dynamic/sp3_expression/#expressiontree">式木</a>」というものが導入されました。
+（ただし、一部の機能は .NET Framework 4 で追加されものなので、この例の場合は .NET 4 が必須になります。）</p>
+<p>IL レベルではなく、構文木レベルでコードを生成できるので、IL Generator と比べればだいぶマシな動的コード生成ができます。
+ただ、キャッシュの仕組みが必要なのは IL Generator と同様です。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> ExpressionTree
+{
+    <span class="keyword">private</span> <span class="keyword">static</span> Dictionary&lt;Type, Func&lt;<span class="keyword">object</span>, <span class="keyword">int</span>&gt;&gt; cache = <span class="keyword">new</span> Dictionary&lt;Type, Func&lt;<span class="keyword">object</span>, <span class="keyword">int</span>&gt;&gt;();
+
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> Sum(<span class="keyword">object</span> p)
+    {
+        <span class="keyword">var</span> t = p.GetType();
+        Func&lt;<span class="keyword">object</span>, <span class="keyword">int</span>&gt; d;
+
+        <span class="keyword">if</span> (!cache.TryGetValue(t, <span class="keyword">out</span> d))
+        {
+            d = CreateMethod(t);
+            cache[t] = d;
+        }
+
+        <span class="keyword">return</span> d(p);
+    }
+
+    <span class="keyword">private</span> <span class="keyword">static</span> Func&lt;<span class="keyword">object</span>, <span class="keyword">int</span>&gt; CreateMethod(Type t)
+    {
+        <span class="keyword">var</span> x = Expression.Parameter(<span class="keyword">typeof</span>(<span class="keyword">object</span>));
+        <span class="keyword">var</span> p = Expression.Parameter(t);
+
+        <span class="comment">/*
+          * {
+          *     T p;
+          *     p = (T)x;
+          *     return p.X + p.Y;
+          * }
+          */</span>
+        <span class="keyword">var</span> exp = Expression.Lambda(
+            <span class="comment">// { T p;</span>
+            Expression.Block(
+                <span class="keyword">new</span>[] { p },
+                <span class="comment">// p = (T)x;</span>
+                Expression.Assign(p, Expression.Convert(x, t)),
+                <span class="comment">// p.X + p.Y</span>
+                <span class="comment">// IL 生成と違って、ユーザー定義の operator+ でも正しくコード生成してくれる。</span>
+                Expression.Add(
+                    Expression.Property(p, <span class="string">&quot;X&quot;</span>),
+                    Expression.Property(p, <span class="string">&quot;Y&quot;</span>))),
+            x
+            );
+
+        <span class="keyword">var</span> d = (Func&lt;<span class="keyword">object</span>, <span class="keyword">int</span>&gt;)exp.Compile();
+        <span class="keyword">return</span> d;
+    }
+}</code></pre>
+<h5 id="section-10"><a id="sec-generated-title-11"></a>利点</h5>
+<ul>
+<li>IL 生成と比べれば随分素直に書ける。</li>
+</ul>
+<h5 id="section-11"><a id="sec-generated-title-12"></a>欠点</h5>
+<ul>
+<li><p>.NET Framework 4 必須（限定的に、.NET 3.5 で実現可能な部分もあり）。</p>
+</li>
+<li><p>自分でキャッシュの仕組みを書かなきゃいけない。</p>
+</li>
+</ul>
+<p>おそらく、自前での動的コード生成を考えるなら、これが最も簡単な方法になります。</p>
+<p>パフォーマンスもそれなりによく、IL 生成するものと比べてそう大きな差はありません。
+静的なバージョンと比べた場合、数倍程度の遅さで済みます。</p>
+<h2 id="dynamic"><a id="sec-generated-title-13"></a> <a id="dynamic"></a>dynamic</h2>
+<h5 class="version version4">Ver. 4.0</h5>
+<p>C# 4.0 で dynamic が導入されたわけですが、
+内部的な挙動が見えないので色々誤解されがちだったり。</p>
+<p>dynamic は、内部的には「式木による動的コード生成」＋「生成したコードのキャッシュ」を行っています。
+したがって、式木版に近いパフォーマンス（静的なバージョンの数倍程度）が出ます。</p>
+<p>汎用性を重視していたり、コンパイラの自動生成にお任せする部分も多く、
+自前で式木を組むよりも少々遅くなりがちです。
+ただし、結構高度なキャッシュの仕組みを持っていて、
+適用される型が多くなってくると、ひょっとすると自前でキャッシュ機構を持つよりも、
+dynamic 任せの方が高速な場合も出て来ると思います。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> Dynamic
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> Sum(<span class="keyword">dynamic</span> p)
+    {
+        <span class="comment">// GenerateIL とか ExpressionTree 版が、「p.X の戻り値は int」みたいな前提でコード書いちゃったので、</span>
+        <span class="comment">// 以下のように書かないと比較がフェアじゃないかなと。</span>
+        <span class="comment">// （厳密には、これでもまだこちらの方が不利）</span>
+        <span class="keyword">return</span> (<span class="keyword">int</span>)p.X + (<span class="keyword">int</span>)p.Y;
+    }
+}</code></pre>
+<h5 id="section-12"><a id="sec-generated-title-14"></a>利点</h5>
+<ul>
+<li><p>超お手軽。</p>
+</li>
+<li><p>動的コード生成もキャッシュも全自動。</p>
+</li>
+</ul>
+<h5 id="section-13"><a id="sec-generated-title-15"></a>欠点</h5>
+<ul>
+<li><p>Type 型を（メソッドの引数で受け取るとか）明示的に渡せない。</p>
+</li>
+<li><p>.NET Framework 4 必須。</p>
+</li>
+</ul>
+<p>この例の場合だと、パフォーマンス的には式木版と比べて数％程度の劣化でした。
+これだけお手軽で、たった数％程度の劣化しかないならかなりの利便性の良さだと思います。</p>
+<p>ただし、Type 型を引数として渡して動的コード生成したりはできないので、
+そういう場合は後述する CallSite（dynamic を実現するための内部的なクラス）を直接利用することになります（結構面倒）。</p>
+<h2 id="callsitedynamic"><a id="sec-generated-title-16"></a> <a id="callsite"></a>CallSite（dynamic の内部挙動）</h2>
+<h5 class="version version4">Ver. 4.0</h5>
+<p>C# 4.0 の dynamic の内部挙動的には、CallSite というクラスを使っています。
+参考までに、上述の dynamic の例を、CallSite を直接使って書き直したものも例示しておきます。</p>
+<p>例示のついでに、
+多少最適化を掛けています。
+（if を1つにまとめたり、キャスト用の CallSite を1つにまとめたり。）
+式木版と遜色ないというか、むしろ式木版よりもちょっと速いくらいになりました。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> DynamicInside
+{
+    <span class="keyword">static</span> CallSite&lt;Func&lt;CallSite, <span class="keyword">object</span>, <span class="keyword">int</span>&gt;&gt; siteCast;
+    <span class="keyword">static</span> CallSite&lt;Func&lt;CallSite, <span class="keyword">object</span>, <span class="keyword">object</span>&gt;&gt; siteGetX, siteGetY;
+
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> Sum(<span class="keyword">object</span> p)
+    {
+        <span class="keyword">if</span> (siteCast == <span class="keyword">null</span>)
+        {
+            <span class="keyword">const</span> CSharpBinderFlags convert = CSharpBinderFlags.ConvertExplicit;
+            <span class="keyword">const</span> CSharpBinderFlags none = CSharpBinderFlags.None;
+            <span class="keyword">var</span> argInfo = <span class="keyword">new</span> CSharpArgumentInfo[] { CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, <span class="keyword">null</span>) };
+
+            siteGetX = CallSite&lt;Func&lt;CallSite, <span class="keyword">object</span>, <span class="keyword">object</span>&gt;&gt;.Create(Binder.GetMember(none, <span class="string">&quot;X&quot;</span>, <span class="keyword">null</span>, argInfo));
+            siteGetY = CallSite&lt;Func&lt;CallSite, <span class="keyword">object</span>, <span class="keyword">object</span>&gt;&gt;.Create(Binder.GetMember(none, <span class="string">&quot;Y&quot;</span>, <span class="keyword">null</span>, argInfo));
+            siteCast = CallSite&lt;Func&lt;CallSite, <span class="keyword">object</span>, <span class="keyword">int</span>&gt;&gt;.Create(Binder.Convert(convert, <span class="keyword">typeof</span>(<span class="keyword">int</span>), <span class="keyword">null</span>));
+        }
+        <span class="keyword">return</span> (siteCast.Target(siteCast, siteGetX.Target(siteGetX, p)) + siteCast.Target(siteCast, siteGetY.Target(siteGetY, p)));
+    }
+}</code></pre>
+<h5 id="section-14"><a id="sec-generated-title-17"></a>利点</h5>
+<ul>
+<li>やってみたら、動的実行版の中では最速だった（今回の例の場合）。</li>
+</ul>
+<h5 id="section-15"><a id="sec-generated-title-18"></a>欠点</h5>
+<ul>
+<li><p>結構複雑で、お手軽とはいかない。</p>
+</li>
+<li><p>.NET Framework 4 必須。</p>
+</li>
+</ul>
+<p>ちなみに、作成手順的には、
+「dynamic を使ったコードを書く」→「逆コンパイル」→「コードをコピーしてきてそのあと最適化」とやっています。
+でないと書ける気しません。</p>
+<p>とはいえ、IL 生成するよりはだいぶマシですし、
+キャッシュ機構は CallSite にお任せできるので、
+ありといえばありな選択肢。</p>
+<h2 id="section-16"><a id="sec-generated-title-19"></a> <a id="dictionary"></a>おまけ： 辞書構造</h2>
+<p>参考実装。</p>
+<p>動的にやるんであれば、CLR オブジェクトとか使わず最初から辞書（ハッシュテーブル）にでもすりゃいいんじゃね？
+という短絡的実装。</p>
+<p>これだけシンプルなメソッドですら、dynamic より倍くらい遅い。
+プロパティの数が増えたり、文字数が長くなるとみるみるパフォーマンスが落ちるおまけ付き。</p>
+<p>さすがに毎回リフレクション呼ぶよりは1桁以上速いですが。</p>
+<pre><code class="language-csharp"><span class="keyword">public</span> <span class="keyword">class</span> PropertyDictionary
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> Sum(Dictionary&lt;<span class="keyword">string</span>, <span class="keyword">int</span>&gt; p)
+    {
+        <span class="keyword">return</span> p[<span class="string">&quot;X&quot;</span>] + p[<span class="string">&quot;Y&quot;</span>];
+    }
+}</code></pre>
+<h5 id="section-17"><a id="sec-generated-title-20"></a>利点</h5>
+<ul>
+<li>単純と言えば単純。</li>
+</ul>
+<h5 id="section-18"><a id="sec-generated-title-21"></a>欠点</h5>
+<ul>
+<li><p>CLR オブジェクトを渡せない。</p>
+</li>
+<li><p>やっぱり遅い。</p>
+</li>
+</ul>
+<p>古来、動的言語のオブジェクトは基本的にこの辞書みたいな構造になっています。
+もちろん、最近は最適化手法が考えられていて、
+CallSite と同じような動的メソッドキャッシュの仕組みを実装しています。
+（実装によって動的言語のパフォーマンスがずいぶんと変わるのは、こういう部分の差も幾分かあります。）</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/dynamic/">&#x52D5;&#x7684;&#x306A;&#x51E6;&#x7406;</a></li><li><a href="/study/csharp/dynamic/sp_reflection/">&#x5B9F;&#x884C;&#x6642;&#x578B;&#x60C5;&#x5831;</a></li><li><a href="/study/csharp/dynamic/sp_attribute/">&#x5C5E;&#x6027;</a></li><li><a href="/study/csharp/dynamic/sp3_expression/">&#x5F0F;&#x6728;&#xFF08;Expression Trees&#xFF09;</a></li><li><a href="/study/csharp/dynamic/sp4_dynamic/">dynamic</a></li><li><a href="/study/csharp/dynamic/sp4_callsite/">dynamic &#x306E;&#x5185;&#x90E8;&#x5B9F;&#x88C5;</a></li><li><a href="/study/csharp/dynamic/dyn_usage/">[&#x96D1;&#x8A18;]&#x52D5;&#x7684;&#x306A;&#x51E6;&#x7406;&#x306E;&#x4F7F;&#x3044;&#x65B9;</a></li><li><a href="/study/csharp/dynamic/sp4_multipledispatch/">[&#x96D1;&#x8A18;] &#x591A;&#x91CD;&#x30C7;&#x30A3;&#x30B9;&#x30D1;&#x30C3;&#x30C1;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>

@@ -1,0 +1,269 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ccccff">
+    <title>C# &#x306E;&#x578B;&#x3068;&#x30E1;&#x30F3;&#x30D0;&#x30FC; | &#x2B;&#x2B;C&#x2B;&#x2B;; // &#x672A;&#x78BA;&#x8A8D;&#x98DB;&#x884C; C</title>
+    <link rel="stylesheet" href="/assets/css/site.css"><link rel="canonical" href="https://ufcpp.net/study/csharp/cheatsheet/list_type/" /></head>
+<body><header class="site-header"><div class="site-header-inner"><h1 class="site-brand"><a class="site-title" href="/"><img class="site-logo" src="/assets/images/sitelogo_l.jpg" alt="++C++; // 未確認飛行 C"></a></h1>
+            <a class="site-search-link" href="/search/">サイト内検索</a></div>
+        <nav class="site-nav" aria-label="メインナビゲーション"><ul><li><a href="/study/csharp/">C#</a></li>
+                <li><a href="/study/dotnet/">.NET</a></li>
+                <li><a href="/study/computer/">情報工学</a></li>
+                <li><a href="/study/miscprog/">コンピューターその他</a></li>
+                <li><a href="/study/math/">数学・物理</a></li>
+                <li><a href="/blog/">ブログ</a></li></ul></nav></header>
+
+    <div class="site-body"><main class="site-main" id="main-content"><article class="content article"><h1 id="c">C# の型とメンバー</h1>
+<h2 id="section"><a id="sec-generated-title-1"></a> <a id="abst"></a>概要</h2>
+<p>機能別索引＆概要。
+C# で使える型とそのメンバーの一覧を先に示しておきます。</p>
+<h2 id="section-1"><a id="sec-generated-title-2"></a> <a id="type"></a>型</h2>
+<p>大まかに分類すると以下の通り。</p>
+<table summary="C# の型の種類。">
+	<caption>
+		C# の型の種類。
+	</caption>
+	<tr>
+		<td></td>
+		<th>組み込み型</th>
+		<th>ユーザー定義型</th>
+		<th>他の型から合成する型</th>
+	</tr>
+	<tr>
+		<th>値型</th>
+		<td><p>単純型</p></td>
+		<td><p>構造体<br></br>列挙型</p></td>
+		<td><p>Null 許容型</p></td>
+	</tr>
+	<tr>
+		<th>参照型</th>
+		<td><p>文字列型<br></br>オブジェクト型</p></td>
+		<td><p>クラス<br></br>インターフェイス<br></br>デリゲート</p></td>
+		<td><p>配列</p></td>
+	</tr>
+	<tr>
+		<th>その他</th>
+		<td></td>
+		<td></td>
+		<td><p>ポインター</p></td>
+	</tr>
+</table>
+<h5 id="section-2"><a id="sec-generated-title-3"></a>縦軸分類</h5>
+<ul>
+<li><p>値型: 値をスタックに確保。代入時にはコピーが作られる。継承不可。</p>
+</li>
+<li><p>参照型: 値をヒープに確保。代入時には参照を渡すだけ。</p>
+</li>
+</ul>
+<p>参考: 「<a href="/study/csharp/resource/oo_reference/">値型と参照型</a>」「<a href="/study/csharp/resource/misc_heap/">[雑記] スタックとヒープ</a>」</p>
+<h5 id="section-3"><a id="sec-generated-title-4"></a>横軸分類</h5>
+<ul>
+<li><p>組み込み型: プログラミング言語にあらかじめ組み込まれている変数の型 →「<a href="/study/csharp/start/st_embeddedtype/">組込み型</a>」</p>
+</li>
+<li><p>ユーザー定義型: プログラマーが自由に作ることができる型（後述）</p>
+</li>
+<li><p>他の型から合成する型: ある型<code>T</code>から<code>T[]</code>や<code>T?</code>などというような書き方で「合成」して作る型（後述）</p>
+</li>
+</ul>
+<h3 id="section-4"><a id="sec-generated-title-5"></a> <a id="user-defined"></a>ユーザー定義型</h3>
+<table summary="C# のユーザー定義型一覧。">
+	<caption>
+		C# のユーザー定義型一覧。
+	</caption>
+	<tr>
+		<th>型</th>
+		<th>説明</th>
+	</tr>
+	<tr>
+		<td><p>クラス</p></td>
+		<td><p>いわゆる複合型。 最も基本的なユーザー定義型 →「<a href="/study/csharp/oop/oo_class/">クラス</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p>構造体</p></td>
+		<td><p>同じく、複合型。 クラスとの違いは値型であること →「<a href="/study/csharp/resource/oo_reference/">値型と参照型</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p>インターフェイス</p></td>
+		<td><p>抽象メンバーだけを持つ（要するに、型の規約（contract）だけを定める）型 →「<a href="/study/csharp/oop/oo_interface/">インターフェース</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p>列挙型</p></td>
+		<td><p>特定の値だけを取ることができる型 →「<a href="/study/csharp/structured/st_enum/">列挙型</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p>デリゲート</p></td>
+		<td><p>いわゆる fist-class 関数。 メソッドを参照するための型 →「<a href="/study/csharp/functional/sp_delegate/">デリゲート</a>」</p></td>
+	</tr>
+</table>
+<p>クラスとインターフェイスと構造体の3つは非常によく似ていて、いずれも次節「<a href="#member">クラス、インターフェイス、構造体のメンバー</a>」で説明する「メンバー」を持てます。
+違いは以下の通りです。</p>
+<ul>
+<li><p>クラスは参照型で、構造体は値型になります（参考:「<a href="/study/csharp/resource/oo_reference/">値型と参照型</a>」）。</p>
+</li>
+<li><p>構造体は継承（参考:「<a href="/study/csharp/oop/oo_inherit/">継承</a>」）ができません</p>
+</li>
+<li><p>インターフェイスはデータ メンバーを持てず、関数メンバーも実装を持てません（全て abstract（参考:「<a href="/study/csharp/oop/oo_abstract/">抽象メソッド、抽象クラス</a>」）扱い）</p>
+</li>
+<li><p>クラスは多重継承できませんが、インターフェイスなら複数継承（実装）することができます。</p>
+</li>
+</ul>
+<h3 id="section-5"><a id="sec-generated-title-6"></a> <a id="composed"></a>他の型から合成する型</h3>
+<table summary="C# における他の型から合成する型一覧。">
+	<caption>
+		C# における他の型から合成する型一覧。
+	</caption>
+	<tr>
+		<th>型</th>
+		<th>説明</th>
+	</tr>
+	<tr>
+		<td><p>配列</p></td>
+		<td><p>複数のデータをひとまとめにして扱うための型 →「<a href="/study/csharp/structured/st_array/">配列</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p>Null 許容型</p></td>
+		<td><p>値型でも null（無効な値）を認めたい場合に使います →「<a href="/study/csharp/resource/sp2_nullable/">Nullable 型</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p>ポインター</p></td>
+		<td><p>C# では、基本的にポインター（メモリのアドレスを数値として扱う）を禁止していますが、 unsafe コンテキスト内でのみポインターを利用可能です →「<a href="/study/csharp/interop/sp_unsafe/">unsafe</a>」</p></td>
+	</tr>
+</table>
+<h2 id="section-6"><a id="sec-generated-title-7"></a> <a id="member"></a>クラス、インターフェイス、構造体のメンバー</h2>
+<h5 id="section-7"><a id="sec-generated-title-8"></a>データ メンバー</h5>
+<p>データを表すメンバー。</p>
+<table summary="C# のクラスのデータ メンバー一覧">
+	<caption>
+		C# のクラスのデータ メンバー一覧
+	</caption>
+	<tr>
+		<th>メンバー</th>
+		<th>説明</th>
+	</tr>
+	<tr>
+		<td><p>フィールド</p></td>
+		<td><p>ユーザー定義型の内部に持つべきデータを格納するための変数 →「<a href="/study/csharp/structured/st_struct/">データの構造化</a>」「<a href="/study/csharp/oop/oo_class/">クラス</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p>定数</p></td>
+		<td><p>ユーザー定義型に関連付けられた定数 →「<a href="/study/csharp/start/sp_const/">定数</a>」</p></td>
+	</tr>
+</table>
+<p>インターフェイスはデータ メンバーを持てません。</p>
+<h5 id="section-8"><a id="sec-generated-title-9"></a>関数メンバー</h5>
+<p>何らかの処理を行うメンバー。</p>
+<table summary="C# のクラスの関数メンバー一覧">
+	<caption>
+		C# のクラスの関数メンバー一覧
+	</caption>
+	<tr>
+		<th>メンバー</th>
+		<th>説明</th>
+	</tr>
+	<tr>
+		<td><p>メソッド</p></td>
+		<td><p>普通に関数らしい使い方をする関数メンバー →「<a href="/study/csharp/structured/st_function/">関数</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p>コンストラクター</p></td>
+		<td><p>初期化処理 →「<a href="/study/csharp/oop/oo_construct/#ctor">コンストラクター</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p>ファイナライザー</p></td>
+		<td><p>破棄処理 →「<a href="/study/csharp/oop/oo_construct/#dtor">ファイナライザー</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p>プロパティ</p></td>
+		<td><p>いわゆるアクセサーを構文化したもの。 クラス外からはフィールド的に、 クラス内からはメソッド的に使える/作れるメンバー →「<a href="/study/csharp/oop/oo_property/">プロパティ</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p>インデクサー</p></td>
+		<td><p>一種の「引数付きプロパティ」。 配列のように、インデックスを指定して要素を読み書きするためのメンバー →「<a href="/study/csharp/oop/oo_indexer/">インデクサー</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p>イベント</p></td>
+		<td><p>いわゆるオブザーバー パターンを構文化したもの。 イベント ハンドラーの登録口を自動生成します →「<a href="/study/csharp/functional/sp_event/">イベント</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p>演算子</p></td>
+		<td><p>ユーザー定義型向けに演算子をオーバーロードできます →「<a href="/study/csharp/oop/oo_operator/">演算子のオーバーロード</a>」</p></td>
+	</tr>
+</table>
+<p>このうち、ファイナライザーはクラスのみ、コンストラクターと演算子はクラスと構造体（インターフェイス以外）のみで定義できます。</p>
+<h5 id="section-9"><a id="sec-generated-title-10"></a>特殊なメソッド</h5>
+<p>メソッドに関しては、いくつか特殊な機能を持つものもあります。</p>
+<table summary="特殊なメソッド一覧">
+	<caption>
+		特殊なメソッド一覧
+	</caption>
+	<tr>
+		<th>メソッド</th>
+		<th>説明</th>
+	</tr>
+	<tr>
+		<td><p>イテレーター ブロック</p></td>
+		<td><p>データの列挙（IEnumerable の実装）を簡素化します →「<a href="/study/csharp/data/sp2_iterator/">イテレーター</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p>拡張メソッド</p></td>
+		<td><p>既存の型に後からメソッドを追加（したかのように見せかけます）。静的メソッドをインスタンス メソッドと同様の構文で呼び出せるようにします →「<a href="/study/csharp/functional/sp3_extension/">拡張メソッド</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p>部分メソッド</p></td>
+		<td><p>開発ツールとの連携用 →「<a href="/study/csharp/oop/oo_class/#partial">クラスの分割定義</a>」</p></td>
+	</tr>
+	<tr>
+		<td><p>非同期メソッド</p></td>
+		<td><p>非同期処理を簡素化します →「<a href="/study/csharp/async/sp5_async/#async">非同期メソッド</a>」</p></td>
+	</tr>
+</table>
+<h3 id="section-10"><a id="sec-generated-title-11"></a> <a id="accessibility"></a>メンバーのアクセス レベル</h3>
+<p>メンバーにアクセス可能な範囲を制御するためのアクセス修飾子。</p>
+<table summary="C# のアクセス修飾子一覧">
+	<caption>
+		C# のアクセス修飾子一覧
+	</caption>
+	<tr>
+		<th>アクセス修飾子</th>
+		<th>説明</th>
+	</tr>
+	<tr>
+		<td><p>public</p></td>
+		<td><p>どこからでもアクセス可能。</p></td>
+	</tr>
+	<tr>
+		<td><p>protected</p></td>
+		<td><p>その型、もしくは、派生クラス内からのみアクセス可能 （ファミリー スコープ（family scope））。</p></td>
+	</tr>
+	<tr>
+		<td><p>internal</p></td>
+		<td><p>アセンブリ内からのみアクセス可能 （アセンブリ スコープ（assembly scope））。</p></td>
+	</tr>
+	<tr>
+		<td><p>protected internal</p></td>
+		<td><p>protected または internal。 その型、派生クラス、もしくは、アセンブリ内からのみアクセス可能。</p></td>
+	</tr>
+	<tr>
+		<td><p>private protected</p></td>
+		<td><p>protected かつ internal。 その型、アセンブリ内にある派生クラスからのみアクセス可能。</p></td>
+	</tr>
+	<tr>
+		<td><p>private</p></td>
+		<td><p>その型の中からのみアクセス可能。</p></td>
+	</tr>
+</table>
+<p>クラスなどの型は、名前空間直下やグローバル スコープ中で定義できますが、
+この場合、public もしくは internal のみが指定可能です。
+この場合、アクセス修飾子を省略すると internal 扱いになります。</p>
+<p>クラス内では全てのアクセス修飾子が利用可能です。
+この場合、省略すると private 扱いになります。</p>
+</article></main>
+        <aside class="site-sidebar"><nav aria-label="&#x95A2;&#x9023;&#x30DA;&#x30FC;&#x30B8;"><h2>関連ページ</h2>
+                <ul><li><a href="/study/csharp/cheatsheet/">C# &#x306E;&#x6A5F;&#x80FD;&#x4E00;&#x89A7;&#xFF08;&#x7D22;&#x5F15;&#x7684;&#x306A;&#x3082;&#x306E;&#xFF09;</a></li><li><a href="/study/csharp/cheatsheet/list_expression/">C# &#x306E;&#x5F0F;&#x3068;&#x6587;&#x306E;&#x4E00;&#x89A7;</a></li><li><a href="/study/csharp/cheatsheet/list_versions/">&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver1/">C# 1.0</a></li><li><a href="/study/csharp/cheatsheet/ap_ver2/">C# 2.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver3/">C# 3.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver4/">C# 4.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver5/">C# 5.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver6/">C# 6 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7/">C# 7 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_1/">C# 7.1 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_2/">C# 7.2 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver7_3/">C# 7.3 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver8/">C# 8.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver9/">C# 9.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver10/">C# 10.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver11/">C# 11.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver12/">C# 12.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver13/">C# 13.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/ap_ver14/">C# 14.0 &#x306E;&#x65B0;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/langversionoption/">&#x8A00;&#x8A9E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x306E;&#x6307;&#x5B9A;</a></li><li><a href="/study/csharp/cheatsheet/listfxlangversion/">C#&#x306E;&#x8A00;&#x8A9E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x3068;.NET&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;</a></li><li><a href="/study/csharp/cheatsheet/ap_modern/">&#x4F7F;&#x308F;&#x306A;&#x304F;&#x306A;&#x3063;&#x305F;&#x6A5F;&#x80FD;&#x30FB;&#x65B0;&#x3057;&#x3044;&#x6A5F;&#x80FD;</a></li><li><a href="/study/csharp/cheatsheet/apscripting/">C#&#x30B9;&#x30AF;&#x30EA;&#x30D7;&#x30C8;&#x5B9F;&#x884C;</a></li><li><a href="/study/csharp/cheatsheet/file-based-app/">&#x30D5;&#x30A1;&#x30A4;&#x30EB; &#x30D9;&#x30FC;&#x30B9;&#x5B9F;&#x884C;</a></li></ul></nav></aside></div>
+
+    <footer class="site-footer"><div class="site-footer-inner"><p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
+            <p class="site-footer-links"><a href="/about_me/">運営者について</a>
+                &ensp;|&ensp;
+                <a href="/about_site/">サイトについて</a>
+                &ensp;|&ensp;
+                <a href="/sitemap/">サイトマップ</a></p></div></footer></body></html>
