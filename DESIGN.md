@@ -75,7 +75,7 @@ lavender masthead, navy navigation, original logo, pale gray page, and white rea
 remain immediately recognizable.
 
 Modernization is structural rather than cosmetic. Semantic landmarks, keyboard focus, and
-responsive stacking improve the experience without turning the archive into a generic SaaS
+responsive spacing improve the experience without turning the archive into a generic SaaS
 landing page, a dark-mode-first developer tool, or a sparse editorial redesign.
 
 **Key Characteristics:**
@@ -84,7 +84,7 @@ landing page, a dark-mode-first developer tool, or a sparse editorial redesign.
 - Compact navy navigation with high-contrast white labels.
 - Information-dense white reading panels on a pale gray page.
 - Restrained borders and shadows that separate surfaces without decoration.
-- Code, tables, formulas, and related navigation treated as first-class content.
+- Code, tables, and formulas treated as first-class content within a full-width article.
 
 ## Colors
 
@@ -107,7 +107,7 @@ high-contrast reading neutrals.
 ### Neutral
 
 - **Archive Gray** (`page-bg`): The continuous page background around all reading surfaces.
-- **Reading White** (`content-bg`): Article, sidebar, search, and code surfaces.
+- **Reading White** (`content-bg`): Article, search, and code surfaces.
 - **Technical Ink** (`text`): Default prose and navigation-supporting copy.
 - **Heading Plum** (`heading`): Secondary heading color inherited from the live site.
 - **Quiet Rule** (`border`): Hairline surface separation and restrained directional shadows.
@@ -132,7 +132,7 @@ gives code samples the same compact Windows-oriented voice as the live site.
 ### Hierarchy
 
 - **Headline** (400, 28px, 1.25): Page titles on compact navy plaques.
-- **Title** (400, 22px, 1.25): Major section headings and related-page headings.
+- **Title** (400, 22px, 1.25): Major section headings.
 - **Subheading** (700, 18px, 1.25): Technical subsections in navy.
 - **Body** (400, 16px, 1.5): Dense long-form reference prose.
 - **Code** (400, 14px, 1.3): Source listings and inline technical tokens.
@@ -177,7 +177,7 @@ card, its shadow is too strong or its corner treatment is too decorative.
 
 - **Corner Style:** Square.
 - **Background:** Reading White.
-- **Border:** One quiet rule around the article and related-navigation panel.
+- **Border:** One quiet rule around the article.
 - **Internal Padding:** 16px desktop, 8px mobile.
 
 ### Headings
@@ -193,20 +193,13 @@ card, its shadow is too strong or its corner treatment is too decorative.
 - **Overflow:** Horizontal scrolling is mandatory; code must never wrap destructively.
 - **Syntax:** Preserve blue reserved words, cyan types, green comments, and brown methods.
 
-### Related Navigation
-
-- **Background:** Reading White.
-- **Links:** Reference Link Brown with quiet row separators.
-- **Hover:** A very pale lavender field, with no movement or elevation.
-
 ## Do's and Don'ts
 
 ### Do:
 
 - **Do** use the original archived ufcpp.net logo and the canonical `#ccccff` / `#2a3869` pairing.
 - **Do** keep articles white on `#f3f3f3` and retain compact 16px technical prose.
-- **Do** preserve semantic DOM order even when the desktop sidebar is visually placed first.
-- **Do** stack the main article before related navigation at tablet and mobile widths.
+- **Do** let each article use the full available reading width.
 - **Do** keep code and wide tables horizontally scrollable.
 
 ### Don't:

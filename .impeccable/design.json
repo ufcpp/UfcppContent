@@ -127,13 +127,13 @@
   ],
   "narrative": {
     "northStar": "The Technical Reference Room",
-    "overview": "This system should feel like a well-used technical reference room: practical, approachable, and dense with useful information. The live ufcpp.net identity is the source of truth, so the lavender masthead, navy navigation, original logo, pale gray page, and white reading surfaces remain immediately recognizable.\n\nModernization is structural rather than cosmetic. Semantic landmarks, keyboard focus, and responsive stacking improve the experience without turning the archive into a generic SaaS landing page, a dark-mode-first developer tool, or a sparse editorial redesign.",
+    "overview": "This system should feel like a well-used technical reference room: practical, approachable, and dense with useful information. The live ufcpp.net identity is the source of truth, so the lavender masthead, navy navigation, original logo, pale gray page, and white reading surfaces remain immediately recognizable.\n\nModernization is structural rather than cosmetic. Semantic landmarks, keyboard focus, and responsive spacing improve the experience without turning the archive into a generic SaaS landing page, a dark-mode-first developer tool, or a sparse editorial redesign.",
     "keyCharacteristics": [
       "Original ufcpp.net logo on a pale lavender masthead.",
       "Compact navy navigation with high-contrast white labels.",
       "Information-dense white reading panels on a pale gray page.",
       "Restrained borders and shadows that separate surfaces without decoration.",
-      "Code, tables, formulas, and related navigation treated as first-class content."
+      "Code, tables, and formulas treated as first-class content within a full-width article."
     ],
     "rules": [
       {
@@ -160,8 +160,7 @@
     "dos": [
       "Do use the original archived ufcpp.net logo and the canonical #ccccff / #2a3869 pairing.",
       "Do keep articles white on #f3f3f3 and retain compact 16px technical prose.",
-      "Do preserve semantic DOM order even when the desktop sidebar is visually placed first.",
-      "Do stack the main article before related navigation at tablet and mobile widths.",
+      "Do let each article use the full available reading width.",
       "Do keep code and wide tables horizontally scrollable."
     ],
     "donts": [

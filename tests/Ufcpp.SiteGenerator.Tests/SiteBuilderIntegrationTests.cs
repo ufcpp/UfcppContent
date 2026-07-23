@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -131,13 +130,10 @@ public sealed class SiteBuilderIntegrationTests
         Assert.Matches(@"--color-brand-navy\s*:\s*#2a3869\s*;", css);
         Assert.Matches(@"--color-content-bg\s*:\s*#ffffff\s*;", css);
         Assert.Matches(@"--color-content-link\s*:\s*#a35951\s*;", css);
-        Assert.Matches(
-            @"\.site-body\s*\{[^}]*grid-template-areas\s*:\s*""sidebar main""\s*;",
-            css);
-        Assert.Matches(
-            @"@media\s*\(\s*max-width\s*:\s*1024px\s*\)[^{]*\{[\s\S]*?"
-            + @"\.site-body\s*\{[^}]*grid-template-areas\s*:\s*""main""\s*""sidebar""\s*;",
-            css);
+        Assert.Matches(@"\.site-main\s*\{[^}]*width\s*:\s*100%\s*;", css);
+        Assert.DoesNotContain(".site-sidebar", css);
+        Assert.DoesNotContain("--sidebar-width", css);
+        Assert.DoesNotContain("grid-template-areas", css);
         Assert.Matches(
             @"\.content h1\s*\{[^}]*overflow-wrap\s*:\s*anywhere\s*;",
             css);
@@ -226,7 +222,7 @@ public sealed class SiteBuilderIntegrationTests
     }
 
     [Fact]
-    public async Task BuildAsync_StudyArticle_WritesOrderedSemanticResponsiveSidebar()
+    public async Task BuildAsync_StudyArticle_OmitsRelatedPagesSidebarAndUsesFullWidthArticle()
     {
         using var site = new SiteFixture();
         site.AddPage(new(
@@ -276,37 +272,21 @@ public sealed class SiteBuilderIntegrationTests
             "start",
             "current",
             "index.html"));
-        var structure = AssertStableDocumentStructure(
+        AssertStableDocumentStructure(
             document,
             "https://ufcpp.net/study/csharp/start/current/",
             "article");
-        var aside = AssertAsideAfterMain(structure.Layout, structure.Main);
-        var navigation = Assert.Single(aside.Descendants("nav"));
-        Assert.False(string.IsNullOrWhiteSpace((string?)navigation.Attribute("aria-label")));
-
-        var links = navigation.Descendants("a").ToList();
-        var parentIndex = AssertSingleLink(
-            links,
-            "/study/csharp/start/",
-            "Start Chapter");
-        var firstSiblingIndex = AssertSingleLink(
-            links,
-            "/study/csharp/start/getting-started/",
-            "Getting Started");
-        var lastSiblingIndex = AssertSingleLink(
-            links,
-            "/study/csharp/start/advanced/",
-            "Advanced Concepts");
-        Assert.True(
-            parentIndex < firstSiblingIndex && firstSiblingIndex < lastSiblingIndex,
-            "The parent link must precede sibling links ordered by sort_order.");
+        Assert.Empty(document.Descendants("aside"));
+        Assert.Empty(document.Descendants().Where(element =>
+            (string?)element.Attribute("aria-label") == "関連ページ"));
 
         var css = await File.ReadAllTextAsync(Path.Combine(
             output,
             "assets",
             "css",
             "site.css"));
-        AssertResponsiveLayoutRule(css, structure.Layout, aside);
+        Assert.Matches(@"\.site-main\s*\{[^}]*width\s*:\s*100%\s*;", css);
+        Assert.DoesNotContain(".site-sidebar", css);
     }
 
     [Fact]
@@ -384,7 +364,6 @@ public sealed class SiteBuilderIntegrationTests
             .ToArray();
         Assert.Equal(["csharp", "release"], tagText);
 
-        AssertAsideAfterMain(structure.Layout, structure.Main);
     }
 
     [Fact]
@@ -527,7 +506,7 @@ public sealed class SiteBuilderIntegrationTests
         Assert.Equal(successfulOutput, await File.ReadAllBytesAsync(homePath));
     }
 
-    private static (XElement Layout, XElement Main, XElement Article)
+    private static (XElement Layout, XElement Article)
         AssertStableDocumentStructure(
             XDocument document,
             string expectedCanonicalUrl,
@@ -558,6 +537,9 @@ public sealed class SiteBuilderIntegrationTests
             body.Elements(),
             element => HasClassToken(element, "site-body"));
         var main = Assert.Single(layout.Elements("main"));
+        Assert.Equal(
+            ["main"],
+            layout.Elements().Select(element => element.Name.LocalName).ToArray());
         var article = Assert.Single(main.Elements("article"));
         Assert.Contains("content", GetClassTokens(article));
         Assert.Contains(expectedContentTypeClass, GetClassTokens(article));
@@ -569,88 +551,7 @@ public sealed class SiteBuilderIntegrationTests
             && shell.IndexOf(layout) < shell.IndexOf(footer),
             "The durable page shell must be ordered header, content layout, footer.");
 
-        return (layout, main, article);
-    }
-
-    private static XElement AssertAsideAfterMain(XElement layout, XElement main)
-    {
-        var aside = Assert.Single(layout.Elements("aside"));
-        var columns = layout.Elements().ToList();
-        Assert.True(
-            columns.IndexOf(main) < columns.IndexOf(aside),
-            "The semantic sidebar must follow the primary content.");
-        return aside;
-    }
-
-    private static int AssertSingleLink(
-        IList<XElement> links,
-        string expectedHref,
-        string expectedText)
-    {
-        var link = Assert.Single(
-            links,
-            candidate => (string?)candidate.Attribute("href") == expectedHref);
-        Assert.Equal(expectedText, NormalizeWhitespace(link.Value));
-        return links.IndexOf(link);
-    }
-
-    private static void AssertResponsiveLayoutRule(
-        string css,
-        XElement layout,
-        XElement aside)
-    {
-        var layoutClasses = GetClassTokens(layout)
-            .Concat(GetClassTokens(aside))
-            .Distinct(StringComparer.Ordinal)
-            .ToArray();
-        var hasResponsiveRule = EnumerateNarrowMediaBlocks(css).Any(block =>
-            block.MaxWidth <= 800
-            && layoutClasses.Any(className => Regex.IsMatch(
-                block.Rules,
-                $@"\.{Regex.Escape(className)}(?![\w-])",
-                RegexOptions.IgnoreCase))
-            && Regex.IsMatch(
-                block.Rules,
-                @"\b(?:display|width|grid-template(?:-columns|-areas)?|flex-direction|flex-flow|order)\s*:",
-                RegexOptions.IgnoreCase));
-
-        Assert.True(
-            hasResponsiveRule,
-            "Expected a max-width media query that changes the generated layout or sidebar.");
-    }
-
-    private static IEnumerable<(int MaxWidth, string Rules)> EnumerateNarrowMediaBlocks(
-        string css)
-    {
-        var mediaHeaders = Regex.Matches(
-            css,
-            @"@media[^{]*\(\s*max-width\s*:\s*(?<width>\d+)px\s*\)[^{]*\{",
-            RegexOptions.IgnoreCase);
-
-        foreach (Match mediaHeader in mediaHeaders)
-        {
-            var openBrace = mediaHeader.Index + mediaHeader.Length - 1;
-            var depth = 1;
-            for (var index = openBrace + 1; index < css.Length; index++)
-            {
-                depth += css[index] switch
-                {
-                    '{' => 1,
-                    '}' => -1,
-                    _ => 0,
-                };
-
-                if (depth == 0)
-                {
-                    yield return (
-                        int.Parse(
-                            mediaHeader.Groups["width"].Value,
-                            CultureInfo.InvariantCulture),
-                        css[(openBrace + 1)..index]);
-                    break;
-                }
-            }
-        }
+        return (layout, article);
     }
 
     private static IEnumerable<string> EnumerateJsonStrings(JsonElement element)

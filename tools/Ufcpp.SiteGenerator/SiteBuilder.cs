@@ -87,7 +87,7 @@ public sealed class SiteBuilder
 
         foreach (var page in pages)
         {
-            await RenderPageAsync(page, pages, urlMap, markdigRenderer, htmlRenderer);
+            await RenderPageAsync(page, urlMap, markdigRenderer, htmlRenderer);
         }
 
         _logger.LogInformation("Copying assets from '{AssetsDir}'...", _options.AssetsDirectory);
@@ -136,7 +136,6 @@ public sealed class SiteBuilder
 
     private async Task RenderPageAsync(
         ContentPage page,
-        IReadOnlyList<ContentPage> allPages,
         IReadOnlyDictionary<string, string> urlMap,
         MarkdigRenderer markdigRenderer,
         HtmlRenderer htmlRenderer)
@@ -146,7 +145,6 @@ public sealed class SiteBuilder
         var pageTitle = BuildPageTitle(page);
         var contentTypeClass = GetContentTypeClass(page.FrontMatter.ContentType);
         var showRss = page.FrontMatter.ContentType is "BlogTop" or "BlogYear" or "BlogMonth";
-        var sidebarItems = BuildSidebarItems(page, allPages);
         var isBlogEntry = page.FrontMatter.ContentType == "BlogEntry";
 
         var fullHtml = await htmlRenderer.Dispatcher.InvokeAsync(async () =>
@@ -159,7 +157,6 @@ public sealed class SiteBuilder
                 [nameof(SiteLayout.ContentTypeClass)] = contentTypeClass,
                 [nameof(SiteLayout.ShowRssFeed)] = showRss,
                 [nameof(SiteLayout.NoIndex)] = _options.NoIndex,
-                [nameof(SiteLayout.SidebarItems)] = sidebarItems,
                 [nameof(SiteLayout.PublishedAt)] = isBlogEntry
                     ? page.FrontMatter.PublishedAt
                     : null,
@@ -216,53 +213,6 @@ public sealed class SiteBuilder
             "aboutme" => "about",
             _ => "",
         };
-
-    private static IReadOnlyList<NavigationItem> BuildSidebarItems(
-        ContentPage page,
-        IReadOnlyList<ContentPage> allPages)
-    {
-        var items = new List<NavigationItem>();
-        var addedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-        void Add(ContentPage candidate)
-        {
-            if (candidate.CanonicalPath != page.CanonicalPath
-                && addedPaths.Add(candidate.CanonicalPath))
-            {
-                items.Add(new NavigationItem(
-                    candidate.CanonicalPath,
-                    candidate.FrontMatter.Title));
-            }
-        }
-
-        var parent = allPages.FirstOrDefault(candidate =>
-            candidate.FrontMatter.UmbracoId == page.FrontMatter.ParentId);
-        if (parent is not null)
-        {
-            Add(parent);
-        }
-
-        foreach (var sibling in allPages
-            .Where(candidate =>
-                candidate.FrontMatter.ParentId == page.FrontMatter.ParentId
-                && candidate.FrontMatter.UmbracoId != page.FrontMatter.UmbracoId)
-            .OrderBy(candidate => candidate.FrontMatter.SortOrder)
-            .ThenBy(candidate => candidate.CanonicalPath, StringComparer.Ordinal))
-        {
-            Add(sibling);
-        }
-
-        foreach (var child in allPages
-            .Where(candidate =>
-                candidate.FrontMatter.ParentId == page.FrontMatter.UmbracoId)
-            .OrderBy(candidate => candidate.FrontMatter.SortOrder)
-            .ThenBy(candidate => candidate.CanonicalPath, StringComparer.Ordinal))
-        {
-            Add(child);
-        }
-
-        return items;
-    }
 
     private string GetSiteCssPath()
     {

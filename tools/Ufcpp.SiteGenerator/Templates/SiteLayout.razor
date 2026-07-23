@@ -70,17 +70,6 @@
                 @((MarkupString)BodyHtml)
             </article>
         </main>
-        <aside class="site-sidebar">
-            <nav aria-label="関連ページ">
-                <h2>関連ページ</h2>
-                <ul>
-                    @foreach (var item in SidebarItems)
-                    {
-                        <li><a href="@item.Url">@item.Title</a></li>
-                    }
-                </ul>
-            </nav>
-        </aside>
     </div>
 
     <footer class="site-footer">
@@ -105,7 +94,6 @@
     [Parameter] public string ContentTypeClass { get; set; } = "";
     [Parameter] public bool ShowRssFeed { get; set; }
     [Parameter] public bool NoIndex { get; set; }
-    [Parameter] public IReadOnlyList<NavigationItem> SidebarItems { get; set; } = [];
     [Parameter] public string? PublishedAt { get; set; }
     [Parameter] public string? UpdatedAt { get; set; }
     [Parameter] public IReadOnlyList<string> Tags { get; set; } = [];

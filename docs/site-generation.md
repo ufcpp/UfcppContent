@@ -45,8 +45,8 @@ Each build is generated and validated in a fresh sibling directory, then replace
 previous output only after it succeeds. Deleted pages, aliases, and assets therefore do
 not remain published, while a failed rebuild leaves the last successful output intact.
 The generated layout includes the global header and footer, content-type-specific
-metadata, and parent/sibling/child sidebar navigation. It switches to a single-column
-layout on narrow screens.
+metadata, and a single article column that uses the full available reading width at
+every viewport size.
 
 ## Previewing locally
 
@@ -131,8 +131,7 @@ tools/Ufcpp.SiteGenerator/
 │   └── PageLoader.cs          Parses YAML front matter, builds URL map, detects collisions
 ├── Models/
 │   ├── FrontMatter.cs         Typed front-matter model (YamlDotNet)
-│   ├── ContentPage.cs         Fully-loaded page model
-│   └── NavigationItem.cs      Typed sidebar navigation item
+│   └── ContentPage.cs         Fully-loaded page model
 ├── Rendering/
 │   ├── MarkdigRenderer.cs     Markdig pipeline + AST link rewriting + HTML rendering
 │   └── LinkRewriter.cs        Resolves relative .md and assets/ links to canonical URLs
