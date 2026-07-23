@@ -605,23 +605,15 @@ math {
 }
 
 .version {
-  margin-right: 0.5em;
-  padding: 0.1em 0.5em;
-  display: inline-block;
-  border-radius: 0.2em;
-  background: var(--color-brand-navy);
-  color: #ffffff;
-  font-size: 0.75em;
-  font-weight: 700;
+  margin: 1.5em 0 0.75em;
+  padding: 0;
+  display: block;
+  background: transparent;
+  color: var(--color-heading);
+  font-size: 16px;
+  font-weight: 400;
+  text-decoration: none;
 }
-
-.version5 { background: #2266aa; }
-.version6 { background: #228822; }
-.version7 { background: #882222; }
-.version8 { background: #666600; }
-.version9 { background: #660066; }
-.version10 { background: #006666; }
-.version12 { background: #004488; }
 
 /* Footer */
 .site-footer {

@@ -160,6 +160,11 @@ public sealed class SiteBuilderIntegrationTests
             @"\.content pre code \.powershellCommand\s*\{[^}]*color\s*:\s*#000080\s*;",
             css);
         Assert.Matches(
+            @"\.version\s*\{[^}]*display\s*:\s*block\s*;[^}]*"
+            + @"background\s*:\s*transparent\s*;[^}]*"
+            + @"color\s*:\s*var\(--color-heading\)\s*;",
+            css);
+        Assert.Matches(
             @"@media print\s*\{[\s\S]*?\.content pre code span\s*\{"
             + @"[^}]*color\s*:\s*#000000(?:\s*!important)?\s*;",
             css);
