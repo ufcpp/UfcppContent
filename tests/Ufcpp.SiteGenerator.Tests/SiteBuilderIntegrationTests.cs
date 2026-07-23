@@ -171,6 +171,61 @@ public sealed class SiteBuilderIntegrationTests
     }
 
     [Fact]
+    public async Task BuildAsync_LegacyMath_WritesFormulaStyles()
+    {
+        using var site = new SiteFixture();
+        site.AddPage(new(
+            "fraction.md",
+            "Fraction",
+            "/fraction/",
+            "Article",
+            102,
+            -1,
+            0,
+            """
+            <span class="math">x = <table class="frac" summary="fraction"><tr><td class="num">1</td></tr><tr><td>y</td></tr></table></span>
+            <div class="math"><table class="sigma"><tr><td class="sigma">∑</td></tr><tr><td class="sigmasub">i=0</td></tr></table></div>
+            <div class="math"><span class="integral">∫</span><table class="integral"><tr><td class="intsup">1</td></tr><tr><td class="intsub">0</td></tr></table></div>
+            <div class="math"><span class="paren">(</span><table class="matrix"><tr><td>x</td><td>y</td></tr></table><span class="paren">)</span></div>
+            """));
+        var output = site.GetOutputDirectory("fraction");
+
+        await site.BuildAsync(output);
+
+        var document = LoadHtmlDocument(Path.Combine(output, "fraction", "index.html"));
+        var fraction = Assert.Single(
+            document.Descendants("table"),
+            element => HasClassToken(element, "frac"));
+        Assert.Equal(["1", "y"], fraction.Descendants("td").Select(cell => cell.Value));
+
+        var css = await File.ReadAllTextAsync(Path.Combine(
+            output,
+            "assets",
+            "css",
+            "site.css"));
+        Assert.Matches(
+            @"\.content table\.frac,[^{]*\{[^}]*display\s*:\s*inline-table\s*;"
+            + @"[^}]*vertical-align\s*:\s*middle\s*;",
+            css);
+        Assert.Matches(
+            @"\.content table\.frac td,[^{]*\{[^}]*border\s*:\s*0\s*;"
+            + @"[^}]*text-align\s*:\s*center\s*;",
+            css);
+        Assert.Matches(
+            @"\.content table\.frac td\.num\s*\{[^}]*"
+            + @"border-bottom\s*:\s*1pt solid currentColor\s*;",
+            css);
+        Assert.Contains(".content table.sigma", css);
+        Assert.Contains(".content table.integral", css);
+        Assert.Contains(".content table.matrix", css);
+        Assert.Contains(".content table.branch", css);
+        Assert.Contains(".content table.subsup", css);
+        Assert.Contains(".content .math span.normal", css);
+        Assert.Contains(".content .math span.vector", css);
+        Assert.Contains(".content .math span.bar", css);
+    }
+
+    [Fact]
     public async Task BuildAsync_StudyArticle_WritesOrderedSemanticResponsiveSidebar()
     {
         using var site = new SiteFixture();

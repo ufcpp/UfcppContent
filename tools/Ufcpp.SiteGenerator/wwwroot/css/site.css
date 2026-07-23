@@ -561,6 +561,154 @@ th {
   font-weight: 700;
 }
 
+.content .math {
+  font-family: "Times New Roman", serif;
+  font-style: italic;
+}
+
+.content span.math {
+  display: inline-block;
+}
+
+.content div.math {
+  margin: 0.2em 1.5em 0.5em;
+}
+
+.content table.frac,
+.content table.sigma,
+.content table.integral,
+.content table.matrix,
+.content table.branch,
+.content table.subsup {
+  width: auto;
+  max-width: none;
+  margin: 0;
+  display: inline-table;
+  overflow: visible;
+  vertical-align: middle;
+  font-family: "Times New Roman", serif;
+  font-style: italic;
+  text-align: center;
+}
+
+.content table.frac td,
+.content table.sigma td,
+.content table.integral td,
+.content table.matrix td,
+.content table.branch td,
+.content table.subsup td {
+  border: 0;
+  text-align: center;
+}
+
+.content table.frac {
+  font-size: 90%;
+}
+
+.content table.frac td {
+  padding: 0;
+}
+
+.content table.frac td.num {
+  border-bottom: 1pt solid currentColor;
+}
+
+.content table.sigma td {
+  padding: 0;
+}
+
+.content table.sigma td.sigma {
+  font-size: 120%;
+  font-style: normal;
+}
+
+.content table.sigma td.sigmasub {
+  font-size: 70%;
+}
+
+.content span.integral,
+.content span.ointegral {
+  font-size: 140%;
+  font-style: normal;
+  vertical-align: middle;
+}
+
+.content span.integral {
+  margin-right: -0.1em;
+}
+
+.content span.ointegral {
+  margin-right: -0.4em;
+}
+
+.content table.integral {
+  padding-right: 0.3em;
+  padding-left: 0.1em;
+  font-size: 80%;
+}
+
+.content table.integral td {
+  margin: 0;
+  padding: 0;
+}
+
+.content table.integral td.intsup {
+  text-align: right;
+}
+
+.content table.integral td.intsub {
+  text-align: left;
+}
+
+.content table.matrix td,
+.content table.branch td {
+  padding: 0.1em 0.25em;
+}
+
+.content table.subsup {
+  padding-left: 1em;
+  font-size: 80%;
+}
+
+.content table.subsup td {
+  padding: 0;
+}
+
+.content .math span.normal {
+  font-weight: 400;
+  font-style: normal;
+}
+
+.content .math span.paren,
+.content .math span.matrix {
+  vertical-align: middle;
+}
+
+.content .math span.paren {
+  font-style: normal;
+}
+
+.content .math span.vector {
+  font-weight: 700;
+}
+
+.content .math span.bold {
+  font-weight: 700;
+  font-style: normal;
+}
+
+.content .math span.bar {
+  display: inline-block;
+  border-top: 1pt solid currentColor;
+}
+
+.content .math span.cursive,
+.content .math span.script {
+  padding-right: 0.2em;
+  font-family: cursive;
+  font-style: italic;
+}
+
 blockquote {
   position: relative;
   margin: 1em 0;
