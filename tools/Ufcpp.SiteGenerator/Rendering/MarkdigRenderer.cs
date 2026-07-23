@@ -64,6 +64,11 @@ public sealed class MarkdigRenderer
         RegexOptions.Compiled,
         TimeSpan.FromSeconds(5));
 
+    private static readonly Regex FencedCodePlaceholderRegex = new(
+        @"<div data-ufcpp-fenced-code-placeholder=""(?<index>\d+)""></div>",
+        RegexOptions.Compiled,
+        TimeSpan.FromSeconds(5));
+
     private static readonly Regex FenceLineRegex = new(
         @"^ {0,3}(?<marker>`{3,}|~{3,})(?<remainder>.*)$",
         RegexOptions.Compiled,
@@ -215,11 +220,36 @@ public sealed class MarkdigRenderer
                 rawTables.Add(RestoreProtectedBlocks(match.Value, protectedBlocks));
                 return $"<div data-ufcpp-raw-table-placeholder=\"{index}\"></div>";
             });
+
+        var renderedFencedBlocks = new Dictionary<int, string>();
+        for (var index = 0; index < protectedBlocks.Count; index++)
+        {
+            var token = $"\u001AFC{index}\u001A";
+            if (!markdown.Contains(token, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            renderedFencedBlocks[index] = Markdown.ToHtml(
+                    protectedBlocks[index],
+                    Pipeline)
+                .TrimEnd('\r', '\n');
+            markdown = markdown.Replace(
+                token,
+                $"<div data-ufcpp-fenced-code-placeholder=\"{index}\"></div>",
+                StringComparison.Ordinal);
+        }
+
         markdown = RestoreProtectedBlocks(markdown, protectedBlocks);
         var html = Markdown.ToHtml(markdown, Pipeline).TrimEnd('\r', '\n');
-        return RawTablePlaceholderRegex.Replace(
+        html = RawTablePlaceholderRegex.Replace(
             html,
             match => rawTables[int.Parse(
+                match.Groups["index"].Value,
+                System.Globalization.CultureInfo.InvariantCulture)]);
+        return FencedCodePlaceholderRegex.Replace(
+            html,
+            match => renderedFencedBlocks[int.Parse(
                 match.Groups["index"].Value,
                 System.Globalization.CultureInfo.InvariantCulture)]);
     }

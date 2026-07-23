@@ -175,6 +175,27 @@ public sealed class MarkdigRendererTests
     }
 
     [Fact]
+    public void Render_LegacyMarkdownContainer_PreservesHighlightedFencedCode()
+    {
+        var html = Render(
+            """
+            <div markdown="1">
+
+            ```csharp
+            if (left < right) return;
+            ```
+
+            </div>
+            """);
+
+        Assert.Contains(
+            "<pre><code class=\"language-csharp\"><span class=\"keyword\">if</span>",
+            html);
+        Assert.DoesNotContain("&lt;span class=&quot;keyword&quot;&gt;", html);
+        Assert.DoesNotContain("```csharp", html);
+    }
+
+    [Fact]
     public void Render_ObjectDataAndSourceParam_RewritesOnlyExistingLegacyAssets()
     {
         var html = Render(

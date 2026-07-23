@@ -100,17 +100,29 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
 
         private static string ExtractHighlightedCode(string html)
         {
-            const string OpeningTag = "<pre>\n";
-            const string ClosingTag = "\n</pre>";
-            var start = html.IndexOf(OpeningTag, StringComparison.Ordinal);
+            const string OpeningTag = "<pre";
+            const string ClosingTag = "</pre>";
+            var openingStart = html.IndexOf(OpeningTag, StringComparison.Ordinal);
+            var contentStart = openingStart < 0
+                ? -1
+                : html.IndexOf('>', openingStart) + 1;
             var end = html.LastIndexOf(ClosingTag, StringComparison.Ordinal);
-            if (start < 0 || end < start)
+            if (contentStart <= 0 || end < contentStart)
             {
                 throw new InvalidDataException(
                     "The syntax highlighter returned an unexpected HTML fragment.");
             }
 
-            return html[(start + OpeningTag.Length)..end];
+            if (html.AsSpan(contentStart).StartsWith("\r\n", StringComparison.Ordinal))
+            {
+                contentStart += 2;
+            }
+            else if (html.AsSpan(contentStart).StartsWith("\n", StringComparison.Ordinal))
+            {
+                contentStart++;
+            }
+
+            return html[contentStart..end];
         }
     }
 }
