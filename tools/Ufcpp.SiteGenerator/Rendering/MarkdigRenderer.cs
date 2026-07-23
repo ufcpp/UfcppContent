@@ -69,6 +69,11 @@ public sealed class MarkdigRenderer
         RegexOptions.Compiled,
         TimeSpan.FromSeconds(5));
 
+    private static readonly Regex LegacyMarkdownPlaceholderRegex = new(
+        @"<div data-ufcpp-legacy-markdown-placeholder=""(?<index>\d+)""></div>",
+        RegexOptions.Compiled,
+        TimeSpan.FromSeconds(5));
+
     private static readonly Regex FenceLineRegex = new(
         @"^ {0,3}(?<marker>`{3,}|~{3,})(?<remainder>.*)$",
         RegexOptions.Compiled,
@@ -109,9 +114,11 @@ public sealed class MarkdigRenderer
 
         var (markdownWithoutFences, fencedCodeBlocks) =
             ProtectFencedCodeBlocks(page.MarkdownBody);
+        var legacyMarkdownBlocks = new List<string>();
         var markdown = RenderLegacyMarkdownElements(
             markdownWithoutFences,
-            fencedCodeBlocks);
+            fencedCodeBlocks,
+            legacyMarkdownBlocks);
         var rawTables = new List<string>();
         markdown = RawTableRegex.Replace(
             markdown,
@@ -141,6 +148,7 @@ public sealed class MarkdigRenderer
             match => rawTables[int.Parse(
                 match.Groups["index"].Value,
                 System.Globalization.CultureInfo.InvariantCulture)]);
+        html = RestoreLegacyMarkdownBlocks(html, legacyMarkdownBlocks);
 
         // Rewrite links in raw HTML blocks (bounded regex, safe from backtracking)
         html = HtmlAttrRegex.Replace(html, match =>
@@ -177,7 +185,8 @@ public sealed class MarkdigRenderer
 
     private static string RenderLegacyMarkdownElements(
         string markdown,
-        IReadOnlyList<string> protectedBlocks)
+        IReadOnlyList<string> protectedBlocks,
+        List<string> renderedBlocks)
     {
         for (var iteration = 0; iteration < 16; iteration++)
         {
@@ -192,7 +201,10 @@ public sealed class MarkdigRenderer
                     var renderedBody = RenderMarkdownFragment(
                         Dedent(match.Groups["body"].Value),
                         protectedBlocks);
-                    return $"<{tag}{attributes}>{renderedBody}</{tag}>";
+                    var renderedElement = $"<{tag}{attributes}>{renderedBody}</{tag}>";
+                    var index = renderedBlocks.Count;
+                    renderedBlocks.Add(renderedElement);
+                    return $"<div data-ufcpp-legacy-markdown-placeholder=\"{index}\"></div>";
                 });
 
             if (string.Equals(replaced, markdown, StringComparison.Ordinal))
@@ -252,6 +264,26 @@ public sealed class MarkdigRenderer
             match => renderedFencedBlocks[int.Parse(
                 match.Groups["index"].Value,
                 System.Globalization.CultureInfo.InvariantCulture)]);
+    }
+
+    private static string RestoreLegacyMarkdownBlocks(
+        string html,
+        IReadOnlyList<string> renderedBlocks)
+    {
+        for (var index = renderedBlocks.Count - 1; index >= 0; index--)
+        {
+            var currentIndex = index;
+            html = LegacyMarkdownPlaceholderRegex.Replace(
+                html,
+                match => int.Parse(
+                        match.Groups["index"].Value,
+                        System.Globalization.CultureInfo.InvariantCulture)
+                    == currentIndex
+                    ? renderedBlocks[currentIndex]
+                    : match.Value);
+        }
+
+        return html;
     }
 
     private static (string Markdown, IReadOnlyList<string> Blocks)

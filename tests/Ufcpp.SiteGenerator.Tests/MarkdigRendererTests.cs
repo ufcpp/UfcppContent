@@ -1,4 +1,5 @@
 using Ufcpp.SiteGenerator.Models;
+using Ufcpp.SiteGenerator.Loading;
 using Ufcpp.SiteGenerator.Rendering;
 
 namespace Ufcpp.SiteGenerator.Tests;
@@ -179,7 +180,7 @@ public sealed class MarkdigRendererTests
     {
         var html = Render(
             """
-            <div markdown="1">
+            <div class="expand-panel" markdown="1" title="（古いコード（Windows Forms））">
 
             ```csharp
             if (left < right) return;
@@ -193,6 +194,20 @@ public sealed class MarkdigRendererTests
             html);
         Assert.DoesNotContain("&lt;span class=&quot;keyword&quot;&gt;", html);
         Assert.DoesNotContain("```csharp", html);
+    }
+
+    [Fact]
+    public void Render_StBasisPage_DoesNotEscapeHighlightedCode()
+    {
+        var contentRoot = Path.GetFullPath(
+            Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\..\\..\\content"));
+        var (pages, urlMap) = PageLoader.Load(contentRoot);
+        var page = pages.Single(
+            candidate => candidate.RelativePath == "study/csharp/start/st_basis.md");
+
+        var html = new MarkdigRenderer(contentRoot).Render(page, urlMap);
+
+        Assert.DoesNotContain("&lt;span class=&quot;", html);
     }
 
     [Fact]
