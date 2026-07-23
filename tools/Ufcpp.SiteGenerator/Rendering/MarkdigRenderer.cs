@@ -2,6 +2,7 @@ using Markdig;
 using Markdig.Renderers;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
+using System.Net;
 using System.Text.RegularExpressions;
 using Ufcpp.SiteGenerator.Models;
 
@@ -79,6 +80,46 @@ public sealed class MarkdigRenderer
         RegexOptions.Compiled,
         TimeSpan.FromSeconds(5));
 
+    private static readonly Regex HeadingElementRegex = new(
+        @"<h(?<level>[2-4])\b(?<attributes>[^>]{0,2048})>(?<content>.*?)</h\k<level>\s*>",
+        RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled,
+        TimeSpan.FromSeconds(5));
+
+    private static readonly Regex TitleElementRegex = new(
+        @"<h1\b[^>]{0,2048}>.*?</h1>\s*",
+        RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled,
+        TimeSpan.FromSeconds(5));
+
+    private static readonly Regex KeywordElementRegex = new(
+        @"<(?<tag>strong|span)\b(?<attributes>[^>]{0,2048})>(?<content>.*?)</\k<tag>\s*>",
+        RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled,
+        TimeSpan.FromSeconds(5));
+
+    private static readonly Regex AnchorOpeningTagRegex = new(
+        @"<a\b(?<attributes>[^>]{0,2048})>",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled,
+        TimeSpan.FromSeconds(5));
+
+    private static readonly Regex IdAttributeRegex = new(
+        @"(?:^|\s)id\s*=\s*(?<q>[""'])(?<value>[^""']{1,2048})\k<q>",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled,
+        TimeSpan.FromSeconds(5));
+
+    private static readonly Regex ClassAttributeRegex = new(
+        @"(?:^|\s)class\s*=\s*(?<q>[""'])(?<value>[^""']{1,2048})\k<q>",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled,
+        TimeSpan.FromSeconds(5));
+
+    private static readonly Regex HtmlTagRegex = new(
+        @"<[^>]{1,2048}>",
+        RegexOptions.Singleline | RegexOptions.Compiled,
+        TimeSpan.FromSeconds(5));
+
+    private static readonly Regex WhitespaceRegex = new(
+        @"\s+",
+        RegexOptions.Compiled,
+        TimeSpan.FromSeconds(5));
+
     private readonly string _contentRootDirectory;
     private readonly string _assetsRootDirectory;
 
@@ -101,7 +142,15 @@ public sealed class MarkdigRenderer
     /// Renders the Markdown body of the given page to an HTML string,
     /// rewriting internal links to canonical URLs.
     /// </summary>
-    public string Render(ContentPage page, IReadOnlyDictionary<string, string> urlMap)
+    public string Render(ContentPage page, IReadOnlyDictionary<string, string> urlMap) =>
+        RenderWithMetadata(page, urlMap).Html;
+
+    /// <summary>
+    /// Renders the Markdown body and extracts its heading outline and keyword anchors.
+    /// </summary>
+    public RenderedContent RenderWithMetadata(
+        ContentPage page,
+        IReadOnlyDictionary<string, string> urlMap)
     {
         var absoluteFilePath = Path.GetFullPath(
             Path.Combine(_contentRootDirectory, page.RelativePath));
@@ -180,8 +229,249 @@ public sealed class MarkdigRenderer
                 + match.Groups["q"].Value;
         });
 
-        return html;
+        var (htmlWithHeadingIds, tableOfContents) = BuildTableOfContents(html);
+        var (htmlWithKeywordTargets, keywords) = ExtractKeywords(htmlWithHeadingIds);
+        var (titleHtml, bodyHtml) = ExtractTitle(htmlWithKeywordTargets);
+        return new RenderedContent(
+            titleHtml,
+            bodyHtml,
+            tableOfContents,
+            keywords);
     }
+
+    private static (string? TitleHtml, string BodyHtml) ExtractTitle(string html)
+    {
+        var match = TitleElementRegex.Match(html);
+        return match.Success
+            ? (match.Value, html.Remove(match.Index, match.Length))
+            : (null, html);
+    }
+
+    private static (
+        string Html,
+        IReadOnlyList<TableOfContentsItem> Items) BuildTableOfContents(string html)
+    {
+        var headings = new List<HeadingItem>();
+        var usedHeadingIds = new HashSet<string>(StringComparer.Ordinal);
+        var firstIdIndexes = GetFirstIdIndexes(html);
+        var existingIds = firstIdIndexes.Keys.ToHashSet(StringComparer.Ordinal);
+        var generatedId = 0;
+
+        var htmlWithHeadingIds = HeadingElementRegex.Replace(html, headingMatch =>
+        {
+            var content = headingMatch.Groups["content"].Value;
+            var title = ExtractText(content);
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                return headingMatch.Value;
+            }
+
+            var id = FindPreferredHeadingId(
+                headingMatch.Groups["attributes"].Value,
+                content,
+                usedHeadingIds,
+                firstIdIndexes,
+                headingMatch.Index,
+                headingMatch.Index + headingMatch.Length);
+            var needsGeneratedId = id is null;
+            if (id is null)
+            {
+                do
+                {
+                    id = $"sec-generated-toc-{++generatedId}";
+                }
+                while (!existingIds.Add(id));
+
+                usedHeadingIds.Add(id);
+            }
+
+            headings.Add(new HeadingItem(
+                int.Parse(
+                    headingMatch.Groups["level"].Value,
+                    System.Globalization.CultureInfo.InvariantCulture),
+                id,
+                title));
+
+            return needsGeneratedId
+                ? SetHeadingId(headingMatch, id)
+                : headingMatch.Value;
+        });
+
+        var roots = new List<TableOfContentsItem>();
+        var levels = new Stack<(int Level, List<TableOfContentsItem> Items)>();
+        levels.Push((1, roots));
+
+        foreach (var heading in headings)
+        {
+            while (levels.Count > 1 && levels.Peek().Level >= heading.Level)
+            {
+                levels.Pop();
+            }
+
+            var children = new List<TableOfContentsItem>();
+            levels.Peek().Items.Add(new TableOfContentsItem(
+                BuildFragmentUrl(heading.Id),
+                heading.Title,
+                children));
+            levels.Push((heading.Level, children));
+        }
+
+        return (htmlWithHeadingIds, roots);
+    }
+
+    private static (
+        string Html,
+        IReadOnlyList<NavigationItem> Items) ExtractKeywords(string html)
+    {
+        var keywords = new List<NavigationItem>();
+        var ids = new HashSet<string>(StringComparer.Ordinal);
+        var firstIdIndexes = GetFirstIdIndexes(html);
+        var existingIds = firstIdIndexes.Keys.ToHashSet(StringComparer.Ordinal);
+        var generatedId = 0;
+
+        var htmlWithKeywordTargets = KeywordElementRegex.Replace(html, keywordMatch =>
+        {
+            var attributes = keywordMatch.Groups["attributes"].Value;
+            var className = GetAttributeValue(ClassAttributeRegex, attributes);
+            if (className is null
+                || !className
+                    .Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)
+                    .Contains("keyword", StringComparer.OrdinalIgnoreCase))
+            {
+                return keywordMatch.Value;
+            }
+
+            var id = GetAttributeValue(IdAttributeRegex, attributes);
+            var title = ExtractText(keywordMatch.Groups["content"].Value);
+            if (string.IsNullOrWhiteSpace(id)
+                || string.IsNullOrWhiteSpace(title)
+                || !ids.Add(id))
+            {
+                return keywordMatch.Value;
+            }
+
+            var targetId = id;
+            var needsGeneratedTarget = firstIdIndexes.TryGetValue(id, out var firstIndex)
+                && firstIndex < keywordMatch.Index;
+            if (needsGeneratedTarget)
+            {
+                do
+                {
+                    targetId = $"sec-generated-keyword-{++generatedId}";
+                }
+                while (!existingIds.Add(targetId));
+            }
+
+            keywords.Add(new NavigationItem(BuildFragmentUrl(targetId), title));
+            return needsGeneratedTarget
+                ? InsertKeywordTarget(keywordMatch, targetId)
+                : keywordMatch.Value;
+        });
+
+        return (htmlWithKeywordTargets, keywords);
+    }
+
+    private static string BuildFragmentUrl(string id) =>
+        "#" + Uri.EscapeDataString(id);
+
+    private static string? FindPreferredHeadingId(
+        string headingAttributes,
+        string content,
+        ISet<string> usedIds,
+        IReadOnlyDictionary<string, int> firstIdIndexes,
+        int headingStart,
+        int headingEnd)
+    {
+        var explicitIds = new List<string>();
+        foreach (Match anchorMatch in AnchorOpeningTagRegex.Matches(content))
+        {
+            var id = GetAttributeValue(
+                IdAttributeRegex,
+                anchorMatch.Groups["attributes"].Value);
+            if (!string.IsNullOrWhiteSpace(id))
+            {
+                explicitIds.Add(id);
+            }
+        }
+
+        var candidates = explicitIds
+            .Where(id => !id.StartsWith(
+                "sec-generated-title-",
+                StringComparison.OrdinalIgnoreCase))
+            .ToList();
+        var headingId = GetAttributeValue(IdAttributeRegex, headingAttributes);
+        if (!string.IsNullOrWhiteSpace(headingId))
+        {
+            candidates.Add(headingId);
+        }
+
+        candidates.AddRange(explicitIds);
+        return candidates.FirstOrDefault(candidate =>
+            firstIdIndexes.TryGetValue(candidate, out var firstIndex)
+            && firstIndex >= headingStart
+            && firstIndex < headingEnd
+            && usedIds.Add(candidate));
+    }
+
+    private static string? GetAttributeValue(Regex regex, string attributes)
+    {
+        var match = regex.Match(attributes);
+        return match.Success
+            ? WebUtility.HtmlDecode(match.Groups["value"].Value).Trim()
+            : null;
+    }
+
+    private static IReadOnlyDictionary<string, int> GetFirstIdIndexes(string html)
+    {
+        var indexes = new Dictionary<string, int>(StringComparer.Ordinal);
+        foreach (Match match in IdAttributeRegex.Matches(html))
+        {
+            var id = WebUtility.HtmlDecode(match.Groups["value"].Value).Trim();
+            if (!string.IsNullOrWhiteSpace(id))
+            {
+                indexes.TryAdd(id, match.Index);
+            }
+        }
+
+        return indexes;
+    }
+
+    private static string SetHeadingId(Match headingMatch, string id)
+    {
+        var attributesGroup = headingMatch.Groups["attributes"];
+        var attributes = attributesGroup.Value;
+        var idMatch = IdAttributeRegex.Match(attributes);
+        var updatedAttributes = idMatch.Success
+            ? attributes[..idMatch.Groups["value"].Index]
+                + id
+                + attributes[(idMatch.Groups["value"].Index
+                    + idMatch.Groups["value"].Length)..]
+            : attributes + $" id=\"{id}\"";
+        var attributesOffset = attributesGroup.Index - headingMatch.Index;
+
+        return headingMatch.Value[..attributesOffset]
+            + updatedAttributes
+            + headingMatch.Value[(attributesOffset + attributesGroup.Length)..];
+    }
+
+    private static string InsertKeywordTarget(Match keywordMatch, string id)
+    {
+        var contentGroup = keywordMatch.Groups["content"];
+        var contentOffset = contentGroup.Index - keywordMatch.Index;
+        return keywordMatch.Value[..contentOffset]
+            + $"<span id=\"{id}\"></span>"
+            + keywordMatch.Value[contentOffset..];
+    }
+
+    private static string ExtractText(string html)
+    {
+        var withoutTags = HtmlTagRegex.Replace(html, string.Empty);
+        return WhitespaceRegex.Replace(
+            WebUtility.HtmlDecode(withoutTags),
+            " ").Trim();
+    }
+
+    private sealed record HeadingItem(int Level, string Id, string Title);
 
     private static string RenderLegacyMarkdownElements(
         string markdown,

@@ -70,6 +70,7 @@ public sealed class SiteBuilder
         _logger.LogInformation("Loaded {Count} pages.", pages.Count);
 
         ValidateOutputClaims(pages);
+        var pagesById = BuildPageIndex(pages);
 
         // Set up Razor HtmlRenderer
         var services = new ServiceCollection();
@@ -87,7 +88,12 @@ public sealed class SiteBuilder
 
         foreach (var page in pages)
         {
-            await RenderPageAsync(page, urlMap, markdigRenderer, htmlRenderer);
+            await RenderPageAsync(
+                page,
+                pagesById,
+                urlMap,
+                markdigRenderer,
+                htmlRenderer);
         }
 
         _logger.LogInformation("Copying assets from '{AssetsDir}'...", _options.AssetsDirectory);
@@ -136,15 +142,18 @@ public sealed class SiteBuilder
 
     private async Task RenderPageAsync(
         ContentPage page,
+        IReadOnlyDictionary<int, ContentPage> pagesById,
         IReadOnlyDictionary<string, string> urlMap,
         MarkdigRenderer markdigRenderer,
         HtmlRenderer htmlRenderer)
     {
-        var bodyHtml = markdigRenderer.Render(page, urlMap);
+        var renderedContent = markdigRenderer.RenderWithMetadata(page, urlMap);
 
         var pageTitle = BuildPageTitle(page);
         var contentTypeClass = GetContentTypeClass(page.FrontMatter.ContentType);
         var showRss = page.FrontMatter.ContentType is "BlogTop" or "BlogYear" or "BlogMonth";
+        var breadcrumbs = BuildBreadcrumbs(page, pagesById);
+        var isArticle = page.FrontMatter.ContentType == "Article";
         var isBlogEntry = page.FrontMatter.ContentType == "BlogEntry";
 
         var fullHtml = await htmlRenderer.Dispatcher.InvokeAsync(async () =>
@@ -153,14 +162,23 @@ public sealed class SiteBuilder
             {
                 [nameof(SiteLayout.PageTitle)] = pageTitle,
                 [nameof(SiteLayout.CanonicalUrl)] = page.FrontMatter.SourceUrl,
-                [nameof(SiteLayout.BodyHtml)] = bodyHtml,
+                [nameof(SiteLayout.TitleHtml)] = renderedContent.TitleHtml,
+                [nameof(SiteLayout.BodyHtml)] = renderedContent.BodyHtml,
                 [nameof(SiteLayout.ContentTypeClass)] = contentTypeClass,
                 [nameof(SiteLayout.ShowRssFeed)] = showRss,
                 [nameof(SiteLayout.NoIndex)] = _options.NoIndex,
-                [nameof(SiteLayout.PublishedAt)] = isBlogEntry
+                [nameof(SiteLayout.IsArticle)] = isArticle,
+                [nameof(SiteLayout.Breadcrumbs)] = breadcrumbs,
+                [nameof(SiteLayout.TableOfContents)] = isArticle
+                    ? renderedContent.TableOfContents
+                    : [],
+                [nameof(SiteLayout.Keywords)] = isArticle
+                    ? renderedContent.Keywords
+                    : [],
+                [nameof(SiteLayout.PublishedAt)] = isArticle || isBlogEntry
                     ? page.FrontMatter.PublishedAt
                     : null,
-                [nameof(SiteLayout.UpdatedAt)] = isBlogEntry
+                [nameof(SiteLayout.UpdatedAt)] = isArticle || isBlogEntry
                     ? page.FrontMatter.UpdatedAt
                     : null,
                 [nameof(SiteLayout.Tags)] = isBlogEntry
@@ -213,6 +231,68 @@ public sealed class SiteBuilder
             "aboutme" => "about",
             _ => "",
         };
+
+    private static IReadOnlyDictionary<int, ContentPage> BuildPageIndex(
+        IReadOnlyList<ContentPage> pages)
+    {
+        var pagesById = new Dictionary<int, ContentPage>();
+        foreach (var page in pages)
+        {
+            if (!pagesById.TryAdd(page.FrontMatter.UmbracoId, page))
+            {
+                throw new InvalidDataException(
+                    $"Duplicate Umbraco ID {page.FrontMatter.UmbracoId} in '{page.RelativePath}'.");
+            }
+        }
+
+        return pagesById;
+    }
+
+    private static IReadOnlyList<NavigationItem> BuildBreadcrumbs(
+        ContentPage page,
+        IReadOnlyDictionary<int, ContentPage> pagesById)
+    {
+        var pages = new Stack<ContentPage>();
+        var visitedIds = new HashSet<int>();
+        var current = page;
+
+        while (true)
+        {
+            var currentId = current.FrontMatter.UmbracoId;
+            if (!visitedIds.Add(currentId))
+            {
+                throw new InvalidDataException(
+                    $"Content hierarchy cycle detected while building breadcrumbs for '{page.RelativePath}'.");
+            }
+
+            pages.Push(current);
+            var parentId = current.FrontMatter.ParentId;
+            if (parentId == -1)
+            {
+                break;
+            }
+
+            var child = current;
+            if (!pagesById.TryGetValue(parentId, out var parent))
+            {
+                throw new InvalidDataException(
+                    $"Parent ID {parentId} for '{child.RelativePath}' does not exist.");
+            }
+
+            current = parent;
+        }
+
+        return pages
+            .Where(candidate =>
+                ReferenceEquals(candidate, page)
+                || candidate.FrontMatter.ContentType != "StudyTop")
+            .Select(candidate => new NavigationItem(
+                candidate.CanonicalPath,
+                candidate.FrontMatter.ContentType == "Home"
+                    ? "TOP"
+                    : candidate.FrontMatter.Title))
+            .ToArray();
+    }
 
     private string GetSiteCssPath()
     {

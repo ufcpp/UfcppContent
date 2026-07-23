@@ -46,7 +46,10 @@ previous output only after it succeeds. Deleted pages, aliases, and assets there
 not remain published, while a failed rebuild leaves the last successful output intact.
 The generated layout includes the global header and footer, content-type-specific
 metadata, and a single article column that uses the full available reading width at
-every viewport size.
+every viewport size. Non-home pages receive breadcrumbs derived from their
+`parent_id` hierarchy. Study articles also reproduce the original publication/update
+line, nested table of contents, and keyword links on the page background above the
+framed white body, without restoring a separate sidebar.
 
 ## Previewing locally
 
@@ -130,14 +133,18 @@ tools/Ufcpp.SiteGenerator/
 ├── Loading/
 │   └── PageLoader.cs          Parses YAML front matter, builds URL map, detects collisions
 ├── Models/
-│   ├── FrontMatter.cs         Typed front-matter model (YamlDotNet)
-│   └── ContentPage.cs         Fully-loaded page model
+│   ├── FrontMatter.cs           Typed front-matter model (YamlDotNet)
+│   ├── ContentPage.cs           Fully-loaded page model
+│   ├── NavigationItem.cs        Breadcrumb and keyword link
+│   ├── TableOfContentsItem.cs   Nested article heading link
+│   └── RenderedContent.cs       HTML plus extracted article navigation
 ├── Rendering/
 │   ├── MarkdigRenderer.cs     Markdig pipeline + AST link rewriting + HTML rendering
 │   └── LinkRewriter.cs        Resolves relative .md and assets/ links to canonical URLs
 ├── Templates/
-│   ├── SiteLayout.razor       Full HTML page layout (Razor Component)
-│   └── _Imports.razor         Razor global imports
+│   ├── SiteLayout.razor         Full HTML page layout (Razor Component)
+│   ├── TableOfContentsList.razor Recursive nested heading list
+│   └── _Imports.razor           Razor global imports
 ├── Output/
 │   ├── OutputPathResolver.cs  source_url → output file path
 │   ├── AssetCopier.cs         Copies assets/ and site CSS
@@ -167,6 +174,17 @@ Raw HTML blocks in Markdown are preserved verbatim. Legacy `markdown="1"` conten
 inside `blockquote`, `div`, `th`, and `td` elements is rendered recursively, including
 nested raw tables. This keeps indented table rows as table markup instead of turning
 them into Markdown code blocks.
+
+After HTML rendering, the first `h1` is separated, including when it is inside a
+wrapper, so contextual navigation can be placed directly below the page title. On
+`Article` pages, `h2` through `h4` headings form the nested table of contents.
+Explicit legacy anchor IDs are preferred over generated IDs, preserving stable links
+from the original site. Headings without an anchor receive a collision-free generated
+ID. When a reused ID would resolve to an earlier element, a target-specific generated
+anchor keeps the table-of-contents or keyword link unambiguous. Elements with both an
+`id` and a `keyword` class form the visible keyword list; duplicate keyword IDs are
+emitted only once. Other content types keep their original body without article-only
+indexes.
 
 ### Syntax highlighting
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-21T17:06:04+09:00",
+  "generatedAt": "2026-07-24T00:17:10+09:00",
   "title": "Design System: ++C++; // 未確認飛行 C",
   "extensions": {
     "colorMeta": {
@@ -104,9 +104,25 @@
       "name": "Content Panel",
       "kind": "custom",
       "refersTo": "content-panel",
-      "description": "White technical reading surface on archive gray.",
-      "html": "<article class=\"ds-content\"><h1>ページ タイトル</h1><p>技術資料の本文です。</p></article>",
-      "css": ".ds-content { padding: 16px; border: 1px solid rgba(192,192,192,.35); background: #fff; color: #4c4c4c; font: 16px/1.5 sans-serif; } .ds-content h1 { width: fit-content; margin: 0 0 20px; padding: 6px 8px; border-radius: .2em; background: #2a3869; color: #f3f3f3; font-size: 28px; font-weight: 400; }"
+      "description": "White technical article-body surface below the unframed title and navigation.",
+      "html": "<div class=\"ds-content\"><p>技術資料の本文です。</p></div>",
+      "css": ".ds-content { margin: 16px 0; padding: 16px; border: 1px solid rgba(192,192,192,.35); background: #fff; color: #4c4c4c; font: 16px/1.5 sans-serif; }"
+    },
+    {
+      "name": "Breadcrumb Trail",
+      "kind": "nav",
+      "refersTo": "context-navigation",
+      "description": "Compact wrapping hierarchy immediately below the page title.",
+      "html": "<nav class=\"ds-breadcrumbs\" aria-label=\"パンくずリスト\"><a href=\"#\">TOP</a><span>›</span><a href=\"#\">C#</a><span>›</span><strong>現在のページ</strong></nav>",
+      "css": ".ds-breadcrumbs { display: flex; flex-wrap: wrap; gap: .55rem; margin: 0 0 16px; color: #818181; font-size: 14px; } .ds-breadcrumbs a { color: inherit; } .ds-breadcrumbs strong { color: #4c4c4c; }"
+    },
+    {
+      "name": "Article Reference Indexes",
+      "kind": "nav",
+      "refersTo": "article-indexes",
+      "description": "Unframed nested table of contents and compact keyword links above the article body.",
+      "html": "<nav class=\"ds-index\"><strong>目次</strong><ul><li><a href=\"#\">概要</a></li></ul></nav><section class=\"ds-index\"><strong>キーワード</strong><a class=\"ds-keyword\" href=\"#\">型</a></section>",
+      "css": ".ds-index { margin: 0 0 16px; color: #4c4c4c; } .ds-index strong { display: block; margin: 16px 0; color: #483949; font-size: 18px; font-weight: 600; } .ds-index ul { padding-left: 1.5em; list-style: disc; } .ds-keyword { display: inline-block; margin: 0 8px 8px 0; padding: 4px 8px; border-radius: .2em; background: rgba(128,128,128,.2); color: #4c4c4c; text-decoration: none; }"
     },
     {
       "name": "Section Heading",
@@ -161,6 +177,7 @@
       "Do use the original archived ufcpp.net logo and the canonical #ccccff / #2a3869 pairing.",
       "Do keep articles white on #f3f3f3 and retain compact 16px technical prose.",
       "Do let each article use the full available reading width.",
+      "Do keep breadcrumbs and article indexes in the reading column immediately below the title.",
       "Do keep code and wide tables horizontally scrollable."
     ],
     "donts": [

@@ -177,8 +177,20 @@ card, its shadow is too strong or its corner treatment is too decorative.
 
 - **Corner Style:** Square.
 - **Background:** Reading White.
-- **Border:** One quiet rule around the article.
+- **Border:** One quiet rule around the article body; title and navigation stay outside it.
 - **Internal Padding:** 16px desktop, 8px mobile.
+
+### Context Navigation
+
+- **Breadcrumbs:** Place a compact, wrapping hierarchy directly below the page title. Use
+  `TOP` for the home link and omit the generic study container from descendant trails.
+- **Article Indexes:** Keep the table of contents and keyword list in the full-width reading
+  column above the framed body. Keep them unframed on the archive-gray page, as on the
+  original site; they must never recreate a separate related-pages sidebar.
+- **Table of Contents:** Preserve heading hierarchy with nested links and prefer stable legacy
+  anchors when available.
+- **Keywords:** Present extracted terms as compact gray links with a key marker, matching the
+  original site's dense reference treatment.
 
 ### Headings
 
@@ -200,6 +212,7 @@ card, its shadow is too strong or its corner treatment is too decorative.
 - **Do** use the original archived ufcpp.net logo and the canonical `#ccccff` / `#2a3869` pairing.
 - **Do** keep articles white on `#f3f3f3` and retain compact 16px technical prose.
 - **Do** let each article use the full available reading width.
+- **Do** keep breadcrumbs and article indexes in the reading column immediately below the title.
 - **Do** keep code and wide tables horizontally scrollable.
 
 ### Don't:

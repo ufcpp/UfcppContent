@@ -290,6 +290,230 @@ public sealed class SiteBuilderIntegrationTests
     }
 
     [Fact]
+    public async Task BuildAsync_StudyArticle_WritesBreadcrumbsTocAndKeywords()
+    {
+        using var site = new SiteFixture();
+        site.AddPage(new(
+            "index.md",
+            "Home",
+            "/",
+            "Home",
+            100,
+            -1,
+            0,
+            "# Home"));
+        site.AddPage(new(
+            "study/index.md",
+            "study",
+            "/study/",
+            "StudyTop",
+            101,
+            100,
+            0,
+            "# study"));
+        site.AddPage(new(
+            "study/csharp/index.md",
+            "C# Guide",
+            "/study/csharp/",
+            "Subject",
+            102,
+            101,
+            0,
+            "# C# Guide"));
+        site.AddPage(new(
+            "study/csharp/start/index.md",
+            "Basics",
+            "/study/csharp/start/",
+            "Chapter",
+            103,
+            102,
+            0,
+            "# Basics"));
+        site.AddPage(new(
+            "study/csharp/start/current.md",
+            "Current Topic",
+            "/study/csharp/start/current/",
+            "Article",
+            104,
+            103,
+            0,
+            """
+            # Current Topic
+
+            ## <a id="sec-generated-title-1"></a> <a id="overview"></a>Overview
+
+            ### <a id="details"></a>Details
+
+            <strong id="term" class="keyword">Important term</strong>
+
+            ## Page toc title
+
+            <span id="page-keywords-title" class="keyword">Label collision</span>
+            """,
+            "2000-12-24T00:00:00",
+            "2008-01-05T00:00:00"));
+        var output = site.GetOutputDirectory("context-navigation");
+
+        await site.BuildAsync(output);
+
+        var document = LoadHtmlDocument(Path.Combine(
+            output,
+            "study",
+            "csharp",
+            "start",
+            "current",
+            "index.html"));
+        var article = Assert.Single(document.Descendants("article"));
+
+        var breadcrumbs = Assert.Single(
+            article.Elements("nav"),
+            element => HasClassToken(element, "breadcrumbs"));
+        var articleElements = article.Elements().ToList();
+        Assert.True(
+            articleElements.IndexOf(Assert.Single(article.Elements("h1")))
+            < articleElements.IndexOf(breadcrumbs),
+            "The page title must precede contextual article navigation.");
+        var breadcrumbItems = breadcrumbs.Descendants("li").ToArray();
+        Assert.Equal(
+            ["TOP", "C# Guide", "Basics", "Current Topic"],
+            breadcrumbItems.Select(item => NormalizeWhitespace(item.Value)));
+        Assert.Equal(
+            ["/", "/study/csharp/", "/study/csharp/start/"],
+            breadcrumbItems
+                .Take(3)
+                .Select(item => (string?)Assert.Single(item.Elements("a")).Attribute("href")));
+        var currentBreadcrumb = breadcrumbItems[^1];
+        Assert.Empty(currentBreadcrumb.Elements("a"));
+        Assert.Equal(
+            "page",
+            (string?)Assert.Single(currentBreadcrumb.Elements("span"))
+                .Attribute("aria-current"));
+
+        var articleMetadata = Assert.Single(
+            article.Elements("div"),
+            element => HasClassToken(element, "article-meta"));
+        Assert.Equal(
+            "2000/12/24 (Last updated:2008/01/05)",
+            NormalizeWhitespace(articleMetadata.Value));
+        Assert.Equal(
+            ["2000-12-24T00:00:00", "2008-01-05T00:00:00"],
+            articleMetadata
+                .Descendants("time")
+                .Select(time => (string?)time.Attribute("datetime")));
+
+        var tableOfContents = Assert.Single(
+            article.Elements("nav"),
+            element => HasClassToken(element, "toc"));
+        Assert.Equal(
+            ["#overview", "#details", "#page-toc-title"],
+            tableOfContents
+                .Descendants("a")
+                .Select(link => (string?)link.Attribute("href")));
+        Assert.Equal(
+            "目次",
+            (string?)tableOfContents.Attribute("aria-label"));
+        var overviewItem = Assert.Single(tableOfContents.Elements("ul"))
+            .Elements("li")
+            .First();
+        Assert.Single(overviewItem.Elements("ul"));
+
+        var keywords = Assert.Single(
+            article.Elements("section"),
+            element => HasClassToken(element, "keywords"));
+        Assert.Equal(
+            "キーワード",
+            (string?)keywords.Attribute("aria-label"));
+        var keyword = Assert.Single(
+            keywords.Descendants("a"),
+            link => (string?)link.Attribute("href") == "#term");
+        Assert.Equal("#term", (string?)keyword.Attribute("href"));
+        Assert.Equal("Important term", keyword.Value);
+        Assert.Single(
+            article.DescendantsAndSelf(),
+            element => (string?)element.Attribute("id") == "page-toc-title");
+        Assert.Single(
+            article.DescendantsAndSelf(),
+            element => (string?)element.Attribute("id") == "page-keywords-title");
+        var articleBody = Assert.Single(
+            article.Elements("div"),
+            element => HasClassToken(element, "article-body"));
+        Assert.True(
+            articleElements.IndexOf(breadcrumbs) < articleElements.IndexOf(articleMetadata)
+            && articleElements.IndexOf(articleMetadata) < articleElements.IndexOf(tableOfContents)
+            && articleElements.IndexOf(tableOfContents) < articleElements.IndexOf(keywords)
+            && articleElements.IndexOf(keywords) < articleElements.IndexOf(articleBody),
+            "Original article metadata and indexes must precede the framed body.");
+        Assert.Empty(document.Descendants("aside"));
+
+        var css = await File.ReadAllTextAsync(Path.Combine(
+            output,
+            "assets",
+            "css",
+            "site.css"));
+        Assert.Contains(".content .breadcrumbs", css);
+        Assert.Contains(".content .toc", css);
+        Assert.Contains(".content .keywords", css);
+        Assert.Contains("viewBox='0 0 1696 1600'", css);
+        Assert.DoesNotContain(@"\1F511", css);
+        Assert.Matches(
+            @"\.content \.sub-info-section\s*\{[^}]*padding\s*:\s*0\s*;[^}]*border\s*:\s*0\s*;",
+            css);
+        Assert.Matches(
+            @"\.content\.article\s*\{[^}]*padding\s*:\s*0\s*;[^}]*border\s*:\s*0\s*;[^}]*background\s*:\s*transparent\s*;",
+            css);
+        Assert.DoesNotContain(".site-sidebar", css);
+    }
+
+    [Theory]
+    [InlineData("2025-07-20T12:34:56", "2025-07-20T12:34:56", null)]
+    [InlineData("2025-07-20T00:00:00", "2025-07-20T12:34:56", "2025/07/20")]
+    [InlineData(
+        "2025-07-20T12:34:56",
+        "2025-07-21T12:34:56",
+        "2025/07/20 (Last updated:2025/07/21)")]
+    public async Task BuildAsync_StudyArticle_MatchesOriginalDateDisplay(
+        string publishedAt,
+        string updatedAt,
+        string? expectedText)
+    {
+        using var site = new SiteFixture();
+        site.AddPage(new(
+            "study/page.md",
+            "Dated article",
+            "/study/page/",
+            "Article",
+            1,
+            -1,
+            0,
+            "# Dated article",
+            publishedAt,
+            updatedAt));
+        var output = site.GetOutputDirectory("article-dates");
+
+        await site.BuildAsync(output);
+
+        var document = LoadHtmlDocument(Path.Combine(
+            output,
+            "study",
+            "page",
+            "index.html"));
+        var metadata = document
+            .Descendants("div")
+            .Where(element => HasClassToken(element, "article-meta"))
+            .ToArray();
+        if (expectedText is null)
+        {
+            Assert.Empty(metadata);
+        }
+        else
+        {
+            Assert.Equal(
+                expectedText,
+                NormalizeWhitespace(Assert.Single(metadata).Value));
+        }
+    }
+
+    [Fact]
     public async Task BuildAsync_BlogEntry_WritesCanonicalTimesAndTagsOutsideBody()
     {
         const string PublishedAt = "2025-07-20T09:30:00+09:00";
@@ -316,6 +540,8 @@ public sealed class SiteBuilderIntegrationTests
             """
             <section id="fixture-body">
             <h1>Phase Four Metadata</h1>
+            <h2 id="blog-heading">Blog heading</h2>
+            <strong id="blog-keyword" class="keyword">Blog keyword</strong>
             <p>Body marker only.</p>
             </section>
             """,
@@ -343,10 +569,16 @@ public sealed class SiteBuilderIntegrationTests
         var metadata = Assert.Single(
             structure.Article.Descendants(),
             element => HasClassToken(element, "entry-meta"));
-        var articleElements = structure.Article.DescendantsAndSelf().ToList();
+        var title = Assert.Single(structure.Article.Elements("h1"));
+        var breadcrumbs = Assert.Single(
+            structure.Article.Elements("nav"),
+            element => HasClassToken(element, "breadcrumbs"));
+        var articleElements = structure.Article.Elements().ToList();
         Assert.True(
-            articleElements.IndexOf(metadata) < articleElements.IndexOf(body),
-            "Entry metadata must precede the rendered body.");
+            articleElements.IndexOf(title) < articleElements.IndexOf(breadcrumbs)
+            && articleElements.IndexOf(breadcrumbs) < articleElements.IndexOf(metadata)
+            && articleElements.IndexOf(metadata) < articleElements.IndexOf(body),
+            "Title, breadcrumbs, entry metadata, and body must remain in that order.");
         Assert.DoesNotContain(metadata, body.AncestorsAndSelf());
 
         Assert.Equal(
@@ -363,6 +595,15 @@ public sealed class SiteBuilderIntegrationTests
             .Where(text => text is "csharp" or "release")
             .ToArray();
         Assert.Equal(["csharp", "release"], tagText);
+        Assert.Empty(
+            structure.Article.Descendants("nav").Where(
+                element => HasClassToken(element, "toc")));
+        Assert.Empty(
+            structure.Article.Descendants("section").Where(
+                element => HasClassToken(element, "keywords")));
+        Assert.Empty(
+            structure.Article.Descendants().Where(
+                element => HasClassToken(element, "article-meta")));
 
     }
 

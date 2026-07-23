@@ -48,7 +48,47 @@
     <div class="site-body">
         <main class="site-main" id="main-content">
             <article class="content @ContentTypeClass">
-                @if (PublishedAt is not null)
+                @if (TitleHtml is not null)
+                {
+                    @((MarkupString)TitleHtml)
+                }
+                @if (Breadcrumbs.Count > 1)
+                {
+                    <nav class="breadcrumbs" aria-label="パンくずリスト">
+                        <ol itemscope="itemscope" itemtype="https://schema.org/BreadcrumbList">
+                            @for (var index = 0; index < Breadcrumbs.Count; index++)
+                            {
+                                var item = Breadcrumbs[index];
+                                var isCurrent = index == Breadcrumbs.Count - 1;
+                                <li itemprop="itemListElement"
+                                    itemscope="itemscope"
+                                    itemtype="https://schema.org/ListItem">
+                                    @if (isCurrent)
+                                    {
+                                        <span itemprop="name" aria-current="page">@item.Title</span>
+                                    }
+                                    else
+                                    {
+                                        <a href="@item.Url" itemprop="item">
+                                            <span itemprop="name">@item.Title</span>
+                                        </a>
+                                    }
+                                    <meta itemprop="position" content="@(index + 1)" />
+                                </li>
+                            }
+                        </ol>
+                    </nav>
+                }
+                @if (IsArticle && ShouldShowArticlePublishedDate(PublishedAt, UpdatedAt))
+                {
+                    <div class="article-meta">
+                        <time datetime="@PublishedAt">@FormatArticleDate(PublishedAt)</time>@if (ShouldShowArticleUpdatedDate(PublishedAt, UpdatedAt))
+                        {
+                            <span> (Last updated:<time datetime="@UpdatedAt">@FormatArticleDate(UpdatedAt)</time>)</span>
+                        }
+                    </div>
+                }
+                else if (!string.IsNullOrWhiteSpace(PublishedAt))
                 {
                     <div class="entry-meta">
                         <span>公開: <time datetime="@PublishedAt">@FormatDate(PublishedAt)</time></span>
@@ -67,7 +107,35 @@
                         }
                     </div>
                 }
-                @((MarkupString)BodyHtml)
+                @if (TableOfContents.Count > 0)
+                {
+                    <nav class="toc sub-info-section" aria-label="目次">
+                        <p class="sub-info-title">目次</p>
+                        <TableOfContentsList Items="@TableOfContents" />
+                    </nav>
+                }
+                @if (Keywords.Count > 0)
+                {
+                    <section class="keywords sub-info-section" aria-label="キーワード">
+                        <p class="sub-info-title">キーワード</p>
+                        <ul>
+                            @foreach (var keyword in Keywords)
+                            {
+                                <li><a href="@keyword.Url">@keyword.Title</a></li>
+                            }
+                        </ul>
+                    </section>
+                }
+                @if (IsArticle)
+                {
+                    <div class="article-body">
+                        @((MarkupString)BodyHtml)
+                    </div>
+                }
+                else
+                {
+                    @((MarkupString)BodyHtml)
+                }
             </article>
         </main>
     </div>
@@ -90,14 +158,40 @@
 @code {
     [Parameter] public string PageTitle { get; set; } = "++C++; // 未確認飛行 C";
     [Parameter] public string? CanonicalUrl { get; set; }
+    [Parameter] public string? TitleHtml { get; set; }
     [Parameter] public string BodyHtml { get; set; } = "";
     [Parameter] public string ContentTypeClass { get; set; } = "";
     [Parameter] public bool ShowRssFeed { get; set; }
     [Parameter] public bool NoIndex { get; set; }
+    [Parameter] public bool IsArticle { get; set; }
+    [Parameter] public IReadOnlyList<NavigationItem> Breadcrumbs { get; set; } = [];
+    [Parameter] public IReadOnlyList<TableOfContentsItem> TableOfContents { get; set; } = [];
+    [Parameter] public IReadOnlyList<NavigationItem> Keywords { get; set; } = [];
     [Parameter] public string? PublishedAt { get; set; }
     [Parameter] public string? UpdatedAt { get; set; }
     [Parameter] public IReadOnlyList<string> Tags { get; set; } = [];
 
     private static string FormatDate(string value) =>
-        value.Length >= 10 ? value[..10] : value;
+        GetDatePart(value);
+
+    private static string FormatArticleDate(string? value) =>
+        GetDatePart(value).Replace('-', '/');
+
+    private static bool ShouldShowArticlePublishedDate(
+        string? publishedAt,
+        string? updatedAt) =>
+        !string.IsNullOrWhiteSpace(publishedAt)
+        && !string.Equals(publishedAt, updatedAt, StringComparison.Ordinal);
+
+    private static bool ShouldShowArticleUpdatedDate(
+        string? publishedAt,
+        string? updatedAt) =>
+        !string.IsNullOrWhiteSpace(updatedAt)
+        && !string.Equals(
+            GetDatePart(publishedAt),
+            GetDatePart(updatedAt),
+            StringComparison.Ordinal);
+
+    private static string GetDatePart(string? value) =>
+        value is { Length: >= 10 } ? value[..10] : value ?? "";
 }

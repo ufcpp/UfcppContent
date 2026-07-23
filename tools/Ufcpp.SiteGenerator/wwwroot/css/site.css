@@ -224,6 +224,24 @@ img {
   line-height: 1.5;
 }
 
+.content.article {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.content.article .article-body {
+  margin: 1rem 0;
+  padding: 16px;
+  border: 1px solid rgba(192, 192, 192, 0.35);
+  background: var(--color-content-bg);
+}
+
+.content.article .article-body > h2:first-child,
+.content.article .article-body > p:first-child {
+  margin-top: 0;
+}
+
 .content h1,
 .content h2,
 .content h3,
@@ -246,6 +264,10 @@ img {
   font-size: 28px;
   font-weight: 400;
   overflow-wrap: anywhere;
+}
+
+.content.article > h1 {
+  margin-bottom: 0;
 }
 
 .content h2 {
@@ -697,6 +719,139 @@ math {
   color: var(--color-text);
 }
 
+/* Context navigation */
+.content .breadcrumbs {
+  margin: 0 0 1rem;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.content .breadcrumbs ol {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  list-style: none;
+}
+
+.content .breadcrumbs li {
+  min-width: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.content .breadcrumbs li + li::before {
+  margin: 0 0.55rem;
+  color: #a0a0a0;
+  content: "\203A";
+}
+
+.content .breadcrumbs a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.content .breadcrumbs a:hover {
+  text-decoration: underline;
+}
+
+.content .breadcrumbs [aria-current="page"] {
+  color: var(--color-text);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.content.article .breadcrumbs {
+  margin: 8px 0 0;
+  font-size: 1rem;
+}
+
+.content.article .breadcrumbs [aria-current="page"] {
+  color: inherit;
+  font-weight: 400;
+}
+
+.article-meta {
+  margin: 0 0 8px;
+  color: var(--color-text-secondary);
+}
+
+.content .sub-info-section {
+  margin: 0 0 1rem;
+  padding: 0;
+  border: 0;
+  color: var(--color-text);
+}
+
+.content .sub-info-section a {
+  color: inherit;
+}
+
+.content .sub-info-title {
+  margin: 1rem 0;
+  color: var(--color-heading);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-indent: 0;
+}
+
+.content .toc ul {
+  margin: 0.5em 0;
+  padding-left: 1.5rem;
+}
+
+.content .toc li {
+  margin: 0.2em 0;
+}
+
+.content .keywords ul {
+  margin: 0 0 -8px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+}
+
+.content .keywords li {
+  margin: 0;
+}
+
+.content .keywords a {
+  padding: 4px 8px;
+  display: block;
+  border-radius: 0.2em;
+  background: rgba(128, 128, 128, 0.2);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.content .keywords a::before {
+  --keyword-key-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1696 1600'%3E%3Cpath d='M832 384q0-80-56-136t-136-56t-136 56t-56 136q0 42 19 83q-41-19-83-19q-80 0-136 56t-56 136t56 136t136 56t136-56t56-136q0-42-19-83q41 19 83 19q80 0 136-56t56-136m851 704q0 17-49 66t-66 49q-9 0-28.5-16t-36.5-33t-38.5-40t-24.5-26l-96 96l220 220q28 28 28 68q0 42-39 81t-81 39q-40 0-68-28L733 893q-176 131-365 131q-163 0-265.5-102.5T0 656q0-160 95-313T343 95T656 0q163 0 265.5 102.5T1024 368q0 189-131 365l355 355l96-96q-3-3-26-24.5t-40-38.5t-33-36.5t-16-28.5q0-17 49-66t66-49q13 0 23 10q6 6 46 44.5t82 79.5t86.5 86t73 78t28.5 41'/%3E%3C/svg%3E");
+  margin: 2px;
+  display: inline-block;
+  width: 1.06em;
+  height: 1em;
+  content: "";
+  background-color: currentColor;
+  font-size: 14px;
+  line-height: 1;
+  vertical-align: -0.125em;
+  -webkit-mask: var(--keyword-key-icon) center / contain no-repeat;
+  mask: var(--keyword-key-icon) center / contain no-repeat;
+}
+
+.content .keywords a:hover {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.content [id] {
+  scroll-margin-top: 1rem;
+}
+
 .version {
   margin: 1.5em 0 0.75em;
   padding: 0;
@@ -834,6 +989,14 @@ math {
     padding: 8px;
   }
 
+  .content .breadcrumbs {
+    font-size: 0.8rem;
+  }
+
+  .content.article .article-body {
+    padding: 8px;
+  }
+
   .content h1 {
     font-size: 24px;
   }
@@ -868,7 +1031,9 @@ math {
 
 @media print {
   .site-header,
-  .site-footer {
+  .site-footer,
+  .content .breadcrumbs,
+  .content .sub-info-section {
     display: none;
   }
 
@@ -886,6 +1051,12 @@ math {
   }
 
   .content {
+    padding: 0;
+    border: 0;
+  }
+
+  .content.article .article-body {
+    margin: 0;
     padding: 0;
     border: 0;
   }

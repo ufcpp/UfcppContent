@@ -211,6 +211,126 @@ public sealed class MarkdigRendererTests
     }
 
     [Fact]
+    public void RenderWithMetadata_ExtractsNestedOutlineAndKeywordAnchors()
+    {
+        var rendered = RenderWithMetadata(
+            """
+            # Article title
+
+            ## <a id="sec-generated-title-1"></a> <a id="overview"></a>Overview
+
+            ### <a id="details"></a>Details
+
+            #### <a id="deep-detail"></a>Deep detail
+
+            ##### Point
+
+            ## Generated heading
+
+            ## <a id="仮想メモリ"></a>仮想メモリ
+
+            <strong class="term keyword" id="type">Type &amp; member</strong>
+            <span id="alias" class="keyword">Alias</span>
+            <strong id="type" class="keyword">Duplicate</strong>
+            """);
+
+        Assert.Equal(3, rendered.TableOfContents.Count);
+
+        var overview = rendered.TableOfContents[0];
+        Assert.Equal("#overview", overview.Url);
+        Assert.Equal("Overview", overview.Title);
+
+        var details = Assert.Single(overview.Children);
+        Assert.Equal("#details", details.Url);
+        var deepDetail = Assert.Single(details.Children);
+        Assert.Equal("#deep-detail", deepDetail.Url);
+
+        var generated = rendered.TableOfContents[1];
+        Assert.Equal("#generated-heading", generated.Url);
+        Assert.Equal("Generated heading", generated.Title);
+
+        var unicodeAnchor = rendered.TableOfContents[2];
+        Assert.Equal(
+            "#%E4%BB%AE%E6%83%B3%E3%83%A1%E3%83%A2%E3%83%AA",
+            unicodeAnchor.Url);
+        Assert.Equal("仮想メモリ", unicodeAnchor.Title);
+        Assert.DoesNotContain(
+            rendered.TableOfContents.SelectMany(Flatten),
+            item => item.Title == "Point");
+
+        Assert.Equal(
+            ["#type", "#alias"],
+            rendered.Keywords.Select(keyword => keyword.Url));
+        Assert.Equal(
+            ["Type & member", "Alias"],
+            rendered.Keywords.Select(keyword => keyword.Title));
+    }
+
+    [Fact]
+    public void RenderWithMetadata_DuplicateLegacyHeadingId_UsesUniqueFallbackAnchor()
+    {
+        var rendered = RenderWithMetadata(
+            """
+            ## <a id="sec-generated-title-1"></a> <a id="shared"></a>First
+
+            ## <a id="sec-generated-title-2"></a> <a id="shared"></a>Second
+            """);
+
+        Assert.Equal(
+            [("#shared", "First"), ("#second", "Second")],
+            rendered.TableOfContents
+                .Select(item => (item.Url, item.Title))
+                .ToArray());
+        Assert.Contains("id=\"second\"", rendered.Html);
+    }
+
+    [Fact]
+    public void RenderWithMetadata_UnanchoredRawHeading_GeneratesResolvableAnchor()
+    {
+        var rendered = RenderWithMetadata(
+            """
+            <span id="sec-generated-toc-1"></span>
+            <h2>Raw heading</h2>
+            """);
+
+        var item = Assert.Single(rendered.TableOfContents);
+        Assert.Equal("#sec-generated-toc-2", item.Url);
+        Assert.Equal("Raw heading", item.Title);
+        Assert.Contains(
+            "<h2 id=\"sec-generated-toc-2\">Raw heading</h2>",
+            rendered.Html);
+    }
+
+    [Fact]
+    public void RenderWithMetadata_CollidingHeadingAndKeywordIds_UseExactTargets()
+    {
+        var rendered = RenderWithMetadata(
+            """
+            <strong id="before" class="keyword">Before</strong>
+
+            ## <a id="before"></a>Later heading
+
+            ## <a id="after"></a>Earlier heading
+
+            <strong id="after" class="keyword">After</strong>
+            """);
+
+        Assert.Equal(
+            [("#later-heading", "Later heading"), ("#after", "Earlier heading")],
+            rendered.TableOfContents
+                .Select(item => (item.Url, item.Title))
+                .ToArray());
+        Assert.Equal(
+            [("#before", "Before"), ("#sec-generated-keyword-1", "After")],
+            rendered.Keywords
+                .Select(item => (item.Url, item.Title))
+                .ToArray());
+        Assert.Contains(
+            "<span id=\"sec-generated-keyword-1\"></span>After",
+            rendered.Html);
+    }
+
+    [Fact]
     public void Render_ObjectDataAndSourceParam_RewritesOnlyExistingLegacyAssets()
     {
         var html = Render(
@@ -236,6 +356,11 @@ public sealed class MarkdigRendererTests
     }
 
     private static string Render(string markdown, Action<string>? arrange = null)
+        => RenderWithMetadata(markdown, arrange).Html;
+
+    private static RenderedContent RenderWithMetadata(
+        string markdown,
+        Action<string>? arrange = null)
     {
         using var tempDirectory = new TempDirectory();
         var contentRoot = Path.Combine(tempDirectory.Path, "content");
@@ -251,9 +376,19 @@ public sealed class MarkdigRendererTests
             OutputPath = "study/page/index.html",
         };
 
-        return new MarkdigRenderer(contentRoot).Render(
+        return new MarkdigRenderer(contentRoot).RenderWithMetadata(
             page,
             new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase));
+    }
+
+    private static IEnumerable<TableOfContentsItem> Flatten(
+        TableOfContentsItem item)
+    {
+        yield return item;
+        foreach (var child in item.Children.SelectMany(Flatten))
+        {
+            yield return child;
+        }
     }
 
     private static void WriteAsset(string tempRoot, string relativePath)

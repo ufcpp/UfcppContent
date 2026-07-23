@@ -1,0 +1,19 @@
+@namespace Ufcpp.SiteGenerator.Templates
+
+<ul>
+    @foreach (var item in Items)
+    {
+        <li>
+            <a href="@item.Url">@item.Title</a>
+            @if (item.Children.Count > 0)
+            {
+                <TableOfContentsList Items="@item.Children" />
+            }
+        </li>
+    }
+</ul>
+
+@code {
+    [Parameter, EditorRequired]
+    public IReadOnlyList<TableOfContentsItem> Items { get; set; } = [];
+}
