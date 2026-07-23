@@ -33,6 +33,14 @@ public sealed class ContentMigration
         @"<!--\s*pageBreak\s*-->",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+    private static readonly Regex AmazonBookWidgetRegex = new(
+        @"(?is)<iframe\b[^>]*\bsrc\s*=\s*[""'](?<src>https?://rcm-jp\.amazon\.co\.jp/e/cm\?[^""']+)[""'][^>]*>\s*asin\s+番号:\s*(?<asin>[A-Za-z0-9]+)\s*</iframe>",
+        RegexOptions.Compiled);
+
+    private static readonly Regex AmazonAffiliateTagRegex = new(
+        @"(?:[?&])t=(?<tag>[^&]+)",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
     private static readonly Regex HeadingAnchorRegex = new(
         @"(?m)^(?<prefix>#{1,6}\s*)<a\s+[^>]*\bid\s*=\s*(?<quote>[""'])(?<id>.*?)\k<quote>[^>]*>(?<title>[^\r\n]*)$",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -243,10 +251,32 @@ public sealed class ContentMigration
             value = AddLegacyFragmentAliases(value, context);
         }
 
+        value = RewriteAmazonBookWidgets(value, context);
         value = _macros.Expand(value, context);
         value = _links.Rewrite(value, context);
         value = CodeBlockNormalizer.Normalize(value, ContentPaths.CanonicalUrl(context));
         return TextUtilities.NormalizeMarkdownFigureImages(value);
+    }
+
+    private static string RewriteAmazonBookWidgets(string value, ContentNode context)
+    {
+        if (context.ContentType != "AboutMe")
+        {
+            return value;
+        }
+
+        return AmazonBookWidgetRegex.Replace(
+            value,
+            match =>
+            {
+                var asin = match.Groups["asin"].Value;
+                var sourceUrl = WebUtility.HtmlDecode(match.Groups["src"].Value);
+                var tagMatch = AmazonAffiliateTagRegex.Match(sourceUrl);
+                var affiliateTag = tagMatch.Success
+                    ? "?tag=" + Uri.EscapeDataString(tagMatch.Groups["tag"].Value)
+                    : string.Empty;
+                return $"Amazon.co.jp: [{asin}](https://www.amazon.co.jp/dp/{asin}{affiliateTag})";
+            });
     }
 
     private static string NormalizeHeadingAnchors(string value, bool generateMissingAnchors)

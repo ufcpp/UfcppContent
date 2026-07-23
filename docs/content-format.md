@@ -56,6 +56,8 @@ prefer `sinceSet` and `lastUpdatedSet`; blog publication dates use `firstPublish
 - Exercises are embedded in their parent article and in the subject exercise list.
 - The three known Umbraco macros are expanded to static content; any unknown macro fails the
   conversion.
+- Deprecated Amazon Associates book widgets on AboutMe pages are converted to direct Amazon
+  product links while preserving the affiliate tag.
 - Internal content links become relative Markdown links. Runtime navigation queries become
   fragments.
 - Every generated relative file target and Markdown fragment is validated.

@@ -54,10 +54,7 @@ niconico ブロマガ（趣味用）
 
 ### <a id="surasura"></a>スラスラわかるC# 
 
-<div>
-        <iframe style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" src="https://rcm-jp.amazon.co.jp/e/cm?t=cunflc-22&amp;o=9&amp;p=8&amp;l=as1&amp;asins=4798125822&amp;fc1=000000&amp;IS2=1&amp;lt1=_blank&amp;lc1=0000ff&amp;bc1=000000&amp;bg1=ffffff&amp;f=ifr">
-asin 番号: 4798125822</iframe>
-      </div>
+Amazon.co.jp: [4798125822](https://www.amazon.co.jp/dp/4798125822?tag=cunflc-22)
 
 ##### 内容紹介
 
@@ -95,10 +92,7 @@ C#には、足枷が少ないといっても、必要とされる機能だけで
 
 ### <a id="win8-store-apps"></a>【書籍】Windows8対応〔基本+実用〕Windowsストアアプリ開発入門
 
-<div>
-        <iframe style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" src="https://rcm-jp.amazon.co.jp/e/cm?t=cunflc-22&amp;o=9&amp;p=8&amp;l=as1&amp;asins=4774155012&amp;fc1=000000&amp;IS2=1&amp;lt1=_blank&amp;lc1=0000ff&amp;bc1=000000&amp;bg1=ffffff&amp;f=ifr">
-asin 番号: 4774155012</iframe>
-      </div>
+Amazon.co.jp: [4774155012](https://www.amazon.co.jp/dp/4774155012?tag=cunflc-22)
 岩永 信之、森 博之の2人（敬称略、こっちは素直に五十音順）による共著。
 
 WPF や Silverlight での連載を持っている僕と、
@@ -115,10 +109,7 @@ iOSやAndroidなどとは異なった複数言語のサポート、Win RTとい�
 
 ### <a id="for-cpp-and-java"></a>【書籍】C#プログラミング すぐに現場で使える知識
 
-<div>
-        <iframe style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" src="https://rcm-jp.amazon.co.jp/e/cm?t=cunflc-22&amp;o=9&amp;p=8&amp;l=as1&amp;asins=4774150169&amp;fc1=000000&amp;IS2=1&amp;lt1=_blank&amp;lc1=0000ff&amp;bc1=000000&amp;bg1=ffffff&amp;f=ifr">
-asin 番号: 4774150169</iframe>
-      </div>
+Amazon.co.jp: [4774150169](https://www.amazon.co.jp/dp/4774150169?tag=cunflc-22)
 中 博俊、猪股 健太郎、 岩永 信之、山本 康彦の4人（敬称略、なぜか実は体重順）による共著。
 最終的に、文体などの統一は岩永が行いました。
 
@@ -137,10 +128,7 @@ C++ もしくは Java の経験がある方向けに、
 
 ### <a id="before-get-started"></a>【書籍】コンピューター プログラミング入門以前
 
-<div>
-        <iframe style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" src="https://rcm-jp.amazon.co.jp/e/cm?t=cunflc-22&amp;o=9&amp;p=8&amp;l=as1&amp;asins=4839936919&amp;fc1=000000&amp;IS2=1&amp;lt1=_blank&amp;lc1=0000ff&amp;bc1=000000&amp;bg1=ffffff&amp;f=ifr">
-asin 番号: 4839936919</iframe>
-      </div>
+Amazon.co.jp: [4839936919](https://www.amazon.co.jp/dp/4839936919?tag=cunflc-22)
 自分の中で、テーマは「CMOS から LINQ まで」。
 
 初心者をターゲットにした本ですが、どちらかというと、副読本的立ち位置です。（なので、「入門」ではなく「入門以前」だったり。）
@@ -160,13 +148,11 @@ Java や C# でプログラミングを覚えたという人にも低レイヤ�
 
 ### プログラミング.NET Framework 第4版 (Microsoft Press)
 
-<iframe style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" src="https://rcm-jp.amazon.co.jp/e/cm?t=cunflc-22&amp;o=9&amp;p=8&amp;l=as1&amp;asins=4822294951&amp;fc1=000000&amp;IS2=1&amp;lt1=_blank&amp;lc1=0000ff&amp;bc1=000000&amp;bg1=ffffff&amp;f=ifr">
-asin 番号: 4822294951</iframe>(第3版から関わっています)
+Amazon.co.jp: [4822294951](https://www.amazon.co.jp/dp/4822294951?tag=cunflc-22) (第3版から関わっています)
 
 ### プログラミング Windows Runtime
 
-<iframe style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" src="https://rcm-jp.amazon.co.jp/e/cm?t=cunflc-22&amp;o=9&amp;p=8&amp;l=as1&amp;asins=B00LMY5S14&amp;fc1=000000&amp;IS2=1&amp;lt1=_blank&amp;lc1=0000ff&amp;bc1=000000&amp;bg1=ffffff&amp;f=ifr">
-asin 番号: B00LMY5S14</iframe>
+Amazon.co.jp: [B00LMY5S14](https://www.amazon.co.jp/dp/B00LMY5S14?tag=cunflc-22)
 
 ## <a id="study-meeting"></a>勉強会
 

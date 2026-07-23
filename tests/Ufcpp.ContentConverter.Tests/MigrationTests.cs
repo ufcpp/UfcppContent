@@ -937,6 +937,51 @@ public sealed class MigrationTests
     }
 
     [Fact]
+    public void GenerationRewritesDeprecatedAmazonBookWidgets()
+    {
+        using var workspace = new TestWorkspace();
+        var snapshot = workspace.Write(
+            "published.xml",
+            SnapshotXml(
+                """
+                <AboutMe id="2" parentID="1" level="2" sortOrder="0" nodeName="about me" urlName="about_me"
+                         createDate="2020-01-01T00:00:00" updateDate="2020-01-02T00:00:00"
+                         nodeTypeAlias="AboutMe">
+                  <title>About me</title>
+                  <bodyText><![CDATA[
+                <iframe style="width:120px;height:240px;" src="https://rcm-jp.amazon.co.jp/e/cm?t=cunflc-22&amp;o=9&amp;p=8&amp;l=as1&amp;asins=4798125822&amp;f=ifr">
+                asin 番号: 4798125822</iframe>
+                ]]></bodyText>
+                </AboutMe>
+                """));
+        var sitemap = workspace.Write(
+            "sitemap.xml",
+            """
+            <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+              <url><loc>https://ufcpp.net/</loc></url>
+              <url><loc>https://ufcpp.net/about_me/</loc></url>
+            </urlset>
+            """);
+        var output = workspace.Directory("output");
+
+        new ContentMigration(
+            new MigrationOptions(
+                snapshot,
+                workspace.Directory("media"),
+                sitemap,
+                workspace.Write("maps.config", RewriteMapsXml(string.Empty, string.Empty)),
+                workspace.Directory("legacy"),
+                output,
+                false)).Run();
+
+        var generated = File.ReadAllText(Path.Combine(output, "content", "about_me.md"));
+        Assert.Contains(
+            "Amazon.co.jp: [4798125822](https://www.amazon.co.jp/dp/4798125822?tag=cunflc-22)",
+            generated);
+        Assert.DoesNotContain("rcm-jp.amazon.co.jp", generated);
+    }
+
+    [Fact]
     public void GenerationCreatesAbsoluteSourceUrlsAndResolvableLegacyHeadingAnchors()
     {
         using var workspace = new TestWorkspace();
