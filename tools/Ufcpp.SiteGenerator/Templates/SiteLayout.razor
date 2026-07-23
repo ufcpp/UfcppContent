@@ -6,6 +6,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#ccccff" />
+    @if (NoIndex)
+    {
+        <meta name="robots" content="noindex, nofollow" />
+    }
     <title>@PageTitle</title>
     <link rel="stylesheet" href="/assets/css/site.css" />
     @if (CanonicalUrl is not null)
@@ -100,6 +104,7 @@
     [Parameter] public string BodyHtml { get; set; } = "";
     [Parameter] public string ContentTypeClass { get; set; } = "";
     [Parameter] public bool ShowRssFeed { get; set; }
+    [Parameter] public bool NoIndex { get; set; }
     [Parameter] public IReadOnlyList<NavigationItem> SidebarItems { get; set; } = [];
     [Parameter] public string? PublishedAt { get; set; }
     [Parameter] public string? UpdatedAt { get; set; }

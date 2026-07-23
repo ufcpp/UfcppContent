@@ -85,7 +85,19 @@ dotnet serve -d _site -p 8080
 | `--assets <dir>` | `assets/` | Directory of static assets |
 | `--output <dir>` | `_site/` | Output directory |
 | `--include-preview-server` | off | Write `server.cs` for `dotnet run server.cs` local preview |
+| `--noindex` | off | Add `noindex, nofollow` robots metadata to generated pages and redirects |
 | `--skip-validation` | off | Skip post-generation link/asset validation |
+
+### Search indexing in preview deployments
+
+The Azure Static Web Apps workflow generates its transient `_site/` output with `--noindex` and
+copies `deploy/azure-static-web-apps/staticwebapp.preview.config.json` into the output as
+`staticwebapp.config.json`. The generated HTML metadata and the configuration's global
+`X-Robots-Tag` header both prevent compliant search engines from indexing the preview.
+
+The preview configuration deliberately does not block crawling with `robots.txt`, because crawlers
+must be able to read the `noindex` directive. A production build must omit `--noindex` and must not
+copy the preview Static Web Apps configuration.
 
 ## Validation
 

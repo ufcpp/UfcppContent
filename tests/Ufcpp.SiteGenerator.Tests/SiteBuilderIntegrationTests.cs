@@ -61,6 +61,36 @@ public sealed class SiteBuilderIntegrationTests
     }
 
     [Fact]
+    public async Task BuildAsync_NoIndexOption_ControlsRobotsMeta()
+    {
+        using var site = new SiteFixture();
+        site.AddPage(new(
+            "index.md",
+            "Home",
+            "/",
+            "Home",
+            1,
+            -1,
+            0,
+            "# Home"));
+
+        var normalOutput = site.GetOutputDirectory("indexable");
+        await site.BuildAsync(normalOutput);
+        var normalHead = Assert.Single(
+            LoadHtmlDocument(Path.Combine(normalOutput, "index.html")).Root!.Elements("head"));
+        Assert.Empty(normalHead.Elements("meta").Where(
+            element => (string?)element.Attribute("name") == "robots"));
+
+        var noIndexOutput = site.GetOutputDirectory("noindex");
+        await site.BuildAsync(noIndexOutput, noIndex: true);
+        var noIndexHead = Assert.Single(
+            LoadHtmlDocument(Path.Combine(noIndexOutput, "index.html")).Root!.Elements("head"));
+        var robots = Assert.Single(noIndexHead.Elements("meta").Where(
+            element => (string?)element.Attribute("name") == "robots"));
+        Assert.Equal("noindex, nofollow", (string?)robots.Attribute("content"));
+    }
+
+    [Fact]
     public async Task BuildAsync_Page_WritesUfcppBrandShellAndPalette()
     {
         using var site = new SiteFixture();
@@ -707,7 +737,8 @@ public sealed class SiteBuilderIntegrationTests
 
         public Task BuildAsync(
             string outputDirectory,
-            bool includePreviewServer = false)
+            bool includePreviewServer = false,
+            bool noIndex = false)
         {
             var options = new CliOptions
             {
@@ -715,6 +746,7 @@ public sealed class SiteBuilderIntegrationTests
                 AssetsDirectory = AssetsDirectory,
                 OutputDirectory = outputDirectory,
                 IncludePreviewServer = includePreviewServer,
+                NoIndex = noIndex,
                 // These partial fixtures intentionally omit global navigation targets.
                 SkipValidation = true,
             };

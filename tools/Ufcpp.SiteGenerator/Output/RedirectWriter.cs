@@ -12,7 +12,12 @@ public static class RedirectWriter
     /// <param name="canonicalPath">The target canonical site path (e.g. <c>/study/csharp/</c>).</param>
     /// <param name="aliases">The alias site paths to generate redirects for.</param>
     /// <param name="outputDirectory">The root output directory of the site.</param>
-    public static void Write(string canonicalPath, IEnumerable<string> aliases, string outputDirectory)
+    /// <param name="noIndex">Whether to prevent generated redirects from being indexed.</param>
+    public static void Write(
+        string canonicalPath,
+        IEnumerable<string> aliases,
+        string outputDirectory,
+        bool noIndex = false)
     {
         var canonicalOutputPath = OutputPathResolver.Resolve(canonicalPath);
         foreach (var alias in aliases)
@@ -43,18 +48,23 @@ public static class RedirectWriter
 
             Directory.CreateDirectory(destDir);
 
-            var html = BuildRedirectHtml(canonicalPath);
+            var html = BuildRedirectHtml(canonicalPath, noIndex);
             File.WriteAllText(destFile, html, System.Text.Encoding.UTF8);
         }
     }
 
-    private static string BuildRedirectHtml(string targetUrl)
+    private static string BuildRedirectHtml(string targetUrl, bool noIndex)
     {
+        var robotsMeta = noIndex
+            ? """<meta name="robots" content="noindex, nofollow" />"""
+            : string.Empty;
+
         return $"""
             <!DOCTYPE html>
             <html lang="ja">
             <head>
             <meta charset="UTF-8" />
+            {robotsMeta}
             <link rel="canonical" href="{targetUrl}" />
             <meta http-equiv="refresh" content="0; url={targetUrl}" />
             <title>Redirecting...</title>

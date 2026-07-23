@@ -41,6 +41,7 @@ public sealed class SiteBuilder
             OutputDirectory = stagingDirectory,
             SkipValidation = _options.SkipValidation,
             IncludePreviewServer = _options.IncludePreviewServer,
+            NoIndex = _options.NoIndex,
         };
 
         try
@@ -106,7 +107,11 @@ public sealed class SiteBuilder
         _logger.LogInformation("Writing aliases (redirects)...");
         foreach (var page in pages)
         {
-            RedirectWriter.Write(page.CanonicalPath, page.FrontMatter.Aliases, _options.OutputDirectory);
+            RedirectWriter.Write(
+                page.CanonicalPath,
+                page.FrontMatter.Aliases,
+                _options.OutputDirectory,
+                _options.NoIndex);
         }
 
         _logger.LogInformation("Writing sitemap.xml...");
@@ -153,6 +158,7 @@ public sealed class SiteBuilder
                 [nameof(SiteLayout.BodyHtml)] = bodyHtml,
                 [nameof(SiteLayout.ContentTypeClass)] = contentTypeClass,
                 [nameof(SiteLayout.ShowRssFeed)] = showRss,
+                [nameof(SiteLayout.NoIndex)] = _options.NoIndex,
                 [nameof(SiteLayout.SidebarItems)] = sidebarItems,
                 [nameof(SiteLayout.PublishedAt)] = isBlogEntry
                     ? page.FrontMatter.PublishedAt

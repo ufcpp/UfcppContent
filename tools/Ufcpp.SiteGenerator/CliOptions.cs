@@ -17,4 +17,7 @@ public sealed class CliOptions
 
     /// <summary>When true, writes a .NET 10 file-based static preview server.</summary>
     public bool IncludePreviewServer { get; init; }
+
+    /// <summary>When true, prevents generated HTML from being indexed by search engines.</summary>
+    public bool NoIndex { get; init; }
 }

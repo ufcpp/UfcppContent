@@ -44,4 +44,33 @@ public sealed class RedirectWriterTests
 
         Assert.Equal("primary page", File.ReadAllText(primaryPath));
     }
+
+    [Fact]
+    public void Write_NoIndexOption_ControlsRobotsMeta()
+    {
+        using var tempDirectory = new TempDirectory();
+
+        RedirectWriter.Write(
+            "/target/",
+            ["/indexable/"],
+            tempDirectory.Path);
+        RedirectWriter.Write(
+            "/target/",
+            ["/noindex/"],
+            tempDirectory.Path,
+            noIndex: true);
+
+        var indexableHtml = File.ReadAllText(Path.Combine(
+            tempDirectory.Path,
+            "indexable",
+            "index.html"));
+        var noIndexHtml = File.ReadAllText(Path.Combine(
+            tempDirectory.Path,
+            "noindex",
+            "index.html"));
+        Assert.DoesNotContain("<meta name=\"robots\"", indexableHtml);
+        Assert.Contains(
+            """<meta name="robots" content="noindex, nofollow" />""",
+            noIndexHtml);
+    }
 }

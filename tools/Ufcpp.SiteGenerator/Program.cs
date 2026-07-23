@@ -6,6 +6,7 @@ var assetsDir = GetArg("--assets", "assets");
 var outputDir = GetArg("--output", "_site");
 var skipValidation = args.Contains("--skip-validation");
 var includePreviewServer = args.Contains("--include-preview-server");
+var noIndex = args.Contains("--noindex");
 
 using var loggerFactory = LoggerFactory.Create(builder =>
     builder.AddSimpleConsole(o =>
@@ -40,6 +41,7 @@ var options = new CliOptions
     OutputDirectory = outputDir,
     SkipValidation = skipValidation,
     IncludePreviewServer = includePreviewServer,
+    NoIndex = noIndex,
 };
 
 try

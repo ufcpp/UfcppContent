@@ -2,6 +2,7 @@
 **/obj/
 **/TestResults/
 **/test-work/
+/_site/
 .validation-output/
 .nuget.offline.config
 .impeccable/hook.cache.json
