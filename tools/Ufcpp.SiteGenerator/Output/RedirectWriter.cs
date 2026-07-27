@@ -1,3 +1,6 @@
+using System.Net;
+using System.Text.Json;
+
 namespace Ufcpp.SiteGenerator.Output;
 
 /// <summary>
@@ -6,8 +9,11 @@ namespace Ufcpp.SiteGenerator.Output;
 public static class RedirectWriter
 {
     /// <summary>
-    /// Writes a redirect HTML page at each alias output path that performs an immediate
-    /// meta-refresh and canonical-link redirect to the target canonical URL.
+    /// Writes a redirect HTML page at each alias output path that redirects to the target
+    /// canonical URL. The redirect carries the incoming fragment across, so legacy links such
+    /// as <c>/csharp/oo_interface.html?p=6#static-abstract</c> still land on their anchor in
+    /// the single-page output. Legacy runtime query strings such as <c>?p=</c> are dropped.
+    /// A meta-refresh fallback keeps the redirect working without scripting.
     /// </summary>
     /// <param name="canonicalPath">The target canonical site path (e.g. <c>/study/csharp/</c>).</param>
     /// <param name="aliases">The alias site paths to generate redirects for.</param>
@@ -58,19 +64,27 @@ public static class RedirectWriter
         var robotsMeta = noIndex
             ? """<meta name="robots" content="noindex, nofollow" />"""
             : string.Empty;
+        var encodedTarget = WebUtility.HtmlEncode(targetUrl);
+        var scriptTarget = JsonSerializer.Serialize(targetUrl);
 
-        return $"""
+        return $$"""
             <!DOCTYPE html>
             <html lang="ja">
             <head>
             <meta charset="UTF-8" />
-            {robotsMeta}
-            <link rel="canonical" href="{targetUrl}" />
-            <meta http-equiv="refresh" content="0; url={targetUrl}" />
+            {{robotsMeta}}
+            <link rel="canonical" href="{{encodedTarget}}" />
+            <script>
+            (function () {
+              var target = {{scriptTarget}};
+              location.replace(target + location.hash);
+            })();
+            </script>
+            <noscript><meta http-equiv="refresh" content="0; url={{encodedTarget}}" /></noscript>
             <title>Redirecting...</title>
             </head>
             <body>
-            <p><a href="{targetUrl}">Redirecting...</a></p>
+            <p><a href="{{encodedTarget}}">Redirecting...</a></p>
             </body>
             </html>
             """;

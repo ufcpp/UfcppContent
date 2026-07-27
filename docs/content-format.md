@@ -52,7 +52,12 @@ prefer `sinceSet` and `lastUpdatedSet`; blog publication dates use `firstPublish
 - HTML tables and MathML remain embedded HTML.
 - Legacy heading anchors are normalized to valid empty HTML anchors for GitHub rendering.
 - Legacy generated section IDs and known historical fragment aliases remain valid.
-- Original page boundaries become `<!-- original-page-break -->`.
+- Original page boundaries become `<!-- original-page-break -->`. The archive renders each
+  article as a single page, so the marker only records where the legacy `?p=` pagination used
+  to split the article and has no effect on the generated HTML.
+- The legacy `?p=` page-number query is removed from internal links; only the fragment is kept,
+  and every anchor that used to live on a later page remains reachable on the single page.
+  Inbound external links that still carry `?p=` continue to work because the query is ignored.
 - Exercises are embedded in their parent article and in the subject exercise list.
 - The three known Umbraco macros are expanded to static content; any unknown macro fails the
   conversion.

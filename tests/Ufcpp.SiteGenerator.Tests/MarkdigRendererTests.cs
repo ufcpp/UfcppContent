@@ -446,6 +446,55 @@ public sealed class MarkdigRendererTests
             html);
     }
 
+    [Fact]
+    public void Render_OriginalPageBreakMarkers_KeepsSinglePageWithAllAnchors()
+    {
+        var rendered = RenderWithMetadata(
+            """
+            # インターフェース
+
+            ## <a id="abst"></a>概要
+
+            最初のページの本文。
+
+            <!-- original-page-break -->
+
+            ## <a id="static-abstract"></a>インターフェイスの静的抽象メンバー
+
+            旧 6 ページ目の本文。
+
+            <!-- original-page-break -->
+
+            ## <a id="last"></a>最後の節
+            """);
+
+        // The legacy pageBreak markers must not split the article: every anchor that used to
+        // live on a separate ?p=N page stays reachable within the single generated page.
+        Assert.Contains("id=\"abst\"", rendered.Html);
+        Assert.Contains("id=\"static-abstract\"", rendered.Html);
+        Assert.Contains("id=\"last\"", rendered.Html);
+        Assert.Contains("旧 6 ページ目の本文。", rendered.Html);
+        Assert.Equal(
+            ["#abst", "#static-abstract", "#last"],
+            rendered.TableOfContents.Select(item => item.Url).ToArray());
+    }
+
+    [Fact]
+    public void Render_LegacyPageQueryInLinks_KeepsOnlyTheFragment()
+    {
+        var html = Render(
+            """
+            [静的抽象メンバー](oo_interface.md?p=6#static-abstract)
+
+            <a href="oo_interface.md?p=6#static-abstract">静的抽象メンバー</a>
+            """);
+
+        Assert.DoesNotContain("?p=", html);
+        Assert.Equal(
+            2,
+            html.Split("\"oo_interface.md#static-abstract\"").Length - 1);
+    }
+
     private static string Render(string markdown, Action<string>? arrange = null)
         => RenderWithMetadata(markdown, arrange).Html;
 

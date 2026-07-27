@@ -140,4 +140,27 @@ public sealed class LinkRewriterTests
             ("/assets/media/ufcpp2000/csharp/slide/WcfDemo.pptx", "/study/csharp/"),
             (rewrittenAsset, unchangedSiteUrl));
     }
+
+    [Theory]
+    [InlineData("asyncvariation.md?p=6#section1", "/study/csharp/async/asyncvariation/#section1")]
+    [InlineData("asyncvariation.md?P=6", "/study/csharp/async/asyncvariation/")]
+    [InlineData("asyncvariation.md?p=6&x=1", "/study/csharp/async/asyncvariation/?x=1")]
+    [InlineData("/study/csharp/oo_interface.html?p=6#x", "/study/csharp/oo_interface.html#x")]
+    public void RewriteUrl_LegacyPageQuery_IsDroppedAndFragmentKept(
+        string input,
+        string expected)
+    {
+        using var tempDir = new TempDirectory();
+
+        var urlMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            [GetContentPath(tempDir, "study", "csharp", "async", "misc_asyncflow.md")] =
+                "/study/csharp/async/misc_asyncflow/",
+            [GetContentPath(tempDir, "study", "csharp", "async", "asyncvariation.md")] =
+                "/study/csharp/async/asyncvariation/",
+        };
+        var rewriter = CreateRewriter(tempDir, urlMap);
+
+        Assert.Equal(expected, rewriter.RewriteUrl(input));
+    }
 }

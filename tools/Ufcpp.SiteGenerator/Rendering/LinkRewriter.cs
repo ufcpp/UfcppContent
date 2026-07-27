@@ -72,7 +72,7 @@ public sealed class LinkRewriter
 
         var suffixIndex = rawUrl.IndexOfAny(['?', '#']);
         var urlPath = suffixIndex >= 0 ? rawUrl[..suffixIndex] : rawUrl;
-        var suffix = suffixIndex >= 0 ? rawUrl[suffixIndex..] : "";
+        var suffix = suffixIndex >= 0 ? NormalizeSuffix(rawUrl[suffixIndex..]) : "";
 
         // Existing root-relative legacy asset URLs (for example /media/...) map
         // to files beneath the emitted /assets/ tree. Other site URLs stay intact.
@@ -80,7 +80,7 @@ public sealed class LinkRewriter
         {
             if (urlPath.StartsWith("/assets/", StringComparison.OrdinalIgnoreCase))
             {
-                return rawUrl;
+                return urlPath + suffix;
             }
 
             var assetRelativePath = Uri.UnescapeDataString(urlPath.TrimStart('/'));
@@ -93,7 +93,7 @@ public sealed class LinkRewriter
                 return "/assets/" + urlPath.TrimStart('/') + suffix;
             }
 
-            return rawUrl;
+            return urlPath + suffix;
         }
 
         if (string.IsNullOrEmpty(urlPath))
@@ -131,7 +131,40 @@ public sealed class LinkRewriter
         }
 
         // Return original (might be an external relative URL or something else)
-        return rawUrl;
+        return urlPath + suffix;
+    }
+
+    /// <summary>
+    /// Drops the legacy Umbraco page-number query (<c>?p=</c>) that used to select one page of
+    /// a paginated article. The archive renders each article as a single page, so only the
+    /// fragment identifies a position within it.
+    /// </summary>
+    private static string NormalizeSuffix(string suffix)
+    {
+        if (!suffix.StartsWith('?'))
+        {
+            return suffix;
+        }
+
+        var fragmentIndex = suffix.IndexOf('#');
+        var fragment = fragmentIndex >= 0 ? suffix[fragmentIndex..] : "";
+        var query = fragmentIndex >= 0 ? suffix[1..fragmentIndex] : suffix[1..];
+
+        var retained = query
+            .Split('&', StringSplitOptions.RemoveEmptyEntries)
+            .Where(item => !IsLegacyPageParameter(item))
+            .ToArray();
+
+        return retained.Length == 0
+            ? fragment
+            : "?" + string.Join('&', retained) + fragment;
+    }
+
+    private static bool IsLegacyPageParameter(string queryItem)
+    {
+        var equals = queryItem.IndexOf('=');
+        var key = equals >= 0 ? queryItem[..equals] : queryItem;
+        return key.Equals("p", StringComparison.OrdinalIgnoreCase);
     }
 
     private static bool IsWithinDirectory(string path, string directory)

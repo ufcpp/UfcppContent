@@ -38,7 +38,12 @@ After generation, the `_site/` directory contains:
 The Google site-search approach is described in
 [Static site search design](site-search.md).
 
-Alias pages (meta-refresh redirects) are written for every `aliases` entry in front matter.
+Alias pages are written for every `aliases` entry in front matter. Each alias page redirects
+with a small inline script that carries the incoming fragment across
+(`location.replace(target + location.hash)`), so legacy links such as
+`/csharp/oo_interface.html?p=6#static-abstract` still land on their anchor in the single-page
+output. The legacy `?p=` page-number query is intentionally dropped, and a `<noscript>`
+meta-refresh keeps the redirect working without scripting.
 Rebuilding updates existing redirects while aliases that resolve to their own canonical
 output leave the primary page intact.
 Each build is generated and validated in a fresh sibling directory, then replaces the
@@ -148,7 +153,7 @@ tools/Ufcpp.SiteGenerator/
 ├── Output/
 │   ├── OutputPathResolver.cs  source_url → output file path
 │   ├── AssetCopier.cs         Copies assets/ and site CSS
-│   ├── RedirectWriter.cs      Generates meta-refresh redirect pages for aliases
+│   ├── RedirectWriter.cs      Generates fragment-preserving redirect pages for aliases
 │   ├── SitemapWriter.cs       Writes sitemap.xml
 │   ├── RssWriter.cs           Writes rssfeed.xml
 │   └── PreviewServerWriter.cs Writes optional server.cs
