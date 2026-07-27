@@ -259,6 +259,30 @@ unknown language is emitted as escaped plain code so its contents cannot be
 interpreted as HTML or be lost. ColorCode failures also fall back to escaped
 plain code.
 
+Fenced blocks can carry editorial highlighting metadata in their generic
+attributes:
+
+````markdown
+```csharp {highlight-lines="2,5-7" highlight-text="Button1_Click"}
+// Code
+```
+````
+
+`highlight-lines` accepts comma-separated, one-based whole-line numbers and
+inclusive ranges. Blank lines count toward the numbering. `highlight-text`
+uses case-sensitive ordinal literal matching and highlights every occurrence,
+including overlapping occurrences. When both attributes select the same source,
+their source ranges are combined and overlapping or adjacent ranges are merged.
+
+Highlight metadata is consumed by the renderer and is never copied into generated
+HTML. Malformed highlight attributes, invalid line syntax, non-positive or
+out-of-range line numbers, an empty literal, and a literal with no match fail site
+generation explicitly. Before inserting fixed
+`<mark class="code-highlight">` elements, the renderer parses the trusted
+syntax-highlighter fragment structurally and verifies that its text maps exactly
+to the source code. This preserves syntax-token spans and escaped plain code
+without rewriting generated HTML with regular expressions.
+
 Roslyn classifications are emitted as scoped `roslyn-*` classes. Same-position
 and overlapping classifications are merged by text interval so embedded
 classifications cannot duplicate or drop source characters.

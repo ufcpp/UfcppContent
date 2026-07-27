@@ -99,7 +99,7 @@ class Program
 /target:winexe というオプションを付けてください。
 （そうしないと、プログラムを実行するたびにコマンドプロンプトが表示されてしまいます。）
 
-```console
+```console {highlight-text="/target:winexe"}
 csc /target:winexe Program.cs
 ```
 
@@ -208,7 +208,7 @@ Form クラスはこのコントロールの一覧である Controls という�
 そして、Controls に対して、Add メソッドを呼び出すことで、
 コントロール（ここでの例の場合、ボタン）を追加することができます。
 
-```csharp
+```csharp {highlight-lines="28"}
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -269,7 +269,7 @@ class Form1 : Form
 以下にソースを示します。
 先ほどから追加したのは、背景色を変えて強調してある部分だけです。
 
-```csharp
+```csharp {highlight-lines="29,34-38"}
 using System;
 using System.Drawing;
 using System.Windows.Forms;

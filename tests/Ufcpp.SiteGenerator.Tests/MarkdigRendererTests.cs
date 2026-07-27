@@ -175,6 +175,208 @@ public sealed class MarkdigRendererTests
     }
 
     [Fact]
+    public void Render_FencedCode_HighlightsLinesAndInclusiveRanges()
+    {
+        var html = Render(
+            """
+            ```csharp {highlight-lines="2,4-5"}
+            int zero = 0;
+            int one = 1;
+            int two = 2;
+            int three = 3;
+            int four = 4;
+            ```
+            """);
+
+        var code = ExtractRenderedCodeElement(html);
+        Assert.Equal(
+            "int one = 1;\nint three = 3;\nint four = 4;",
+            ExtractHighlightedCodeText(code));
+        Assert.NotEmpty(code.Descendants("span"));
+        Assert.All(
+            code.Descendants("mark"),
+            mark => Assert.Equal("code-highlight", mark.Attribute("class")?.Value));
+    }
+
+    [Fact]
+    public void Render_HighlightText_HighlightsEveryOrdinalOccurrenceInSupportedCode()
+    {
+        var html = Render(
+            """
+            ```csharp {highlight-text="Value"}
+            var Value = "Value";
+            var value = 0;
+            ```
+            """);
+
+        var code = ExtractRenderedCodeElement(html);
+        Assert.Equal("ValueValue", ExtractHighlightedCodeText(code));
+        Assert.Contains(
+            code.Descendants("span"),
+            span => span.Descendants("mark").Any());
+    }
+
+    [Fact]
+    public void Render_HighlightText_PreservesColorCodeTokenSpans()
+    {
+        var html = Render(
+            """
+            ```xml {highlight-text="value"}
+            <root attr="value" />
+            ```
+            """);
+
+        var code = ExtractRenderedCodeElement(html);
+        Assert.Equal("<root attr=\"value\" />\n", code.Value);
+        Assert.Equal("value", ExtractHighlightedCodeText(code));
+        Assert.Contains(
+            code.Descendants("span"),
+            span => span.Descendants("mark").Any());
+        Assert.Contains(code.Descendants("span"), span => span.HasAttributes);
+    }
+
+    [Fact]
+    public void Render_HighlightText_HighlightsPartialPlainCode()
+    {
+        var html = Render(
+            """
+            ```console {highlight-text="/target:winexe"}
+            csc /target:winexe Program.cs
+            ```
+            """);
+
+        var code = ExtractRenderedCodeElement(html);
+        var mark = Assert.Single(code.Descendants("mark"));
+        Assert.Equal("/target:winexe", mark.Value);
+        Assert.Empty(code.Descendants("span"));
+        Assert.DoesNotContain("highlight-text", html);
+    }
+
+    [Fact]
+    public void Render_OverlappingHighlightSelections_AreMerged()
+    {
+        var html = Render(
+            """
+            ```text {highlight-lines="1" highlight-text="aa"}
+            aaa
+            ```
+            """);
+
+        var code = ExtractRenderedCodeElement(html);
+        var mark = Assert.Single(code.Descendants("mark"));
+        Assert.Equal("aaa", mark.Value);
+        Assert.Empty(mark.Descendants("mark"));
+    }
+
+    [Fact]
+    public void Render_HighlightText_EscapesCodeAndDoesNotEmitMetadata()
+    {
+        var html = Render(
+            """
+            ```csharp {highlight-text="<img src=x>"}
+            var text = "<img src=x>";
+            ```
+            """);
+
+        var code = ExtractRenderedCodeElement(html);
+        Assert.Equal("var text = \"<img src=x>\";", code.Value);
+        Assert.Equal("<img src=x>", ExtractHighlightedCodeText(code));
+        Assert.DoesNotContain("<img src=x>", html);
+        Assert.DoesNotContain("highlight-text", html);
+    }
+
+    [Fact]
+    public void Render_UnsupportedLanguage_HighlightsEscapedFallback()
+    {
+        var html = Render(
+            """
+            ```unknown-language {highlight-lines="1"}
+            <tag attr="value">& text</tag>
+            ```
+            """);
+
+        var code = ExtractRenderedCodeElement(html);
+        Assert.Equal("language-unknown-language", code.Attribute("class")?.Value);
+        Assert.Equal("<tag attr=\"value\">& text</tag>", code.Value);
+        Assert.Equal(code.Value, ExtractHighlightedCodeText(code));
+        Assert.Empty(code.Descendants("span"));
+        Assert.DoesNotContain("<tag attr=", html);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("0")]
+    [InlineData("-1")]
+    [InlineData("1-")]
+    [InlineData("2-1")]
+    [InlineData("1,,1")]
+    public void Render_HighlightLines_RejectsMalformedSyntax(string value)
+    {
+        var markdown = $"```text {{highlight-lines=\"{value}\"}}\nonly\n```";
+
+        Assert.Throws<InvalidDataException>(() => Render(markdown));
+    }
+
+    [Theory]
+    [InlineData("""{highlight-lines=}""")]
+    [InlineData("""{highlight-text=}""")]
+    [InlineData("""{highlight-lines="1" """)]
+    [InlineData("""highlight-text="only" """)]
+    public void Render_HighlightMetadata_RejectsMalformedAttribute(string metadata)
+    {
+        var markdown = $"```text {metadata}\nonly\n```";
+
+        Assert.Throws<InvalidDataException>(() => Render(markdown));
+    }
+
+    [Theory]
+    [InlineData("""text{highlight-lines=}""")]
+    [InlineData("""text{highlight-text="only" """)]
+    public void Render_HighlightMetadata_RejectsMalformedAttributeAttachedToLanguage(
+        string info)
+    {
+        var markdown = $"```{info}\nonly\n```";
+
+        Assert.Throws<InvalidDataException>(() => Render(markdown));
+    }
+
+    [Fact]
+    public void Render_HighlightLines_RejectsOutOfRangeLine()
+    {
+        Assert.Throws<InvalidDataException>(
+            () => Render(
+                """
+                ```text {highlight-lines="2"}
+                only
+                ```
+                """));
+    }
+
+    [Fact]
+    public void Render_HighlightText_RejectsMissingLiteral()
+    {
+        Assert.Throws<InvalidDataException>(
+            () => Render(
+                """
+                ```text {highlight-text="missing"}
+                present
+                ```
+                """));
+    }
+
+    [Fact]
+    public void Render_HighlightText_RejectsEmptyLiteral()
+    {
+        Assert.Throws<InvalidDataException>(
+            () => Render(
+                """
+                ```text {highlight-text=""}
+                present
+                ```
+                """));
+    }
+
+    [Fact]
     public void Render_SupportedFencedCode_IsDeterministic()
     {
         const string Markdown = "```csharp\nvar answer = 42;\n```";
@@ -495,6 +697,47 @@ public sealed class MarkdigRendererTests
     }
 
     [Fact]
+    public void Render_LibFormsPage_RestoresAllEditorialCodeHighlights()
+    {
+        var contentRoot = Path.GetFullPath(
+            Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\..\\..\\content"));
+        var (pages, urlMap) = PageLoader.Load(contentRoot);
+        var page = pages.Single(
+            candidate => candidate.RelativePath == "study/csharp/lib/lib_forms.md");
+
+        var html = new MarkdigRenderer(contentRoot).Render(page, urlMap);
+        var highlightedBlocks = ExtractRenderedCodeElements(html)
+            .Where(code => code.Descendants("mark").Any())
+            .ToArray();
+
+        Assert.Equal(3, highlightedBlocks.Length);
+
+        var console = highlightedBlocks.Single(
+            code => code.Value.Contains("csc /target:winexe", StringComparison.Ordinal));
+        Assert.Equal("/target:winexe", ExtractHighlightedCodeText(console));
+
+        var addControl = highlightedBlocks.Single(
+            code => code.Value.Contains(
+                "this.Controls.Add(this.button1);",
+                StringComparison.Ordinal)
+                && !code.Value.Contains("Button1_Click", StringComparison.Ordinal));
+        Assert.Equal(
+            "    this.Controls.Add(this.button1);\n",
+            ExtractHighlightedCodeText(addControl));
+
+        var handler = highlightedBlocks.Single(
+            code => code.Value.Contains("Button1_Click", StringComparison.Ordinal));
+        Assert.Equal(
+            "    this.button1.Click += new EventHandler(this.Button1_Click);\n"
+                + "  void Button1_Click(object sender, EventArgs e)\n"
+                + "  {\n"
+                + "    this.count++;\n"
+                + "    this.button1.Text = this.count.ToString();\n"
+                + "  }\n",
+            ExtractHighlightedCodeText(handler));
+    }
+
+    [Fact]
     public void RenderWithMetadata_ExtractsNestedOutlineAndKeywordAnchors()
     {
         var rendered = RenderWithMetadata(
@@ -692,18 +935,33 @@ public sealed class MarkdigRendererTests
         => RenderWithMetadata(markdown, arrange).Html;
 
     private static string ExtractRenderedCodeText(string html)
-    {
-        var codeTagStart = html.IndexOf("<code", StringComparison.Ordinal);
-        Assert.True(codeTagStart >= 0);
-        var contentStart = html.IndexOf('>', codeTagStart) + 1;
-        var contentEnd = html.IndexOf("</code>", contentStart, StringComparison.Ordinal);
-        Assert.True(contentStart > 0);
-        Assert.True(contentEnd >= contentStart);
+        => ExtractRenderedCodeElement(html).Value;
 
-        return XElement.Parse(
-            $"<root>{html[contentStart..contentEnd]}</root>",
-            LoadOptions.PreserveWhitespace).Value;
+    private static XElement ExtractRenderedCodeElement(string html)
+    {
+        var match = Regex.Match(
+            html,
+            @"<code(?:\s[^>]*)?>.*?</code>",
+            RegexOptions.Singleline);
+        Assert.True(match.Success);
+
+        return XElement.Parse(match.Value, LoadOptions.PreserveWhitespace);
     }
+
+    private static IReadOnlyList<XElement> ExtractRenderedCodeElements(string html) =>
+        Regex.Matches(
+                html,
+                @"<code(?:\s[^>]*)?>.*?</code>",
+                RegexOptions.Singleline)
+            .Cast<Match>()
+            .Select(
+                match => XElement.Parse(
+                    match.Value,
+                    LoadOptions.PreserveWhitespace))
+            .ToArray();
+
+    private static string ExtractHighlightedCodeText(XElement code) =>
+        string.Concat(code.Descendants("mark").Select(static mark => mark.Value));
 
     private static RenderedContent RenderWithMetadata(
         string markdown,

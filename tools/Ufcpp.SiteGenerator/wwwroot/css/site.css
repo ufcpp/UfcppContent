@@ -23,6 +23,7 @@
   --color-code-type: #2b91af;
   --color-code-method: #74531f;
   --color-code-symbol: #001080;
+  --color-editorial-highlight: rgba(238, 239, 118, 0.75);
   --font-sans: "Hiragino Kaku Gothic Pro", "Meiryo", "Yu Gothic", YuGothic,
     "MS PGothic", sans-serif;
   --font-mono: Consolas, "Courier New", Courier, monospace;
@@ -366,7 +367,7 @@ img {
 .content em,
 .content .keyword {
   padding: 0 2px;
-  background: rgba(238, 239, 118, 0.75);
+  background: var(--color-editorial-highlight);
 }
 
 .content figure {
@@ -416,6 +417,12 @@ pre code {
   border-radius: 0;
   background: transparent;
   font-size: inherit;
+}
+
+.content pre code mark.code-highlight {
+  padding: 0;
+  color: inherit;
+  background: var(--color-editorial-highlight);
 }
 
 pre.console,
