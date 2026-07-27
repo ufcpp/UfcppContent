@@ -1,6 +1,7 @@
 using Ufcpp.SiteGenerator.Models;
 using Ufcpp.SiteGenerator.Loading;
 using Ufcpp.SiteGenerator.Rendering;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace Ufcpp.SiteGenerator.Tests;
@@ -285,6 +286,198 @@ public sealed class MarkdigRendererTests
             "&lt;span class=&quot;roslyn-keyword-control&quot;&gt;",
             html);
         Assert.DoesNotContain("```csharp", html);
+    }
+
+    [Fact]
+    public void Render_ExpandPanelPair_BecomesNativeDisclosure()
+    {
+        var html = Render(
+            """
+            <span class="expand-button">（古いバージョンの例）</span>
+
+            <div class="expand-panel" markdown="1">
+
+            Legacy *body*.
+
+            ```csharp
+            if (left < right) return;
+            ```
+
+            </div>
+            """);
+
+        Assert.Contains("<details class=\"expand-panel\">", html);
+        Assert.Contains(
+            "<summary class=\"expand-button\">（古いバージョンの例）</summary>",
+            html);
+        Assert.Contains("<div class=\"expand-panel-body\">", html);
+        Assert.Contains("</details>", html);
+        Assert.Contains("<em>body</em>", html);
+        Assert.Contains(
+            "<pre><code class=\"language-csharp\"><span class=\"roslyn-keyword-control\">if</span>",
+            html);
+        Assert.DoesNotContain("class=\"expand-button\">（", html.Replace(
+            "<summary class=\"expand-button\">（古いバージョンの例）</summary>",
+            string.Empty));
+        Assert.DoesNotContain("markdown=\"1\"", html);
+    }
+
+    [Fact]
+    public void Render_ExpandPanelWithoutButton_IsLeftAlone()
+    {
+        var html = Render(
+            """
+            <div class="expand-panel" markdown="1">
+
+            Body only.
+
+            </div>
+            """);
+
+        Assert.DoesNotContain("<details", html);
+        Assert.Contains("<div class=\"expand-panel\">", html);
+    }
+
+    [Fact]
+    public void Render_TabContainer_GainsRadiosAndLabels()
+    {
+        var html = Render(
+            """
+            <div class="tab-container">
+            <ul>
+            	<li>C#</li>
+            	<li>VB</li>
+            </ul>
+            <div>
+
+            C# panel.
+
+            </div>
+            <div>
+
+            VB panel.
+
+            </div>
+            </div>
+            """);
+
+        Assert.Contains(
+            "<input type=\"radio\" name=\"ufcpp-tab-1\" id=\"ufcpp-tab-1-1\" checked>",
+            html);
+        Assert.Contains(
+            "<input type=\"radio\" name=\"ufcpp-tab-1\" id=\"ufcpp-tab-1-2\">",
+            html);
+        Assert.Contains("<li><label for=\"ufcpp-tab-1-1\">C#</label></li>", html);
+        Assert.Contains("<li><label for=\"ufcpp-tab-1-2\">VB</label></li>", html);
+
+        // Exactly one tab starts selected.
+        Assert.Single(Regex.Matches(html, " checked>"));
+
+        // The radios must precede the <ul> so `:checked ~` can reach both the
+        // tab strip and the panels.
+        Assert.True(
+            html.IndexOf("ufcpp-tab-1-2\">", StringComparison.Ordinal)
+                < html.IndexOf("<ul>", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Render_MultipleTabContainers_GetDistinctNames()
+    {
+        var html = Render(
+            """
+            <div class="tab-container">
+            <ul>
+            	<li>C#</li>
+            </ul>
+            <div>
+
+            One.
+
+            </div>
+            </div>
+
+            <div class="tab-container">
+            <ul>
+            	<li>VB</li>
+            </ul>
+            <div>
+
+            Two.
+
+            </div>
+            </div>
+            """);
+
+        Assert.Contains("name=\"ufcpp-tab-1\" id=\"ufcpp-tab-1-1\"", html);
+        Assert.Contains("name=\"ufcpp-tab-2\" id=\"ufcpp-tab-2-1\"", html);
+    }
+
+    [Fact]
+    public void Render_TabContainerBeyondStyledLimit_IsLeftAlone()
+    {
+        var tabs = string.Join(
+            "\n",
+            Enumerable
+                .Range(1, LegacyControlRewriter.MaxSwitchableTabs + 1)
+                .Select(index => $"\t<li>Lang{index}</li>"));
+        var panels = string.Join(
+            "\n",
+            Enumerable
+                .Range(1, LegacyControlRewriter.MaxSwitchableTabs + 1)
+                .Select(index => $"<div>\n\nPanel {index}.\n\n</div>"));
+
+        var html = Render(
+            $"""
+            <div class="tab-container">
+            <ul>
+            {tabs}
+            </ul>
+            {panels}
+            </div>
+            """);
+
+        Assert.DoesNotContain("<input type=\"radio\"", html);
+        Assert.DoesNotContain("<label", html);
+    }
+
+    [Fact]
+    public void Render_LegacyControlMarkupInsideCodeSample_IsNotRewritten()
+    {
+        var html = Render(
+            """
+            ```html
+            <span class="expand-button">Label</span>
+            <div class="expand-panel">Body</div>
+            <div class="tab-container"><ul><li>C#</li></ul><div>x</div></div>
+            ```
+            """);
+
+        Assert.DoesNotContain("<details", html);
+        Assert.DoesNotContain("<input type=\"radio\"", html);
+        Assert.Contains("expand-button", html);
+    }
+
+    [Fact]
+    public void Render_TabContainer_AvoidsCollidingWithExistingIds()
+    {
+        var html = Render(
+            """
+            <a id="ufcpp-tab-1-1"></a>
+
+            <div class="tab-container">
+            <ul>
+            	<li>C#</li>
+            </ul>
+            <div>
+
+            Panel.
+
+            </div>
+            </div>
+            """);
+
+        Assert.Contains("name=\"ufcpp-tab-2\" id=\"ufcpp-tab-2-1\"", html);
+        Assert.DoesNotContain("name=\"ufcpp-tab-1\"", html);
     }
 
     [Fact]

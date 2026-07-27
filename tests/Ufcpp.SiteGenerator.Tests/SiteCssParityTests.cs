@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using Ufcpp.SiteGenerator.Rendering;
 
 namespace Ufcpp.SiteGenerator.Tests;
 
@@ -162,34 +163,106 @@ public sealed class SiteCssParityTests
     }
 
     /// <summary>
-    /// ufcpp.net hides <c>.expand-panel</c> and reveals it with JavaScript. This
-    /// site ships no JavaScript, so porting that rule verbatim would hide the
-    /// content permanently.
+    /// The generator rewrites the legacy expand markup into a native
+    /// <c>&lt;details&gt;</c>, so the body has to be hidden by the element's own
+    /// semantics rather than by a CSS rule that no script can undo.
     /// </summary>
     [Fact]
-    public void ExpandPanel_StaysVisibleWithoutScripting()
+    public void ExpandPanelBody_IsNotHiddenByCss()
     {
-        var declarations = RuleBody(@":where\(\.content\)\s*\.expand-panel");
+        var panel = RuleBody(@":where\(\.content\)\s*\.expand-panel");
+        var body = RuleBody(@":where\(\.content\)\s*\.expand-panel-body");
 
-        Assert.NotNull(declarations);
-        Assert.DoesNotContain("display: none", declarations);
+        Assert.NotNull(panel);
+        Assert.NotNull(body);
+        Assert.DoesNotContain("display: none", panel);
+        Assert.DoesNotContain("display: none", body);
+
+        // ufcpp.net's grey box moves to the inner wrapper so the summary is not
+        // painted over.
+        Assert.Contains("background-color: #f3f3f3", body);
     }
 
     /// <summary>
-    /// Nothing in the article body may look clickable when it is not: without
-    /// JavaScript the expand buttons and tab strips are inert labels.
+    /// <c>display</c> on a <c>&lt;summary&gt;</c> overrides
+    /// <c>display: list-item</c> and removes the disclosure triangle, which is
+    /// the only affordance left now that no icon font is served.
+    /// </summary>
+    [Fact]
+    public void ExpandButton_KeepsTheDisclosureMarker()
+    {
+        var declarations = RuleBody(@":where\(\.content\)\s*\.expand-button");
+
+        Assert.NotNull(declarations);
+        Assert.DoesNotContain("display:", declarations);
+    }
+
+    /// <summary>
+    /// Both legacy controls are operable again, so they have to look operable —
+    /// pointer cursor plus the hover feedback ufcpp.net draws.
     /// </summary>
     [Theory]
-    [InlineData(@":where\(\.content\)\s*\.expand-button")]
-    [InlineData(@":where\(\.content\)\s*\.tab-container\s*>\s*ul\s+li")]
-    public void InertLegacyControl_HasNoInteractiveAffordance(string selectorPattern)
+    [InlineData(
+        @":where\(\.content\)\s*\.expand-button",
+        @":where\(\.content\)\s*\.expand-button:hover")]
+    [InlineData(
+        @":where\(\.content\)\s*\.tab-container\s*>\s*ul\s+li\s+label",
+        @":where\(\.content\)\s*\.tab-container\s*>\s*ul\s+li:hover")]
+    public void InteractiveLegacyControl_HasAffordance(
+        string selectorPattern,
+        string hoverPattern)
     {
-        var css = SiteCss.Value;
         var declarations = RuleBody(selectorPattern);
 
         Assert.NotNull(declarations);
-        Assert.DoesNotContain("cursor:", declarations);
-        Assert.DoesNotMatch(new Regex(selectorPattern + @"[^{]*:hover"), css);
+        Assert.Contains("cursor: pointer", declarations);
+        Assert.NotNull(RuleBody(hoverPattern));
+    }
+
+    /// <summary>
+    /// Tab panels are hidden by default and revealed by the sibling radio, so
+    /// every index the rewriter can emit needs a matching pair of rules —
+    /// otherwise a panel would be unreachable.
+    /// </summary>
+    [Fact]
+    public void TabContainer_SwitchesEveryIndexTheRewriterCanEmit()
+    {
+        var panel = RuleBody(@":where\(\.content\)\s*\.tab-container\s*>\s*div");
+
+        Assert.NotNull(panel);
+        Assert.Contains("display: none", panel);
+
+        var css = SiteCss.Value;
+        for (var index = 1; index <= LegacyControlRewriter.MaxSwitchableTabs; index++)
+        {
+            Assert.Matches(
+                new Regex(
+                    $@"\.tab-container\s*>\s*input:nth-of-type\({index}\):checked\s*~\s*div:nth-of-type\({index}\)"),
+                css);
+            Assert.Matches(
+                new Regex(
+                    $@"\.tab-container\s*>\s*input:nth-of-type\({index}\):checked\s*~\s*ul\s+li:nth-child\({index}\)"),
+                css);
+        }
+    }
+
+    /// <summary>
+    /// The radio is clipped out of view, so keyboard focus has to be visible on
+    /// the tab it drives.
+    /// </summary>
+    [Fact]
+    public void TabContainer_KeepsKeyboardFocusVisible()
+    {
+        var radio = RuleBody(@":where\(\.content\)\s*\.tab-container\s*>\s*input");
+
+        Assert.NotNull(radio);
+        Assert.DoesNotContain("display: none", radio);
+        Assert.DoesNotContain("visibility: hidden", radio);
+
+        Assert.Matches(
+            new Regex(
+                @"\.tab-container\s*>\s*input:nth-of-type\(1\):focus-visible\s*~\s*ul\s+li:nth-child\(1\)"),
+            SiteCss.Value);
     }
 
     private static readonly char[] RazorExpressionChars = ['@', '{', '}', '(', ')'];

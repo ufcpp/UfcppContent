@@ -206,6 +206,25 @@ inside `blockquote`, `div`, `th`, and `td` elements is rendered recursively, inc
 nested raw tables. This keeps indented table rows as table markup instead of turning
 them into Markdown code blocks.
 
+Two ufcpp.net components only worked with JavaScript, which this site does not ship.
+`LegacyControlRewriter` rewrites their Markdown source into markup CSS alone can
+drive, right after fenced code blocks have been replaced by placeholders and before
+`markdown="1"` containers are expanded — so HTML that only appears inside a code
+sample is never touched:
+
+- `<span class="expand-button">` followed by `<div class="expand-panel">` becomes
+  `<details class="expand-panel">` / `<summary class="expand-button">` around a
+  `<div class="expand-panel-body" markdown="1">`. The panel starts closed, matching
+  ufcpp.net.
+- `<div class="tab-container">` gains one `<input type="radio">` per tab ahead of its
+  `<ul>`, and each `<li>` body is wrapped in a `<label for>`. `site.css` switches
+  panels with `:checked ~`. Names and IDs are `ufcpp-tab-{set}-{tab}`, skipped past
+  any ID the page already uses, so the output stays deterministic and collision-free.
+
+Markup that does not match the expected shape — a panel with no button, or a tab set
+with more tabs than `LegacyControlRewriter.MaxSwitchableTabs` — is left untouched and
+keeps the earlier static rendering, so no content can become unreachable.
+
 After HTML rendering, the first `h1` is separated, including when it is inside a
 wrapper, so contextual navigation can be placed directly below the page title. On
 `Article` pages, `h2` through `h4` headings form the nested table of contents.
@@ -259,7 +278,7 @@ Article bodies still carry the legacy HTML classes inherited from ufcpp.net
 the content to render as intended. [docs/css-parity.md](css-parity.md) records how
 that reconciliation is verified, which classes are deliberately left unstyled, and
 where this site intentionally departs from the original — including the
-JavaScript-free treatment of ufcpp.net's expand panels and language tabs.
+JavaScript-free rebuild of ufcpp.net's expand panels and language tabs.
 
 Two checks back it up, plus `SiteCssParityTests`:
 

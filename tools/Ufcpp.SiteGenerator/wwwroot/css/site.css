@@ -1121,32 +1121,53 @@ math {
 }
 
 /* Collapsible sections. On ufcpp.net `.expand-panel` starts at display: none
-   and JavaScript toggles it. This site ships no JavaScript, so the panel stays
-   open and the button is styled as a static label rather than a control — no
-   pointer cursor, no hover affordance, nothing that suggests it can be
-   clicked. The lavender chip ufcpp.net draws belongs to the `::before`
-   FontAwesome glyph, not to the label itself, so it is not reproduced either.
-   See docs/css-parity.md. */
-:where(.content) .expand-button {
-  margin: 0 0.5em 0 0;
-  display: inline;
-  text-decoration: none;
-  text-indent: 0;
+   and JavaScript toggles it. This site ships no JavaScript, so the generator
+   rewrites the legacy `<span class="expand-button">` + `<div class="expand-panel">`
+   pair into <details class="expand-panel"> / <summary class="expand-button">
+   plus a `.expand-panel-body` wrapper (see Rendering/LegacyControlRewriter.cs).
+   The disclosure is native, so the label carries ufcpp.net's pointer cursor and
+   hover feedback again. The `::before` FontAwesome glyph is replaced by the
+   <details> marker because no icon font is served. See docs/css-parity.md. */
+:where(.content) .expand-panel {
+  margin: 1em 0;
 }
 
-:where(.content) .expand-panel {
-  display: block;
+:where(.content) .expand-button {
+  margin: 0 0.5em 0 0;
+  text-decoration: none;
+  text-indent: 0;
+  cursor: pointer;
+}
+
+:where(.content) .expand-button:hover {
+  background-color: #f3f3f3;
+}
+
+:where(.content) .expand-panel-body {
   padding: 2px;
   background-color: #f3f3f3;
 }
 
-/* Language tabs. `.view` is added at runtime by ufcpp.net's JavaScript, so the
-   panels here are bare <div> children. Without scripting every panel is
-   visible, so the <ul> is presented as a static legend instead of a tab strip
-   and each panel is boxed the way `.tab-container div.view` boxes the active
-   one. */
+/* Language tabs. `.view` and `.current` are added at runtime by ufcpp.net's
+   JavaScript. The generator instead emits one radio button per tab ahead of the
+   legacy <ul> and wraps each <li> in a <label>, so `:checked ~` switches panels
+   with no scripting. The nth-of-type pairs below cover
+   LegacyControlRewriter.MaxSwitchableTabs tabs; a larger set is left unrewritten
+   and keeps every panel visible. */
 :where(.content) .tab-container {
   margin: 1em 0;
+}
+
+:where(.content) .tab-container > input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
 }
 
 :where(.content) .tab-container > ul {
@@ -1158,18 +1179,64 @@ math {
   list-style: none;
 }
 
+/* The padding ufcpp.net puts on the <li> lives on the <label> instead, so the
+   whole tab is clickable. The rendered box is the same size either way. */
 :where(.content) .tab-container > ul li {
   margin: 0 0.2em 0 0;
-  padding: 0.2em 0.8em;
   display: inline-block;
   border: solid 1px var(--color-code-border);
   border-bottom: none;
   background-color: transparent;
 }
 
+:where(.content) .tab-container > ul li label {
+  display: block;
+  padding: 0.2em 0.8em;
+  cursor: pointer;
+}
+
+:where(.content) .tab-container > ul li:hover {
+  border-color: var(--color-brand-navy);
+  background-color: var(--color-brand-navy);
+  color: #f3f3f3;
+}
+
+:where(.content) .tab-container > input:nth-of-type(1):checked ~ ul li:nth-child(1),
+:where(.content) .tab-container > input:nth-of-type(2):checked ~ ul li:nth-child(2),
+:where(.content) .tab-container > input:nth-of-type(3):checked ~ ul li:nth-child(3),
+:where(.content) .tab-container > input:nth-of-type(4):checked ~ ul li:nth-child(4),
+:where(.content) .tab-container > input:nth-of-type(5):checked ~ ul li:nth-child(5),
+:where(.content) .tab-container > input:nth-of-type(6):checked ~ ul li:nth-child(6) {
+  border-color: var(--color-brand-navy);
+  background-color: var(--color-brand-navy);
+  color: #f3f3f3;
+  font-weight: 700;
+}
+
+/* The radio itself is clipped, so its focus ring has to move to the tab. */
+:where(.content) .tab-container > input:nth-of-type(1):focus-visible ~ ul li:nth-child(1),
+:where(.content) .tab-container > input:nth-of-type(2):focus-visible ~ ul li:nth-child(2),
+:where(.content) .tab-container > input:nth-of-type(3):focus-visible ~ ul li:nth-child(3),
+:where(.content) .tab-container > input:nth-of-type(4):focus-visible ~ ul li:nth-child(4),
+:where(.content) .tab-container > input:nth-of-type(5):focus-visible ~ ul li:nth-child(5),
+:where(.content) .tab-container > input:nth-of-type(6):focus-visible ~ ul li:nth-child(6) {
+  outline: 3px solid #66ccdd;
+  outline-offset: 3px;
+}
+
 :where(.content) .tab-container > div {
+  display: none;
   padding: 0.2em;
   border: solid 1px var(--color-code-border);
+}
+
+:where(.content) .tab-container > input:nth-of-type(1):checked ~ div:nth-of-type(1),
+:where(.content) .tab-container > input:nth-of-type(2):checked ~ div:nth-of-type(2),
+:where(.content) .tab-container > input:nth-of-type(3):checked ~ div:nth-of-type(3),
+:where(.content) .tab-container > input:nth-of-type(4):checked ~ div:nth-of-type(4),
+:where(.content) .tab-container > input:nth-of-type(5):checked ~ div:nth-of-type(5),
+:where(.content) .tab-container > input:nth-of-type(6):checked ~ div:nth-of-type(6) {
+  display: block;
 }
 
 /* Update-history block captured inside one blog post. The original restacks

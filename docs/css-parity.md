@@ -107,8 +107,11 @@ node tools/css-parity-compare.mjs '[{"label":"expand","path":"/study/csharp/asyn
 - 許可リストが陳腐化していない（もう使われていない項目が残っていない）
 - `version` 系 22 クラスの色とボーダー スタイルが期待どおり
 - `.content h3`〜`h6` が `margin` ショートハンドを使っていない（後述の詳細度バグの再発防止）
-- `.expand-panel` が表示されたまま
-- 操作できない要素に `cursor` や `:hover` が付いていない
+- 折りたたみの本文が CSS で隠されていない（開閉は `<details>` の役目）
+- `.expand-button` に `display` が付いていない（`<summary>` のマーカーが消えるため）
+- 操作できる要素に `cursor: pointer` と `:hover` が付いている
+- タブが `LegacyControlRewriter.MaxSwitchableTabs` 個ぶんの `:checked ~` 規則を持つ
+- ラジオ ボタンがフォーカス可能なまま隠されていて、フォーカス リングがタブ側に出る
 
 ## 詳細度の罠
 
@@ -158,8 +161,8 @@ node tools/css-parity-compare.mjs '[{"label":"expand","path":"/study/csharp/asyn
 | `table.variable` | 文字色 `#2c2e55`、`tbody` の上下に 4px の罫線 | `study/physics/em/variable.md` |
 | `.pros-mark` / `.cons-mark` | 赤 / 青のマーカー | `fun_whyextensions.md` 17 箇所 |
 | `.input` | 橙色の太字（入力箇所の強調） | 3 箇所 |
-| `.expand-button` / `.expand-panel` | 折りたたみ（下記のとおり静的化） | 13 ファイル |
-| `.tab-container` | 言語別タブ（下記のとおり静的化） | 7 ファイル |
+| `.expand-button` / `.expand-panel` | 折りたたみ（下記のとおり `<details>` に変換） | 13 ファイル |
+| `.tab-container` | 言語別タブ（下記のとおり radio + label に変換） | 7 ファイル |
 | `.latest-posts` | 取り込んだ更新履歴リスト | ブログ 1 件 |
 
 `.version13` の確認用ページとして `content/study/misc/list/test.md` が全バリエーションを
@@ -230,21 +233,35 @@ ufcpp.net は `td.intsup { padding: 0 }` のように数式セルの余白を 0 
 ### JavaScript 前提のコンポーネント
 
 本サイトは JavaScript を配信しない（`docs/site-search.md`、`DESIGN.md` を参照）。そのため
-次の 2 つは「内容は常に見える」「操作できるようには見せない」方針で静的に描画する。
+次の 2 つは、生成時に HTML を書き換えて **CSS だけで動く**形にしている
+（`tools/Ufcpp.SiteGenerator/Rendering/LegacyControlRewriter.cs`。詳細は
+`docs/site-generation.md`）。
 
 | | ufcpp.net | 本サイト |
 |---|---|---|
-| `.expand-panel` | `display: none` で始まり JS で開閉 | 常に `display: block` |
-| `.expand-button` | `cursor: pointer`、`:hover` 背景、`::before` の FontAwesome アイコン | どれも無し。本文と同じ体裁のラベル |
-| `.tab-container > ul li` | `cursor: pointer`、`:hover`、選択中タブの `.current` を JS が付与 | 凡例として並べるだけ。選択状態は無し |
-| `.tab-container > div` | JS が `.view` を付けて 1 つだけ表示 | すべて枠線で区切って表示 |
+| `.expand-panel` | `display: none` で始まり JS で開閉 | `<details>` の開閉。初期状態は閉（ufcpp.net と同じ） |
+| `.expand-button` | `cursor: pointer`、`:hover` 背景、`::before` の FontAwesome アイコン | `<summary>`。`cursor` と `:hover` は再現。アイコンの代わりに `<details>` の標準マーカー |
+| `.tab-container > ul li` | `cursor: pointer`、`:hover`、選択中タブの `.current` を JS が付与 | `<label>` で包み、`input:checked ~` で選択中の体裁を再現 |
+| `.tab-container > div` | JS が `.view` を付けて 1 つだけ表示 | `display: none` を既定にし、`input:checked ~` で 1 つだけ表示 |
 
-`.expand-button` の紫のチップは ufcpp.net では `::before` 疑似要素（アイコン）に付いており、
-ラベル文字そのものには付かない。アイコンを持たない本サイトでチップだけ再現すると
-ラベル全体が押せそうなボタンに見えてしまうため、再現しない。
+意図的な差分は次の 3 点。
 
-JavaScript 無しで同等の操作性を得る案（`<details>` / `<summary>`、radio + label によるタブ）は
-生成側の HTML 変換が必要になるため、別 Issue (#34) とする。
+- `.expand-button` から `display: inline` / `width: 1em` / `text-align: center` を落とした。
+  `<summary>` は `display: list-item` でないとマーカーが消え、アイコンを持たない本サイトでは
+  開閉できることを示すものが無くなるためである。`width` と `text-align` は ufcpp.net では
+  `display: inline` に打ち消されていて効いていない。
+- ufcpp.net が `.expand-panel` に付ける灰色の箱（`padding: 2px` / `background-color: #f3f3f3`）は
+  内側の `.expand-panel-body` に移した。`<details>` 自身に付けると `<summary>` まで塗られてしまう。
+- `.tab-container > ul li` の `padding: .2em .8em` は内側の `<label>` に移した。タブ全体を
+  クリックできるようにするためで、描画される箱の大きさは変わらない。
+
+ラジオ ボタンは `clip-path` で視覚的にのみ隠す（`display: none` にするとフォーカスを受け取れず
+キーボード操作できなくなる）。隠れているぶんフォーカス リングが見えないので、
+`input:focus-visible ~ ul li` で対応するタブ側に描く。
+
+`site.css` が持つ `:checked ~` の規則は `LegacyControlRewriter.MaxSwitchableTabs` 個ぶん。
+それを超えるタブ数の `.tab-container` は変換せず、従来どおり全パネルを表示する
+（対応する規則が無いパネルが永久に隠れるのを避けるため）。現在の `content/` の最大は 4。
 
 ### シンタックス ハイライト
 

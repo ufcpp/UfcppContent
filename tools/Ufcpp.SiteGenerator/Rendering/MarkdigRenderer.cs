@@ -163,9 +163,14 @@ public sealed class MarkdigRenderer
 
         var (markdownWithoutFences, fencedCodeBlocks) =
             ProtectFencedCodeBlocks(page.MarkdownBody);
+
+        // Runs while the fenced code blocks are still placeholders, so raw HTML
+        // that only appears inside a code sample is never rewritten.
+        var markdownWithNativeControls =
+            LegacyControlRewriter.Rewrite(markdownWithoutFences);
         var legacyMarkdownBlocks = new List<string>();
         var markdown = RenderLegacyMarkdownElements(
-            markdownWithoutFences,
+            markdownWithNativeControls,
             fencedCodeBlocks,
             legacyMarkdownBlocks);
         var rawTables = new List<string>();
