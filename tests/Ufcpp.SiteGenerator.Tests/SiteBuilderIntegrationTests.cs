@@ -130,6 +130,8 @@ public sealed class SiteBuilderIntegrationTests
         Assert.Matches(@"--color-brand-navy\s*:\s*#2a3869\s*;", css);
         Assert.Matches(@"--color-content-bg\s*:\s*#ffffff\s*;", css);
         Assert.Matches(@"--color-content-link\s*:\s*#a35951\s*;", css);
+        Assert.Matches(@"--color-code-keyword\s*:\s*#0000e1\s*;", css);
+        Assert.Matches(@"--color-code-string\s*:\s*#a31515\s*;", css);
         Assert.Matches(@"\.site-main\s*\{[^}]*width\s*:\s*100%\s*;", css);
         Assert.DoesNotContain(".site-sidebar", css);
         Assert.DoesNotContain("--sidebar-width", css);
@@ -146,11 +148,13 @@ public sealed class SiteBuilderIntegrationTests
             + @"\.site-body\s*\{[^}]*width\s*:\s*auto\s*;",
             css);
         Assert.Matches(
-            @"\.content pre code \.keyword\s*\{[^}]*color\s*:\s*#0000e1\s*;"
+            @"\.content pre code \.keyword\s*\{[^}]*"
+            + @"color\s*:\s*var\(--color-code-keyword\)\s*;"
             + @"[^}]*background\s*:\s*transparent\s*;",
             css);
         Assert.Matches(
-            @"\.content pre code \.xmlName\s*\{[^}]*color\s*:\s*#a31515\s*;",
+            @"\.content pre code \.xmlName\s*\{[^}]*"
+            + @"color\s*:\s*var\(--color-code-string\)\s*;",
             css);
         Assert.Matches(
             @"\.content pre code \.powershellCommand\s*\{[^}]*color\s*:\s*#000080\s*;",

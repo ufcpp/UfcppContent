@@ -1,6 +1,7 @@
 using Ufcpp.SiteGenerator.Models;
 using Ufcpp.SiteGenerator.Loading;
 using Ufcpp.SiteGenerator.Rendering;
+using System.Xml.Linq;
 
 namespace Ufcpp.SiteGenerator.Tests;
 
@@ -54,7 +55,7 @@ public sealed class MarkdigRendererTests
     }
 
     [Theory]
-    [InlineData("cs", "public string Value = \"<tag>\";", "csharp", "keyword")]
+    [InlineData("cs", "public string Value = \"<tag>\";", "csharp", "roslyn-keyword")]
     [InlineData("XML", "<root attr=\"value\" />", "xml", "xmlName")]
     [InlineData("ps1", "$value = Get-Item \"path\"", "powershell", "powershellCommand")]
     public void Render_SupportedFencedCode_NormalizesAndHighlights(
@@ -70,6 +71,94 @@ public sealed class MarkdigRendererTests
             html);
         Assert.Contains($"<span class=\"{tokenClass}\">", html);
         Assert.DoesNotContain("<tag>", html);
+    }
+
+    [Theory]
+    [InlineData("cs")]
+    [InlineData("csharp")]
+    [InlineData("c#")]
+    [InlineData("CSHARP")]
+    public void Render_CSharpAliases_UseRoslyn(string language)
+    {
+        var html = Render($"```{language}\nrecord R;\n```");
+
+        Assert.Contains("<pre><code class=\"language-csharp\">", html);
+        Assert.Contains(
+            "<span class=\"roslyn-keyword\">record</span>",
+            html);
+        Assert.Contains(
+            "<span class=\"roslyn-record-class-name\">R</span>",
+            html);
+    }
+
+    [Fact]
+    public void Render_CSharpFence_ClassifiesModernSyntaxAndSymbols()
+    {
+        var html = Render(
+            """
+            ```cs
+            using System.Diagnostics.CodeAnalysis;
+            using System.Numerics;
+
+            record struct X(int A)
+            {
+                public int B { readonly get => field; set => field = value; }
+                public readonly bool TryGetValue([NotNullWhen(true)] out int? value) => (value = A) != 0;
+            }
+
+            static class Y
+            {
+                extension<T>(ref T x)
+                    where T : struct, IIncrementOperators<T>
+                {
+                    public void operator +=(int count)
+                    {
+                        for (int i = 0; i < count; i++) x++;
+                    }
+                }
+            }
+            ```
+            """);
+
+        Assert.Contains("<span class=\"roslyn-keyword\">record</span>", html);
+        Assert.Contains("<span class=\"roslyn-keyword\">field</span>", html);
+        Assert.Contains(
+            "<span class=\"roslyn-record-struct-name\">X</span>",
+            html);
+        Assert.Contains("<span class=\"roslyn-property-name\">B</span>", html);
+        Assert.Contains(
+            "<span class=\"roslyn-method-name\">TryGetValue</span>",
+            html);
+        Assert.Contains(
+            "<span class=\"roslyn-parameter-name\">value</span>",
+            html);
+        Assert.Contains(
+            "<span class=\"roslyn-interface-name\">IIncrementOperators</span>",
+            html);
+        Assert.Contains("<span class=\"roslyn-local-name\">i</span>", html);
+        Assert.Contains("&lt;", html);
+    }
+
+    [Fact]
+    public void Render_CSharpFence_PreservesTextAcrossMultipleClassifications()
+    {
+        const string Code = """
+            C.Write("<tag>");
+            static class C
+            {
+                public static void Write(string value) { }
+            }
+            """;
+
+        var html = Render($"```csharp\n{Code}\n```");
+
+        Assert.Contains(
+            "<span class=\"roslyn-method-name roslyn-static-symbol\">Write</span>",
+            html);
+        Assert.DoesNotContain("<tag>", html);
+        Assert.Equal(
+            Code,
+            ExtractRenderedCodeText(html).TrimEnd('\r', '\n'));
     }
 
     [Theory]
@@ -190,9 +279,11 @@ public sealed class MarkdigRendererTests
             """);
 
         Assert.Contains(
-            "<pre><code class=\"language-csharp\"><span class=\"keyword\">if</span>",
+            "<pre><code class=\"language-csharp\"><span class=\"roslyn-keyword-control\">if</span>",
             html);
-        Assert.DoesNotContain("&lt;span class=&quot;keyword&quot;&gt;", html);
+        Assert.DoesNotContain(
+            "&lt;span class=&quot;roslyn-keyword-control&quot;&gt;",
+            html);
         Assert.DoesNotContain("```csharp", html);
     }
 
@@ -357,6 +448,20 @@ public sealed class MarkdigRendererTests
 
     private static string Render(string markdown, Action<string>? arrange = null)
         => RenderWithMetadata(markdown, arrange).Html;
+
+    private static string ExtractRenderedCodeText(string html)
+    {
+        var codeTagStart = html.IndexOf("<code", StringComparison.Ordinal);
+        Assert.True(codeTagStart >= 0);
+        var contentStart = html.IndexOf('>', codeTagStart) + 1;
+        var contentEnd = html.IndexOf("</code>", contentStart, StringComparison.Ordinal);
+        Assert.True(contentStart > 0);
+        Assert.True(contentEnd >= contentStart);
+
+        return XElement.Parse(
+            $"<root>{html[contentStart..contentEnd]}</root>",
+            LoadOptions.PreserveWhitespace).Value;
+    }
 
     private static RenderedContent RenderWithMetadata(
         string markdown,

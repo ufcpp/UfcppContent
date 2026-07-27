@@ -8,14 +8,18 @@ namespace Ufcpp.SiteGenerator.Rendering;
 
 internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
 {
+    private readonly Lazy<RoslynCSharpHighlighter> _csharpHighlighter = new();
+
+    private static readonly IReadOnlySet<string> CSharpLanguageNames =
+        new HashSet<string>(
+            ["csharp", "cs", "c#"],
+            StringComparer.OrdinalIgnoreCase);
+
     private static readonly IReadOnlyDictionary<string, (string Name, ILanguage Language)>
         LanguagesByName =
             new Dictionary<string, (string Name, ILanguage Language)>(
                 StringComparer.OrdinalIgnoreCase)
             {
-                ["csharp"] = ("csharp", Languages.CSharp),
-                ["cs"] = ("csharp", Languages.CSharp),
-                ["c#"] = ("csharp", Languages.CSharp),
                 ["xml"] = ("xml", Languages.Xml),
                 ["html"] = ("html", Languages.Html),
                 ["css"] = ("css", Languages.Css),
@@ -47,18 +51,38 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
     {
         if (renderer is HtmlRenderer htmlRenderer)
         {
-            htmlRenderer.ObjectRenderers.Insert(0, new HighlightedCodeBlockRenderer());
+            htmlRenderer.ObjectRenderers.Insert(
+                0,
+                new HighlightedCodeBlockRenderer(_csharpHighlighter));
         }
     }
 
     private sealed class HighlightedCodeBlockRenderer
         : HtmlObjectRenderer<FencedCodeBlock>
     {
+        private readonly Lazy<RoslynCSharpHighlighter> _csharpHighlighter;
+
+        public HighlightedCodeBlockRenderer(
+            Lazy<RoslynCSharpHighlighter> csharpHighlighter)
+        {
+            _csharpHighlighter = csharpHighlighter;
+        }
+
         protected override void Write(HtmlRenderer renderer, FencedCodeBlock block)
         {
             var languageName = block.Info?
                 .Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)
                 .FirstOrDefault();
+            if (languageName is not null
+                && CSharpLanguageNames.Contains(languageName))
+            {
+                renderer.Write("<pre><code class=\"language-csharp\">");
+                renderer.Write(
+                    _csharpHighlighter.Value.Highlight(block.Lines.ToString()));
+                renderer.WriteLine("</code></pre>");
+                return;
+            }
+
             if (languageName is null
                 || !LanguagesByName.TryGetValue(languageName, out var language))
             {

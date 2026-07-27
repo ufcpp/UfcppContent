@@ -11,7 +11,14 @@ colors:
   heading: "#483949"
   content-link: "#a35951"
   border: "#dddddd"
+  code-keyword: "#0000e1"
+  code-control: "#8f08c4"
+  code-comment: "#008000"
+  code-string: "#a31515"
+  code-number: "#098658"
   code-type: "#2b91af"
+  code-method: "#74531f"
+  code-symbol: "#001080"
 typography:
   headline:
     fontFamily: '"Hiragino Kaku Gothic Pro", "Meiryo", "Yu Gothic", YuGothic, "MS PGothic", sans-serif'
@@ -102,7 +109,9 @@ high-contrast reading neutrals.
 
 - **Reference Link Brown** (`content-link`): Distinguishes links inside technical prose without
   introducing a generic bright web-blue accent.
-- **Code Type Cyan** (`code-type`): Preserves the familiar syntax-highlighting vocabulary.
+- **Code Syntax Colors** (`code-keyword`, `code-control`, `code-comment`, `code-string`,
+  `code-number`, `code-type`, `code-method`, `code-symbol`): Preserve the familiar Visual
+  Studio Light syntax-highlighting vocabulary for both migrated and newly rendered examples.
 
 ### Neutral
 

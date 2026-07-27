@@ -188,9 +188,13 @@ indexes.
 
 ### Syntax highlighting
 
-Fenced code blocks are highlighted at build time with ColorCode. Build-time
-highlighting keeps generated pages deterministic and self-contained; unlike
-browser-side highlighting, it requires no JavaScript or CDN request.
+Fenced code blocks are highlighted at build time. C# uses Roslyn
+(`Microsoft.CodeAnalysis.Classification.Classifier`) with preview language parsing,
+so current contextual keywords and semantic symbol categories such as record types,
+methods, properties, parameters, and locals receive Visual Studio-style colors.
+Other supported languages use ColorCode. Build-time highlighting keeps generated
+pages deterministic and self-contained; unlike browser-side highlighting, it
+requires no JavaScript or CDN request.
 
 The renderer supports these canonical language names:
 
@@ -200,12 +204,17 @@ The renderer supports these canonical language names:
 
 Common aliases are normalized (`cs`/`c#`, `ps1`, `c++`, `vb`, `fs`, `py`, `js`,
 and `ts`). Case is ignored. The frequently used `console`, `text`, `cil`, and
-`shell` blocks intentionally remain plain text. A block with no language, an
-unknown language, or a highlighting failure is also emitted as escaped plain
-code so its contents cannot be interpreted as HTML or be lost.
+`shell` blocks intentionally remain plain text. A block with no language or an
+unknown language is emitted as escaped plain code so its contents cannot be
+interpreted as HTML or be lost. ColorCode failures also fall back to escaped
+plain code.
 
-To add a language, add its canonical name and aliases to `LanguagesByName` in
-`Rendering/SyntaxHighlightingExtension.cs`, add scoped token colors to
+Roslyn classifications are emitted as scoped `roslyn-*` classes. Same-position
+and overlapping classifications are merged by text interval so embedded
+classifications cannot duplicate or drop source characters.
+
+To add a non-C# language, add its canonical name and aliases to `LanguagesByName`
+in `Rendering/SyntaxHighlightingExtension.cs`, add scoped token colors to
 `wwwroot/css/site.css` when its token classes are new, and add a representative
 case to `MarkdigRendererTests`.
 

@@ -15,6 +15,14 @@
   --color-border: #dddddd;
   --color-code-border: #ccccff;
   --color-code-console: #606060;
+  --color-code-keyword: #0000e1;
+  --color-code-control: #8f08c4;
+  --color-code-comment: #008000;
+  --color-code-string: #a31515;
+  --color-code-number: #098658;
+  --color-code-type: #2b91af;
+  --color-code-method: #74531f;
+  --color-code-symbol: #001080;
   --font-sans: "Hiragino Kaku Gothic Pro", "Meiryo", "Yu Gothic", YuGothic,
     "MS PGothic", sans-serif;
   --font-mono: Consolas, "Courier New", Courier, monospace;
@@ -411,7 +419,7 @@ pre.console code {
 
 .content pre code .keyword {
   padding: 0;
-  color: #0000e1;
+  color: var(--color-code-keyword);
   background: transparent;
   font-weight: 700;
 }
@@ -421,30 +429,30 @@ pre.console code {
 .content pre code .htmlTagDelimiter,
 .content pre code .htmlOperator,
 .content pre code .xmlDelimiter {
-  color: #0000e1;
+  color: var(--color-code-keyword);
 }
 
 .content pre code .comment,
 .content pre code .htmlComment,
 .content pre code .xmlDocComment,
 .content pre code .xmlComment {
-  color: #008000;
+  color: var(--color-code-comment);
 }
 
 .content pre code .string,
 .content pre code .stringCSharpVerbatim,
 .content pre code .htmlElementName {
-  color: #a31515;
+  color: var(--color-code-string);
 }
 
 .content pre code .xmlName {
-  color: #a31515;
+  color: var(--color-code-string);
 }
 
 .content pre code .type,
 .content pre code .powershellType,
 .content pre code .className {
-  color: #2b7185;
+  color: var(--color-code-type);
 }
 
 .content pre code .htmlAttributeName,
@@ -475,14 +483,76 @@ pre.console code {
   color: #000080;
 }
 
+/* Roslyn C# semantic classifications */
+.content pre code .roslyn-keyword,
+.content pre code .roslyn-preprocessor-keyword {
+  color: var(--color-code-keyword);
+  font-weight: 700;
+}
+
+.content pre code .roslyn-keyword-control {
+  color: var(--color-code-control);
+  font-weight: 700;
+}
+
+.content pre code .roslyn-comment,
+.content pre code [class*="roslyn-xml-doc-comment-"] {
+  color: var(--color-code-comment);
+}
+
+.content pre code .roslyn-excluded-code {
+  color: #808080;
+}
+
+.content pre code .roslyn-string,
+.content pre code .roslyn-string-verbatim,
+.content pre code .roslyn-string-escape-character {
+  color: var(--color-code-string);
+}
+
+.content pre code .roslyn-number {
+  color: var(--color-code-number);
+}
+
+.content pre code .roslyn-class-name,
+.content pre code .roslyn-record-class-name,
+.content pre code .roslyn-struct-name,
+.content pre code .roslyn-record-struct-name,
+.content pre code .roslyn-interface-name,
+.content pre code .roslyn-delegate-name,
+.content pre code .roslyn-enum-name,
+.content pre code .roslyn-module-name,
+.content pre code .roslyn-type-parameter-name {
+  color: var(--color-code-type);
+}
+
+.content pre code .roslyn-method-name,
+.content pre code .roslyn-extension-method-name {
+  color: var(--color-code-method);
+}
+
+.content pre code .roslyn-field-name,
+.content pre code .roslyn-enum-member-name,
+.content pre code .roslyn-constant-name,
+.content pre code .roslyn-local-name,
+.content pre code .roslyn-parameter-name,
+.content pre code .roslyn-property-name,
+.content pre code .roslyn-event-name {
+  color: var(--color-code-symbol);
+}
+
+.content pre code .roslyn-obsolete-symbol {
+  text-decoration: line-through;
+}
+
 .reserved,
 .language-csharp .reserved {
-  color: #0000e1;
+  color: var(--color-code-keyword);
   font-weight: 700;
 }
 
 .control {
-  color: #8f08c4;
+  color: var(--color-code-control);
 }
 
 .inactive {
@@ -490,19 +560,19 @@ pre.console code {
 }
 
 .comment {
-  color: #008000;
+  color: var(--color-code-comment);
 }
 
 .type {
-  color: #2b91af;
+  color: var(--color-code-type);
 }
 
 .method {
-  color: #74531f;
+  color: var(--color-code-method);
 }
 
 .string {
-  color: #a31515;
+  color: var(--color-code-string);
 }
 
 /* Tables and quotations */
