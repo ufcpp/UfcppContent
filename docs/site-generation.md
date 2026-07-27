@@ -249,6 +249,25 @@ in `Rendering/SyntaxHighlightingExtension.cs`, add scoped token colors to
 `wwwroot/css/site.css` when its token classes are new, and add a representative
 case to `MarkdigRendererTests`.
 
+### Stylesheet and CSS parity
+
+The site ships a single stylesheet, `tools/Ufcpp.SiteGenerator/wwwroot/css/site.css`,
+copied to `_site/assets/css/site.css` at build time.
+
+Article bodies still carry the legacy HTML classes inherited from ufcpp.net
+(`version13`, `pros-mark`, `table.layout`, …), so `site.css` must define them for
+the content to render as intended. [docs/css-parity.md](css-parity.md) records how
+that reconciliation is verified, which classes are deliberately left unstyled, and
+where this site intentionally departs from the original — including the
+JavaScript-free treatment of ufcpp.net's expand panels and language tabs.
+
+Two checks back it up, plus `SiteCssParityTests`:
+
+```bash
+pwsh -NoProfile -File ./tools/css-class-reconciliation.ps1   # class coverage
+node tools/css-parity-compare.mjs tools/css-parity-cases.json # computed styles
+```
+
 ### Link rewriting
 
 Internal links are rewritten at the Markdig AST level (before HTML rendering):

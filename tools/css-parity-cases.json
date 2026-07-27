@@ -1,0 +1,27 @@
+[
+  {
+    "label": "version markers (h5 and div, every version class)",
+    "path": "/study/misc/list/test/",
+    "selector": ".version"
+  },
+  {
+    "label": "layout table cells",
+    "path": "/study/math/vector_analysis/v_field/",
+    "selector": "table.layout td, table.layout th"
+  },
+  {
+    "label": "variable table rules",
+    "path": "/study/physics/em/variable/",
+    "selector": "table.variable tbody"
+  },
+  {
+    "label": "pros/cons marks",
+    "path": "/study/csharp/functional/fun_whyextensions/",
+    "selector": ".pros-mark, .cons-mark"
+  },
+  {
+    "label": "captured update-history list",
+    "path": "/blog/2021/11/2022-ga-soon/",
+    "selector": ".latest-posts time, .latest-posts h4"
+  }
+]

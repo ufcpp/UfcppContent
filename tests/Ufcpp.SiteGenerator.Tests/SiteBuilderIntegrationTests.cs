@@ -160,9 +160,13 @@ public sealed class SiteBuilderIntegrationTests
             @"\.content pre code \.powershellCommand\s*\{[^}]*color\s*:\s*#000080\s*;",
             css);
         Assert.Matches(
-            @"\.version\s*\{[^}]*display\s*:\s*block\s*;[^}]*"
-            + @"background\s*:\s*transparent\s*;[^}]*"
-            + @"color\s*:\s*var\(--color-heading\)\s*;",
+            @":where\(\.content\) \.version\s*\{[^}]*margin-left\s*:\s*8px\s*;[^}]*"
+            + @"border-left\s*:\s*8px solid #b0b0c0\s*;",
+            css);
+        Assert.Matches(
+            @":where\(\.content\) \.version13\s*\{[^}]*"
+            + @"border-left-color\s*:\s*#66ccdd\s*;[^}]*"
+            + @"border-left-style\s*:\s*ridge\s*;",
             css);
         Assert.Matches(
             @"@media print\s*\{[\s\S]*?\.content pre code span\s*\{"
@@ -213,7 +217,7 @@ public sealed class SiteBuilderIntegrationTests
             css);
         Assert.Matches(
             @"\.content table\.frac td\.num\s*\{[^}]*"
-            + @"border-bottom\s*:\s*1pt solid currentColor\s*;",
+            + @"border-bottom\s*:\s*1pt solid var\(--color-text\)\s*;",
             css);
         Assert.Contains(".content table.sigma", css);
         Assert.Contains(".content table.integral", css);

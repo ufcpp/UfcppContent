@@ -294,22 +294,28 @@ img {
   background: var(--color-brand-navy);
 }
 
+/* Longhands, not the `margin` shorthand: `margin` would declare margin-left: 0
+   at (0,1,1) and defeat the legacy `.version` marker's margin-left at (0,1,0).
+   ufcpp.net uses margin-top/margin-bottom here for the same reason. */
 .content h3 {
-  margin: 16px 0;
+  margin-top: 16px;
+  margin-bottom: 16px;
   color: var(--color-brand-navy);
   font-size: 18px;
   font-weight: 700;
 }
 
 .content h4 {
-  margin: 16px 0;
+  margin-top: 16px;
+  margin-bottom: 16px;
   color: #2b91af;
   font-size: 16px;
   font-weight: 700;
 }
 
 .content h5 {
-  margin: 16px 0;
+  margin-top: 16px;
+  margin-bottom: 16px;
   color: var(--color-brand-navy);
   font-size: 16px;
   font-weight: 400;
@@ -317,7 +323,8 @@ img {
 }
 
 .content h6 {
-  margin: 16px 0;
+  margin-top: 16px;
+  margin-bottom: 16px;
   color: var(--color-brand-navy);
   font-size: 16px;
   font-weight: 400;
@@ -647,7 +654,10 @@ th {
 }
 
 .content table.frac td.num {
-  border-bottom: 1pt solid currentColor;
+  /* ufcpp.net pins this rule to a literal #4c4c4c rather than the inherited
+     colour, so the fraction bar stays neutral even inside coloured blocks such
+     as `table.variable`. `--color-text` is that same value. */
+  border-bottom: 1pt solid var(--color-text);
 }
 
 .content table.sigma td {
@@ -922,15 +932,270 @@ math {
   scroll-margin-top: 1rem;
 }
 
-.version {
-  margin: 1.5em 0 0.75em;
-  padding: 0;
-  display: block;
-  background: transparent;
-  color: var(--color-heading);
-  font-size: 16px;
-  font-weight: 400;
+/* --- Legacy content styles -------------------------------------------------
+   Ported from ufcpp.net's bundle.min.css so the raw HTML preserved in content/
+   renders the way it does on the original site. See docs/css-parity.md for the
+   full reconciliation and for the differences that are intentional.
+
+   Every selector is wrapped in :where(.content) so these legacy names cannot
+   leak into the site chrome. :where() adds zero specificity, so each rule keeps
+   the exact weight it has on ufcpp.net — which some of them depend on. */
+
+/* Version markers: <h5 class="version version13">, <div class="version version14">.
+   Specificity is load-bearing here:
+   - `.version` and `.versionN` must tie at (0,1,0) so the later `.versionN`
+     wins the border colour. Promote only one of them and the `border-left`
+     shorthand wins instead, turning every marker the same grey.
+   - `.content h5` (0,1,1) must keep beating `.versionN` (0,1,0) for `color`,
+     matching ufcpp.net where `.container h5` wins. Version *headings* stay
+     navy; only `div.version.versionN` shows the per-version colour.
+   `display: flexbox` in the original is an invalid legacy value that browsers
+   drop, so it is not ported. */
+:where(.content) .version {
+  margin-left: 8px;
+  padding-left: 8px;
+  border-left: 8px solid #b0b0c0;
+}
+
+:where(.content) .version2 {
+  color: #ff0000;
+  border-left-color: #ff8e8e;
+}
+
+:where(.content) .version3 {
+  color: #00cc00;
+  border-left-color: #8ecc8e;
+}
+
+:where(.content) .version4 {
+  color: #0000cc;
+  border-left-color: #8e8ecc;
+}
+
+:where(.content) .version5 {
+  color: #cc00cc;
+  border-left-color: #dd8ecc;
+}
+
+:where(.content) .version6 {
+  color: #bbbb00;
+  border-left-color: #dddd66;
+}
+
+:where(.content) .version7 {
+  color: #00aacc;
+  border-left-color: #66ccdd;
+}
+
+:where(.content) .version7_1 {
+  color: #0000ff;
+  border-left-color: #66ccdd;
+}
+
+:where(.content) .version7_2 {
+  color: #00cc00;
+  border-left-color: #66ccdd;
+}
+
+:where(.content) .version7_3 {
+  color: #aa0000;
+  border-left-color: #66ccdd;
+}
+
+:where(.content) .version8 {
+  color: #ff0000;
+  border-left-color: #ff8e8e;
+  border-left-style: ridge;
+}
+
+:where(.content) .version9 {
+  color: #00cc00;
+  border-left-color: #8ecc8e;
+  border-left-style: ridge;
+}
+
+:where(.content) .version10 {
+  color: #0000cc;
+  border-left-color: #8e8ecc;
+  border-left-style: ridge;
+}
+
+:where(.content) .version11 {
+  color: #cc00cc;
+  border-left-color: #dd8ecc;
+  border-left-style: ridge;
+}
+
+:where(.content) .version12 {
+  color: #bbbb00;
+  border-left-color: #dddd66;
+  border-left-style: ridge;
+}
+
+:where(.content) .version13 {
+  color: #00aacc;
+  border-left-color: #66ccdd;
+  border-left-style: ridge;
+}
+
+:where(.content) .version14 {
+  color: #ff0000;
+  border-left-color: #ff8e8e;
+  border-left-style: double;
+}
+
+:where(.content) .version15 {
+  color: #00cc00;
+  border-left-color: #8ecc8e;
+  border-left-style: double;
+}
+
+:where(.content) .version16 {
+  color: #0000cc;
+  border-left-color: #8e8ecc;
+  border-left-style: double;
+}
+
+:where(.content) .version17 {
+  color: #cc00cc;
+  border-left-color: #dd8ecc;
+  border-left-style: double;
+}
+
+:where(.content) .version18 {
+  color: #bbbb00;
+  border-left-color: #dddd66;
+  border-left-style: double;
+}
+
+:where(.content) .version19 {
+  color: #00aacc;
+  border-left-color: #66ccdd;
+  border-left-style: double;
+}
+
+/* Code blocks carried over as raw HTML. The base `pre` rule already supplies
+   the margin and background; only the text colour is still missing. */
+:where(.content) pre.source,
+:where(.content) pre.source code {
+  color: #000000;
+}
+
+/* Layout tables are used purely to align figures, so their cells are bare. */
+:where(.content) table.layout td,
+:where(.content) table.layout th {
+  border: none;
+  background-color: transparent;
+}
+
+/* Variable-definition tables rule off the body block. ufcpp.net also colours
+   the table via its bare `.variable` token rule, so the colour is reproduced
+   here on the table itself — our syntax highlighter never emits `.variable`,
+   and scoping it this way keeps the rule from leaking onto code tokens. */
+:where(.content) table.variable {
+  color: #2c2e55;
+}
+
+:where(.content) table.variable tbody {
+  border-top: 4px solid #c0c0c0;
+  border-bottom: 4px solid #c0c0c0;
+}
+
+/* Pro/con bullets and highlighted placeholder text. */
+:where(.content) .pros-mark,
+:where(.content) .cons-mark {
+  margin: 0 4px;
+}
+
+:where(.content) .pros-mark {
+  color: #ff0000;
+}
+
+:where(.content) .cons-mark {
+  color: #0000ff;
+}
+
+:where(.content) .input {
+  color: #ff8030;
+  font-weight: 700;
+}
+
+/* Collapsible sections. On ufcpp.net `.expand-panel` starts at display: none
+   and JavaScript toggles it. This site ships no JavaScript, so the panel stays
+   open and the button is styled as a static label rather than a control — no
+   pointer cursor, no hover affordance, nothing that suggests it can be
+   clicked. The lavender chip ufcpp.net draws belongs to the `::before`
+   FontAwesome glyph, not to the label itself, so it is not reproduced either.
+   See docs/css-parity.md. */
+:where(.content) .expand-button {
+  margin: 0 0.5em 0 0;
+  display: inline;
   text-decoration: none;
+  text-indent: 0;
+}
+
+:where(.content) .expand-panel {
+  display: block;
+  padding: 2px;
+  background-color: #f3f3f3;
+}
+
+/* Language tabs. `.view` is added at runtime by ufcpp.net's JavaScript, so the
+   panels here are bare <div> children. Without scripting every panel is
+   visible, so the <ul> is presented as a static legend instead of a tab strip
+   and each panel is boxed the way `.tab-container div.view` boxes the active
+   one. */
+:where(.content) .tab-container {
+  margin: 1em 0;
+}
+
+:where(.content) .tab-container > ul {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  color: #4c4c4c;
+  font-size: 0.8em;
+  list-style: none;
+}
+
+:where(.content) .tab-container > ul li {
+  margin: 0 0.2em 0 0;
+  padding: 0.2em 0.8em;
+  display: inline-block;
+  border: solid 1px var(--color-code-border);
+  border-bottom: none;
+  background-color: transparent;
+}
+
+:where(.content) .tab-container > div {
+  padding: 0.2em;
+  border: solid 1px var(--color-code-border);
+}
+
+/* Update-history block captured inside one blog post. The original restacks
+   this at 640px; that override lives with the other narrow-viewport rules. */
+:where(.content) .latest-posts time,
+:where(.content) .latest-posts header,
+:where(.content) .latest-posts h4 {
+  display: inline-block;
+}
+
+:where(.content) .latest-posts h4 {
+  margin: 0 0.5em;
+  color: #a35951;
+  font-weight: 400;
+}
+
+:where(.content) .latest-posts h4 a {
+  text-decoration: underline;
+}
+
+:where(.content) .latest-posts h4 a:hover {
+  text-decoration: none;
+}
+
+:where(.content) .latest-posts article {
+  margin: 0 0 0 1em;
 }
 
 /* Footer */
@@ -1081,6 +1346,19 @@ math {
 
   table {
     font-size: 0.875rem;
+  }
+
+  /* Legacy: ufcpp.net restacks the captured update-history block here. */
+  :where(.content) .latest-posts time {
+    display: block;
+  }
+
+  :where(.content) .latest-posts h4 {
+    margin-left: 0;
+  }
+
+  :where(.content) .latest-posts article header {
+    margin-left: 1em;
   }
 
   .site-footer {
