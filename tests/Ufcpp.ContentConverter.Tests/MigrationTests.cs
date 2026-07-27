@@ -6,7 +6,7 @@ namespace Ufcpp.ContentConverter.Tests;
 public sealed class MigrationTests
 {
     [Fact]
-    public void LegacyCodeBlocksBecomeLanguageTaggedMarkdownFences()
+    public void LegacySourceBlocksArePreservedWhileOtherPreBlocksAreNormalized()
     {
         var input = """
             <pre class="source" title="generic.cs" lang="">
@@ -44,12 +44,12 @@ public sealed class MigrationTests
             <table><tr><td><pre class="source"><code><span class="reserved">var</span> cell = "&lt;tag&gt;";</code></pre></td></tr></table>
             """;
         var expected = """
-            ```csharp
-            public class C<T>
+            <pre class="source" title="generic.cs" lang="">
+            <code><span class="reserved">public</span> <span class="reserved">class</span> C&lt;T&gt;
             {
-                public T Value { get; }
+                <span class="reserved">public</span> T Value { <span class="reserved">get</span>; }
             }
-            ```
+            </code></pre>
 
             ```xml
             <Project>
@@ -57,13 +57,13 @@ public sealed class MigrationTests
             </Project>
             ```
 
-            ```powershell
-            $values = 1, 2, 3
-            ```
+            <pre class="source" title="test.ps1" lang="">
+            <code>$values = 1, 2, 3
+            </code></pre>
 
-            ```fsharp
-            let square x = x * x
-            ```
+            <pre class="source" title="" lang="F#">
+            <code>let square x = x * x
+            </code></pre>
 
             ```console
             42
@@ -77,7 +77,7 @@ public sealed class MigrationTests
             Preformatted prose remains preformatted.
             ```
 
-            <table><tr><td><pre class="source"><code class="language-csharp">var cell = &quot;&lt;tag&gt;&quot;;</code></pre></td></tr></table>
+            <table><tr><td><pre class="source"><code><span class="reserved">var</span> cell = "&lt;tag&gt;";</code></pre></td></tr></table>
             """;
 
         var actual = CodeBlockNormalizer.Normalize(input, "/study/csharp/example/");
@@ -112,26 +112,26 @@ public sealed class MigrationTests
     }
 
     [Fact]
-    public void LegacyCodeBlockHoistsIdFromPreElementBeforeMarkdownFence()
+    public void LegacySourceBlockPreservesAttributesAndAnnotations()
     {
         const string input = """
-            <pre id="pre-anchor" class="source">
-            <code>var value = 1;</code>
+            <pre id="pre-anchor" class="sample source annotated" title="sample.cs">
+            <code><span class="reserved">var</span> <em>value</em> = 1;</code>
             </pre>
             """;
 
         var actual = CodeBlockNormalizer.Normalize(input, "/study/csharp/example/");
 
-        Assert.StartsWith("<a id=\"pre-anchor\"></a>\n\n```csharp\n", actual);
-        Assert.DoesNotContain("<pre", actual);
+        Assert.Equal(input, actual);
+        Assert.Equal(input, CodeBlockNormalizer.Normalize(actual, "/study/csharp/example/"));
     }
 
     [Fact]
-    public void MissingFenceLanguagesAreInferredWithoutClosingOnNestedFences()
+    public void PreservedSourceBlocksAreSkippedWhenMissingFenceLanguagesAreInferred()
     {
         var input = """
             <pre class="source" title="Markdown example">
-            <code>```cs
+            <code>```
             var value = 1;
             ```
             </code></pre>
@@ -153,11 +153,11 @@ public sealed class MigrationTests
             ```
             """;
         var expected = """
-            ````csharp
-            ```cs
+            <pre class="source" title="Markdown example">
+            <code>```
             var value = 1;
             ```
-            ````
+            </code></pre>
 
             ```csharp
             string? value = null;
@@ -191,7 +191,7 @@ public sealed class MigrationTests
         string code,
         string expectedLanguage)
     {
-        var input = $"<pre class=\"source\" lang=\"{language}\"><code>{code}</code></pre>";
+        var input = $"<pre lang=\"{language}\"><code>{code}</code></pre>";
 
         var actual = CodeBlockNormalizer.Normalize(input, "/study/example/");
 
@@ -223,7 +223,7 @@ public sealed class MigrationTests
 
         var prose = CodeBlockNormalizer.Normalize("<pre>Profile notes</pre>", context);
         var source = CodeBlockNormalizer.Normalize(
-            "<pre class=\"source\">Invoke-CustomCommand</pre>",
+            "<pre><code>Invoke-CustomCommand</code></pre>",
             context);
 
         Assert.StartsWith("```text\n", prose, StringComparison.Ordinal);
@@ -243,7 +243,7 @@ public sealed class MigrationTests
     [Fact]
     public void LegacyCodeBlockClosingWhitespaceDoesNotCreateWhitespaceOnlyLines()
     {
-        var input = "<pre class=\"source\"><code>var value = 1;</code></pre> \nAfter";
+        var input = "<pre><code>var value = 1;</code></pre> \nAfter";
 
         var actual = CodeBlockNormalizer.Normalize(input, "/study/csharp/example/");
 

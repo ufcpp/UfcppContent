@@ -132,6 +132,25 @@ public static class CodeBlockNormalizer
     public static string Normalize(string value, string contextPath)
     {
         var normalized = TextUtilities.NormalizeNewlines(value);
+        var preservedSourceBlocks = new List<string>();
+        var placeholderPrefix = CreateUnusedPlaceholderPrefix(normalized);
+        normalized = LegacyPreRegex.Replace(
+            normalized,
+            match =>
+            {
+                var attributes = ParseAttributes(match.Groups["attributes"].Value);
+                var classes = SplitClasses(attributes.GetValueOrDefault("class"));
+                if (!classes.Contains("source"))
+                {
+                    return match.Value;
+                }
+
+                var placeholder =
+                    $"{placeholderPrefix}{preservedSourceBlocks.Count}\u001e";
+                preservedSourceBlocks.Add(match.Value);
+                return placeholder;
+            });
+
         var source = normalized;
         normalized = LegacyPreRegex.Replace(
             source,
@@ -140,7 +159,28 @@ public static class CodeBlockNormalizer
                 contextPath,
                 source,
                 IsInsideHtmlTable(source, match.Index)));
-        return AddMissingFenceLanguages(normalized, contextPath);
+        normalized = AddMissingFenceLanguages(normalized, contextPath);
+
+        for (var index = 0; index < preservedSourceBlocks.Count; index++)
+        {
+            normalized = normalized.Replace(
+                $"{placeholderPrefix}{index}\u001e",
+                preservedSourceBlocks[index],
+                StringComparison.Ordinal);
+        }
+
+        return normalized;
+    }
+
+    private static string CreateUnusedPlaceholderPrefix(string value)
+    {
+        var prefix = "\u001fufcpp-preserved-source:";
+        while (value.Contains(prefix, StringComparison.Ordinal))
+        {
+            prefix += "_";
+        }
+
+        return prefix;
     }
 
     private static string RewriteLegacyBlock(

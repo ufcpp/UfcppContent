@@ -35,6 +35,11 @@ hierarchy, unknown document types or macros, malformed exercise JSON, unsafe out
 ambiguous aliases, unresolved internal files or fragments, missing assets, sitemap differences,
 or required accounting differences.
 
+Legacy `<pre>` elements whose class list contains `source` are preserved as raw HTML after
+newline normalization. Their attributes and nested markup, including syntax-coloring spans and
+editorial annotations such as `<em>`, are not converted to Markdown fences. Other preformatted
+blocks and existing Markdown fences continue through language detection and normalization.
+
 ## Validate
 
 ```powershell
