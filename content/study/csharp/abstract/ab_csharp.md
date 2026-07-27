@@ -9,10 +9,6 @@ umbraco_id: 1186
 parent_id: 1185
 sort_order: 0
 aliases:
-  - "/csharp/ab_csharp"
-  - "/csharp/ab_csharp.html"
-  - "/csharp/abstract/ab_csharp/"
-  - "/study/csharp/ab_csharp"
   - "/study/csharp/ab_csharp.html"
 ---
 

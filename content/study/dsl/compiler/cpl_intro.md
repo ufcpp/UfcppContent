@@ -9,10 +9,6 @@ umbraco_id: 1435
 parent_id: 1434
 sort_order: 0
 aliases:
-  - "/dsl/compiler/cpl_intro/"
-  - "/dsl/cpl_intro"
-  - "/dsl/cpl_intro.html"
-  - "/study/dsl/cpl_intro"
   - "/study/dsl/cpl_intro.html"
 ---
 

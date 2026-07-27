@@ -9,8 +9,7 @@ tags:
 umbraco_id: 2255
 parent_id: 1286
 sort_order: 11
-aliases:
-  - "/csharp/resource/nullablereferencetype/"
+aliases: []
 ---
 
 # null 許容参照型

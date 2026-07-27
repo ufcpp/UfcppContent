@@ -9,10 +9,6 @@ umbraco_id: 1401
 parent_id: 1393
 sort_order: 7
 aliases:
-  - "/dotnet/wpf/wpf_binding/"
-  - "/dotnet/wpf_binding"
-  - "/dotnet/wpf_binding.html"
-  - "/study/dotnet/wpf_binding"
   - "/study/dotnet/wpf_binding.html"
 ---
 

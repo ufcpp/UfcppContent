@@ -9,10 +9,6 @@ umbraco_id: 1297
 parent_id: 1286
 sort_order: 16
 aliases:
-  - "/csharp/RmWeakReference"
-  - "/csharp/RmWeakReference.html"
-  - "/csharp/resource/rmweakreference/"
-  - "/study/csharp/RmWeakReference"
   - "/study/csharp/RmWeakReference.html"
 ---
 

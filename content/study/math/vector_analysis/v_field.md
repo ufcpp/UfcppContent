@@ -9,11 +9,7 @@ umbraco_id: 1492
 parent_id: 1491
 sort_order: 0
 aliases:
-  - "/math/vector_analysis/v_field/"
-  - "/study/vector_analysis/field"
   - "/study/vector_analysis/field.html"
-  - "/vector_analysis/field"
-  - "/vector_analysis/field.html"
 ---
 
 # 場

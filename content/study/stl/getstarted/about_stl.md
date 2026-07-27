@@ -9,10 +9,6 @@ umbraco_id: 1628
 parent_id: 1627
 sort_order: 0
 aliases:
-  - "/stl/about_stl"
-  - "/stl/about_stl.html"
-  - "/stl/getstarted/about_stl/"
-  - "/study/stl/about_stl"
   - "/study/stl/about_stl.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1480
 parent_id: 1471
 sort_order: 8
 aliases:
-  - "/math/set/cardinality/"
-  - "/set/cardinality"
-  - "/set/cardinality.html"
-  - "/study/set/cardinality"
   - "/study/set/cardinality.html"
 ---
 

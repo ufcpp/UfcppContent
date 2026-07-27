@@ -9,11 +9,7 @@ umbraco_id: 1688
 parent_id: 1661
 sort_order: 26
 aliases:
-  - "/ref/Re"
-  - "/ref/Re.html"
-  - "/study/ref/Re"
   - "/study/ref/Re.html"
-  - "/xml/ref/re/"
 ---
 
 # 実部・虚部

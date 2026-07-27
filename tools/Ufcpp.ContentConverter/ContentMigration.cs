@@ -121,6 +121,7 @@ public sealed class ContentMigration
     private IReadOnlyDictionary<int, string> _canonicalUrls = null!;
     private IReadOnlyDictionary<int, string> _outputPaths = null!;
     private IReadOnlyDictionary<int, IReadOnlyList<string>> _aliases = null!;
+    private IReadOnlyDictionary<int, IReadOnlyList<string>> _publishedAliases = null!;
     private IReadOnlyDictionary<string, string> _categoryAnchors = null!;
     private MacroExpander _macros = null!;
     private LinkRewriter _links = null!;
@@ -150,6 +151,9 @@ public sealed class ContentMigration
         }
 
         _aliases = rewriteMaps.BuildAliases(_snapshot.Nodes, _canonicalUrls);
+        _publishedAliases = _aliases.ToDictionary(
+            pair => pair.Key,
+            pair => AliasPolicy.SelectPublished(_canonicalUrls[pair.Key], pair.Value));
         _categoryAnchors = BuildCategoryAnchors(_snapshot.Nodes);
         PrepareOutput();
         _assets = new AssetManager(_options.MediaRoot, _options.LegacyRoot, _options.OutputRoot);
@@ -357,7 +361,7 @@ public sealed class ContentMigration
         builder.AppendLine($"umbraco_id: {node.Id}");
         builder.AppendLine($"parent_id: {node.ParentId}");
         builder.AppendLine($"sort_order: {node.SortOrder}");
-        AppendArray(builder, "aliases", _aliases[node.Id]);
+        AppendArray(builder, "aliases", _publishedAliases[node.Id]);
         builder.AppendLine("---");
         return builder.ToString();
     }
@@ -766,7 +770,7 @@ public sealed class ContentMigration
                     canonical_url = _canonicalUrls[node.Id],
                     output_path = outputPath,
                     status,
-                    aliases = _aliases[node.Id],
+                    aliases = _publishedAliases[node.Id],
                     metadata = node.ContentType == "SubjectGroup"
                         ? new Dictionary<string, string> { ["display_name"] = node.Get("displayName") }
                         : null,

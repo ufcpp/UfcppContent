@@ -9,11 +9,7 @@ umbraco_id: 1683
 parent_id: 1661
 sort_order: 21
 aliases:
-  - "/ref/operator"
-  - "/ref/operator.html"
-  - "/study/ref/operator"
   - "/study/ref/operator.html"
-  - "/xml/ref/operator/"
 ---
 
 # 演算子

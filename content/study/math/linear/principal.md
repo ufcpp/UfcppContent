@@ -9,10 +9,6 @@ umbraco_id: 1463
 parent_id: 1458
 sort_order: 4
 aliases:
-  - "/linear/principal"
-  - "/linear/principal.html"
-  - "/math/linear/principal/"
-  - "/study/linear/principal"
   - "/study/linear/principal.html"
 ---
 

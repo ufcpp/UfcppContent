@@ -9,10 +9,6 @@ umbraco_id: 1262
 parent_id: 1248
 sort_order: 9
 aliases:
-  - "/csharp/oo_inherit"
-  - "/csharp/oo_inherit.html"
-  - "/csharp/oop/oo_inherit/"
-  - "/study/csharp/oo_inherit"
   - "/study/csharp/oo_inherit.html"
 ---
 

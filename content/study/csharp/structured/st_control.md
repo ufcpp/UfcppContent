@@ -9,10 +9,6 @@ umbraco_id: 1219
 parent_id: 1217
 sort_order: 1
 aliases:
-  - "/csharp/st_control"
-  - "/csharp/st_control.html"
-  - "/csharp/structured/st_control/"
-  - "/study/csharp/st_control"
   - "/study/csharp/st_control.html"
 ---
 

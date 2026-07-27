@@ -9,10 +9,6 @@ umbraco_id: 1601
 parent_id: 1599
 sort_order: 1
 aliases:
-  - "/dsp/fourier"
-  - "/dsp/fourier.html"
-  - "/sp/dsp/fourier/"
-  - "/study/dsp/fourier"
   - "/study/dsp/fourier.html"
 ---
 

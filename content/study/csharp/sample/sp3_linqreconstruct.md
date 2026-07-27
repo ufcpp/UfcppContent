@@ -9,10 +9,6 @@ umbraco_id: 1364
 parent_id: 1359
 sort_order: 4
 aliases:
-  - "/csharp/sample/sp3_linqreconstruct/"
-  - "/csharp/sp3_linqreconstruct"
-  - "/csharp/sp3_linqreconstruct.html"
-  - "/study/csharp/sp3_linqreconstruct"
   - "/study/csharp/sp3_linqreconstruct.html"
 ---
 

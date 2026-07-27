@@ -9,10 +9,6 @@ umbraco_id: 1370
 parent_id: 1359
 sort_order: 10
 aliases:
-  - "/csharp/sample/sm_daifugou/"
-  - "/csharp/sm_daifugou"
-  - "/csharp/sm_daifugou.html"
-  - "/study/csharp/sm_daifugou"
   - "/study/csharp/sm_daifugou.html"
 ---
 

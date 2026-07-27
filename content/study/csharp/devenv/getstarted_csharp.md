@@ -9,12 +9,7 @@ umbraco_id: 1189
 parent_id: 1709
 sort_order: 2
 aliases:
-  - "/csharp/abstract/getstarted_csharp"
-  - "/csharp/devenv/getstarted_csharp/"
-  - "/csharp/getstarted_csharp"
-  - "/csharp/getstarted_csharp.html"
   - "/study/csharp/abstract/getstarted_csharp"
-  - "/study/csharp/getstarted_csharp"
   - "/study/csharp/getstarted_csharp.html"
 ---
 

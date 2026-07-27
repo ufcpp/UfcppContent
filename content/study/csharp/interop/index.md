@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1321
 parent_id: 1169
 sort_order: 12
-aliases:
-  - "/csharp/interop/"
+aliases: []
 ---
 
 # 相互運用

@@ -9,10 +9,6 @@ umbraco_id: 1355
 parent_id: 1350
 sort_order: 3
 aliases:
-  - "/csharp/lib/lib_forms/"
-  - "/csharp/lib_forms"
-  - "/csharp/lib_forms.html"
-  - "/study/csharp/lib_forms"
   - "/study/csharp/lib_forms.html"
 ---
 

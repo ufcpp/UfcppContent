@@ -9,10 +9,6 @@ umbraco_id: 1523
 parent_id: 1521
 sort_order: 1
 aliases:
-  - "/math/miscmath/definition/"
-  - "/miscmath/definition"
-  - "/miscmath/definition.html"
-  - "/study/miscmath/definition"
   - "/study/miscmath/definition.html"
 ---
 

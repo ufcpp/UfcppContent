@@ -9,10 +9,6 @@ umbraco_id: 1155
 parent_id: 1151
 sort_order: 3
 aliases:
-  - "/computer/SequentialCircuit"
-  - "/computer/SequentialCircuit.html"
-  - "/computer/basis/sequentialcircuit/"
-  - "/study/computer/SequentialCircuit"
   - "/study/computer/SequentialCircuit.html"
 ---
 

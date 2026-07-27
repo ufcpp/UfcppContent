@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1183
 parent_id: 1174
 sort_order: 21
-aliases:
-  - "/csharp/cheatsheet/listfxlangversion/"
+aliases: []
 ---
 
 # C#の言語バージョンと.NETバージョン

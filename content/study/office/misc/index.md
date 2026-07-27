@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1551
 parent_id: 1546
 sort_order: 1
-aliases:
-  - "/office/misc/"
+aliases: []
 ---
 
 # その他

@@ -9,10 +9,6 @@ umbraco_id: 1150
 parent_id: 1147
 sort_order: 2
 aliases:
-  - "/computer/FloatingPointNumber"
-  - "/computer/FloatingPointNumber.html"
-  - "/computer/digits/floatingpointnumber/"
-  - "/study/computer/FloatingPointNumber"
   - "/study/computer/FloatingPointNumber.html"
 ---
 

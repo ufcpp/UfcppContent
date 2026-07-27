@@ -9,10 +9,6 @@ umbraco_id: 1525
 parent_id: 1521
 sort_order: 3
 aliases:
-  - "/math/miscmath/gendai/"
-  - "/miscmath/gendai"
-  - "/miscmath/gendai.html"
-  - "/study/miscmath/gendai"
   - "/study/miscmath/gendai.html"
 ---
 

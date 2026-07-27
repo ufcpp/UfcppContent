@@ -11,10 +11,6 @@ umbraco_id: 1334
 parent_id: 1326
 sort_order: 7
 aliases:
-  - "/csharp/async/sp5_async/"
-  - "/csharp/sp5_async"
-  - "/csharp/sp5_async.html"
-  - "/study/csharp/sp5_async"
   - "/study/csharp/sp5_async.html"
 ---
 

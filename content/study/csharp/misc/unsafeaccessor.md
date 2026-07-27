@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2518
 parent_id: 1338
 sort_order: 11
-aliases:
-  - "/csharp/misc/unsafeaccessor/"
+aliases: []
 ---
 
 # UnsafeAccessor

@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1248
 parent_id: 1169
 sort_order: 6
-aliases:
-  - "/csharp/oop/"
+aliases: []
 ---
 
 # オブジェクト指向

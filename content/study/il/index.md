@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1440
 parent_id: 1115
 sort_order: 2
-aliases:
-  - "/il/"
+aliases: []
 ---
 
 # IL（.NET の中間言語）

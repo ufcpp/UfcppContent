@@ -9,10 +9,6 @@ umbraco_id: 1399
 parent_id: 1393
 sort_order: 5
 aliases:
-  - "/dotnet/wpf/wpf_uielement/"
-  - "/dotnet/wpf_uielement"
-  - "/dotnet/wpf_uielement.html"
-  - "/study/dotnet/wpf_uielement"
   - "/study/dotnet/wpf_uielement.html"
 ---
 

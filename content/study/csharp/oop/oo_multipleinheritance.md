@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1850
 parent_id: 1248
 sort_order: 11
-aliases:
-  - "/csharp/oop/oo_multipleinheritance/"
+aliases: []
 ---
 
 # \[雑記\] 多重継承できない理由

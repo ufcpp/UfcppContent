@@ -12,10 +12,6 @@ umbraco_id: 1255
 parent_id: 1248
 sort_order: 4
 aliases:
-  - "/csharp/oo_property"
-  - "/csharp/oo_property.html"
-  - "/csharp/oop/oo_property/"
-  - "/study/csharp/oo_property"
   - "/study/csharp/oo_property.html"
 ---
 

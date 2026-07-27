@@ -9,11 +9,7 @@ umbraco_id: 1658
 parent_id: 1650
 sort_order: 7
 aliases:
-  - "/study/testxsl/source"
   - "/study/testxsl/source.html"
-  - "/testxsl/source"
-  - "/testxsl/source.html"
-  - "/xml/summary/source/"
 ---
 
 # ソースファイル

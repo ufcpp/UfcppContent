@@ -9,10 +9,6 @@ umbraco_id: 1519
 parent_id: 1515
 sort_order: 3
 aliases:
-  - "/manifold/difform"
-  - "/manifold/difform.html"
-  - "/math/manifold/difform/"
-  - "/study/manifold/difform"
   - "/study/manifold/difform.html"
 ---
 

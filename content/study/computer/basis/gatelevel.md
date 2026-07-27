@@ -9,10 +9,6 @@ umbraco_id: 1152
 parent_id: 1151
 sort_order: 0
 aliases:
-  - "/computer/GateLevel"
-  - "/computer/GateLevel.html"
-  - "/computer/basis/gatelevel/"
-  - "/study/computer/GateLevel"
   - "/study/computer/GateLevel.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1587
 parent_id: 1577
 sort_order: 9
 aliases:
-  - "/powershell/exception"
-  - "/powershell/exception.html"
-  - "/powershell/syntax/exception/"
-  - "/study/powershell/exception"
   - "/study/powershell/exception.html"
 ---
 

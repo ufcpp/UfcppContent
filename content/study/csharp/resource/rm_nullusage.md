@@ -10,10 +10,6 @@ umbraco_id: 1294
 parent_id: 1286
 sort_order: 12
 aliases:
-  - "/csharp/resource/rm_nullusage/"
-  - "/csharp/rm_nullusage"
-  - "/csharp/rm_nullusage.html"
-  - "/study/csharp/rm_nullusage"
   - "/study/csharp/rm_nullusage.html"
 ---
 

@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1190
 parent_id: 1169
 sort_order: 4
-aliases:
-  - "/csharp/start/"
+aliases: []
 ---
 
 # 基礎

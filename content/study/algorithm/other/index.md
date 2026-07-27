@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1142
 parent_id: 1116
 sort_order: 2
-aliases:
-  - "/algorithm/other/"
+aliases: []
 ---
 
 # その他のアルゴリズム

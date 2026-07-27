@@ -9,10 +9,6 @@ umbraco_id: 1470
 parent_id: 1464
 sort_order: 5
 aliases:
-  - "/analysis/residue"
-  - "/analysis/residue.html"
-  - "/math/analysis/residue/"
-  - "/study/analysis/residue"
   - "/study/analysis/residue.html"
 ---
 

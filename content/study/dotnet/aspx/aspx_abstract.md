@@ -9,10 +9,6 @@ umbraco_id: 1415
 parent_id: 1414
 sort_order: 0
 aliases:
-  - "/aspx/abstract"
-  - "/aspx/abstract.html"
-  - "/dotnet/aspx/aspx_abstract/"
-  - "/study/aspx/abstract"
   - "/study/aspx/abstract.html"
 ---
 

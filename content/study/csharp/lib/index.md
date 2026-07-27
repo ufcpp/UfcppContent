@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1350
 parent_id: 1169
 sort_order: 17
-aliases:
-  - "/csharp/lib/"
+aliases: []
 ---
 
 # 標準ライブラリ

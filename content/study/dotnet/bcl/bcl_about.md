@@ -9,10 +9,6 @@ umbraco_id: 1386
 parent_id: 1385
 sort_order: 0
 aliases:
-  - "/dotnet/bcl/bcl_about/"
-  - "/dotnet/bcl_about"
-  - "/dotnet/bcl_about.html"
-  - "/study/dotnet/bcl_about"
   - "/study/dotnet/bcl_about.html"
 ---
 

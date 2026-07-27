@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1956
 parent_id: 1940
 sort_order: 2
-aliases:
-  - "/csharp/datatype/typeswitch/"
+aliases: []
 ---
 
 # is、switch の拡張 (型スイッチ)

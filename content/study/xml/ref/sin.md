@@ -9,11 +9,7 @@ umbraco_id: 1691
 parent_id: 1661
 sort_order: 29
 aliases:
-  - "/ref/sin"
-  - "/ref/sin.html"
-  - "/study/ref/sin"
   - "/study/ref/sin.html"
-  - "/xml/ref/sin/"
 ---
 
 # 三角関数

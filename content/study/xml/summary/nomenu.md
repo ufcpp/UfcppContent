@@ -9,11 +9,7 @@ umbraco_id: 1652
 parent_id: 1650
 sort_order: 1
 aliases:
-  - "/study/testxsl/nomenu"
   - "/study/testxsl/nomenu.html"
-  - "/testxsl/nomenu"
-  - "/testxsl/nomenu.html"
-  - "/xml/summary/nomenu/"
 ---
 
 # ドキュメントのパラメータ

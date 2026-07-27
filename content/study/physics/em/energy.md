@@ -9,10 +9,6 @@ umbraco_id: 1568
 parent_id: 1561
 sort_order: 6
 aliases:
-  - "/em/energy"
-  - "/em/energy.html"
-  - "/physics/em/energy/"
-  - "/study/em/energy"
   - "/study/em/energy.html"
 ---
 

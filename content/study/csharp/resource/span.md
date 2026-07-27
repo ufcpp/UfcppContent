@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2103
 parent_id: 1286
 sort_order: 6
-aliases:
-  - "/csharp/resource/span/"
+aliases: []
 ---
 
 # Span<T>構造体

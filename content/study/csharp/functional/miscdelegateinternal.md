@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2111
 parent_id: 1275
 sort_order: 3
-aliases:
-  - "/csharp/functional/miscdelegateinternal/"
+aliases: []
 ---
 
 # \[雑記\] デリゲートの内部

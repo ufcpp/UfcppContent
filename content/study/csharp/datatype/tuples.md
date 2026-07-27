@@ -9,9 +9,6 @@ umbraco_id: 1941
 parent_id: 1940
 sort_order: 0
 aliases:
-  - "/csharp/data/tuples"
-  - "/csharp/data/tuples/"
-  - "/csharp/datatype/tuples/"
   - "/study/csharp/data/tuples"
   - "/study/csharp/data/tuples/"
 ---

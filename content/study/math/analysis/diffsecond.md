@@ -9,10 +9,6 @@ umbraco_id: 1466
 parent_id: 1464
 sort_order: 1
 aliases:
-  - "/analysis/diffsecond"
-  - "/analysis/diffsecond.html"
-  - "/math/analysis/diffsecond/"
-  - "/study/analysis/diffsecond"
   - "/study/analysis/diffsecond.html"
 ---
 

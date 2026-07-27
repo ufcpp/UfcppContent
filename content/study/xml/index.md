@@ -9,23 +9,12 @@ umbraco_id: 1644
 parent_id: 1115
 sort_order: 13
 aliases:
-  - "/ref/"
-  - "/ref/index"
-  - "/ref/index.html"
   - "/study/ref/"
-  - "/study/ref/index"
   - "/study/ref/index.html"
   - "/study/testxsl"
   - "/study/testxsl/"
   - "/study/textxsl/"
-  - "/study/textxsl/index"
   - "/study/textxsl/index.html"
-  - "/testxsl"
-  - "/testxsl/"
-  - "/textxsl/"
-  - "/textxsl/index"
-  - "/textxsl/index.html"
-  - "/xml/"
 ---
 
 # XML,XSL

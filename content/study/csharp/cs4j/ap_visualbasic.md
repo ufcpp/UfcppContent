@@ -9,10 +9,6 @@ umbraco_id: 1376
 parent_id: 1372
 sort_order: 3
 aliases:
-  - "/csharp/ap_visualbasic"
-  - "/csharp/ap_visualbasic.html"
-  - "/csharp/cs4j/ap_visualbasic/"
-  - "/study/csharp/ap_visualbasic"
   - "/study/csharp/ap_visualbasic.html"
 ---
 

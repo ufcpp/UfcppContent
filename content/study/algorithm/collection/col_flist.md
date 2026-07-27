@@ -9,10 +9,6 @@ umbraco_id: 1132
 parent_id: 1128
 sort_order: 3
 aliases:
-  - "/algorithm/col_flist"
-  - "/algorithm/col_flist.html"
-  - "/algorithm/collection/col_flist/"
-  - "/study/algorithm/col_flist"
   - "/study/algorithm/col_flist.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1418
 parent_id: 1414
 sort_order: 3
 aliases:
-  - "/aspx/counter"
-  - "/aspx/counter.html"
-  - "/dotnet/aspx/counter/"
-  - "/study/aspx/counter"
   - "/study/aspx/counter.html"
 ---
 

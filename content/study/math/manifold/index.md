@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1515
 parent_id: 1444
 sort_order: 9
-aliases:
-  - "/math/manifold/"
+aliases: []
 ---
 
 # 多様体

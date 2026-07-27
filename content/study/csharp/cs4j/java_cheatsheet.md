@@ -9,10 +9,6 @@ umbraco_id: 1373
 parent_id: 1372
 sort_order: 0
 aliases:
-  - "/csharp/cs4j/java_cheatsheet/"
-  - "/csharp/java_cheatsheet"
-  - "/csharp/java_cheatsheet.html"
-  - "/study/csharp/java_cheatsheet"
   - "/study/csharp/java_cheatsheet.html"
 ---
 

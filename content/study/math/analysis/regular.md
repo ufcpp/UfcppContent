@@ -9,10 +9,6 @@ umbraco_id: 1469
 parent_id: 1464
 sort_order: 4
 aliases:
-  - "/analysis/regular"
-  - "/analysis/regular.html"
-  - "/math/analysis/regular/"
-  - "/study/analysis/regular"
   - "/study/analysis/regular.html"
 ---
 

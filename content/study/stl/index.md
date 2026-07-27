@@ -9,10 +9,6 @@ umbraco_id: 1626
 parent_id: 1115
 sort_order: 8
 aliases:
-  - "/stl/"
-  - "/stl/index"
-  - "/stl/index.html"
-  - "/study/stl/index"
   - "/study/stl/index.html"
   - "/stydy/stl"
   - "/stydy/stl/"

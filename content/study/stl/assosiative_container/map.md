@@ -9,10 +9,6 @@ umbraco_id: 1640
 parent_id: 1638
 sort_order: 1
 aliases:
-  - "/stl/assosiative_container/map/"
-  - "/stl/map"
-  - "/stl/map.html"
-  - "/study/stl/map"
   - "/study/stl/map.html"
 ---
 

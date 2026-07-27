@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1406
 parent_id: 1384
 sort_order: 4
-aliases:
-  - "/dotnet/tpl/"
+aliases: []
 ---
 
 # Task Parallel Library

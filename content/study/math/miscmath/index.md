@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1521
 parent_id: 1444
 sort_order: 10
-aliases:
-  - "/math/miscmath/"
+aliases: []
 ---
 
 # 数学雑記

@@ -9,11 +9,7 @@ umbraco_id: 1497
 parent_id: 1491
 sort_order: 5
 aliases:
-  - "/math/vector_analysis/divergence/"
-  - "/study/vector_analysis/divergence"
   - "/study/vector_analysis/divergence.html"
-  - "/vector_analysis/divergence"
-  - "/vector_analysis/divergence.html"
 ---
 
 # 発散

@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2475
 parent_id: 1940
 sort_order: 6
-aliases:
-  - "/csharp/datatype/collection-expression/"
+aliases: []
 ---
 
 # コレクション式

@@ -9,11 +9,7 @@ umbraco_id: 1673
 parent_id: 1661
 sort_order: 11
 aliases:
-  - "/ref/doubleint"
-  - "/ref/doubleint.html"
-  - "/study/ref/doubleint"
   - "/study/ref/doubleint.html"
-  - "/xml/ref/doubleint/"
 ---
 
 # 重積分記号

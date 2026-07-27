@@ -9,10 +9,6 @@ umbraco_id: 1467
 parent_id: 1464
 sort_order: 2
 aliases:
-  - "/analysis/difflinear"
-  - "/analysis/difflinear.html"
-  - "/math/analysis/difflinear/"
-  - "/study/analysis/difflinear"
   - "/study/analysis/difflinear.html"
 ---
 

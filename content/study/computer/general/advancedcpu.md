@@ -9,10 +9,6 @@ umbraco_id: 1160
 parent_id: 1156
 sort_order: 3
 aliases:
-  - "/computer/AdvancedCpu"
-  - "/computer/AdvancedCpu.html"
-  - "/computer/general/advancedcpu/"
-  - "/study/computer/AdvancedCpu"
   - "/study/computer/AdvancedCpu.html"
 ---
 

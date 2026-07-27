@@ -9,11 +9,7 @@ umbraco_id: 1648
 parent_id: 1645
 sort_order: 2
 aliases:
-  - "/study/testxsl/math"
   - "/study/testxsl/math.html"
-  - "/testxsl/math"
-  - "/testxsl/math.html"
-  - "/xml/xslsummary/math/"
 ---
 
 # XML で数式を書こう

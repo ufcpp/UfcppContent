@@ -9,11 +9,6 @@ umbraco_id: 1169
 parent_id: 1115
 sort_order: 0
 aliases:
-  - "/csharp"
-  - "/csharp/"
-  - "/csharp/index"
-  - "/csharp/index.html"
-  - "/study/csharp/index"
   - "/study/csharp/index.html"
 ---
 

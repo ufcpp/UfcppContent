@@ -9,10 +9,6 @@ umbraco_id: 1621
 parent_id: 1610
 sort_order: 10
 aliases:
-  - "/digital_filter/elliptic"
-  - "/digital_filter/elliptic.html"
-  - "/sp/digital_filter/elliptic/"
-  - "/study/digital_filter/elliptic"
   - "/study/digital_filter/elliptic.html"
 ---
 

@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1408
 parent_id: 1384
 sort_order: 5
-aliases:
-  - "/dotnet/appendix/"
+aliases: []
 ---
 
 # 付録

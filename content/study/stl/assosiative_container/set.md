@@ -9,10 +9,6 @@ umbraco_id: 1639
 parent_id: 1638
 sort_order: 0
 aliases:
-  - "/stl/assosiative_container/set/"
-  - "/stl/set"
-  - "/stl/set.html"
-  - "/study/stl/set"
   - "/study/stl/set.html"
 ---
 

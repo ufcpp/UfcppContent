@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1404
 parent_id: 1384
 sort_order: 3
-aliases:
-  - "/dotnet/wcf/"
+aliases: []
 ---
 
 # Windows Communication Foundation

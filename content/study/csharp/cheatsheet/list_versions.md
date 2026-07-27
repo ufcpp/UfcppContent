@@ -9,10 +9,6 @@ umbraco_id: 1177
 parent_id: 1174
 sort_order: 2
 aliases:
-  - "/csharp/cheatsheet/list_versions/"
-  - "/csharp/list_versions"
-  - "/csharp/list_versions.html"
-  - "/study/csharp/list_versions"
   - "/study/csharp/list_versions.html"
 ---
 

@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1170
 parent_id: 1169
 sort_order: 0
-aliases:
-  - "/csharp/intro/"
+aliases: []
 ---
 
 # まえがき

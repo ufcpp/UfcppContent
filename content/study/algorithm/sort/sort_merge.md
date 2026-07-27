@@ -9,10 +9,6 @@ umbraco_id: 1125
 parent_id: 1117
 sort_order: 7
 aliases:
-  - "/algorithm/sort/sort_merge/"
-  - "/algorithm/sort_merge"
-  - "/algorithm/sort_merge.html"
-  - "/study/algorithm/sort_merge"
   - "/study/algorithm/sort_merge.html"
 ---
 

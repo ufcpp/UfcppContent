@@ -9,10 +9,6 @@ umbraco_id: 1331
 parent_id: 1326
 sort_order: 4
 aliases:
-  - "/csharp/async/misc_synchronize/"
-  - "/csharp/misc_synchronize"
-  - "/csharp/misc_synchronize.html"
-  - "/study/csharp/misc_synchronize"
   - "/study/csharp/misc_synchronize.html"
 ---
 

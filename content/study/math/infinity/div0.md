@@ -9,10 +9,6 @@ umbraco_id: 1501
 parent_id: 1500
 sort_order: 0
 aliases:
-  - "/infinity/div0"
-  - "/infinity/div0.html"
-  - "/math/infinity/div0/"
-  - "/study/infinity/div0"
   - "/study/infinity/div0.html"
 ---
 

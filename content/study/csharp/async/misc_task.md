@@ -9,10 +9,6 @@ umbraco_id: 1332
 parent_id: 1326
 sort_order: 5
 aliases:
-  - "/csharp/async/misc_task/"
-  - "/csharp/misc_task"
-  - "/csharp/misc_task.html"
-  - "/study/csharp/misc_task"
   - "/study/csharp/misc_task.html"
 ---
 

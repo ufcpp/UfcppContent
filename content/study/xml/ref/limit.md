@@ -9,11 +9,7 @@ umbraco_id: 1679
 parent_id: 1661
 sort_order: 17
 aliases:
-  - "/ref/limit"
-  - "/ref/limit.html"
-  - "/study/ref/limit"
   - "/study/ref/limit.html"
-  - "/xml/ref/limit/"
 ---
 
 # lim

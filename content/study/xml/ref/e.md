@@ -9,11 +9,7 @@ umbraco_id: 1674
 parent_id: 1661
 sort_order: 12
 aliases:
-  - "/ref/e"
-  - "/ref/e.html"
-  - "/study/ref/e"
   - "/study/ref/e.html"
-  - "/xml/ref/e/"
 ---
 
 # 指数関数の底

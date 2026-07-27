@@ -9,10 +9,6 @@ umbraco_id: 1387
 parent_id: 1385
 sort_order: 1
 aliases:
-  - "/dotnet/bcl/bcl_regex/"
-  - "/dotnet/bcl_regex"
-  - "/dotnet/bcl_regex.html"
-  - "/study/dotnet/bcl_regex"
   - "/study/dotnet/bcl_regex.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1539
 parent_id: 1534
 sort_order: 4
 aliases:
-  - "/misc/conlang"
-  - "/misc/conlang.html"
-  - "/misc/list/conlang/"
-  - "/study/misc/conlang"
   - "/study/misc/conlang.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1397
 parent_id: 1393
 sort_order: 3
 aliases:
-  - "/dotnet/wpf/wpf_xamladv/"
-  - "/dotnet/wpf_xamladv"
-  - "/dotnet/wpf_xamladv.html"
-  - "/study/dotnet/wpf_xamladv"
   - "/study/dotnet/wpf_xamladv.html"
 ---
 

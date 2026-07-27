@@ -9,10 +9,6 @@ umbraco_id: 1296
 parent_id: 1286
 sort_order: 15
 aliases:
-  - "/csharp/resource/rm_disposable/"
-  - "/csharp/rm_disposable"
-  - "/csharp/rm_disposable.html"
-  - "/study/csharp/rm_disposable"
   - "/study/csharp/rm_disposable.html"
 ---
 

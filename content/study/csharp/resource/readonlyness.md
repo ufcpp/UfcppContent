@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2095
 parent_id: 1286
 sort_order: 3
-aliases:
-  - "/csharp/resource/readonlyness/"
+aliases: []
 ---
 
 # readonly の注意点

@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1547
 parent_id: 1546
 sort_order: 0
-aliases:
-  - "/office/word/"
+aliases: []
 ---
 
 # Word 美文書作成入門

@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1650
 parent_id: 1644
 sort_order: 1
-aliases:
-  - "/xml/summary/"
+aliases: []
 ---
 
 # スタイルシートの説明

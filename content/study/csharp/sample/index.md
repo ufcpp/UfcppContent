@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1359
 parent_id: 1169
 sort_order: 18
-aliases:
-  - "/csharp/sample/"
+aliases: []
 ---
 
 # サンプルプログラム

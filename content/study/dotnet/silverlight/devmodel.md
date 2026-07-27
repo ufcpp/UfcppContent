@@ -9,10 +9,6 @@ umbraco_id: 1413
 parent_id: 1411
 sort_order: 1
 aliases:
-  - "/dotnet/silverlight/devmodel/"
-  - "/silverlight/devmodel"
-  - "/silverlight/devmodel.html"
-  - "/study/silverlight/devmodel"
   - "/study/silverlight/devmodel.html"
 ---
 

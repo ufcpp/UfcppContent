@@ -9,10 +9,6 @@ umbraco_id: 1584
 parent_id: 1577
 sort_order: 6
 aliases:
-  - "/powershell/syntax/xml/"
-  - "/powershell/xml"
-  - "/powershell/xml.html"
-  - "/study/powershell/xml"
   - "/study/powershell/xml.html"
 ---
 

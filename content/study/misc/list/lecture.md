@@ -11,12 +11,7 @@ sort_order: 2
 aliases:
   - "/lecture"
   - "/lecture/"
-  - "/lecture/index"
   - "/lecture/index.html"
-  - "/misc/lecture"
-  - "/misc/lecture.html"
-  - "/misc/list/lecture/"
-  - "/study/misc/lecture"
   - "/study/misc/lecture.html"
 ---
 

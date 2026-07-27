@@ -9,10 +9,6 @@ umbraco_id: 1742
 parent_id: 1377
 sort_order: 7
 aliases:
-  - "/csharp/appendix/version_index/"
-  - "/csharp/version_index"
-  - "/csharp/version_index.html"
-  - "/study/csharp/version_index"
   - "/study/csharp/version_index.html"
 ---
 

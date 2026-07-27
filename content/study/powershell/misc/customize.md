@@ -9,10 +9,6 @@ umbraco_id: 1596
 parent_id: 1594
 sort_order: 1
 aliases:
-  - "/powershell/customize"
-  - "/powershell/customize.html"
-  - "/powershell/misc/customize/"
-  - "/study/powershell/customize"
   - "/study/powershell/customize.html"
 ---
 

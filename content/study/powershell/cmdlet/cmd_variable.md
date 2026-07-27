@@ -9,10 +9,6 @@ umbraco_id: 1590
 parent_id: 1588
 sort_order: 1
 aliases:
-  - "/powershell/cmd_variable"
-  - "/powershell/cmd_variable.html"
-  - "/powershell/cmdlet/cmd_variable/"
-  - "/study/powershell/cmd_variable"
   - "/study/powershell/cmd_variable.html"
 ---
 

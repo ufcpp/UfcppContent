@@ -9,10 +9,6 @@ umbraco_id: 1617
 parent_id: 1610
 sort_order: 6
 aliases:
-  - "/digital_filter/analoglpf"
-  - "/digital_filter/analoglpf.html"
-  - "/sp/digital_filter/analoglpf/"
-  - "/study/digital_filter/analoglpf"
   - "/study/digital_filter/analoglpf.html"
 ---
 

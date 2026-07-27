@@ -9,10 +9,6 @@ umbraco_id: 1527
 parent_id: 1521
 sort_order: 5
 aliases:
-  - "/math/miscmath/development/"
-  - "/miscmath/development"
-  - "/miscmath/development.html"
-  - "/study/miscmath/development"
   - "/study/miscmath/development.html"
 ---
 

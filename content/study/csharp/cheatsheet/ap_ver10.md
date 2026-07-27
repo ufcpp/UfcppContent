@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2353
 parent_id: 1174
 sort_order: 15
-aliases:
-  - "/csharp/cheatsheet/ap_ver10/"
+aliases: []
 ---
 
 # C# 10.0 の新機能

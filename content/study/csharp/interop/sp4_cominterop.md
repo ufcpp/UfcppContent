@@ -10,10 +10,6 @@ umbraco_id: 1325
 parent_id: 1321
 sort_order: 3
 aliases:
-  - "/csharp/interop/sp4_cominterop/"
-  - "/csharp/sp4_cominterop"
-  - "/csharp/sp4_cominterop.html"
-  - "/study/csharp/sp4_cominterop"
   - "/study/csharp/sp4_cominterop.html"
 ---
 

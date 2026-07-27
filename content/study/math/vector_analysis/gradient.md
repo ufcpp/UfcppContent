@@ -9,11 +9,7 @@ umbraco_id: 1496
 parent_id: 1491
 sort_order: 4
 aliases:
-  - "/math/vector_analysis/gradient/"
-  - "/study/vector_analysis/gradient"
   - "/study/vector_analysis/gradient.html"
-  - "/vector_analysis/gradient"
-  - "/vector_analysis/gradient.html"
 ---
 
 # 勾配

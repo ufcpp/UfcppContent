@@ -9,11 +9,7 @@ umbraco_id: 1498
 parent_id: 1491
 sort_order: 6
 aliases:
-  - "/math/vector_analysis/rotation/"
-  - "/study/vector_analysis/rotation"
   - "/study/vector_analysis/rotation.html"
-  - "/vector_analysis/rotation"
-  - "/vector_analysis/rotation.html"
 ---
 
 # 回転

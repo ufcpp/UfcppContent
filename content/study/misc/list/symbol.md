@@ -9,10 +9,6 @@ umbraco_id: 1536
 parent_id: 1534
 sort_order: 1
 aliases:
-  - "/misc/list/symbol/"
-  - "/misc/symbol"
-  - "/misc/symbol.html"
-  - "/study/misc/symbol"
   - "/study/misc/symbol.html"
 ---
 

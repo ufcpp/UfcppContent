@@ -9,10 +9,6 @@ umbraco_id: 1342
 parent_id: 1338
 sort_order: 4
 aliases:
-  - "/csharp/ap_compatibility"
-  - "/csharp/ap_compatibility.html"
-  - "/csharp/misc/ap_compatibility/"
-  - "/study/csharp/ap_compatibility"
   - "/study/csharp/ap_compatibility.html"
 ---
 

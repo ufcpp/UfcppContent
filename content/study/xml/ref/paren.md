@@ -9,11 +9,7 @@ umbraco_id: 1684
 parent_id: 1661
 sort_order: 22
 aliases:
-  - "/ref/paren"
-  - "/ref/paren.html"
-  - "/study/ref/paren"
   - "/study/ref/paren.html"
-  - "/xml/ref/paren/"
 ---
 
 # ()括弧

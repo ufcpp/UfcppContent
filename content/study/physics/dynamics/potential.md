@@ -9,10 +9,6 @@ umbraco_id: 1557
 parent_id: 1554
 sort_order: 2
 aliases:
-  - "/dynamics/potential"
-  - "/dynamics/potential.html"
-  - "/physics/dynamics/potential/"
-  - "/study/dynamics/potential"
   - "/study/dynamics/potential.html"
 ---
 

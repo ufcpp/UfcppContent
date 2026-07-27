@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1588
 parent_id: 1572
 sort_order: 2
-aliases:
-  - "/powershell/cmdlet/"
+aliases: []
 ---
 
 # Cmdlet

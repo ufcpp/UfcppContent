@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2472
 parent_id: 1940
 sort_order: 7
-aliases:
-  - "/csharp/datatype/inline-array/"
+aliases: []
 ---
 
 # \[雑記\] InlineArray

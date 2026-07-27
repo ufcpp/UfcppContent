@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1326
 parent_id: 1169
 sort_order: 13
-aliases:
-  - "/csharp/async/"
+aliases: []
 ---
 
 # 非同期処理

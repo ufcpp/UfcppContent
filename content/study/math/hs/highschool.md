@@ -9,10 +9,6 @@ umbraco_id: 1446
 parent_id: 1445
 sort_order: 0
 aliases:
-  - "/hs/highschool"
-  - "/hs/highschool.html"
-  - "/math/hs/highschool/"
-  - "/study/hs/highschool"
   - "/study/hs/highschool.html"
 ---
 

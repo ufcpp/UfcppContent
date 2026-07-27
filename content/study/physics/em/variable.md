@@ -9,14 +9,8 @@ umbraco_id: 1571
 parent_id: 1561
 sort_order: 9
 aliases:
-  - "/em/physics/variable"
-  - "/em/physics/variable/"
-  - "/em/variable"
-  - "/em/variable.html"
-  - "/physics/em/variable/"
   - "/study/em/physics/variable"
   - "/study/em/physics/variable/"
-  - "/study/em/variable"
   - "/study/em/variable.html"
 ---
 

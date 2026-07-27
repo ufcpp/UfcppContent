@@ -9,10 +9,6 @@ umbraco_id: 1608
 parent_id: 1599
 sort_order: 8
 aliases:
-  - "/dsp/da"
-  - "/dsp/da.html"
-  - "/sp/dsp/da/"
-  - "/study/dsp/da"
   - "/study/dsp/da.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1348
 parent_id: 1344
 sort_order: 4
 aliases:
-  - "/csharp/FwAppDomain"
-  - "/csharp/FwAppDomain.html"
-  - "/csharp/framework/fwappdomain/"
-  - "/study/csharp/FwAppDomain"
   - "/study/csharp/FwAppDomain.html"
 ---
 

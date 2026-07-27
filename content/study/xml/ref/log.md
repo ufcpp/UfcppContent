@@ -9,11 +9,7 @@ umbraco_id: 1680
 parent_id: 1661
 sort_order: 18
 aliases:
-  - "/ref/log"
-  - "/ref/log.html"
-  - "/study/ref/log"
   - "/study/ref/log.html"
-  - "/xml/ref/log/"
 ---
 
 # 指数・対数

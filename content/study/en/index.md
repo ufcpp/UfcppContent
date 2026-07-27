@@ -9,10 +9,6 @@ umbraco_id: 1437
 parent_id: 1115
 sort_order: 12
 aliases:
-  - "/en/"
-  - "/en/index"
-  - "/en/index.html"
-  - "/study/en/index"
   - "/study/en/index.html"
 ---
 

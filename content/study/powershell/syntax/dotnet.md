@@ -9,10 +9,6 @@ umbraco_id: 1580
 parent_id: 1577
 sort_order: 2
 aliases:
-  - "/powershell/dotnet"
-  - "/powershell/dotnet.html"
-  - "/powershell/syntax/dotnet/"
-  - "/study/powershell/dotnet"
   - "/study/powershell/dotnet.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1229
 parent_id: 1217
 sort_order: 4
 aliases:
-  - "/csharp/st_array"
-  - "/csharp/st_array.html"
-  - "/csharp/structured/st_array/"
-  - "/study/csharp/st_array"
   - "/study/csharp/st_array.html"
 ---
 

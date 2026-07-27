@@ -9,10 +9,6 @@ umbraco_id: 1517
 parent_id: 1515
 sort_order: 1
 aliases:
-  - "/manifold/vector"
-  - "/manifold/vector.html"
-  - "/math/manifold/m_vector/"
-  - "/study/manifold/vector"
   - "/study/manifold/vector.html"
 ---
 

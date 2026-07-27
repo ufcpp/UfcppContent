@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1892
 parent_id: 1298
 sort_order: 8
-aliases:
-  - "/csharp/data/datamodulararchitecture/"
+aliases: []
 ---
 
 # \[雑記\] 小さな機能の組み合わせ

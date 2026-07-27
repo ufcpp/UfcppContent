@@ -9,10 +9,6 @@ umbraco_id: 1363
 parent_id: 1359
 sort_order: 3
 aliases:
-  - "/csharp/sample/sp3_comprehensions/"
-  - "/csharp/sp3_comprehensions"
-  - "/csharp/sp3_comprehensions.html"
-  - "/study/csharp/sp3_comprehensions"
   - "/study/csharp/sp3_comprehensions.html"
 ---
 

@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2428
 parent_id: 1248
 sort_order: 21
-aliases:
-  - "/csharp/oop/generic-math-operators/"
+aliases: []
 ---
 
 # 【Generic Math】 C# 11 での演算子の新機能

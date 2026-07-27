@@ -10,10 +10,6 @@ umbraco_id: 1337
 parent_id: 1326
 sort_order: 10
 aliases:
-  - "/csharp/async/misc_uithread/"
-  - "/csharp/misc_uithread"
-  - "/csharp/misc_uithread.html"
-  - "/study/csharp/misc_uithread"
   - "/study/csharp/misc_uithread.html"
 ---
 

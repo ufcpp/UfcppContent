@@ -56,6 +56,31 @@ every viewport size. Non-home pages receive breadcrumbs derived from their
 line, nested table of contents, and keyword links on the page background above the
 framed white body, without restoring a separate sidebar.
 
+## Canonical URLs and legacy redirects
+
+Every page is canonically served from its directory URL,
+`/study/<subject>/<chapter>/<slug>/`. No page is canonically served from a legacy
+`.html` path, and the trailing-slash-less form resolves to the same output file, so
+the host serves it without a redirect.
+
+Articles published before 2014 additionally had a flat legacy URL,
+`/study/<subject>/<slug>.html`. Those paths are listed in the page's `aliases` and get a
+fragment-preserving redirect page with `rel=canonical` pointing at the directory URL, so old
+links and bookmarks keep working.
+
+`RewriteMapCatalog.BuildAliases` collects a wider *routing* set than the site publishes:
+it also derives `/study`-less paths (`/csharp/st_basis.html`) and extension-less variants
+of `.html` paths (`/study/csharp/st_basis`). Neither form was ever served by the original
+site. The converter uses the routing set only to resolve legacy links found inside the
+source content, and `AliasPolicy.SelectPublished` narrows it to the aliases that are
+written to front matter and `catalog/content-map.json` — that is, the ones that become
+redirects. Genuine legacy URLs outside `/study/`, such as `/lecture/index.html`, are kept
+because no `/study`-prefixed counterpart exists on the same page.
+
+`LegacyUrlCoverageTests` verifies this offline against the committed content: every key
+and value in `tools/Ufcpp.ContentConverter/data/rewrite_rewritemaps.config` is served by
+some page, no canonical URL ends in `.html`, and no published alias is a derived form.
+
 ## Previewing locally
 
 Generate the optional single-file .NET 10 preview server:
@@ -116,6 +141,7 @@ By default, after generation the tool validates:
 - URL-derived output paths cannot escape the output directory or use
   Windows-incompatible path segments
 - Every expected page was written
+- Every alias resolves to an existing output file, so no redirect is silently missing
 - Root-relative page and generated-file links resolve to actual output files
 - URL fragments match an `id` or legacy `<a name="…">` in the target page
 - Asset references in `href`, `src`, `data`, and Silverlight

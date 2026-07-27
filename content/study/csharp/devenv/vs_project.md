@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1710
 parent_id: 1709
 sort_order: 1
-aliases:
-  - "/csharp/devenv/vs_project/"
+aliases: []
 ---
 
 # プロジェクト管理

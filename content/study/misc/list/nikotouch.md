@@ -9,10 +9,6 @@ umbraco_id: 1540
 parent_id: 1534
 sort_order: 5
 aliases:
-  - "/misc/list/nikotouch/"
-  - "/misc/nikotouch"
-  - "/misc/nikotouch.html"
-  - "/study/misc/nikotouch"
   - "/study/misc/nikotouch.html"
 ---
 

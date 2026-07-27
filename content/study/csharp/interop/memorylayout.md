@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1915
 parent_id: 1321
 sort_order: 4
-aliases:
-  - "/csharp/interop/memorylayout/"
+aliases: []
 ---
 
 # 複合型のレイアウト

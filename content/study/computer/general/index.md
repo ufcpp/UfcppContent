@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1156
 parent_id: 1144
 sort_order: 3
-aliases:
-  - "/computer/general/"
+aliases: []
 ---
 
 # 汎用コンピューター

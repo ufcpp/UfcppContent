@@ -9,10 +9,6 @@ umbraco_id: 1357
 parent_id: 1350
 sort_order: 5
 aliases:
-  - "/csharp/lib/lib_dotnet3/"
-  - "/csharp/lib_dotnet3"
-  - "/csharp/lib_dotnet3.html"
-  - "/study/csharp/lib_dotnet3"
   - "/study/csharp/lib_dotnet3.html"
 ---
 

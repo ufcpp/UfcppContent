@@ -9,10 +9,6 @@ umbraco_id: 1173
 parent_id: 1170
 sort_order: 2
 aliases:
-  - "/csharp/howeasy"
-  - "/csharp/howeasy.html"
-  - "/csharp/intro/howeasy/"
-  - "/study/csharp/howeasy"
   - "/study/csharp/howeasy.html"
 ---
 

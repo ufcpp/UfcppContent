@@ -9,10 +9,6 @@ umbraco_id: 1583
 parent_id: 1577
 sort_order: 5
 aliases:
-  - "/powershell/array"
-  - "/powershell/array.html"
-  - "/powershell/syntax/array/"
-  - "/study/powershell/array"
   - "/study/powershell/array.html"
 ---
 

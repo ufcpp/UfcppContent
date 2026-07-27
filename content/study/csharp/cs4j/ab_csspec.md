@@ -9,10 +9,6 @@ umbraco_id: 1374
 parent_id: 1372
 sort_order: 1
 aliases:
-  - "/csharp/ab_csspec"
-  - "/csharp/ab_csspec.html"
-  - "/csharp/cs4j/ab_csspec/"
-  - "/study/csharp/ab_csspec"
   - "/study/csharp/ab_csspec.html"
 ---
 

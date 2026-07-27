@@ -9,11 +9,7 @@ umbraco_id: 1651
 parent_id: 1650
 sort_order: 0
 aliases:
-  - "/study/testxsl/document"
   - "/study/testxsl/document.html"
-  - "/testxsl/document"
-  - "/testxsl/document.html"
-  - "/xml/summary/document/"
 ---
 
 # ドキュメント

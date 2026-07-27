@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2107
 parent_id: 1286
 sort_order: 7
-aliases:
-  - "/csharp/resource/refstruct/"
+aliases: []
 ---
 
 # ref構造体

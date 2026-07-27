@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1424
 parent_id: 1423
 sort_order: 0
-aliases:
-  - "/dsl/dsl/"
+aliases: []
 ---
 
 # モデリング

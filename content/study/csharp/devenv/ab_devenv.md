@@ -9,11 +9,6 @@ umbraco_id: 1188
 parent_id: 1709
 sort_order: 0
 aliases:
-  - "/csharp/ab_devenv"
-  - "/csharp/ab_devenv.html"
-  - "/csharp/abstract/ab_devenv"
-  - "/csharp/devenv/ab_devenv/"
-  - "/study/csharp/ab_devenv"
   - "/study/csharp/ab_devenv.html"
   - "/study/csharp/abstract/ab_devenv"
 ---

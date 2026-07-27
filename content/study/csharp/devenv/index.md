@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1709
 parent_id: 1169
 sort_order: 3
-aliases:
-  - "/csharp/devenv/"
+aliases: []
 ---
 
 # C#開発環境

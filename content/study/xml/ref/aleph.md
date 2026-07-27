@@ -9,11 +9,7 @@ umbraco_id: 1663
 parent_id: 1661
 sort_order: 1
 aliases:
-  - "/ref/aleph"
-  - "/ref/aleph.html"
-  - "/study/ref/aleph"
   - "/study/ref/aleph.html"
-  - "/xml/ref/aleph/"
 ---
 
 # アレフ

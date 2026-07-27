@@ -9,8 +9,7 @@ tags:
 umbraco_id: 1859
 parent_id: 1190
 sort_order: 17
-aliases:
-  - "/csharp/start/st_scope/"
+aliases: []
 ---
 
 # \[雑記\] 識別子のスコープとオブジェクトの寿命

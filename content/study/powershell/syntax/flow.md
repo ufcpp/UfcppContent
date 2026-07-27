@@ -9,10 +9,6 @@ umbraco_id: 1585
 parent_id: 1577
 sort_order: 7
 aliases:
-  - "/powershell/flow"
-  - "/powershell/flow.html"
-  - "/powershell/syntax/flow/"
-  - "/study/powershell/flow"
   - "/study/powershell/flow.html"
 ---
 

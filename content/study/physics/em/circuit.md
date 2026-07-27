@@ -9,10 +9,6 @@ umbraco_id: 1567
 parent_id: 1561
 sort_order: 5
 aliases:
-  - "/em/circuit"
-  - "/em/circuit.html"
-  - "/physics/em/circuit/"
-  - "/study/em/circuit"
   - "/study/em/circuit.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1126
 parent_id: 1117
 sort_order: 8
 aliases:
-  - "/algorithm/sort/sort_bucket/"
-  - "/algorithm/sort_bucket"
-  - "/algorithm/sort_bucket.html"
-  - "/study/algorithm/sort_bucket"
   - "/study/algorithm/sort_bucket.html"
 ---
 

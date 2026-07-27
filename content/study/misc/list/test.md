@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1707
 parent_id: 1534
 sort_order: 6
-aliases:
-  - "/misc/list/test/"
+aliases: []
 ---
 
 # test

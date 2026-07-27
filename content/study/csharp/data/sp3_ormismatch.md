@@ -10,10 +10,6 @@ umbraco_id: 1307
 parent_id: 1298
 sort_order: 9
 aliases:
-  - "/csharp/data/sp3_ormismatch/"
-  - "/csharp/sp3_ormismatch"
-  - "/csharp/sp3_ormismatch.html"
-  - "/study/csharp/sp3_ormismatch"
   - "/study/csharp/sp3_ormismatch.html"
 ---
 

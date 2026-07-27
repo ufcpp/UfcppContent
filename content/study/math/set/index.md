@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1471
 parent_id: 1444
 sort_order: 3
-aliases:
-  - "/math/set/"
+aliases: []
 ---
 
 # 集合論

@@ -9,10 +9,6 @@ umbraco_id: 1481
 parent_id: 1471
 sort_order: 9
 aliases:
-  - "/math/set/metric/"
-  - "/set/metric"
-  - "/set/metric.html"
-  - "/study/set/metric"
   - "/study/set/metric.html"
 ---
 

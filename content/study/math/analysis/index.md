@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1464
 parent_id: 1444
 sort_order: 2
-aliases:
-  - "/math/analysis/"
+aliases: []
 ---
 
 # 数学解析

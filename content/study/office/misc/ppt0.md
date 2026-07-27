@@ -9,10 +9,6 @@ umbraco_id: 1552
 parent_id: 1551
 sort_order: 0
 aliases:
-  - "/office/misc/ppt0/"
-  - "/office/ppt0"
-  - "/office/ppt0.html"
-  - "/study/office/ppt0"
   - "/study/office/ppt0.html"
 ---
 

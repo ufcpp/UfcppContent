@@ -9,10 +9,6 @@ umbraco_id: 1266
 parent_id: 1248
 sort_order: 14
 aliases:
-  - "/csharp/misc_construct"
-  - "/csharp/misc_construct.html"
-  - "/csharp/oop/misc_construct/"
-  - "/study/csharp/misc_construct"
   - "/study/csharp/misc_construct.html"
 ---
 

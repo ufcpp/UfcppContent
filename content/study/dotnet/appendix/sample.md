@@ -9,10 +9,6 @@ umbraco_id: 1409
 parent_id: 1408
 sort_order: 0
 aliases:
-  - "/dotnet/appendix/sample/"
-  - "/dotnet/sample"
-  - "/dotnet/sample.html"
-  - "/study/dotnet/sample"
   - "/study/dotnet/sample.html"
 ---
 

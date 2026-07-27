@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1434
 parent_id: 1423
 sort_order: 2
-aliases:
-  - "/dsl/compiler/"
+aliases: []
 ---
 
 # はじめてのコンパイラ

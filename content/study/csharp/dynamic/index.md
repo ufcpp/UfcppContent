@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1312
 parent_id: 1169
 sort_order: 11
-aliases:
-  - "/csharp/dynamic/"
+aliases: []
 ---
 
 # 動的な処理

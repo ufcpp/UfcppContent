@@ -9,8 +9,6 @@ umbraco_id: 1129
 parent_id: 1128
 sort_order: 0
 aliases:
-  - "/algorithm/collection.html"
-  - "/algorithm/collection/collection/"
   - "/study/algorithm/collection.html"
 ---
 

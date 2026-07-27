@@ -9,10 +9,6 @@ umbraco_id: 1146
 parent_id: 1145
 sort_order: 0
 aliases:
-  - "/computer/Summary"
-  - "/computer/Summary.html"
-  - "/computer/about/summary/"
-  - "/study/computer/Summary"
   - "/study/computer/Summary.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1209
 parent_id: 1190
 sort_order: 12
 aliases:
-  - "/csharp/st_cast"
-  - "/csharp/st_cast.html"
-  - "/csharp/start/st_cast/"
-  - "/study/csharp/st_cast"
   - "/study/csharp/st_cast.html"
 ---
 

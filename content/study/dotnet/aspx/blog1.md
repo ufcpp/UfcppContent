@@ -9,10 +9,6 @@ umbraco_id: 1420
 parent_id: 1414
 sort_order: 5
 aliases:
-  - "/aspx/blog1"
-  - "/aspx/blog1.html"
-  - "/dotnet/aspx/blog1/"
-  - "/study/aspx/blog1"
   - "/study/aspx/blog1.html"
 ---
 

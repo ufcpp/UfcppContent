@@ -9,11 +9,7 @@ umbraco_id: 1694
 parent_id: 1661
 sort_order: 32
 aliases:
-  - "/ref/symbol"
-  - "/ref/symbol.html"
-  - "/study/ref/symbol"
   - "/study/ref/symbol.html"
-  - "/xml/ref/symbol/"
 ---
 
 # 記号

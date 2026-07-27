@@ -9,10 +9,6 @@ umbraco_id: 1394
 parent_id: 1393
 sort_order: 0
 aliases:
-  - "/dotnet/wpf/wpf_abst/"
-  - "/dotnet/wpf_abst"
-  - "/dotnet/wpf_abst.html"
-  - "/study/dotnet/wpf_abst"
   - "/study/dotnet/wpf_abst.html"
 ---
 

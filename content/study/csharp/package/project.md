@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1726
 parent_id: 1717
 sort_order: 0
-aliases:
-  - "/csharp/package/project/"
+aliases: []
 ---
 
 # プロジェクトの分割

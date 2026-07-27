@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1161
 parent_id: 1144
 sort_order: 4
-aliases:
-  - "/computer/essential-software/"
+aliases: []
 ---
 
 # 基礎的なソフトウェア

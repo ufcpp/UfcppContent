@@ -9,8 +9,6 @@ umbraco_id: 1593
 parent_id: 1592
 sort_order: 0
 aliases:
-  - "/powershell/interop.html"
-  - "/powershell/interop/interop/"
   - "/study/powershell/interop.html"
 ---
 

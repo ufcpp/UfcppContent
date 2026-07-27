@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1761
 parent_id: 1717
 sort_order: 3
-aliases:
-  - "/csharp/package/typeforwarding/"
+aliases: []
 ---
 
 # 型フォワーディング

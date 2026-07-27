@@ -9,10 +9,6 @@ umbraco_id: 1154
 parent_id: 1151
 sort_order: 2
 aliases:
-  - "/computer/CombinationalCircuit"
-  - "/computer/CombinationalCircuit.html"
-  - "/computer/basis/combinationalcircuit/"
-  - "/study/computer/CombinationalCircuit"
   - "/study/computer/CombinationalCircuit.html"
 ---
 

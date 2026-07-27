@@ -9,10 +9,6 @@ umbraco_id: 1347
 parent_id: 1344
 sort_order: 3
 aliases:
-  - "/csharp/FwReferenceAssemblies"
-  - "/csharp/FwReferenceAssemblies.html"
-  - "/csharp/framework/fwreferenceassemblies/"
-  - "/study/csharp/FwReferenceAssemblies"
   - "/study/csharp/FwReferenceAssemblies.html"
 ---
 

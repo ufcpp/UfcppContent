@@ -9,10 +9,6 @@ umbraco_id: 1292
 parent_id: 1286
 sort_order: 9
 aliases:
-  - "/csharp/RmBoxing"
-  - "/csharp/RmBoxing.html"
-  - "/csharp/resource/rmboxing/"
-  - "/study/csharp/RmBoxing"
   - "/study/csharp/RmBoxing.html"
 ---
 

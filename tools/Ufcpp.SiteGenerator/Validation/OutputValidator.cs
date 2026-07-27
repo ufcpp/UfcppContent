@@ -48,6 +48,7 @@ public sealed class OutputValidator
         var errors = new List<string>();
 
         ValidateOutputFiles(errors);
+        ValidateAliasRedirects(errors);
         ValidateInternalLinks(errors);
 
         if (errors.Count > 0)
@@ -70,6 +71,25 @@ public sealed class OutputValidator
             if (!File.Exists(outputFile))
             {
                 errors.Add($"Expected output file not found: '{page.OutputPath}' (from '{page.RelativePath}').");
+            }
+        }
+    }
+
+    private void ValidateAliasRedirects(List<string> errors)
+    {
+        // Every alias is a legacy URL that must keep resolving. It is served either by a
+        // redirect page or, when it resolves to the canonical output itself, by the page.
+        foreach (var page in _pages)
+        {
+            foreach (var alias in page.FrontMatter.Aliases)
+            {
+                var aliasOutputPath = NormalizeOutputPath(OutputPathResolver.Resolve(alias));
+                if (!File.Exists(GetOutputFile(aliasOutputPath)))
+                {
+                    errors.Add(
+                        $"Missing redirect for alias '{alias}' of '{page.RelativePath}' "
+                        + $"(expected output file '{aliasOutputPath}').");
+                }
             }
         }
     }

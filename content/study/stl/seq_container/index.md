@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1630
 parent_id: 1626
 sort_order: 1
-aliases:
-  - "/stl/seq_container/"
+aliases: []
 ---
 
 # 順序コンテナ

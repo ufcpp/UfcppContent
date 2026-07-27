@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1385
 parent_id: 1384
 sort_order: 0
-aliases:
-  - "/dotnet/bcl/"
+aliases: []
 ---
 
 # 基本クラスライブラリ

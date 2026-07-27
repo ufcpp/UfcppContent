@@ -9,10 +9,6 @@ umbraco_id: 1282
 parent_id: 1275
 sort_order: 8
 aliases:
-  - "/csharp/MiscEventSubscribe"
-  - "/csharp/MiscEventSubscribe.html"
-  - "/csharp/functional/misceventsubscribe/"
-  - "/study/csharp/MiscEventSubscribe"
   - "/study/csharp/MiscEventSubscribe.html"
 ---
 

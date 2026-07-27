@@ -10,10 +10,6 @@ umbraco_id: 1290
 parent_id: 1286
 sort_order: 5
 aliases:
-  - "/csharp/resource/sp_ref/"
-  - "/csharp/sp_ref"
-  - "/csharp/sp_ref.html"
-  - "/study/csharp/sp_ref"
   - "/study/csharp/sp_ref.html"
 ---
 

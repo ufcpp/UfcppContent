@@ -10,10 +10,6 @@ umbraco_id: 1279
 parent_id: 1275
 sort_order: 5
 aliases:
-  - "/csharp/functional/sp2_anonymousmethod/"
-  - "/csharp/sp2_anonymousmethod"
-  - "/csharp/sp2_anonymousmethod.html"
-  - "/study/csharp/sp2_anonymousmethod"
   - "/study/csharp/sp2_anonymousmethod.html"
 ---
 

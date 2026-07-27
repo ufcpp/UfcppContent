@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2248
 parent_id: 1326
 sort_order: 11
-aliases:
-  - "/csharp/async/asyncstream/"
+aliases: []
 ---
 
 # 非同期ストリーム

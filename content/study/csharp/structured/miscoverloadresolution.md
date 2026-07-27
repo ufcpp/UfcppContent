@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2147
 parent_id: 1217
 sort_order: 8
-aliases:
-  - "/csharp/structured/miscoverloadresolution/"
+aliases: []
 ---
 
 # \[雑記\] オーバーロード解決

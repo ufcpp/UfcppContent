@@ -9,10 +9,6 @@ umbraco_id: 1538
 parent_id: 1534
 sort_order: 3
 aliases:
-  - "/misc/language"
-  - "/misc/language.html"
-  - "/misc/list/language/"
-  - "/study/misc/language"
   - "/study/misc/language.html"
 ---
 

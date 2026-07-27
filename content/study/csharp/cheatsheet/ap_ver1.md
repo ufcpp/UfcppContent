@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1911
 parent_id: 1174
 sort_order: 3
-aliases:
-  - "/csharp/cheatsheet/ap_ver1/"
+aliases: []
 ---
 
 # C# 1.0

@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2362
 parent_id: 1190
 sort_order: 10
-aliases:
-  - "/csharp/start/improvedinterpolatedstring/"
+aliases: []
 ---
 
 # C# 10.0 の補間文字列の改善

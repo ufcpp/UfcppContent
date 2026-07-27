@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2431
 parent_id: 1338
 sort_order: 10
-aliases:
-  - "/csharp/misc/file-local/"
+aliases: []
 ---
 
 # file ローカル型

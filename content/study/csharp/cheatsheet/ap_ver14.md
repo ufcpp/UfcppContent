@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2514
 parent_id: 1174
 sort_order: 19
-aliases:
-  - "/csharp/cheatsheet/ap_ver14/"
+aliases: []
 ---
 
 # C# 14.0 の新機能

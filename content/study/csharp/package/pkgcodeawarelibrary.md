@@ -9,8 +9,7 @@ tags:
 umbraco_id: 1718
 parent_id: 1717
 sort_order: 2
-aliases:
-  - "/csharp/package/pkgcodeawarelibrary/"
+aliases: []
 ---
 
 # Code-Awareなライブラリ

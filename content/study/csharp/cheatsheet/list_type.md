@@ -9,10 +9,6 @@ umbraco_id: 1176
 parent_id: 1174
 sort_order: 1
 aliases:
-  - "/csharp/cheatsheet/list_type/"
-  - "/csharp/list_type"
-  - "/csharp/list_type.html"
-  - "/study/csharp/list_type"
   - "/study/csharp/list_type.html"
 ---
 

@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1483
 parent_id: 1444
 sort_order: 4
-aliases:
-  - "/math/group/"
+aliases: []
 ---
 
 # 群、環、体

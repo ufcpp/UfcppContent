@@ -9,10 +9,6 @@ umbraco_id: 1533
 parent_id: 1529
 sort_order: 3
 aliases:
-  - "/misc/enterprise"
-  - "/misc/enterprise.html"
-  - "/misc/management/enterprise/"
-  - "/study/misc/enterprise"
   - "/study/misc/enterprise.html"
 ---
 

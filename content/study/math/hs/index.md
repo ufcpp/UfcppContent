@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1445
 parent_id: 1444
 sort_order: 0
-aliases:
-  - "/math/hs/"
+aliases: []
 ---
 
 # 高校の数学

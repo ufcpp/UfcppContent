@@ -9,11 +9,7 @@ umbraco_id: 1675
 parent_id: 1661
 sort_order: 13
 aliases:
-  - "/ref/font"
-  - "/ref/font.html"
-  - "/study/ref/font"
   - "/study/ref/font.html"
-  - "/xml/ref/font/"
 ---
 
 # 書体

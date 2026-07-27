@@ -9,10 +9,6 @@ umbraco_id: 1157
 parent_id: 1156
 sort_order: 0
 aliases:
-  - "/computer/CPU"
-  - "/computer/CPU.html"
-  - "/computer/general/cpu/"
-  - "/study/computer/CPU"
   - "/study/computer/CPU.html"
 ---
 

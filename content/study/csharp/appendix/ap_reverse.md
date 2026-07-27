@@ -9,10 +9,6 @@ umbraco_id: 1383
 parent_id: 1377
 sort_order: 5
 aliases:
-  - "/csharp/ap_reverse"
-  - "/csharp/ap_reverse.html"
-  - "/csharp/appendix/ap_reverse/"
-  - "/study/csharp/ap_reverse"
   - "/study/csharp/ap_reverse.html"
 ---
 

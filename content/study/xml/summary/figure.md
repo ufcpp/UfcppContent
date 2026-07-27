@@ -9,11 +9,7 @@ umbraco_id: 1657
 parent_id: 1650
 sort_order: 6
 aliases:
-  - "/study/testxsl/figure"
   - "/study/testxsl/figure.html"
-  - "/testxsl/figure"
-  - "/testxsl/figure.html"
-  - "/xml/summary/figure/"
 ---
 
 # 図表

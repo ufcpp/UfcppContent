@@ -12,10 +12,6 @@ umbraco_id: 1257
 parent_id: 1248
 sort_order: 5
 aliases:
-  - "/csharp/oo_static"
-  - "/csharp/oo_static.html"
-  - "/csharp/oop/oo_static/"
-  - "/study/csharp/oo_static"
   - "/study/csharp/oo_static.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1604
 parent_id: 1599
 sort_order: 4
 aliases:
-  - "/dsp/frequency"
-  - "/dsp/frequency.html"
-  - "/sp/dsp/frequency/"
-  - "/study/dsp/frequency"
   - "/study/dsp/frequency.html"
 ---
 

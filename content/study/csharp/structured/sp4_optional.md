@@ -10,10 +10,6 @@ umbraco_id: 1238
 parent_id: 1217
 sort_order: 10
 aliases:
-  - "/csharp/sp4_optional"
-  - "/csharp/sp4_optional.html"
-  - "/csharp/structured/sp4_optional/"
-  - "/study/csharp/sp4_optional"
   - "/study/csharp/sp4_optional.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1241
 parent_id: 1217
 sort_order: 13
 aliases:
-  - "/csharp/st_enum"
-  - "/csharp/st_enum.html"
-  - "/csharp/structured/st_enum/"
-  - "/study/csharp/st_enum"
   - "/study/csharp/st_enum.html"
 ---
 

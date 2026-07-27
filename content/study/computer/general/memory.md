@@ -9,10 +9,6 @@ umbraco_id: 1158
 parent_id: 1156
 sort_order: 1
 aliases:
-  - "/computer/general/memory/"
-  - "/computer/memory"
-  - "/computer/memory.html"
-  - "/study/computer/memory"
   - "/study/computer/memory.html"
 ---
 

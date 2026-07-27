@@ -9,10 +9,6 @@ umbraco_id: 1346
 parent_id: 1344
 sort_order: 1
 aliases:
-  - "/csharp/FwManaged"
-  - "/csharp/FwManaged.html"
-  - "/csharp/framework/fwmanaged/"
-  - "/study/csharp/FwManaged"
   - "/study/csharp/FwManaged.html"
 ---
 

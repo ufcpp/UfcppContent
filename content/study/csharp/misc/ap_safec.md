@@ -9,10 +9,6 @@ umbraco_id: 1341
 parent_id: 1338
 sort_order: 3
 aliases:
-  - "/csharp/ap_safec"
-  - "/csharp/ap_safec.html"
-  - "/csharp/misc/ap_safec/"
-  - "/study/csharp/ap_safec"
   - "/study/csharp/ap_safec.html"
 ---
 

@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1592
 parent_id: 1572
 sort_order: 3
-aliases:
-  - "/powershell/interop/"
+aliases: []
 ---
 
 # .NET 言語からの利用

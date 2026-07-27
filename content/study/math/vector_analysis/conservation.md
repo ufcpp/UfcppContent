@@ -9,11 +9,7 @@ umbraco_id: 1499
 parent_id: 1491
 sort_order: 7
 aliases:
-  - "/math/vector_analysis/conservation/"
-  - "/study/vector_analysis/conservation"
   - "/study/vector_analysis/conservation.html"
-  - "/vector_analysis/conservation"
-  - "/vector_analysis/conservation.html"
 ---
 
 # 保存場とソレノイダル場

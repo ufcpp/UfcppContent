@@ -9,10 +9,6 @@ umbraco_id: 1214
 parent_id: 1190
 sort_order: 14
 aliases:
-  - "/csharp/sp_const"
-  - "/csharp/sp_const.html"
-  - "/csharp/start/sp_const/"
-  - "/study/csharp/sp_const"
   - "/study/csharp/sp_const.html"
 ---
 

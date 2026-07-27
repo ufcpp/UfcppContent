@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1661
 parent_id: 1644
 sort_order: 3
-aliases:
-  - "/xml/ref/"
+aliases: []
 ---
 
 # 数式表現用XML

@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2348
 parent_id: 1940
 sort_order: 5
-aliases:
-  - "/csharp/datatype/record/"
+aliases: []
 ---
 
 # レコード型

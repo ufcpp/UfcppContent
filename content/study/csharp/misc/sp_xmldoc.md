@@ -9,10 +9,6 @@ umbraco_id: 1340
 parent_id: 1338
 sort_order: 2
 aliases:
-  - "/csharp/misc/sp_xmldoc/"
-  - "/csharp/sp_xmldoc"
-  - "/csharp/sp_xmldoc.html"
-  - "/study/csharp/sp_xmldoc"
   - "/study/csharp/sp_xmldoc.html"
 ---
 

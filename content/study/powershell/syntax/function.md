@@ -9,10 +9,6 @@ umbraco_id: 1586
 parent_id: 1577
 sort_order: 8
 aliases:
-  - "/powershell/function"
-  - "/powershell/function.html"
-  - "/powershell/syntax/function/"
-  - "/study/powershell/function"
   - "/study/powershell/function.html"
 ---
 

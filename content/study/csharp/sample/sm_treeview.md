@@ -9,10 +9,6 @@ umbraco_id: 1367
 parent_id: 1359
 sort_order: 7
 aliases:
-  - "/csharp/sample/sm_treeview/"
-  - "/csharp/sm_treeview"
-  - "/csharp/sm_treeview.html"
-  - "/study/csharp/sm_treeview"
   - "/study/csharp/sm_treeview.html"
 ---
 

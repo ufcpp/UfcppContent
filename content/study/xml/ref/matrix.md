@@ -9,11 +9,7 @@ umbraco_id: 1681
 parent_id: 1661
 sort_order: 19
 aliases:
-  - "/ref/matrix"
-  - "/ref/matrix.html"
-  - "/study/ref/matrix"
   - "/study/ref/matrix.html"
-  - "/xml/ref/matrix/"
 ---
 
 # 行列

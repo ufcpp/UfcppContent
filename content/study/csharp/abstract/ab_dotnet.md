@@ -9,10 +9,6 @@ umbraco_id: 1187
 parent_id: 1185
 sort_order: 1
 aliases:
-  - "/csharp/ab_dotnet"
-  - "/csharp/ab_dotnet.html"
-  - "/csharp/abstract/ab_dotnet/"
-  - "/study/csharp/ab_dotnet"
   - "/study/csharp/ab_dotnet.html"
 ---
 

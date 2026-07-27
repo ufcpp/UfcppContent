@@ -9,10 +9,6 @@ umbraco_id: 1407
 parent_id: 1406
 sort_order: 0
 aliases:
-  - "/dotnet/tpl/tpl_abst/"
-  - "/dotnet/tpl_abst"
-  - "/dotnet/tpl_abst.html"
-  - "/study/dotnet/tpl_abst"
   - "/study/dotnet/tpl_abst.html"
 ---
 

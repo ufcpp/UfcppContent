@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2249
 parent_id: 1338
 sort_order: 7
-aliases:
-  - "/csharp/misc/miscpatternbased/"
+aliases: []
 ---
 
 # パターン ベースな構文

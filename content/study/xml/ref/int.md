@@ -9,11 +9,7 @@ umbraco_id: 1678
 parent_id: 1661
 sort_order: 16
 aliases:
-  - "/ref/int"
-  - "/ref/int.html"
-  - "/study/ref/int"
   - "/study/ref/int.html"
-  - "/xml/ref/int/"
 ---
 
 # 積分記号

@@ -9,10 +9,6 @@ umbraco_id: 1556
 parent_id: 1554
 sort_order: 1
 aliases:
-  - "/dynamics/action"
-  - "/dynamics/action.html"
-  - "/physics/dynamics/action/"
-  - "/study/dynamics/action"
   - "/study/dynamics/action.html"
 ---
 

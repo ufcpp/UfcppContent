@@ -9,11 +9,7 @@ umbraco_id: 1693
 parent_id: 1661
 sort_order: 31
 aliases:
-  - "/ref/subsup"
-  - "/ref/subsup.html"
-  - "/study/ref/subsup"
   - "/study/ref/subsup.html"
-  - "/xml/ref/subsup/"
 ---
 
 # 上付き・下付き文字

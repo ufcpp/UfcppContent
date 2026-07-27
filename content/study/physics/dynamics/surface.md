@@ -9,10 +9,6 @@ umbraco_id: 1560
 parent_id: 1554
 sort_order: 5
 aliases:
-  - "/dynamics/surface"
-  - "/dynamics/surface.html"
-  - "/physics/dynamics/surface/"
-  - "/study/dynamics/surface"
   - "/study/dynamics/surface.html"
 ---
 

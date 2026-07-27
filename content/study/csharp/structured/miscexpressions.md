@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1962
 parent_id: 1217
 sort_order: 20
-aliases:
-  - "/csharp/structured/miscexpressions/"
+aliases: []
 ---
 
 # \[雑記\] 式にまつわる補足

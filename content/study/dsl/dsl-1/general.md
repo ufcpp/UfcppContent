@@ -9,12 +9,7 @@ umbraco_id: 1430
 parent_id: 1426
 sort_order: 3
 aliases:
-  - "/dsl/dsl-1/general/"
-  - "/dsl/dsl/general"
-  - "/dsl/general"
-  - "/dsl/general.html"
   - "/study/dsl/dsl/general"
-  - "/study/dsl/general"
   - "/study/dsl/general.html"
 ---
 

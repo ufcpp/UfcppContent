@@ -9,10 +9,6 @@ umbraco_id: 1574
 parent_id: 1573
 sort_order: 0
 aliases:
-  - "/powershell/abstract"
-  - "/powershell/abstract.html"
-  - "/powershell/intro/abstract/"
-  - "/study/powershell/abstract"
   - "/study/powershell/abstract.html"
 ---
 

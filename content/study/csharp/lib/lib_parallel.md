@@ -9,10 +9,6 @@ umbraco_id: 1358
 parent_id: 1350
 sort_order: 6
 aliases:
-  - "/csharp/lib/lib_parallel/"
-  - "/csharp/lib_parallel"
-  - "/csharp/lib_parallel.html"
-  - "/study/csharp/lib_parallel"
   - "/study/csharp/lib_parallel.html"
 ---
 

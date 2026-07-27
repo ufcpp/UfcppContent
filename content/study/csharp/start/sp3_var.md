@@ -10,10 +10,6 @@ umbraco_id: 1216
 parent_id: 1190
 sort_order: 16
 aliases:
-  - "/csharp/sp3_var"
-  - "/csharp/sp3_var.html"
-  - "/csharp/start/sp3_var/"
-  - "/study/csharp/sp3_var"
   - "/study/csharp/sp3_var.html"
 ---
 

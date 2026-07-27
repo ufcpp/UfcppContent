@@ -9,10 +9,6 @@ umbraco_id: 1579
 parent_id: 1577
 sort_order: 1
 aliases:
-  - "/powershell/syntax/variable/"
-  - "/powershell/variable"
-  - "/powershell/variable.html"
-  - "/study/powershell/variable"
   - "/study/powershell/variable.html"
 ---
 

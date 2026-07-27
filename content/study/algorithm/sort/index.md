@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1117
 parent_id: 1116
 sort_order: 0
-aliases:
-  - "/algorithm/sort/"
+aliases: []
 ---
 
 # ソート

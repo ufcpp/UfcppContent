@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1426
 parent_id: 1423
 sort_order: 1
-aliases:
-  - "/dsl/dsl-1/"
+aliases: []
 ---
 
 # DSL (Domain Specific Language)

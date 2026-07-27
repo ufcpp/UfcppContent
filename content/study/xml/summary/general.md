@@ -9,11 +9,7 @@ umbraco_id: 1653
 parent_id: 1650
 sort_order: 2
 aliases:
-  - "/study/testxsl/general"
   - "/study/testxsl/general.html"
-  - "/testxsl/general"
-  - "/testxsl/general.html"
-  - "/xml/summary/general/"
 ---
 
 # 未定義タグ

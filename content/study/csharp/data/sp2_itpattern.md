@@ -10,10 +10,6 @@ umbraco_id: 1301
 parent_id: 1298
 sort_order: 2
 aliases:
-  - "/csharp/data/sp2_itpattern/"
-  - "/csharp/sp2_itpattern"
-  - "/csharp/sp2_itpattern.html"
-  - "/study/csharp/sp2_itpattern"
   - "/study/csharp/sp2_itpattern.html"
 ---
 

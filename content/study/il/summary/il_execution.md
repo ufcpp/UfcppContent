@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1443
 parent_id: 1441
 sort_order: 1
-aliases:
-  - "/il/summary/il_execution/"
+aliases: []
 ---
 
 # IL 命令の実行例

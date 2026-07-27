@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1217
 parent_id: 1169
 sort_order: 5
-aliases:
-  - "/csharp/structured/"
+aliases: []
 ---
 
 # 構造化

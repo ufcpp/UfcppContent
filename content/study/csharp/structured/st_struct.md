@@ -9,10 +9,6 @@ umbraco_id: 1242
 parent_id: 1217
 sort_order: 14
 aliases:
-  - "/csharp/st_struct"
-  - "/csharp/st_struct.html"
-  - "/csharp/structured/st_struct/"
-  - "/study/csharp/st_struct"
   - "/study/csharp/st_struct.html"
 ---
 

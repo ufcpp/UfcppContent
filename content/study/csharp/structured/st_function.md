@@ -11,10 +11,6 @@ umbraco_id: 1233
 parent_id: 1217
 sort_order: 5
 aliases:
-  - "/csharp/st_function"
-  - "/csharp/st_function.html"
-  - "/csharp/structured/st_function/"
-  - "/study/csharp/st_function"
   - "/study/csharp/st_function.html"
 ---
 

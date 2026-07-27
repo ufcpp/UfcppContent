@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1865
 parent_id: 1174
 sort_order: 23
-aliases:
-  - "/csharp/cheatsheet/apscripting/"
+aliases: []
 ---
 
 # C#スクリプト実行

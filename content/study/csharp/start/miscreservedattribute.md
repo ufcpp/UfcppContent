@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2361
 parent_id: 1190
 sort_order: 19
-aliases:
-  - "/csharp/start/miscreservedattribute/"
+aliases: []
 ---
 
 # \[雑記\] コンパイル結果に影響を及ぼす属性

@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2329
 parent_id: 1248
 sort_order: 6
-aliases:
-  - "/csharp/oop/moduleinitializer/"
+aliases: []
 ---
 
 # モジュール初期化子

@@ -9,10 +9,6 @@ umbraco_id: 1246
 parent_id: 1217
 sort_order: 18
 aliases:
-  - "/csharp/misc_exception"
-  - "/csharp/misc_exception.html"
-  - "/csharp/structured/misc_exception/"
-  - "/study/csharp/misc_exception"
   - "/study/csharp/misc_exception.html"
 ---
 

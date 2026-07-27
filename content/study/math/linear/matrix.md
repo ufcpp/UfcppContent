@@ -9,10 +9,6 @@ umbraco_id: 1460
 parent_id: 1458
 sort_order: 1
 aliases:
-  - "/linear/matrix"
-  - "/linear/matrix.html"
-  - "/math/linear/matrix/"
-  - "/study/linear/matrix"
   - "/study/linear/matrix.html"
 ---
 

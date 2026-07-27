@@ -9,10 +9,6 @@ umbraco_id: 1351
 parent_id: 1350
 sort_order: 0
 aliases:
-  - "/csharp/lib/lib_string/"
-  - "/csharp/lib_string"
-  - "/csharp/lib_string.html"
-  - "/study/csharp/lib_string"
   - "/study/csharp/lib_string.html"
 ---
 

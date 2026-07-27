@@ -548,6 +548,29 @@ public sealed class MigrationTests
         Assert.Contains("/study/csharp/foo.html", aliases[5]);
         Assert.Contains("/study/csharp/foo", aliases[5]);
         Assert.Contains("/csharp/foo.html", aliases[5]);
+
+        // Only the legacy URL the original site actually served is published as a redirect.
+        Assert.Equal(
+            ["/study/csharp/foo.html"],
+            AliasPolicy.SelectPublished(urls[5], aliases[5]));
+    }
+
+    [Fact]
+    public void PublishedAliasesKeepLegacyUrlsOutsideStudy()
+    {
+        var published = AliasPolicy.SelectPublished(
+            "/study/misc/list/lecture/",
+            [
+                "/lecture",
+                "/lecture/",
+                "/lecture/index.html",
+                "/misc/list/lecture/",
+                "/study/misc/lecture.html",
+            ]);
+
+        Assert.Equal(
+            ["/lecture", "/lecture/", "/lecture/index.html", "/study/misc/lecture.html"],
+            published);
     }
 
     [Theory]

@@ -9,10 +9,6 @@ umbraco_id: 1457
 parent_id: 1445
 sort_order: 11
 aliases:
-  - "/hs/vector"
-  - "/hs/vector.html"
-  - "/math/hs/vector/"
-  - "/study/hs/vector"
   - "/study/hs/vector.html"
 ---
 

@@ -9,11 +9,7 @@ umbraco_id: 1669
 parent_id: 1661
 sort_order: 7
 aliases:
-  - "/ref/conjugate"
-  - "/ref/conjugate.html"
-  - "/study/ref/conjugate"
   - "/study/ref/conjugate.html"
-  - "/xml/ref/conjugate/"
 ---
 
 # 複素共役

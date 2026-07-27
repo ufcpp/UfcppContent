@@ -9,10 +9,6 @@ umbraco_id: 1143
 parent_id: 1142
 sort_order: 0
 aliases:
-  - "/algorithm/o_days"
-  - "/algorithm/o_days.html"
-  - "/algorithm/other/o_days/"
-  - "/study/algorithm/o_days"
   - "/study/algorithm/o_days.html"
 ---
 

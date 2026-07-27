@@ -9,10 +9,6 @@ umbraco_id: 1149
 parent_id: 1147
 sort_order: 1
 aliases:
-  - "/computer/DigitsInComputer"
-  - "/computer/DigitsInComputer.html"
-  - "/computer/digits/digitsincomputer/"
-  - "/study/computer/DigitsInComputer"
   - "/study/computer/DigitsInComputer.html"
 ---
 

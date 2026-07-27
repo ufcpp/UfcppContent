@@ -9,10 +9,6 @@ umbraco_id: 1191
 parent_id: 1190
 sort_order: 0
 aliases:
-  - "/csharp/st_basis"
-  - "/csharp/st_basis.html"
-  - "/csharp/start/st_basis/"
-  - "/study/csharp/st_basis"
   - "/study/csharp/st_basis.html"
 ---
 

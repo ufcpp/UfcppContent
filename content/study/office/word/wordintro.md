@@ -9,10 +9,6 @@ umbraco_id: 1548
 parent_id: 1547
 sort_order: 0
 aliases:
-  - "/office/word/wordintro/"
-  - "/office/wordintro"
-  - "/office/wordintro.html"
-  - "/study/office/wordintro"
   - "/study/office/wordintro.html"
 ---
 

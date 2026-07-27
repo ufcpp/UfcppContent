@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1554
 parent_id: 1553
 sort_order: 0
-aliases:
-  - "/physics/dynamics/"
+aliases: []
 ---
 
 # 力学

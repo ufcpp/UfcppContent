@@ -9,11 +9,7 @@ umbraco_id: 1682
 parent_id: 1661
 sort_order: 20
 aliases:
-  - "/ref/oint"
-  - "/ref/oint.html"
-  - "/study/ref/oint"
   - "/study/ref/oint.html"
-  - "/xml/ref/oint/"
 ---
 
 # 周回積分記号

@@ -9,10 +9,6 @@ umbraco_id: 1130
 parent_id: 1128
 sort_order: 1
 aliases:
-  - "/algorithm/col_array"
-  - "/algorithm/col_array.html"
-  - "/algorithm/collection/col_array/"
-  - "/study/algorithm/col_array"
   - "/study/algorithm/col_array.html"
 ---
 

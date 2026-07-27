@@ -9,10 +9,6 @@ umbraco_id: 1360
 parent_id: 1359
 sort_order: 0
 aliases:
-  - "/csharp/ap_sample"
-  - "/csharp/ap_sample.html"
-  - "/csharp/sample/ap_sample/"
-  - "/study/csharp/ap_sample"
   - "/study/csharp/ap_sample.html"
 ---
 

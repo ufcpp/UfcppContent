@@ -9,10 +9,6 @@ umbraco_id: 1314
 parent_id: 1312
 sort_order: 1
 aliases:
-  - "/csharp/dynamic/sp_attribute/"
-  - "/csharp/sp_attribute"
-  - "/csharp/sp_attribute.html"
-  - "/study/csharp/sp_attribute"
   - "/study/csharp/sp_attribute.html"
 ---
 

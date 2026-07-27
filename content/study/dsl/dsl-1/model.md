@@ -9,12 +9,7 @@ umbraco_id: 1433
 parent_id: 1426
 sort_order: 6
 aliases:
-  - "/dsl/dsl-1/model/"
-  - "/dsl/dsl/model"
-  - "/dsl/model"
-  - "/dsl/model.html"
   - "/study/dsl/dsl/model"
-  - "/study/dsl/model"
   - "/study/dsl/model.html"
 ---
 

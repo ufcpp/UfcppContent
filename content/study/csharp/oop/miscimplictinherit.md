@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2149
 parent_id: 1248
 sort_order: 10
-aliases:
-  - "/csharp/oop/miscimplictinherit/"
+aliases: []
 ---
 
 # \[余談\] 暗黙的な派生

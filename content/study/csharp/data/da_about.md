@@ -10,10 +10,6 @@ umbraco_id: 1302
 parent_id: 1298
 sort_order: 3
 aliases:
-  - "/csharp/da_about"
-  - "/csharp/da_about.html"
-  - "/csharp/data/da_about/"
-  - "/study/csharp/da_about"
   - "/study/csharp/da_about.html"
 ---
 

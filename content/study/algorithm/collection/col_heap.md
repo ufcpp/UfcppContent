@@ -9,10 +9,6 @@ umbraco_id: 1139
 parent_id: 1128
 sort_order: 10
 aliases:
-  - "/algorithm/col_heap"
-  - "/algorithm/col_heap.html"
-  - "/algorithm/collection/col_heap/"
-  - "/study/algorithm/col_heap"
   - "/study/algorithm/col_heap.html"
 ---
 

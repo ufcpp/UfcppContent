@@ -9,10 +9,6 @@ umbraco_id: 1390
 parent_id: 1385
 sort_order: 4
 aliases:
-  - "/dotnet/bcl/bcl_collection_algorithm/"
-  - "/dotnet/bcl_collection_algorithm"
-  - "/dotnet/bcl_collection_algorithm.html"
-  - "/study/dotnet/bcl_collection_algorithm"
   - "/study/dotnet/bcl_collection_algorithm.html"
 ---
 

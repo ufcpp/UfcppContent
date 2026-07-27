@@ -9,10 +9,6 @@ umbraco_id: 1602
 parent_id: 1599
 sort_order: 2
 aliases:
-  - "/dsp/dft"
-  - "/dsp/dft.html"
-  - "/sp/dsp/dft/"
-  - "/study/dsp/dft"
   - "/study/dsp/dft.html"
 ---
 

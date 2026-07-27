@@ -9,10 +9,6 @@ umbraco_id: 1184
 parent_id: 1174
 sort_order: 22
 aliases:
-  - "/csharp/ap_modern"
-  - "/csharp/ap_modern.html"
-  - "/csharp/cheatsheet/ap_modern/"
-  - "/study/csharp/ap_modern"
   - "/study/csharp/ap_modern.html"
 ---
 

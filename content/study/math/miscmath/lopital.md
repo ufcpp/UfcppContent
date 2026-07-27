@@ -9,10 +9,6 @@ umbraco_id: 1522
 parent_id: 1521
 sort_order: 0
 aliases:
-  - "/math/miscmath/lopital/"
-  - "/miscmath/lopital"
-  - "/miscmath/lopital.html"
-  - "/study/miscmath/lopital"
   - "/study/miscmath/lopital.html"
 ---
 

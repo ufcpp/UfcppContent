@@ -9,12 +9,7 @@ umbraco_id: 1479
 parent_id: 1471
 sort_order: 7
 aliases:
-  - "/math/set/complex-s_complex/"
-  - "/math/set/s_complex"
-  - "/set/complex"
-  - "/set/complex.html"
   - "/study/math/set/s_complex"
-  - "/study/set/complex"
   - "/study/set/complex.html"
 ---
 

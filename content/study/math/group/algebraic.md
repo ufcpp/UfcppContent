@@ -9,10 +9,6 @@ umbraco_id: 1484
 parent_id: 1483
 sort_order: 0
 aliases:
-  - "/group/algebraic"
-  - "/group/algebraic.html"
-  - "/math/group/algebraic/"
-  - "/study/group/algebraic"
   - "/study/group/algebraic.html"
 ---
 

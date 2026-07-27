@@ -9,11 +9,7 @@ umbraco_id: 1692
 parent_id: 1661
 sort_order: 30
 aliases:
-  - "/ref/sqbracket"
-  - "/ref/sqbracket.html"
-  - "/study/ref/sqbracket"
   - "/study/ref/sqbracket.html"
-  - "/xml/ref/sqbracket/"
 ---
 
 # \[\]括弧

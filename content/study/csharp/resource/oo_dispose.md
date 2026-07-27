@@ -9,10 +9,6 @@ umbraco_id: 1295
 parent_id: 1286
 sort_order: 13
 aliases:
-  - "/csharp/oo_dispose"
-  - "/csharp/oo_dispose.html"
-  - "/csharp/resource/oo_dispose/"
-  - "/study/csharp/oo_dispose"
   - "/study/csharp/oo_dispose.html"
 ---
 

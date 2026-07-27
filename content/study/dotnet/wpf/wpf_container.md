@@ -9,10 +9,6 @@ umbraco_id: 1398
 parent_id: 1393
 sort_order: 4
 aliases:
-  - "/dotnet/wpf/wpf_container/"
-  - "/dotnet/wpf_container"
-  - "/dotnet/wpf_container.html"
-  - "/study/dotnet/wpf_container"
   - "/study/dotnet/wpf_container.html"
 ---
 

@@ -9,11 +9,7 @@ umbraco_id: 1677
 parent_id: 1661
 sort_order: 15
 aliases:
-  - "/ref/frac"
-  - "/ref/frac.html"
-  - "/study/ref/frac"
   - "/study/ref/frac.html"
-  - "/xml/ref/frac/"
 ---
 
 # 分数

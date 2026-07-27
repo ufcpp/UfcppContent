@@ -9,11 +9,7 @@ umbraco_id: 1690
 parent_id: 1661
 sort_order: 28
 aliases:
-  - "/ref/Sigma"
-  - "/ref/Sigma.html"
-  - "/study/ref/Sigma"
   - "/study/ref/Sigma.html"
-  - "/xml/ref/sigma/"
 ---
 
 # ∑

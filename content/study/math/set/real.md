@@ -9,10 +9,6 @@ umbraco_id: 1478
 parent_id: 1471
 sort_order: 6
 aliases:
-  - "/math/set/real/"
-  - "/set/real"
-  - "/set/real.html"
-  - "/study/set/real"
   - "/study/set/real.html"
 ---
 

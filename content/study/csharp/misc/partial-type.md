@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2500
 parent_id: 1338
 sort_order: 0
-aliases:
-  - "/csharp/misc/partial-type/"
+aliases: []
 ---
 
 # 型の分割定義 (partial)

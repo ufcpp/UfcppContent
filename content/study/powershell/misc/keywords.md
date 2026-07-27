@@ -9,10 +9,6 @@ umbraco_id: 1597
 parent_id: 1594
 sort_order: 2
 aliases:
-  - "/powershell/keywords"
-  - "/powershell/keywords.html"
-  - "/powershell/misc/keywords/"
-  - "/study/powershell/keywords"
   - "/study/powershell/keywords.html"
 ---
 

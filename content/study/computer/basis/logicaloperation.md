@@ -9,10 +9,6 @@ umbraco_id: 1153
 parent_id: 1151
 sort_order: 1
 aliases:
-  - "/computer/LogicalOperation"
-  - "/computer/LogicalOperation.html"
-  - "/computer/basis/logicaloperation/"
-  - "/study/computer/LogicalOperation"
   - "/study/computer/LogicalOperation.html"
 ---
 

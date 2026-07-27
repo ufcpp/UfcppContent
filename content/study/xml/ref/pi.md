@@ -9,11 +9,7 @@ umbraco_id: 1687
 parent_id: 1661
 sort_order: 25
 aliases:
-  - "/ref/Pi"
-  - "/ref/Pi.html"
-  - "/study/ref/Pi"
   - "/study/ref/Pi.html"
-  - "/xml/ref/pi/"
 ---
 
 # Π

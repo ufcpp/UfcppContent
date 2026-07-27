@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1599
 parent_id: 1598
 sort_order: 0
-aliases:
-  - "/sp/dsp/"
+aliases: []
 ---
 
 # ディジタル信号処理

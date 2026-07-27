@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1372
 parent_id: 1169
 sort_order: 19
-aliases:
-  - "/csharp/cs4j/"
+aliases: []
 ---
 
 # 他のプログラミング言語経験者向け

@@ -9,10 +9,6 @@ umbraco_id: 1291
 parent_id: 1286
 sort_order: 8
 aliases:
-  - "/csharp/misc_heap"
-  - "/csharp/misc_heap.html"
-  - "/csharp/resource/misc_heap/"
-  - "/study/csharp/misc_heap"
   - "/study/csharp/misc_heap.html"
 ---
 

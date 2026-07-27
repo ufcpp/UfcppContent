@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2461
 parent_id: 1321
 sort_order: 5
-aliases:
-  - "/csharp/interop/functionpointer/"
+aliases: []
 ---
 
 # 関数ポインター

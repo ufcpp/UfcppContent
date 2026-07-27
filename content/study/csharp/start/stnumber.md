@@ -9,8 +9,7 @@ tags:
 umbraco_id: 1900
 parent_id: 1190
 sort_order: 8
-aliases:
-  - "/csharp/start/stnumber/"
+aliases: []
 ---
 
 # 数値

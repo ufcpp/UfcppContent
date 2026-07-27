@@ -9,10 +9,6 @@ umbraco_id: 1613
 parent_id: 1610
 sort_order: 2
 aliases:
-  - "/digital_filter/fir"
-  - "/digital_filter/fir.html"
-  - "/sp/digital_filter/fir/"
-  - "/study/digital_filter/fir"
   - "/study/digital_filter/fir.html"
 ---
 

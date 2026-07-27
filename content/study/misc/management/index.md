@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1529
 parent_id: 1528
 sort_order: 0
-aliases:
-  - "/misc/management/"
+aliases: []
 ---
 
 # サイト運営

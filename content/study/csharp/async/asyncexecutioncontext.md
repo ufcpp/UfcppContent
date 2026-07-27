@@ -9,10 +9,6 @@ umbraco_id: 1330
 parent_id: 1326
 sort_order: 3
 aliases:
-  - "/csharp/AsyncExecutionContext"
-  - "/csharp/AsyncExecutionContext.html"
-  - "/csharp/async/asyncexecutioncontext/"
-  - "/study/csharp/AsyncExecutionContext"
   - "/study/csharp/AsyncExecutionContext.html"
 ---
 

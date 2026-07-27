@@ -9,10 +9,6 @@ umbraco_id: 1546
 parent_id: 1115
 sort_order: 9
 aliases:
-  - "/office/"
-  - "/office/index"
-  - "/office/index.html"
-  - "/study/office/index"
   - "/study/office/index.html"
 ---
 

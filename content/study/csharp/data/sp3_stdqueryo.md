@@ -10,10 +10,6 @@ umbraco_id: 1305
 parent_id: 1298
 sort_order: 6
 aliases:
-  - "/csharp/data/sp3_stdqueryo/"
-  - "/csharp/sp3_stdqueryo"
-  - "/csharp/sp3_stdqueryo.html"
-  - "/study/csharp/sp3_stdqueryo"
   - "/study/csharp/sp3_stdqueryo.html"
 ---
 

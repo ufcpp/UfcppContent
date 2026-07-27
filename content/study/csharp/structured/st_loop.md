@@ -9,10 +9,6 @@ umbraco_id: 1225
 parent_id: 1217
 sort_order: 3
 aliases:
-  - "/csharp/st_loop"
-  - "/csharp/st_loop.html"
-  - "/csharp/structured/st_loop/"
-  - "/study/csharp/st_loop"
   - "/study/csharp/st_loop.html"
 ---
 

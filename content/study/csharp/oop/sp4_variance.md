@@ -10,10 +10,6 @@ umbraco_id: 1274
 parent_id: 1248
 sort_order: 20
 aliases:
-  - "/csharp/oop/sp4_variance/"
-  - "/csharp/sp4_variance"
-  - "/csharp/sp4_variance.html"
-  - "/study/csharp/sp4_variance"
   - "/study/csharp/sp4_variance.html"
 ---
 

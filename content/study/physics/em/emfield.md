@@ -9,10 +9,6 @@ umbraco_id: 1569
 parent_id: 1561
 sort_order: 7
 aliases:
-  - "/em/emfield"
-  - "/em/emfield.html"
-  - "/physics/em/emfield/"
-  - "/study/em/emfield"
   - "/study/em/emfield.html"
 ---
 

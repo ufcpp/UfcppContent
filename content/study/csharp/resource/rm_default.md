@@ -9,10 +9,6 @@ umbraco_id: 1289
 parent_id: 1286
 sort_order: 4
 aliases:
-  - "/csharp/resource/rm_default/"
-  - "/csharp/rm_default"
-  - "/csharp/rm_default.html"
-  - "/study/csharp/rm_default"
   - "/study/csharp/rm_default.html"
 ---
 

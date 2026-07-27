@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1458
 parent_id: 1444
 sort_order: 1
-aliases:
-  - "/math/linear/"
+aliases: []
 ---
 
 # 線形代数

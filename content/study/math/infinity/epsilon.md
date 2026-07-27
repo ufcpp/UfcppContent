@@ -9,10 +9,6 @@ umbraco_id: 1503
 parent_id: 1500
 sort_order: 2
 aliases:
-  - "/infinity/epsilon"
-  - "/infinity/epsilon.html"
-  - "/math/infinity/epsilon/"
-  - "/study/infinity/epsilon"
   - "/study/infinity/epsilon.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1237
 parent_id: 1217
 sort_order: 9
 aliases:
-  - "/csharp/sp_params"
-  - "/csharp/sp_params.html"
-  - "/csharp/structured/sp_params/"
-  - "/study/csharp/sp_params"
   - "/study/csharp/sp_params.html"
 ---
 

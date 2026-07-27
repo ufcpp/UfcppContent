@@ -9,10 +9,6 @@ umbraco_id: 1162
 parent_id: 1161
 sort_order: 0
 aliases:
-  - "/computer/EssentialSoftware"
-  - "/computer/EssentialSoftware.html"
-  - "/computer/essential-software/essentialsoftware/"
-  - "/study/computer/EssentialSoftware"
   - "/study/computer/EssentialSoftware.html"
 ---
 

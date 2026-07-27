@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1939
 parent_id: 1217
 sort_order: 15
-aliases:
-  - "/csharp/structured/st_anonymoustype/"
+aliases: []
 ---
 
 # 名前のない複合型

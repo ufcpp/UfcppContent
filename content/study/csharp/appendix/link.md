@@ -9,10 +9,6 @@ umbraco_id: 1382
 parent_id: 1377
 sort_order: 4
 aliases:
-  - "/csharp/appendix/link/"
-  - "/csharp/link"
-  - "/csharp/link.html"
-  - "/study/csharp/link"
   - "/study/csharp/link.html"
 ---
 

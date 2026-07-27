@@ -9,10 +9,6 @@ umbraco_id: 1195
 parent_id: 1190
 sort_order: 3
 aliases:
-  - "/csharp/st_consoleio"
-  - "/csharp/st_consoleio.html"
-  - "/csharp/start/st_consoleio/"
-  - "/study/csharp/st_consoleio"
   - "/study/csharp/st_consoleio.html"
 ---
 

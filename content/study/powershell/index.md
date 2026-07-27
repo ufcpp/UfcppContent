@@ -9,10 +9,6 @@ umbraco_id: 1572
 parent_id: 1115
 sort_order: 3
 aliases:
-  - "/powershell/"
-  - "/powershell/index"
-  - "/powershell/index.html"
-  - "/study/powershell/index"
   - "/study/powershell/index.html"
 ---
 

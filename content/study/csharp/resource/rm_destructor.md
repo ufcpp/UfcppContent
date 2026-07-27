@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2173
 parent_id: 1286
 sort_order: 14
-aliases:
-  - "/csharp/resource/rm_destructor/"
+aliases: []
 ---
 
 # ファイナライザー

@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2231
 parent_id: 1174
 sort_order: 20
-aliases:
-  - "/csharp/cheatsheet/langversionoption/"
+aliases: []
 ---
 
 # 言語バージョンの指定

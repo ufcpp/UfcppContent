@@ -10,10 +10,6 @@ umbraco_id: 1202
 parent_id: 1190
 sort_order: 9
 aliases:
-  - "/csharp/st_string"
-  - "/csharp/st_string.html"
-  - "/csharp/start/st_string/"
-  - "/study/csharp/st_string"
   - "/study/csharp/st_string.html"
 ---
 

@@ -9,12 +9,7 @@ umbraco_id: 1432
 parent_id: 1426
 sort_order: 5
 aliases:
-  - "/dsl/dsl-1/dslconclusion/"
-  - "/dsl/dsl/dslconclusion"
-  - "/dsl/dslconclusion"
-  - "/dsl/dslconclusion.html"
   - "/study/dsl/dsl/dslconclusion"
-  - "/study/dsl/dslconclusion"
   - "/study/dsl/dslconclusion.html"
 ---
 

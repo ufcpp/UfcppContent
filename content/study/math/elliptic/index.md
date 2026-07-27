@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1511
 parent_id: 1444
 sort_order: 8
-aliases:
-  - "/math/elliptic/"
+aliases: []
 ---
 
 # 楕円関数

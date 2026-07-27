@@ -9,10 +9,6 @@ umbraco_id: 1313
 parent_id: 1312
 sort_order: 0
 aliases:
-  - "/csharp/dynamic/sp_reflection/"
-  - "/csharp/sp_reflection"
-  - "/csharp/sp_reflection.html"
-  - "/study/csharp/sp_reflection"
   - "/study/csharp/sp_reflection.html"
 ---
 

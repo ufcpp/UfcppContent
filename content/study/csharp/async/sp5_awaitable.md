@@ -11,10 +11,6 @@ umbraco_id: 1335
 parent_id: 1326
 sort_order: 8
 aliases:
-  - "/csharp/async/sp5_awaitable/"
-  - "/csharp/sp5_awaitable"
-  - "/csharp/sp5_awaitable.html"
-  - "/study/csharp/sp5_awaitable"
   - "/study/csharp/sp5_awaitable.html"
 ---
 

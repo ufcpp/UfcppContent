@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2246
 parent_id: 1298
 sort_order: 14
-aliases:
-  - "/csharp/data/dataranges/"
+aliases: []
 ---
 
 # インデックス/範囲処理

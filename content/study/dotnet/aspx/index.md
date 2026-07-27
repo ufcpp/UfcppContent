@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1414
 parent_id: 1384
 sort_order: 7
-aliases:
-  - "/dotnet/aspx/"
+aliases: []
 ---
 
 # ASP.NET

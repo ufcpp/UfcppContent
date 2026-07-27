@@ -9,10 +9,6 @@ umbraco_id: 1353
 parent_id: 1350
 sort_order: 2
 aliases:
-  - "/csharp/lib/lib_drawing/"
-  - "/csharp/lib_drawing"
-  - "/csharp/lib_drawing.html"
-  - "/study/csharp/lib_drawing"
   - "/study/csharp/lib_drawing.html"
 ---
 

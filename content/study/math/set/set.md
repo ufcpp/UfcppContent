@@ -9,10 +9,6 @@ umbraco_id: 1473
 parent_id: 1471
 sort_order: 1
 aliases:
-  - "/math/set/set/"
-  - "/set/set"
-  - "/set/set.html"
-  - "/study/set/set"
   - "/study/set/set.html"
 ---
 

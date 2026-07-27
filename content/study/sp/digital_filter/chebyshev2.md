@@ -9,10 +9,6 @@ umbraco_id: 1620
 parent_id: 1610
 sort_order: 9
 aliases:
-  - "/digital_filter/chebyshev2"
-  - "/digital_filter/chebyshev2.html"
-  - "/sp/digital_filter/chebyshev2/"
-  - "/study/digital_filter/chebyshev2"
   - "/study/digital_filter/chebyshev2.html"
 ---
 

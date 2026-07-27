@@ -10,10 +10,6 @@ umbraco_id: 1273
 parent_id: 1248
 sort_order: 19
 aliases:
-  - "/csharp/oop/sp2_generics/"
-  - "/csharp/sp2_generics"
-  - "/csharp/sp2_generics.html"
-  - "/study/csharp/sp2_generics"
   - "/study/csharp/sp2_generics.html"
 ---
 

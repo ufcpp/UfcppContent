@@ -9,10 +9,6 @@ umbraco_id: 1402
 parent_id: 1393
 sort_order: 8
 aliases:
-  - "/dotnet/wpf/wpf_template/"
-  - "/dotnet/wpf_template"
-  - "/dotnet/wpf_template.html"
-  - "/study/dotnet/wpf_template"
   - "/study/dotnet/wpf_template.html"
 ---
 

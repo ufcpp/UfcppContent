@@ -9,10 +9,6 @@ umbraco_id: 1425
 parent_id: 1424
 sort_order: 0
 aliases:
-  - "/dsl/dsl/mdd/"
-  - "/dsl/mdd"
-  - "/dsl/mdd.html"
-  - "/study/dsl/mdd"
   - "/study/dsl/mdd.html"
 ---
 

@@ -10,10 +10,6 @@ umbraco_id: 1315
 parent_id: 1312
 sort_order: 2
 aliases:
-  - "/csharp/dynamic/sp3_expression/"
-  - "/csharp/sp3_expression"
-  - "/csharp/sp3_expression.html"
-  - "/study/csharp/sp3_expression"
   - "/study/csharp/sp3_expression.html"
 ---
 

@@ -9,9 +9,6 @@ umbraco_id: 2176
 parent_id: 1940
 sort_order: 3
 aliases:
-  - "/csharp/datatype/patternmatching"
-  - "/csharp/datatype/patternmatching/"
-  - "/csharp/datatype/patterns/"
   - "/study/csharp/datatype/patternmatching"
   - "/study/csharp/datatype/patternmatching/"
 ---

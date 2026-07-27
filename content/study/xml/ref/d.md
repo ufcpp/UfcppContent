@@ -9,11 +9,7 @@ umbraco_id: 1670
 parent_id: 1661
 sort_order: 8
 aliases:
-  - "/ref/d"
-  - "/ref/d.html"
-  - "/study/ref/d"
   - "/study/ref/d.html"
-  - "/xml/ref/d/"
 ---
 
 # 微分のd

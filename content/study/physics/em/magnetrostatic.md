@@ -9,10 +9,6 @@ umbraco_id: 1566
 parent_id: 1561
 sort_order: 4
 aliases:
-  - "/em/magnetrostatic"
-  - "/em/magnetrostatic.html"
-  - "/physics/em/magnetrostatic/"
-  - "/study/em/magnetrostatic"
   - "/study/em/magnetrostatic.html"
 ---
 

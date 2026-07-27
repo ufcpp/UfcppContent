@@ -9,10 +9,6 @@ umbraco_id: 1520
 parent_id: 1515
 sort_order: 4
 aliases:
-  - "/manifold/intrinsic"
-  - "/manifold/intrinsic.html"
-  - "/math/manifold/intrinsic/"
-  - "/study/manifold/intrinsic"
   - "/study/manifold/intrinsic.html"
 ---
 

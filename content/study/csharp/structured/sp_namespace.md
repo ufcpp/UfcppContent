@@ -11,10 +11,6 @@ umbraco_id: 1244
 parent_id: 1217
 sort_order: 16
 aliases:
-  - "/csharp/sp_namespace"
-  - "/csharp/sp_namespace.html"
-  - "/csharp/structured/sp_namespace/"
-  - "/study/csharp/sp_namespace"
   - "/study/csharp/sp_namespace.html"
 ---
 

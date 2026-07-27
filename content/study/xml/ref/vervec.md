@@ -9,11 +9,7 @@ umbraco_id: 1698
 parent_id: 1661
 sort_order: 36
 aliases:
-  - "/ref/vervec"
-  - "/ref/vervec.html"
-  - "/study/ref/vervec"
   - "/study/ref/vervec.html"
-  - "/xml/ref/vervec/"
 ---
 
 # 縦ベクトル

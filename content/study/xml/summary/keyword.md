@@ -9,11 +9,7 @@ umbraco_id: 1655
 parent_id: 1650
 sort_order: 4
 aliases:
-  - "/study/testxsl/keyword"
   - "/study/testxsl/keyword.html"
-  - "/testxsl/keyword"
-  - "/testxsl/keyword.html"
-  - "/xml/summary/keyword/"
 ---
 
 # キーワードの参照

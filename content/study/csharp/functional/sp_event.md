@@ -9,10 +9,6 @@ umbraco_id: 1281
 parent_id: 1275
 sort_order: 7
 aliases:
-  - "/csharp/functional/sp_event/"
-  - "/csharp/sp_event"
-  - "/csharp/sp_event.html"
-  - "/study/csharp/sp_event"
   - "/study/csharp/sp_event.html"
 ---
 

@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2462
 parent_id: 1190
 sort_order: 20
-aliases:
-  - "/csharp/start/definiteassignment/"
+aliases: []
 ---
 
 # \[雑記\] 明確な代入ルール

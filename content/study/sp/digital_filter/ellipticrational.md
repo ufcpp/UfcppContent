@@ -9,10 +9,6 @@ umbraco_id: 1622
 parent_id: 1610
 sort_order: 11
 aliases:
-  - "/digital_filter/ellipticrational"
-  - "/digital_filter/ellipticrational.html"
-  - "/sp/digital_filter/ellipticrational/"
-  - "/study/digital_filter/ellipticrational"
   - "/study/digital_filter/ellipticrational.html"
 ---
 

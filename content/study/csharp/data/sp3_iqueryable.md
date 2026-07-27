@@ -10,10 +10,6 @@ umbraco_id: 1310
 parent_id: 1298
 sort_order: 12
 aliases:
-  - "/csharp/data/sp3_iqueryable/"
-  - "/csharp/sp3_iqueryable"
-  - "/csharp/sp3_iqueryable.html"
-  - "/study/csharp/sp3_iqueryable"
   - "/study/csharp/sp3_iqueryable.html"
 ---
 

@@ -10,10 +10,6 @@ umbraco_id: 1336
 parent_id: 1326
 sort_order: 9
 aliases:
-  - "/csharp/async/misc_continuation/"
-  - "/csharp/misc_continuation"
-  - "/csharp/misc_continuation.html"
-  - "/study/csharp/misc_continuation"
   - "/study/csharp/misc_continuation.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1508
 parent_id: 1500
 sort_order: 7
 aliases:
-  - "/infinity/float"
-  - "/infinity/float.html"
-  - "/math/infinity/float/"
-  - "/study/infinity/float"
   - "/study/infinity/float.html"
 ---
 

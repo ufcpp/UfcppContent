@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2009
 parent_id: 1940
 sort_order: 4
-aliases:
-  - "/csharp/datatype/declarationexpressions/"
+aliases: []
 ---
 
 # 特殊な変数宣言

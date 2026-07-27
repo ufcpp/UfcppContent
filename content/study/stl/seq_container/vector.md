@@ -9,10 +9,6 @@ umbraco_id: 1631
 parent_id: 1630
 sort_order: 0
 aliases:
-  - "/stl/seq_container/vector/"
-  - "/stl/vector"
-  - "/stl/vector.html"
-  - "/study/stl/vector"
   - "/study/stl/vector.html"
 ---
 

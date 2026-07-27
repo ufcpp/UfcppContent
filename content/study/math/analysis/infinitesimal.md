@@ -9,10 +9,6 @@ umbraco_id: 1468
 parent_id: 1464
 sort_order: 3
 aliases:
-  - "/analysis/infinitesimal"
-  - "/analysis/infinitesimal.html"
-  - "/math/analysis/infinitesimal/"
-  - "/study/analysis/infinitesimal"
   - "/study/analysis/infinitesimal.html"
 ---
 

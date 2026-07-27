@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1174
 parent_id: 1169
 sort_order: 1
-aliases:
-  - "/csharp/cheatsheet/"
+aliases: []
 ---
 
 # C# の機能一覧（索引的なもの）

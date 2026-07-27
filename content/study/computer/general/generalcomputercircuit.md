@@ -9,10 +9,6 @@ umbraco_id: 1159
 parent_id: 1156
 sort_order: 2
 aliases:
-  - "/computer/GeneralComputerCircuit"
-  - "/computer/GeneralComputerCircuit.html"
-  - "/computer/general/generalcomputercircuit/"
-  - "/study/computer/GeneralComputerCircuit"
   - "/study/computer/GeneralComputerCircuit.html"
 ---
 

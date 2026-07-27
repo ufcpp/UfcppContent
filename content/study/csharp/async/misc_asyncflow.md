@@ -9,10 +9,6 @@ umbraco_id: 1333
 parent_id: 1326
 sort_order: 6
 aliases:
-  - "/csharp/async/misc_asyncflow/"
-  - "/csharp/misc_asyncflow"
-  - "/csharp/misc_asyncflow.html"
-  - "/study/csharp/misc_asyncflow"
   - "/study/csharp/misc_asyncflow.html"
 ---
 

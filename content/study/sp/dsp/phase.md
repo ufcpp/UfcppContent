@@ -9,10 +9,6 @@ umbraco_id: 1607
 parent_id: 1599
 sort_order: 7
 aliases:
-  - "/dsp/phase"
-  - "/dsp/phase.html"
-  - "/sp/dsp/phase/"
-  - "/study/dsp/phase"
   - "/study/dsp/phase.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1702
 parent_id: 1377
 sort_order: 6
 aliases:
-  - "/csharp/appendix/exercise/"
-  - "/csharp/exercise"
-  - "/csharp/exercise.html"
-  - "/study/csharp/exercise"
   - "/study/csharp/exercise.html"
 ---
 

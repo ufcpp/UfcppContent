@@ -9,10 +9,6 @@ umbraco_id: 1591
 parent_id: 1588
 sort_order: 2
 aliases:
-  - "/powershell/cmd_object"
-  - "/powershell/cmd_object.html"
-  - "/powershell/cmdlet/cmd_object/"
-  - "/study/powershell/cmd_object"
   - "/study/powershell/cmd_object.html"
 ---
 

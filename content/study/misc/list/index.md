@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1534
 parent_id: 1528
 sort_order: 1
-aliases:
-  - "/misc/list/"
+aliases: []
 ---
 
 # 未分類

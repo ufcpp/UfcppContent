@@ -9,10 +9,6 @@ umbraco_id: 1518
 parent_id: 1515
 sort_order: 2
 aliases:
-  - "/manifold/tangent"
-  - "/manifold/tangent.html"
-  - "/math/manifold/tangent/"
-  - "/study/manifold/tangent"
   - "/study/manifold/tangent.html"
 ---
 

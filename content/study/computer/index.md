@@ -9,10 +9,6 @@ umbraco_id: 1144
 parent_id: 1115
 sort_order: 4
 aliases:
-  - "/computer/"
-  - "/computer/index"
-  - "/computer/index.html"
-  - "/study/computer/index"
   - "/study/computer/index.html"
 ---
 

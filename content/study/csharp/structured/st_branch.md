@@ -9,10 +9,6 @@ umbraco_id: 1220
 parent_id: 1217
 sort_order: 2
 aliases:
-  - "/csharp/st_branch"
-  - "/csharp/st_branch.html"
-  - "/csharp/structured/st_branch/"
-  - "/study/csharp/st_branch"
   - "/study/csharp/st_branch.html"
 ---
 

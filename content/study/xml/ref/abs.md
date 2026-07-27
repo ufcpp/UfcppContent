@@ -9,11 +9,7 @@ umbraco_id: 1662
 parent_id: 1661
 sort_order: 0
 aliases:
-  - "/ref/abs"
-  - "/ref/abs.html"
-  - "/study/ref/abs"
   - "/study/ref/abs.html"
-  - "/xml/ref/abs/"
 ---
 
 # 絶対値

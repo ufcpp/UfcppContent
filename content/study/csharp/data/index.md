@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1298
 parent_id: 1169
 sort_order: 9
-aliases:
-  - "/csharp/data/"
+aliases: []
 ---
 
 # データ列処理

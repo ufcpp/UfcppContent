@@ -9,11 +9,6 @@ umbraco_id: 1453
 parent_id: 1445
 sort_order: 7
 aliases:
-  - "/hs/complex"
-  - "/hs/complex.html"
-  - "/math/hs/complex"
-  - "/math/hs/complex-s_complex/"
-  - "/study/hs/complex"
   - "/study/hs/complex.html"
   - "/study/math/hs/complex"
 ---

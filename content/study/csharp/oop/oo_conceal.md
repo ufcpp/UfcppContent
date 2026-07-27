@@ -9,10 +9,6 @@ umbraco_id: 1254
 parent_id: 1248
 sort_order: 3
 aliases:
-  - "/csharp/oo_conceal"
-  - "/csharp/oo_conceal.html"
-  - "/csharp/oop/oo_conceal/"
-  - "/study/csharp/oo_conceal"
   - "/study/csharp/oo_conceal.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1482
 parent_id: 1471
 sort_order: 10
 aliases:
-  - "/math/set/topology/"
-  - "/set/topology"
-  - "/set/topology.html"
-  - "/study/set/topology"
   - "/study/set/topology.html"
 ---
 

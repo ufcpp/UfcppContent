@@ -9,10 +9,6 @@ umbraco_id: 1452
 parent_id: 1445
 sort_order: 6
 aliases:
-  - "/hs/mc"
-  - "/hs/mc.html"
-  - "/math/hs/mc/"
-  - "/study/hs/mc"
   - "/study/hs/mc.html"
 ---
 

@@ -10,8 +10,7 @@ tags:
 umbraco_id: 1773
 parent_id: 1286
 sort_order: 1
-aliases:
-  - "/csharp/resource/rm_struct/"
+aliases: []
 ---
 
 # 構造体

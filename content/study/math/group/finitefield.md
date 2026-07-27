@@ -9,10 +9,6 @@ umbraco_id: 1489
 parent_id: 1483
 sort_order: 5
 aliases:
-  - "/group/finitefield"
-  - "/group/finitefield.html"
-  - "/math/group/finitefield/"
-  - "/study/group/finitefield"
   - "/study/group/finitefield.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1462
 parent_id: 1458
 sort_order: 3
 aliases:
-  - "/linear/eigen"
-  - "/linear/eigen.html"
-  - "/math/linear/eigen/"
-  - "/study/linear/eigen"
   - "/study/linear/eigen.html"
 ---
 

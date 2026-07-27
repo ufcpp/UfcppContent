@@ -9,10 +9,6 @@ umbraco_id: 1200
 parent_id: 1190
 sort_order: 6
 aliases:
-  - "/csharp/misc_unicode"
-  - "/csharp/misc_unicode.html"
-  - "/csharp/start/misc_unicode/"
-  - "/study/csharp/misc_unicode"
   - "/study/csharp/misc_unicode.html"
 ---
 

@@ -9,11 +9,7 @@ umbraco_id: 1646
 parent_id: 1645
 sort_order: 0
 aliases:
-  - "/study/testxsl/about"
   - "/study/testxsl/about.html"
-  - "/testxsl/about"
-  - "/testxsl/about.html"
-  - "/xml/xslsummary/about/"
 ---
 
 # 概要

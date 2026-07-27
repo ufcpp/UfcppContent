@@ -9,11 +9,6 @@ umbraco_id: 1507
 parent_id: 1500
 sort_order: 6
 aliases:
-  - "/infinity/distribution"
-  - "/infinity/distribution.html"
-  - "/math/infinity/distribution"
-  - "/math/infinity/distribution-e_distribution/"
-  - "/study/infinity/distribution"
   - "/study/infinity/distribution.html"
   - "/study/math/infinity/distribution"
 ---

@@ -9,10 +9,6 @@ umbraco_id: 1168
 parent_id: 1166
 sort_order: 1
 aliases:
-  - "/computer/logic"
-  - "/computer/logic.html"
-  - "/computer/old/logic/"
-  - "/study/computer/logic"
   - "/study/computer/logic.html"
 ---
 

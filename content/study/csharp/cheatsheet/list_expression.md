@@ -9,10 +9,6 @@ umbraco_id: 1175
 parent_id: 1174
 sort_order: 0
 aliases:
-  - "/csharp/cheatsheet/list_expression/"
-  - "/csharp/list_expression"
-  - "/csharp/list_expression.html"
-  - "/study/csharp/list_expression"
   - "/study/csharp/list_expression.html"
 ---
 

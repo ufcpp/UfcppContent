@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1573
 parent_id: 1572
 sort_order: 0
-aliases:
-  - "/powershell/intro/"
+aliases: []
 ---
 
 # 前置き

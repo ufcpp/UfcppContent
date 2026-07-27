@@ -9,10 +9,6 @@ umbraco_id: 1345
 parent_id: 1344
 sort_order: 0
 aliases:
-  - "/csharp/FwInfrastructure"
-  - "/csharp/FwInfrastructure.html"
-  - "/csharp/framework/fwinfrastructure/"
-  - "/study/csharp/FwInfrastructure"
   - "/study/csharp/FwInfrastructure.html"
 ---
 

@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1500
 parent_id: 1444
 sort_order: 6
-aliases:
-  - "/math/infinity/"
+aliases: []
 ---
 
 # ∞

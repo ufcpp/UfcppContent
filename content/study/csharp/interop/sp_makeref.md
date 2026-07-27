@@ -9,10 +9,6 @@ umbraco_id: 1323
 parent_id: 1321
 sort_order: 1
 aliases:
-  - "/csharp/interop/sp_makeref/"
-  - "/csharp/sp_makeref"
-  - "/csharp/sp_makeref.html"
-  - "/study/csharp/sp_makeref"
   - "/study/csharp/sp_makeref.html"
 ---
 

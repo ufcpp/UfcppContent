@@ -9,10 +9,6 @@ umbraco_id: 1198
 parent_id: 1190
 sort_order: 4
 aliases:
-  - "/csharp/st_variable"
-  - "/csharp/st_variable.html"
-  - "/csharp/start/st_variable/"
-  - "/study/csharp/st_variable"
   - "/study/csharp/st_variable.html"
 ---
 

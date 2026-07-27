@@ -9,10 +9,6 @@ umbraco_id: 1595
 parent_id: 1594
 sort_order: 0
 aliases:
-  - "/powershell/misc/psdrive/"
-  - "/powershell/psdrive"
-  - "/powershell/psdrive.html"
-  - "/study/powershell/psdrive"
   - "/study/powershell/psdrive.html"
 ---
 

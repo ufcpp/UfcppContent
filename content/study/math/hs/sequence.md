@@ -9,10 +9,6 @@ umbraco_id: 1456
 parent_id: 1445
 sort_order: 10
 aliases:
-  - "/hs/sequence"
-  - "/hs/sequence.html"
-  - "/math/hs/sequence/"
-  - "/study/hs/sequence"
   - "/study/hs/sequence.html"
 ---
 

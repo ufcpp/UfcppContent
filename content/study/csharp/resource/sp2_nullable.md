@@ -10,10 +10,6 @@ umbraco_id: 1293
 parent_id: 1286
 sort_order: 10
 aliases:
-  - "/csharp/resource/sp2_nullable/"
-  - "/csharp/sp2_nullable"
-  - "/csharp/sp2_nullable.html"
-  - "/study/csharp/sp2_nullable"
   - "/study/csharp/sp2_nullable.html"
 ---
 

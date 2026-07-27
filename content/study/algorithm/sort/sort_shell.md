@@ -9,10 +9,6 @@ umbraco_id: 1122
 parent_id: 1117
 sort_order: 4
 aliases:
-  - "/algorithm/sort/sort_shell/"
-  - "/algorithm/sort_shell"
-  - "/algorithm/sort_shell.html"
-  - "/study/algorithm/sort_shell"
   - "/study/algorithm/sort_shell.html"
 ---
 

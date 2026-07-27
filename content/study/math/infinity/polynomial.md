@@ -9,10 +9,6 @@ umbraco_id: 1505
 parent_id: 1500
 sort_order: 4
 aliases:
-  - "/infinity/polynomial"
-  - "/infinity/polynomial.html"
-  - "/math/infinity/polynomial/"
-  - "/study/infinity/polynomial"
   - "/study/infinity/polynomial.html"
 ---
 

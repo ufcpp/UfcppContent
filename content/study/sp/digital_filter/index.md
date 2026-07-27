@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1610
 parent_id: 1598
 sort_order: 1
-aliases:
-  - "/sp/digital_filter/"
+aliases: []
 ---
 
 # ディジタルフィルタ

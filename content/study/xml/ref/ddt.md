@@ -9,11 +9,7 @@ umbraco_id: 1671
 parent_id: 1661
 sort_order: 9
 aliases:
-  - "/ref/ddt"
-  - "/ref/ddt.html"
-  - "/study/ref/ddt"
   - "/study/ref/ddt.html"
-  - "/xml/ref/ddt/"
 ---
 
 # 時間微分

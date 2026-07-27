@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1627
 parent_id: 1626
 sort_order: 0
-aliases:
-  - "/stl/getstarted/"
+aliases: []
 ---
 
 # はじめに

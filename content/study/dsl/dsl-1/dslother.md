@@ -9,12 +9,7 @@ umbraco_id: 1431
 parent_id: 1426
 sort_order: 4
 aliases:
-  - "/dsl/dsl-1/dslother/"
-  - "/dsl/dsl/dslother"
-  - "/dsl/dslother"
-  - "/dsl/dslother.html"
   - "/study/dsl/dsl/dslother"
-  - "/study/dsl/dslother"
   - "/study/dsl/dslother.html"
 ---
 

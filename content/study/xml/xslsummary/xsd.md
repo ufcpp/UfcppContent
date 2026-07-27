@@ -9,11 +9,7 @@ umbraco_id: 1649
 parent_id: 1645
 sort_order: 3
 aliases:
-  - "/study/testxsl/xsd"
   - "/study/testxsl/xsd.html"
-  - "/testxsl/xsd"
-  - "/testxsl/xsd.html"
-  - "/xml/xslsummary/xsd/"
 ---
 
 # XSD

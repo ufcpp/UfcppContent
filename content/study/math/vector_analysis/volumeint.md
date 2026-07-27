@@ -9,11 +9,7 @@ umbraco_id: 1495
 parent_id: 1491
 sort_order: 3
 aliases:
-  - "/math/vector_analysis/volumeint/"
-  - "/study/vector_analysis/volumeint"
   - "/study/vector_analysis/volumeint.html"
-  - "/vector_analysis/volumeint"
-  - "/vector_analysis/volumeint.html"
 ---
 
 # 体積積分

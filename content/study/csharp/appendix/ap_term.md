@@ -9,10 +9,6 @@ umbraco_id: 1378
 parent_id: 1377
 sort_order: 0
 aliases:
-  - "/csharp/ap_term"
-  - "/csharp/ap_term.html"
-  - "/csharp/appendix/ap_term/"
-  - "/study/csharp/ap_term"
   - "/study/csharp/ap_term.html"
 ---
 

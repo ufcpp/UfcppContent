@@ -9,10 +9,6 @@ umbraco_id: 1375
 parent_id: 1372
 sort_order: 2
 aliases:
-  - "/csharp/cmp_type"
-  - "/csharp/cmp_type.html"
-  - "/csharp/cs4j/cmp_type/"
-  - "/study/csharp/cmp_type"
   - "/study/csharp/cmp_type.html"
 ---
 

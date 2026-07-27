@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1491
 parent_id: 1444
 sort_order: 5
-aliases:
-  - "/math/vector_analysis/"
+aliases: []
 ---
 
 # ベクトル解析

@@ -9,10 +9,6 @@ umbraco_id: 1559
 parent_id: 1554
 sort_order: 4
 aliases:
-  - "/dynamics/hamilton"
-  - "/dynamics/hamilton.html"
-  - "/physics/dynamics/hamilton/"
-  - "/study/dynamics/hamilton"
   - "/study/dynamics/hamilton.html"
 ---
 

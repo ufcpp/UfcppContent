@@ -9,11 +9,7 @@ umbraco_id: 1668
 parent_id: 1661
 sort_order: 6
 aliases:
-  - "/ref/branch"
-  - "/ref/branch.html"
-  - "/study/ref/branch"
   - "/study/ref/branch.html"
-  - "/xml/ref/branch/"
 ---
 
 # 条件分岐

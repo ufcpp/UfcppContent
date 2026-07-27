@@ -9,10 +9,6 @@ umbraco_id: 1531
 parent_id: 1529
 sort_order: 1
 aliases:
-  - "/misc/instructive"
-  - "/misc/instructive.html"
-  - "/misc/management/instructive/"
-  - "/study/misc/instructive"
   - "/study/misc/instructive.html"
 ---
 

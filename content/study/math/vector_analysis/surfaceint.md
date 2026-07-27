@@ -9,11 +9,7 @@ umbraco_id: 1494
 parent_id: 1491
 sort_order: 2
 aliases:
-  - "/math/vector_analysis/surfaceint/"
-  - "/study/vector_analysis/surfaceint"
   - "/study/vector_analysis/surfaceint.html"
-  - "/vector_analysis/surfaceint"
-  - "/vector_analysis/surfaceint.html"
 ---
 
 # 面積分

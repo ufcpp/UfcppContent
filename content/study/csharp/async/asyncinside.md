@@ -9,10 +9,6 @@ umbraco_id: 1329
 parent_id: 1326
 sort_order: 2
 aliases:
-  - "/csharp/AsyncInside"
-  - "/csharp/AsyncInside.html"
-  - "/csharp/async/asyncinside/"
-  - "/study/csharp/AsyncInside"
   - "/study/csharp/AsyncInside.html"
 ---
 

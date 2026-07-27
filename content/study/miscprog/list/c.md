@@ -9,10 +9,6 @@ umbraco_id: 1543
 parent_id: 1542
 sort_order: 0
 aliases:
-  - "/miscprog/c"
-  - "/miscprog/c.html"
-  - "/miscprog/list/c/"
-  - "/study/miscprog/c"
   - "/study/miscprog/c.html"
 ---
 

@@ -9,11 +9,7 @@ umbraco_id: 1664
 parent_id: 1661
 sort_order: 2
 aliases:
-  - "/ref/arg"
-  - "/ref/arg.html"
-  - "/study/ref/arg"
   - "/study/ref/arg.html"
-  - "/xml/ref/arg/"
 ---
 
 # 偏角

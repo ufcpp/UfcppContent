@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1929
 parent_id: 1275
 sort_order: 4
-aliases:
-  - "/csharp/functional/fun_localfunctions/"
+aliases: []
 ---
 
 # ローカル関数と匿名関数

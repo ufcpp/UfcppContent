@@ -9,10 +9,6 @@ umbraco_id: 1311
 parent_id: 1298
 sort_order: 13
 aliases:
-  - "/csharp/data/misc_immutabledata/"
-  - "/csharp/misc_immutabledata"
-  - "/csharp/misc_immutabledata.html"
-  - "/study/csharp/misc_immutabledata"
   - "/study/csharp/misc_immutabledata.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1545
 parent_id: 1542
 sort_order: 2
 aliases:
-  - "/miscprog/list/training/"
-  - "/miscprog/training"
-  - "/miscprog/training.html"
-  - "/study/miscprog/training"
   - "/study/miscprog/training.html"
 ---
 

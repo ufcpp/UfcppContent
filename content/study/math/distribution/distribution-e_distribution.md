@@ -9,11 +9,6 @@ umbraco_id: 1510
 parent_id: 1509
 sort_order: 0
 aliases:
-  - "/distribution/distribution"
-  - "/distribution/distribution.html"
-  - "/math/distribution/distribution-e_distribution/"
-  - "/math/distribution/e_distribution"
-  - "/study/distribution/distribution"
   - "/study/distribution/distribution.html"
   - "/study/math/distribution/e_distribution"
 ---

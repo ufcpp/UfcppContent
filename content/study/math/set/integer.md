@@ -9,10 +9,6 @@ umbraco_id: 1476
 parent_id: 1471
 sort_order: 4
 aliases:
-  - "/math/set/integer/"
-  - "/set/integer"
-  - "/set/integer.html"
-  - "/study/set/integer"
   - "/study/set/integer.html"
 ---
 

@@ -9,7 +9,6 @@ umbraco_id: 1099
 parent_id: -1
 sort_order: 0
 aliases:
-  - "/index"
   - "/index.html"
 ---
 

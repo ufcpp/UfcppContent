@@ -9,10 +9,6 @@ umbraco_id: 1535
 parent_id: 1534
 sort_order: 0
 aliases:
-  - "/misc/latex"
-  - "/misc/latex.html"
-  - "/misc/list/latex/"
-  - "/study/misc/latex"
   - "/study/misc/latex.html"
 ---
 

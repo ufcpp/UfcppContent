@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1645
 parent_id: 1644
 sort_order: 0
-aliases:
-  - "/xml/xslsummary/"
+aliases: []
 ---
 
 # XSL概要

@@ -9,10 +9,6 @@ umbraco_id: 1259
 parent_id: 1248
 sort_order: 7
 aliases:
-  - "/csharp/oo_operator"
-  - "/csharp/oo_operator.html"
-  - "/csharp/oop/oo_operator/"
-  - "/study/csharp/oo_operator"
   - "/study/csharp/oo_operator.html"
 ---
 

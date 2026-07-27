@@ -9,10 +9,6 @@ umbraco_id: 1381
 parent_id: 1377
 sort_order: 3
 aliases:
-  - "/csharp/appendix/keywords/"
-  - "/csharp/keywords"
-  - "/csharp/keywords.html"
-  - "/study/csharp/keywords"
   - "/study/csharp/keywords.html"
 ---
 

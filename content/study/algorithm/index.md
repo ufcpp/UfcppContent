@@ -9,10 +9,6 @@ umbraco_id: 1116
 parent_id: 1115
 sort_order: 5
 aliases:
-  - "/algorithm/"
-  - "/algorithm/index"
-  - "/algorithm/index.html"
-  - "/study/algorithm/index"
   - "/study/algorithm/index.html"
 ---
 

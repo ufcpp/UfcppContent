@@ -9,11 +9,7 @@ umbraco_id: 1672
 parent_id: 1661
 sort_order: 10
 aliases:
-  - "/ref/differential"
-  - "/ref/differential.html"
-  - "/study/ref/differential"
   - "/study/ref/differential.html"
-  - "/xml/ref/differential/"
 ---
 
 # 微分

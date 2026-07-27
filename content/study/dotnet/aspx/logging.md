@@ -9,10 +9,6 @@ umbraco_id: 1417
 parent_id: 1414
 sort_order: 2
 aliases:
-  - "/aspx/logging"
-  - "/aspx/logging.html"
-  - "/dotnet/aspx/logging/"
-  - "/study/aspx/logging"
   - "/study/aspx/logging.html"
 ---
 

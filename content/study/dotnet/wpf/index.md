@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1393
 parent_id: 1384
 sort_order: 2
-aliases:
-  - "/dotnet/wpf/"
+aliases: []
 ---
 
 # Windows Presentation Foundation

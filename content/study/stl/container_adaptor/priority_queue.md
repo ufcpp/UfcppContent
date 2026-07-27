@@ -9,10 +9,6 @@ umbraco_id: 1637
 parent_id: 1634
 sort_order: 2
 aliases:
-  - "/stl/container_adaptor/priority_queue/"
-  - "/stl/priority_queue"
-  - "/stl/priority_queue.html"
-  - "/study/stl/priority_queue"
   - "/study/stl/priority_queue.html"
 ---
 

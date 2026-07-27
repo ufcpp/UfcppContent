@@ -9,10 +9,6 @@ umbraco_id: 1365
 parent_id: 1359
 sort_order: 5
 aliases:
-  - "/csharp/sample/sp3_expressionsample/"
-  - "/csharp/sp3_expressionsample"
-  - "/csharp/sp3_expressionsample.html"
-  - "/study/csharp/sp3_expressionsample"
   - "/study/csharp/sp3_expressionsample.html"
 ---
 

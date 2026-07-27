@@ -9,10 +9,6 @@ umbraco_id: 1576
 parent_id: 1573
 sort_order: 2
 aliases:
-  - "/powershell/intro/prepare/"
-  - "/powershell/prepare"
-  - "/powershell/prepare.html"
-  - "/study/powershell/prepare"
   - "/study/powershell/prepare.html"
 ---
 

@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1377
 parent_id: 1169
 sort_order: 20
-aliases:
-  - "/csharp/appendix/"
+aliases: []
 ---
 
 # 付録

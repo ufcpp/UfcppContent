@@ -9,8 +9,6 @@ umbraco_id: 1589
 parent_id: 1588
 sort_order: 0
 aliases:
-  - "/powershell/cmdlet.html"
-  - "/powershell/cmdlet/cmdlet/"
   - "/study/powershell/cmdlet.html"
 ---
 

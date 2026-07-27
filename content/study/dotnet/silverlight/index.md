@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1411
 parent_id: 1384
 sort_order: 6
-aliases:
-  - "/dotnet/silverlight/"
+aliases: []
 ---
 
 # Silverlight

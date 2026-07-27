@@ -9,9 +9,6 @@ umbraco_id: 1944
 parent_id: 1940
 sort_order: 1
 aliases:
-  - "/csharp/data/deconstruction"
-  - "/csharp/data/deconstruction/"
-  - "/csharp/datatype/deconstruction/"
   - "/study/csharp/data/deconstruction"
   - "/study/csharp/data/deconstruction/"
 ---

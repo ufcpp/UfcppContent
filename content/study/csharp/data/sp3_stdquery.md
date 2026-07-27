@@ -10,10 +10,6 @@ umbraco_id: 1304
 parent_id: 1298
 sort_order: 5
 aliases:
-  - "/csharp/data/sp3_stdquery/"
-  - "/csharp/sp3_stdquery"
-  - "/csharp/sp3_stdquery.html"
-  - "/study/csharp/sp3_stdquery"
   - "/study/csharp/sp3_stdquery.html"
 ---
 

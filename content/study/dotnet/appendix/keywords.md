@@ -9,10 +9,6 @@ umbraco_id: 1410
 parent_id: 1408
 sort_order: 1
 aliases:
-  - "/dotnet/appendix/keywords/"
-  - "/dotnet/keywords"
-  - "/dotnet/keywords.html"
-  - "/study/dotnet/keywords"
   - "/study/dotnet/keywords.html"
 ---
 

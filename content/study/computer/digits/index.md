@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1147
 parent_id: 1144
 sort_order: 1
-aliases:
-  - "/computer/digits/"
+aliases: []
 ---
 
 # 数字の表し方

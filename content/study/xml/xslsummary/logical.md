@@ -9,11 +9,7 @@ umbraco_id: 1647
 parent_id: 1645
 sort_order: 1
 aliases:
-  - "/study/testxsl/logical"
   - "/study/testxsl/logical.html"
-  - "/testxsl/logical"
-  - "/testxsl/logical.html"
-  - "/xml/xslsummary/logical/"
 ---
 
 # 論理マークアップとデザインの変更

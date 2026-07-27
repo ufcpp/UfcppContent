@@ -9,10 +9,6 @@ umbraco_id: 1164
 parent_id: 1161
 sort_order: 2
 aliases:
-  - "/computer/MemoryManagement"
-  - "/computer/MemoryManagement.html"
-  - "/computer/essential-software/memorymanagement/"
-  - "/study/computer/MemoryManagement"
   - "/study/computer/MemoryManagement.html"
 ---
 

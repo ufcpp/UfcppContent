@@ -9,10 +9,6 @@ umbraco_id: 1324
 parent_id: 1321
 sort_order: 2
 aliases:
-  - "/csharp/interop/sp_pinvoke/"
-  - "/csharp/sp_pinvoke"
-  - "/csharp/sp_pinvoke.html"
-  - "/study/csharp/sp_pinvoke"
   - "/study/csharp/sp_pinvoke.html"
 ---
 

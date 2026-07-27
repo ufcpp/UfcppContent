@@ -9,10 +9,6 @@ umbraco_id: 1239
 parent_id: 1217
 sort_order: 11
 aliases:
-  - "/csharp/st_command"
-  - "/csharp/st_command.html"
-  - "/csharp/structured/st_command/"
-  - "/study/csharp/st_command"
   - "/study/csharp/st_command.html"
 ---
 

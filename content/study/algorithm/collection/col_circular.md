@@ -9,10 +9,6 @@ umbraco_id: 1131
 parent_id: 1128
 sort_order: 2
 aliases:
-  - "/algorithm/col_circular"
-  - "/algorithm/col_circular.html"
-  - "/algorithm/collection/col_circular/"
-  - "/study/algorithm/col_circular"
   - "/study/algorithm/col_circular.html"
 ---
 

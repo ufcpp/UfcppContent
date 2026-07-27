@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1638
 parent_id: 1626
 sort_order: 3
-aliases:
-  - "/stl/assosiative_container/"
+aliases: []
 ---
 
 # 連想コンテナ

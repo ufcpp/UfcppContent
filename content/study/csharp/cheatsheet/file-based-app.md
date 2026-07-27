@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2515
 parent_id: 1174
 sort_order: 24
-aliases:
-  - "/csharp/cheatsheet/file-based-app/"
+aliases: []
 ---
 
 # ファイル ベース実行

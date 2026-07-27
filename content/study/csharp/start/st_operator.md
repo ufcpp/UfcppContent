@@ -9,10 +9,6 @@ umbraco_id: 1203
 parent_id: 1190
 sort_order: 11
 aliases:
-  - "/csharp/st_operator"
-  - "/csharp/st_operator.html"
-  - "/csharp/start/st_operator/"
-  - "/study/csharp/st_operator"
   - "/study/csharp/st_operator.html"
 ---
 

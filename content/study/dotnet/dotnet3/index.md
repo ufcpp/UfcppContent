@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1391
 parent_id: 1384
 sort_order: 1
-aliases:
-  - "/dotnet/dotnet3/"
+aliases: []
 ---
 
 # .NET Framework 3.0 ～

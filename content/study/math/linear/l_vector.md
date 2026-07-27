@@ -9,10 +9,6 @@ umbraco_id: 1459
 parent_id: 1458
 sort_order: 0
 aliases:
-  - "/linear/vector"
-  - "/linear/vector.html"
-  - "/math/linear/l_vector/"
-  - "/study/linear/vector"
   - "/study/linear/vector.html"
 ---
 

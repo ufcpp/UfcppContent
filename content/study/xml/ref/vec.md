@@ -9,11 +9,7 @@ umbraco_id: 1697
 parent_id: 1661
 sort_order: 35
 aliases:
-  - "/ref/vec"
-  - "/ref/vec.html"
-  - "/study/ref/vec"
   - "/study/ref/vec.html"
-  - "/xml/ref/vec/"
 ---
 
 # ベクトル

@@ -9,10 +9,6 @@ umbraco_id: 1562
 parent_id: 1561
 sort_order: 0
 aliases:
-  - "/em/maxwell"
-  - "/em/maxwell.html"
-  - "/physics/em/maxwell/"
-  - "/study/em/maxwell"
   - "/study/em/maxwell.html"
 ---
 

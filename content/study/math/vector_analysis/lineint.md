@@ -9,11 +9,7 @@ umbraco_id: 1493
 parent_id: 1491
 sort_order: 1
 aliases:
-  - "/math/vector_analysis/lineint/"
-  - "/study/vector_analysis/lineint"
   - "/study/vector_analysis/lineint.html"
-  - "/vector_analysis/lineint"
-  - "/vector_analysis/lineint.html"
 ---
 
 # 線積分

@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2089
 parent_id: 1174
 sort_order: 11
-aliases:
-  - "/csharp/cheatsheet/ap_ver7_2/"
+aliases: []
 ---
 
 # C# 7.2 の新機能

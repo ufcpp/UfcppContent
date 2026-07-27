@@ -9,11 +9,7 @@ umbraco_id: 1696
 parent_id: 1661
 sort_order: 34
 aliases:
-  - "/ref/va"
-  - "/ref/va.html"
-  - "/study/ref/va"
   - "/study/ref/va.html"
-  - "/xml/ref/va/"
 ---
 
 # ベクトル解析用記号

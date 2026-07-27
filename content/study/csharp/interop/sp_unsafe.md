@@ -9,10 +9,6 @@ umbraco_id: 1322
 parent_id: 1321
 sort_order: 0
 aliases:
-  - "/csharp/interop/sp_unsafe/"
-  - "/csharp/sp_unsafe"
-  - "/csharp/sp_unsafe.html"
-  - "/study/csharp/sp_unsafe"
   - "/study/csharp/sp_unsafe.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1555
 parent_id: 1554
 sort_order: 0
 aliases:
-  - "/dynamics/variation"
-  - "/dynamics/variation.html"
-  - "/physics/dynamics/variation/"
-  - "/study/dynamics/variation"
   - "/study/dynamics/variation.html"
 ---
 

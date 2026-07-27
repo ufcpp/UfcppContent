@@ -9,10 +9,6 @@ umbraco_id: 1465
 parent_id: 1464
 sort_order: 0
 aliases:
-  - "/analysis/diff"
-  - "/analysis/diff.html"
-  - "/math/analysis/diff/"
-  - "/study/analysis/diff"
   - "/study/analysis/diff.html"
 ---
 

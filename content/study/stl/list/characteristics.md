@@ -9,10 +9,6 @@ umbraco_id: 1642
 parent_id: 1641
 sort_order: 0
 aliases:
-  - "/stl/characteristics"
-  - "/stl/characteristics.html"
-  - "/stl/list/characteristics/"
-  - "/study/stl/characteristics"
   - "/study/stl/characteristics.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1635
 parent_id: 1634
 sort_order: 0
 aliases:
-  - "/stl/container_adaptor/stack/"
-  - "/stl/stack"
-  - "/stl/stack.html"
-  - "/study/stl/stack"
   - "/study/stl/stack.html"
 ---
 

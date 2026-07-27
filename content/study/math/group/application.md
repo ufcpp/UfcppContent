@@ -9,10 +9,6 @@ umbraco_id: 1490
 parent_id: 1483
 sort_order: 6
 aliases:
-  - "/group/application"
-  - "/group/application.html"
-  - "/math/group/application/"
-  - "/study/group/application"
   - "/study/group/application.html"
 ---
 

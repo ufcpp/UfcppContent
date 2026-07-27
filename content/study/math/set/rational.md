@@ -9,10 +9,6 @@ umbraco_id: 1477
 parent_id: 1471
 sort_order: 5
 aliases:
-  - "/math/set/rational/"
-  - "/set/rational"
-  - "/set/rational.html"
-  - "/study/set/rational"
   - "/study/set/rational.html"
 ---
 

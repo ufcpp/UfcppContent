@@ -9,10 +9,6 @@ umbraco_id: 1544
 parent_id: 1542
 sort_order: 1
 aliases:
-  - "/miscprog/accessor"
-  - "/miscprog/accessor.html"
-  - "/miscprog/list/accessor/"
-  - "/study/miscprog/accessor"
   - "/study/miscprog/accessor.html"
 ---
 

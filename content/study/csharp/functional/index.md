@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1275
 parent_id: 1169
 sort_order: 8
-aliases:
-  - "/csharp/functional/"
+aliases: []
 ---
 
 # 関数指向

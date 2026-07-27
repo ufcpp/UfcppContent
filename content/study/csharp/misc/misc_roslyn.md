@@ -9,10 +9,6 @@ umbraco_id: 1343
 parent_id: 1338
 sort_order: 5
 aliases:
-  - "/csharp/misc/misc_roslyn/"
-  - "/csharp/misc_roslyn"
-  - "/csharp/misc_roslyn.html"
-  - "/study/csharp/misc_roslyn"
   - "/study/csharp/misc_roslyn.html"
 ---
 

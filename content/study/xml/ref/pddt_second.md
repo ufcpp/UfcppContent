@@ -9,11 +9,7 @@ umbraco_id: 1686
 parent_id: 1661
 sort_order: 24
 aliases:
-  - "/ref/pddt_second"
-  - "/ref/pddt_second.html"
-  - "/study/ref/pddt_second"
   - "/study/ref/pddt_second.html"
-  - "/xml/ref/pddt_second/"
 ---
 
 # 2階時間偏微分

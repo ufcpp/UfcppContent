@@ -9,10 +9,6 @@ umbraco_id: 1240
 parent_id: 1217
 sort_order: 12
 aliases:
-  - "/csharp/st_library"
-  - "/csharp/st_library.html"
-  - "/csharp/structured/st_library/"
-  - "/study/csharp/st_library"
   - "/study/csharp/st_library.html"
 ---
 

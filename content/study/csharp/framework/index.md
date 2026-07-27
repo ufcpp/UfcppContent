@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1344
 parent_id: 1169
 sort_order: 16
-aliases:
-  - "/csharp/framework/"
+aliases: []
 ---
 
 # フレームワーク / 実行環境

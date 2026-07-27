@@ -9,10 +9,6 @@ umbraco_id: 1366
 parent_id: 1359
 sort_order: 6
 aliases:
-  - "/csharp/sample/sm_genericop/"
-  - "/csharp/sm_genericop"
-  - "/csharp/sm_genericop.html"
-  - "/study/csharp/sm_genericop"
   - "/study/csharp/sm_genericop.html"
 ---
 

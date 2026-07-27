@@ -9,10 +9,6 @@ umbraco_id: 1504
 parent_id: 1500
 sort_order: 3
 aliases:
-  - "/infinity/riemann"
-  - "/infinity/riemann.html"
-  - "/math/infinity/riemann/"
-  - "/study/infinity/riemann"
   - "/study/infinity/riemann.html"
 ---
 

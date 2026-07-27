@@ -9,10 +9,6 @@ umbraco_id: 1516
 parent_id: 1515
 sort_order: 0
 aliases:
-  - "/manifold/linear"
-  - "/manifold/linear.html"
-  - "/math/manifold/m_linear/"
-  - "/study/manifold/linear"
   - "/study/manifold/linear.html"
 ---
 

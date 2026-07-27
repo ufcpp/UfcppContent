@@ -10,10 +10,6 @@ umbraco_id: 1306
 parent_id: 1298
 sort_order: 7
 aliases:
-  - "/csharp/data/sp3_lazylist/"
-  - "/csharp/sp3_lazylist"
-  - "/csharp/sp3_lazylist.html"
-  - "/study/csharp/sp3_lazylist"
   - "/study/csharp/sp3_lazylist.html"
 ---
 

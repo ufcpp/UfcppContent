@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1577
 parent_id: 1572
 sort_order: 1
-aliases:
-  - "/powershell/syntax/"
+aliases: []
 ---
 
 # PowerShel の構文

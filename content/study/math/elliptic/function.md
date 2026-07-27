@@ -9,10 +9,6 @@ umbraco_id: 1513
 parent_id: 1511
 sort_order: 1
 aliases:
-  - "/elliptic/function"
-  - "/elliptic/function.html"
-  - "/math/elliptic/function/"
-  - "/study/elliptic/function"
   - "/study/elliptic/function.html"
 ---
 

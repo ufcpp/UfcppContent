@@ -9,10 +9,6 @@ umbraco_id: 1271
 parent_id: 1248
 sort_order: 17
 aliases:
-  - "/csharp/misc_autoimpl"
-  - "/csharp/misc_autoimpl.html"
-  - "/csharp/oop/misc_autoimpl/"
-  - "/study/csharp/misc_autoimpl"
   - "/study/csharp/misc_autoimpl.html"
 ---
 

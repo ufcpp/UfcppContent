@@ -9,10 +9,6 @@ umbraco_id: 1506
 parent_id: 1500
 sort_order: 5
 aliases:
-  - "/infinity/power"
-  - "/infinity/power.html"
-  - "/math/infinity/power/"
-  - "/study/infinity/power"
   - "/study/infinity/power.html"
 ---
 

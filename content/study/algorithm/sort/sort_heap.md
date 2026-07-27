@@ -9,10 +9,6 @@ umbraco_id: 1124
 parent_id: 1117
 sort_order: 6
 aliases:
-  - "/algorithm/sort/sort_heap/"
-  - "/algorithm/sort_heap"
-  - "/algorithm/sort_heap.html"
-  - "/study/algorithm/sort_heap"
   - "/study/algorithm/sort_heap.html"
 ---
 

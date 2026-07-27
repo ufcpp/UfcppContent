@@ -224,6 +224,50 @@ public sealed class OutputValidatorTests
         AssertOnlyMissingControl(site.CreateValidator());
     }
 
+    [Fact]
+    public void Validate_AliasWithoutRedirectFile_ReportsMissingRedirect()
+    {
+        using var site = new SiteFixture();
+        site.AddPage(
+            "/study/csharp/start/st_basis/",
+            "study/csharp/start/st_basis/index.html",
+            "<p>Basis</p>",
+            "/study/csharp/st_basis.html");
+
+        var exception = Assert.Throws<AggregateException>(site.CreateValidator().Validate);
+        var error = Assert.Single(exception.InnerExceptions);
+
+        Assert.IsType<InvalidDataException>(error);
+        Assert.Equal(
+            "Missing redirect for alias '/study/csharp/st_basis.html' of "
+            + "'study/csharp/start/st_basis/source.md' "
+            + "(expected output file 'study/csharp/st_basis.html').",
+            error.Message);
+    }
+
+    [Fact]
+    public void Validate_AliasesResolvingToRedirectOrCanonicalOutput_AreAccepted()
+    {
+        using var site = new SiteFixture();
+        site.WriteGeneratedFile(
+            "study/csharp/st_basis.html",
+            """<meta http-equiv="refresh" content="0; url=/study/csharp/start/st_basis/">""");
+        site.AddPage(
+            "/study/csharp/start/st_basis/",
+            "study/csharp/start/st_basis/index.html",
+            """<a href="/missing-control/">Broken control</a>""",
+            "/study/csharp/st_basis.html",
+            "/study/csharp/start/st_basis");
+
+        var exception = Assert.Throws<AggregateException>(site.CreateValidator().Validate);
+        var error = Assert.Single(exception.InnerExceptions);
+
+        Assert.IsType<InvalidDataException>(error);
+        Assert.Equal(
+            "Broken internal link '/missing-control/' in 'study/csharp/start/st_basis/index.html'.",
+            error.Message);
+    }
+
     private static void AssertOnlyMissingControl(OutputValidator validator)
     {
         var exception = Assert.Throws<AggregateException>(validator.Validate);
@@ -248,7 +292,11 @@ public sealed class OutputValidatorTests
 
         public string OutputDirectory { get; }
 
-        public void AddPage(string canonicalPath, string outputPath, string body)
+        public void AddPage(
+            string canonicalPath,
+            string outputPath,
+            string body,
+            params string[] aliases)
         {
             WriteOutputFile(outputPath, Encoding.UTF8.GetBytes(CreateHtml(body)));
             _pages.Add(new ContentPage
@@ -257,6 +305,7 @@ public sealed class OutputValidatorTests
                 {
                     Title = canonicalPath,
                     SourceUrl = "https://ufcpp.net" + canonicalPath,
+                    Aliases = [.. aliases],
                 },
                 RelativePath = outputPath.Replace("index.html", "source.md"),
                 MarkdownBody = "",

@@ -9,11 +9,7 @@ umbraco_id: 1666
 parent_id: 1661
 sort_order: 4
 aliases:
-  - "/ref/brace"
-  - "/ref/brace.html"
-  - "/study/ref/brace"
   - "/study/ref/brace.html"
-  - "/xml/ref/brace/"
 ---
 
 # {}括弧

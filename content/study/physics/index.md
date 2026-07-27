@@ -9,18 +9,9 @@ umbraco_id: 1553
 parent_id: 1115
 sort_order: 15
 aliases:
-  - "/dynamics/"
-  - "/dynamics/index"
-  - "/dynamics/index.html"
-  - "/em/"
-  - "/em/index"
-  - "/em/index.html"
-  - "/physics/"
   - "/study/dynamics/"
-  - "/study/dynamics/index"
   - "/study/dynamics/index.html"
   - "/study/em/"
-  - "/study/em/index"
   - "/study/em/index.html"
 ---
 

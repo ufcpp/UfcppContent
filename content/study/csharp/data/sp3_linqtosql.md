@@ -10,10 +10,6 @@ umbraco_id: 1309
 parent_id: 1298
 sort_order: 11
 aliases:
-  - "/csharp/data/sp3_linqtosql/"
-  - "/csharp/sp3_linqtosql"
-  - "/csharp/sp3_linqtosql.html"
-  - "/study/csharp/sp3_linqtosql"
   - "/study/csharp/sp3_linqtosql.html"
 ---
 

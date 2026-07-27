@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1772
 parent_id: 1717
 sort_order: 1
-aliases:
-  - "/csharp/package/toplevelaccessibility/"
+aliases: []
 ---
 
 # トップ レベルのアクセシビリティ

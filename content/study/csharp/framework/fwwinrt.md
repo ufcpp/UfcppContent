@@ -9,10 +9,6 @@ umbraco_id: 1349
 parent_id: 1344
 sort_order: 5
 aliases:
-  - "/csharp/FwWinRT"
-  - "/csharp/FwWinRT.html"
-  - "/csharp/framework/fwwinrt/"
-  - "/study/csharp/FwWinRT"
   - "/study/csharp/FwWinRT.html"
 ---
 

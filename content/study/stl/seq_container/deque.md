@@ -9,10 +9,6 @@ umbraco_id: 1632
 parent_id: 1630
 sort_order: 1
 aliases:
-  - "/stl/deque"
-  - "/stl/deque.html"
-  - "/stl/seq_container/deque/"
-  - "/study/stl/deque"
   - "/study/stl/deque.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1512
 parent_id: 1511
 sort_order: 0
 aliases:
-  - "/elliptic/integral"
-  - "/elliptic/integral.html"
-  - "/math/elliptic/integral/"
-  - "/study/elliptic/integral"
   - "/study/elliptic/integral.html"
 ---
 

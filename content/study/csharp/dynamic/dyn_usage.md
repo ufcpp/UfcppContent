@@ -9,10 +9,6 @@ umbraco_id: 1319
 parent_id: 1312
 sort_order: 6
 aliases:
-  - "/csharp/dyn_usage"
-  - "/csharp/dyn_usage.html"
-  - "/csharp/dynamic/dyn_usage/"
-  - "/study/csharp/dyn_usage"
   - "/study/csharp/dyn_usage.html"
 ---
 

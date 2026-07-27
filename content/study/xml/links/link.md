@@ -9,11 +9,7 @@ umbraco_id: 1660
 parent_id: 1659
 sort_order: 0
 aliases:
-  - "/study/testxsl/link"
   - "/study/testxsl/link.html"
-  - "/testxsl/link"
-  - "/testxsl/link.html"
-  - "/xml/links/link/"
 ---
 
 # リンク集（WEB関連、XML/XSLT）

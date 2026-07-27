@@ -10,10 +10,6 @@ umbraco_id: 1178
 parent_id: 1174
 sort_order: 4
 aliases:
-  - "/csharp/ap_ver2"
-  - "/csharp/ap_ver2.html"
-  - "/csharp/cheatsheet/ap_ver2/"
-  - "/study/csharp/ap_ver2"
   - "/study/csharp/ap_ver2.html"
 ---
 

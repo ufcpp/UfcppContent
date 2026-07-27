@@ -9,10 +9,6 @@ umbraco_id: 1276
 parent_id: 1275
 sort_order: 0
 aliases:
-  - "/csharp/fun_functional"
-  - "/csharp/fun_functional.html"
-  - "/csharp/functional/fun_functional/"
-  - "/study/csharp/fun_functional"
   - "/study/csharp/fun_functional.html"
 ---
 

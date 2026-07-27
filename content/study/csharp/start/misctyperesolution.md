@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 2275
 parent_id: 1190
 sort_order: 18
-aliases:
-  - "/csharp/start/misctyperesolution/"
+aliases: []
 ---
 
 # \[雑記\] 型の決定

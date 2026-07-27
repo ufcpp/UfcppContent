@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1185
 parent_id: 1169
 sort_order: 2
-aliases:
-  - "/csharp/abstract/"
+aliases: []
 ---
 
 # C# の概要

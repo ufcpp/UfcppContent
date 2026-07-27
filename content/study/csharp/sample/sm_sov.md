@@ -9,10 +9,6 @@ umbraco_id: 1368
 parent_id: 1359
 sort_order: 8
 aliases:
-  - "/csharp/sample/sm_sov/"
-  - "/csharp/sm_sov"
-  - "/csharp/sm_sov.html"
-  - "/study/csharp/sm_sov"
   - "/study/csharp/sm_sov.html"
 ---
 

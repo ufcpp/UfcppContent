@@ -9,10 +9,6 @@ umbraco_id: 1163
 parent_id: 1161
 sort_order: 1
 aliases:
-  - "/computer/OperatingSystem"
-  - "/computer/OperatingSystem.html"
-  - "/computer/essential-software/operatingsystem/"
-  - "/study/computer/OperatingSystem"
   - "/study/computer/OperatingSystem.html"
 ---
 

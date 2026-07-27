@@ -9,10 +9,6 @@ umbraco_id: 1121
 parent_id: 1117
 sort_order: 3
 aliases:
-  - "/algorithm/sort/sort_insert/"
-  - "/algorithm/sort_insert"
-  - "/algorithm/sort_insert.html"
-  - "/study/algorithm/sort_insert"
   - "/study/algorithm/sort_insert.html"
 ---
 

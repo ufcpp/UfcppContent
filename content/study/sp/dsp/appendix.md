@@ -9,10 +9,6 @@ umbraco_id: 1609
 parent_id: 1599
 sort_order: 9
 aliases:
-  - "/dsp/appendix"
-  - "/dsp/appendix.html"
-  - "/sp/dsp/appendix/"
-  - "/study/dsp/appendix"
   - "/study/dsp/appendix.html"
 ---
 

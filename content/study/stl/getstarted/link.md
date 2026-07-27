@@ -9,10 +9,6 @@ umbraco_id: 1629
 parent_id: 1627
 sort_order: 1
 aliases:
-  - "/stl/getstarted/link/"
-  - "/stl/link"
-  - "/stl/link.html"
-  - "/study/stl/link"
   - "/study/stl/link.html"
 ---
 

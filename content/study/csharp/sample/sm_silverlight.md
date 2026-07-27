@@ -9,10 +9,6 @@ umbraco_id: 1371
 parent_id: 1359
 sort_order: 11
 aliases:
-  - "/csharp/sample/sm_silverlight/"
-  - "/csharp/sm_silverlight"
-  - "/csharp/sm_silverlight.html"
-  - "/study/csharp/sm_silverlight"
   - "/study/csharp/sm_silverlight.html"
 ---
 

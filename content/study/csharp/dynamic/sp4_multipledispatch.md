@@ -10,10 +10,6 @@ umbraco_id: 1320
 parent_id: 1312
 sort_order: 7
 aliases:
-  - "/csharp/dynamic/sp4_multipledispatch/"
-  - "/csharp/sp4_multipledispatch"
-  - "/csharp/sp4_multipledispatch.html"
-  - "/study/csharp/sp4_multipledispatch"
   - "/study/csharp/sp4_multipledispatch.html"
 ---
 

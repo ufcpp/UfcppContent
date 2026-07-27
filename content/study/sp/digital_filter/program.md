@@ -9,10 +9,6 @@ umbraco_id: 1612
 parent_id: 1610
 sort_order: 1
 aliases:
-  - "/digital_filter/program"
-  - "/digital_filter/program.html"
-  - "/sp/digital_filter/program/"
-  - "/study/digital_filter/program"
   - "/study/digital_filter/program.html"
 ---
 

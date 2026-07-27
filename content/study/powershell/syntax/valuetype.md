@@ -9,10 +9,6 @@ umbraco_id: 1581
 parent_id: 1577
 sort_order: 3
 aliases:
-  - "/powershell/syntax/valuetype/"
-  - "/powershell/valuetype"
-  - "/powershell/valuetype.html"
-  - "/study/powershell/valuetype"
   - "/study/powershell/valuetype.html"
 ---
 

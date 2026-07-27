@@ -9,10 +9,6 @@ umbraco_id: 1201
 parent_id: 1190
 sort_order: 7
 aliases:
-  - "/csharp/st_embeddedtype"
-  - "/csharp/st_embeddedtype.html"
-  - "/csharp/start/st_embeddedtype/"
-  - "/study/csharp/st_embeddedtype"
   - "/study/csharp/st_embeddedtype.html"
 ---
 

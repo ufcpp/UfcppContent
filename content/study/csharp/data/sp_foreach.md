@@ -9,10 +9,6 @@ umbraco_id: 1299
 parent_id: 1298
 sort_order: 0
 aliases:
-  - "/csharp/data/sp_foreach/"
-  - "/csharp/sp_foreach"
-  - "/csharp/sp_foreach.html"
-  - "/study/csharp/sp_foreach"
   - "/study/csharp/sp_foreach.html"
 ---
 

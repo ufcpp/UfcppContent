@@ -10,10 +10,6 @@ umbraco_id: 1245
 parent_id: 1217
 sort_order: 17
 aliases:
-  - "/csharp/oo_exception"
-  - "/csharp/oo_exception.html"
-  - "/csharp/structured/oo_exception/"
-  - "/study/csharp/oo_exception"
   - "/study/csharp/oo_exception.html"
 ---
 

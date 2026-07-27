@@ -9,10 +9,6 @@ umbraco_id: 1165
 parent_id: 1161
 sort_order: 3
 aliases:
-  - "/computer/Compiler"
-  - "/computer/Compiler.html"
-  - "/computer/essential-software/compiler/"
-  - "/study/computer/Compiler"
   - "/study/computer/Compiler.html"
 ---
 

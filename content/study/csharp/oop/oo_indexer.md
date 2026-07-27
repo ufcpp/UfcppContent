@@ -9,10 +9,6 @@ umbraco_id: 1261
 parent_id: 1248
 sort_order: 8
 aliases:
-  - "/csharp/oo_indexer"
-  - "/csharp/oo_indexer.html"
-  - "/csharp/oop/oo_indexer/"
-  - "/study/csharp/oo_indexer"
   - "/study/csharp/oo_indexer.html"
 ---
 

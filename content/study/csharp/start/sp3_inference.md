@@ -10,10 +10,6 @@ umbraco_id: 1215
 parent_id: 1190
 sort_order: 15
 aliases:
-  - "/csharp/sp3_inference"
-  - "/csharp/sp3_inference.html"
-  - "/csharp/start/sp3_inference/"
-  - "/study/csharp/sp3_inference"
   - "/study/csharp/sp3_inference.html"
 ---
 

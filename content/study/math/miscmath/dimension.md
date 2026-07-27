@@ -9,10 +9,6 @@ umbraco_id: 1524
 parent_id: 1521
 sort_order: 2
 aliases:
-  - "/math/miscmath/dimension/"
-  - "/miscmath/dimension"
-  - "/miscmath/dimension.html"
-  - "/study/miscmath/dimension"
   - "/study/miscmath/dimension.html"
 ---
 

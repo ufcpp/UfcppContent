@@ -9,12 +9,7 @@ umbraco_id: 1428
 parent_id: 1426
 sort_order: 1
 aliases:
-  - "/dsl/dsl-1/dslapproachi/"
-  - "/dsl/dsl/dslapproachi"
-  - "/dsl/dslapproachi"
-  - "/dsl/dslapproachi.html"
   - "/study/dsl/dsl/dslapproachi"
-  - "/study/dsl/dslapproachi"
   - "/study/dsl/dslapproachi.html"
 ---
 

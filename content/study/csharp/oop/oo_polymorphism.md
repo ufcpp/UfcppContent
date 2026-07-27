@@ -9,10 +9,6 @@ umbraco_id: 1263
 parent_id: 1248
 sort_order: 12
 aliases:
-  - "/csharp/oo_polymorphism"
-  - "/csharp/oo_polymorphism.html"
-  - "/csharp/oop/oo_polymorphism/"
-  - "/study/csharp/oo_polymorphism"
   - "/study/csharp/oo_polymorphism.html"
 ---
 

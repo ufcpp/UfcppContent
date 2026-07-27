@@ -9,22 +9,10 @@ umbraco_id: 1384
 parent_id: 1115
 sort_order: 1
 aliases:
-  - "/aspx/"
-  - "/aspx/index"
-  - "/aspx/index.html"
-  - "/dotnet/"
-  - "/dotnet/index"
-  - "/dotnet/index.html"
-  - "/silverlight/"
-  - "/silverlight/index"
-  - "/silverlight/index.html"
   - "/study/aspx/"
-  - "/study/aspx/index"
   - "/study/aspx/index.html"
-  - "/study/dotnet/index"
   - "/study/dotnet/index.html"
   - "/study/silverlight/"
-  - "/study/silverlight/index"
   - "/study/silverlight/index.html"
 ---
 

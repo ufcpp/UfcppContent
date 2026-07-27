@@ -9,11 +9,7 @@ umbraco_id: 1654
 parent_id: 1650
 sort_order: 3
 aliases:
-  - "/study/testxsl/section"
   - "/study/testxsl/section.html"
-  - "/testxsl/section"
-  - "/testxsl/section.html"
-  - "/xml/summary/section/"
 ---
 
 # 章の参照

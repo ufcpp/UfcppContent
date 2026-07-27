@@ -9,10 +9,6 @@ umbraco_id: 1199
 parent_id: 1190
 sort_order: 5
 aliases:
-  - "/csharp/misc_identifier"
-  - "/csharp/misc_identifier.html"
-  - "/csharp/start/misc_identifier/"
-  - "/study/csharp/misc_identifier"
   - "/study/csharp/misc_identifier.html"
 ---
 

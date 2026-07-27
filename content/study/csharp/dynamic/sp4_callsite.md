@@ -10,10 +10,6 @@ umbraco_id: 1317
 parent_id: 1312
 sort_order: 4
 aliases:
-  - "/csharp/dynamic/sp4_callsite/"
-  - "/csharp/sp4_callsite"
-  - "/csharp/sp4_callsite.html"
-  - "/study/csharp/sp4_callsite"
   - "/study/csharp/sp4_callsite.html"
 ---
 

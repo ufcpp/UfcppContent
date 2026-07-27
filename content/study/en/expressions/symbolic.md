@@ -9,10 +9,6 @@ umbraco_id: 1439
 parent_id: 1438
 sort_order: 0
 aliases:
-  - "/en/expressions/symbolic/"
-  - "/en/symbolic"
-  - "/en/symbolic.html"
-  - "/study/en/symbolic"
   - "/study/en/symbolic.html"
 ---
 

@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1561
 parent_id: 1553
 sort_order: 1
-aliases:
-  - "/physics/em/"
+aliases: []
 ---
 
 # 電磁理論

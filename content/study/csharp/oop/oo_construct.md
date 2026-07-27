@@ -9,10 +9,6 @@ umbraco_id: 1252
 parent_id: 1248
 sort_order: 2
 aliases:
-  - "/csharp/oo_construct"
-  - "/csharp/oo_construct.html"
-  - "/csharp/oop/oo_construct/"
-  - "/study/csharp/oo_construct"
   - "/study/csharp/oo_construct.html"
 ---
 

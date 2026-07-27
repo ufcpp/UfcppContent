@@ -9,10 +9,6 @@ umbraco_id: 1563
 parent_id: 1561
 sort_order: 1
 aliases:
-  - "/em/electro"
-  - "/em/electro.html"
-  - "/physics/em/electro/"
-  - "/study/em/electro"
   - "/study/em/electro.html"
 ---
 

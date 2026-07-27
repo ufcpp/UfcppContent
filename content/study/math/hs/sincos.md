@@ -9,10 +9,6 @@ umbraco_id: 1454
 parent_id: 1445
 sort_order: 8
 aliases:
-  - "/hs/sincos"
-  - "/hs/sincos.html"
-  - "/math/hs/sincos/"
-  - "/study/hs/sincos"
   - "/study/hs/sincos.html"
 ---
 

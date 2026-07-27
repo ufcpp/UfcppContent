@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1717
 parent_id: 1169
 sort_order: 15
-aliases:
-  - "/csharp/package/"
+aliases: []
 ---
 
 # パッケージ管理

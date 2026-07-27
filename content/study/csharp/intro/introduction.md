@@ -9,10 +9,6 @@ umbraco_id: 1171
 parent_id: 1170
 sort_order: 0
 aliases:
-  - "/csharp/intro/introduction/"
-  - "/csharp/introduction"
-  - "/csharp/introduction.html"
-  - "/study/csharp/introduction"
   - "/study/csharp/introduction.html"
 ---
 

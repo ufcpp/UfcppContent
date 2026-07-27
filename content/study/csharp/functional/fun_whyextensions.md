@@ -9,10 +9,6 @@ umbraco_id: 1285
 parent_id: 1275
 sort_order: 11
 aliases:
-  - "/csharp/fun_WhyExtensions"
-  - "/csharp/fun_WhyExtensions.html"
-  - "/csharp/functional/fun_whyextensions/"
-  - "/study/csharp/fun_WhyExtensions"
   - "/study/csharp/fun_WhyExtensions.html"
 ---
 

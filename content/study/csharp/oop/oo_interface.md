@@ -9,10 +9,6 @@ umbraco_id: 1269
 parent_id: 1248
 sort_order: 16
 aliases:
-  - "/csharp/oo_interface"
-  - "/csharp/oo_interface.html"
-  - "/csharp/oop/oo_interface/"
-  - "/study/csharp/oo_interface"
   - "/study/csharp/oo_interface.html"
 ---
 

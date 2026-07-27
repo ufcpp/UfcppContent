@@ -9,10 +9,6 @@ umbraco_id: 1618
 parent_id: 1610
 sort_order: 7
 aliases:
-  - "/digital_filter/butterworth"
-  - "/digital_filter/butterworth.html"
-  - "/sp/digital_filter/butterworth/"
-  - "/study/digital_filter/butterworth"
   - "/study/digital_filter/butterworth.html"
 ---
 

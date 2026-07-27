@@ -9,10 +9,6 @@ umbraco_id: 1575
 parent_id: 1573
 sort_order: 1
 aliases:
-  - "/powershell/intro/scriptlang/"
-  - "/powershell/scriptlang"
-  - "/powershell/scriptlang.html"
-  - "/study/powershell/scriptlang"
   - "/study/powershell/scriptlang.html"
 ---
 

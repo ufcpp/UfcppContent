@@ -9,8 +9,7 @@ tags:
 umbraco_id: 2301
 parent_id: 1338
 sort_order: 8
-aliases:
-  - "/csharp/misc/miscentrypoint/"
+aliases: []
 ---
 
 # エントリー ポイント

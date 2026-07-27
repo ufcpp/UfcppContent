@@ -9,24 +9,11 @@ umbraco_id: 1598
 parent_id: 1115
 sort_order: 6
 aliases:
-  - "/digital_filter/"
-  - "/digital_filter/index"
-  - "/digital_filter/index.html"
-  - "/dsp/"
-  - "/dsp/index"
-  - "/dsp/index.html"
-  - "/image/"
-  - "/image/index"
-  - "/image/index.html"
-  - "/sp/"
   - "/study/digital_filter/"
-  - "/study/digital_filter/index"
   - "/study/digital_filter/index.html"
   - "/study/dsp/"
-  - "/study/dsp/index"
   - "/study/dsp/index.html"
   - "/study/image/"
-  - "/study/image/index"
   - "/study/image/index.html"
 ---
 

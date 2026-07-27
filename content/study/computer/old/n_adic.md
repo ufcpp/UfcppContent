@@ -9,10 +9,6 @@ umbraco_id: 1167
 parent_id: 1166
 sort_order: 0
 aliases:
-  - "/computer/n_adic"
-  - "/computer/n_adic.html"
-  - "/computer/old/n_adic/"
-  - "/study/computer/n_adic"
   - "/study/computer/n_adic.html"
 ---
 

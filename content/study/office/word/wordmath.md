@@ -9,10 +9,6 @@ umbraco_id: 1550
 parent_id: 1547
 sort_order: 2
 aliases:
-  - "/office/word/wordmath/"
-  - "/office/wordmath"
-  - "/office/wordmath.html"
-  - "/study/office/wordmath"
   - "/study/office/wordmath.html"
 ---
 

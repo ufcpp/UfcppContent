@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1151
 parent_id: 1144
 sort_order: 2
-aliases:
-  - "/computer/basis/"
+aliases: []
 ---
 
 # 回路設計（ゲート、組み合わせ回路、順序回路）

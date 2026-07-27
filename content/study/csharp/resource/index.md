@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1286
 parent_id: 1169
 sort_order: 10
-aliases:
-  - "/csharp/resource/"
+aliases: []
 ---
 
 # メモリとリソース管理

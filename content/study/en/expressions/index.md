@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1438
 parent_id: 1437
 sort_order: 0
-aliases:
-  - "/en/expressions/"
+aliases: []
 ---
 
 # Expressions

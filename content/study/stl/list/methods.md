@@ -9,10 +9,6 @@ umbraco_id: 1643
 parent_id: 1641
 sort_order: 1
 aliases:
-  - "/stl/list/methods/"
-  - "/stl/methods"
-  - "/stl/methods.html"
-  - "/study/stl/methods"
   - "/study/stl/methods.html"
 ---
 

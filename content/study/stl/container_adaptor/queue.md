@@ -9,10 +9,6 @@ umbraco_id: 1636
 parent_id: 1634
 sort_order: 1
 aliases:
-  - "/stl/container_adaptor/queue/"
-  - "/stl/queue"
-  - "/stl/queue.html"
-  - "/study/stl/queue"
   - "/study/stl/queue.html"
 ---
 

@@ -9,11 +9,7 @@ umbraco_id: 1689
 parent_id: 1661
 sort_order: 27
 aliases:
-  - "/ref/Res"
-  - "/ref/Res.html"
-  - "/study/ref/Res"
   - "/study/ref/Res.html"
-  - "/xml/ref/res/"
 ---
 
 # 留数

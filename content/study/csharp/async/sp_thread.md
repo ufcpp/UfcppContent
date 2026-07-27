@@ -9,10 +9,6 @@ umbraco_id: 1327
 parent_id: 1326
 sort_order: 0
 aliases:
-  - "/csharp/async/sp_thread/"
-  - "/csharp/sp_thread"
-  - "/csharp/sp_thread.html"
-  - "/study/csharp/sp_thread"
   - "/study/csharp/sp_thread.html"
 ---
 

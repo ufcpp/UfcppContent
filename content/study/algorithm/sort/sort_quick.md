@@ -9,10 +9,6 @@ umbraco_id: 1123
 parent_id: 1117
 sort_order: 5
 aliases:
-  - "/algorithm/sort/sort_quick/"
-  - "/algorithm/sort_quick"
-  - "/algorithm/sort_quick.html"
-  - "/study/algorithm/sort_quick"
   - "/study/algorithm/sort_quick.html"
 ---
 

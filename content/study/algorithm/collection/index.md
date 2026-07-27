@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1128
 parent_id: 1116
 sort_order: 1
-aliases:
-  - "/algorithm/collection/"
+aliases: []
 ---
 
 # コレクション

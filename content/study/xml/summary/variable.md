@@ -11,13 +11,7 @@ sort_order: 5
 aliases:
   - "/study/summary/xml/variable"
   - "/study/summary/xml/variable/"
-  - "/study/testxsl/variable"
   - "/study/testxsl/variable.html"
-  - "/summary/xml/variable"
-  - "/summary/xml/variable/"
-  - "/testxsl/variable"
-  - "/testxsl/variable.html"
-  - "/xml/summary/variable/"
 ---
 
 # 変数

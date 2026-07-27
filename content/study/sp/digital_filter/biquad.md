@@ -9,10 +9,6 @@ umbraco_id: 1616
 parent_id: 1610
 sort_order: 5
 aliases:
-  - "/digital_filter/biquad"
-  - "/digital_filter/biquad.html"
-  - "/sp/digital_filter/biquad/"
-  - "/study/digital_filter/biquad"
   - "/study/digital_filter/biquad.html"
 ---
 

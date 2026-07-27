@@ -9,11 +9,7 @@ umbraco_id: 1676
 parent_id: 1661
 sort_order: 14
 aliases:
-  - "/ref/Fourier"
-  - "/ref/Fourier.html"
-  - "/study/ref/Fourier"
   - "/study/ref/Fourier.html"
-  - "/xml/ref/fourier/"
 ---
 
 # フーリエ変換など

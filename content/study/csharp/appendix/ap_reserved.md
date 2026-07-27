@@ -9,10 +9,6 @@ umbraco_id: 1380
 parent_id: 1377
 sort_order: 2
 aliases:
-  - "/csharp/ap_reserved"
-  - "/csharp/ap_reserved.html"
-  - "/csharp/appendix/ap_reserved/"
-  - "/study/csharp/ap_reserved"
   - "/study/csharp/ap_reserved.html"
 ---
 

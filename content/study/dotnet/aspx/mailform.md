@@ -9,10 +9,6 @@ umbraco_id: 1419
 parent_id: 1414
 sort_order: 4
 aliases:
-  - "/aspx/mailform"
-  - "/aspx/mailform.html"
-  - "/dotnet/aspx/mailform/"
-  - "/study/aspx/mailform"
   - "/study/aspx/mailform.html"
 ---
 

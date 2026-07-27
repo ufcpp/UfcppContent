@@ -9,10 +9,6 @@ umbraco_id: 1361
 parent_id: 1359
 sort_order: 1
 aliases:
-  - "/csharp/sample/sm_soundlib/"
-  - "/csharp/sm_soundlib"
-  - "/csharp/sm_soundlib.html"
-  - "/study/csharp/sm_soundlib"
   - "/study/csharp/sm_soundlib.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1487
 parent_id: 1483
 sort_order: 3
 aliases:
-  - "/group/quotientfield"
-  - "/group/quotientfield.html"
-  - "/math/group/quotientfield/"
-  - "/study/group/quotientfield"
   - "/study/group/quotientfield.html"
 ---
 

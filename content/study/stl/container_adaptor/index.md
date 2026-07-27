@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1634
 parent_id: 1626
 sort_order: 2
-aliases:
-  - "/stl/container_adaptor/"
+aliases: []
 ---
 
 # コンテナアダプタ

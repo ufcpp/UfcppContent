@@ -9,10 +9,6 @@ umbraco_id: 1514
 parent_id: 1511
 sort_order: 2
 aliases:
-  - "/elliptic/jacobi"
-  - "/elliptic/jacobi.html"
-  - "/math/elliptic/jacobi/"
-  - "/study/elliptic/jacobi"
   - "/study/elliptic/jacobi.html"
 ---
 

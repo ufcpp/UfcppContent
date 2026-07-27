@@ -9,10 +9,6 @@ umbraco_id: 1287
 parent_id: 1286
 sort_order: 0
 aliases:
-  - "/csharp/resource/rm_gc/"
-  - "/csharp/rm_gc"
-  - "/csharp/rm_gc.html"
-  - "/study/csharp/rm_gc"
   - "/study/csharp/rm_gc.html"
 ---
 

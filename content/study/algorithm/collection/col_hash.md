@@ -9,10 +9,6 @@ umbraco_id: 1135
 parent_id: 1128
 sort_order: 6
 aliases:
-  - "/algorithm/col_hash"
-  - "/algorithm/col_hash.html"
-  - "/algorithm/collection/col_hash/"
-  - "/study/algorithm/col_hash"
   - "/study/algorithm/col_hash.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1486
 parent_id: 1483
 sort_order: 2
 aliases:
-  - "/group/field"
-  - "/group/field.html"
-  - "/math/group/field/"
-  - "/study/group/field"
   - "/study/group/field.html"
 ---
 

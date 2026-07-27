@@ -9,10 +9,6 @@ umbraco_id: 1194
 parent_id: 1190
 sort_order: 2
 aliases:
-  - "/csharp/st_comment"
-  - "/csharp/st_comment.html"
-  - "/csharp/start/st_comment/"
-  - "/study/csharp/st_comment"
   - "/study/csharp/st_comment.html"
 ---
 

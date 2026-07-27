@@ -30,6 +30,13 @@ dotnet run --project .\tools\Ufcpp.ContentConverter -- `
 The converter deletes only `content`, `assets`, and `catalog` below `--output`. It never
 deletes tooling, tests, or documentation.
 
+The rewrite maps are parsed into a *routing* alias set that also contains derived paths
+(`/study`-less and extension-less variants) so legacy links inside the source content can
+be resolved. Only the subset returned by `AliasPolicy.SelectPublished` is written to the
+front-matter `aliases` and `catalog/content-map.json`, because only those become published
+redirects. `LegacyUrlCoverageTests` re-checks the committed content against the rewrite
+maps offline, so regeneration cannot silently drop a legacy URL.
+
 The XML parser uses `DtdProcessing.Ignore` and a null resolver. Generation fails on malformed
 hierarchy, unknown document types or macros, malformed exercise JSON, unsafe output paths,
 ambiguous aliases, unresolved internal files or fragments, missing assets, sitemap differences,

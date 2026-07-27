@@ -9,10 +9,6 @@ umbraco_id: 1405
 parent_id: 1404
 sort_order: 0
 aliases:
-  - "/dotnet/wcf/wcf_abst/"
-  - "/dotnet/wcf_abst"
-  - "/dotnet/wcf_abst.html"
-  - "/study/dotnet/wcf_abst"
   - "/study/dotnet/wcf_abst.html"
 ---
 

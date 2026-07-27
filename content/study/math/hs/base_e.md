@@ -9,10 +9,6 @@ umbraco_id: 1455
 parent_id: 1445
 sort_order: 9
 aliases:
-  - "/hs/base_e"
-  - "/hs/base_e.html"
-  - "/math/hs/base_e/"
-  - "/study/hs/base_e"
   - "/study/hs/base_e.html"
 ---
 

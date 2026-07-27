@@ -9,11 +9,7 @@ umbraco_id: 1695
 parent_id: 1661
 sort_order: 33
 aliases:
-  - "/ref/tripleint"
-  - "/ref/tripleint.html"
-  - "/study/ref/tripleint"
   - "/study/ref/tripleint.html"
-  - "/xml/ref/tripleint/"
 ---
 
 # 3重積分記号

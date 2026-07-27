@@ -9,10 +9,6 @@ umbraco_id: 1502
 parent_id: 1500
 sort_order: 1
 aliases:
-  - "/infinity/limit"
-  - "/infinity/limit.html"
-  - "/math/infinity/limit/"
-  - "/study/infinity/limit"
   - "/study/infinity/limit.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1172
 parent_id: 1170
 sort_order: 1
 aliases:
-  - "/csharp/getstarted"
-  - "/csharp/getstarted.html"
-  - "/csharp/intro/getstarted/"
-  - "/study/csharp/getstarted"
   - "/study/csharp/getstarted.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1412
 parent_id: 1411
 sort_order: 0
 aliases:
-  - "/dotnet/silverlight/introduction/"
-  - "/silverlight/introduction"
-  - "/silverlight/introduction.html"
-  - "/study/silverlight/introduction"
   - "/study/silverlight/introduction.html"
 ---
 

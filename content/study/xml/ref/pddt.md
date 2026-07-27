@@ -9,11 +9,7 @@ umbraco_id: 1685
 parent_id: 1661
 sort_order: 23
 aliases:
-  - "/ref/pddt"
-  - "/ref/pddt.html"
-  - "/study/ref/pddt"
   - "/study/ref/pddt.html"
-  - "/xml/ref/pddt/"
 ---
 
 # 時間偏微分

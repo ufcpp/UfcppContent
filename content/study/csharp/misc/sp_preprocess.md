@@ -9,10 +9,6 @@ umbraco_id: 1339
 parent_id: 1338
 sort_order: 1
 aliases:
-  - "/csharp/misc/sp_preprocess/"
-  - "/csharp/sp_preprocess"
-  - "/csharp/sp_preprocess.html"
-  - "/study/csharp/sp_preprocess"
   - "/study/csharp/sp_preprocess.html"
 ---
 

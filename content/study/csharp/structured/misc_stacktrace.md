@@ -9,10 +9,6 @@ umbraco_id: 1247
 parent_id: 1217
 sort_order: 19
 aliases:
-  - "/csharp/misc_stacktrace"
-  - "/csharp/misc_stacktrace.html"
-  - "/csharp/structured/misc_stacktrace/"
-  - "/study/csharp/misc_stacktrace"
   - "/study/csharp/misc_stacktrace.html"
 ---
 

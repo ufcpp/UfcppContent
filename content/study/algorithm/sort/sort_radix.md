@@ -9,10 +9,6 @@ umbraco_id: 1127
 parent_id: 1117
 sort_order: 9
 aliases:
-  - "/algorithm/sort/sort_radix/"
-  - "/algorithm/sort_radix"
-  - "/algorithm/sort_radix.html"
-  - "/study/algorithm/sort_radix"
   - "/study/algorithm/sort_radix.html"
 ---
 

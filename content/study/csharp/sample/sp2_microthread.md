@@ -9,10 +9,6 @@ umbraco_id: 1362
 parent_id: 1359
 sort_order: 2
 aliases:
-  - "/csharp/sample/sp2_microthread/"
-  - "/csharp/sp2_microthread"
-  - "/csharp/sp2_microthread.html"
-  - "/study/csharp/sp2_microthread"
   - "/study/csharp/sp2_microthread.html"
 ---
 

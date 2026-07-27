@@ -9,10 +9,6 @@ umbraco_id: 1213
 parent_id: 1190
 sort_order: 13
 aliases:
-  - "/csharp/sp_checked"
-  - "/csharp/sp_checked.html"
-  - "/csharp/start/sp_checked/"
-  - "/study/csharp/sp_checked"
   - "/study/csharp/sp_checked.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1461
 parent_id: 1458
 sort_order: 2
 aliases:
-  - "/linear/determinant"
-  - "/linear/determinant.html"
-  - "/math/linear/determinant/"
-  - "/study/linear/determinant"
   - "/study/linear/determinant.html"
 ---
 

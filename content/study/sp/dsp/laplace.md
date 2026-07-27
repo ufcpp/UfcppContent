@@ -9,10 +9,6 @@ umbraco_id: 1605
 parent_id: 1599
 sort_order: 5
 aliases:
-  - "/dsp/laplace"
-  - "/dsp/laplace.html"
-  - "/sp/dsp/laplace/"
-  - "/study/dsp/laplace"
   - "/study/dsp/laplace.html"
 ---
 

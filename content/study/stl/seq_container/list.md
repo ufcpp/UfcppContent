@@ -9,8 +9,6 @@ umbraco_id: 1633
 parent_id: 1630
 sort_order: 2
 aliases:
-  - "/stl/list.html"
-  - "/stl/seq_container/list/"
   - "/study/stl/list.html"
 ---
 

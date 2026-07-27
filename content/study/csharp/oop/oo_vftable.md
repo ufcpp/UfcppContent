@@ -9,10 +9,6 @@ umbraco_id: 1272
 parent_id: 1248
 sort_order: 18
 aliases:
-  - "/csharp/oo_vftable"
-  - "/csharp/oo_vftable.html"
-  - "/csharp/oop/oo_vftable/"
-  - "/study/csharp/oo_vftable"
   - "/study/csharp/oo_vftable.html"
 ---
 

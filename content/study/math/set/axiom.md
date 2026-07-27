@@ -9,10 +9,6 @@ umbraco_id: 1472
 parent_id: 1471
 sort_order: 0
 aliases:
-  - "/math/set/axiom/"
-  - "/set/axiom"
-  - "/set/axiom.html"
-  - "/study/set/axiom"
   - "/study/set/axiom.html"
 ---
 

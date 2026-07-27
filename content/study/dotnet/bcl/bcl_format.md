@@ -9,10 +9,6 @@ umbraco_id: 1388
 parent_id: 1385
 sort_order: 2
 aliases:
-  - "/dotnet/bcl/bcl_format/"
-  - "/dotnet/bcl_format"
-  - "/dotnet/bcl_format.html"
-  - "/study/dotnet/bcl_format"
   - "/study/dotnet/bcl_format.html"
 ---
 

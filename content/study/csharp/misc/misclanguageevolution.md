@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1897
 parent_id: 1338
 sort_order: 6
-aliases:
-  - "/csharp/misc/misclanguageevolution/"
+aliases: []
 ---
 
 # \[雑記\] 構文の進化

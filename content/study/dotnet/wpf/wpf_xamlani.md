@@ -9,10 +9,6 @@ umbraco_id: 1403
 parent_id: 1393
 sort_order: 9
 aliases:
-  - "/dotnet/wpf/wpf_xamlani/"
-  - "/dotnet/wpf_xamlani"
-  - "/dotnet/wpf_xamlani.html"
-  - "/study/dotnet/wpf_xamlani"
   - "/study/dotnet/wpf_xamlani.html"
 ---
 

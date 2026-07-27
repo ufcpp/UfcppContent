@@ -9,10 +9,6 @@ umbraco_id: 1565
 parent_id: 1561
 sort_order: 3
 aliases:
-  - "/em/electrostatic"
-  - "/em/electrostatic.html"
-  - "/physics/em/electrostatic/"
-  - "/study/em/electrostatic"
   - "/study/em/electrostatic.html"
 ---
 

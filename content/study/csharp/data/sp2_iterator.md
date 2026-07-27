@@ -10,10 +10,6 @@ umbraco_id: 1300
 parent_id: 1298
 sort_order: 1
 aliases:
-  - "/csharp/data/sp2_iterator/"
-  - "/csharp/sp2_iterator"
-  - "/csharp/sp2_iterator.html"
-  - "/study/csharp/sp2_iterator"
   - "/study/csharp/sp2_iterator.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1416
 parent_id: 1414
 sort_order: 1
 aliases:
-  - "/aspx/webapp"
-  - "/aspx/webapp.html"
-  - "/dotnet/aspx/webapp/"
-  - "/study/aspx/webapp"
   - "/study/aspx/webapp.html"
 ---
 

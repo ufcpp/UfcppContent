@@ -9,10 +9,6 @@ umbraco_id: 1369
 parent_id: 1359
 sort_order: 9
 aliases:
-  - "/csharp/sample/sm_proxy/"
-  - "/csharp/sm_proxy"
-  - "/csharp/sm_proxy.html"
-  - "/study/csharp/sm_proxy"
   - "/study/csharp/sm_proxy.html"
 ---
 

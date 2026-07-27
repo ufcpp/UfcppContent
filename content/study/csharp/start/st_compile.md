@@ -9,10 +9,6 @@ umbraco_id: 1192
 parent_id: 1190
 sort_order: 1
 aliases:
-  - "/csharp/st_compile"
-  - "/csharp/st_compile.html"
-  - "/csharp/start/st_compile/"
-  - "/study/csharp/st_compile"
   - "/study/csharp/st_compile.html"
 ---
 

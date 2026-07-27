@@ -9,10 +9,6 @@ umbraco_id: 1277
 parent_id: 1275
 sort_order: 1
 aliases:
-  - "/csharp/functional/sp_delegate/"
-  - "/csharp/sp_delegate"
-  - "/csharp/sp_delegate.html"
-  - "/study/csharp/sp_delegate"
   - "/study/csharp/sp_delegate.html"
 ---
 

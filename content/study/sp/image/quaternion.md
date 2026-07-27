@@ -9,10 +9,6 @@ umbraco_id: 1624
 parent_id: 1623
 sort_order: 0
 aliases:
-  - "/image/quaternion"
-  - "/image/quaternion.html"
-  - "/sp/image/quaternion/"
-  - "/study/image/quaternion"
   - "/study/image/quaternion.html"
 ---
 

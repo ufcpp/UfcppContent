@@ -9,10 +9,6 @@ umbraco_id: 1120
 parent_id: 1117
 sort_order: 2
 aliases:
-  - "/algorithm/sort/sort_select/"
-  - "/algorithm/sort_select"
-  - "/algorithm/sort_select.html"
-  - "/study/algorithm/sort_select"
   - "/study/algorithm/sort_select.html"
 ---
 

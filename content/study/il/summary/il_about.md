@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1442
 parent_id: 1441
 sort_order: 0
-aliases:
-  - "/il/summary/il_about/"
+aliases: []
 ---
 
 # IL の概要

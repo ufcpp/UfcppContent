@@ -56,6 +56,12 @@ public sealed class RewriteMapCatalog
         }
     }
 
+    /// <summary>
+    /// Builds the full set of legacy paths that resolve to each node. The result is the
+    /// routing set used to rewrite legacy links found in the source content; use
+    /// <see cref="AliasPolicy.SelectPublished"/> to narrow it to the aliases that are
+    /// published as redirects.
+    /// </summary>
     public IReadOnlyDictionary<int, IReadOnlyList<string>> BuildAliases(
         IReadOnlyList<ContentNode> nodes,
         IReadOnlyDictionary<int, string> canonicalUrls)

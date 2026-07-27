@@ -9,10 +9,6 @@ umbraco_id: 1532
 parent_id: 1529
 sort_order: 2
 aliases:
-  - "/misc/autonym"
-  - "/misc/autonym.html"
-  - "/misc/management/autonym/"
-  - "/study/misc/autonym"
   - "/study/misc/autonym.html"
 ---
 

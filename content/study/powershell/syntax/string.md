@@ -9,10 +9,6 @@ umbraco_id: 1582
 parent_id: 1577
 sort_order: 4
 aliases:
-  - "/powershell/string"
-  - "/powershell/string.html"
-  - "/powershell/syntax/string/"
-  - "/study/powershell/string"
   - "/study/powershell/string.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1526
 parent_id: 1521
 sort_order: 4
 aliases:
-  - "/math/miscmath/interpretation/"
-  - "/miscmath/interpretation"
-  - "/miscmath/interpretation.html"
-  - "/study/miscmath/interpretation"
   - "/study/miscmath/interpretation.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1396
 parent_id: 1393
 sort_order: 2
 aliases:
-  - "/dotnet/wpf/wpf_xamlbasic/"
-  - "/dotnet/wpf_xamlbasic"
-  - "/dotnet/wpf_xamlbasic.html"
-  - "/study/dotnet/wpf_xamlbasic"
   - "/study/dotnet/wpf_xamlbasic.html"
 ---
 

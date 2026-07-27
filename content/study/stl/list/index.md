@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1641
 parent_id: 1626
 sort_order: 4
-aliases:
-  - "/stl/list/"
+aliases: []
 ---
 
 # 一覧

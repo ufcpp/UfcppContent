@@ -9,10 +9,6 @@ umbraco_id: 1564
 parent_id: 1561
 sort_order: 2
 aliases:
-  - "/em/magnetro"
-  - "/em/magnetro.html"
-  - "/physics/em/magnetro/"
-  - "/study/em/magnetro"
   - "/study/em/magnetro.html"
 ---
 

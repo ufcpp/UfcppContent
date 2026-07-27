@@ -9,10 +9,6 @@ umbraco_id: 1392
 parent_id: 1391
 sort_order: 0
 aliases:
-  - "/dotnet/abstract"
-  - "/dotnet/abstract.html"
-  - "/dotnet/dotnet3/abstract/"
-  - "/study/dotnet/abstract"
   - "/study/dotnet/abstract.html"
 ---
 

@@ -9,10 +9,6 @@ umbraco_id: 1614
 parent_id: 1610
 sort_order: 3
 aliases:
-  - "/digital_filter/iir"
-  - "/digital_filter/iir.html"
-  - "/sp/digital_filter/iir/"
-  - "/study/digital_filter/iir"
   - "/study/digital_filter/iir.html"
 ---
 

@@ -9,11 +9,7 @@ umbraco_id: 1665
 parent_id: 1661
 sort_order: 3
 aliases:
-  - "/ref/bar"
-  - "/ref/bar.html"
-  - "/study/ref/bar"
   - "/study/ref/bar.html"
-  - "/xml/ref/bar/"
 ---
 
 # バー

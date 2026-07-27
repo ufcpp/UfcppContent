@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1594
 parent_id: 1572
 sort_order: 4
-aliases:
-  - "/powershell/misc/"
+aliases: []
 ---
 
 # その他

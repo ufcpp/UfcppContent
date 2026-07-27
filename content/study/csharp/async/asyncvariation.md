@@ -9,10 +9,6 @@ umbraco_id: 1328
 parent_id: 1326
 sort_order: 1
 aliases:
-  - "/csharp/AsyncVariation"
-  - "/csharp/AsyncVariation.html"
-  - "/csharp/async/asyncvariation/"
-  - "/study/csharp/AsyncVariation"
   - "/study/csharp/AsyncVariation.html"
 ---
 

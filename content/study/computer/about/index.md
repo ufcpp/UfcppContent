@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1145
 parent_id: 1144
 sort_order: 0
-aliases:
-  - "/computer/about/"
+aliases: []
 ---
 
 # はじめに

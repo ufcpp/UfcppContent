@@ -10,10 +10,6 @@ umbraco_id: 1318
 parent_id: 1312
 sort_order: 5
 aliases:
-  - "/csharp/dynamic/misc_dynamic/"
-  - "/csharp/misc_dynamic"
-  - "/csharp/misc_dynamic.html"
-  - "/study/csharp/misc_dynamic"
   - "/study/csharp/misc_dynamic.html"
 ---
 

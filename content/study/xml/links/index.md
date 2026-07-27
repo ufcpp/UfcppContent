@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1659
 parent_id: 1644
 sort_order: 2
-aliases:
-  - "/xml/links/"
+aliases: []
 ---
 
 # リンク集

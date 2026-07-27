@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1441
 parent_id: 1440
 sort_order: 0
-aliases:
-  - "/il/summary/"
+aliases: []
 ---
 
 # 概要

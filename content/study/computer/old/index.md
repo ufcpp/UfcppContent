@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1166
 parent_id: 1144
 sort_order: 5
-aliases:
-  - "/computer/old/"
+aliases: []
 ---
 
 # 旧コンテンツ

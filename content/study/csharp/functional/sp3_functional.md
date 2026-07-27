@@ -10,10 +10,6 @@ umbraco_id: 1283
 parent_id: 1275
 sort_order: 9
 aliases:
-  - "/csharp/functional/sp3_functional/"
-  - "/csharp/sp3_functional"
-  - "/csharp/sp3_functional.html"
-  - "/study/csharp/sp3_functional"
   - "/study/csharp/sp3_functional.html"
 ---
 

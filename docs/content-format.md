@@ -35,6 +35,14 @@ aliases: []
 Strings use JSON-compatible YAML quoting. Arrays are sorted deterministically. Article dates
 prefer `sinceSet` and `lastUpdatedSet`; blog publication dates use `firstPublishedDate`.
 
+`source_url` is always the canonical directory URL; it never points at a legacy `.html`
+path. `aliases` lists the legacy URLs the site still has to serve — mainly the pre-2014
+flat form `/study/<subject>/<slug>.html` — and the site generator turns each entry into a
+redirect page. Paths that the original site never served (the `/study`-less and
+extension-less variants derived while parsing the IIS rewrite maps) are excluded by
+`AliasPolicy.SelectPublished`; see
+[Site generation](site-generation.md#canonical-urls-and-legacy-redirects).
+
 ## Body conversion
 
 - Original `bodyText` MarkdownDeep/Extra Markdown and embedded HTML are preserved except for

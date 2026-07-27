@@ -8,8 +8,7 @@ tags: []
 umbraco_id: 1820
 parent_id: 1344
 sort_order: 2
-aliases:
-  - "/csharp/framework/fwjitcompilation/"
+aliases: []
 ---
 
 # JITコンパイル

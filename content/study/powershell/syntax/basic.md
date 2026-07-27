@@ -9,10 +9,6 @@ umbraco_id: 1578
 parent_id: 1577
 sort_order: 0
 aliases:
-  - "/powershell/basic"
-  - "/powershell/basic.html"
-  - "/powershell/syntax/basic/"
-  - "/study/powershell/basic"
   - "/study/powershell/basic.html"
 ---
 

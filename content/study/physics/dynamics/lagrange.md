@@ -9,10 +9,6 @@ umbraco_id: 1558
 parent_id: 1554
 sort_order: 3
 aliases:
-  - "/dynamics/lagrange"
-  - "/dynamics/lagrange.html"
-  - "/physics/dynamics/lagrange/"
-  - "/study/dynamics/lagrange"
   - "/study/dynamics/lagrange.html"
 ---
 
