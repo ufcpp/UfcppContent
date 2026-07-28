@@ -23,6 +23,7 @@
   --color-code-type: #2b91af;
   --color-code-method: #74531f;
   --color-code-symbol: #001080;
+  --color-code-highlight: #e0ffff;
   --color-editorial-highlight: rgba(238, 239, 118, 0.75);
   --font-sans: "Hiragino Kaku Gothic Pro", "Meiryo", "Yu Gothic", YuGothic,
     "MS PGothic", sans-serif;
@@ -420,15 +421,24 @@ pre code {
 }
 
 .content pre code mark.code-highlight {
-  padding: 0;
+  padding: 0 2px;
   color: inherit;
-  background: var(--color-editorial-highlight);
+  background: var(--color-code-highlight);
+  font-style: normal;
+  font-weight: 700;
 }
 
 pre.console,
 pre.console code {
   background: var(--color-code-console);
   color: #ffffff;
+}
+
+.content pre.console code mark.code-highlight {
+  color: #ffffff;
+  background: var(--color-code-console);
+  border-bottom: 1px solid #ff8080;
+  font-weight: 400;
 }
 
 .content pre code .keyword {

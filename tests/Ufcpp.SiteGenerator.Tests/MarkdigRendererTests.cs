@@ -175,6 +175,109 @@ public sealed class MarkdigRendererTests
     }
 
     [Fact]
+    public void Render_FencedCodeTitle_IsEscapedAndWrittenOnlyToPre()
+    {
+        const string Title = """A "quoted" <tag> & value""";
+        var html = Render(
+            """
+            ```unknown-language {title='A "quoted" <tag> & value'}
+            <unsafe>
+            ```
+            """);
+
+        var pre = Assert.Single(ExtractRenderedPreElements(html));
+        var code = Assert.Single(pre.Elements("code"));
+        Assert.Equal(Title, pre.Attribute("title")?.Value);
+        Assert.Null(code.Attribute("title"));
+        Assert.Equal("<unsafe>", code.Value);
+        Assert.Contains(
+            "title=\"A &quot;quoted&quot; &lt;tag&gt; &amp; value\"",
+            html);
+        Assert.DoesNotContain("<tag>", html);
+        Assert.DoesNotContain("<unsafe>", html);
+    }
+
+    [Fact]
+    public void Render_FencedCodeWithoutTitle_OmitsTitleAttribute()
+    {
+        var html = Render(
+            """
+            ```text
+            plain
+            ```
+            """);
+
+        Assert.Null(
+            Assert.Single(ExtractRenderedPreElements(html)).Attribute("title"));
+    }
+
+    [Fact]
+    public void Render_FencedCodeMetadata_RejectsPropertiesOutsideAllowlist()
+    {
+        Assert.Throws<InvalidDataException>(
+            () => Render(
+                """
+                ```text {onclick="alert(1)"}
+                plain
+                ```
+                """));
+    }
+
+    [Theory]
+    [InlineData("""{#code-block}""")]
+    [InlineData("""{.source}""")]
+    public void Render_FencedCodeMetadata_RejectsGenericIdsOrClasses(string metadata)
+    {
+        Assert.Throws<InvalidDataException>(
+            () => Render($"```text {metadata}\nplain\n```"));
+    }
+
+    [Fact]
+    public void Render_MathBlock_AllowsExtensionGeneratedGenericClass()
+    {
+        var html = Render(
+            """
+            $$
+            x + y
+            $$
+            """);
+
+        Assert.Contains("x + y", html);
+    }
+
+    [Fact]
+    public void Render_FencedCodeTitle_RejectsRepeatedAttribute()
+    {
+        Assert.Throws<InvalidDataException>(
+            () => Render(
+                """
+                ```text {title="first" title="second"}
+                plain
+                ```
+                """));
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    public void Render_FencedCodeTitle_RejectsEmptyValue(string title)
+    {
+        var markdown = $"```text {{title=\"{title}\"}}\nplain\n```";
+
+        Assert.Throws<InvalidDataException>(() => Render(markdown));
+    }
+
+    [Theory]
+    [InlineData("\t")]
+    [InlineData("\u007F")]
+    public void Render_FencedCodeTitle_RejectsControlCharacters(string title)
+    {
+        var markdown = $"```text {{title=\"before{title}after\"}}\nplain\n```";
+
+        Assert.Throws<InvalidDataException>(() => Render(markdown));
+    }
+
+    [Fact]
     public void Render_FencedCode_HighlightsLinesAndInclusiveRanges()
     {
         var html = Render(
@@ -190,8 +293,11 @@ public sealed class MarkdigRendererTests
 
         var code = ExtractRenderedCodeElement(html);
         Assert.Equal(
-            "int one = 1;\nint three = 3;\nint four = 4;",
-            ExtractHighlightedCodeText(code));
+            [
+                "int one = 1;",
+                "int three = 3;\nint four = 4;",
+            ],
+            GetHighlightedRegions(code));
         Assert.NotEmpty(code.Descendants("span"));
         Assert.All(
             code.Descendants("mark"),
@@ -212,8 +318,8 @@ public sealed class MarkdigRendererTests
         var code = ExtractRenderedCodeElement(html);
         Assert.Equal("ValueValue", ExtractHighlightedCodeText(code));
         Assert.Contains(
-            code.Descendants("span"),
-            span => span.Descendants("mark").Any());
+            code.Descendants("mark"),
+            mark => mark.Descendants("span").Any());
     }
 
     [Fact]
@@ -230,8 +336,8 @@ public sealed class MarkdigRendererTests
         Assert.Equal("<root attr=\"value\" />\n", code.Value);
         Assert.Equal("value", ExtractHighlightedCodeText(code));
         Assert.Contains(
-            code.Descendants("span"),
-            span => span.Descendants("mark").Any());
+            code.Descendants("mark"),
+            mark => mark.Descendants("span").Any());
         Assert.Contains(code.Descendants("span"), span => span.HasAttributes);
     }
 
@@ -245,8 +351,10 @@ public sealed class MarkdigRendererTests
             ```
             """);
 
-        var code = ExtractRenderedCodeElement(html);
+        var pre = Assert.Single(ExtractRenderedPreElements(html));
+        var code = Assert.Single(pre.Elements("code"));
         var mark = Assert.Single(code.Descendants("mark"));
+        Assert.Equal("console", pre.Attribute("class")?.Value);
         Assert.Equal("/target:winexe", mark.Value);
         Assert.Empty(code.Descendants("span"));
         Assert.DoesNotContain("highlight-text", html);
@@ -320,9 +428,11 @@ public sealed class MarkdigRendererTests
     [Theory]
     [InlineData("""{highlight-lines=}""")]
     [InlineData("""{highlight-text=}""")]
+    [InlineData("""{title=}""")]
     [InlineData("""{highlight-lines="1" """)]
     [InlineData("""highlight-text="only" """)]
-    public void Render_HighlightMetadata_RejectsMalformedAttribute(string metadata)
+    [InlineData("""title="only" """)]
+    public void Render_FencedCodeMetadata_RejectsMalformedAttribute(string metadata)
     {
         var markdown = $"```text {metadata}\nonly\n```";
 
@@ -332,7 +442,7 @@ public sealed class MarkdigRendererTests
     [Theory]
     [InlineData("""text{highlight-lines=}""")]
     [InlineData("""text{highlight-text="only" """)]
-    public void Render_HighlightMetadata_RejectsMalformedAttributeAttachedToLanguage(
+    public void Render_FencedCodeMetadata_RejectsMalformedAttributeAttachedToLanguage(
         string info)
     {
         var markdown = $"```{info}\nonly\n```";
@@ -706,35 +816,56 @@ public sealed class MarkdigRendererTests
             candidate => candidate.RelativePath == "study/csharp/lib/lib_forms.md");
 
         var html = new MarkdigRenderer(contentRoot).Render(page, urlMap);
-        var highlightedBlocks = ExtractRenderedCodeElements(html)
-            .Where(code => code.Descendants("mark").Any())
+        var codeBlocks = ExtractRenderedPreElements(html);
+        Assert.Equal(
+            [
+                "最小の GUI アプリケーション",
+                "target:winexe",
+                "幅・高さとタイトル文字を設定",
+                "Form をサブクラス化",
+                "Button",
+                "Form に Button を追加",
+                "Click イベントハンドラを追加",
+            ],
+            codeBlocks.Select(block => block.Attribute("title")?.Value));
+
+        var highlightedBlocks = codeBlocks
+            .Where(block => block.Descendants("mark").Any())
             .ToArray();
 
         Assert.Equal(3, highlightedBlocks.Length);
+        Assert.Equal(
+            [
+                "target:winexe",
+                "Form に Button を追加",
+                "Click イベントハンドラを追加",
+            ],
+            highlightedBlocks.Select(block => block.Attribute("title")?.Value));
 
         var console = highlightedBlocks.Single(
-            code => code.Value.Contains("csc /target:winexe", StringComparison.Ordinal));
-        Assert.Equal("/target:winexe", ExtractHighlightedCodeText(console));
+            block => block.Attribute("title")?.Value == "target:winexe");
+        Assert.Equal(
+            "/target:winexe",
+            ExtractHighlightedCodeText(Assert.Single(console.Elements("code"))));
 
         var addControl = highlightedBlocks.Single(
-            code => code.Value.Contains(
-                "this.Controls.Add(this.button1);",
-                StringComparison.Ordinal)
-                && !code.Value.Contains("Button1_Click", StringComparison.Ordinal));
+            block => block.Attribute("title")?.Value == "Form に Button を追加");
         Assert.Equal(
-            "    this.Controls.Add(this.button1);\n",
-            ExtractHighlightedCodeText(addControl));
+            ["this.Controls.Add(this.button1);"],
+            GetHighlightedRegions(Assert.Single(addControl.Elements("code"))));
 
         var handler = highlightedBlocks.Single(
-            code => code.Value.Contains("Button1_Click", StringComparison.Ordinal));
+            block => block.Attribute("title")?.Value == "Click イベントハンドラを追加");
         Assert.Equal(
-            "    this.button1.Click += new EventHandler(this.Button1_Click);\n"
-                + "  void Button1_Click(object sender, EventArgs e)\n"
-                + "  {\n"
-                + "    this.count++;\n"
-                + "    this.button1.Text = this.count.ToString();\n"
-                + "  }\n",
-            ExtractHighlightedCodeText(handler));
+            [
+                "this.button1.Click += new EventHandler(this.Button1_Click);",
+                "  void Button1_Click(object sender, EventArgs e)\n"
+                    + "  {\n"
+                    + "    this.count++;\n"
+                    + "    this.button1.Text = this.count.ToString();\n"
+                        + "  }",
+            ],
+            GetHighlightedRegions(Assert.Single(handler.Elements("code"))));
     }
 
     [Fact]
@@ -960,8 +1091,23 @@ public sealed class MarkdigRendererTests
                     LoadOptions.PreserveWhitespace))
             .ToArray();
 
+    private static IReadOnlyList<XElement> ExtractRenderedPreElements(string html) =>
+        Regex.Matches(
+                html,
+                @"<pre(?:\s[^>]*)?>.*?</pre>",
+                RegexOptions.Singleline)
+            .Cast<Match>()
+            .Select(
+                match => XElement.Parse(
+                    match.Value,
+                    LoadOptions.PreserveWhitespace))
+            .ToArray();
+
     private static string ExtractHighlightedCodeText(XElement code) =>
         string.Concat(code.Descendants("mark").Select(static mark => mark.Value));
+
+    private static IReadOnlyList<string> GetHighlightedRegions(XElement code) =>
+        code.Descendants("mark").Select(static mark => mark.Value).ToArray();
 
     private static RenderedContent RenderWithMetadata(
         string markdown,

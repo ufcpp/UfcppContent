@@ -263,25 +263,40 @@ Fenced blocks can carry editorial highlighting metadata in their generic
 attributes:
 
 ````markdown
-```csharp {highlight-lines="2,5-7" highlight-text="Button1_Click"}
+```csharp {title="Register the click handler" highlight-lines="2,5-7" highlight-text="Button1_Click"}
 // Code
 ```
 ````
 
-`highlight-lines` accepts comma-separated, one-based whole-line numbers and
-inclusive ranges. Blank lines count toward the numbering. `highlight-text`
-uses case-sensitive ordinal literal matching and highlights every occurrence,
-including overlapping occurrences. When both attributes select the same source,
-their source ranges are combined and overlapping or adjacent ranges are merged.
+`title` adds an escaped `title` attribute to the generated `<pre>` element, so
+desktop browsers expose the same native hover tooltip as the legacy site. It
+must be non-empty and cannot contain control characters. When it is omitted,
+the renderer does not emit a `title` attribute. `highlight-lines` accepts
+comma-separated, one-based whole-line numbers and inclusive ranges. Blank lines
+count toward the numbering; the terminating line break after each selection stays
+outside the generated highlight. `highlight-text` uses case-sensitive ordinal
+literal matching and highlights every occurrence, including overlapping occurrences.
+When both attributes select the same source, their source ranges are combined
+and overlapping or adjacent ranges are merged.
 
+The named-property allowlist contains only `title`, `highlight-lines`, and
+`highlight-text`; event handlers and other named generic attributes fail site
+generation instead of reaching generated HTML. Author-supplied generic IDs and
+classes on fenced code blocks also fail generation. Markdig-generated attributes
+on its derived block extensions are ignored rather than copied.
 Highlight metadata is consumed by the renderer and is never copied into generated
-HTML. Malformed highlight attributes, invalid line syntax, non-positive or
-out-of-range line numbers, an empty literal, and a literal with no match fail site
-generation explicitly. Before inserting fixed
+HTML. Malformed attributes, invalid line syntax, non-positive or out-of-range
+line numbers, an empty literal, and a literal with no match fail site generation
+explicitly. Before inserting fixed
 `<mark class="code-highlight">` elements, the renderer parses the trusted
 syntax-highlighter fragment structurally and verifies that its text maps exactly
 to the source code. This preserves syntax-token spans and escaped plain code
 without rewriting generated HTML with regular expressions.
+
+Source-code highlights reproduce the legacy effective style: `#e0ffff`
+background, `0 2px` padding, normal font style, and bold text while nested syntax
+token colors remain intact. Console highlights retain white text on `#606060`,
+normal weight, and the legacy `1px solid #ff8080` bottom border.
 
 Roslyn classifications are emitted as scoped `roslyn-*` classes. Same-position
 and overlapping classifications are merged by text interval so embedded

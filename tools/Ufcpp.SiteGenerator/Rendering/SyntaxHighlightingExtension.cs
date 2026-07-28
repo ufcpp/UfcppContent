@@ -66,6 +66,7 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
     {
         private const string HighlightLinesAttribute = "highlight-lines";
         private const string HighlightTextAttribute = "highlight-text";
+        private const string TitleAttribute = "title";
         private const string HighlightClassName = "code-highlight";
         private readonly Lazy<RoslynCSharpHighlighter> _csharpHighlighter;
 
@@ -78,19 +79,28 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
         protected override void Write(HtmlRenderer renderer, FencedCodeBlock block)
         {
             var code = block.Lines.ToString();
-            var highlightSpans = GetHighlightSpans(block, code);
             var languageName = block.Info?
                 .Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)
                 .FirstOrDefault();
+            var metadata = GetMetadata(block, code, languageName);
+            var preClassName = languageName?.Equals(
+                "console",
+                StringComparison.OrdinalIgnoreCase) == true
+                    ? "console"
+                    : null;
             if (languageName is not null
                 && CSharpLanguageNames.Contains(languageName))
             {
-                renderer.Write("<pre><code class=\"language-csharp\">");
+                WriteOpeningTags(
+                    renderer,
+                    preClassName,
+                    "csharp",
+                    metadata.Title);
                 renderer.Write(
                     ApplyHighlights(
                         _csharpHighlighter.Value.Highlight(code),
                         code,
-                        highlightSpans));
+                        metadata.HighlightSpans));
                 renderer.WriteLine("</code></pre>");
                 return;
             }
@@ -98,23 +108,21 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
             if (languageName is null
                 || !LanguagesByName.TryGetValue(languageName, out var language))
             {
-                renderer.Write("<pre><code");
-                if (languageName is not null)
-                {
-                    renderer.Write(" class=\"language-");
-                    renderer.WriteEscape(languageName);
-                    renderer.Write("\"");
-                }
-
-                renderer.Write(">");
-                WritePlainCode(renderer, code, highlightSpans);
+                WriteOpeningTags(
+                    renderer,
+                    preClassName,
+                    languageName,
+                    metadata.Title);
+                WritePlainCode(renderer, code, metadata.HighlightSpans);
                 renderer.WriteLine("</code></pre>");
                 return;
             }
 
-            renderer.Write("<pre><code class=\"language-");
-            renderer.WriteEscape(language.Name);
-            renderer.Write("\">");
+            WriteOpeningTags(
+                renderer,
+                preClassName,
+                language.Name,
+                metadata.Title);
 
             HighlightedFragment highlightedCode;
             try
@@ -128,31 +136,97 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                     or InvalidOperationException
                     or System.Text.RegularExpressions.RegexMatchTimeoutException)
             {
-                WritePlainCode(renderer, code, highlightSpans);
+                WritePlainCode(renderer, code, metadata.HighlightSpans);
                 renderer.WriteLine("</code></pre>");
                 return;
             }
 
             renderer.Write(
-                ApplyHighlights(highlightedCode.Html, code, highlightSpans));
+                ApplyHighlights(
+                    highlightedCode.Html,
+                    code,
+                    metadata.HighlightSpans));
             renderer.Write(highlightedCode.TrailingWhitespace);
             renderer.WriteLine("</code></pre>");
         }
 
-        private static IReadOnlyList<SourceSpan> GetHighlightSpans(
+        private static void WriteOpeningTags(
+            HtmlRenderer renderer,
+            string? preClassName,
+            string? languageName,
+            string? title)
+        {
+            renderer.Write("<pre");
+            if (preClassName is not null)
+            {
+                renderer.Write(" class=\"");
+                renderer.WriteEscape(preClassName);
+                renderer.Write("\"");
+            }
+
+            if (title is not null)
+            {
+                renderer.Write(" title=\"");
+                renderer.WriteEscape(title);
+                renderer.Write("\"");
+            }
+
+            renderer.Write("><code");
+            if (languageName is not null)
+            {
+                renderer.Write(" class=\"language-");
+                renderer.WriteEscape(languageName);
+                renderer.Write("\"");
+            }
+
+            renderer.Write(">");
+        }
+
+        private static CodeBlockMetadata GetMetadata(
             FencedCodeBlock block,
-            string code)
+            string code,
+            string? languageName)
         {
             string? highlightedLines = null;
             string? highlightedText = null;
-            if (ContainsHighlightMetadata(block.Arguments)
-                || ContainsAttachedHighlightMetadata(block.Info))
+            string? title = null;
+            if (!string.IsNullOrWhiteSpace(block.Arguments)
+                || ContainsAttachedMetadata(block.Info))
             {
                 throw new InvalidDataException(
-                    "The fenced code highlight metadata is malformed.");
+                    "The fenced code metadata is malformed.");
             }
 
-            foreach (var attribute in block.TryGetAttributes()?.Properties ?? [])
+            var attributes = block.TryGetAttributes();
+            if (block.GetType() == typeof(FencedCodeBlock))
+            {
+                if (!string.IsNullOrEmpty(attributes?.Id))
+                {
+                    throw UnsupportedMetadata(
+                        propertyName: "id",
+                        languageName: languageName);
+                }
+
+                var generatedLanguageClass = languageName is null
+                    ? null
+                    : $"language-{languageName}";
+                var classes = attributes?.Classes;
+                var unsupportedClass = classes is null
+                    ? null
+                    : classes.FirstOrDefault(
+                        className => !string.Equals(
+                            className,
+                            generatedLanguageClass,
+                            StringComparison.Ordinal));
+                if (unsupportedClass is not null)
+                {
+                    throw UnsupportedMetadata(
+                        propertyName: "class",
+                        languageName: languageName);
+                }
+            }
+
+            foreach (var attribute in attributes?.Properties ?? [])
             {
                 if (attribute.Key.Equals(
                         HighlightLinesAttribute,
@@ -182,6 +256,27 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                         ?? throw new InvalidDataException(
                             $"The {HighlightTextAttribute} attribute requires a value.");
                 }
+                else if (attribute.Key.Equals(
+                             TitleAttribute,
+                             StringComparison.Ordinal))
+                {
+                    if (title is not null)
+                    {
+                        throw new InvalidDataException(
+                            $"The {TitleAttribute} attribute cannot be repeated.");
+                    }
+
+                    title = attribute.Value
+                        ?? throw new InvalidDataException(
+                            $"The {TitleAttribute} attribute requires a value.");
+                    ValidateTitle(title);
+                }
+                else
+                {
+                    throw UnsupportedMetadata(
+                        propertyName: attribute.Key,
+                        languageName: languageName);
+                }
             }
 
             var spans = new List<SourceSpan>();
@@ -195,26 +290,36 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                 AddTextSpans(spans, code, highlightedText);
             }
 
-            return MergeSpans(spans);
+            return new CodeBlockMetadata(title, MergeSpans(spans));
         }
 
-        private static bool ContainsHighlightMetadata(string? arguments) =>
-            arguments is not null
-            && (arguments.Contains(
-                    HighlightLinesAttribute,
-                    StringComparison.Ordinal)
-                || arguments.Contains(
-                    HighlightTextAttribute,
-                    StringComparison.Ordinal));
+        private static bool ContainsAttachedMetadata(string? info) =>
+            info?.Contains('{', StringComparison.Ordinal) == true;
 
-        private static bool ContainsAttachedHighlightMetadata(string? info) =>
-            info is not null
-            && (info.Contains(
-                    $"{{{HighlightLinesAttribute}",
-                    StringComparison.Ordinal)
-                || info.Contains(
-                    $"{{{HighlightTextAttribute}",
-                    StringComparison.Ordinal));
+        private static InvalidDataException UnsupportedMetadata(
+            string? languageName = null,
+            string? propertyName = null)
+        {
+            return new InvalidDataException(
+                "Fenced code metadata supports only title, highlight-lines, "
+                + $"and highlight-text; found unsupported '{propertyName}' metadata "
+                + $"for language '{languageName ?? string.Empty}'.");
+        }
+
+        private static void ValidateTitle(string title)
+        {
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                throw new InvalidDataException(
+                    $"The {TitleAttribute} attribute requires a non-empty value.");
+            }
+
+            if (title.Any(char.IsControl))
+            {
+                throw new InvalidDataException(
+                    $"The {TitleAttribute} attribute cannot contain control characters.");
+            }
+        }
 
         private static void AddLineSpans(
             ICollection<SourceSpan> spans,
@@ -255,8 +360,23 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                 spans.Add(
                     new SourceSpan(
                         sourceLines[startLine - 1].Start,
-                        sourceLines[endLine - 1].End));
+                        GetLineContentEnd(code, sourceLines[endLine - 1])));
             }
+        }
+
+        private static int GetLineContentEnd(string code, SourceSpan line)
+        {
+            var end = line.End;
+            if (end > line.Start && code[end - 1] == '\n')
+            {
+                end--;
+                if (end > line.Start && code[end - 1] == '\r')
+                {
+                    end--;
+                }
+            }
+
+            return end;
         }
 
         private static int ParseLineNumber(string value)
@@ -420,55 +540,65 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
             string code,
             IReadOnlyList<SourceSpan> highlightSpans)
         {
+            var segments = new List<RenderedSegment>();
             var sourcePosition = 0;
-            var spanIndex = 0;
-            foreach (var textNode in root.DescendantNodes().OfType<XText>().ToArray())
+            foreach (var node in root.Nodes().ToArray())
             {
-                var text = textNode.Value;
-                var nodeEnd = sourcePosition + text.Length;
-                var replacementNodes = new List<object>();
-                var localPosition = 0;
-
-                while (localPosition < text.Length)
+                string text;
+                XElement? element = null;
+                if (node is XText textNode)
                 {
-                    var absolutePosition = sourcePosition + localPosition;
-                    while (spanIndex < highlightSpans.Count
-                           && highlightSpans[spanIndex].End <= absolutePosition)
-                    {
-                        spanIndex++;
-                    }
-
-                    if (spanIndex >= highlightSpans.Count
-                        || highlightSpans[spanIndex].Start >= nodeEnd)
-                    {
-                        replacementNodes.Add(new XText(text[localPosition..]));
-                        localPosition = text.Length;
-                        continue;
-                    }
-
-                    var span = highlightSpans[spanIndex];
-                    if (absolutePosition < span.Start)
-                    {
-                        var plainEnd = Math.Min(span.Start, nodeEnd);
-                        replacementNodes.Add(
-                            new XText(
-                                text[localPosition..(plainEnd - sourcePosition)]));
-                        localPosition = plainEnd - sourcePosition;
-                        continue;
-                    }
-
-                    var highlightedEnd = Math.Min(span.End, nodeEnd);
-                    replacementNodes.Add(
-                        new XElement(
-                            "mark",
-                            new XAttribute("class", HighlightClassName),
-                            text[localPosition..(highlightedEnd - sourcePosition)]));
-                    localPosition = highlightedEnd - sourcePosition;
+                    text = textNode.Value;
+                }
+                else if (node is XElement candidate
+                         && !candidate.Descendants().Any())
+                {
+                    element = candidate;
+                    text = candidate.Value;
+                }
+                else
+                {
+                    throw new InvalidDataException(
+                        "The syntax highlighter returned unsupported nested markup.");
                 }
 
-                if (replacementNodes.Count > 0)
+                var nodeEnd = sourcePosition + text.Length;
+                var boundaries = new SortedSet<int> { 0, text.Length };
+                foreach (var span in highlightSpans)
                 {
-                    textNode.ReplaceWith(replacementNodes.ToArray());
+                    if (span.End <= sourcePosition || span.Start >= nodeEnd)
+                    {
+                        continue;
+                    }
+
+                    boundaries.Add(Math.Max(span.Start, sourcePosition) - sourcePosition);
+                    boundaries.Add(Math.Min(span.End, nodeEnd) - sourcePosition);
+                }
+
+                var positions = boundaries.ToArray();
+                for (var index = 0; index < positions.Length - 1; index++)
+                {
+                    var start = positions[index];
+                    var end = positions[index + 1];
+                    if (start == end)
+                    {
+                        continue;
+                    }
+
+                    var absoluteStart = sourcePosition + start;
+                    var absoluteEnd = sourcePosition + end;
+                    var isHighlighted = highlightSpans.Any(
+                        span => span.Start <= absoluteStart
+                            && absoluteEnd <= span.End);
+                    var value = text[start..end];
+                    XNode renderedNode = element is null
+                        ? new XText(value)
+                        : new XElement(
+                            element.Name,
+                            element.Attributes().Select(
+                                static attribute => new XAttribute(attribute)),
+                            value);
+                    segments.Add(new RenderedSegment(renderedNode, isHighlighted));
                 }
 
                 sourcePosition = nodeEnd;
@@ -478,6 +608,45 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
             {
                 throw new InvalidDataException(
                     "The syntax highlighter fragment ended before the source code.");
+            }
+
+            root.RemoveNodes();
+            var run = new List<XNode>();
+            bool? runIsHighlighted = null;
+            foreach (var segment in segments)
+            {
+                if (runIsHighlighted != segment.IsHighlighted)
+                {
+                    FlushRun();
+                    runIsHighlighted = segment.IsHighlighted;
+                }
+
+                run.Add(segment.Node);
+            }
+
+            FlushRun();
+
+            void FlushRun()
+            {
+                if (run.Count == 0)
+                {
+                    return;
+                }
+
+                if (runIsHighlighted == true)
+                {
+                    root.Add(
+                        new XElement(
+                            "mark",
+                            new XAttribute("class", HighlightClassName),
+                            run));
+                }
+                else
+                {
+                    root.Add(run);
+                }
+
+                run.Clear();
             }
         }
 
@@ -528,6 +697,14 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
         private readonly record struct HighlightedFragment(
             string Html,
             string TrailingWhitespace);
+
+        private readonly record struct CodeBlockMetadata(
+            string? Title,
+            IReadOnlyList<SourceSpan> HighlightSpans);
+
+        private readonly record struct RenderedSegment(
+            XNode Node,
+            bool IsHighlighted);
 
         private readonly record struct SourceSpan(int Start, int End);
     }

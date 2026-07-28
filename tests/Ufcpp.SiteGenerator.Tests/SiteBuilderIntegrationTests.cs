@@ -132,6 +132,8 @@ public sealed class SiteBuilderIntegrationTests
         Assert.Matches(@"--color-content-link\s*:\s*#a35951\s*;", css);
         Assert.Matches(@"--color-code-keyword\s*:\s*#0000e1\s*;", css);
         Assert.Matches(@"--color-code-string\s*:\s*#a31515\s*;", css);
+        Assert.Matches(@"--color-code-highlight\s*:\s*#e0ffff\s*;", css);
+        Assert.Matches(@"(?:^|\n)code\s*\{[^}]*color\s*:\s*#000000\s*;", css);
         Assert.Matches(@"\.site-main\s*\{[^}]*width\s*:\s*100%\s*;", css);
         Assert.DoesNotContain(".site-sidebar", css);
         Assert.DoesNotContain("--sidebar-width", css);
@@ -158,6 +160,21 @@ public sealed class SiteBuilderIntegrationTests
             css);
         Assert.Matches(
             @"\.content pre code \.powershellCommand\s*\{[^}]*color\s*:\s*#000080\s*;",
+            css);
+        Assert.Matches(
+            @"\.content pre code mark\.code-highlight\s*\{[^}]*"
+            + @"padding\s*:\s*0 2px\s*;[^}]*"
+            + @"color\s*:\s*inherit\s*;[^}]*"
+            + @"background\s*:\s*var\(--color-code-highlight\)\s*;[^}]*"
+            + @"font-style\s*:\s*normal\s*;[^}]*"
+            + @"font-weight\s*:\s*700\s*;",
+            css);
+        Assert.Matches(
+            @"\.content pre\.console code mark\.code-highlight\s*\{[^}]*"
+            + @"color\s*:\s*#ffffff\s*;[^}]*"
+            + @"background\s*:\s*var\(--color-code-console\)\s*;[^}]*"
+            + @"border-bottom\s*:\s*1px solid #ff8080\s*;[^}]*"
+            + @"font-weight\s*:\s*400\s*;",
             css);
         Assert.Matches(
             @":where\(\.content\) \.version\s*\{[^}]*margin-left\s*:\s*8px\s*;[^}]*"

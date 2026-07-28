@@ -67,7 +67,7 @@ Form や Menu、Button といった名前の「[クラス](../oop/oo_class.md#cl
 ボタンも何もないただのフォームが1枚現れるだけなのであまり意味はありませんが、
 最小の GUI アプリケーションは以下のようなものになります。
 
-```csharp
+```csharp {title="最小の GUI アプリケーション"}
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -99,7 +99,7 @@ class Program
 /target:winexe というオプションを付けてください。
 （そうしないと、プログラムを実行するたびにコマンドプロンプトが表示されてしまいます。）
 
-```console {highlight-text="/target:winexe"}
+```console {title="target:winexe" highlight-text="/target:winexe"}
 csc /target:winexe Program.cs
 ```
 
@@ -113,7 +113,7 @@ Text がタイトル文字になります。
 これらを設定し、以下のようなプログラム作成・コンパイルし、実行すると、
 図2のようなフォームが表示されるはずです。
 
-```csharp
+```csharp {title="幅・高さとタイトル文字を設定"}
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -145,7 +145,7 @@ class Program
 以下のコードに示すように、
 フォームごとに Form クラスを「[継承](../oop/oo_inherit.md#derive)」した「[派生クラス](../oop/oo_inherit.md#subclass)」を作るスタイルが一般的です。
 
-```csharp
+```csharp {title="Form をサブクラス化"}
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -188,7 +188,7 @@ class Form1 : Form
 あるいは、Size プロパティを使えば、幅と高さを同時に指定できます。
 また、ボタンを置く位置は Location プロパティを使って指定します。
 
-```csharp
+```csharp {title="Button"}
 Button button1;
 button1 = new Button();
 button1.Location = new Point(10, 10);
@@ -208,7 +208,7 @@ Form クラスはこのコントロールの一覧である Controls という�
 そして、Controls に対して、Add メソッドを呼び出すことで、
 コントロール（ここでの例の場合、ボタン）を追加することができます。
 
-```csharp {highlight-lines="28"}
+```csharp {title="Form に Button を追加" highlight-text="this.Controls.Add(this.button1);"}
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -269,7 +269,7 @@ class Form1 : Form
 以下にソースを示します。
 先ほどから追加したのは、背景色を変えて強調してある部分だけです。
 
-```csharp {highlight-lines="29,34-38"}
+```csharp {title="Click イベントハンドラを追加" highlight-lines="34-38" highlight-text="this.button1.Click += new EventHandler(this.Button1_Click);"}
 using System;
 using System.Drawing;
 using System.Windows.Forms;
