@@ -93,6 +93,25 @@ public sealed class MarkdigRendererTests
     }
 
     [Fact]
+    public void Render_CSharpFence_ResolvesConsoleTemplateImplicitUsings()
+    {
+        var html = Render(
+            """
+            ```csharp
+            Console.WriteLine("Hello");
+            await Task.Delay(1);
+            ```
+            """);
+
+        Assert.Contains(
+            "<span class=\"roslyn-class-name roslyn-static-symbol\">Console</span>",
+            html);
+        Assert.Contains(
+            "<span class=\"roslyn-class-name\">Task</span>",
+            html);
+    }
+
+    [Fact]
     public void Render_CSharpFence_ClassifiesModernSyntaxAndSymbols()
     {
         var html = Render(

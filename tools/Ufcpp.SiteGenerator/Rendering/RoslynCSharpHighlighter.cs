@@ -20,6 +20,15 @@ namespace Ufcpp.SiteGenerator.Rendering;
 internal sealed class RoslynCSharpHighlighter
 {
     private const string CssClassPrefix = "roslyn-";
+    private const string ConsoleImplicitGlobalUsings = """
+        global using System;
+        global using System.IO;
+        global using System.Collections.Generic;
+        global using System.Linq;
+        global using System.Net.Http;
+        global using System.Threading;
+        global using System.Threading.Tasks;
+        """;
     private readonly Project _baseProject;
     private readonly ConcurrentDictionary<string, string> _highlightedCodeCache =
         new(StringComparer.Ordinal);
@@ -27,13 +36,18 @@ internal sealed class RoslynCSharpHighlighter
     public RoslynCSharpHighlighter()
     {
         var workspace = new AdhocWorkspace();
-        _baseProject = workspace
+        var project = workspace
             .AddProject("C# syntax highlighting", LanguageNames.CSharp)
             .WithParseOptions(
                 CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Preview))
             .WithCompilationOptions(
                 new CSharpCompilationOptions(OutputKind.ConsoleApplication))
             .AddMetadataReferences(CreatePlatformReferences());
+        _baseProject = project
+            .AddDocument(
+                "GlobalUsings.g.cs",
+                SourceText.From(ConsoleImplicitGlobalUsings, Encoding.UTF8))
+            .Project;
 
         if (_baseProject.GetCompilationAsync().GetAwaiter().GetResult() is null)
         {
