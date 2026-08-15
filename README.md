@@ -16,6 +16,11 @@ and asset catalogs, and the converter used to regenerate them.
 The raw Umbraco cache, acquisition archives, credentials, activity logs, and extracted source
 trees do not belong in this repository.
 
+## Adding content
+
+See [docs/adding-content.md](docs/adding-content.md) for the procedure to add blog entries and
+articles directly as Markdown.
+
 ## Local validation
 
 ```powershell
