@@ -4,10 +4,9 @@
 追加する手順を説明します。コマンドはリポジトリのルートから PowerShell で実行します。
 
 > [!IMPORTANT]
-> 通常の追加作業では `Ufcpp.ContentConverter` を実行しないでください。コンバーターは
-> `content/`、`assets/`、`catalog/` を削除して、取得済みの Umbraco スナップショットから
-> 全体を再生成します。Markdown へ直接追加した内容はスナップショットに含まれないため、
-> 再生成すると失われます。
+> 現在は `content/` の Markdown を正として直接保守します。初回移行に使用した
+> `Ufcpp.ContentConverter` は廃止済みで、必要な場合に履歴を確認できるよう
+> Git tag `archive/content-converter` にのみ保存されています。
 
 ## ファイル構成
 

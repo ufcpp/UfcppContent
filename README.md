@@ -1,16 +1,16 @@
 # ufcpp.net content
 
 This repository is the local, deterministic Markdown archive of the published ufcpp.net
-content snapshot. It contains generated Markdown, referenced local assets, reversible content
-and asset catalogs, and the converter used to regenerate them.
+content snapshot. It contains Markdown maintained as the current source of truth, referenced
+local assets, reversible content and asset catalogs, and the static site generator.
 
 ## Layout
 
 - `content/`: 1,107 generated Markdown documents.
 - `assets/`: only assets referenced by generated content.
 - `catalog/`: source fingerprints, node/asset mappings, and validation results.
-- `tools/Ufcpp.ContentConverter/`: .NET 8 converter.
-- `tests/Ufcpp.ContentConverter.Tests/`: focused xUnit tests.
+- `tools/Ufcpp.SiteGenerator/`: .NET 10 static site generator.
+- `tests/Ufcpp.SiteGenerator.Tests/`: focused xUnit tests.
 - `docs/`: format and regeneration details.
 
 The raw Umbraco cache, acquisition archives, credentials, activity logs, and extracted source
@@ -29,19 +29,14 @@ dotnet build .\UfcppContent.slnx --no-restore
 dotnet test .\UfcppContent.slnx --no-build
 ```
 
-Regeneration requires the locally acquired inputs outside this repository:
+## Historical conversion
 
-```powershell
-dotnet run --project .\tools\Ufcpp.ContentConverter -- `
-  --snapshot <published-content.xml> `
-  --media <extracted-media-root> `
-  --sitemap <live-sitemap.xml> `
-  --rewrite-maps .\tools\Ufcpp.ContentConverter\data\rewrite_rewritemaps.config `
-  --legacy-root <legacy-source-repository> `
-  --output .
-```
+The one-time `Ufcpp.ContentConverter`, its tests, and the original offline regeneration
+instructions were retired after the Umbraco migration. Their final state is preserved in the
+annotated Git tag [`archive/content-converter`](https://github.com/runceel/UfcppContent/tree/archive/content-converter).
+They are not part of the current build or authoring workflow.
 
-See [docs/regeneration.md](docs/regeneration.md) for the complete offline procedure.
+See [docs/regeneration.md](docs/regeneration.md) for archival access details.
 
 ## Copyright
 

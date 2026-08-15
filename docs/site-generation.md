@@ -68,18 +68,18 @@ Articles published before 2014 additionally had a flat legacy URL,
 fragment-preserving redirect page with `rel=canonical` pointing at the directory URL, so old
 links and bookmarks keep working.
 
-`RewriteMapCatalog.BuildAliases` collects a wider *routing* set than the site publishes:
-it also derives `/study`-less paths (`/csharp/st_basis.html`) and extension-less variants
-of `.html` paths (`/study/csharp/st_basis`). Neither form was ever served by the original
-site. The converter uses the routing set only to resolve legacy links found inside the
-source content, and `AliasPolicy.SelectPublished` narrows it to the aliases that are
-written to front matter and `catalog/content-map.json` — that is, the ones that become
-redirects. Genuine legacy URLs outside `/study/`, such as `/lecture/index.html`, are kept
-because no `/study`-prefixed counterpart exists on the same page.
+Published aliases intentionally exclude `/study`-less paths
+(`/csharp/st_basis.html`) and extension-less variants of `.html` paths
+(`/study/csharp/st_basis`) that were derived only for the original migration. Genuine
+legacy URLs outside `/study/`, such as `/lecture/index.html`, remain published when no
+`/study`-prefixed counterpart exists on the same page.
 
-`LegacyUrlCoverageTests` verifies this offline against the committed content: every key
-and value in `tools/Ufcpp.ContentConverter/data/rewrite_rewritemaps.config` is served by
-some page, no canonical URL ends in `.html`, and no published alias is a derived form.
+`LegacyUrlCoverageTests` loads the committed content through `PageLoader` and verifies it
+offline against
+`tests/Ufcpp.SiteGenerator.Tests/data/rewrite_rewritemaps.config`: every rewrite-map key
+and value is served by some page, no canonical URL ends in `.html`, and no published alias
+is a derived form. The retired conversion implementation that originally produced these
+aliases is preserved in Git tag `archive/content-converter`.
 
 ## Previewing locally
 
