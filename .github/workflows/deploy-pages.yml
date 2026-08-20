@@ -33,7 +33,7 @@ jobs:
         run: dotnet test UfcppContent.slnx --configuration Release --no-restore
 
       - name: Generate site
-        run: &gt;
+        run: >
           dotnet run
           --project tools/Ufcpp.SiteGenerator/Ufcpp.SiteGenerator.csproj
           --configuration Release
