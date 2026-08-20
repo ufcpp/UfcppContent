@@ -51,8 +51,12 @@ public sealed class OutputCollisionTests
             Directory.EnumerateFiles(redirectDirectory, "*.html", SearchOption.AllDirectories));
         var html = File.ReadAllText(redirectFile);
 
-        Assert.Contains("""<link rel="canonical" href="/article/" />""", html);
-        Assert.Contains("""<meta http-equiv="refresh" content="0; url=/article/" />""", html);
+        Assert.Contains(
+            """<link rel="canonical" href="https://ufcpp.net/article/" />""",
+            html);
+        Assert.Contains(
+            """<meta http-equiv="refresh" content="0; url=../article/" />""",
+            html);
     }
 
     [Fact]

@@ -142,15 +142,19 @@ public sealed class MarkdigRenderer
     /// Renders the Markdown body of the given page to an HTML string,
     /// rewriting internal links to canonical URLs.
     /// </summary>
-    public string Render(ContentPage page, IReadOnlyDictionary<string, string> urlMap) =>
-        RenderWithMetadata(page, urlMap).Html;
+    public string Render(
+        ContentPage page,
+        IReadOnlyDictionary<string, string> urlMap,
+        IReadOnlySet<string>? knownSiteOutputs = null) =>
+        RenderWithMetadata(page, urlMap, knownSiteOutputs).Html;
 
     /// <summary>
     /// Renders the Markdown body and extracts its heading outline and keyword anchors.
     /// </summary>
     public RenderedContent RenderWithMetadata(
         ContentPage page,
-        IReadOnlyDictionary<string, string> urlMap)
+        IReadOnlyDictionary<string, string> urlMap,
+        IReadOnlySet<string>? knownSiteOutputs = null)
     {
         var absoluteFilePath = Path.GetFullPath(
             Path.Combine(_contentRootDirectory, page.RelativePath));
@@ -159,7 +163,9 @@ public sealed class MarkdigRenderer
             _contentRootDirectory,
             _assetsRootDirectory,
             absoluteFilePath,
-            urlMap);
+            page.CanonicalPath,
+            urlMap,
+            knownSiteOutputs);
 
         var (markdownWithoutFences, fencedCodeBlocks) =
             ProtectFencedCodeBlocks(page.MarkdownBody);
@@ -207,7 +213,7 @@ public sealed class MarkdigRenderer
         // Rewrite links in raw HTML blocks (bounded regex, safe from backtracking)
         html = HtmlAttrRegex.Replace(html, match =>
         {
-            var url = match.Groups["url"].Value;
+            var url = WebUtility.HtmlDecode(match.Groups["url"].Value);
             var rewritten = rewriter.RewriteUrl(url);
             if (rewritten == url)
             {
@@ -216,12 +222,12 @@ public sealed class MarkdigRenderer
 
             var attr = match.Groups["attr"].Value;
             var q = match.Groups["q"].Value;
-            return attr + "=" + q + rewritten + q;
+            return attr + "=" + q + WebUtility.HtmlEncode(rewritten) + q;
         });
 
         html = SourceParamRegex.Replace(html, match =>
         {
-            var url = match.Groups["url"].Value;
+            var url = WebUtility.HtmlDecode(match.Groups["url"].Value);
             var rewritten = rewriter.RewriteUrl(url);
             if (rewritten == url)
             {
@@ -230,7 +236,7 @@ public sealed class MarkdigRenderer
 
             return match.Groups["prefix"].Value
                 + match.Groups["q"].Value
-                + rewritten
+                + WebUtility.HtmlEncode(rewritten)
                 + match.Groups["q"].Value;
         });
 

@@ -564,7 +564,7 @@ public sealed class MarkdigRendererTests
         Assert.Contains("<table summary=\"\">", html);
         Assert.Contains("<td>", html);
         Assert.Contains("<ul>", html);
-        Assert.Contains("<a href=\"/guide/\">Guide</a>", html);
+        Assert.Contains("<a href=\"../../guide/\">Guide</a>", html);
         Assert.Contains("<strong>Important</strong>", html);
         Assert.DoesNotContain("markdown=\"1\"", html);
         Assert.DoesNotContain("* [Guide]", html);
@@ -591,7 +591,7 @@ public sealed class MarkdigRendererTests
         Assert.Contains("<blockquote>", html);
         Assert.Contains("<p>Intro</p>", html);
         Assert.Contains("<table summary=\"\">", html);
-        Assert.Contains("<td><p><a href=\"/guide/\">Guide</a></p></td>", html);
+        Assert.Contains("<td><p><a href=\"../../guide/\">Guide</a></p></td>", html);
         Assert.DoesNotContain("markdown=\"1\"", html);
         Assert.DoesNotContain("<pre><code>", html);
     }
@@ -1023,10 +1023,12 @@ public sealed class MarkdigRendererTests
                 WriteAsset(tempRoot, "media/demo/application.xap");
             });
 
-        Assert.Contains("data=\"/assets/media/demo/player.xap\"", html);
-        Assert.Contains("name=\"source\" value=\"/assets/media/demo/application.xap\"", html);
+        Assert.Contains("data=\"../../assets/media/demo/player.xap\"", html);
+        Assert.Contains(
+            "name=\"source\" value=\"../../assets/media/demo/application.xap\"",
+            html);
         Assert.Contains("name=\"background\" value=\"/media/demo/not-a-resource.png\"", html);
-        Assert.DoesNotContain("data=\"/media/demo/player.xap\"", html);
+        Assert.DoesNotContain("data=\"../../media/demo/player.xap\"", html);
         Assert.DoesNotContain(
             "name=\"background\" value=\"/assets/media/demo/not-a-resource.png\"",
             html);

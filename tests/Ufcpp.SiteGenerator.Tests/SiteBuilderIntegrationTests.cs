@@ -90,6 +90,101 @@ public sealed class SiteBuilderIntegrationTests
     }
 
     [Fact]
+    public async Task BuildAsync_DeepPage_UsesPortableRelativeInternalUrls()
+    {
+        using var site = new SiteFixture();
+        site.WriteAsset("media/demo/image.png", "fixture image");
+        site.AddPage(new(
+            "target/entity.md",
+            "Entity target",
+            "/target/a%26b/",
+            "Article",
+            98,
+            -1,
+            0,
+            "# Entity target"));
+        site.AddPage(new(
+            "study/dotnet/index.md",
+            ".NET guide",
+            "/study/dotnet/",
+            "Chapter",
+            99,
+            -1,
+            0,
+            "# .NET guide",
+            Aliases: ["/legacy-dotnet.html"]));
+        site.AddPage(new(
+            "study/csharp/async/sample.md",
+            "Portable URLs",
+            "/study/csharp/async/sample/",
+            "Article",
+            100,
+            -1,
+            0,
+            """
+            # Portable URLs
+
+            [.NET guide](http://ufcpp.net/legacy-dotnet.html)
+
+            <img class="body-image" src="/media/demo/image.png" alt="Demo">
+            <a class="entity-link" href="/target/a&amp;b/?p=6&amp;x=1">Entity target</a>
+            """));
+        var output = site.GetOutputDirectory("portable-urls");
+
+        await site.BuildAsync(output);
+
+        var document = LoadHtmlDocument(Path.Combine(
+            output,
+            "study",
+            "csharp",
+            "async",
+            "sample",
+            "index.html"));
+        var stylesheet = Assert.Single(
+            document.Descendants("link"),
+            element => (string?)element.Attribute("rel") == "stylesheet");
+        var canonical = Assert.Single(
+            document.Descendants("link"),
+            element => (string?)element.Attribute("rel") == "canonical");
+        var logo = Assert.Single(
+            document.Descendants("img"),
+            element => HasClassToken(element, "site-logo"));
+        var bodyImage = Assert.Single(
+            document.Descendants("img"),
+            element => HasClassToken(element, "body-image"));
+        var guideLink = Assert.Single(
+            document.Descendants("a"),
+            element => element.Value == ".NET guide");
+        var entityLink = Assert.Single(
+            document.Descendants("a"),
+            element => HasClassToken(element, "entity-link"));
+
+        Assert.Equal(
+            "https://ufcpp.net/study/csharp/async/sample/",
+            (string?)canonical.Attribute("href"));
+        AssertPortableUrl(
+            "study/csharp/async/sample/",
+            (string?)stylesheet.Attribute("href"),
+            "assets/css/site.css");
+        AssertPortableUrl(
+            "study/csharp/async/sample/",
+            (string?)logo.Attribute("src"),
+            "assets/images/sitelogo_l.jpg");
+        AssertPortableUrl(
+            "study/csharp/async/sample/",
+            (string?)bodyImage.Attribute("src"),
+            "assets/media/demo/image.png");
+        AssertPortableUrl(
+            "study/csharp/async/sample/",
+            (string?)guideLink.Attribute("href"),
+            "legacy-dotnet.html");
+        AssertPortableUrl(
+            "study/csharp/async/sample/",
+            (string?)entityLink.Attribute("href"),
+            "target/a&b/?x=1");
+    }
+
+    [Fact]
     public async Task BuildAsync_Page_WritesUfcppBrandShellAndPalette()
     {
         using var site = new SiteFixture();
@@ -117,7 +212,7 @@ public sealed class SiteBuilderIntegrationTests
         var logo = Assert.Single(
             header.Descendants("img"),
             element => HasClassToken(element, "site-logo"));
-        Assert.Equal("/assets/images/sitelogo_l.jpg", (string?)logo.Attribute("src"));
+        Assert.Equal("assets/images/sitelogo_l.jpg", (string?)logo.Attribute("src"));
         Assert.Equal("++C++; // 未確認飛行 C", (string?)logo.Attribute("alt"));
 
         var css = await File.ReadAllTextAsync(Path.Combine(
@@ -403,7 +498,7 @@ public sealed class SiteBuilderIntegrationTests
             ["TOP", "C# Guide", "Basics", "Current Topic"],
             breadcrumbItems.Select(item => NormalizeWhitespace(item.Value)));
         Assert.Equal(
-            ["/", "/study/csharp/", "/study/csharp/start/"],
+            ["../../../../", "../../", "../"],
             breadcrumbItems
                 .Take(3)
                 .Select(item => (string?)Assert.Single(item.Elements("a")).Attribute("href")));
@@ -577,6 +672,20 @@ public sealed class SiteBuilderIntegrationTests
 
         await site.BuildAsync(output);
 
+        var monthDocument = LoadHtmlDocument(Path.Combine(
+            output,
+            "blog",
+            "2025",
+            "7",
+            "index.html"));
+        var feedLink = Assert.Single(
+            monthDocument.Descendants("link"),
+            element => (string?)element.Attribute("rel") == "alternate");
+        AssertPortableUrl(
+            "blog/2025/7/",
+            (string?)feedLink.Attribute("href"),
+            "rssfeed.xml");
+
         var document = LoadHtmlDocument(Path.Combine(
             output,
             "blog",
@@ -657,7 +766,7 @@ public sealed class SiteBuilderIntegrationTests
             "media",
             "demo",
             "image.png");
-        Assert.Contains("src=\"/assets/media/demo/image.png\"", html);
+        Assert.Contains("src=\"assets/media/demo/image.png\"", html);
         Assert.Equal("fixture image", await File.ReadAllTextAsync(copiedAsset));
     }
 
@@ -864,6 +973,26 @@ public sealed class SiteBuilderIntegrationTests
             .Replace("&nbsp;", "&#160;", StringComparison.Ordinal)
             .Replace("&mdash;", "&#8212;", StringComparison.Ordinal);
         return XDocument.Parse(html, LoadOptions.PreserveWhitespace);
+    }
+
+    private static void AssertPortableUrl(
+        string pagePath,
+        string? relativeUrl,
+        string targetPath)
+    {
+        Assert.NotNull(relativeUrl);
+        Assert.False(relativeUrl.StartsWith('/'));
+
+        foreach (var deploymentRoot in new[]
+                 {
+                     new Uri("https://ufcpp.net/"),
+                     new Uri("https://ufcpp.github.io/UfcppContent/"),
+                 })
+        {
+            var pageUrl = new Uri(deploymentRoot, pagePath);
+            var expected = new Uri(deploymentRoot, targetPath);
+            Assert.Equal(expected, new Uri(pageUrl, relativeUrl));
+        }
     }
 
     private static bool HasClassToken(XElement element, string expected) =>

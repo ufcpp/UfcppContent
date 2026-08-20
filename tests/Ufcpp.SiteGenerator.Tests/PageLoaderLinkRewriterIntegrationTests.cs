@@ -23,12 +23,16 @@ public sealed class PageLoaderLinkRewriterIntegrationTests
             CreateMarkdown("Sibling page", "https://ufcpp.net/study/csharp/sibling/"));
 
         var (pages, urlMap) = PageLoader.Load(contentRoot);
-        var rewriter = new LinkRewriter(contentRoot, currentFile, urlMap);
+        var rewriter = new LinkRewriter(
+            contentRoot,
+            currentFile,
+            "/study/csharp/current/",
+            urlMap);
 
         Assert.Equal(2, pages.Count);
         Assert.Equal("/study/csharp/sibling/", urlMap[siblingFile]);
         Assert.Equal(
-            "/study/csharp/sibling/#details",
+            "../sibling/#details",
             rewriter.RewriteUrl("sibling.md#details"));
     }
 

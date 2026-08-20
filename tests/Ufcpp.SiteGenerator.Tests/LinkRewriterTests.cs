@@ -1,4 +1,5 @@
 using Ufcpp.SiteGenerator.Rendering;
+using Ufcpp.SiteGenerator.Output;
 
 namespace Ufcpp.SiteGenerator.Tests;
 
@@ -6,7 +7,8 @@ public sealed class LinkRewriterTests
 {
     private static LinkRewriter CreateRewriter(
         TempDirectory tempDirectory,
-        Dictionary<string, string>? urlMap = null)
+        Dictionary<string, string>? urlMap = null,
+        IReadOnlySet<string>? knownSiteOutputs = null)
     {
         var contentRoot = GetContentPath(tempDirectory);
         var currentFile = GetContentPath(
@@ -24,7 +26,12 @@ public sealed class LinkRewriterTests
                 "/blog/2025/1/first-class-span/",
         };
 
-        return new LinkRewriter(contentRoot, currentFile, urlMap);
+        return new LinkRewriter(
+            contentRoot,
+            currentFile,
+            "/study/csharp/async/misc_asyncflow/",
+            urlMap,
+            knownSiteOutputs);
     }
 
     private static string GetContentPath(
@@ -49,6 +56,35 @@ public sealed class LinkRewriterTests
     }
 
     [Fact]
+    public void RewriteUrl_KnownAbsoluteSiteAlias_ReturnsPageRelativePath()
+    {
+        using var tempDir = new TempDirectory();
+        var knownSiteOutputs = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            OutputPathResolver.Resolve("/study/csharp/misc_task.html"),
+        };
+        var rewriter = CreateRewriter(
+            tempDir,
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase),
+            knownSiteOutputs);
+
+        Assert.Equal(
+            "../../misc_task.html",
+            rewriter.RewriteUrl("http://ufcpp.net/study/csharp/misc_task.html"));
+    }
+
+    [Fact]
+    public void RewriteUrl_UnknownAbsoluteSiteUrl_ReturnsUnchanged()
+    {
+        using var tempDir = new TempDirectory();
+        var rewriter = CreateRewriter(tempDir);
+
+        Assert.Equal(
+            "http://ufcpp.net/Services",
+            rewriter.RewriteUrl("http://ufcpp.net/Services"));
+    }
+
+    [Fact]
     public void RewriteUrl_FragmentOnly_ReturnsUnchanged()
     {
         using var tempDir = new TempDirectory();
@@ -57,11 +93,11 @@ public sealed class LinkRewriterTests
     }
 
     [Fact]
-    public void RewriteUrl_AbsolutePath_ReturnsUnchanged()
+    public void RewriteUrl_RootRelativePath_ReturnsPageRelativePath()
     {
         using var tempDir = new TempDirectory();
         var rewriter = CreateRewriter(tempDir);
-        Assert.Equal("/some/path/", rewriter.RewriteUrl("/some/path/"));
+        Assert.Equal("../../../../some/path/", rewriter.RewriteUrl("/some/path/"));
     }
 
     [Fact]
@@ -79,7 +115,7 @@ public sealed class LinkRewriterTests
                 "/study/csharp/async/asyncvariation/",
         };
         var r = CreateRewriter(tempDir, urlMap);
-        Assert.Equal("/study/csharp/async/asyncvariation/", r.RewriteUrl("asyncvariation.md"));
+        Assert.Equal("../asyncvariation/", r.RewriteUrl("asyncvariation.md"));
     }
 
     [Fact]
@@ -88,12 +124,14 @@ public sealed class LinkRewriterTests
         using var tempDir = new TempDirectory();
 
         // From content/study/csharp/async/misc_asyncflow.md,
-        // ../../../../assets/media/foo.zip should become /assets/media/foo.zip
+        // The source-relative asset reference remains portable from this public page.
         var urlMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         var rewriter = CreateRewriter(tempDir, urlMap);
 
         var result = rewriter.RewriteUrl("../../../../assets/media/ufcpp2000/csharp/source/ShowDialogAsyncSample.zip");
-        Assert.Equal("/assets/media/ufcpp2000/csharp/source/ShowDialogAsyncSample.zip", result);
+        Assert.Equal(
+            "../../../../assets/media/ufcpp2000/csharp/source/ShowDialogAsyncSample.zip",
+            result);
     }
 
     [Fact]
@@ -110,7 +148,7 @@ public sealed class LinkRewriterTests
         };
         var r = CreateRewriter(tempDir, urlMap);
         var result = r.RewriteUrl("asyncvariation.md#section1");
-        Assert.Equal("/study/csharp/async/asyncvariation/#section1", result);
+        Assert.Equal("../asyncvariation/#section1", result);
     }
 
     [Fact]
@@ -134,18 +172,18 @@ public sealed class LinkRewriterTests
             new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase));
 
         var rewrittenAsset = rewriter.RewriteUrl("/media/ufcpp2000/csharp/slide/WcfDemo.pptx");
-        var unchangedSiteUrl = rewriter.RewriteUrl("/study/csharp/");
+        var rewrittenSiteUrl = rewriter.RewriteUrl("/study/csharp/");
 
         Assert.Equal(
-            ("/assets/media/ufcpp2000/csharp/slide/WcfDemo.pptx", "/study/csharp/"),
-            (rewrittenAsset, unchangedSiteUrl));
+            ("../../../../assets/media/ufcpp2000/csharp/slide/WcfDemo.pptx", "../../"),
+            (rewrittenAsset, rewrittenSiteUrl));
     }
 
     [Theory]
-    [InlineData("asyncvariation.md?p=6#section1", "/study/csharp/async/asyncvariation/#section1")]
-    [InlineData("asyncvariation.md?P=6", "/study/csharp/async/asyncvariation/")]
-    [InlineData("asyncvariation.md?p=6&x=1", "/study/csharp/async/asyncvariation/?x=1")]
-    [InlineData("/study/csharp/oo_interface.html?p=6#x", "/study/csharp/oo_interface.html#x")]
+    [InlineData("asyncvariation.md?p=6#section1", "../asyncvariation/#section1")]
+    [InlineData("asyncvariation.md?P=6", "../asyncvariation/")]
+    [InlineData("asyncvariation.md?p=6&x=1", "../asyncvariation/?x=1")]
+    [InlineData("/study/csharp/oo_interface.html?p=6#x", "../../oo_interface.html#x")]
     public void RewriteUrl_LegacyPageQuery_IsDroppedAndFragmentKept(
         string input,
         string expected)

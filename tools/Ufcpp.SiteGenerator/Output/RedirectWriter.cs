@@ -16,11 +16,13 @@ public static class RedirectWriter
     /// A meta-refresh fallback keeps the redirect working without scripting.
     /// </summary>
     /// <param name="canonicalPath">The target canonical site path (e.g. <c>/study/csharp/</c>).</param>
+    /// <param name="canonicalUrl">The target's absolute public canonical URL.</param>
     /// <param name="aliases">The alias site paths to generate redirects for.</param>
     /// <param name="outputDirectory">The root output directory of the site.</param>
     /// <param name="noIndex">Whether to prevent generated redirects from being indexed.</param>
     public static void Write(
         string canonicalPath,
+        string canonicalUrl,
         IEnumerable<string> aliases,
         string outputDirectory,
         bool noIndex = false)
@@ -54,17 +56,55 @@ public static class RedirectWriter
 
             Directory.CreateDirectory(destDir);
 
-            var html = BuildRedirectHtml(canonicalPath, noIndex);
+            var aliasPublicPath = GetPublicPath(alias, outputPath);
+            var targetUrl = SiteUrlResolver.MakeRelative(aliasPublicPath, canonicalPath);
+            var html = BuildRedirectHtml(targetUrl, canonicalUrl, noIndex);
             File.WriteAllText(destFile, html, System.Text.Encoding.UTF8);
         }
     }
 
-    private static string BuildRedirectHtml(string targetUrl, bool noIndex)
+    private static string GetPublicPath(string alias, string outputPath)
+    {
+        var normalized = outputPath.Replace('\\', '/').TrimStart('/');
+        if (!string.Equals(normalized, "index.html", StringComparison.OrdinalIgnoreCase)
+            && !normalized.EndsWith(
+                "/index.html",
+                StringComparison.OrdinalIgnoreCase))
+        {
+            return alias;
+        }
+
+        const string IndexFile = "index.html";
+        return IsIndexFileAlias(alias, IndexFile)
+            ? alias
+            : alias.TrimEnd('/') + "/";
+    }
+
+    private static bool IsIndexFileAlias(string alias, string indexFile)
+    {
+        var slashIndex = alias.LastIndexOf('/');
+        var lastSegment = alias[(slashIndex + 1)..];
+        try
+        {
+            return Uri.UnescapeDataString(lastSegment)
+                .Equals(indexFile, StringComparison.OrdinalIgnoreCase);
+        }
+        catch (UriFormatException)
+        {
+            return false;
+        }
+    }
+
+    private static string BuildRedirectHtml(
+        string targetUrl,
+        string canonicalUrl,
+        bool noIndex)
     {
         var robotsMeta = noIndex
             ? """<meta name="robots" content="noindex, nofollow" />"""
             : string.Empty;
         var encodedTarget = WebUtility.HtmlEncode(targetUrl);
+        var encodedCanonical = WebUtility.HtmlEncode(canonicalUrl);
         var scriptTarget = JsonSerializer.Serialize(targetUrl);
 
         return $$"""
@@ -73,7 +113,7 @@ public static class RedirectWriter
             <head>
             <meta charset="UTF-8" />
             {{robotsMeta}}
-            <link rel="canonical" href="{{encodedTarget}}" />
+            <link rel="canonical" href="{{encodedCanonical}}" />
             <script>
             (function () {
               var target = {{scriptTarget}};

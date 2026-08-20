@@ -122,12 +122,20 @@ public sealed class OutputValidator
         var matches = InternalLinkRegex.Matches(html);
         foreach (Match match in matches)
         {
-            ValidateUrl(sourcePage, htmlFile, match.Groups["url"].Value, errors);
+            ValidateUrl(
+                sourcePage,
+                htmlFile,
+                WebUtility.HtmlDecode(match.Groups["url"].Value),
+                errors);
         }
 
         foreach (Match match in SourceParamRegex.Matches(html))
         {
-            ValidateUrl(sourcePage, htmlFile, match.Groups["url"].Value, errors);
+            ValidateUrl(
+                sourcePage,
+                htmlFile,
+                WebUtility.HtmlDecode(match.Groups["url"].Value),
+                errors);
         }
     }
 
@@ -148,15 +156,28 @@ public sealed class OutputValidator
         var queryIndex = pathAndQuery.IndexOf('?');
         var path = queryIndex >= 0 ? pathAndQuery[..queryIndex] : pathAndQuery;
 
-        if (path.Length > 0 && !path.StartsWith('/'))
+        if (path.StartsWith('/'))
         {
-            errors.Add($"Relative URL '{url}' found in generated file '{RelativeTo(htmlFile)}'.");
+            errors.Add(
+                $"Root-relative internal URL '{url}' found in generated file "
+                + $"'{RelativeTo(htmlFile)}'. Generated internal URLs must be page-relative.");
             return;
         }
 
-        if (path.StartsWith("/assets/", StringComparison.OrdinalIgnoreCase))
+        string resolvedPath;
+        if (path.Length == 0)
         {
-            var assetFile = ResolveRootRelativeOutputFile(path);
+            resolvedPath = sourcePage.CanonicalPath;
+        }
+        else if (!TryResolveSitePath(sourcePage.CanonicalPath, path, out resolvedPath))
+        {
+            errors.Add($"Unsafe internal link '{url}' in '{RelativeTo(htmlFile)}'.");
+            return;
+        }
+
+        if (resolvedPath.StartsWith("/assets/", StringComparison.OrdinalIgnoreCase))
+        {
+            var assetFile = ResolveRootRelativeOutputFile(resolvedPath);
             if (assetFile is null || !File.Exists(assetFile))
             {
                 errors.Add($"Missing asset '{path}' referenced in '{RelativeTo(htmlFile)}'.");
@@ -177,7 +198,7 @@ public sealed class OutputValidator
         }
         else
         {
-            var exactFile = ResolveRootRelativeOutputFile(path);
+            var exactFile = ResolveRootRelativeOutputFile(resolvedPath);
             if (exactFile is not null && File.Exists(exactFile))
             {
                 var exactOutputPath = NormalizeOutputPath(RelativeTo(exactFile));
@@ -185,11 +206,22 @@ public sealed class OutputValidator
                 targetFile = targetPage is null
                     ? exactFile
                     : GetOutputFile(targetPage.OutputPath);
-                targetPath = targetPage?.CanonicalPath ?? path;
+                targetPath = targetPage?.CanonicalPath ?? resolvedPath;
             }
             else
             {
-                var requestedOutputPath = NormalizeOutputPath(OutputPathResolver.Resolve(path));
+                string requestedOutputPath;
+                try
+                {
+                    requestedOutputPath = NormalizeOutputPath(
+                        OutputPathResolver.Resolve(resolvedPath));
+                }
+                catch (InvalidDataException)
+                {
+                    errors.Add($"Unsafe internal link '{url}' in '{RelativeTo(htmlFile)}'.");
+                    return;
+                }
+
                 _targetsByOutputPath.TryGetValue(requestedOutputPath, out targetPage);
 
                 var requestedFile = GetOutputFile(requestedOutputPath);
@@ -202,7 +234,7 @@ public sealed class OutputValidator
                 targetFile = targetPage is null
                     ? requestedFile
                     : GetOutputFile(targetPage.OutputPath);
-                targetPath = targetPage?.CanonicalPath ?? NormalizeSitePath(path);
+                targetPath = targetPage?.CanonicalPath ?? NormalizeSitePath(resolvedPath);
             }
         }
 
@@ -272,6 +304,88 @@ public sealed class OutputValidator
         url.StartsWith("//", StringComparison.Ordinal)
         || SchemeRegex.IsMatch(url);
 
+    private static bool TryResolveSitePath(
+        string sourcePath,
+        string relativePath,
+        out string resolvedPath)
+    {
+        if (EscapesSiteRoot(sourcePath, relativePath))
+        {
+            resolvedPath = "";
+            return false;
+        }
+
+        try
+        {
+            var sourceUri = new Uri(
+                ValidationOrigin,
+                ValidationBasePath + sourcePath.TrimStart('/'));
+            var targetUri = new Uri(sourceUri, relativePath);
+            if (!string.Equals(
+                    targetUri.Scheme,
+                    ValidationOrigin.Scheme,
+                    StringComparison.OrdinalIgnoreCase)
+                || !string.Equals(
+                    targetUri.Host,
+                    ValidationOrigin.Host,
+                    StringComparison.OrdinalIgnoreCase)
+                || targetUri.Port != ValidationOrigin.Port
+                || !targetUri.AbsolutePath.StartsWith(
+                    ValidationBasePath,
+                    StringComparison.Ordinal))
+            {
+                resolvedPath = "";
+                return false;
+            }
+
+            resolvedPath = "/" + targetUri.AbsolutePath[ValidationBasePath.Length..];
+            return true;
+        }
+        catch (UriFormatException)
+        {
+            resolvedPath = "";
+            return false;
+        }
+    }
+
+    private static bool EscapesSiteRoot(string sourcePath, string relativePath)
+    {
+        var sourceSegments = sourcePath
+            .Trim('/')
+            .Split('/', StringSplitOptions.RemoveEmptyEntries);
+        var sourceIsFile = !sourcePath.EndsWith('/')
+            && sourceSegments.Length > 0
+            && sourceSegments[^1].EndsWith(
+                ".html",
+                StringComparison.OrdinalIgnoreCase);
+        var depth = sourceSegments.Length - (sourceIsFile ? 1 : 0);
+        var decodedPath = DecodeUrlComponent(relativePath).Replace('\\', '/');
+
+        foreach (var segment in decodedPath.Split('/'))
+        {
+            if (segment.Length == 0 || segment == ".")
+            {
+                continue;
+            }
+
+            if (segment == "..")
+            {
+                if (depth == 0)
+                {
+                    return true;
+                }
+
+                depth--;
+            }
+            else
+            {
+                depth++;
+            }
+        }
+
+        return false;
+    }
+
     private static string DecodeUrlComponent(string value)
     {
         try
@@ -322,4 +436,9 @@ public sealed class OutputValidator
         @"^[a-z][a-z0-9+.-]*:",
         RegexOptions.IgnoreCase | RegexOptions.Compiled,
         TimeSpan.FromSeconds(5));
+
+    private static readonly Uri ValidationOrigin =
+        new("https://ufcpp.invalid/", UriKind.Absolute);
+
+    private const string ValidationBasePath = "/__site__/";
 }
