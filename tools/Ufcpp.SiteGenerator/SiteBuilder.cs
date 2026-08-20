@@ -71,6 +71,7 @@ public sealed class SiteBuilder
 
         ValidateOutputClaims(pages);
         var pagesById = BuildPageIndex(pages);
+        var knownSiteOutputs = BuildKnownSiteOutputs(pages);
 
         // Set up Razor HtmlRenderer
         var services = new ServiceCollection();
@@ -92,6 +93,7 @@ public sealed class SiteBuilder
                 page,
                 pagesById,
                 urlMap,
+                knownSiteOutputs,
                 markdigRenderer,
                 htmlRenderer);
         }
@@ -115,6 +117,7 @@ public sealed class SiteBuilder
         {
             RedirectWriter.Write(
                 page.CanonicalPath,
+                page.FrontMatter.SourceUrl,
                 page.FrontMatter.Aliases,
                 _options.OutputDirectory,
                 _options.NoIndex);
@@ -144,10 +147,14 @@ public sealed class SiteBuilder
         ContentPage page,
         IReadOnlyDictionary<int, ContentPage> pagesById,
         IReadOnlyDictionary<string, string> urlMap,
+        IReadOnlySet<string> knownSiteOutputs,
         MarkdigRenderer markdigRenderer,
         HtmlRenderer htmlRenderer)
     {
-        var renderedContent = markdigRenderer.RenderWithMetadata(page, urlMap);
+        var renderedContent = markdigRenderer.RenderWithMetadata(
+            page,
+            urlMap,
+            knownSiteOutputs);
 
         var pageTitle = BuildPageTitle(page);
         var contentTypeClass = GetContentTypeClass(page.FrontMatter.ContentType);
@@ -161,6 +168,7 @@ public sealed class SiteBuilder
             var parameters = ParameterView.FromDictionary(new Dictionary<string, object?>
             {
                 [nameof(SiteLayout.PageTitle)] = pageTitle,
+                [nameof(SiteLayout.CurrentPath)] = page.CanonicalPath,
                 [nameof(SiteLayout.CanonicalUrl)] = page.FrontMatter.SourceUrl,
                 [nameof(SiteLayout.TitleHtml)] = renderedContent.TitleHtml,
                 [nameof(SiteLayout.BodyHtml)] = renderedContent.BodyHtml,
@@ -247,6 +255,16 @@ public sealed class SiteBuilder
 
         return pagesById;
     }
+
+    private static IReadOnlySet<string> BuildKnownSiteOutputs(
+        IReadOnlyList<ContentPage> pages) =>
+        pages
+            .SelectMany(page =>
+                new[] { page.CanonicalPath }.Concat(page.FrontMatter.Aliases))
+            .Append("/sitemap.xml")
+            .Append("/rssfeed.xml")
+            .Select(OutputPathResolver.Resolve)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
     private static IReadOnlyList<NavigationItem> BuildBreadcrumbs(
         ContentPage page,

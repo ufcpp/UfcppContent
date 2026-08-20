@@ -1,32 +1,41 @@
+using Ufcpp.SiteGenerator.Output;
+
 namespace Ufcpp.SiteGenerator.Rendering;
 
 /// <summary>
-/// Resolves relative links found in a Markdown file to canonical site URLs.
+/// Resolves links found in a Markdown file to deployment-independent site URLs.
 /// Converts <c>.md</c> file references to canonical site paths and
-/// relative <c>assets/</c> paths to root-relative <c>/assets/</c> URLs.
+/// emits internal targets relative to the current public page path.
 /// </summary>
 public sealed class LinkRewriter
 {
     private readonly string _contentRootDirectory;
     private readonly string _assetsRootDirectory;
     private readonly string _currentFileDirectory;
+    private readonly string _currentSitePath;
     private readonly IReadOnlyDictionary<string, string> _urlMap;
+    private readonly IReadOnlySet<string> _knownSiteOutputs;
 
     /// <summary>
     /// Initialises the rewriter for a specific page.
     /// </summary>
     /// <param name="contentRootDirectory">Absolute path to the content directory root.</param>
     /// <param name="currentFilePath">Absolute path of the Markdown file being processed.</param>
+    /// <param name="currentSitePath">Root-relative public path of the current page.</param>
     /// <param name="urlMap">Map from absolute file path → canonical site path.</param>
     public LinkRewriter(
         string contentRootDirectory,
         string currentFilePath,
-        IReadOnlyDictionary<string, string> urlMap)
+        string currentSitePath,
+        IReadOnlyDictionary<string, string> urlMap,
+        IReadOnlySet<string>? knownSiteOutputs = null)
         : this(
             contentRootDirectory,
             Path.Combine(contentRootDirectory, "..", "assets"),
             currentFilePath,
-            urlMap)
+            currentSitePath,
+            urlMap,
+            knownSiteOutputs)
     {
     }
 
@@ -35,13 +44,20 @@ public sealed class LinkRewriter
         string contentRootDirectory,
         string assetsRootDirectory,
         string currentFilePath,
-        IReadOnlyDictionary<string, string> urlMap)
+        string currentSitePath,
+        IReadOnlyDictionary<string, string> urlMap,
+        IReadOnlySet<string>? knownSiteOutputs = null)
     {
         _contentRootDirectory = Path.GetFullPath(contentRootDirectory);
         _assetsRootDirectory = Path.GetFullPath(assetsRootDirectory);
         _currentFileDirectory = Path.GetDirectoryName(Path.GetFullPath(currentFilePath))
             ?? _contentRootDirectory;
+        _currentSitePath = currentSitePath;
         _urlMap = urlMap;
+        _knownSiteOutputs = knownSiteOutputs
+            ?? urlMap.Values
+                .Select(OutputPathResolver.Resolve)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
     }
 
     /// <summary>Resolves a single URL string, returning the rewritten URL or the original.</summary>
@@ -58,8 +74,11 @@ public sealed class LinkRewriter
             return rawUrl;
         }
 
-        // Keep external links, including protocol-relative URLs.
-        if (rawUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+        if (TryGetKnownAbsoluteSiteUrl(rawUrl, out var siteUrl))
+        {
+            rawUrl = siteUrl;
+        }
+        else if (rawUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
             || rawUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
             || rawUrl.StartsWith("//", StringComparison.Ordinal)
             || rawUrl.StartsWith("mailto:", StringComparison.OrdinalIgnoreCase)
@@ -75,12 +94,13 @@ public sealed class LinkRewriter
         var suffix = suffixIndex >= 0 ? NormalizeSuffix(rawUrl[suffixIndex..]) : "";
 
         // Existing root-relative legacy asset URLs (for example /media/...) map
-        // to files beneath the emitted /assets/ tree. Other site URLs stay intact.
+        // to files beneath the emitted /assets/ tree. All internal targets are then
+        // made relative to the current public page.
         if (urlPath.StartsWith('/'))
         {
             if (urlPath.StartsWith("/assets/", StringComparison.OrdinalIgnoreCase))
             {
-                return urlPath + suffix;
+                return MakeSiteRelative(urlPath + suffix);
             }
 
             var assetRelativePath = Uri.UnescapeDataString(urlPath.TrimStart('/'));
@@ -90,10 +110,10 @@ public sealed class LinkRewriter
 
             if (IsWithinDirectory(assetFile, _assetsRootDirectory) && File.Exists(assetFile))
             {
-                return "/assets/" + urlPath.TrimStart('/') + suffix;
+                return MakeSiteRelative("/assets/" + urlPath.TrimStart('/') + suffix);
             }
 
-            return urlPath + suffix;
+            return MakeSiteRelative(urlPath + suffix);
         }
 
         if (string.IsNullOrEmpty(urlPath))
@@ -109,7 +129,7 @@ public sealed class LinkRewriter
         // Check if this is an .md link
         if (_urlMap.TryGetValue(resolved, out var canonicalPath))
         {
-            return canonicalPath + suffix;
+            return MakeSiteRelative(canonicalPath + suffix);
         }
 
         // Also try without .md extension (in case link lacks it)
@@ -118,7 +138,7 @@ public sealed class LinkRewriter
             var withMd = resolved + ".md";
             if (_urlMap.TryGetValue(withMd, out canonicalPath))
             {
-                return canonicalPath + suffix;
+                return MakeSiteRelative(canonicalPath + suffix);
             }
         }
 
@@ -127,12 +147,60 @@ public sealed class LinkRewriter
         {
             var assetRelative = Path.GetRelativePath(_assetsRootDirectory, resolved)
                 .Replace('\\', '/');
-            return "/assets/" + assetRelative + suffix;
+            return MakeSiteRelative("/assets/" + assetRelative + suffix);
         }
 
         // Return original (might be an external relative URL or something else)
         return urlPath + suffix;
     }
+
+    private string MakeSiteRelative(string targetUrl) =>
+        SiteUrlResolver.MakeRelative(_currentSitePath, targetUrl);
+
+    private bool TryGetKnownAbsoluteSiteUrl(string rawUrl, out string siteUrl)
+    {
+        siteUrl = "";
+        if (!Uri.TryCreate(rawUrl, UriKind.Absolute, out var uri)
+            || uri.Scheme is not ("http" or "https")
+            || !uri.IsDefaultPort
+            || !IsSiteHost(uri.Host)
+            || !IsKnownSiteTarget(uri.AbsolutePath))
+        {
+            return false;
+        }
+
+        siteUrl = uri.AbsolutePath + uri.Query + uri.Fragment;
+        return true;
+    }
+
+    private bool IsKnownSiteTarget(string path)
+    {
+        try
+        {
+            if (_knownSiteOutputs.Contains(OutputPathResolver.Resolve(path)))
+            {
+                return true;
+            }
+        }
+        catch (InvalidDataException)
+        {
+            return false;
+        }
+
+        var assetPath = path.StartsWith("/assets/", StringComparison.OrdinalIgnoreCase)
+            ? path["/assets/".Length..]
+            : path.TrimStart('/');
+        var assetFile = Path.GetFullPath(Path.Combine(
+            _assetsRootDirectory,
+            Uri.UnescapeDataString(assetPath)
+                .Replace('/', Path.DirectorySeparatorChar)));
+        return IsWithinDirectory(assetFile, _assetsRootDirectory)
+            && File.Exists(assetFile);
+    }
+
+    private static bool IsSiteHost(string host) =>
+        host.Equals("ufcpp.net", StringComparison.OrdinalIgnoreCase)
+        || host.Equals("www.ufcpp.net", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     /// Drops the legacy Umbraco page-number query (<c>?p=</c>) that used to select one page of

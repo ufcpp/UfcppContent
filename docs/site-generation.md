@@ -142,7 +142,9 @@ By default, after generation the tool validates:
   Windows-incompatible path segments
 - Every expected page was written
 - Every alias resolves to an existing output file, so no redirect is silently missing
-- Root-relative page and generated-file links resolve to actual output files
+- Page-relative page, generated-file, and asset links resolve to actual output files
+- Generated pages contain no root-relative internal URLs, so the same output can be
+  hosted at the origin root or beneath a path prefix
 - URL fragments match an `id` or legacy `<a name="…">` in the target page
 - Asset references in `href`, `src`, `data`, and Silverlight
   `<param name="source" value="…">` attributes exist in the output
@@ -171,13 +173,14 @@ tools/Ufcpp.SiteGenerator/
 │   └── RenderedContent.cs       HTML plus extracted article navigation
 ├── Rendering/
 │   ├── MarkdigRenderer.cs     Markdig pipeline + AST link rewriting + HTML rendering
-│   └── LinkRewriter.cs        Resolves relative .md and assets/ links to canonical URLs
+│   └── LinkRewriter.cs        Resolves content links to page-relative public URLs
 ├── Templates/
 │   ├── SiteLayout.razor         Full HTML page layout (Razor Component)
 │   ├── TableOfContentsList.razor Recursive nested heading list
 │   └── _Imports.razor           Razor global imports
 ├── Output/
 │   ├── OutputPathResolver.cs  source_url → output file path
+│   ├── SiteUrlResolver.cs     Root-relative target → portable page-relative URL
 │   ├── AssetCopier.cs         Copies assets/ and site CSS
 │   ├── RedirectWriter.cs      Generates fragment-preserving redirect pages for aliases
 │   ├── SitemapWriter.cs       Writes sitemap.xml
@@ -330,11 +333,17 @@ node tools/css-parity-compare.mjs tools/css-parity-cases.json # computed styles
 
 Internal links are rewritten at the Markdig AST level (before HTML rendering):
 
-- Relative `.md` links → canonical site paths (e.g. `../foo.md` → `/study/csharp/foo/`)
-- Relative `assets/` paths → root-relative `/assets/…` URLs
+- Relative `.md` links are resolved through canonical site paths and then made relative
+  to the current public page
+- Relative `assets/` paths are emitted as page-relative links into the copied
+  `assets/` tree
 - Query strings and fragments are retained while the path is rewritten
 - Protocol-relative external URLs remain external
-- Existing root-relative legacy media references are mapped to copied assets
+- Existing root-relative site links are made page-relative
+- Absolute `ufcpp.net` links are made page-relative when they identify a generated
+  page, alias, artifact, or copied asset; illustrative endpoints remain absolute
+- Existing root-relative legacy media references are mapped to copied assets and made
+  page-relative
 
 Asset lookup uses the directory supplied through `--assets`; it does not assume the
 directory is a sibling named `assets`.
@@ -342,6 +351,12 @@ directory is a sibling named `assets`.
 Raw HTML `href`, `src`, and `data` attributes plus Silverlight source parameters in
 the rendered output are rewritten with bounded regular expressions (max 2 048 chars
 per attribute value, 5 s timeout) to catch links in raw HTML blocks.
+
+The page shell and alias redirects use the same relative URL resolver. As a result, one
+generated `_site/` tree works both at `https://ufcpp.net/` and at a project-site prefix
+such as `https://ufcpp.github.io/UfcppContent/`; no deployment-specific base-path option
+or HTML `<base>` element is required. Absolute canonical URLs, sitemap entries, and RSS
+entry URLs continue to identify `https://ufcpp.net/`.
 
 ### Output determinism
 

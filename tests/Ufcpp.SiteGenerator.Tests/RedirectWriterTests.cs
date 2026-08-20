@@ -11,10 +11,12 @@ public sealed class RedirectWriterTests
 
         RedirectWriter.Write(
             "/first-target/",
+            "https://ufcpp.net/first-target/",
             ["/legacy/"],
             tempDirectory.Path);
         RedirectWriter.Write(
             "/second-target/",
+            "https://ufcpp.net/second-target/",
             ["/legacy/"],
             tempDirectory.Path);
 
@@ -22,8 +24,8 @@ public sealed class RedirectWriterTests
             tempDirectory.Path,
             "legacy",
             "index.html"));
-        Assert.Contains("href=\"/second-target/\"", html);
-        Assert.DoesNotContain("/first-target/", html);
+        Assert.Contains("href=\"../second-target/\"", html);
+        Assert.DoesNotContain("../first-target/", html);
     }
 
     [Fact]
@@ -39,6 +41,7 @@ public sealed class RedirectWriterTests
 
         RedirectWriter.Write(
             "/study/",
+            "https://ufcpp.net/study/",
             ["/study/index.html"],
             tempDirectory.Path);
 
@@ -52,10 +55,12 @@ public sealed class RedirectWriterTests
 
         RedirectWriter.Write(
             "/target/",
+            "https://ufcpp.net/target/",
             ["/indexable/"],
             tempDirectory.Path);
         RedirectWriter.Write(
             "/target/",
+            "https://ufcpp.net/target/",
             ["/noindex/"],
             tempDirectory.Path,
             noIndex: true);
@@ -81,6 +86,7 @@ public sealed class RedirectWriterTests
 
         RedirectWriter.Write(
             "/study/csharp/oop/oo_interface/",
+            "https://ufcpp.net/study/csharp/oop/oo_interface/",
             ["/csharp/oo_interface.html"],
             tempDirectory.Path);
 
@@ -92,7 +98,7 @@ public sealed class RedirectWriterTests
         // Legacy links such as /csharp/oo_interface.html?p=6#static-abstract must keep
         // their anchor when the single-page output is reached.
         Assert.Contains("location.replace(target + location.hash)", html);
-        Assert.Contains("""var target = "/study/csharp/oop/oo_interface/";""", html);
+        Assert.Contains("""var target = "../study/csharp/oop/oo_interface/";""", html);
         Assert.DoesNotContain("location.search", html);
     }
 
@@ -101,7 +107,11 @@ public sealed class RedirectWriterTests
     {
         using var tempDirectory = new TempDirectory();
 
-        RedirectWriter.Write("/target/", ["/legacy/"], tempDirectory.Path);
+        RedirectWriter.Write(
+            "/target/",
+            "https://ufcpp.net/target/",
+            ["/legacy/"],
+            tempDirectory.Path);
 
         var html = File.ReadAllText(Path.Combine(
             tempDirectory.Path,
@@ -109,9 +119,11 @@ public sealed class RedirectWriterTests
             "index.html"));
 
         Assert.Contains(
-            """<noscript><meta http-equiv="refresh" content="0; url=/target/" /></noscript>""",
+            """<noscript><meta http-equiv="refresh" content="0; url=../target/" /></noscript>""",
             html);
-        Assert.Contains("""<link rel="canonical" href="/target/" />""", html);
+        Assert.Contains(
+            """<link rel="canonical" href="https://ufcpp.net/target/" />""",
+            html);
     }
 
     [Fact]
@@ -119,15 +131,64 @@ public sealed class RedirectWriterTests
     {
         using var tempDirectory = new TempDirectory();
 
-        RedirectWriter.Write("/target/a&b/", ["/legacy/"], tempDirectory.Path);
+        RedirectWriter.Write(
+            "/target/a&b/",
+            "https://ufcpp.net/target/a&b/",
+            ["/legacy/"],
+            tempDirectory.Path);
 
         var html = File.ReadAllText(Path.Combine(
             tempDirectory.Path,
             "legacy",
             "index.html"));
 
-        Assert.Contains("href=\"/target/a&amp;b/\"", html);
-        Assert.Contains("""var target = "/target/a\u0026b/";""", html);
-        Assert.DoesNotContain("href=\"/target/a&b/\"", html);
+        Assert.Contains("href=\"../target/a&amp;b/\"", html);
+        Assert.Contains(
+            "href=\"https://ufcpp.net/target/a&amp;b/\"",
+            html);
+        Assert.Contains("""var target = "../target/a\u0026b/";""", html);
+        Assert.DoesNotContain("href=\"../target/a&b/\"", html);
+    }
+
+    [Theory]
+    [InlineData("/legacy%23part/", "legacy#part")]
+    [InlineData("/legacy%25part/", "legacy%part")]
+    public void Write_EncodedAlias_KeepsEncodedPublicBasePath(
+        string alias,
+        string outputDirectoryName)
+    {
+        using var tempDirectory = new TempDirectory();
+
+        RedirectWriter.Write(
+            "/target/",
+            "https://ufcpp.net/target/",
+            [alias],
+            tempDirectory.Path);
+
+        var html = File.ReadAllText(Path.Combine(
+            tempDirectory.Path,
+            outputDirectoryName,
+            "index.html"));
+        Assert.Contains("""var target = "../target/";""", html);
+    }
+
+    [Theory]
+    [InlineData("/legacy/index.html")]
+    [InlineData("/legacy/%69ndex.html")]
+    public void Write_IndexFileAlias_UsesFileUrlAsRelativeBase(string alias)
+    {
+        using var tempDirectory = new TempDirectory();
+
+        RedirectWriter.Write(
+            "/target/",
+            "https://ufcpp.net/target/",
+            [alias],
+            tempDirectory.Path);
+
+        var html = File.ReadAllText(Path.Combine(
+            tempDirectory.Path,
+            "legacy",
+            "index.html"));
+        Assert.Contains("""var target = "../target/";""", html);
     }
 }

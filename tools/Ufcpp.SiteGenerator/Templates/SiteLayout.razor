@@ -11,36 +11,36 @@
         <meta name="robots" content="noindex, nofollow" />
     }
     <title>@PageTitle</title>
-    <link rel="stylesheet" href="/assets/css/site.css" />
+    <link rel="stylesheet" href="@Url("/assets/css/site.css")" />
     @if (CanonicalUrl is not null)
     {
         <link rel="canonical" href="@CanonicalUrl" />
     }
     @if (ShowRssFeed)
     {
-        <link rel="alternate" type="application/rss+xml" title="++C++; // 未確認飛行 C Blog" href="/rssfeed.xml" />
+        <link rel="alternate" type="application/rss+xml" title="++C++; // 未確認飛行 C Blog" href="@Url("/rssfeed.xml")" />
     }
 </head>
 <body>
     <header class="site-header">
         <div class="site-header-inner">
             <h1 class="site-brand">
-                <a class="site-title" href="/">
+                <a class="site-title" href="@Url("/")">
                     <img class="site-logo"
-                         src="/assets/images/sitelogo_l.jpg"
+                         src="@Url("/assets/images/sitelogo_l.jpg")"
                          alt="++C++; // 未確認飛行 C" />
                 </a>
             </h1>
-            <a class="site-search-link" href="/search/">サイト内検索 <span aria-hidden="true">›</span></a>
+            <a class="site-search-link" href="@Url("/search/")">サイト内検索 <span aria-hidden="true">›</span></a>
         </div>
         <nav class="site-nav" aria-label="メインナビゲーション">
             <ul>
-                <li><a href="/study/csharp/">C#</a></li>
-                <li><a href="/study/dotnet/">.NET</a></li>
-                <li><a href="/study/computer/">情報工学</a></li>
-                <li><a href="/study/miscprog/">コンピューターその他</a></li>
-                <li><a href="/study/math/">数学・物理</a></li>
-                <li><a href="/blog/">ブログ</a></li>
+                <li><a href="@Url("/study/csharp/")">C#</a></li>
+                <li><a href="@Url("/study/dotnet/")">.NET</a></li>
+                <li><a href="@Url("/study/computer/")">情報工学</a></li>
+                <li><a href="@Url("/study/miscprog/")">コンピューターその他</a></li>
+                <li><a href="@Url("/study/math/")">数学・物理</a></li>
+                <li><a href="@Url("/blog/")">ブログ</a></li>
             </ul>
         </nav>
     </header>
@@ -69,7 +69,7 @@
                                     }
                                     else
                                     {
-                                        <a href="@item.Url" itemprop="item">
+                                        <a href="@Url(item.Url)" itemprop="item">
                                             <span itemprop="name">@item.Title</span>
                                         </a>
                                     }
@@ -121,7 +121,7 @@
                         <ul>
                             @foreach (var keyword in Keywords)
                             {
-                                <li><a href="@keyword.Url">@keyword.Title</a></li>
+                                <li><a href="@Url(keyword.Url)">@keyword.Title</a></li>
                             }
                         </ul>
                     </section>
@@ -144,11 +144,11 @@
         <div class="site-footer-inner">
             <p>Copyright &copy; 2000&ndash;2026 ++C++; // 未確認飛行 C. All Rights Reserved.</p>
             <p class="site-footer-links">
-                <a href="/about_me/">運営者について</a>
+                <a href="@Url("/about_me/")">運営者について</a>
                 &ensp;|&ensp;
-                <a href="/about_site/">サイトについて</a>
+                <a href="@Url("/about_site/")">サイトについて</a>
                 &ensp;|&ensp;
-                <a href="/sitemap/">サイトマップ</a>
+                <a href="@Url("/sitemap/")">サイトマップ</a>
             </p>
         </div>
     </footer>
@@ -157,6 +157,7 @@
 
 @code {
     [Parameter] public string PageTitle { get; set; } = "++C++; // 未確認飛行 C";
+    [Parameter] public string CurrentPath { get; set; } = "/";
     [Parameter] public string? CanonicalUrl { get; set; }
     [Parameter] public string? TitleHtml { get; set; }
     [Parameter] public string BodyHtml { get; set; } = "";
@@ -170,6 +171,9 @@
     [Parameter] public string? PublishedAt { get; set; }
     [Parameter] public string? UpdatedAt { get; set; }
     [Parameter] public IReadOnlyList<string> Tags { get; set; } = [];
+
+    private string Url(string target) =>
+        SiteUrlResolver.MakeRelative(CurrentPath, target);
 
     private static string FormatDate(string value) =>
         GetDatePart(value);

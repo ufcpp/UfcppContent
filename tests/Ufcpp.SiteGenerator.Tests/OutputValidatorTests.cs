@@ -18,8 +18,8 @@ public sealed class OutputValidatorTests
             "/",
             "index.html",
             """
-            <a href="/assets/archive/manual.html">Archived manual</a>
-            <a href="/missing-control/">Broken control</a>
+            <a href="assets/archive/manual.html">Archived manual</a>
+            <a href="missing-control/">Broken control</a>
             """);
 
         AssertOnlyMissingControl(site.CreateValidator());
@@ -38,7 +38,7 @@ public sealed class OutputValidatorTests
             """
             <a href="//docs.example.test/guide">External guide</a>
             <script src="//cdn.example.test/site.js?v=2"></script>
-            <a href="/missing-control/">Broken control</a>
+            <a href="missing-control/">Broken control</a>
             """);
 
         AssertOnlyMissingControl(site.CreateValidator());
@@ -53,9 +53,9 @@ public sealed class OutputValidatorTests
             "/",
             "index.html",
             """
-            <a href="/guide/?view=print#details">Guide</a>
-            <link rel="stylesheet" href="/assets/css/site.css?v=20260721">
-            <a href="/missing-control/">Broken control</a>
+            <a href="guide/?view=print#details">Guide</a>
+            <link rel="stylesheet" href="assets/css/site.css?v=20260721">
+            <a href="missing-control/">Broken control</a>
             """);
         site.AddPage(
             "/guide/",
@@ -66,7 +66,23 @@ public sealed class OutputValidatorTests
     }
 
     [Fact]
-    public void Validate_RootRelativeGeneratedFile_ResolvesExactOutputPath()
+    public void Validate_HtmlEncodedRelativeUrl_DecodesBeforeResolving()
+    {
+        using var site = new SiteFixture();
+        site.AddPage(
+            "/",
+            "index.html",
+            """<a href="target/a&amp;b/?first=1&amp;second=2">Target</a>""");
+        site.AddPage(
+            "/target/a%26b/",
+            "target/a&b/index.html",
+            "<h1>Target</h1>");
+
+        site.CreateValidator().Validate();
+    }
+
+    [Fact]
+    public void Validate_RelativeGeneratedFile_ResolvesExactOutputPath()
     {
         using var site = new SiteFixture();
         site.WriteGeneratedFile("rssfeed.xml", "<rss />");
@@ -74,11 +90,56 @@ public sealed class OutputValidatorTests
             "/",
             "index.html",
             """
-            <a href="/rssfeed.xml">RSS</a>
-            <a href="/missing-control/">Broken control</a>
+            <a href="rssfeed.xml">RSS</a>
+            <a href="missing-control/">Broken control</a>
             """);
 
         AssertOnlyMissingControl(site.CreateValidator());
+    }
+
+    [Fact]
+    public void Validate_RootRelativeInternalUrl_ReportsPortabilityError()
+    {
+        using var site = new SiteFixture();
+        site.AddPage(
+            "/",
+            "index.html",
+            """<a href="/guide/">Guide</a>""");
+
+        var exception = Assert.Throws<AggregateException>(
+            () => site.CreateValidator().Validate());
+        var error = Assert.Single(exception.InnerExceptions);
+
+        Assert.Equal(
+            "Root-relative internal URL '/guide/' found in generated file "
+            + "'index.html'. Generated internal URLs must be page-relative.",
+            error.Message);
+    }
+
+    [Theory]
+    [InlineData("../../../index.html")]
+    [InlineData("..%2f..%2f..%2f..%2fsecret.txt")]
+    [InlineData("../../../__site__/guide/")]
+    public void Validate_RelativeUrlEscapingDeploymentBase_ReportsUnsafeLink(
+        string unsafeUrl)
+    {
+        using var site = new SiteFixture();
+        site.AddPage(
+            "/study/page/",
+            "study/page/index.html",
+            $"""<a href="{unsafeUrl}">Secret</a>""");
+        site.AddPage(
+            "/guide/",
+            "guide/index.html",
+            "<h1>Guide</h1>");
+
+        var exception = Assert.Throws<AggregateException>(
+            () => site.CreateValidator().Validate());
+        var error = Assert.Single(exception.InnerExceptions);
+
+        Assert.Equal(
+            $"Unsafe internal link '{unsafeUrl}' in 'study/page/index.html'.",
+            error.Message);
     }
 
     [Fact]
@@ -93,9 +154,9 @@ public sealed class OutputValidatorTests
             <a name="local-name"></a>
             <a href="#local-id">Local id</a>
             <a href="#local-name">Local legacy name</a>
-            <a href="/guide/#remote-id">Remote id</a>
-            <a href="/guide/#remote-name">Remote legacy name</a>
-            <a href="/missing-control/">Broken control</a>
+            <a href="guide/#remote-id">Remote id</a>
+            <a href="guide/#remote-name">Remote legacy name</a>
+            <a href="missing-control/">Broken control</a>
             """);
         site.AddPage(
             "/guide/",
@@ -110,7 +171,7 @@ public sealed class OutputValidatorTests
 
     [Theory]
     [InlineData("#missing-local", "/", "#missing-local")]
-    [InlineData("/guide/#missing-remote", "/guide/", "#missing-remote")]
+    [InlineData("guide/#missing-remote", "/guide/", "#missing-remote")]
     public void Validate_MissingFragment_ReportsSourceTargetAndFragment(
         string url,
         string targetPath,
@@ -174,10 +235,10 @@ public sealed class OutputValidatorTests
             "/",
             "index.html",
             """
-            <object data="/assets/media/player.xap" type="application/x-silverlight-2">
-              <param name="source" value="/assets/media/application.xap">
+            <object data="assets/media/player.xap" type="application/x-silverlight-2">
+              <param name="source" value="assets/media/application.xap">
             </object>
-            <a href="/missing-control/">Broken control</a>
+            <a href="missing-control/">Broken control</a>
             """);
 
         AssertOnlyMissingControl(site.CreateValidator());
@@ -185,11 +246,11 @@ public sealed class OutputValidatorTests
 
     [Theory]
     [InlineData(
-        "<object data=\"/assets/media/missing-player.xap\"></object>",
-        "/assets/media/missing-player.xap")]
+        "<object data=\"assets/media/missing-player.xap\"></object>",
+        "assets/media/missing-player.xap")]
     [InlineData(
-        "<object data=\"data:application/x-silverlight-2,\"><param name=\"source\" value=\"/assets/media/missing-application.xap\"></object>",
-        "/assets/media/missing-application.xap")]
+        "<object data=\"data:application/x-silverlight-2,\"><param name=\"source\" value=\"assets/media/missing-application.xap\"></object>",
+        "assets/media/missing-application.xap")]
     public void Validate_MissingObjectOrSourceParamAsset_ReportsResource(
         string resourceMarkup,
         string missingPath)
@@ -218,7 +279,7 @@ public sealed class OutputValidatorTests
             <object data="data:application/x-silverlight-2,">
               <param name="background" value="/assets/media/not-a-resource.png">
             </object>
-            <a href="/missing-control/">Broken control</a>
+            <a href="missing-control/">Broken control</a>
             """);
 
         AssertOnlyMissingControl(site.CreateValidator());
@@ -255,7 +316,7 @@ public sealed class OutputValidatorTests
         site.AddPage(
             "/study/csharp/start/st_basis/",
             "study/csharp/start/st_basis/index.html",
-            """<a href="/missing-control/">Broken control</a>""",
+            """<a href="../../../../missing-control/">Broken control</a>""",
             "/study/csharp/st_basis.html",
             "/study/csharp/start/st_basis");
 
@@ -264,7 +325,8 @@ public sealed class OutputValidatorTests
 
         Assert.IsType<InvalidDataException>(error);
         Assert.Equal(
-            "Broken internal link '/missing-control/' in 'study/csharp/start/st_basis/index.html'.",
+            "Broken internal link '../../../../missing-control/' in "
+            + "'study/csharp/start/st_basis/index.html'.",
             error.Message);
     }
 
@@ -275,7 +337,7 @@ public sealed class OutputValidatorTests
 
         Assert.IsType<InvalidDataException>(error);
         Assert.Equal(
-            "Broken internal link '/missing-control/' in 'index.html'.",
+            "Broken internal link 'missing-control/' in 'index.html'.",
             error.Message);
     }
 
