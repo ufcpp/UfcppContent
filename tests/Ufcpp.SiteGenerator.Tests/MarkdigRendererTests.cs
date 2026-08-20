@@ -815,7 +815,7 @@ public sealed class MarkdigRendererTests
     public void Render_StBasisPage_DoesNotEscapeHighlightedCode()
     {
         var contentRoot = Path.GetFullPath(
-            Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\..\\..\\content"));
+            Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "content"));
         var (pages, urlMap) = PageLoader.Load(contentRoot);
         var page = pages.Single(
             candidate => candidate.RelativePath == "study/csharp/start/st_basis.md");
@@ -829,7 +829,7 @@ public sealed class MarkdigRendererTests
     public void Render_LibFormsPage_RestoresAllEditorialCodeHighlights()
     {
         var contentRoot = Path.GetFullPath(
-            Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\..\\..\\content"));
+            Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "content"));
         var (pages, urlMap) = PageLoader.Load(contentRoot);
         var page = pages.Single(
             candidate => candidate.RelativePath == "study/csharp/lib/lib_forms.md");
