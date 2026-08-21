@@ -298,8 +298,10 @@ without rewriting generated HTML with regular expressions.
 
 Source-code highlights reproduce the legacy effective style: `#e0ffff`
 background, `0 2px` padding, normal font style, and bold text while nested syntax
-token colors remain intact. Console highlights retain white text on `#606060`,
-normal weight, and the legacy `1px solid #ff8080` bottom border.
+token colors remain intact. Syntax keyword classifications inherit the base code
+weight instead of using bold, matching the current ufcpp.net `.reserved` style.
+Console highlights retain white text on `#606060`, normal weight, and the legacy
+`1px solid #ff8080` bottom border.
 
 Roslyn classifications are emitted as scoped `roslyn-*` classes. Same-position
 and overlapping classifications are merged by text interval so embedded

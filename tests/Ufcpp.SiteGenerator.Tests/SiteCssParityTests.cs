@@ -163,6 +163,27 @@ public sealed class SiteCssParityTests
     }
 
     /// <summary>
+    /// The current ufcpp.net colors syntax keywords without changing their
+    /// inherited weight. Generated and legacy token classes must do the same.
+    /// </summary>
+    [Theory]
+    [InlineData(".content pre code .keyword")]
+    [InlineData(".content pre code .roslyn-keyword")]
+    [InlineData(".content pre code .roslyn-preprocessor-keyword")]
+    [InlineData(".content pre code .roslyn-keyword-control")]
+    [InlineData(".reserved")]
+    [InlineData(".language-csharp .reserved")]
+    public void CodeKeyword_InheritsTheBaseCodeWeight(string selector)
+    {
+        var bodies = RuleBodiesFor(selector);
+
+        Assert.NotEmpty(bodies);
+        Assert.DoesNotContain(
+            bodies,
+            body => Regex.IsMatch(body, @"(^|;)\s*font-weight\s*:", RegexOptions.Multiline));
+    }
+
+    /// <summary>
     /// The generator rewrites the legacy expand markup into a native
     /// <c>&lt;details&gt;</c>, so the body has to be hidden by the element's own
     /// semantics rather than by a CSS rule that no script can undo.

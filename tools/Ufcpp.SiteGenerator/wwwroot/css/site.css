@@ -445,7 +445,6 @@ pre.console code {
   padding: 0;
   color: var(--color-code-keyword);
   background: transparent;
-  font-weight: 700;
 }
 
 .content pre code .controlKeyword,
@@ -511,12 +510,10 @@ pre.console code {
 .content pre code .roslyn-keyword,
 .content pre code .roslyn-preprocessor-keyword {
   color: var(--color-code-keyword);
-  font-weight: 700;
 }
 
 .content pre code .roslyn-keyword-control {
   color: var(--color-code-control);
-  font-weight: 700;
 }
 
 .content pre code .roslyn-comment,
@@ -572,7 +569,6 @@ pre.console code {
 .reserved,
 .language-csharp .reserved {
   color: var(--color-code-keyword);
-  font-weight: 700;
 }
 
 .control {
