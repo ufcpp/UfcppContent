@@ -11,6 +11,7 @@ colors:
   heading: "#483949"
   content-link: "#a35951"
   border: "#dddddd"
+  image-border: "#696969"
   code-keyword: "#0000ff"
   code-control: "#8f08c4"
   code-preprocessor: "#808080"
@@ -129,6 +130,8 @@ high-contrast reading neutrals.
 - **Technical Ink** (`text`): Default prose and navigation-supporting copy.
 - **Heading Plum** (`heading`): Secondary heading color inherited from the live site.
 - **Quiet Rule** (`border`): Hairline surface separation and restrained directional shadows.
+- **Image Frame** (`image-border`): Preserves the original site's boundary around diagrams whose
+  white canvas would otherwise blend into the reading surface.
 
 ### Named Rules
 
