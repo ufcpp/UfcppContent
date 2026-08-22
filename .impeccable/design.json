@@ -90,9 +90,9 @@
       },
       "code-constant": {
         "role": "secondary",
-        "displayName": "Constant Periwinkle",
-        "canonical": "#8080ff",
-        "tonalRamp": ["#242447", "#3d3d7a", "#5757ad", "#6d6dd9", "#8080ff", "#aaaaff", "#d5d5ff", "#f6f6ff"]
+        "displayName": "Constant Blue",
+        "canonical": "#0070c1",
+        "tonalRamp": ["#001f36", "#00365d", "#004c83", "#005fa4", "#0070c1", "#559fd6", "#aad0eb", "#eef5fb"]
       },
       "code-variable": {
         "role": "secondary",

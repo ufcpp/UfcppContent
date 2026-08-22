@@ -22,7 +22,7 @@ colors:
   code-method: "#74531f"
   code-field: "#004080"
   code-property: "#004080"
-  code-constant: "#8080ff"
+  code-constant: "#0070c1"
   code-variable: "#000080"
   code-operator: "#004080"
 typography:
