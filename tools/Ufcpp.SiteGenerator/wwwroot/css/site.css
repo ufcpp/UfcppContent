@@ -29,7 +29,7 @@
   --color-code-property: var(--color-code-field);
   --color-code-event: var(--color-code-property);
   --color-code-enum-member: var(--color-code-field);
-  --color-code-constant: #8080ff;
+  --color-code-constant: #0070c1;
   --color-code-variable: #000080;
   --color-code-operator: #004080;
   --color-code-highlight: #e0ffff;

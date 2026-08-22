@@ -298,7 +298,7 @@ Visual Studio の現行の配色**である。ufcpp.net の CSS は古い Visual
 | `--color-code-property` | `var(--color-code-field)` | フィールドと同色 | `property-name` |
 | `--color-code-event` | `var(--color-code-property)` | イベントはプロパティに近い | `event-name` |
 | `--color-code-enum-member` | `var(--color-code-field)` | 実体は静的フィールド | `enum-member-name` |
-| `--color-code-constant` | `#8080ff` | VS の定数名 | `constant-name` |
+| `--color-code-constant` | `#0070c1` | VS Code の Visual Studio Light テーマの定数名 | `constant-name` |
 | `--color-code-variable` | `#000080` | VS のローカル / 引数 | `local-name`、`parameter-name` |
 | `--color-code-operator` | `#004080` | フィールドと同じ値 | `operator`、`operator-overloaded` |
 

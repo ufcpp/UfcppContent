@@ -211,7 +211,7 @@ public sealed class SiteCssParityTests
         { "--color-code-property", "var(--color-code-field)", "Same color as a field, separate class." },
         { "--color-code-event", "var(--color-code-property)", "An event is closest to a property." },
         { "--color-code-enum-member", "var(--color-code-field)", "An enum member is a static field." },
-        { "--color-code-constant", "#8080ff", "Visual Studio constant name." },
+        { "--color-code-constant", "#0070c1", "VS Code Visual Studio Light constant name." },
         { "--color-code-variable", "#000080", "Visual Studio local and parameter name." },
         { "--color-code-operator", "#004080", "Visual Studio paints operators as plain text; this site tints them." },
     };
