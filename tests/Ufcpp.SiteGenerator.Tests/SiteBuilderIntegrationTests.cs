@@ -225,7 +225,7 @@ public sealed class SiteBuilderIntegrationTests
         Assert.Matches(@"--color-brand-navy\s*:\s*#2a3869\s*;", css);
         Assert.Matches(@"--color-content-bg\s*:\s*#ffffff\s*;", css);
         Assert.Matches(@"--color-content-link\s*:\s*#a35951\s*;", css);
-        Assert.Matches(@"--color-code-keyword\s*:\s*#0000e1\s*;", css);
+        Assert.Matches(@"--color-code-keyword\s*:\s*#0000ff\s*;", css);
         Assert.Matches(@"--color-code-string\s*:\s*#a31515\s*;", css);
         Assert.Matches(@"--color-code-highlight\s*:\s*#e0ffff\s*;", css);
         Assert.Matches(@"(?:^|\n)code\s*\{[^}]*color\s*:\s*#000000\s*;", css);

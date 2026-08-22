@@ -11,14 +11,20 @@ colors:
   heading: "#483949"
   content-link: "#a35951"
   border: "#dddddd"
-  code-keyword: "#0000e1"
+  code-keyword: "#0000ff"
   code-control: "#8f08c4"
+  code-preprocessor: "#686868"
   code-comment: "#008000"
   code-string: "#a31515"
-  code-number: "#098658"
+  code-number: "#254370"
   code-type: "#2b91af"
+  code-struct: "#007acc"
   code-method: "#74531f"
-  code-symbol: "#001080"
+  code-field: "#383b74"
+  code-property: "#27525a"
+  code-constant: "#743131"
+  code-variable: "#2c2e55"
+  code-operator: "#6b3480"
 typography:
   headline:
     fontFamily: '"Hiragino Kaku Gothic Pro", "Meiryo", "Yu Gothic", YuGothic, "MS PGothic", sans-serif'

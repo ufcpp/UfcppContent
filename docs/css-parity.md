@@ -171,8 +171,9 @@ node tools/css-parity-compare.mjs '[{"label":"expand","path":"/study/csharp/asyn
 並べている（`/study/misc/list/test/`）。目視確認はここが最も効率が良い。
 
 `table.variable` の文字色は、参照 CSS の `.variable { color: #2c2e55 }` という**要素を選ばない
-ルール**に由来する。本リポジトリのシンタックス ハイライターは `.variable` を出力しないため、
-コード トークンへ漏れないよう `table.variable` に限定して移植した。
+ルール**に由来する。参照 CSS ではこの `.variable` がコードのローカル変数の色も兼ねているため、
+表側は `table.variable` に限定して移植し、コード側は下記のトークン表のとおり
+`--color-code-variable` として別に持っている。
 
 ## 未定義のまま許容するクラス
 
@@ -274,6 +275,48 @@ ufcpp.net はレガシーな `span.reserved` / `span.type` などでコードを
 ウェイトも現行サイトの役割分担に合わせる。構文キーワードは `.reserved` と同じくコードの
 通常ウェイトを継承し、背景付きの編集上の強調だけを `code em` 相当の太字にする。ユーザーが
 書き換える箇所を示す `.input` の太字と、コンソール強調の通常ウェイトも従来どおり維持する。
+
+#### トークンの色
+
+色は `:root` のカスタム プロパティに集約し、値は参照 CSS の**実効値**に合わせる。
+参照 CSS には同じクラスが 2 度宣言されている箇所があり、後に書かれたほうが勝つ。
+先頭一致で読むと `.reserved` を `#0000e1`、`.type` を `#2ba6af` と読み違えるので注意する。
+
+| カスタム プロパティ | 値 | 参照 CSS のクラス | 主な `roslyn-*` クラス |
+|---|---|---|---|
+| `--color-code-keyword` | `#0000ff` | `.reserved` | `keyword` |
+| `--color-code-control` | `#8f08c4` | `.control` | `keyword-control` |
+| `--color-code-preprocessor` | `#686868` | `.preprocess` | `preprocessor-keyword` |
+| `--color-code-excluded` | `#686868` | `.excluded` | `excluded-code` |
+| `--color-code-comment` | `#008000` | `.comment` | `comment`、`xml-doc-comment-*` |
+| `--color-code-string` | `#a31515` | `.string` | `string`、`string-verbatim` |
+| `--color-code-number` | `#254370` | `.number` | `number` |
+| `--color-code-type` | `#2b91af` | `.type` | `class-name`、`interface-name` ほか |
+| `--color-code-struct` | `#007acc` | `.type.struct` | `struct-name`、`record-struct-name` |
+| `--color-code-method` | `#74531f` | `.method` | `method-name`、`extension-method-name` |
+| `--color-code-field` | `#383b74` | `.field` | `field-name`、`event-name` |
+| `--color-code-property` | `#27525a` | `.property` | `property-name` |
+| `--color-code-constant` | `#743131` | `.constant` | `constant-name`、`enum-member-name` |
+| `--color-code-variable` | `#2c2e55` | `.variable` | `local-name`、`parameter-name` |
+| `--color-code-operator` | `#6b3480` | `.operator` | `operator`、`operator-overloaded` |
+
+Roslyn のハイライターは元サイトのレガシー ハイライターより細かく分類するため、参照 CSS に
+対応するクラスが無いものがある。次の 3 つは意味が最も近いトークンに寄せた。型引数
+（`roslyn-type-parameter-name`）は Visual Studio の既定と同じ型の色のままとする。
+
+| トークン | 採用した色 | 理由 |
+|---|---|---|
+| `roslyn-enum-member-name` | 定数と同じ | 意味的に定数に最も近い |
+| `roslyn-event-name` | フィールドと同じ | 実体はフィールド |
+| `roslyn-record-struct-name` | 構造体と同じ | 構造体の一種 |
+
+`.inactive`（`#808080`）と `.excluded`（`#686868`）は参照 CSS では別の色である。
+`#if` で無効化されたコードは後者を使う。
+
+これらは `SiteCssParityTests` の `CodeTokenPalette` / `CodeTokenSelectors` で固定している。
+実描画を比較する `tools/css-parity-compare.mjs` はこの用途には使えない。ufcpp.net 側は
+`span.preprocess`、本サイトは `span.roslyn-preprocessor-keyword` とクラス名もトークンの
+分割位置も異なり、同ツールは両サイトに同じセレクターを当てて要素を突き合わせるためである。
 
 ## コンテンツ側の既知の不整合（本 Issue では直さない）
 

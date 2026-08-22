@@ -184,6 +184,115 @@ public sealed class SiteCssParityTests
     }
 
     /// <summary>
+    /// The code token palette, copied from ufcpp.net's bundle.min.css.
+    ///
+    /// These are the <em>effective</em> values: the reference stylesheet declares
+    /// some of these classes twice, so a naive first-match read gives the wrong
+    /// color (<c>.reserved</c> is <c>#0000e1</c> then <c>#0000FF</c>,
+    /// <c>.type</c> is <c>#2ba6af</c> then <c>#2B91AF</c>).
+    /// </summary>
+    public static TheoryData<string, string, string> CodeTokenPalette() => new()
+    {
+        { "--color-code-keyword", "#0000ff", ".reserved" },
+        { "--color-code-control", "#8f08c4", ".control" },
+        { "--color-code-preprocessor", "#686868", ".preprocess" },
+        { "--color-code-excluded", "#686868", ".excluded" },
+        { "--color-code-comment", "#008000", ".comment" },
+        { "--color-code-string", "#a31515", ".string" },
+        { "--color-code-number", "#254370", ".number" },
+        { "--color-code-type", "#2b91af", ".type" },
+        { "--color-code-struct", "#007acc", ".type.struct" },
+        { "--color-code-method", "#74531f", ".method" },
+        { "--color-code-field", "#383b74", ".field" },
+        { "--color-code-property", "#27525a", ".property" },
+        { "--color-code-constant", "#743131", ".constant" },
+        { "--color-code-variable", "#2c2e55", ".variable" },
+        { "--color-code-operator", "#6b3480", ".operator" },
+    };
+
+    /// <summary>
+    /// Which palette entry each token class has to read. The Roslyn highlighter
+    /// splits C# far more finely than the legacy one did, and ufcpp.net colors
+    /// those categories separately, so the classes must not be collapsed back
+    /// into one shared color.
+    /// </summary>
+    public static TheoryData<string, string> CodeTokenSelectors() => new()
+    {
+        { ".content pre code .roslyn-keyword", "--color-code-keyword" },
+        { ".content pre code .roslyn-keyword-control", "--color-code-control" },
+        { ".content pre code .roslyn-preprocessor-keyword", "--color-code-preprocessor" },
+        { ".content pre code .roslyn-excluded-code", "--color-code-excluded" },
+        { ".content pre code .roslyn-comment", "--color-code-comment" },
+        { ".content pre code .roslyn-string", "--color-code-string" },
+        { ".content pre code .roslyn-number", "--color-code-number" },
+        { ".content pre code .roslyn-class-name", "--color-code-type" },
+        { ".content pre code .roslyn-record-class-name", "--color-code-type" },
+        { ".content pre code .roslyn-interface-name", "--color-code-type" },
+        { ".content pre code .roslyn-delegate-name", "--color-code-type" },
+        { ".content pre code .roslyn-enum-name", "--color-code-type" },
+        { ".content pre code .roslyn-type-parameter-name", "--color-code-type" },
+        { ".content pre code .roslyn-struct-name", "--color-code-struct" },
+        { ".content pre code .roslyn-record-struct-name", "--color-code-struct" },
+        { ".content pre code .roslyn-method-name", "--color-code-method" },
+        { ".content pre code .roslyn-extension-method-name", "--color-code-method" },
+        { ".content pre code .roslyn-field-name", "--color-code-field" },
+        { ".content pre code .roslyn-event-name", "--color-code-field" },
+        { ".content pre code .roslyn-property-name", "--color-code-property" },
+        { ".content pre code .roslyn-constant-name", "--color-code-constant" },
+        { ".content pre code .roslyn-enum-member-name", "--color-code-constant" },
+        { ".content pre code .roslyn-local-name", "--color-code-variable" },
+        { ".content pre code .roslyn-parameter-name", "--color-code-variable" },
+        { ".content pre code .roslyn-operator", "--color-code-operator" },
+        { ".content pre code .roslyn-operator-overloaded", "--color-code-operator" },
+        { ".content pre code .keyword", "--color-code-keyword" },
+        { ".content pre code .preprocessorKeyword", "--color-code-preprocessor" },
+        { ".reserved", "--color-code-keyword" },
+    };
+
+    /// <param name="variable">The custom property that carries the color.</param>
+    /// <param name="color">The effective value in the reference stylesheet.</param>
+    /// <param name="originalClass">
+    /// The class ufcpp.net uses for the same token, recorded so the value can be
+    /// re-checked against the reference stylesheet.
+    /// </param>
+    [Theory]
+    [MemberData(nameof(CodeTokenPalette))]
+    public void CodeTokenColor_MatchesOriginalPalette(
+        string variable,
+        string color,
+        string originalClass)
+    {
+        Assert.NotEmpty(originalClass);
+
+        var declarations = RuleBody(":root");
+
+        Assert.NotNull(declarations);
+        Assert.Contains($"{variable}: {color};", declarations);
+    }
+
+    [Theory]
+    [MemberData(nameof(CodeTokenSelectors))]
+    public void CodeToken_ReadsItsOwnPaletteEntry(string selector, string variable)
+    {
+        var bodies = RuleBodiesFor(selector);
+
+        Assert.NotEmpty(bodies);
+        Assert.All(bodies, body => Assert.Contains($"color: var({variable});", body));
+    }
+
+    /// <summary>
+    /// Fields, properties, constants, locals and parameters used to share a
+    /// single <c>--color-code-symbol</c> taken from Visual Studio's default
+    /// theme. ufcpp.net gives them four different colors, so the merged variable
+    /// must stay gone.
+    /// </summary>
+    [Fact]
+    public void CodePalette_HasNoMergedSymbolColor()
+    {
+        Assert.DoesNotContain("--color-code-symbol", SiteCss.Value, StringComparison.Ordinal);
+    }
+
+    /// <summary>
     /// The generator rewrites the legacy expand markup into a native
     /// <c>&lt;details&gt;</c>, so the body has to be hidden by the element's own
     /// semantics rather than by a CSS rule that no script can undo.
