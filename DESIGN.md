@@ -212,6 +212,10 @@ card, its shadow is too strong or its corner treatment is too decorative.
   anchors when available.
 - **Keywords:** Present extracted terms as compact gray links with a key marker, matching the
   original site's dense reference treatment.
+- **Previous / Next Pages:** Place compact gray links after chapter content pages. Follow
+  `sort_order` through all chapters in the current subject, including exercise-list pages,
+  prefix a link with `【章名】` when it crosses a chapter boundary, and show only the available
+  direction at subject boundaries.
 
 ### Headings
 

@@ -902,6 +902,56 @@ math {
   font-weight: 400;
 }
 
+.content .around-article {
+  margin: 1em 0;
+}
+
+.content .around-article::after {
+  height: 0;
+  display: block;
+  clear: both;
+  visibility: hidden;
+  content: ".";
+}
+
+.content .around-article a {
+  width: 48%;
+  margin: 0;
+  padding: 4px 8px;
+  display: block;
+  border: 0;
+  border-radius: 0.2em;
+  background-color: rgba(128, 128, 128, 0.2);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.content .around-article a:hover {
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+.content .next-article {
+  float: right;
+  text-align: right;
+}
+
+.content .previous-article {
+  float: left;
+  text-align: left;
+}
+
+.content .article-navigation-arrow {
+  font-size: 16px;
+}
+
+.content .next-article .article-navigation-arrow {
+  margin-left: 0.25em;
+}
+
+.content .previous-article .article-navigation-arrow {
+  margin-right: 0.25em;
+}
+
 .article-meta {
   margin: 0 0 8px;
   color: var(--color-text-secondary);
