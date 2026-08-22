@@ -303,4 +303,5 @@ public sealed class GitRepositoryReaderTests
         Assert.Contains("maintenance.auto=false", startInfo.ArgumentList);
         Assert.Contains("fetch.writeCommitGraph=false", startInfo.ArgumentList);
     }
+
 }

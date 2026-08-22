@@ -131,7 +131,6 @@ internal static class GitRepositoryReader
             resolvedCurrentCommit,
             changedDuringRead: true,
             cancellationToken);
-
         return new RepositoryContent(
             root,
             resolvedSourceCommit,

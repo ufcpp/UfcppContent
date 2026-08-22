@@ -113,8 +113,7 @@ internal static class MigratorCli
                 cancellationToken);
             var reportPath = ResolveReportPath(
                 options.ReportPath,
-                workingDirectory,
-                repository);
+                workingDirectory);
             var outcome = MigrationAnalyzer.Analyze(
                 new MigrationAnalysisInput(
                     repository.ResolvedSourceCommit,
@@ -128,10 +127,6 @@ internal static class MigratorCli
             {
                 await standardOutput.WriteAsync(bytes, cancellationToken);
                 await standardOutput.FlushAsync(cancellationToken);
-            }
-            else
-            {
-                await WriteReportFileAsync(reportPath, bytes, cancellationToken);
             }
 
             return outcome.ExitCode;
@@ -155,8 +150,7 @@ internal static class MigratorCli
 
     private static string? ResolveReportPath(
         string value,
-        string workingDirectory,
-        RepositoryContent repository)
+        string workingDirectory)
     {
         if (value == "-")
         {
@@ -168,108 +162,10 @@ internal static class MigratorCli
             throw new MigrationInputException("Report path cannot be empty.");
         }
 
-        if (OperatingSystem.IsWindows()
-            && (value.StartsWith(@"\\?\", StringComparison.Ordinal)
-                || value.StartsWith(@"\\.\", StringComparison.Ordinal)))
-        {
-            throw new MigrationInputException(
-                "Report path cannot use a Windows device-path alias.");
-        }
-
-        var reportPath = Path.GetFullPath(value, workingDirectory);
-        var parent = Path.GetDirectoryName(reportPath);
-        if (parent is null || !Directory.Exists(parent))
-        {
-            throw new MigrationInputException(
-                $"Report directory does not exist: '{parent}'.");
-        }
-
-        if (Directory.Exists(reportPath))
-        {
-            throw new MigrationInputException(
-                $"Report path names a directory: '{reportPath}'.");
-        }
-
-        if (IsWithin(reportPath, repository.RepositoryRoot)
-            || FileSystemPathSafety.IsDirectoryWithin(
-                parent,
-                repository.RepositoryRoot))
-        {
-            throw new MigrationInputException(
-                "Report path must be outside the repository worktree.");
-        }
-
-        RejectReparsePoints(reportPath);
-        return reportPath;
-    }
-
-    private static async Task WriteReportFileAsync(
-        string reportPath,
-        byte[] bytes,
-        CancellationToken cancellationToken)
-    {
-        var parent = Path.GetDirectoryName(reportPath)
-            ?? throw new MigrationInputException("Report path has no parent directory.");
-        var temporaryPath = Path.Combine(
-            parent,
-            $".{Path.GetFileName(reportPath)}.{Guid.NewGuid():N}.tmp");
-        try
-        {
-            await File.WriteAllBytesAsync(temporaryPath, bytes, cancellationToken);
-            RejectReparsePoints(reportPath);
-            File.Move(temporaryPath, reportPath, overwrite: true);
-        }
-        finally
-        {
-            if (File.Exists(temporaryPath))
-            {
-                File.Delete(temporaryPath);
-            }
-        }
-    }
-
-    private static void RejectReparsePoints(string path)
-    {
-        var current = File.Exists(path) || Directory.Exists(path)
-            ? path
-            : Path.GetDirectoryName(path);
-        while (!string.IsNullOrEmpty(current))
-        {
-            if ((File.GetAttributes(current) & FileAttributes.ReparsePoint) != 0)
-            {
-                throw new MigrationInputException(
-                    $"Report path cannot traverse a symbolic link or junction: "
-                    + $"'{current}'.");
-            }
-
-            var parent = Path.GetDirectoryName(
-                current.TrimEnd(
-                    Path.DirectorySeparatorChar,
-                    Path.AltDirectorySeparatorChar));
-            if (string.Equals(parent, current, StringComparison.Ordinal))
-            {
-                break;
-            }
-
-            current = parent;
-        }
-    }
-
-    private static bool IsWithin(string path, string directory)
-    {
-        var comparison = OperatingSystem.IsWindows()
-            ? StringComparison.OrdinalIgnoreCase
-            : StringComparison.Ordinal;
-        var normalizedDirectory = directory.TrimEnd(
-            Path.DirectorySeparatorChar,
-            Path.AltDirectorySeparatorChar);
-        return path.Equals(normalizedDirectory, comparison)
-            || path.StartsWith(
-                normalizedDirectory + Path.DirectorySeparatorChar,
-                comparison)
-            || Path.AltDirectorySeparatorChar != Path.DirectorySeparatorChar
-            && path.StartsWith(
-                normalizedDirectory + Path.AltDirectorySeparatorChar,
-                comparison);
+        _ = Path.GetFullPath(value, workingDirectory);
+        throw new MigrationInputException(
+            "File report output is disabled because filesystem aliases and "
+            + "concurrent topology changes cannot be proven safe without writes "
+            + "or locks; use --report - and capture standard output.");
     }
 }

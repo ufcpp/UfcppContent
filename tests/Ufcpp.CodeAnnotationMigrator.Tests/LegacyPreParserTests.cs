@@ -208,4 +208,41 @@ public sealed class LegacyPreParserTests
         Assert.False(diagnostic.CountsAsBlock);
         Assert.Contains("closing", diagnostic.Message, StringComparison.OrdinalIgnoreCase);
     }
+
+    [Fact]
+    public void Parse_PlainPrePreservesLeadingWhitespaceBeforeFirstCodeLine()
+    {
+        var document = """
+            <pre class="source" title="sample">
+                case 'e':
+                    ch = '\u001b';
+                    break;
+            </pre>
+            """.ReplaceLineEndings("\n");
+
+        var block = Assert.Single(LegacyPreParser.Parse(document));
+
+        Assert.Equal(
+            "\n    case 'e':\n        ch = '\\u001b';\n        break;\n",
+            block.Code);
+        Assert.Equal(
+            "case 'e':\n    ch = '\\u001b';\n    break;",
+            CodeNormalizer.Normalize(block.Code));
+    }
+
+    [Fact]
+    public void Parse_StructuralCodeWrapperExcludesOnlyWrapperBoundaryWhitespace()
+    {
+        var document = """
+            <pre>
+              <code>  first
+                second
+              </code>
+            </pre>
+            """.ReplaceLineEndings("\n");
+
+        var block = Assert.Single(LegacyPreParser.Parse(document));
+
+        Assert.Equal("  first\n    second\n  ", block.Code);
+    }
 }

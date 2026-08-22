@@ -123,6 +123,33 @@ public sealed class BlockMatcherTests
         Assert.Equal(1, Assert.Single(result.CurrentOnly).Ordinal);
     }
 
+    [Fact]
+    public void Match_PlainPreIndentationMatchesConvertedFence()
+    {
+        var historicalDocument = """
+            <pre class="source" title="sample">
+                case 'e':
+                    ch = '\u001b';
+                    break;
+            </pre>
+            """.ReplaceLineEndings("\n");
+        var currentDocument = """
+            ```csharp
+                case 'e':
+                    ch = '\u001b';
+                    break;
+            ```
+            """.ReplaceLineEndings("\n");
+
+        var result = BlockMatcher.Match(
+            LegacyPreParser.Parse(historicalDocument),
+            CurrentBlockDiscoverer.Discover(currentDocument));
+
+        var match = Assert.Single(result.Historical);
+        Assert.Equal(BlockMatchStatus.Matched, match.Status);
+        Assert.Equal(BlockMatchMethod.OrdinalAndHash, match.Method);
+    }
+
     private static HistoricalCodeBlock Historical(int ordinal, string code) =>
         new(ordinal, ordinal * 10, ordinal, false, null, code, []);
 

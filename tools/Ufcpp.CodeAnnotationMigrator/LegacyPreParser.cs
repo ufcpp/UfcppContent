@@ -213,21 +213,21 @@ internal static class LegacyPreParser
     private static (string Code, IReadOnlyList<AnnotationSelection> Annotations)
         ParsePreBody(string document, int bodyStart, int bodyEnd)
     {
-        var contentStart = bodyStart;
-        var contentEnd = bodyEnd;
-        while (contentStart < contentEnd && char.IsWhiteSpace(document[contentStart]))
+        var wrapperStart = bodyStart;
+        var wrapperEnd = bodyEnd;
+        while (wrapperStart < wrapperEnd && char.IsWhiteSpace(document[wrapperStart]))
         {
-            contentStart++;
+            wrapperStart++;
         }
 
-        while (contentEnd > contentStart && char.IsWhiteSpace(document[contentEnd - 1]))
+        while (wrapperEnd > wrapperStart && char.IsWhiteSpace(document[wrapperEnd - 1]))
         {
-            contentEnd--;
+            wrapperEnd--;
         }
 
-        if (contentStart < contentEnd
-            && document[contentStart] == '<'
-            && TryReadTag(document, contentStart, out var openingCode)
+        if (wrapperStart < wrapperEnd
+            && document[wrapperStart] == '<'
+            && TryReadTag(document, wrapperStart, out var openingCode)
             && !openingCode.IsClosing
             && openingCode.Name.Equals("code", StringComparison.OrdinalIgnoreCase))
         {
@@ -235,12 +235,14 @@ internal static class LegacyPreParser
             if (closingCode.Start <= bodyEnd
                 && IsOnlyWhitespace(document, closingCode.End + 1, bodyEnd))
             {
-                contentStart = openingCode.End + 1;
-                contentEnd = closingCode.Start;
+                return ParseAnnotatedText(
+                    document,
+                    openingCode.End + 1,
+                    closingCode.Start);
             }
         }
 
-        return ParseAnnotatedText(document, contentStart, contentEnd);
+        return ParseAnnotatedText(document, bodyStart, bodyEnd);
     }
 
     private static (string Code, IReadOnlyList<AnnotationSelection> Annotations)

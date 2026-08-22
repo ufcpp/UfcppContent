@@ -28,18 +28,16 @@ The command accepts:
   source commit. The default is `content`.
 - `--current-path <relative-path>`: the current Markdown tree within the
   current `HEAD` commit. The default is `content`.
-- `--report <path|->`: deterministic JSON output. `-`, the default, means
-  standard output. A file report must be outside the repository worktree.
+- `--report -`: deterministic JSON on standard output. `-` is the default and
+  only accepted destination.
 - `--dry-run`: optional and accepted for clarity. Dry run is the only mode.
 
 Unknown options, positional arguments, `--apply`, missing option values, rooted
-source/current paths, `..` traversal, and a report path anywhere inside the
-repository worktree are input errors. Report paths that use a Windows device
-alias or traverse a symbolic link or junction are also rejected; directory
-handles are resolved to canonical final paths on Windows to catch short-name
-and substituted-drive aliases. File reports are written to a sibling temporary
-file and atomically moved into place so an existing hard link is not written
-through.
+source/current paths, `..` traversal, and every `--report` value other than `-`
+are input errors. File output is categorically disabled: aliases, hard links,
+mount/share namespaces, Git administration paths, associated worktrees, and
+concurrent topology changes therefore cannot turn reporting into a repository
+write. Callers that need a file capture standard output outside the tool.
 
 Before analysis, the tool:
 
@@ -103,6 +101,12 @@ For each historical `<pre>`:
 - all other tags, including syntax-color spans such as `reserved`, `literal`,
   `type`, `method`, and `comment`, affect neither metadata kind nor output
   text. Their visible text still contributes to code.
+
+A structural `<code>...</code>` wrapper may be surrounded by whitespace inside
+`<pre>`; only that wrapper boundary is excluded. A plain `<pre>` without the
+wrapper preserves its complete original body bounds, including leading
+whitespace before the first code line. Matching normalization, not parsing,
+removes framing blank lines and common indentation.
 
 Tag and attribute names and class tokens are compared case-insensitively.
 Malformed or unbalanced `<pre>`, `<code>`, `<em>`, `error`, or `warning`
@@ -261,8 +265,8 @@ code 3.
 
 The tool does not open current Markdown from the worktree; it reads the captured
 `HEAD` tree by object ID and reports that target commit. It exposes no content
-writer and no apply command. Report file output uses only the explicit
-destination after validating that it is outside the repository worktree.
+writer, no apply command, and no filesystem report destination. It writes only
+to the caller-provided standard-output stream.
 
 PR 1 acceptance requires:
 

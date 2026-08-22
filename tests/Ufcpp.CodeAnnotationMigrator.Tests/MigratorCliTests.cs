@@ -145,7 +145,7 @@ public sealed class MigratorCliTests
     }
 
     [Fact]
-    public async Task RunAsync_OverwritesExplicitReportWithIdenticalBytes()
+    public async Task RunAsync_RejectsExplicitFileReportWithoutWriting()
     {
         using var repository = new TemporaryGitRepository();
         repository.Write("content/a.md", "<pre>value</pre>");
@@ -160,46 +160,32 @@ public sealed class MigratorCliTests
         var reportPath = Path.Combine(reportDirectory, "report.json");
         try
         {
-            var arguments = new[]
-            {
-                "--repo-root",
-                repository.Root,
-                "--source-commit",
-                commit,
-                "--report",
-                reportPath,
-            };
-            await using var firstOutput = new MemoryStream();
-            using var firstError = new StringWriter();
-            var firstExit = await MigratorCli.RunAsync(
-                arguments,
-                firstOutput,
-                firstError,
+            await using var output = new MemoryStream();
+            using var error = new StringWriter();
+            var exitCode = await MigratorCli.RunAsync(
+                [
+                    "--repo-root",
+                    repository.Root,
+                    "--source-commit",
+                    commit,
+                    "--report",
+                    reportPath,
+                ],
+                output,
+                error,
                 repository.Root);
-            var first = File.ReadAllBytes(reportPath);
 
-            await using var secondOutput = new MemoryStream();
-            using var secondError = new StringWriter();
-            var secondExit = await MigratorCli.RunAsync(
-                arguments,
-                secondOutput,
-                secondError,
-                repository.Root);
-            var second = File.ReadAllBytes(reportPath);
-
-            Assert.Equal(0, firstExit);
-            Assert.Equal(0, secondExit);
-            Assert.Equal(first, second);
-            Assert.Empty(Directory.EnumerateFiles(reportDirectory, "*.tmp"));
+            Assert.Equal(2, exitCode);
+            Assert.False(File.Exists(reportPath));
+            Assert.Empty(output.ToArray());
+            Assert.Contains(
+                "standard output",
+                error.ToString(),
+                StringComparison.OrdinalIgnoreCase);
             Assert.Equal(string.Empty, repository.Status());
         }
         finally
         {
-            if (File.Exists(reportPath))
-            {
-                File.Delete(reportPath);
-            }
-
             Directory.Delete(reportDirectory);
         }
     }
@@ -207,6 +193,11 @@ public sealed class MigratorCliTests
     [Fact]
     public async Task RunAsync_RejectsReportPathThroughDirectoryLink()
     {
+        if (!OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
         using var repository = new TemporaryGitRepository();
         repository.Write("content/a.md", "<pre>value</pre>");
         var commit = repository.Commit("current");
@@ -218,19 +209,9 @@ public sealed class MigratorCliTests
         var linkPath = Path.Combine(reportDirectory, "linked-content");
         try
         {
-            try
-            {
-                Directory.CreateSymbolicLink(
-                    linkPath,
-                    Path.Combine(repository.Root, "content"));
-            }
-            catch (Exception exception) when (
-                exception is UnauthorizedAccessException
-                    or IOException
-                    or PlatformNotSupportedException)
-            {
-                return;
-            }
+            Directory.CreateSymbolicLink(
+                linkPath,
+                Path.Combine(repository.Root, "content"));
 
             await using var output = new MemoryStream();
             using var error = new StringWriter();
@@ -253,7 +234,7 @@ public sealed class MigratorCliTests
                 "content",
                 "report.json")));
             Assert.Contains(
-                "Report path",
+                "standard output",
                 error.ToString(),
                 StringComparison.OrdinalIgnoreCase);
         }
@@ -302,5 +283,244 @@ public sealed class MigratorCliTests
             repository.Root,
             "content",
             "report.json")));
+    }
+
+    [Fact]
+    public async Task RunAsync_RejectsReportInsideCommonGitDirectory()
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        using var repository = new TemporaryGitRepository();
+        repository.Write("content/a.md", "<pre>value</pre>");
+        var commit = repository.Commit("current");
+        var linkedWorktree = repository.CreateLinkedWorktree();
+        var reportPath = Path.Combine(repository.CommonGitDirectory(), "report.json");
+        await using var output = new MemoryStream();
+        using var error = new StringWriter();
+
+        var exitCode = await MigratorCli.RunAsync(
+            [
+                "--repo-root",
+                linkedWorktree,
+                "--source-commit",
+                commit,
+                "--report",
+                reportPath,
+            ],
+            output,
+            error,
+            linkedWorktree);
+
+        Assert.Equal(2, exitCode);
+        Assert.False(File.Exists(reportPath));
+        Assert.Contains(
+            "standard output",
+            error.ToString(),
+            StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task RunAsync_RejectsReportInsideAssociatedWorktree()
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        using var repository = new TemporaryGitRepository();
+        repository.Write("content/a.md", "<pre>value</pre>");
+        var commit = repository.Commit("current");
+        var linkedWorktree = repository.CreateLinkedWorktree();
+        var reportPath = Path.Combine(linkedWorktree, "report.json");
+        await using var output = new MemoryStream();
+        using var error = new StringWriter();
+
+        var exitCode = await MigratorCli.RunAsync(
+            [
+                "--repo-root",
+                repository.Root,
+                "--source-commit",
+                commit,
+                "--report",
+                reportPath,
+            ],
+            output,
+            error,
+            repository.Root);
+
+        Assert.Equal(2, exitCode);
+        Assert.False(File.Exists(reportPath));
+        Assert.Contains(
+            "standard output",
+            error.ToString(),
+            StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task RunAsync_AtomicReplaceDoesNotWriteThroughHardLink()
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        using var repository = new TemporaryGitRepository();
+        repository.Write("content/a.md", "<pre>value</pre>");
+        var commit = repository.Commit("historical");
+        repository.Write("content/a.md", "```text\nvalue\n```");
+        repository.Commit("current");
+        var contentPath = Path.Combine(repository.Root, "content", "a.md");
+        var originalContent = File.ReadAllBytes(contentPath);
+        var reportDirectory = Path.Combine(
+            Path.GetTempPath(),
+            "ufcpp-code-annotation-hardlink",
+            Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(reportDirectory);
+        var reportPath = Path.Combine(reportDirectory, "report.json");
+        TestFileSystemLinks.CreateHardLink(reportPath, contentPath);
+        try
+        {
+            await using var output = new MemoryStream();
+            using var error = new StringWriter();
+            var exitCode = await MigratorCli.RunAsync(
+                [
+                    "--repo-root",
+                    repository.Root,
+                    "--source-commit",
+                    commit,
+                    "--report",
+                    reportPath,
+                ],
+                output,
+                error,
+                repository.Root);
+
+            Assert.Equal(2, exitCode);
+            Assert.Equal(originalContent, File.ReadAllBytes(contentPath));
+            Assert.Equal(originalContent, File.ReadAllBytes(reportPath));
+            Assert.Equal(string.Empty, repository.Status());
+        }
+        finally
+        {
+            File.Delete(reportPath);
+            Directory.Delete(reportDirectory);
+        }
+    }
+
+    [Fact]
+    public async Task RunAsync_RejectsOrFailsClosedForLocalhostAdminShareIntoContent()
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        using var repository = new TemporaryGitRepository();
+        repository.Write("content/a.md", "<pre>value</pre>");
+        var commit = repository.Commit("current");
+        var root = Path.GetPathRoot(repository.Root)
+            ?? throw new InvalidOperationException("Repository has no path root.");
+        var relativeReportPath = Path.Combine(
+            Path.GetRelativePath(root, repository.Root),
+            "content",
+            "report.json");
+        var reportPath =
+            $@"\\localhost\{char.ToUpperInvariant(root[0])}$\{relativeReportPath}";
+        await using var output = new MemoryStream();
+        using var error = new StringWriter();
+
+        var exitCode = await MigratorCli.RunAsync(
+            [
+                "--repo-root",
+                repository.Root,
+                "--source-commit",
+                commit,
+                "--report",
+                reportPath,
+            ],
+            output,
+            error,
+            repository.Root);
+
+        Assert.Equal(2, exitCode);
+        Assert.False(File.Exists(Path.Combine(
+            repository.Root,
+            "content",
+            "report.json")));
+        Assert.Contains("Input error", error.ToString(), StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("//?/C:/report.json")]
+    [InlineData("//./C:/report.json")]
+    [InlineData("\\??\\C:\\report.json")]
+    public async Task RunAsync_RejectsAllWindowsDeviceNamespaceSpellings(
+        string reportPath)
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        using var repository = new TemporaryGitRepository();
+        repository.Write("content/a.md", "<pre>value</pre>");
+        var commit = repository.Commit("current");
+        await using var output = new MemoryStream();
+        using var error = new StringWriter();
+
+        var exitCode = await MigratorCli.RunAsync(
+            [
+                "--repo-root",
+                repository.Root,
+                "--source-commit",
+                commit,
+                "--report",
+                reportPath,
+            ],
+            output,
+            error,
+            repository.Root);
+
+        Assert.Equal(2, exitCode);
+        Assert.Contains(
+            "standard output",
+            error.ToString(),
+            StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task RunAsync_NonWindowsFileReportFailsClosed()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        using var repository = new TemporaryGitRepository();
+        repository.Write("content/a.md", "<pre>value</pre>");
+        var commit = repository.Commit("current");
+        var reportPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.json");
+        await using var output = new MemoryStream();
+        using var error = new StringWriter();
+
+        var exitCode = await MigratorCli.RunAsync(
+            [
+                "--repo-root",
+                repository.Root,
+                "--source-commit",
+                commit,
+                "--report",
+                reportPath,
+            ],
+            output,
+            error,
+            repository.Root);
+
+        Assert.Equal(2, exitCode);
+        Assert.False(File.Exists(reportPath));
+        Assert.Contains("standard output", error.ToString(), StringComparison.OrdinalIgnoreCase);
     }
 }

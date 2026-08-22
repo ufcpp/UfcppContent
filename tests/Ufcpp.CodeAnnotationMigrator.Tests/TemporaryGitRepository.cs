@@ -5,6 +5,8 @@ namespace Ufcpp.CodeAnnotationMigrator.Tests;
 
 internal sealed class TemporaryGitRepository : IDisposable
 {
+    private readonly List<string> _linkedWorktrees = [];
+
     public TemporaryGitRepository()
     {
         Root = Path.Combine(
@@ -41,8 +43,40 @@ internal sealed class TemporaryGitRepository : IDisposable
     public void ReplaceObject(string objectToReplace, string replacementObject) =>
         Run("replace", objectToReplace, replacementObject);
 
+    public string CreateLinkedWorktree()
+    {
+        var path = Path.Combine(
+            Path.GetTempPath(),
+            "ufcpp-code-annotation-linked-worktrees",
+            Guid.NewGuid().ToString("N"));
+        AddLinkedWorktree(path);
+        return path;
+    }
+
+    public void AddLinkedWorktree(string path)
+    {
+        if (Directory.Exists(path))
+        {
+            Directory.Delete(path);
+        }
+
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        Run("worktree", "add", "--quiet", "--detach", path, "HEAD");
+        _linkedWorktrees.Add(path);
+    }
+
+    public string GitDirectory() => Run("rev-parse", "--absolute-git-dir").Trim();
+
+    public string CommonGitDirectory() =>
+        Run("rev-parse", "--path-format=absolute", "--git-common-dir").Trim();
+
     public void Dispose()
     {
+        foreach (var worktree in _linkedWorktrees)
+        {
+            Run("worktree", "remove", "--force", worktree);
+        }
+
         if (Directory.Exists(Root))
         {
             foreach (var file in Directory.EnumerateFiles(
