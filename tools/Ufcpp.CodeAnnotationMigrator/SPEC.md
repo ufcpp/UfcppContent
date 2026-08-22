@@ -36,9 +36,10 @@ Unknown options, positional arguments, `--apply`, missing option values, rooted
 source/current paths, `..` traversal, and a report path anywhere inside the
 repository worktree are input errors. Report paths that use a Windows device
 alias or traverse a symbolic link or junction are also rejected; directory
-filesystem identities are compared on Windows to catch short-name and
-substituted-drive aliases. File reports are written to a sibling temporary file
-and atomically moved into place so an existing hard link is not written through.
+handles are resolved to canonical final paths on Windows to catch short-name
+and substituted-drive aliases. File reports are written to a sibling temporary
+file and atomically moved into place so an existing hard link is not written
+through.
 
 Before analysis, the tool:
 
@@ -47,7 +48,8 @@ Before analysis, the tool:
 3. verifies that `<commit>:<source-path>` exists as a tree;
 4. verifies that the current path exists as a directory;
 5. rejects tracked, untracked, or ignored Markdown changes below the current
-   content path and rejects linked Markdown files; and
+   content path, rejects `assume-unchanged`/`skip-worktree` index flags, and
+   rejects linked Markdown files; and
 6. reads historical blobs with `git ls-tree` and `git cat-file`.
 
 Git is invoked only with read-only commands. The tool never checks out,
@@ -176,6 +178,7 @@ selection. It is represented by `*-text` only when:
 - it occurs exactly once, ordinally and case-sensitively, in the current code;
   and
 - the occurrence maps exactly to the historical selection after newline
+  normalization, including the same occurrence ordinal after matching entity
   normalization.
 
 Planning uses the raw current fenced-code text, not the entity-decoded matching

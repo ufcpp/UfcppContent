@@ -187,4 +187,26 @@ public sealed class GitRepositoryReaderTests
             Directory.Delete(externalDirectory);
         }
     }
+
+    [Fact]
+    public async Task LoadAsync_RejectsAssumeUnchangedMarkdown()
+    {
+        using var repository = new TemporaryGitRepository();
+        repository.Write("content/a.md", "committed");
+        var commit = repository.Commit("current");
+        repository.AssumeUnchanged("content/a.md");
+        repository.Write("content/a.md", "hidden change");
+
+        var exception = await Assert.ThrowsAsync<MigrationInputException>(
+            () => GitRepositoryReader.LoadAsync(
+                repository.Root,
+                commit,
+                "content",
+                "content"));
+
+        Assert.Contains(
+            "assume-unchanged",
+            exception.Message,
+            StringComparison.OrdinalIgnoreCase);
+    }
 }

@@ -177,6 +177,23 @@ public sealed class MetadataPlannerTests
         Assert.Null(result.Plan.Error);
     }
 
+    [Fact]
+    public void Plan_RejectsUniqueRawTextAtDifferentSemanticOccurrence()
+    {
+        const string HistoricalCode = "< <";
+        const string CurrentCode = "&lt; <";
+        var historical = Historical(
+            HistoricalCode,
+            null,
+            Selection(AnnotationKind.Highlight, HistoricalCode, "<"));
+
+        var result = MetadataPlanner.Plan(historical, Current(CurrentCode));
+
+        var diagnostic = Assert.Single(result.Diagnostics);
+        Assert.Equal("UNREPRESENTABLE_POSITIONAL_TEXT", diagnostic.Code);
+        Assert.Null(result.Plan.Highlight);
+    }
+
     private static HistoricalCodeBlock Historical(
         string code,
         string? title,

@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace Ufcpp.CodeAnnotationMigrator;
 
 internal sealed record SelectionMetadataPlan(string? Lines, string? Text);
@@ -227,11 +229,95 @@ internal static class MetadataPlanner
                     + $"occurs {occurrenceCount} times in the current block."));
                 return null;
             }
+
+            var currentOffset = current.Canonical.IndexOf(
+                text,
+                StringComparison.Ordinal);
+            if (!MapsToSameSemanticOccurrence(
+                    partial[0],
+                    historical,
+                    current,
+                    text,
+                    currentOffset))
+            {
+                diagnostics.Add(new MetadataPlanningDiagnostic(
+                    "UNREPRESENTABLE_POSITIONAL_TEXT",
+                    kind,
+                    $"The {kind.ToString().ToLowerInvariant()} selected text "
+                    + "maps to a different occurrence after entity normalization."));
+                return null;
+            }
         }
 
         return new SelectionMetadataPlan(
             lines.Count == 0 ? null : FormatLineRanges(lines),
             text);
+    }
+
+    private static bool MapsToSameSemanticOccurrence(
+        AnnotationSelection selection,
+        CodeLayout historical,
+        CodeLayout current,
+        string rawText,
+        int currentRawOffset)
+    {
+        if (currentRawOffset < 0
+            || selection.Start < 0
+            || selection.Start > historical.Original.Length)
+        {
+            return false;
+        }
+
+        var historicalCanonicalOffset = NormalizeNewlines(
+            historical.Original[..selection.Start]).Length;
+        if (historicalCanonicalOffset > historical.Canonical.Length)
+        {
+            return false;
+        }
+
+        var semanticText = WebUtility.HtmlDecode(rawText);
+        var historicalSemantic = WebUtility.HtmlDecode(historical.Canonical);
+        var currentSemantic = WebUtility.HtmlDecode(current.Canonical);
+        var historicalSemanticOffset = WebUtility.HtmlDecode(
+            historical.Canonical[..historicalCanonicalOffset]).Length;
+        var currentSemanticOffset = WebUtility.HtmlDecode(
+            current.Canonical[..currentRawOffset]).Length;
+        return HasTextAt(historicalSemantic, semanticText, historicalSemanticOffset)
+            && HasTextAt(currentSemantic, semanticText, currentSemanticOffset)
+            && GetOccurrenceOrdinal(
+                historicalSemantic,
+                semanticText,
+                historicalSemanticOffset)
+            == GetOccurrenceOrdinal(
+                currentSemantic,
+                semanticText,
+                currentSemanticOffset);
+    }
+
+    private static bool HasTextAt(string value, string text, int offset) =>
+        offset >= 0
+        && offset + text.Length <= value.Length
+        && value.AsSpan(offset, text.Length).SequenceEqual(text);
+
+    private static int GetOccurrenceOrdinal(
+        string value,
+        string text,
+        int selectedOffset)
+    {
+        var ordinal = 0;
+        for (var offset = 0; offset <= selectedOffset;)
+        {
+            var found = value.IndexOf(text, offset, StringComparison.Ordinal);
+            if (found < 0 || found > selectedOffset)
+            {
+                break;
+            }
+
+            ordinal++;
+            offset = found + 1;
+        }
+
+        return ordinal;
     }
 
     private static bool TryMapWholeLines(

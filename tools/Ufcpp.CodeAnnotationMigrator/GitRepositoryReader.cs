@@ -120,6 +120,10 @@ internal static class GitRepositoryReader
                 $"Current content tree is dirty: {string.Join(", ", entries)}.");
         }
 
+        await RejectUnsafeIndexFlagsAsync(
+            root,
+            normalizedCurrentPath,
+            cancellationToken);
         var historicalDocuments = await ReadHistoricalDocumentsAsync(
             root,
             resolvedCommit,
@@ -137,6 +141,39 @@ internal static class GitRepositoryReader
             normalizedCurrentPath,
             historicalDocuments,
             currentDocuments);
+    }
+
+    private static async Task RejectUnsafeIndexFlagsAsync(
+        string root,
+        string currentPath,
+        CancellationToken cancellationToken)
+    {
+        var flagged = await RunGitAsync(
+            root,
+            ["ls-files", "-v", "-z", "--", currentPath],
+            cancellationToken);
+        if (flagged.ExitCode != 0)
+        {
+            throw new MigrationInputException(
+                $"Unable to inspect current Git index flags: "
+                + flagged.Error.Trim());
+        }
+
+        var unsafePaths = flagged.Output
+            .Split('\0', StringSplitOptions.RemoveEmptyEntries)
+            .Where(static entry =>
+                entry.Length > 2
+                && (char.IsLower(entry[0]) || entry[0] == 'S')
+                && entry[2..].EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+            .Select(static entry => entry[2..])
+            .Order(StringComparer.Ordinal)
+            .ToArray();
+        if (unsafePaths.Length != 0)
+        {
+            throw new MigrationInputException(
+                "Current Markdown cannot use assume-unchanged or skip-worktree "
+                + $"index flags: {string.Join(", ", unsafePaths)}.");
+        }
     }
 
     private static async Task<IReadOnlyDictionary<string, string>>

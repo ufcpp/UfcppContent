@@ -35,6 +35,9 @@ internal sealed class TemporaryGitRepository : IDisposable
 
     public string Status() => Run("status", "--porcelain=v1");
 
+    public void AssumeUnchanged(string relativePath) =>
+        Run("update-index", "--assume-unchanged", "--", relativePath);
+
     public void Dispose()
     {
         if (Directory.Exists(Root))
