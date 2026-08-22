@@ -25,14 +25,20 @@
       "code-keyword": {
         "role": "secondary",
         "displayName": "Reserved Word Blue",
-        "canonical": "#0000e1",
-        "tonalRamp": ["#000033", "#00005c", "#00008a", "#0000b8", "#0000e1", "#5555eb", "#aaaaf5", "#eeeeff"]
+        "canonical": "#0000ff",
+        "tonalRamp": ["#000047", "#00007a", "#0000ad", "#0000d9", "#0000ff", "#5555ff", "#aaaaff", "#eeeeff"]
       },
       "code-control": {
         "role": "secondary",
         "displayName": "Control Flow Purple",
         "canonical": "#8f08c4",
         "tonalRamp": ["#240331", "#410459", "#600582", "#7b07a8", "#8f08c4", "#b450d3", "#d79be7", "#f5e8fa"]
+      },
+      "code-preprocessor": {
+        "role": "secondary",
+        "displayName": "Preprocessor Gray",
+        "canonical": "#808080",
+        "tonalRamp": ["#242424", "#3d3d3d", "#575757", "#6d6d6d", "#808080", "#aaaaaa", "#d5d5d5", "#f6f6f6"]
       },
       "code-comment": {
         "role": "secondary",
@@ -50,7 +56,7 @@
         "role": "secondary",
         "displayName": "Numeric Green",
         "canonical": "#098658",
-        "tonalRamp": ["#02251a", "#043f2a", "#065b3c", "#08734c", "#098658", "#53aa87", "#9bd1ba", "#e7f6ef"]
+        "tonalRamp": ["#032619", "#04402a", "#065b3c", "#08724b", "#098658", "#5bae90", "#add7c7", "#eff7f4"]
       },
       "code-type": {
         "role": "secondary",
@@ -58,17 +64,47 @@
         "canonical": "#2b91af",
         "tonalRamp": ["#0c2931", "#144553", "#1d6377", "#267f99", "#2b91af", "#6bb2c7", "#add5e0", "#edf8fb"]
       },
+      "code-struct": {
+        "role": "secondary",
+        "displayName": "Struct Blue",
+        "canonical": "#007acc",
+        "tonalRamp": ["#002239", "#003b62", "#00538b", "#0068ad", "#007acc", "#55a6dd", "#aad3ee", "#eef6fc"]
+      },
       "code-method": {
         "role": "secondary",
         "displayName": "Method Brown",
         "canonical": "#74531f",
         "tonalRamp": ["#201709", "#37270e", "#503a16", "#65491b", "#74531f", "#9a7c4d", "#c5ad86", "#f1e8d8"]
       },
-      "code-symbol": {
+      "code-field": {
         "role": "secondary",
-        "displayName": "Symbol Navy",
-        "canonical": "#001080",
-        "tonalRamp": ["#000525", "#000940", "#000d5d", "#000f73", "#001080", "#4d58a6", "#9ba1cf", "#e8eaf5"]
+        "displayName": "Member Navy",
+        "canonical": "#004080",
+        "tonalRamp": ["#001224", "#001f3d", "#002c57", "#00366d", "#004080", "#5580aa", "#aabfd5", "#eef2f6"]
+      },
+      "code-property": {
+        "role": "secondary",
+        "displayName": "Member Navy",
+        "canonical": "#004080",
+        "tonalRamp": ["#001224", "#001f3d", "#002c57", "#00366d", "#004080", "#5580aa", "#aabfd5", "#eef2f6"]
+      },
+      "code-constant": {
+        "role": "secondary",
+        "displayName": "Constant Periwinkle",
+        "canonical": "#8080ff",
+        "tonalRamp": ["#242447", "#3d3d7a", "#5757ad", "#6d6dd9", "#8080ff", "#aaaaff", "#d5d5ff", "#f6f6ff"]
+      },
+      "code-variable": {
+        "role": "secondary",
+        "displayName": "Variable Navy",
+        "canonical": "#000080",
+        "tonalRamp": ["#000024", "#00003d", "#000057", "#00006d", "#000080", "#5555aa", "#aaaad5", "#eeeef6"]
+      },
+      "code-operator": {
+        "role": "secondary",
+        "displayName": "Operator Navy",
+        "canonical": "#004080",
+        "tonalRamp": ["#001224", "#001f3d", "#002c57", "#00366d", "#004080", "#5580aa", "#aabfd5", "#eef2f6"]
       },
       "page-bg": {
         "role": "neutral",
@@ -186,7 +222,7 @@
       "refersTo": "source-code",
       "description": "Compact source listing with lavender framing.",
       "html": "<pre class=\"ds-code\"><code><span class=\"ds-keyword\">using</span> <span class=\"ds-type\">System</span>;</code></pre>",
-      "css": ".ds-code { max-width: 100%; margin: 1em 0; padding: .4em; overflow: auto; border: 2px solid var(--color-brand-lavender, #ccccff); background: var(--color-content-bg, #fff); color: #000; font: 14px/1.3 Consolas, monospace; } .ds-code code { border: 0; } .ds-keyword { color: var(--color-code-keyword, #0000e1); font-weight: 700; } .ds-type { color: var(--color-code-type, #2b91af); }"
+      "css": ".ds-code { max-width: 100%; margin: 1em 0; padding: .4em; overflow: auto; border: 2px solid var(--color-brand-lavender, #ccccff); background: var(--color-content-bg, #fff); color: #000; font: 14px/1.3 Consolas, monospace; } .ds-code code { border: 0; } .ds-keyword { color: var(--color-code-keyword, #0000ff); font-weight: 700; } .ds-type { color: var(--color-code-type, #2b91af); }"
     }
   ],
   "narrative": {

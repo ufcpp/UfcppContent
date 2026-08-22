@@ -15,14 +15,23 @@
   --color-border: #dddddd;
   --color-code-border: #ccccff;
   --color-code-console: #606060;
-  --color-code-keyword: #0000e1;
+  --color-code-keyword: #0000ff;
   --color-code-control: #8f08c4;
+  --color-code-preprocessor: #808080;
+  --color-code-excluded: #808080;
   --color-code-comment: #008000;
   --color-code-string: #a31515;
   --color-code-number: #098658;
   --color-code-type: #2b91af;
+  --color-code-struct: #007acc;
   --color-code-method: #74531f;
-  --color-code-symbol: #001080;
+  --color-code-field: #004080;
+  --color-code-property: var(--color-code-field);
+  --color-code-event: var(--color-code-property);
+  --color-code-enum-member: var(--color-code-field);
+  --color-code-constant: #8080ff;
+  --color-code-variable: #000080;
+  --color-code-operator: #004080;
   --color-code-highlight: #e0ffff;
   --color-editorial-highlight: rgba(238, 239, 118, 0.75);
   --font-sans: "Hiragino Kaku Gothic Pro", "Meiryo", "Yu Gothic", YuGothic,
@@ -448,11 +457,14 @@ pre.console code {
 }
 
 .content pre code .controlKeyword,
-.content pre code .preprocessorKeyword,
 .content pre code .htmlTagDelimiter,
 .content pre code .htmlOperator,
 .content pre code .xmlDelimiter {
   color: var(--color-code-keyword);
+}
+
+.content pre code .preprocessorKeyword {
+  color: var(--color-code-preprocessor);
 }
 
 .content pre code .comment,
@@ -507,9 +519,12 @@ pre.console code {
 }
 
 /* Roslyn C# semantic classifications */
-.content pre code .roslyn-keyword,
-.content pre code .roslyn-preprocessor-keyword {
+.content pre code .roslyn-keyword {
   color: var(--color-code-keyword);
+}
+
+.content pre code .roslyn-preprocessor-keyword {
+  color: var(--color-code-preprocessor);
 }
 
 .content pre code .roslyn-keyword-control {
@@ -522,7 +537,7 @@ pre.console code {
 }
 
 .content pre code .roslyn-excluded-code {
-  color: #808080;
+  color: var(--color-code-excluded);
 }
 
 .content pre code .roslyn-string,
@@ -535,16 +550,15 @@ pre.console code {
   color: var(--color-code-number);
 }
 
-.content pre code .roslyn-class-name,
-.content pre code .roslyn-record-class-name,
-.content pre code .roslyn-struct-name,
-.content pre code .roslyn-record-struct-name,
-.content pre code .roslyn-interface-name,
-.content pre code .roslyn-delegate-name,
-.content pre code .roslyn-enum-name,
-.content pre code .roslyn-module-name,
-.content pre code .roslyn-type-parameter-name {
+/* Every kind of type carries .roslyn-type-name, so a kind we have no rule for
+   (a future union, say) still gets the default type color. */
+.content pre code .roslyn-type-name {
   color: var(--color-code-type);
+}
+
+.content pre code .roslyn-type-name.roslyn-struct-name,
+.content pre code .roslyn-type-name.roslyn-record-struct-name {
+  color: var(--color-code-struct);
 }
 
 .content pre code .roslyn-method-name,
@@ -552,14 +566,34 @@ pre.console code {
   color: var(--color-code-method);
 }
 
-.content pre code .roslyn-field-name,
-.content pre code .roslyn-enum-member-name,
-.content pre code .roslyn-constant-name,
-.content pre code .roslyn-local-name,
-.content pre code .roslyn-parameter-name,
-.content pre code .roslyn-property-name,
+.content pre code .roslyn-field-name {
+  color: var(--color-code-field);
+}
+
+.content pre code .roslyn-property-name {
+  color: var(--color-code-property);
+}
+
 .content pre code .roslyn-event-name {
-  color: var(--color-code-symbol);
+  color: var(--color-code-event);
+}
+
+.content pre code .roslyn-enum-member-name {
+  color: var(--color-code-enum-member);
+}
+
+.content pre code .roslyn-constant-name {
+  color: var(--color-code-constant);
+}
+
+.content pre code .roslyn-local-name,
+.content pre code .roslyn-parameter-name {
+  color: var(--color-code-variable);
+}
+
+.content pre code .roslyn-operator,
+.content pre code .roslyn-operator-overloaded {
+  color: var(--color-code-operator);
 }
 
 .content pre code .roslyn-obsolete-symbol {

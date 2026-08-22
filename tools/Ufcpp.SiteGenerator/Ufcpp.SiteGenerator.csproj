@@ -26,4 +26,8 @@
     <Content Update="wwwroot\**\*" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Ufcpp.SiteGenerator.Tests" />
+  </ItemGroup>
+
 </Project>

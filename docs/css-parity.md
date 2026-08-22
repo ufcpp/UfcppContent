@@ -171,8 +171,9 @@ node tools/css-parity-compare.mjs '[{"label":"expand","path":"/study/csharp/asyn
 並べている（`/study/misc/list/test/`）。目視確認はここが最も効率が良い。
 
 `table.variable` の文字色は、参照 CSS の `.variable { color: #2c2e55 }` という**要素を選ばない
-ルール**に由来する。本リポジトリのシンタックス ハイライターは `.variable` を出力しないため、
-コード トークンへ漏れないよう `table.variable` に限定して移植した。
+ルール**に由来する。参照 CSS ではこの `.variable` がコードのローカル変数の色も兼ねているため、
+表側は `table.variable` に限定して移植し、コード側は下記のトークン表のとおり
+`--color-code-variable` として別に持っている。
 
 ## 未定義のまま許容するクラス
 
@@ -274,6 +275,71 @@ ufcpp.net はレガシーな `span.reserved` / `span.type` などでコードを
 ウェイトも現行サイトの役割分担に合わせる。構文キーワードは `.reserved` と同じくコードの
 通常ウェイトを継承し、背景付きの編集上の強調だけを `code em` 相当の太字にする。ユーザーが
 書き換える箇所を示す `.input` の太字と、コンソール強調の通常ウェイトも従来どおり維持する。
+
+#### トークンの色
+
+色は `:root` のカスタム プロパティに集約する。値の基準は**参照 CSS の実効値ではなく、
+Visual Studio の現行の配色**である。ufcpp.net の CSS は古い Visual Studio の色を写した
+ものなので、そちらへ寄せると現在のエディターとの見え方の差がそのまま残ってしまう。
+
+| カスタム プロパティ | 値 | 出所 | 主な `roslyn-*` クラス |
+|---|---|---|---|
+| `--color-code-keyword` | `#0000ff` | VS のキーワード | `keyword` |
+| `--color-code-control` | `#8f08c4` | VS の制御キーワード | `keyword-control` |
+| `--color-code-preprocessor` | `#808080` | VS のプリプロセッサー | `preprocessor-keyword` |
+| `--color-code-excluded` | `#808080` | VS の除外コード | `excluded-code` |
+| `--color-code-comment` | `#008000` | VS のコメント | `comment`、`xml-doc-comment-*` |
+| `--color-code-string` | `#a31515` | VS の文字列 | `string`、`string-verbatim` |
+| `--color-code-number` | `#098658` | VS の数値 | `number` |
+| `--color-code-type` | `#2b91af` | VS のクラス名 | `type-name`（すべての型） |
+| `--color-code-struct` | `#007acc` | VS の構造体名 | `type-name.struct-name` ほか |
+| `--color-code-method` | `#74531f` | VS のメソッド名 | `method-name`、`extension-method-name` |
+| `--color-code-field` | `#004080` | VS のフィールド名 | `field-name` |
+| `--color-code-property` | `var(--color-code-field)` | フィールドと同色 | `property-name` |
+| `--color-code-event` | `var(--color-code-property)` | イベントはプロパティに近い | `event-name` |
+| `--color-code-enum-member` | `var(--color-code-field)` | 実体は静的フィールド | `enum-member-name` |
+| `--color-code-constant` | `#8080ff` | VS の定数名 | `constant-name` |
+| `--color-code-variable` | `#000080` | VS のローカル / 引数 | `local-name`、`parameter-name` |
+| `--color-code-operator` | `#004080` | フィールドと同じ値 | `operator`、`operator-overloaded` |
+
+色が同じでも CSS クラスは分ける。プロパティ・イベント・列挙メンバーは `var()` で他の
+トークンを参照しており、参照元を動かせば追随する。演算子だけは値が偶然同じであって
+意味的な依存ではないので直書きにしてある。
+
+#### 型の色は共通クラスに集約する
+
+ハイライターは型を表す分類に、種類ごとのクラス（`roslyn-class-name` など）に加えて
+共通クラス `roslyn-type-name` を併記する。
+
+```html
+<span class="roslyn-class-name roslyn-type-name">Sample</span>
+<span class="roslyn-record-struct-name roslyn-type-name">Point</span>
+```
+
+CSS は共通クラス側を既定色にし、色を変えたい種類だけを上書きする。
+
+```css
+.content pre code .roslyn-type-name { color: var(--color-code-type); }
+.content pre code .roslyn-type-name.roslyn-struct-name,
+.content pre code .roslyn-type-name.roslyn-record-struct-name { color: var(--color-code-struct); }
+```
+
+こうしておくと、C# に新しい型の種類（union など）が入って Roslyn が新しい分類名を
+出すようになっても、CSS を触らないかぎり自動的に型の色で表示される。既定と違う色に
+したくなった時点で 1 行足せばよい。
+
+Roslyn には「型を表す分類の一覧」を返す API が無いため、対象は
+`RoslynCSharpHighlighter.TypeClassificationTypeNames` に明示列挙している。取りこぼしは
+`MarkdigRendererTests.TypeClassifications_CoverEveryClassificationRoslynDeclares` が
+検知する。`ClassificationTypeNames` の公開フィールドのうち `name` で終わるものが
+型リストか非型リストのどちらかに載っていることを確認しているので、Roslyn を更新して
+分類が増えるとこのテストが落ちる。落ちたらどちらのリストに入るかを判断して 1 行足す。
+
+これらは `SiteCssParityTests` の `CodeTokenPalette` / `CodeTokenSelectors` /
+`UncoloredTypeKind_HasNoRuleOfItsOwn` でも固定している。
+実描画を比較する `tools/css-parity-compare.mjs` はこの用途には使えない。ufcpp.net 側は
+`span.preprocess`、本サイトは `span.roslyn-preprocessor-keyword` とクラス名もトークンの
+分割位置も異なり、同ツールは両サイトに同じセレクターを当てて要素を突き合わせるためである。
 
 ## コンテンツ側の既知の不整合（本 Issue では直さない）
 

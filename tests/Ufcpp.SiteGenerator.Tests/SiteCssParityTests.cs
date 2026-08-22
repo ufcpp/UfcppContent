@@ -184,6 +184,141 @@ public sealed class SiteCssParityTests
     }
 
     /// <summary>
+    /// The code token palette.
+    ///
+    /// The values follow Visual Studio's current C# colors rather than the ones
+    /// baked into ufcpp.net's bundle.min.css: several of those predate a Visual
+    /// Studio release that later introduced a dedicated color, and the site owner
+    /// wants the newer ones. See docs/css-parity.md for the per-token rationale.
+    ///
+    /// Tokens whose color is defined as "the same as another token" carry a
+    /// <c>var()</c> reference instead of a literal, so the two stay in step when
+    /// one of them is retuned.
+    /// </summary>
+    public static TheoryData<string, string, string> CodeTokenPalette() => new()
+    {
+        { "--color-code-keyword", "#0000ff", "Visual Studio keyword." },
+        { "--color-code-control", "#8f08c4", "ufcpp.net .control; Visual Studio leaves it as a keyword." },
+        { "--color-code-preprocessor", "#808080", "Visual Studio preprocessor keyword." },
+        { "--color-code-excluded", "#808080", "Visual Studio excluded code." },
+        { "--color-code-comment", "#008000", "Visual Studio comment." },
+        { "--color-code-string", "#a31515", "Visual Studio string." },
+        { "--color-code-number", "#098658", "VS Code light theme; Visual Studio paints numbers as plain text." },
+        { "--color-code-type", "#2b91af", "Visual Studio class name; the default for every kind of type." },
+        { "--color-code-struct", "#007acc", "Visual Studio struct name." },
+        { "--color-code-method", "#74531f", "Visual Studio method name." },
+        { "--color-code-field", "#004080", "Visual Studio field name." },
+        { "--color-code-property", "var(--color-code-field)", "Same color as a field, separate class." },
+        { "--color-code-event", "var(--color-code-property)", "An event is closest to a property." },
+        { "--color-code-enum-member", "var(--color-code-field)", "An enum member is a static field." },
+        { "--color-code-constant", "#8080ff", "Visual Studio constant name." },
+        { "--color-code-variable", "#000080", "Visual Studio local and parameter name." },
+        { "--color-code-operator", "#004080", "Visual Studio paints operators as plain text; this site tints them." },
+    };
+
+    /// <summary>
+    /// Which palette entry each token class has to read. The Roslyn highlighter
+    /// splits C# far more finely than the legacy one did, and these categories
+    /// are colored separately, so the classes must not be collapsed back into one
+    /// shared color.
+    ///
+    /// Every kind of type is covered by the single <c>.roslyn-type-name</c> entry
+    /// the highlighter adds alongside the specific class, so only the kinds that
+    /// deviate from the default type color are listed here.
+    /// </summary>
+    public static TheoryData<string, string> CodeTokenSelectors() => new()
+    {
+        { ".content pre code .roslyn-keyword", "--color-code-keyword" },
+        { ".content pre code .roslyn-keyword-control", "--color-code-control" },
+        { ".content pre code .roslyn-preprocessor-keyword", "--color-code-preprocessor" },
+        { ".content pre code .roslyn-excluded-code", "--color-code-excluded" },
+        { ".content pre code .roslyn-comment", "--color-code-comment" },
+        { ".content pre code .roslyn-string", "--color-code-string" },
+        { ".content pre code .roslyn-number", "--color-code-number" },
+        { ".content pre code .roslyn-type-name", "--color-code-type" },
+        { ".content pre code .roslyn-type-name.roslyn-struct-name", "--color-code-struct" },
+        { ".content pre code .roslyn-type-name.roslyn-record-struct-name", "--color-code-struct" },
+        { ".content pre code .roslyn-method-name", "--color-code-method" },
+        { ".content pre code .roslyn-extension-method-name", "--color-code-method" },
+        { ".content pre code .roslyn-field-name", "--color-code-field" },
+        { ".content pre code .roslyn-property-name", "--color-code-property" },
+        { ".content pre code .roslyn-event-name", "--color-code-event" },
+        { ".content pre code .roslyn-enum-member-name", "--color-code-enum-member" },
+        { ".content pre code .roslyn-constant-name", "--color-code-constant" },
+        { ".content pre code .roslyn-local-name", "--color-code-variable" },
+        { ".content pre code .roslyn-parameter-name", "--color-code-variable" },
+        { ".content pre code .roslyn-operator", "--color-code-operator" },
+        { ".content pre code .roslyn-operator-overloaded", "--color-code-operator" },
+        { ".content pre code .keyword", "--color-code-keyword" },
+        { ".content pre code .preprocessorKeyword", "--color-code-preprocessor" },
+        { ".reserved", "--color-code-keyword" },
+    };
+
+    /// <param name="variable">The custom property that carries the color.</param>
+    /// <param name="color">
+    /// The literal color, or a <c>var()</c> reference when the token is defined
+    /// as following another one.
+    /// </param>
+    /// <param name="source">Where the value comes from, recorded so it can be re-checked.</param>
+    [Theory]
+    [MemberData(nameof(CodeTokenPalette))]
+    public void CodeTokenColor_MatchesOriginalPalette(
+        string variable,
+        string color,
+        string source)
+    {
+        Assert.NotEmpty(source);
+
+        var declarations = RuleBody(":root");
+
+        Assert.NotNull(declarations);
+        Assert.Contains($"{variable}: {color};", declarations);
+    }
+
+    /// <summary>
+    /// A type kind that carries no color of its own has to fall back to the
+    /// shared type color, so that a kind the language adds later (C# 15's unions,
+    /// for one) is styled as a type without anyone touching the stylesheet.
+    /// Giving such a kind its own rule would silently break that fallback.
+    /// </summary>
+    [Theory]
+    [InlineData("roslyn-class-name")]
+    [InlineData("roslyn-record-class-name")]
+    [InlineData("roslyn-interface-name")]
+    [InlineData("roslyn-delegate-name")]
+    [InlineData("roslyn-enum-name")]
+    [InlineData("roslyn-module-name")]
+    [InlineData("roslyn-type-parameter-name")]
+    public void UncoloredTypeKind_HasNoRuleOfItsOwn(string cssClass)
+    {
+        var selectors = Regex.Replace(SiteCss.Value, @"\{[^{}]*\}", " ", RegexOptions.Singleline);
+
+        Assert.DoesNotContain(cssClass, selectors, StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [MemberData(nameof(CodeTokenSelectors))]
+    public void CodeToken_ReadsItsOwnPaletteEntry(string selector, string variable)
+    {
+        var bodies = RuleBodiesFor(selector);
+
+        Assert.NotEmpty(bodies);
+        Assert.All(bodies, body => Assert.Contains($"color: var({variable});", body));
+    }
+
+    /// <summary>
+    /// Fields, properties, constants, locals and parameters used to share a
+    /// single <c>--color-code-symbol</c> taken from Visual Studio's default
+    /// theme. ufcpp.net gives them four different colors, so the merged variable
+    /// must stay gone.
+    /// </summary>
+    [Fact]
+    public void CodePalette_HasNoMergedSymbolColor()
+    {
+        Assert.DoesNotContain("--color-code-symbol", SiteCss.Value, StringComparison.Ordinal);
+    }
+
+    /// <summary>
     /// The generator rewrites the legacy expand markup into a native
     /// <c>&lt;details&gt;</c>, so the body has to be hidden by the element's own
     /// semantics rather than by a CSS rule that no script can undo.
