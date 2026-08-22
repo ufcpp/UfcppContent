@@ -71,6 +71,7 @@ public sealed class SiteBuilder
 
         ValidateOutputClaims(pages);
         var pagesById = BuildPageIndex(pages);
+        var studyNavigationById = BuildStudyPageNavigation(pages, pagesById);
         var knownSiteOutputs = BuildKnownSiteOutputs(pages);
 
         // Set up Razor HtmlRenderer
@@ -92,6 +93,7 @@ public sealed class SiteBuilder
             await RenderPageAsync(
                 page,
                 pagesById,
+                studyNavigationById,
                 urlMap,
                 knownSiteOutputs,
                 markdigRenderer,
@@ -146,6 +148,7 @@ public sealed class SiteBuilder
     private async Task RenderPageAsync(
         ContentPage page,
         IReadOnlyDictionary<int, ContentPage> pagesById,
+        IReadOnlyDictionary<int, PageNavigation> studyNavigationById,
         IReadOnlyDictionary<string, string> urlMap,
         IReadOnlySet<string> knownSiteOutputs,
         MarkdigRenderer markdigRenderer,
@@ -162,6 +165,9 @@ public sealed class SiteBuilder
         var breadcrumbs = BuildBreadcrumbs(page, pagesById);
         var isArticle = page.FrontMatter.ContentType == "Article";
         var isBlogEntry = page.FrontMatter.ContentType == "BlogEntry";
+        studyNavigationById.TryGetValue(
+            page.FrontMatter.UmbracoId,
+            out var studyNavigation);
 
         var fullHtml = await htmlRenderer.Dispatcher.InvokeAsync(async () =>
         {
@@ -183,6 +189,8 @@ public sealed class SiteBuilder
                 [nameof(SiteLayout.Keywords)] = isArticle
                     ? renderedContent.Keywords
                     : [],
+                [nameof(SiteLayout.PreviousPage)] = studyNavigation?.Previous,
+                [nameof(SiteLayout.NextPage)] = studyNavigation?.Next,
                 [nameof(SiteLayout.PublishedAt)] = isArticle || isBlogEntry
                     ? page.FrontMatter.PublishedAt
                     : null,
@@ -254,6 +262,132 @@ public sealed class SiteBuilder
         }
 
         return pagesById;
+    }
+
+    private static IReadOnlyDictionary<int, PageNavigation> BuildStudyPageNavigation(
+        IReadOnlyList<ContentPage> pages,
+        IReadOnlyDictionary<int, ContentPage> pagesById)
+    {
+        var childrenByParentId = pages
+            .GroupBy(page => page.FrontMatter.ParentId)
+            .ToDictionary(
+                group => group.Key,
+                group => group
+                    .OrderBy(page => page.FrontMatter.SortOrder)
+                    .ThenBy(
+                        page => page.RelativePath,
+                        StringComparer.OrdinalIgnoreCase)
+                    .ThenBy(page => page.RelativePath, StringComparer.Ordinal)
+                    .ToArray());
+        var navigationById = new Dictionary<int, PageNavigation>();
+
+        foreach (var subject in pages
+                     .Where(page => page.FrontMatter.ContentType == "Subject")
+                     .OrderBy(
+                         page => page.RelativePath,
+                         StringComparer.OrdinalIgnoreCase)
+                     .ThenBy(page => page.RelativePath, StringComparer.Ordinal))
+        {
+            var studyPages = EnumerateNavigableStudyPages(
+                    subject,
+                    childrenByParentId)
+                .ToArray();
+
+            for (var index = 0; index < studyPages.Length; index++)
+            {
+                var current = studyPages[index];
+                var previous = index > 0
+                    ? BuildStudyPageNavigationItem(
+                        current,
+                        studyPages[index - 1],
+                        pagesById)
+                    : null;
+                var next = index < studyPages.Length - 1
+                    ? BuildStudyPageNavigationItem(
+                        current,
+                        studyPages[index + 1],
+                        pagesById)
+                    : null;
+
+                navigationById.Add(
+                    current.FrontMatter.UmbracoId,
+                    new PageNavigation(previous, next));
+            }
+        }
+
+        return navigationById;
+    }
+
+    private static IEnumerable<ContentPage> EnumerateNavigableStudyPages(
+        ContentPage subject,
+        IReadOnlyDictionary<int, ContentPage[]> childrenByParentId)
+    {
+        var ancestors = new HashSet<int>();
+
+        foreach (var page in EnumerateChildren(subject))
+        {
+            yield return page;
+        }
+
+        IEnumerable<ContentPage> EnumerateChildren(ContentPage parent)
+        {
+            var parentId = parent.FrontMatter.UmbracoId;
+            if (!ancestors.Add(parentId))
+            {
+                throw new InvalidDataException(
+                    $"Content hierarchy cycle detected while building study page navigation for '{subject.RelativePath}'.");
+            }
+
+            try
+            {
+                if (!childrenByParentId.TryGetValue(parentId, out var children))
+                {
+                    yield break;
+                }
+
+                foreach (var child in children)
+                {
+                    if (child.FrontMatter.ContentType == "Subject")
+                    {
+                        continue;
+                    }
+
+                    if (child.FrontMatter.ContentType is "Article" or "ExerciseList")
+                    {
+                        yield return child;
+                    }
+
+                    foreach (var page in EnumerateChildren(child))
+                    {
+                        yield return page;
+                    }
+                }
+            }
+            finally
+            {
+                ancestors.Remove(parentId);
+            }
+        }
+    }
+
+    private static NavigationItem BuildStudyPageNavigationItem(
+        ContentPage current,
+        ContentPage target,
+        IReadOnlyDictionary<int, ContentPage> pagesById)
+    {
+        var title = target.FrontMatter.Title;
+        if (current.FrontMatter.ParentId != target.FrontMatter.ParentId)
+        {
+            if (!pagesById.TryGetValue(target.FrontMatter.ParentId, out var parent))
+            {
+                throw new InvalidDataException(
+                    $"Parent ID {target.FrontMatter.ParentId} for '{target.RelativePath}' does not exist.");
+            }
+
+            title = $"【{parent.FrontMatter.Title}】 {title}";
+        }
+
+        return new NavigationItem(target.CanonicalPath, title);
     }
 
     private static IReadOnlySet<string> BuildKnownSiteOutputs(
@@ -444,4 +578,8 @@ public sealed class SiteBuilder
                 path);
         }
     }
+
+    private sealed record PageNavigation(
+        NavigationItem? Previous,
+        NavigationItem? Next);
 }

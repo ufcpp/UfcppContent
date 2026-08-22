@@ -410,6 +410,255 @@ public sealed class SiteBuilderIntegrationTests
     }
 
     [Fact]
+    public async Task BuildAsync_StudyPages_WriteCurrentSitePreviousAndNextNavigation()
+    {
+        using var site = new SiteFixture();
+        site.AddPage(new(
+            "study/topic/index.md",
+            "Topic",
+            "/study/topic/",
+            "Subject",
+            100,
+            -1,
+            0,
+            "# Topic"));
+        site.AddPage(new(
+            "study/topic/z-first/index.md",
+            "First Chapter",
+            "/study/topic/first/",
+            "Chapter",
+            200,
+            100,
+            10,
+            "# First Chapter"));
+        site.AddPage(new(
+            "study/topic/z-first/z-first.md",
+            "First Article",
+            "/study/topic/first/first/",
+            "Article",
+            201,
+            200,
+            10,
+            "# First Article"));
+        site.AddPage(new(
+            "study/topic/z-first/a-last.md",
+            "Last in First",
+            "/study/topic/first/last/",
+            "Article",
+            202,
+            200,
+            20,
+            "# Last in First"));
+        site.AddPage(new(
+            "study/topic/a-second/index.md",
+            "Second Chapter",
+            "/study/topic/second/",
+            "Chapter",
+            300,
+            100,
+            20,
+            "# Second Chapter"));
+        site.AddPage(new(
+            "study/topic/a-second/z-current.md",
+            "First in Second",
+            "/study/topic/second/current/",
+            "Article",
+            301,
+            300,
+            10,
+            "# First in Second"));
+        site.AddPage(new(
+            "study/topic/a-second/m-exercises.md",
+            "Exercises",
+            "/study/topic/second/exercises/",
+            "ExerciseList",
+            302,
+            300,
+            20,
+            "# Exercises"));
+        site.AddPage(new(
+            "study/topic/a-second/a-final.md",
+            "Final Article",
+            "/study/topic/second/final/",
+            "Article",
+            303,
+            300,
+            30,
+            "# Final Article"));
+        var output = site.GetOutputDirectory("article-navigation");
+
+        await site.BuildAsync(output);
+
+        var firstNavigation = GetPageNavigation(LoadHtmlDocument(Path.Combine(
+            output,
+            "study",
+            "topic",
+            "first",
+            "first",
+            "index.html")));
+        Assert.Empty(
+            firstNavigation.Elements("a").Where(
+                link => HasClassToken(link, "previous-article")));
+        var firstNext = AssertNavigationLink(
+            firstNavigation,
+            "next-article",
+            "Last in First");
+        AssertPortableUrl(
+            "study/topic/first/first/",
+            (string?)firstNext.Attribute("href"),
+            "study/topic/first/last/");
+
+        var lastInFirstNavigation = GetPageNavigation(LoadHtmlDocument(Path.Combine(
+            output,
+            "study",
+            "topic",
+            "first",
+            "last",
+            "index.html")));
+        Assert.Equal(
+            ["next-article", "previous-article"],
+            lastInFirstNavigation
+                .Elements("a")
+                .Select(link => (string?)link.Attribute("class")));
+        var crossChapterNext = AssertNavigationLink(
+            lastInFirstNavigation,
+            "next-article",
+            "【Second Chapter】 First in Second");
+        AssertPortableUrl(
+            "study/topic/first/last/",
+            (string?)crossChapterNext.Attribute("href"),
+            "study/topic/second/current/");
+        var sameChapterPrevious = AssertNavigationLink(
+            lastInFirstNavigation,
+            "previous-article",
+            "First Article");
+        AssertPortableUrl(
+            "study/topic/first/last/",
+            (string?)sameChapterPrevious.Attribute("href"),
+            "study/topic/first/first/");
+
+        var firstInSecondNavigation = GetPageNavigation(LoadHtmlDocument(Path.Combine(
+            output,
+            "study",
+            "topic",
+            "second",
+            "current",
+            "index.html")));
+        var sameChapterNext = AssertNavigationLink(
+            firstInSecondNavigation,
+            "next-article",
+            "Exercises");
+        AssertPortableUrl(
+            "study/topic/second/current/",
+            (string?)sameChapterNext.Attribute("href"),
+            "study/topic/second/exercises/");
+        var crossChapterPrevious = AssertNavigationLink(
+            firstInSecondNavigation,
+            "previous-article",
+            "【First Chapter】 Last in First");
+        AssertPortableUrl(
+            "study/topic/second/current/",
+            (string?)crossChapterPrevious.Attribute("href"),
+            "study/topic/first/last/");
+
+        var exerciseNavigation = GetPageNavigation(LoadHtmlDocument(Path.Combine(
+            output,
+            "study",
+            "topic",
+            "second",
+            "exercises",
+            "index.html")));
+        var exerciseNext = AssertNavigationLink(
+            exerciseNavigation,
+            "next-article",
+            "Final Article");
+        AssertPortableUrl(
+            "study/topic/second/exercises/",
+            (string?)exerciseNext.Attribute("href"),
+            "study/topic/second/final/");
+        var exercisePrevious = AssertNavigationLink(
+            exerciseNavigation,
+            "previous-article",
+            "First in Second");
+        AssertPortableUrl(
+            "study/topic/second/exercises/",
+            (string?)exercisePrevious.Attribute("href"),
+            "study/topic/second/current/");
+
+        var finalNavigation = GetPageNavigation(LoadHtmlDocument(Path.Combine(
+            output,
+            "study",
+            "topic",
+            "second",
+            "final",
+            "index.html")));
+        Assert.Empty(
+            finalNavigation.Elements("a").Where(
+                link => HasClassToken(link, "next-article")));
+        AssertNavigationLink(
+            finalNavigation,
+            "previous-article",
+            "Exercises");
+
+        var chapterDocument = LoadHtmlDocument(Path.Combine(
+            output,
+            "study",
+            "topic",
+            "second",
+            "index.html"));
+        Assert.Empty(
+            chapterDocument.Descendants("nav").Where(
+                navigation => HasClassToken(navigation, "around-article")));
+
+        var css = await File.ReadAllTextAsync(Path.Combine(
+            output,
+            "assets",
+            "css",
+            "site.css"));
+        Assert.Matches(
+            @"\.content \.around-article a\s*\{[^}]*width\s*:\s*48%\s*;"
+            + @"[^}]*background-color\s*:\s*rgba\(128,\s*128,\s*128,\s*0\.2\)\s*;",
+            css);
+        Assert.Matches(
+            @"\.content \.next-article\s*\{[^}]*float\s*:\s*right\s*;"
+            + @"[^}]*text-align\s*:\s*right\s*;",
+            css);
+        Assert.Matches(
+            @"\.content \.previous-article\s*\{[^}]*float\s*:\s*left\s*;"
+            + @"[^}]*text-align\s*:\s*left\s*;",
+            css);
+
+        static XElement GetPageNavigation(XDocument document)
+        {
+            var navigation = Assert.Single(
+                document.Descendants("nav"),
+                element => HasClassToken(element, "around-article"));
+            Assert.Equal("前後のページ", (string?)navigation.Attribute("aria-label"));
+            return navigation;
+        }
+
+        static XElement AssertNavigationLink(
+            XElement navigation,
+            string className,
+            string expectedTitle)
+        {
+            var link = Assert.Single(
+                navigation.Elements("a"),
+                element => HasClassToken(element, className));
+            var title = string.Concat(
+                link.Nodes()
+                    .OfType<XText>()
+                    .Select(text => text.Value));
+            Assert.Equal(expectedTitle, NormalizeWhitespace(title));
+            var arrow = Assert.Single(
+                link.Elements("span"),
+                element => HasClassToken(element, "article-navigation-arrow"));
+            Assert.Equal("true", (string?)arrow.Attribute("aria-hidden"));
+            return link;
+        }
+    }
+
+    [Fact]
     public async Task BuildAsync_StudyArticle_WritesBreadcrumbsTocAndKeywords()
     {
         using var site = new SiteFixture();
