@@ -154,6 +154,16 @@ internal static class GitRepositoryReader
             UseShellExecute = false,
             CreateNoWindow = true,
         };
+        var inheritedGitVariables = startInfo.Environment.Keys
+            .Where(static name => name.StartsWith(
+                "GIT_",
+                StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+        foreach (var name in inheritedGitVariables)
+        {
+            startInfo.Environment.Remove(name);
+        }
+
         startInfo.Environment["GIT_NO_REPLACE_OBJECTS"] = "1";
         startInfo.Environment["GIT_OPTIONAL_LOCKS"] = "0";
         startInfo.Environment["GIT_NO_LAZY_FETCH"] = "1";

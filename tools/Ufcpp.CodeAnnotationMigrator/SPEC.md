@@ -57,8 +57,12 @@ Before analysis, the tool:
 Git is invoked only with read-only commands. Every subprocess disables
 replacement objects, optional locks, lazy fetching, terminal prompts, file
 system monitoring, automatic maintenance, and fetch commit-graph writes.
-Required objects must already exist locally. The tool never checks out,
-updates, stages, fetches, or writes a repository file.
+Before those explicit safe values are added, every inherited environment
+variable whose name starts with `GIT_` is removed case-insensitively. This
+includes alternate indexes, trace destinations, replacement/config injection,
+object directories, and every numbered `GIT_CONFIG_*` field. Required objects
+must already exist locally. The tool never checks out, updates, stages, fetches,
+or writes a repository file.
 
 ## Document and block enumeration
 

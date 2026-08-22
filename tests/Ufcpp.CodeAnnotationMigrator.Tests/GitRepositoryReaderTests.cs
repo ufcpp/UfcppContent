@@ -1,5 +1,6 @@
 namespace Ufcpp.CodeAnnotationMigrator.Tests;
 
+[Collection(ProcessEnvironmentCollection.Name)]
 public sealed class GitRepositoryReaderTests
 {
     [Fact]
@@ -302,6 +303,87 @@ public sealed class GitRepositoryReaderTests
         Assert.Contains("core.fsmonitor=false", startInfo.ArgumentList);
         Assert.Contains("maintenance.auto=false", startInfo.ArgumentList);
         Assert.Contains("fetch.writeCommitGraph=false", startInfo.ArgumentList);
+    }
+
+    [Fact]
+    public void CreateGitStartInfo_RemovesEveryInheritedGitVariable()
+    {
+        using var environment = new EnvironmentVariableScope(
+            new Dictionary<string, string?>
+            {
+                ["GIT_INDEX_FILE"] = "hostile-index",
+                ["GIT_TRACE"] = "hostile-trace",
+                ["GIT_TRACE2_EVENT"] = "hostile-trace2",
+                ["GIT_CONFIG_COUNT"] = "1",
+                ["GIT_CONFIG_KEY_0"] = "core.bare",
+                ["GIT_CONFIG_VALUE_0"] = "true",
+                ["git_hostile_lowercase"] = "hostile-lowercase",
+            });
+
+        var startInfo = GitRepositoryReader.CreateGitStartInfo(
+            @"C:\repository",
+            ["status", "--porcelain=v1"]);
+
+        var expected = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["GIT_NO_REPLACE_OBJECTS"] = "1",
+            ["GIT_OPTIONAL_LOCKS"] = "0",
+            ["GIT_NO_LAZY_FETCH"] = "1",
+            ["GIT_TERMINAL_PROMPT"] = "0",
+        };
+        var actual = startInfo.Environment
+            .Where(static item => item.Key.StartsWith(
+                "GIT_",
+                StringComparison.OrdinalIgnoreCase))
+            .ToDictionary(
+                static item => item.Key,
+                static item => item.Value ?? string.Empty,
+                StringComparer.OrdinalIgnoreCase);
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public async Task LoadAsync_HostileGitEnvironmentCannotAffectChecksOrWriteTrace()
+    {
+        using var repository = new TemporaryGitRepository();
+        repository.Write("content/a.md", "current");
+        var commit = repository.Commit("current");
+        var hostileDirectory = Path.Combine(
+            Path.GetTempPath(),
+            "ufcpp-code-annotation-hostile-git",
+            Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(hostileDirectory);
+        var tracePath = Path.Combine(hostileDirectory, "trace.json");
+        var alternateIndexPath = Path.Combine(hostileDirectory, "index");
+        try
+        {
+            using var environment = new EnvironmentVariableScope(
+                new Dictionary<string, string?>
+                {
+                    ["GIT_INDEX_FILE"] = alternateIndexPath,
+                    ["GIT_TRACE"] = tracePath,
+                    ["GIT_TRACE2_EVENT"] = tracePath,
+                    ["GIT_CONFIG_COUNT"] = "1",
+                    ["GIT_CONFIG_KEY_0"] = "core.bare",
+                    ["GIT_CONFIG_VALUE_0"] = "true",
+                });
+
+            var content = await GitRepositoryReader.LoadAsync(
+                repository.Root,
+                commit,
+                "content",
+                "content");
+
+            Assert.Equal(commit, content.ResolvedCurrentCommit);
+            Assert.Equal("current", content.CurrentDocuments["a.md"]);
+            Assert.False(File.Exists(tracePath));
+            Assert.False(File.Exists(alternateIndexPath));
+        }
+        finally
+        {
+            Directory.Delete(hostileDirectory, true);
+        }
     }
 
 }
