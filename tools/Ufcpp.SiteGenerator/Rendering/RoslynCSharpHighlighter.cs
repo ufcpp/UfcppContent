@@ -19,7 +19,26 @@ namespace Ufcpp.SiteGenerator.Rendering;
 
 internal sealed class RoslynCSharpHighlighter
 {
+    /// <summary>
+    /// The classifications that denote a type. Roslyn exposes no such list, so
+    /// this one is checked against every classification it declares by
+    /// <c>MarkdigRendererTests.TypeClassifications_CoverEveryClassificationRoslynDeclares</c>.
+    /// </summary>
+    internal static readonly ImmutableHashSet<string> TypeClassificationTypeNames =
+    [
+        ClassificationTypeNames.ClassName,
+        ClassificationTypeNames.RecordClassName,
+        ClassificationTypeNames.StructName,
+        ClassificationTypeNames.RecordStructName,
+        ClassificationTypeNames.InterfaceName,
+        ClassificationTypeNames.DelegateName,
+        ClassificationTypeNames.EnumName,
+        ClassificationTypeNames.ModuleName,
+        ClassificationTypeNames.TypeParameterName,
+    ];
+
     private const string CssClassPrefix = "roslyn-";
+    private const string TypeCssClass = CssClassPrefix + "type-name";
     private const string ConsoleImplicitGlobalUsings = """
         global using System;
         global using System.IO;
@@ -131,6 +150,14 @@ internal sealed class RoslynCSharpHighlighter
                     span.Start,
                     span.End,
                     GetCssClass(classifiedSpan.ClassificationType)));
+
+            // Every kind of type also carries a shared class so that CSS can paint
+            // types it does not know about yet with the default type color.
+            if (TypeClassificationTypeNames.Contains(classifiedSpan.ClassificationType))
+            {
+                ranges.Add(new ClassificationRange(span.Start, span.End, TypeCssClass));
+            }
+
             boundaries.Add(span.Start);
             boundaries.Add(span.End);
         }

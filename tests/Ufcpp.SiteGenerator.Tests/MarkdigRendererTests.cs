@@ -1,8 +1,10 @@
 using Ufcpp.SiteGenerator.Models;
 using Ufcpp.SiteGenerator.Loading;
 using Ufcpp.SiteGenerator.Rendering;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using Microsoft.CodeAnalysis.Classification;
 
 namespace Ufcpp.SiteGenerator.Tests;
 
@@ -88,7 +90,7 @@ public sealed class MarkdigRendererTests
             "<span class=\"roslyn-keyword\">record</span>",
             html);
         Assert.Contains(
-            "<span class=\"roslyn-record-class-name\">R</span>",
+            "<span class=\"roslyn-record-class-name roslyn-type-name\">R</span>",
             html);
     }
 
@@ -104,10 +106,10 @@ public sealed class MarkdigRendererTests
             """);
 
         Assert.Contains(
-            "<span class=\"roslyn-class-name roslyn-static-symbol\">Console</span>",
+            "<span class=\"roslyn-class-name roslyn-static-symbol roslyn-type-name\">Console</span>",
             html);
         Assert.Contains(
-            "<span class=\"roslyn-class-name\">Task</span>",
+            "<span class=\"roslyn-class-name roslyn-type-name\">Task</span>",
             html);
     }
 
@@ -143,7 +145,7 @@ public sealed class MarkdigRendererTests
         Assert.Contains("<span class=\"roslyn-keyword\">record</span>", html);
         Assert.Contains("<span class=\"roslyn-keyword\">field</span>", html);
         Assert.Contains(
-            "<span class=\"roslyn-record-struct-name\">X</span>",
+            "<span class=\"roslyn-record-struct-name roslyn-type-name\">X</span>",
             html);
         Assert.Contains("<span class=\"roslyn-property-name\">B</span>", html);
         Assert.Contains(
@@ -153,10 +155,114 @@ public sealed class MarkdigRendererTests
             "<span class=\"roslyn-parameter-name\">value</span>",
             html);
         Assert.Contains(
-            "<span class=\"roslyn-interface-name\">IIncrementOperators</span>",
+            "<span class=\"roslyn-interface-name roslyn-type-name\">IIncrementOperators</span>",
             html);
         Assert.Contains("<span class=\"roslyn-local-name\">i</span>", html);
         Assert.Contains("&lt;", html);
+    }
+
+    /// <summary>
+    /// Every kind of type carries the shared <c>roslyn-type-name</c> class on top
+    /// of its specific one, so the stylesheet can color types once and override
+    /// only the kinds that differ.
+    /// </summary>
+    [Theory]
+    [InlineData("class C { }", "roslyn-class-name roslyn-type-name", "C")]
+    [InlineData("record R;", "roslyn-record-class-name roslyn-type-name", "R")]
+    [InlineData("struct S { }", "roslyn-struct-name roslyn-type-name", "S")]
+    [InlineData("record struct RS;", "roslyn-record-struct-name roslyn-type-name", "RS")]
+    [InlineData("interface I { }", "roslyn-interface-name roslyn-type-name", "I")]
+    [InlineData("delegate void D();", "roslyn-delegate-name roslyn-type-name", "D")]
+    [InlineData("enum E { A }", "roslyn-enum-name roslyn-type-name", "E")]
+    [InlineData("class C<TItem> { }", "roslyn-type-name roslyn-type-parameter-name", "TItem")]
+    public void Render_CSharpFence_MarksEveryTypeKindAsAType(
+        string code,
+        string classes,
+        string name)
+    {
+        var html = Render($"```csharp\n{code}\n```");
+
+        Assert.Contains($"<span class=\"{classes}\">{name}</span>", html);
+    }
+
+    /// <summary>
+    /// The shared class must not leak onto members and locals: they are colored
+    /// by their own classes, and picking up the type color would be wrong.
+    /// </summary>
+    [Fact]
+    public void Render_CSharpFence_LeavesNonTypesUnmarked()
+    {
+        var html = Render(
+            """
+            ```csharp
+            class C
+            {
+                int _field;
+                const int Constant = 1;
+                int Property { get; set; }
+                event Action? Event;
+                void Method(int parameter) { int local = parameter; }
+            }
+            ```
+            """);
+
+        Assert.Contains("<span class=\"roslyn-field-name\">_field</span>", html);
+        Assert.Contains(
+            "<span class=\"roslyn-constant-name roslyn-static-symbol\">Constant</span>",
+            html);
+        Assert.Contains("<span class=\"roslyn-property-name\">Property</span>", html);
+        Assert.Contains("<span class=\"roslyn-event-name\">Event</span>", html);
+        Assert.Contains("<span class=\"roslyn-method-name\">Method</span>", html);
+        Assert.Contains("<span class=\"roslyn-parameter-name\">parameter</span>", html);
+        Assert.Contains("<span class=\"roslyn-local-name\">local</span>", html);
+    }
+
+    /// <summary>
+    /// Roslyn exposes no list of the classifications that denote a type, so the
+    /// highlighter carries its own. This checks that list against every
+    /// classification Roslyn declares: when a compiler release adds a kind of
+    /// type (C# 15's unions, for one), this fails and the new name has to be
+    /// sorted into <see cref="RoslynCSharpHighlighter.TypeClassificationTypeNames"/>
+    /// or into the non-type list below.
+    /// </summary>
+    [Fact]
+    public void TypeClassifications_CoverEveryClassificationRoslynDeclares()
+    {
+        string[] nonTypeNames =
+        [
+            ClassificationTypeNames.ConstantName,
+            ClassificationTypeNames.EnumMemberName,
+            ClassificationTypeNames.EventName,
+            ClassificationTypeNames.ExtensionMethodName,
+            ClassificationTypeNames.FieldName,
+            ClassificationTypeNames.LabelName,
+            ClassificationTypeNames.LocalName,
+            ClassificationTypeNames.MethodName,
+            ClassificationTypeNames.NamespaceName,
+            ClassificationTypeNames.ParameterName,
+            ClassificationTypeNames.PropertyName,
+            ClassificationTypeNames.XmlDocCommentAttributeName,
+            ClassificationTypeNames.XmlDocCommentName,
+            ClassificationTypeNames.XmlLiteralAttributeName,
+            ClassificationTypeNames.XmlLiteralName,
+        ];
+
+        var declared = typeof(ClassificationTypeNames)
+            .GetFields(BindingFlags.Public | BindingFlags.Static)
+            .Where(field => field.FieldType == typeof(string))
+            .Select(field => (string)field.GetValue(null)!)
+            .Where(name => name.EndsWith("name", StringComparison.Ordinal))
+            .ToArray();
+
+        var classified = RoslynCSharpHighlighter.TypeClassificationTypeNames
+            .Concat(nonTypeNames)
+            .ToHashSet(StringComparer.Ordinal);
+
+        Assert.NotEmpty(declared);
+        Assert.Empty(declared.Where(name => !classified.Contains(name)));
+        Assert.Empty(
+            RoslynCSharpHighlighter.TypeClassificationTypeNames
+                .Where(name => !declared.Contains(name)));
     }
 
     [Fact]

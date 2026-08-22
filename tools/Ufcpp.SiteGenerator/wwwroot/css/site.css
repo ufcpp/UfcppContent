@@ -17,19 +17,21 @@
   --color-code-console: #606060;
   --color-code-keyword: #0000ff;
   --color-code-control: #8f08c4;
-  --color-code-preprocessor: #686868;
-  --color-code-excluded: #686868;
+  --color-code-preprocessor: #808080;
+  --color-code-excluded: #808080;
   --color-code-comment: #008000;
   --color-code-string: #a31515;
-  --color-code-number: #254370;
+  --color-code-number: #098658;
   --color-code-type: #2b91af;
   --color-code-struct: #007acc;
   --color-code-method: #74531f;
-  --color-code-field: #383b74;
-  --color-code-property: #27525a;
-  --color-code-constant: #743131;
-  --color-code-variable: #2c2e55;
-  --color-code-operator: #6b3480;
+  --color-code-field: #004080;
+  --color-code-property: var(--color-code-field);
+  --color-code-event: var(--color-code-property);
+  --color-code-enum-member: var(--color-code-field);
+  --color-code-constant: #8080ff;
+  --color-code-variable: #000080;
+  --color-code-operator: #004080;
   --color-code-highlight: #e0ffff;
   --color-editorial-highlight: rgba(238, 239, 118, 0.75);
   --font-sans: "Hiragino Kaku Gothic Pro", "Meiryo", "Yu Gothic", YuGothic,
@@ -548,18 +550,14 @@ pre.console code {
   color: var(--color-code-number);
 }
 
-.content pre code .roslyn-class-name,
-.content pre code .roslyn-record-class-name,
-.content pre code .roslyn-interface-name,
-.content pre code .roslyn-delegate-name,
-.content pre code .roslyn-enum-name,
-.content pre code .roslyn-module-name,
-.content pre code .roslyn-type-parameter-name {
+/* Every kind of type carries .roslyn-type-name, so a kind we have no rule for
+   (a future union, say) still gets the default type color. */
+.content pre code .roslyn-type-name {
   color: var(--color-code-type);
 }
 
-.content pre code .roslyn-struct-name,
-.content pre code .roslyn-record-struct-name {
+.content pre code .roslyn-type-name.roslyn-struct-name,
+.content pre code .roslyn-type-name.roslyn-record-struct-name {
   color: var(--color-code-struct);
 }
 
@@ -568,8 +566,7 @@ pre.console code {
   color: var(--color-code-method);
 }
 
-.content pre code .roslyn-field-name,
-.content pre code .roslyn-event-name {
+.content pre code .roslyn-field-name {
   color: var(--color-code-field);
 }
 
@@ -577,8 +574,15 @@ pre.console code {
   color: var(--color-code-property);
 }
 
-.content pre code .roslyn-constant-name,
+.content pre code .roslyn-event-name {
+  color: var(--color-code-event);
+}
+
 .content pre code .roslyn-enum-member-name {
+  color: var(--color-code-enum-member);
+}
+
+.content pre code .roslyn-constant-name {
   color: var(--color-code-constant);
 }
 

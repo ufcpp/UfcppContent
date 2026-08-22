@@ -13,18 +13,18 @@ colors:
   border: "#dddddd"
   code-keyword: "#0000ff"
   code-control: "#8f08c4"
-  code-preprocessor: "#686868"
+  code-preprocessor: "#808080"
   code-comment: "#008000"
   code-string: "#a31515"
-  code-number: "#254370"
+  code-number: "#098658"
   code-type: "#2b91af"
   code-struct: "#007acc"
   code-method: "#74531f"
-  code-field: "#383b74"
-  code-property: "#27525a"
-  code-constant: "#743131"
-  code-variable: "#2c2e55"
-  code-operator: "#6b3480"
+  code-field: "#004080"
+  code-property: "#004080"
+  code-constant: "#8080ff"
+  code-variable: "#000080"
+  code-operator: "#004080"
 typography:
   headline:
     fontFamily: '"Hiragino Kaku Gothic Pro", "Meiryo", "Yu Gothic", YuGothic, "MS PGothic", sans-serif'
@@ -115,9 +115,12 @@ high-contrast reading neutrals.
 
 - **Reference Link Brown** (`content-link`): Distinguishes links inside technical prose without
   introducing a generic bright web-blue accent.
-- **Code Syntax Colors** (`code-keyword`, `code-control`, `code-comment`, `code-string`,
-  `code-number`, `code-type`, `code-method`, `code-symbol`): Preserve the familiar Visual
-  Studio Light syntax-highlighting vocabulary for both migrated and newly rendered examples.
+- **Code Syntax Colors** (`code-keyword`, `code-control`, `code-preprocessor`, `code-comment`,
+  `code-string`, `code-number`, `code-type`, `code-struct`, `code-method`, `code-field`,
+  `code-property`, `code-constant`, `code-variable`, `code-operator`): The current Visual Studio
+  light theme values, so an example on the site reads the way it does in the editor. Members that
+  share a color (a field and a property, say) still get their own CSS class, and the stylesheet
+  chains them with `var()` to keep the reason for the shared value visible.
 
 ### Neutral
 

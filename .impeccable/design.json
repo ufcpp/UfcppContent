@@ -37,8 +37,8 @@
       "code-preprocessor": {
         "role": "secondary",
         "displayName": "Preprocessor Gray",
-        "canonical": "#686868",
-        "tonalRamp": ["#1d1d1d", "#323232", "#474747", "#585858", "#686868", "#9a9a9a", "#cdcdcd", "#f5f5f5"]
+        "canonical": "#808080",
+        "tonalRamp": ["#242424", "#3d3d3d", "#575757", "#6d6d6d", "#808080", "#aaaaaa", "#d5d5d5", "#f6f6f6"]
       },
       "code-comment": {
         "role": "secondary",
@@ -54,9 +54,9 @@
       },
       "code-number": {
         "role": "secondary",
-        "displayName": "Numeric Navy",
-        "canonical": "#254370",
-        "tonalRamp": ["#0a131f", "#122036", "#192e4c", "#1f395f", "#254370", "#6e82a0", "#b6c0cf", "#f0f2f5"]
+        "displayName": "Numeric Green",
+        "canonical": "#098658",
+        "tonalRamp": ["#032619", "#04402a", "#065b3c", "#08724b", "#098658", "#5bae90", "#add7c7", "#eff7f4"]
       },
       "code-type": {
         "role": "secondary",
@@ -78,33 +78,33 @@
       },
       "code-field": {
         "role": "secondary",
-        "displayName": "Field Indigo",
-        "canonical": "#383b74",
-        "tonalRamp": ["#101120", "#1b1c38", "#26284f", "#303263", "#383b74", "#7a7ca2", "#bdbed1", "#f2f2f6"]
+        "displayName": "Member Navy",
+        "canonical": "#004080",
+        "tonalRamp": ["#001224", "#001f3d", "#002c57", "#00366d", "#004080", "#5580aa", "#aabfd5", "#eef2f6"]
       },
       "code-property": {
         "role": "secondary",
-        "displayName": "Property Teal",
-        "canonical": "#27525a",
-        "tonalRamp": ["#0b1719", "#13272b", "#1b383d", "#21464c", "#27525a", "#6f8c91", "#b7c5c8", "#f1f3f4"]
+        "displayName": "Member Navy",
+        "canonical": "#004080",
+        "tonalRamp": ["#001224", "#001f3d", "#002c57", "#00366d", "#004080", "#5580aa", "#aabfd5", "#eef2f6"]
       },
       "code-constant": {
         "role": "secondary",
-        "displayName": "Constant Maroon",
-        "canonical": "#743131",
-        "tonalRamp": ["#200e0e", "#381818", "#4f2121", "#632a2a", "#743131", "#a27676", "#d1baba", "#f6f1f1"]
+        "displayName": "Constant Periwinkle",
+        "canonical": "#8080ff",
+        "tonalRamp": ["#242447", "#3d3d7a", "#5757ad", "#6d6dd9", "#8080ff", "#aaaaff", "#d5d5ff", "#f6f6ff"]
       },
       "code-variable": {
         "role": "secondary",
         "displayName": "Variable Navy",
-        "canonical": "#2c2e55",
-        "tonalRamp": ["#0c0d18", "#151629", "#1e1f3a", "#252748", "#2c2e55", "#72748e", "#b9b9c6", "#f1f1f4"]
+        "canonical": "#000080",
+        "tonalRamp": ["#000024", "#00003d", "#000057", "#00006d", "#000080", "#5555aa", "#aaaad5", "#eeeef6"]
       },
       "code-operator": {
         "role": "secondary",
-        "displayName": "Operator Purple",
-        "canonical": "#6b3480",
-        "tonalRamp": ["#1e0f24", "#33193d", "#492357", "#5b2c6d", "#6b3480", "#9c78aa", "#cebbd5", "#f5f1f6"]
+        "displayName": "Operator Navy",
+        "canonical": "#004080",
+        "tonalRamp": ["#001224", "#001f3d", "#002c57", "#00366d", "#004080", "#5580aa", "#aabfd5", "#eef2f6"]
       },
       "page-bg": {
         "role": "neutral",
