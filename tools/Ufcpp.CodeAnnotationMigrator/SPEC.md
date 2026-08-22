@@ -29,12 +29,16 @@ The command accepts:
 - `--current-path <relative-path>`: the current Markdown tree within the
   worktree. The default is `content`.
 - `--report <path|->`: deterministic JSON output. `-`, the default, means
-  standard output. A file report must be outside the current content tree.
+  standard output. A file report must be outside the repository worktree.
 - `--dry-run`: optional and accepted for clarity. Dry run is the only mode.
 
 Unknown options, positional arguments, `--apply`, missing option values, rooted
-source/current paths, `..` traversal, and a report path inside the current
-content tree are input errors.
+source/current paths, `..` traversal, and a report path anywhere inside the
+repository worktree are input errors. Report paths that use a Windows device
+alias or traverse a symbolic link or junction are also rejected; directory
+filesystem identities are compared on Windows to catch short-name and
+substituted-drive aliases. File reports are written to a sibling temporary file
+and atomically moved into place so an existing hard link is not written through.
 
 Before analysis, the tool:
 
@@ -42,8 +46,9 @@ Before analysis, the tool:
 2. verifies that the revision names a commit;
 3. verifies that `<commit>:<source-path>` exists as a tree;
 4. verifies that the current path exists as a directory;
-5. rejects tracked or untracked changes below the current content path; and
-6. reads historical blobs with `git ls-tree` and `git show`.
+5. rejects tracked, untracked, or ignored Markdown changes below the current
+   content path and rejects linked Markdown files; and
+6. reads historical blobs with `git ls-tree` and `git cat-file`.
 
 Git is invoked only with read-only commands. The tool never checks out,
 updates, stages, or writes a repository file.
@@ -126,13 +131,25 @@ Matching has two deterministic passes:
    matches only when it occurs exactly once on each side. This safely handles
    an insertion or deletion that shifts later block ordinals.
 
-If a remaining historical hash has current candidates but either side has
-multiple candidates, the case is ambiguous. Occurrence proximity or duplicate
-order is not used to guess. If it has no current candidate, it is unmatched.
-A current-only block is reported separately and is not evidence of lost
+For a hash duplicated on either side, ordinal matches are accepted only when
+the complete ascending ordinal lists for that hash are identical. If duplicate
+counts or ordinal lists differ, every historical occurrence of that hash is
+ambiguous, even if one occurrence happens to retain its old ordinal. This
+prevents an insertion from making one duplicate appear to match while swapping
+the annotations of otherwise identical blocks. Occurrence proximity or
+duplicate order is not used to guess.
+
+If a remaining historical hash has no current candidate, it is unmatched. A
+current-only block is reported separately and is not evidence of lost
 historical metadata. Ambiguous and unmatched historical blocks are error
 diagnostics even when they carry no annotation, so a successful exit cannot
 hide partial block coverage.
+
+A hash match is safe only when the target representation is also correct:
+historical blocks outside tables must match current fenced blocks, while
+historical blocks inside tables must match raw current `<pre>` elements that
+remain inside a table. A kind or table-context mismatch is unrepresentable and
+forces an error exit.
 
 ## Metadata conversion planning
 
@@ -158,8 +175,14 @@ selection. It is represented by `*-text` only when:
 - it contains no CR or LF;
 - it occurs exactly once, ordinally and case-sensitively, in the current code;
   and
-- the occurrence maps exactly to the historical selection after newline and
-  entity normalization.
+- the occurrence maps exactly to the historical selection after newline
+  normalization.
+
+Planning uses the raw current fenced-code text, not the entity-decoded matching
+form, because the future metadata attributes are evaluated against source
+text. Line metadata uses physical current lines. A match that exists only after
+entity decoding, or whose entity decoding changes the physical line layout, is
+unrepresentable.
 
 Multiple partial selections, multiline partial selections, missing selected
 text, overlapping selections of different locations, or repeated selected
@@ -184,11 +207,16 @@ Top-level sections are emitted in this order:
 7. diagnostics.
 
 Coverage has separate counters for `title`, `highlight`, `error`, `warning`,
-historical blocks expected to become `fencedBlocks`, historical `rawPreBlocks`,
-and historical `tableBlocks`. Every counter has `total`, `matched`,
-`ambiguous`, `unmatched`, and `unrepresentable` fields. For metadata, the unit
-is a historical block containing that metadata kind. For block kinds, the unit
-is a historical block.
+historical blocks expected to become `fencedBlocks`, and historical raw
+`rawTableBlocks` that must remain inside HTML tables. Every counter has `total`,
+`matched`, `ambiguous`, `unmatched`, and `unrepresentable` fields. For metadata,
+the unit is a historical block containing that metadata kind. For block kinds,
+the unit is a historical block. Totals additionally distinguish current raw
+`<pre>` blocks outside tables from raw `<pre>` blocks inside tables and record
+the number of malformed historical blocks. A malformed block contributes to
+the appropriate block-kind `unrepresentable` count; metadata that cannot be
+parsed safely from that block is not guessed into a metadata counter and is
+instead identified by its per-block diagnostic.
 
 Plans are ordered by path, historical block ordinal, and metadata kind.
 Diagnostics are ordered by path, historical block ordinal, current block
@@ -219,7 +247,7 @@ code 3.
 
 The tool opens current Markdown only for reading. It exposes no content writer
 and no apply command. Report file output uses only the explicit destination
-after validating that it is outside the current content tree.
+after validating that it is outside the repository worktree.
 
 PR 1 acceptance requires:
 

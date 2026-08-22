@@ -1,0 +1,306 @@
+using System.Text;
+
+namespace Ufcpp.CodeAnnotationMigrator.Tests;
+
+public sealed class MigratorCliTests
+{
+    [Fact]
+    public void Parse_UsesPinnedDryRunDefaultsAndExplicitOverrides()
+    {
+        var defaults = MigratorCliOptionsParser.Parse([], @"C:\repository");
+        Assert.Equal(@"C:\repository", defaults.RepositoryRoot);
+        Assert.Equal(
+            "eacf0d470a684771524fb04f710951d38a60cc74",
+            defaults.SourceCommit);
+        Assert.Equal("content", defaults.SourcePath);
+        Assert.Equal("content", defaults.CurrentPath);
+        Assert.Equal("-", defaults.ReportPath);
+
+        var explicitOptions = MigratorCliOptionsParser.Parse(
+            [
+                "--dry-run",
+                "--repo-root",
+                @"C:\other",
+                "--source-commit",
+                "HEAD~1",
+                "--source-path",
+                "archive",
+                "--current-path",
+                "docs",
+                "--report",
+                "report.json",
+            ],
+            @"C:\repository");
+        Assert.Equal(@"C:\other", explicitOptions.RepositoryRoot);
+        Assert.Equal("HEAD~1", explicitOptions.SourceCommit);
+        Assert.Equal("archive", explicitOptions.SourcePath);
+        Assert.Equal("docs", explicitOptions.CurrentPath);
+        Assert.Equal("report.json", explicitOptions.ReportPath);
+    }
+
+    [Theory]
+    [InlineData("--apply")]
+    [InlineData("--unknown")]
+    [InlineData("--source-commit")]
+    public void Parse_RejectsApplyUnknownAndMissingValues(string argument)
+    {
+        Assert.Throws<MigrationInputException>(
+            () => MigratorCliOptionsParser.Parse([argument], Environment.CurrentDirectory));
+    }
+
+    [Fact]
+    public async Task RunAsync_WritesDryRunReportWithoutMutatingContent()
+    {
+        using var repository = new TemporaryGitRepository();
+        repository.Write(
+            "content/a.md",
+            "<pre title=\"sample\"><code><em>value</em></code></pre>");
+        var historicalCommit = repository.Commit("historical");
+        repository.Write(
+            "content/a.md",
+            "```text\nvalue\n```");
+        repository.Commit("current");
+        var before = File.ReadAllBytes(Path.Combine(repository.Root, "content", "a.md"));
+        await using var output = new MemoryStream();
+        using var error = new StringWriter();
+
+        var exitCode = await MigratorCli.RunAsync(
+            [
+                "--repo-root",
+                repository.Root,
+                "--source-commit",
+                historicalCommit,
+            ],
+            output,
+            error,
+            repository.Root);
+
+        Assert.Equal(0, exitCode);
+        Assert.Equal(string.Empty, error.ToString());
+        Assert.Contains(
+            "\"schemaVersion\": 1",
+            Encoding.UTF8.GetString(output.ToArray()),
+            StringComparison.Ordinal);
+        Assert.Equal(
+            before,
+            File.ReadAllBytes(Path.Combine(repository.Root, "content", "a.md")));
+        Assert.Equal(string.Empty, repository.Status());
+    }
+
+    [Fact]
+    public async Task RunAsync_ReturnsInputErrorForMissingCommit()
+    {
+        using var repository = new TemporaryGitRepository();
+        repository.Write("content/a.md", "current");
+        repository.Commit("current");
+        await using var output = new MemoryStream();
+        using var error = new StringWriter();
+
+        var exitCode = await MigratorCli.RunAsync(
+            [
+                "--repo-root",
+                repository.Root,
+                "--source-commit",
+                "missing",
+            ],
+            output,
+            error,
+            repository.Root);
+
+        Assert.Equal(2, exitCode);
+        Assert.Empty(output.ToArray());
+        Assert.Contains("commit", error.ToString(), StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task RunAsync_RejectsReportInsideCurrentContent()
+    {
+        using var repository = new TemporaryGitRepository();
+        repository.Write("content/a.md", "<pre>value</pre>");
+        var commit = repository.Commit("historical");
+        repository.Write("content/a.md", "```text\nvalue\n```");
+        repository.Commit("current");
+        await using var output = new MemoryStream();
+        using var error = new StringWriter();
+
+        var exitCode = await MigratorCli.RunAsync(
+            [
+                "--repo-root",
+                repository.Root,
+                "--source-commit",
+                commit,
+                "--report",
+                "content/report.json",
+            ],
+            output,
+            error,
+            repository.Root);
+
+        Assert.Equal(2, exitCode);
+        Assert.False(File.Exists(Path.Combine(
+            repository.Root,
+            "content",
+            "report.json")));
+        Assert.Contains("report", error.ToString(), StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task RunAsync_OverwritesExplicitReportWithIdenticalBytes()
+    {
+        using var repository = new TemporaryGitRepository();
+        repository.Write("content/a.md", "<pre>value</pre>");
+        var commit = repository.Commit("historical");
+        repository.Write("content/a.md", "```text\nvalue\n```");
+        repository.Commit("current");
+        var reportDirectory = Path.Combine(
+            Path.GetTempPath(),
+            "ufcpp-code-annotation-reports",
+            Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(reportDirectory);
+        var reportPath = Path.Combine(reportDirectory, "report.json");
+        try
+        {
+            var arguments = new[]
+            {
+                "--repo-root",
+                repository.Root,
+                "--source-commit",
+                commit,
+                "--report",
+                reportPath,
+            };
+            await using var firstOutput = new MemoryStream();
+            using var firstError = new StringWriter();
+            var firstExit = await MigratorCli.RunAsync(
+                arguments,
+                firstOutput,
+                firstError,
+                repository.Root);
+            var first = File.ReadAllBytes(reportPath);
+
+            await using var secondOutput = new MemoryStream();
+            using var secondError = new StringWriter();
+            var secondExit = await MigratorCli.RunAsync(
+                arguments,
+                secondOutput,
+                secondError,
+                repository.Root);
+            var second = File.ReadAllBytes(reportPath);
+
+            Assert.Equal(0, firstExit);
+            Assert.Equal(0, secondExit);
+            Assert.Equal(first, second);
+            Assert.Empty(Directory.EnumerateFiles(reportDirectory, "*.tmp"));
+            Assert.Equal(string.Empty, repository.Status());
+        }
+        finally
+        {
+            if (File.Exists(reportPath))
+            {
+                File.Delete(reportPath);
+            }
+
+            Directory.Delete(reportDirectory);
+        }
+    }
+
+    [Fact]
+    public async Task RunAsync_RejectsReportPathThroughDirectoryLink()
+    {
+        using var repository = new TemporaryGitRepository();
+        repository.Write("content/a.md", "<pre>value</pre>");
+        var commit = repository.Commit("current");
+        var reportDirectory = Path.Combine(
+            Path.GetTempPath(),
+            "ufcpp-code-annotation-links",
+            Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(reportDirectory);
+        var linkPath = Path.Combine(reportDirectory, "linked-content");
+        try
+        {
+            try
+            {
+                Directory.CreateSymbolicLink(
+                    linkPath,
+                    Path.Combine(repository.Root, "content"));
+            }
+            catch (Exception exception) when (
+                exception is UnauthorizedAccessException
+                    or IOException
+                    or PlatformNotSupportedException)
+            {
+                return;
+            }
+
+            await using var output = new MemoryStream();
+            using var error = new StringWriter();
+            var exitCode = await MigratorCli.RunAsync(
+                [
+                    "--repo-root",
+                    repository.Root,
+                    "--source-commit",
+                    commit,
+                    "--report",
+                    Path.Combine(linkPath, "report.json"),
+                ],
+                output,
+                error,
+                repository.Root);
+
+            Assert.Equal(2, exitCode);
+            Assert.False(File.Exists(Path.Combine(
+                repository.Root,
+                "content",
+                "report.json")));
+            Assert.Contains(
+                "Report path",
+                error.ToString(),
+                StringComparison.OrdinalIgnoreCase);
+        }
+        finally
+        {
+            if (Directory.Exists(linkPath))
+            {
+                Directory.Delete(linkPath);
+            }
+
+            Directory.Delete(reportDirectory);
+        }
+    }
+
+    [Fact]
+    public async Task RunAsync_RejectsExtendedPathAliasIntoContent()
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        using var repository = new TemporaryGitRepository();
+        repository.Write("content/a.md", "<pre>value</pre>");
+        var commit = repository.Commit("current");
+        var reportPath = @"\\?\"
+            + Path.Combine(repository.Root, "content", "report.json");
+        await using var output = new MemoryStream();
+        using var error = new StringWriter();
+
+        var exitCode = await MigratorCli.RunAsync(
+            [
+                "--repo-root",
+                repository.Root,
+                "--source-commit",
+                commit,
+                "--report",
+                reportPath,
+            ],
+            output,
+            error,
+            repository.Root);
+
+        Assert.Equal(2, exitCode);
+        Assert.False(File.Exists(Path.Combine(
+            repository.Root,
+            "content",
+            "report.json")));
+    }
+}
