@@ -23,9 +23,11 @@ internal sealed record HistoricalCodeBlock(
     IReadOnlyList<AnnotationSelection> Annotations);
 
 internal sealed record HistoricalParseDiagnostic(
-    int Ordinal,
+    string Code,
+    int? Ordinal,
     int SourceLine,
     bool IsInsideTable,
+    bool CountsAsBlock,
     string Message);
 
 internal sealed record HistoricalParseResult(

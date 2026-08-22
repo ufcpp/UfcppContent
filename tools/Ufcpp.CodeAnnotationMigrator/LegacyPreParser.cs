@@ -34,6 +34,7 @@ internal static class LegacyPreParser
         var diagnostics = new List<HistoricalParseDiagnostic>();
         var tableDepth = 0;
         var preBlockCount = 0;
+        var suppressedRecoveryClosings = 0;
 
         for (var index = 0; index < document.Length;)
         {
@@ -91,17 +92,44 @@ internal static class LegacyPreParser
                         code,
                         annotations));
                 }
-                catch (InvalidDataException exception)
+                catch (Exception exception) when (
+                    exception is InvalidDataException or NestedPreException)
                 {
+                    if (exception is NestedPreException)
+                    {
+                        suppressedRecoveryClosings++;
+                    }
+
                     diagnostics.Add(new HistoricalParseDiagnostic(
+                        "MALFORMED_HISTORICAL_BLOCK",
                         preBlockCount,
                         sourceLine,
                         isInsideTable,
+                        true,
                         exception.Message));
                 }
 
                 index = closingTag?.End + 1 ?? tag.End + 1;
                 continue;
+            }
+
+            if (tag.IsClosing
+                && tag.Name.Equals("pre", StringComparison.OrdinalIgnoreCase))
+            {
+                if (suppressedRecoveryClosings > 0)
+                {
+                    suppressedRecoveryClosings--;
+                }
+                else
+                {
+                    diagnostics.Add(new HistoricalParseDiagnostic(
+                        "ORPHAN_HISTORICAL_PRE_CLOSE",
+                        null,
+                        SourceText.GetLineNumber(document, tag.Start),
+                        tableDepth > 0,
+                        false,
+                        "Orphan </pre> closing tag has no matching opening tag."));
+                }
             }
 
             index = tag.End + 1;
@@ -439,7 +467,7 @@ internal static class LegacyPreParser
                 {
                     if (name.Equals("pre", StringComparison.OrdinalIgnoreCase))
                     {
-                        throw new InvalidDataException(
+                        throw new NestedPreException(
                             $"Nested <pre> element at line "
                             + $"{SourceText.GetLineNumber(document, tag.Start)}.");
                     }
@@ -718,4 +746,7 @@ internal static class LegacyPreParser
     private sealed record OpenSelection(
         AnnotationKind? Kind,
         int Start);
+
+    private sealed class NestedPreException(string message)
+        : Exception(message);
 }

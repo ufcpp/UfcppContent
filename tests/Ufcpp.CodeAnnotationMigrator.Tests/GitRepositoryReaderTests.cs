@@ -11,7 +11,7 @@ public sealed class GitRepositoryReaderTests
         var historicalCommit = repository.Commit("historical");
         repository.Write("content/nested/a.md", "```text\nhistorical\n```");
         repository.Write("content/b.md", "```text\nnew\n```");
-        repository.Commit("current");
+        var currentCommit = repository.Commit("current");
 
         var content = await GitRepositoryReader.LoadAsync(
             repository.Root,
@@ -21,6 +21,7 @@ public sealed class GitRepositoryReaderTests
 
         Assert.Equal(Path.GetFullPath(repository.Root), content.RepositoryRoot);
         Assert.Equal(historicalCommit, content.ResolvedSourceCommit);
+        Assert.Equal(currentCommit, content.ResolvedCurrentCommit);
         Assert.Equal(
             ["nested/a.md"],
             content.HistoricalDocuments.Keys);
@@ -152,17 +153,7 @@ public sealed class GitRepositoryReaderTests
         Directory.CreateDirectory(Path.GetDirectoryName(linkPath)!);
         try
         {
-            try
-            {
-                File.CreateSymbolicLink(linkPath, externalPath);
-            }
-            catch (Exception setupException) when (
-                setupException is UnauthorizedAccessException
-                    or IOException
-                    or PlatformNotSupportedException)
-            {
-                return;
-            }
+            File.CreateSymbolicLink(linkPath, externalPath);
 
             var commit = repository.Commit("linked");
             File.WriteAllText(externalPath, "changed outside Git");
@@ -174,7 +165,10 @@ public sealed class GitRepositoryReaderTests
                     "content",
                     "content"));
 
-            Assert.Contains("symbolic", exception.Message, StringComparison.OrdinalIgnoreCase);
+            Assert.Contains(
+                "regular Git blob",
+                exception.Message,
+                StringComparison.OrdinalIgnoreCase);
         }
         finally
         {
@@ -208,5 +202,105 @@ public sealed class GitRepositoryReaderTests
             "assume-unchanged",
             exception.Message,
             StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task LoadAsync_IgnoresGitReplacementObjects()
+    {
+        using var repository = new TemporaryGitRepository();
+        repository.Write("content/a.md", "<pre>authoritative</pre>");
+        var authoritativeCommit = repository.Commit("authoritative");
+        repository.Write("content/a.md", "<pre>replacement</pre>");
+        var replacementCommit = repository.Commit("replacement");
+        repository.ReplaceObject(authoritativeCommit, replacementCommit);
+
+        var content = await GitRepositoryReader.LoadAsync(
+            repository.Root,
+            authoritativeCommit,
+            "content",
+            "content");
+
+        Assert.Equal(authoritativeCommit, content.ResolvedSourceCommit);
+        Assert.Equal(
+            "<pre>authoritative</pre>",
+            content.HistoricalDocuments["a.md"]);
+    }
+
+    [Fact]
+    public async Task LoadAsync_FailsIfCheckoutChangesAfterSnapshotCapture()
+    {
+        using var repository = new TemporaryGitRepository();
+        repository.Write("content/a.md", "<pre>historical</pre>");
+        var historicalCommit = repository.Commit("historical");
+        repository.Write("content/a.md", "```text\nhistorical\n```");
+        repository.Commit("current");
+        var hooks = new RepositoryReadHooks(
+            AfterInitialValidation: () =>
+            {
+                repository.Write("content/a.md", "concurrent edit");
+                return Task.CompletedTask;
+            });
+
+        var exception = await Assert.ThrowsAsync<MigrationInputException>(
+            () => GitRepositoryReader.LoadAsync(
+                repository.Root,
+                historicalCommit,
+                "content",
+                "content",
+                hooks,
+                CancellationToken.None));
+
+        Assert.Contains("changed during", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task LoadAsync_RejectsReparsePointInCurrentPathParent()
+    {
+        using var repository = new TemporaryGitRepository();
+        repository.Write("content/a.md", "current");
+        var commit = repository.Commit("current");
+        var contentPath = Path.Combine(repository.Root, "content");
+        var physicalPath = Path.Combine(
+            Path.GetTempPath(),
+            "ufcpp-code-annotation-linked-directory",
+            Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(Path.GetDirectoryName(physicalPath)!);
+        Directory.Move(contentPath, physicalPath);
+        Directory.CreateSymbolicLink(contentPath, physicalPath);
+        try
+        {
+            var exception = await Assert.ThrowsAsync<MigrationInputException>(
+                () => GitRepositoryReader.LoadAsync(
+                    repository.Root,
+                    commit,
+                    "content",
+                    "content"));
+
+            Assert.Contains(
+                "symbolic link or junction",
+                exception.Message,
+                StringComparison.OrdinalIgnoreCase);
+        }
+        finally
+        {
+            Directory.Delete(contentPath);
+            Directory.Move(physicalPath, contentPath);
+        }
+    }
+
+    [Fact]
+    public void CreateGitStartInfo_DisablesReplacementLocksAndLazyFetch()
+    {
+        var startInfo = GitRepositoryReader.CreateGitStartInfo(
+            @"C:\repository",
+            ["cat-file", "-t", "HEAD"]);
+
+        Assert.Equal("1", startInfo.Environment["GIT_NO_REPLACE_OBJECTS"]);
+        Assert.Equal("0", startInfo.Environment["GIT_OPTIONAL_LOCKS"]);
+        Assert.Equal("1", startInfo.Environment["GIT_NO_LAZY_FETCH"]);
+        Assert.Equal("0", startInfo.Environment["GIT_TERMINAL_PROMPT"]);
+        Assert.Contains("core.fsmonitor=false", startInfo.ArgumentList);
+        Assert.Contains("maintenance.auto=false", startInfo.ArgumentList);
+        Assert.Contains("fetch.writeCommitGraph=false", startInfo.ArgumentList);
     }
 }

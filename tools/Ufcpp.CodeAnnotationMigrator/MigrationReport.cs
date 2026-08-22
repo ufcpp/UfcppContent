@@ -7,6 +7,7 @@ namespace Ufcpp.CodeAnnotationMigrator;
 internal sealed record MigrationAnalysisInput(
     string SourceCommit,
     string SourcePath,
+    string TargetCommit,
     string TargetPath,
     IReadOnlyDictionary<string, string> HistoricalDocuments,
     IReadOnlyDictionary<string, string> CurrentDocuments);
@@ -29,13 +30,13 @@ internal sealed record MigrationReport(
 
 internal sealed record ReportSource(string Commit, string Path);
 
-internal sealed record ReportTarget(string Path);
+internal sealed record ReportTarget(string Commit, string Path);
 
 internal sealed record ReportTotals(
     int HistoricalDocuments,
     int CurrentDocuments,
     int HistoricalPreBlocks,
-    int MalformedHistoricalBlocks,
+    int MalformedHistoricalCases,
     int CurrentFencedBlocks,
     int CurrentRawPreBlocks,
     int CurrentRawTableBlocks);
@@ -96,6 +97,7 @@ internal static class MigrationAnalyzer
         var fencedCoverage = new CoverageAccumulator();
         var tableCoverage = new CoverageAccumulator();
         var historicalBlockCount = 0;
+        var malformedHistoricalCaseCount = 0;
 
         foreach (var (path, document) in input.HistoricalDocuments
                      .OrderBy(static item => item.Key, StringComparer.Ordinal))
@@ -107,6 +109,7 @@ internal static class MigrationAnalyzer
             }
             catch (InvalidDataException exception)
             {
+                malformedHistoricalCaseCount++;
                 diagnostics.Add(Diagnostic(
                     "MALFORMED_HISTORICAL_MARKUP",
                     "error",
@@ -117,13 +120,18 @@ internal static class MigrationAnalyzer
 
             var historicalBlocks = parsing.Blocks;
             historicalBlockCount += parsing.PreBlockCount;
+            malformedHistoricalCaseCount += parsing.Diagnostics.Count;
             foreach (var parseDiagnostic in parsing.Diagnostics)
             {
-                (parseDiagnostic.IsInsideTable
-                    ? tableCoverage
-                    : fencedCoverage).Add(CoverageDisposition.Unrepresentable);
+                if (parseDiagnostic.CountsAsBlock)
+                {
+                    (parseDiagnostic.IsInsideTable
+                        ? tableCoverage
+                        : fencedCoverage).Add(CoverageDisposition.Unrepresentable);
+                }
+
                 diagnostics.Add(Diagnostic(
-                    "MALFORMED_HISTORICAL_BLOCK",
+                    parseDiagnostic.Code,
                     "error",
                     path,
                     historicalOrdinal: parseDiagnostic.Ordinal,
@@ -299,15 +307,14 @@ internal static class MigrationAnalyzer
             1,
             "dry-run",
             new ReportSource(input.SourceCommit, input.SourcePath),
-            new ReportTarget(input.TargetPath),
+            new ReportTarget(input.TargetCommit, input.TargetPath),
             "html-decode+lf+trim-line-end+trim-blank-frame+common-indent-v1",
             "path+sha256+ordinal+unique-hash+target-kind-v1",
             new ReportTotals(
                 input.HistoricalDocuments.Count,
                 input.CurrentDocuments.Count,
                 historicalBlockCount,
-                diagnostics.Count(static diagnostic =>
-                    diagnostic.Code == "MALFORMED_HISTORICAL_BLOCK"),
+                malformedHistoricalCaseCount,
                 allCurrentBlocks.Count(static block =>
                     block.Kind == CurrentCodeBlockKind.Fenced),
                 allCurrentBlocks.Count(static block =>

@@ -30,6 +30,7 @@ public sealed class MigrationReportTests
             new MigrationAnalysisInput(
                 "0123456789012345678901234567890123456789",
                 "content",
+                "9876543210987654321098765432109876543210",
                 "content",
                 historical,
                 current));
@@ -71,6 +72,7 @@ public sealed class MigrationReportTests
         var input = new MigrationAnalysisInput(
             "0123456789012345678901234567890123456789",
             "content",
+            "9876543210987654321098765432109876543210",
             "content",
             new Dictionary<string, string>
             {
@@ -101,6 +103,7 @@ public sealed class MigrationReportTests
             new MigrationAnalysisInput(
                 "0123456789012345678901234567890123456789",
                 "content",
+                "9876543210987654321098765432109876543210",
                 "content",
                 new Dictionary<string, string>
                 {
@@ -125,6 +128,7 @@ public sealed class MigrationReportTests
             new MigrationAnalysisInput(
                 "0123456789012345678901234567890123456789",
                 "content",
+                "9876543210987654321098765432109876543210",
                 "content",
                 new Dictionary<string, string>
                 {
@@ -141,7 +145,7 @@ public sealed class MigrationReportTests
 
         Assert.Equal(3, outcome.ExitCode);
         Assert.Equal(2, outcome.Report.Totals.HistoricalPreBlocks);
-        Assert.Equal(1, outcome.Report.Totals.MalformedHistoricalBlocks);
+        Assert.Equal(1, outcome.Report.Totals.MalformedHistoricalCases);
         Assert.Equal(
             new CoverageCounts(2, 1, 0, 0, 1),
             outcome.Report.Coverage.FencedBlocks);
@@ -173,6 +177,7 @@ public sealed class MigrationReportTests
             new MigrationAnalysisInput(
                 "0123456789012345678901234567890123456789",
                 "content",
+                "9876543210987654321098765432109876543210",
                 "content",
                 new Dictionary<string, string> { ["kind.md"] = historical },
                 new Dictionary<string, string> { ["kind.md"] = current }));
@@ -184,5 +189,53 @@ public sealed class MigrationReportTests
             ? outcome.Report.Coverage.FencedBlocks
             : outcome.Report.Coverage.RawTableBlocks;
         Assert.Equal(new CoverageCounts(1, 0, 0, 0, 1), coverage);
+    }
+
+    [Fact]
+    public void Analyze_CountsOrphanPreCloseAsMalformedCaseOnly()
+    {
+        var outcome = MigrationAnalyzer.Analyze(
+            new MigrationAnalysisInput(
+                "0123456789012345678901234567890123456789",
+                "content",
+                "9876543210987654321098765432109876543210",
+                "content",
+                new Dictionary<string, string>
+                {
+                    ["orphan.md"] =
+                        "<pre><code>value</code></pre>\n</pre>",
+                },
+                new Dictionary<string, string>
+                {
+                    ["orphan.md"] = "```text\nvalue\n```",
+                }));
+
+        Assert.Equal(3, outcome.ExitCode);
+        Assert.Equal(1, outcome.Report.Totals.HistoricalPreBlocks);
+        Assert.Equal(1, outcome.Report.Totals.MalformedHistoricalCases);
+        Assert.Equal(
+            new CoverageCounts(1, 1, 0, 0, 0),
+            outcome.Report.Coverage.FencedBlocks);
+        var diagnostic = Assert.Single(outcome.Report.Diagnostics);
+        Assert.Equal("ORPHAN_HISTORICAL_PRE_CLOSE", diagnostic.Code);
+        Assert.Null(diagnostic.HistoricalOrdinal);
+        Assert.Equal(2, diagnostic.HistoricalLine);
+    }
+
+    [Fact]
+    public void Analyze_RecordsImmutableTargetCommit()
+    {
+        var outcome = MigrationAnalyzer.Analyze(
+            new MigrationAnalysisInput(
+                "1111111111111111111111111111111111111111",
+                "content",
+                "2222222222222222222222222222222222222222",
+                "content",
+                new Dictionary<string, string>(),
+                new Dictionary<string, string>()));
+
+        Assert.Equal(
+            "2222222222222222222222222222222222222222",
+            outcome.Report.Target.Commit);
     }
 }

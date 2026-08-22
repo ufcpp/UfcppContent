@@ -188,4 +188,24 @@ public sealed class LegacyPreParserTests
         Assert.Equal(AnnotationKind.Error, error.Kind);
         Assert.Equal("value", error.Text);
     }
+
+    [Fact]
+    public void ParseDetailed_ReportsOrphanPreClosingTagWithoutInventingBlock()
+    {
+        const string Document =
+            "<pre><code>first</code></pre>\n"
+            + "</pre>\n"
+            + "<pre><code>second</code></pre>";
+
+        var result = LegacyPreParser.ParseDetailed(Document);
+
+        Assert.Equal(2, result.PreBlockCount);
+        Assert.Equal([1, 2], result.Blocks.Select(block => block.Ordinal));
+        var diagnostic = Assert.Single(result.Diagnostics);
+        Assert.Equal("ORPHAN_HISTORICAL_PRE_CLOSE", diagnostic.Code);
+        Assert.Null(diagnostic.Ordinal);
+        Assert.Equal(2, diagnostic.SourceLine);
+        Assert.False(diagnostic.CountsAsBlock);
+        Assert.Contains("closing", diagnostic.Message, StringComparison.OrdinalIgnoreCase);
+    }
 }

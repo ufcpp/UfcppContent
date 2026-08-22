@@ -8,19 +8,38 @@ internal sealed class MigrationInputException(string message) : Exception(messag
 internal sealed record RepositoryContent(
     string RepositoryRoot,
     string ResolvedSourceCommit,
+    string ResolvedCurrentCommit,
     string SourcePath,
     string CurrentPath,
     IReadOnlyDictionary<string, string> HistoricalDocuments,
     IReadOnlyDictionary<string, string> CurrentDocuments);
 
+internal sealed record RepositoryReadHooks(
+    Func<Task>? AfterInitialValidation = null);
+
 internal static class GitRepositoryReader
 {
-    public static async Task<RepositoryContent> LoadAsync(
+    public static Task<RepositoryContent> LoadAsync(
         string repositoryRoot,
         string sourceCommit,
         string sourcePath,
         string currentPath,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) =>
+        LoadAsync(
+            repositoryRoot,
+            sourceCommit,
+            sourcePath,
+            currentPath,
+            hooks: null,
+            cancellationToken);
+
+    internal static async Task<RepositoryContent> LoadAsync(
+        string repositoryRoot,
+        string sourceCommit,
+        string sourcePath,
+        string currentPath,
+        RepositoryReadHooks? hooks,
+        CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(repositoryRoot)
             || !Directory.Exists(repositoryRoot))
@@ -59,37 +78,164 @@ internal static class GitRepositoryReader
                 $"Repository root must be the worktree root '{resolvedTopLevel}'.");
         }
 
-        var commit = await RunGitAsync(
+        ValidateNoReparsePoints(root, normalizedCurrentPath);
+        var resolvedSourceCommit = await ResolveCommitAsync(
             root,
-            ["rev-parse", "--verify", "--end-of-options", $"{sourceCommit}^{{commit}}"],
+            sourceCommit,
+            "Source",
             cancellationToken);
-        if (commit.ExitCode != 0)
+        var resolvedCurrentCommit = await ResolveCommitAsync(
+            root,
+            "HEAD",
+            "Current HEAD",
+            cancellationToken);
+        await ValidateTreeAsync(
+            root,
+            resolvedSourceCommit,
+            normalizedSourcePath,
+            "Historical source",
+            cancellationToken);
+        await ValidateTreeAsync(
+            root,
+            resolvedCurrentCommit,
+            normalizedCurrentPath,
+            "Current",
+            cancellationToken);
+
+        await ValidateCurrentCheckoutAsync(
+            root,
+            normalizedCurrentPath,
+            resolvedCurrentCommit,
+            changedDuringRead: false,
+            cancellationToken);
+        if (hooks?.AfterInitialValidation is { } afterInitialValidation)
         {
-            throw new MigrationInputException(
-                $"Source commit '{sourceCommit}' is not available in local Git history.");
+            await afterInitialValidation();
         }
 
-        var resolvedCommit = commit.Output.Trim();
-        var sourceType = await RunGitAsync(
+        var historicalDocuments = await ReadDocumentsAtCommitAsync(
             root,
-            ["cat-file", "-t", $"{resolvedCommit}:{normalizedSourcePath}"],
+            resolvedSourceCommit,
+            normalizedSourcePath,
+            "historical",
             cancellationToken);
-        if (sourceType.ExitCode != 0
-            || !sourceType.Output.Trim().Equals("tree", StringComparison.Ordinal))
+        var currentDocuments = await ReadDocumentsAtCommitAsync(
+            root,
+            resolvedCurrentCommit,
+            normalizedCurrentPath,
+            "current",
+            cancellationToken);
+        await ValidateCurrentCheckoutAsync(
+            root,
+            normalizedCurrentPath,
+            resolvedCurrentCommit,
+            changedDuringRead: true,
+            cancellationToken);
+
+        return new RepositoryContent(
+            root,
+            resolvedSourceCommit,
+            resolvedCurrentCommit,
+            normalizedSourcePath,
+            normalizedCurrentPath,
+            historicalDocuments,
+            currentDocuments);
+    }
+
+    internal static ProcessStartInfo CreateGitStartInfo(
+        string root,
+        IReadOnlyList<string> arguments)
+    {
+        var startInfo = new ProcessStartInfo("git")
         {
-            throw new MigrationInputException(
-                $"Historical source path '{normalizedSourcePath}' is not a tree "
-                + $"at commit '{resolvedCommit}'.");
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            StandardOutputEncoding = new UTF8Encoding(false),
+            StandardErrorEncoding = new UTF8Encoding(false),
+            UseShellExecute = false,
+            CreateNoWindow = true,
+        };
+        startInfo.Environment["GIT_NO_REPLACE_OBJECTS"] = "1";
+        startInfo.Environment["GIT_OPTIONAL_LOCKS"] = "0";
+        startInfo.Environment["GIT_NO_LAZY_FETCH"] = "1";
+        startInfo.Environment["GIT_TERMINAL_PROMPT"] = "0";
+        foreach (var configuration in new[]
+                 {
+                     "core.fsmonitor=false",
+                     "maintenance.auto=false",
+                     "fetch.writeCommitGraph=false",
+                 })
+        {
+            startInfo.ArgumentList.Add("-c");
+            startInfo.ArgumentList.Add(configuration);
         }
 
-        var currentDirectory = Path.GetFullPath(
-            Path.Combine(
-                root,
-                normalizedCurrentPath.Replace('/', Path.DirectorySeparatorChar)));
-        if (!Directory.Exists(currentDirectory))
+        startInfo.ArgumentList.Add("-C");
+        startInfo.ArgumentList.Add(root);
+        foreach (var argument in arguments)
+        {
+            startInfo.ArgumentList.Add(argument);
+        }
+
+        return startInfo;
+    }
+
+    private static async Task<string> ResolveCommitAsync(
+        string root,
+        string revision,
+        string description,
+        CancellationToken cancellationToken)
+    {
+        var result = await RunGitAsync(
+            root,
+            ["rev-parse", "--verify", "--end-of-options", $"{revision}^{{commit}}"],
+            cancellationToken);
+        if (result.ExitCode != 0)
         {
             throw new MigrationInputException(
-                $"Current path does not exist: '{normalizedCurrentPath}'.");
+                $"{description} commit '{revision}' is not available in local "
+                + "Git history without replacement objects or lazy fetching.");
+        }
+
+        return result.Output.Trim();
+    }
+
+    private static async Task ValidateTreeAsync(
+        string root,
+        string commit,
+        string path,
+        string description,
+        CancellationToken cancellationToken)
+    {
+        var result = await RunGitAsync(
+            root,
+            ["cat-file", "-t", $"{commit}:{path}"],
+            cancellationToken);
+        if (result.ExitCode != 0
+            || !result.Output.Trim().Equals("tree", StringComparison.Ordinal))
+        {
+            throw new MigrationInputException(
+                $"{description} path '{path}' is not a tree at commit '{commit}', "
+                + "or its objects are unavailable locally.");
+        }
+    }
+
+    private static async Task ValidateCurrentCheckoutAsync(
+        string root,
+        string currentPath,
+        string expectedCommit,
+        bool changedDuringRead,
+        CancellationToken cancellationToken)
+    {
+        var liveCommit = await ResolveCommitAsync(
+            root,
+            "HEAD",
+            "Current HEAD",
+            cancellationToken);
+        if (!liveCommit.Equals(expectedCommit, StringComparison.Ordinal))
+        {
+            throw new MigrationInputException(
+                "Current HEAD changed during immutable snapshot capture.");
         }
 
         var dirty = await RunGitAsync(
@@ -100,13 +246,13 @@ internal static class GitRepositoryReader
                 "-z",
                 "--untracked-files=all",
                 "--",
-                normalizedCurrentPath,
+                currentPath,
             ],
             cancellationToken);
         if (dirty.ExitCode != 0)
         {
             throw new MigrationInputException(
-                $"Unable to inspect current path '{normalizedCurrentPath}': "
+                $"Unable to inspect current path '{currentPath}': "
                 + dirty.Error.Trim());
         }
 
@@ -116,31 +262,16 @@ internal static class GitRepositoryReader
                 .Split('\0', StringSplitOptions.RemoveEmptyEntries)
                 .Select(static entry => entry.Trim())
                 .Order(StringComparer.Ordinal);
+            var prefix = changedDuringRead
+                ? "Current content tree changed during immutable snapshot capture"
+                : "Current content tree is dirty";
             throw new MigrationInputException(
-                $"Current content tree is dirty: {string.Join(", ", entries)}.");
+                $"{prefix}: {string.Join(", ", entries)}.");
         }
 
-        await RejectUnsafeIndexFlagsAsync(
-            root,
-            normalizedCurrentPath,
-            cancellationToken);
-        var historicalDocuments = await ReadHistoricalDocumentsAsync(
-            root,
-            resolvedCommit,
-            normalizedSourcePath,
-            cancellationToken);
-        var currentDocuments = await ReadCurrentDocumentsAsync(
-            root,
-            normalizedCurrentPath,
-            currentDirectory,
-            cancellationToken);
-        return new RepositoryContent(
-            root,
-            resolvedCommit,
-            normalizedSourcePath,
-            normalizedCurrentPath,
-            historicalDocuments,
-            currentDocuments);
+        await RejectUnsafeIndexFlagsAsync(root, currentPath, cancellationToken);
+        await RejectIgnoredMarkdownAsync(root, currentPath, cancellationToken);
+        ValidateNoReparsePoints(root, currentPath);
     }
 
     private static async Task RejectUnsafeIndexFlagsAsync(
@@ -176,132 +307,149 @@ internal static class GitRepositoryReader
         }
     }
 
-    private static async Task<IReadOnlyDictionary<string, string>>
-        ReadHistoricalDocumentsAsync(
-            string root,
-            string commit,
-            string sourcePath,
-            CancellationToken cancellationToken)
+    private static async Task RejectIgnoredMarkdownAsync(
+        string root,
+        string currentPath,
+        CancellationToken cancellationToken)
     {
-        var tree = await RunGitAsync(
+        var ignored = await RunGitAsync(
             root,
-            ["ls-tree", "-r", "-z", "--name-only", commit, "--", sourcePath],
+            [
+                "ls-files",
+                "--others",
+                "--ignored",
+                "--exclude-standard",
+                "-z",
+                "--",
+                currentPath,
+            ],
             cancellationToken);
-        if (tree.ExitCode != 0)
+        if (ignored.ExitCode != 0)
         {
             throw new MigrationInputException(
-                $"Unable to enumerate historical source path '{sourcePath}': "
-                + tree.Error.Trim());
+                $"Unable to inspect ignored current Markdown: "
+                + ignored.Error.Trim());
         }
 
-        var prefix = sourcePath + "/";
-        var repositoryPaths = tree.Output
+        var ignoredMarkdown = ignored.Output
             .Split('\0', StringSplitOptions.RemoveEmptyEntries)
             .Where(static path => path.EndsWith(
                 ".md",
                 StringComparison.OrdinalIgnoreCase))
             .Order(StringComparer.Ordinal)
             .ToArray();
-        var documents = new Dictionary<string, string>(StringComparer.Ordinal);
-        foreach (var repositoryPath in repositoryPaths)
+        if (ignoredMarkdown.Length != 0)
         {
-            if (!repositoryPath.StartsWith(prefix, StringComparison.Ordinal))
+            throw new MigrationInputException(
+                "Current content tree contains ignored Markdown: "
+                + string.Join(", ", ignoredMarkdown)
+                + ".");
+        }
+    }
+
+    private static async Task<IReadOnlyDictionary<string, string>>
+        ReadDocumentsAtCommitAsync(
+            string root,
+            string commit,
+            string treePath,
+            string description,
+            CancellationToken cancellationToken)
+    {
+        var tree = await RunGitAsync(
+            root,
+            ["ls-tree", "-r", "-z", commit, "--", treePath],
+            cancellationToken);
+        if (tree.ExitCode != 0)
+        {
+            throw new MigrationInputException(
+                $"Unable to enumerate {description} path '{treePath}' at "
+                + $"'{commit}' without fetching: {tree.Error.Trim()}");
+        }
+
+        var prefix = treePath + "/";
+        var entries = tree.Output
+            .Split('\0', StringSplitOptions.RemoveEmptyEntries)
+            .Select(ParseTreeEntry)
+            .Where(static entry => entry.Path.EndsWith(
+                ".md",
+                StringComparison.OrdinalIgnoreCase))
+            .OrderBy(static entry => entry.Path, StringComparer.Ordinal)
+            .ToArray();
+        var documents = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var entry in entries)
+        {
+            if (!entry.Path.StartsWith(prefix, StringComparison.Ordinal))
             {
                 throw new MigrationInputException(
-                    $"Historical path '{repositoryPath}' escaped '{sourcePath}'.");
+                    $"{description} path '{entry.Path}' escaped '{treePath}'.");
+            }
+
+            if (entry.Type != "blob" || entry.Mode is not ("100644" or "100755"))
+            {
+                throw new MigrationInputException(
+                    $"{description} Markdown '{entry.Path}' must be a regular "
+                    + $"Git blob, not mode '{entry.Mode}' type '{entry.Type}'.");
             }
 
             var blob = await RunGitAsync(
                 root,
-                ["cat-file", "blob", $"{commit}:{repositoryPath}"],
+                ["cat-file", "blob", entry.ObjectId],
                 cancellationToken);
             if (blob.ExitCode != 0)
             {
                 throw new MigrationInputException(
-                    $"Unable to read historical Markdown '{repositoryPath}': "
-                    + blob.Error.Trim());
+                    $"Unable to read {description} Markdown '{entry.Path}' "
+                    + $"from local object '{entry.ObjectId}': {blob.Error.Trim()}");
             }
 
-            documents.Add(repositoryPath[prefix.Length..], blob.Output);
+            documents.Add(entry.Path[prefix.Length..], blob.Output);
         }
 
         return documents;
     }
 
-    private static async Task<IReadOnlyDictionary<string, string>>
-        ReadCurrentDocumentsAsync(
-            string root,
-            string currentPath,
-            string currentDirectory,
-            CancellationToken cancellationToken)
+    private static GitTreeEntry ParseTreeEntry(string value)
     {
-        var tracked = await RunGitAsync(
-            root,
-            ["ls-files", "-z", "--", currentPath],
-            cancellationToken);
-        if (tracked.ExitCode != 0)
+        var tab = value.IndexOf('\t');
+        if (tab < 0)
         {
             throw new MigrationInputException(
-                $"Unable to enumerate tracked current Markdown: "
-                + tracked.Error.Trim());
+                $"Git returned a malformed tree entry: '{value}'.");
         }
 
-        var prefix = currentPath + "/";
-        var trackedMarkdown = tracked.Output
-            .Split('\0', StringSplitOptions.RemoveEmptyEntries)
-            .Where(static path => path.EndsWith(
-                ".md",
-                StringComparison.OrdinalIgnoreCase))
-            .Select(path => path.StartsWith(prefix, StringComparison.Ordinal)
-                ? path[prefix.Length..]
-                : throw new MigrationInputException(
-                    $"Tracked path '{path}' escaped '{currentPath}'."))
-            .ToHashSet(StringComparer.Ordinal);
-        var files = Directory
-            .EnumerateFiles(currentDirectory, "*", SearchOption.AllDirectories)
-            .Where(static path => Path.GetExtension(path).Equals(
-                ".md",
-                StringComparison.OrdinalIgnoreCase))
-            .Select(path => (
-                Path: path,
-                RelativePath: Path.GetRelativePath(currentDirectory, path)
-                    .Replace('\\', '/')))
-            .OrderBy(static item => item.RelativePath, StringComparer.Ordinal)
-            .ToArray();
-        var localOnly = files
-            .Where(file => !trackedMarkdown.Contains(file.RelativePath))
-            .Select(static file => file.RelativePath)
-            .ToArray();
-        if (localOnly.Length != 0)
+        var metadata = value[..tab].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (metadata.Length != 3)
         {
             throw new MigrationInputException(
-                "Current content tree contains untracked or ignored Markdown: "
-                + string.Join(", ", localOnly)
-                + ".");
+                $"Git returned malformed tree metadata: '{value[..tab]}'.");
         }
 
-        var linked = files
-            .Where(static file =>
-                (File.GetAttributes(file.Path) & FileAttributes.ReparsePoint) != 0)
-            .Select(static file => file.RelativePath)
-            .ToArray();
-        if (linked.Length != 0)
+        return new GitTreeEntry(metadata[0], metadata[1], metadata[2], value[(tab + 1)..]);
+    }
+
+    private static void ValidateNoReparsePoints(string root, string relativePath)
+    {
+        var current = root;
+        foreach (var segment in relativePath.Split('/').Prepend(string.Empty))
         {
-            throw new MigrationInputException(
-                "Current Markdown must be regular files, not symbolic links: "
-                + string.Join(", ", linked)
-                + ".");
-        }
+            if (segment.Length != 0)
+            {
+                current = Path.Combine(current, segment);
+            }
 
-        var documents = new Dictionary<string, string>(StringComparer.Ordinal);
-        foreach (var file in files)
-        {
-            documents.Add(
-                file.RelativePath,
-                await File.ReadAllTextAsync(file.Path, cancellationToken));
-        }
+            if (!Directory.Exists(current))
+            {
+                throw new MigrationInputException(
+                    $"Current path component does not exist: '{current}'.");
+            }
 
-        return documents;
+            if ((File.GetAttributes(current) & FileAttributes.ReparsePoint) != 0)
+            {
+                throw new MigrationInputException(
+                    $"Current path cannot traverse a symbolic link or junction: "
+                    + $"'{current}'.");
+            }
+        }
     }
 
     private static string NormalizeRelativePath(string path, string description)
@@ -329,22 +477,7 @@ internal static class GitRepositoryReader
         IReadOnlyList<string> arguments,
         CancellationToken cancellationToken)
     {
-        var startInfo = new ProcessStartInfo("git")
-        {
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            StandardOutputEncoding = new UTF8Encoding(false),
-            StandardErrorEncoding = new UTF8Encoding(false),
-            UseShellExecute = false,
-            CreateNoWindow = true,
-        };
-        startInfo.ArgumentList.Add("-C");
-        startInfo.ArgumentList.Add(root);
-        foreach (var argument in arguments)
-        {
-            startInfo.ArgumentList.Add(argument);
-        }
-
+        var startInfo = CreateGitStartInfo(root, arguments);
         try
         {
             using var process = Process.Start(startInfo)
@@ -363,6 +496,12 @@ internal static class GitRepositoryReader
                 $"Unable to run Git: {exception.Message}");
         }
     }
+
+    private sealed record GitTreeEntry(
+        string Mode,
+        string Type,
+        string ObjectId,
+        string Path);
 
     private sealed record GitResult(int ExitCode, string Output, string Error);
 }

@@ -119,6 +119,7 @@ internal static class MigratorCli
                 new MigrationAnalysisInput(
                     repository.ResolvedSourceCommit,
                     repository.SourcePath,
+                    repository.ResolvedCurrentCommit,
                     repository.CurrentPath,
                     repository.HistoricalDocuments,
                     repository.CurrentDocuments));

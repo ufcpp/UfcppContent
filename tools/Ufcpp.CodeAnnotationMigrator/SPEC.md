@@ -27,7 +27,7 @@ The command accepts:
 - `--source-path <relative-path>`: the historical Markdown tree within the
   source commit. The default is `content`.
 - `--current-path <relative-path>`: the current Markdown tree within the
-  worktree. The default is `content`.
+  current `HEAD` commit. The default is `content`.
 - `--report <path|->`: deterministic JSON output. `-`, the default, means
   standard output. A file report must be outside the repository worktree.
 - `--dry-run`: optional and accepted for clarity. Dry run is the only mode.
@@ -44,16 +44,23 @@ through.
 Before analysis, the tool:
 
 1. resolves and validates the worktree root with `git rev-parse`;
-2. verifies that the revision names a commit;
+2. resolves both the requested source revision and current `HEAD` to full
+   commit object IDs;
 3. verifies that `<commit>:<source-path>` exists as a tree;
-4. verifies that the current path exists as a directory;
+4. verifies that `<HEAD>:<current-path>` exists as a tree and that every
+   worktree path component from the repository root to `current-path` is a
+   normal directory rather than a symbolic link or junction;
 5. rejects tracked, untracked, or ignored Markdown changes below the current
    content path, rejects `assume-unchanged`/`skip-worktree` index flags, and
-   rejects linked Markdown files; and
-6. reads historical blobs with `git ls-tree` and `git cat-file`.
+   repeats the `HEAD` and cleanliness checks after all objects are read; and
+6. reads historical and current Markdown only from the two resolved commit
+   trees with `git ls-tree` and `git cat-file`.
 
-Git is invoked only with read-only commands. The tool never checks out,
-updates, stages, or writes a repository file.
+Git is invoked only with read-only commands. Every subprocess disables
+replacement objects, optional locks, lazy fetching, terminal prompts, file
+system monitoring, automatic maintenance, and fetch commit-graph writes.
+Required objects must already exist locally. The tool never checks out,
+updates, stages, fetches, or writes a repository file.
 
 ## Document and block enumeration
 
@@ -65,8 +72,9 @@ element is enumerated in source order, including `<pre>` elements nested in
 raw HTML tables. A `<code>` wrapper inside `<pre>` is structural and is not a
 separate block. Inline HTML or Markdown `<code>` outside `<pre>` is excluded.
 
-Current documents are read from the worktree. The following are merged by
-source offset to produce one document-order sequence:
+Current documents are read from the resolved `HEAD` commit, not mutable
+worktree files. The following are merged by source offset to produce one
+document-order sequence:
 
 - closed backtick or tilde fenced code blocks recognized by Markdig; and
 - raw HTML `<pre>` elements, including those inside raw HTML tables.
@@ -98,7 +106,9 @@ For each historical `<pre>`:
 
 Tag and attribute names and class tokens are compared case-insensitively.
 Malformed or unbalanced `<pre>`, `<code>`, `<em>`, `error`, or `warning`
-markup is an explicit diagnostic, never a partially parsed success.
+markup is an explicit diagnostic, never a partially parsed success. An orphan
+`</pre>` outside a parsed block is also an explicit malformed historical case;
+it does not invent a historical block or alter block coverage.
 
 ## Matching normalization
 
@@ -202,7 +212,8 @@ timestamp, absolute path, machine name, elapsed time, or report destination.
 Top-level sections are emitted in this order:
 
 1. `schemaVersion` and `mode`;
-2. resolved `source` and relative `target`;
+2. resolved `source` and `target`, each with a full commit object ID and
+   relative tree path;
 3. the normalization and matching policy identifiers;
 4. document and block totals;
 5. coverage counters;
@@ -216,10 +227,10 @@ historical blocks expected to become `fencedBlocks`, and historical raw
 the unit is a historical block containing that metadata kind. For block kinds,
 the unit is a historical block. Totals additionally distinguish current raw
 `<pre>` blocks outside tables from raw `<pre>` blocks inside tables and record
-the number of malformed historical blocks. A malformed block contributes to
-the appropriate block-kind `unrepresentable` count; metadata that cannot be
-parsed safely from that block is not guessed into a metadata counter and is
-instead identified by its per-block diagnostic.
+the number of malformed historical cases. A malformed block contributes to the
+appropriate block-kind `unrepresentable` count; an orphan closing tag does not
+represent a block. Metadata that cannot be parsed safely is not guessed into a
+metadata counter and is instead identified by its diagnostic.
 
 Plans are ordered by path, historical block ordinal, and metadata kind.
 Diagnostics are ordered by path, historical block ordinal, current block
@@ -248,9 +259,10 @@ code 3.
 
 ## Safety and PR 1 acceptance
 
-The tool opens current Markdown only for reading. It exposes no content writer
-and no apply command. Report file output uses only the explicit destination
-after validating that it is outside the repository worktree.
+The tool does not open current Markdown from the worktree; it reads the captured
+`HEAD` tree by object ID and reports that target commit. It exposes no content
+writer and no apply command. Report file output uses only the explicit
+destination after validating that it is outside the repository worktree.
 
 PR 1 acceptance requires:
 

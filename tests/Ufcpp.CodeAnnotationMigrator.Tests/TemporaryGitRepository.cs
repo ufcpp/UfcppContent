@@ -38,6 +38,9 @@ internal sealed class TemporaryGitRepository : IDisposable
     public void AssumeUnchanged(string relativePath) =>
         Run("update-index", "--assume-unchanged", "--", relativePath);
 
+    public void ReplaceObject(string objectToReplace, string replacementObject) =>
+        Run("replace", objectToReplace, replacementObject);
+
     public void Dispose()
     {
         if (Directory.Exists(Root))
