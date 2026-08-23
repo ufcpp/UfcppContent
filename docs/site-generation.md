@@ -54,7 +54,10 @@ metadata, and a single article column that uses the full available reading width
 every viewport size. Non-home pages receive breadcrumbs derived from their
 `parent_id` hierarchy. Study articles also reproduce the original publication/update
 line, nested table of contents, and keyword links on the page background above the
-framed white body, without restoring a separate sidebar.
+framed white body, without restoring a separate sidebar. Previous and next links appear
+after navigable chapter content (`Article` and `ExerciseList`) in subject tree order
+(`sort_order` at each level). Crossing a chapter boundary prefixes the target title with
+`【章名】`; the first and last page in each subject show only the available direction.
 
 ## Canonical URLs and legacy redirects
 
@@ -168,7 +171,7 @@ tools/Ufcpp.SiteGenerator/
 ├── Models/
 │   ├── FrontMatter.cs           Typed front-matter model (YamlDotNet)
 │   ├── ContentPage.cs           Fully-loaded page model
-│   ├── NavigationItem.cs        Breadcrumb and keyword link
+│   ├── NavigationItem.cs        Breadcrumb, keyword, and previous/next link
 │   ├── TableOfContentsItem.cs   Nested article heading link
 │   └── RenderedContent.cs       HTML plus extracted article navigation
 ├── Rendering/
