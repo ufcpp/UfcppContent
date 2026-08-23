@@ -74,7 +74,7 @@ class Init
 
 [匿名関数](../../../../study/csharp/functional/fun_localfunctions.md#anonymous-function) ([ラムダ式](../../../../study/csharp/functional/sp_delegate.md#lambda)と[匿名メソッド式](../../../../study/csharp/functional/sp_delegate.md#anonymous-method))に対して `static` 修飾を付けて、[キャプチャ](../../../../study/csharp/functional/sp2_anonymousmethod.md#closure)の抑止ができるようになりました。
 
-```csharp {title="静的匿名関数"}
+```csharp {title="静的匿名関数" error-ranges="sha256:5c3e186826a4ab3ea0e5ed5ab1e8588c7ed69cdf2d43d7b369b4f87348d37fcf;9:57-9:62,10:74-10:79"}
 using System;
 
 // OK

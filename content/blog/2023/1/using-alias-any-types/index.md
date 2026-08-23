@@ -35,7 +35,7 @@ using ListT = System.Collections.Generic.List<(int, int)>;
 
 そのくせ以下のコードはコンパイルできません。
 
-```csharp {title="現状ではコンパイルできない using alias"}
+```csharp {title="現状ではコンパイルできない using alias" error-ranges="sha256:2d05a6e619f5f95d9b37961dd3ceae9b0014ed717b9819274dedab017bf681e1;1:20-1:23,2:15-2:18,2:19-2:20,3:18-3:22,4:15-4:19,4:21-4:24"}
 using Primitive =  int;
 using Array = int[];
 using Nullable = int?;
@@ -77,7 +77,7 @@ using_alias_directive
 まあ、今でも、`typeof(string)` は書けても `typeof(string?)` とは書けないので、
 それと同じです。
 
-```csharp {title="トップレベルの NRT"}
+```csharp {title="トップレベルの NRT" error-ranges="sha256:59ad0d397a5a4d879d0b212bd5b835b856e2198f0de02f43467404bbfda8a777;2:11-2:18"}
 using List = System.Collections.Generic.List<string?>; // これは OK。
 using S = string?; // これはダメ。
 ```

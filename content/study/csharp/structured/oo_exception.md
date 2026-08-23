@@ -299,7 +299,7 @@ static void Main()
 
 ちなみに、同じ型の`catch`を複数並べるとエラーになります。
 
-```csharp {title="同じ型のcatchを並べるとエラー"}
+```csharp {title="同じ型のcatchを並べるとエラー" error-ranges="sha256:ae20f5621a04db93b99b2514585b2b767326c8fbda70c5a7cf5566abbb599163;7:7-7:22"}
 try
 {
 }

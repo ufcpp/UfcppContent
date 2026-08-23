@@ -31,7 +31,7 @@ C# 13でのコレクション式関連、量が多いのでちょっとずつ取
 
 C# 12 でコレクション式が入りましたが、`Dictionary<TKey, TValue>` などのディクショナリ系の型に対しては使えませんでした。
 
-```csharp {title="ディクショナリに対するコレクション式"}
+```csharp {title="ディクショナリに対するコレクション式" error-ranges="sha256:4361d61b8d6a595a81700cff72dd087101e0a0285fd3305aa51f67a7e073fabf;8:30-8:58,9:30-9:39,12:31-12:32,12:37-12:39,13:31-13:35"}
 // C# 12 でも空っぽのディクショナリは作れるのに…
 Dictionary<string, int> d = [];
 
@@ -164,7 +164,7 @@ List<KeyValuePair<string, int>> d = [
 
 あとは、`KeyValuePair` を特別扱いするとしても、暗黙の型変換を認めるかどうか。
 
-```csharp
+```csharp {warning-ranges="sha256:023bfbdc791670ba68841e7509f540e10080902b8d7990b7a3a1592e55b772d9;1:21-1:22,1:26-1:27"}
 struct Pair<X, Y>(X x, Y y)
 {
     public static implicit operator KeyValuePair<X, Y>(Pair<X, Y> pair) => ...;

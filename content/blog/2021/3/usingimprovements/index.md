@@ -52,7 +52,7 @@ using Ng2 = int?;
 以下のようなやつもコンパイル エラー。
 配列の `[]`、nullable の `?`、ポインターの `*`は現状書けません。
 
-```csharp {title="? [] * も付けれない"}
+```csharp {title="? [] * も付けれない" error-ranges="sha256:4605810876c5291ac77400e42e53e32e91a023d92a833a4ee62e2b210c41e3fe;1:25-1:26,2:25-2:27,3:25-3:26"}
 using Ng3 = System.Int32?;
 using Ng4 = System.Int32[];
 using Ng5 = System.Int32*;
@@ -61,7 +61,7 @@ using Ng5 = System.Int32*;
 あと、頻出で出ている要望がタプルで、
 以下のようなやつも「書きたいのに書けない」筆頭です。
 
-```csharp {title="タプルのエイリアスを作りたいという要望は頻出"}
+```csharp {title="タプルのエイリアスを作りたいという要望は頻出" error-ranges="sha256:468a73be806852ebeff6d1e5a9506135f8897071aab1a428b7e88f1b27286fa3;1:14-1:26,1:28-1:41,2:14-2:17,2:19-2:25,3:13-3:34"}
 using Ng6 = (System.Int32, System.String); // これがダメな時点でお察しだけど…
 using Ng7 = (int, string); // ほんとに書きたいのはこうだし、
 using Ng8 = (int id, string name); // 名前付きタプルも書きたい。
@@ -81,7 +81,7 @@ enum B : int { }
 タプルのエイリアスを付けれるようにしようとなると、まあ、「ジェネリックなエイリアス」も作りたくなります。
 これもこの際、C# 10.0 で一緒にやるそうです。
 
-```csharp {title="ジェネリックなエイリアス"}
+```csharp {title="ジェネリックなエイリアス" error-ranges="sha256:5ed5fe7ce293ad58b40c1402664ded06d424e9273540c6cf6f2f1f0c3f76a2f5;1:7-1:14,2:7-2:14,3:7-3:14"}
 using Fix2<T> = (T, T);
 using Fix3<T> = (T, T, T);
 using Fix4<T> = (T, T, T, T);
@@ -110,7 +110,7 @@ using MyDictionary<T1, T2> = System.Collections.Generic.Dictionary<T1, T2>;
 
 ちなみに、以下のようなオープン ジェネリック(引数なしの状態)は C# 10.0 でも書けません。
 
-```csharp {title="これは C# 10.0 でもダメ"}
+```csharp {title="これは C# 10.0 でもダメ" error-text="List&lt;&gt;"}
 // これは引き続き今後もダメ。
 // 空っぽの <> が許されるのは typeof(T<>) だけ
 using OpenGeneric = System.Collections.Generic.List<>;
@@ -121,7 +121,7 @@ using OpenGeneric = System.Collections.Generic.List<>;
 エイリアスを「実際にある型」に近い扱いにしようという感じ。
 (現状あんまり乗り気ではなさげ。)
 
-```csharp {title="選択肢1: エイリアス自体に where 制約"}
+```csharp {title="選択肢1: エイリアス自体に where 制約" error-ranges="sha256:888eed2b8fae24675d1a407b918d138948e171bbb07b3a89e4c87efc1066a695;1:30-1:31"}
 using Optional<T> = Nullable<T>; // 「T に制約が付いてないのでダメ」扱いする
 using Optional<T> = Nullable<T> where T : struct // と言うことはここに型制約(where)を書けるようにする必要あり
 ```
@@ -129,7 +129,7 @@ using Optional<T> = Nullable<T> where T : struct // と言うことはここに�
 もう1つの選択肢は、「エイリアスの時点では素通し」で、現状、こっちが有力みたいです。
 「エイリアスはあくまでエイリアス」で、C 言語のマクロっぽい挙動というか。
 
-```csharp {title="エイリアスの時点では素通し"}
+```csharp {title="エイリアスの時点では素通し" error-ranges="sha256:cc77f8a3becce8dc6a711eb935676ff81b2e5f580ee35293edc989243cfb654e;4:17-4:23"}
 using Optional<T> = Nullable<T>; // この時点では T のチェックしない。
  
 // Nullable<string> とは書けないので、そのエイリアスの Optional<string> もダメ。

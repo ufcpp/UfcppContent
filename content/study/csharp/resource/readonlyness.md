@@ -29,7 +29,7 @@ aliases: []
 例えば以下のコードを見てください。`Program`クラスのフィールド`c`には`readonly`が付いていますが、
 `c`が普通に書き換え可能なクラスのフィールドなので、クラスの中身は自由に書き換えられます。
 
-```csharp {title="参照型のフィールドに対してreadonlyを付ける例"}
+```csharp {title="参照型のフィールドに対してreadonlyを付ける例" error-ranges="sha256:365b6fc5f7814a69e4593752c30877d96e16fc8a605194e623b81f2d2a993d39;21:9-21:10"}
 // 書き換え可能なクラス
 class MutableClass
 {
@@ -74,7 +74,7 @@ class Program
 
 例えば以下のように、`readonly`が付いたフィールド`c`自体に加えて、`c`のフィールドも書き換えできません。
 
-```csharp {title="値型のフィールドに対してreadonlyを付ける例"}
+```csharp {title="値型のフィールドに対してreadonlyを付ける例" error-ranges="sha256:fcb5ba5d2d85822b11a9d036f8068a75f2868bb8ccd93d88580610c3ebeb9da3;22:9-22:10,25:9-25:12"}
 using System;
 
 // 書き換え可能な構造体

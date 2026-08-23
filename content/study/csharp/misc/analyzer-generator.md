@@ -179,7 +179,7 @@ C# では、書いたところからリアルタイムにコンパイルが掛�
 
 例えば以下のようなコードを書いたとします。
 
-```csharp {title="警告が出るソースコードの例"}
+```csharp {title="警告が出るソースコードの例" warning-ranges="sha256:5c9c373ee3ef77e4acd63742a3bdfe5b87bb401d49b9ffa1f118ce4fb16940b9;3:5-3:6"}
 using System;
 var x = 1;
 var y = 2;
@@ -230,7 +230,7 @@ C#/.NET チームによる公式提供のものは .NET SDK や Visual Studio �
 通常は「コピーされてまずいなら構造体を使うな」という方針にすることが多いです。
 ただ、パフォーマンス的にどうしても構造体にした上でコピーを禁止したいという場面がまれにあって、そういう場合に使います。
 
-```csharp {title="構造体のコピーを禁止"}
+```csharp {title="構造体のコピーを禁止" error-ranges="sha256:cab1132d6dc30c4b24905706790628e66ad11840cd4e1f106ff0edcf6f5f08bb;3:8-3:10"}
 // NonCopyableAnalyzer の機能:
 S s1 = new();
 S s2 = s1; // 構造体の代入(コピー)を禁止する

@@ -437,7 +437,7 @@ class X<TItem, TList>
 ちなみに、互いに矛盾したり、意味が重複していて無駄な制約は同時には指定できません。
 具体的には、`class`、`struct`、基底型は同時には指定できません。
 
-```csharp {title="排他な制約"}
+```csharp {title="排他な制約" error-ranges="sha256:015f823547ad220a3fa65e48d05ce17e0e3b7d97c83b05110f80c216098f8c77;2:23-2:28,8:21-8:26"}
 class X<T>
     where T : struct, class // 「クラス、かつ、構造体」なんてことはあり得ない。エラーに
 {
@@ -452,7 +452,7 @@ class X<T>
 
 また、`class`、`struct`、基底型の3つは、インターフェイス、`new()`の2つよりも前に書く必要があります。
 
-```csharp {title="制約の順序"}
+```csharp {title="制約の順序" error-ranges="sha256:7e92256bb69de5f818497ebcd9772223febb0df3a34a4153b67baa70432ebb0e;9:28-9:34"}
 using System;
 
 class Ok<T>
@@ -535,7 +535,7 @@ C# 8.0 で `notnull` 制約が増えました。
 `class` 制約や、基底クラス制約は「非 null」の意味になり、
 null 許容参照型を受け付けたい場合は制約に `?` を付けることになります。
 
-```csharp {title="null 許容参照型がらみの制約"}
+```csharp {title="null 許容参照型がらみの制約" error-ranges="sha256:9e420e7cfdeb6514b583d44aa8cea2e661eb8c88a23c2eade044ef53ac75f669;31:9-31:19,32:9-32:22" warning-ranges="sha256:9e420e7cfdeb6514b583d44aa8cea2e661eb8c88a23c2eade044ef53ac75f669;25:9-25:23,26:9-26:37,27:9-27:22,28:9-28:25"}
 #nullable enable
 using System;
  
@@ -628,8 +628,8 @@ C# 13 で [`allows ref struct`](../resource/refstruct.md#ref-struct-interface) �
 
 <pre class="source" title="制約あり"><code class="language-csharp">M&lt;int&gt;();
 M&lt;object&gt;();
-M&lt;string&gt;(); // 書けなくなる。
-M&lt;Uri&gt;();    // 書けなくなる。
+<span class="error">M&lt;string&gt;</span>(); // 書けなくなる。
+<span class="error">M&lt;Uri&gt;</span>();    // 書けなくなる。
 
 static object M&lt;T&gt;()
     where T : new()
@@ -650,7 +650,7 @@ static object M&lt;T&gt;()
     // 制約なしの場合
 {
     // こっちが書けない。
-    return new T();
+    return <span class="error">new T()</span>;
 }</code></pre>
 
 </td>
@@ -680,7 +680,7 @@ static object? M&lt;T&gt;()
     where T : allows ref struct
 {
     // ref struct を object に渡せない。
-    return default(T);
+    return <span class="error">default(T)</span>;
 }</code></pre>
 
 </td>
@@ -688,8 +688,8 @@ static object? M&lt;T&gt;()
 
 <pre class="source" title="アンチ制約なし"><code class="language-csharp">M&lt;int&gt;();
 M&lt;object&gt;();
-M&lt;Span&lt;string&gt;&gt;();      // 書けない。
-M&lt;ReadOnlySpan&lt;int&gt;&gt;(); // 書けない。
+<span class="error">M&lt;Span&lt;string&gt;&gt;</span>();      // 書けない。
+<span class="error">M&lt;ReadOnlySpan&lt;int&gt;&gt;</span>(); // 書けない。
 
 static object? M&lt;T&gt;()
     // アンチ制約なしの場合
@@ -715,7 +715,7 @@ C# 13 時点でアンチ制約(= `allows` を使うもの)は `ref struct` だ�
 
 これまで、`where T : struct` 制約を指定すると null 許容値型を `T` に渡せなくなるという制約がありました。
 
-```csharp {title="where T : struct では null 許容値型を使えなくなる"}
+```csharp {title="where T : struct では null 許容値型を使えなくなる" error-text="M&lt;int?&gt;" warning-text="x"}
 // struct 制約が付いていると null 許容型を指定できなくなる。
 M<int?>();
 
@@ -730,7 +730,7 @@ static void M<T>()
 
 そこで、`allows nullable` (仮)アンチ制約を導入してはどうかという案が出ています。
 
-```csharp {title="null 許容値型アンチ制約を追加する案"}
+```csharp {title="null 許容値型アンチ制約を追加する案" error-text="T?" warning-text="x"}
 // これができるようになってほしい。
 M<int?>();
 

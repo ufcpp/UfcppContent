@@ -151,7 +151,7 @@ class Foo { public int field; }
 C# の構造体には「すべてのフィールドを初期化しきるまで関数メンバー(メソッドやプロパティ)を呼べない」という仕様がありました。
 (ただし、[C# 11 で緩和されました](../../../../study/csharp/cheatsheet/ap_ver11.md#auto-default)。)
 
-```csharp {title="すべてのフィールドの初期化が必須"}
+```csharp {title="すべてのフィールドの初期化が必須" error-ranges="sha256:185cf3d64025c010a1eb00607103430c954fbb9b26c17ac488918947e1c98118;10:9-10:10"}
 struct S
 {
     int _x;

@@ -54,7 +54,7 @@ C# 7.2 の頃に [`Span<T>` 構造体](../../../../study/csharp/resource/span.md
 わかりやすい原因は、参照型に対して `stackalloc` を使えない点。
 以下のようなコードはコンパイル エラーになります。
 
-```csharp {title="参照型の stackalloc は禁止"}
+```csharp {title="参照型の stackalloc は禁止" error-ranges="sha256:73e70c9debad69558086701d2a15d17948024d267ad6df38b51cdec5a474a569;1:6-1:12"}
 Span<string> span = stackalloc string[4];
 ```
 

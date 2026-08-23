@@ -1047,7 +1047,7 @@ Console.WriteLine(a3 is [.., 1, 2]); // true
 
 ちなみに、2か所以上に `..` を置いてしまうとコンパイル エラーになります。
 
-```csharp {title="2か所以上に .. を置くとコンパイル エラー"}
+```csharp {title="2か所以上に .. を置くとコンパイル エラー" error-ranges="sha256:15adf19c8f4037c28722a3810172477c42a6caf7897e81b0d3ff1ad23ccb3da3;3:33-3:35"}
 var array = new[] { 1, 2 };
 
 Console.WriteLine(array is [.., ..]);
@@ -1510,7 +1510,7 @@ int M(byte x) => x switch
 `byte` も高々256個の値しか持ちません。
 [型スイッチのページにも書いていますが](typeswitch.md#exhaustive)、パターン マッチングではこれらの値をすべて網羅しているかどうか(exhaustiveness: 網羅性)の検査をしてくれます。
 
-```csharp {title="bool, bool? の網羅性検査"}
+```csharp {title="bool, bool? の網羅性検査" warning-ranges="sha256:ea62bbfe01227de78dc6f15e5c6e5dd351cda481cd2fc802e47d9ace61faa946;9:21-9:27"}
 // 無警告
 int A(bool x) => x switch
 {
@@ -1581,7 +1581,7 @@ int M(int? x, int? y) => (x, y) switch
 
 一番わかりやすいのは[破棄パターン](#discard)で、これは「何にでも一致するパターン」なので、その下に何かを書くとエラーになります。
 
-```csharp {title="破棄パターンの下に別条件を書いても絶対に到達できない"}
+```csharp {title="破棄パターンの下に別条件を書いても絶対に到達できない" error-text="string _"}
 int M(object obj) => obj switch
 {
     _ => 0,
@@ -1591,7 +1591,7 @@ int M(object obj) => obj switch
 
 当然ですが、全く同じ条件が2つ以上ある場合にも、1つ目以外には絶対に到達しないのでエラーになります。
 
-```csharp {title="同じ条件が並ぶとエラー"}
+```csharp {title="同じ条件が並ぶとエラー" error-text="string _"}
 int M(object obj) => obj switch
 {
     string s => s.Length,
@@ -1602,7 +1602,7 @@ int M(object obj) => obj switch
 ちなみに、[`when`句](typeswitch.md#switch)だと重複チェックが漏れることがあります。
 一方、同じような条件でも、[再帰パターン](#recursive)を使うとチェックが働きやすいです。
 
-```csharp {title="再帰パターンの方が重複チェックが正確"}
+```csharp {title="再帰パターンの方が重複チェックが正確" error-ranges="sha256:2157360ac959168c5637c06c248a8ab16933eb82bff87d82f2bc5798ef6e2256;13:5-13:25"}
 int M1(object obj) => obj switch
 {
     // when 句を使うと「同じ条件」判定ができなくなる。コンパイルできてしまう。
@@ -1624,7 +1624,7 @@ int M2(object obj) => obj switch
 全ての値を網羅済みのところの後ろに条件を足しても、その行には絶対に来ないのでエラーにできます。
 例えば以下のコードはコンパイル エラーになります。
 
-```csharp {title="網羅済みのところの後ろに追加の条件を足すとエラー"}
+```csharp {title="網羅済みのところの後ろに追加の条件を足すとエラー" error-text="_"}
 int M(bool a, bool b) => (a, b) switch
 {
     (false, false) => 0,

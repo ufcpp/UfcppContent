@@ -79,7 +79,7 @@ class こういうコードで困る
 [C# 3.0 の頃からある `var`](../../../../study/csharp/cheatsheet/ap_ver3.md#functional)ですが、
 有名な話、「`class var { }` とかいう型をどこかに書いておけば、型推論の `var` を阻害できる」という問題があります。
 
-```csharp {title="var"}
+```csharp {title="var" warning-ranges="sha256:3d6a406c70e488b1f03358917cd346113c0aff0b3ecd861b44b9121cc6c6e54f;5:7-5:10"}
 // 普通は型推論の var になるはず。
 var x = 1;
 
@@ -110,7 +110,7 @@ class var
 [C# 7 で discard が導入された](../../../../study/csharp/cheatsheet/ap_ver7.md#discard)わけですが、
 これも「`_` を普通に変数として使っていないときに限り、`_` が discard の意味になる」という挙動になっています。
 
-```csharp {title="_ (discard)"}
+```csharp {title="_ (discard)" error-ranges="sha256:cee1eea9110f3ea01f6ec69a9e25c65c1d695280b039dd47ff7fb60069b61869;19:9-19:10"}
 void m1(int i, string s)
 {
     // これはいずれも discard。

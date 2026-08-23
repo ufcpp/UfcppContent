@@ -89,7 +89,7 @@ ref 構造体にインターフェイスを実装できるようになりまし�
 また、このインターフェイスのメンバーを呼び出すために、
 ジェネリック型引数に ref 構造体を渡せるようにする仕組みとして `allows ref struct` アンチ制約が追加されました。
 
-```csharp {title="allows ref struct なジェネリック メソッドを介して、ref 構造体のインターフェイス実装を呼ぶ"}
+```csharp {title="allows ref struct なジェネリック メソッドを介して、ref 構造体のインターフェイス実装を呼ぶ" error-ranges="sha256:932ebd5b6b45447eda33f7a31881441fdc008eaf413dd8799ace8e1f16fcdef4;4:18-4:19"}
 S x = new(); // S は IFormattable を実装してる。
 
 // これはボックス化を起こすから C# 13 でもエラーになる。
@@ -226,7 +226,7 @@ C# 13 で書けるようになったのは、前述の[`Lock` クラスに対す
 ただし、これは `yield` や `await` をまたがない場合に限って許されます。
 例えば以下のコードは C# 13 でもコンパイル エラーを起こします。
 
-```csharp {title="C# 13 でもエラーになる書き方の例"}
+```csharp {title="C# 13 でもエラーになる書き方の例" error-ranges="sha256:f8bfc97b848e800f373c34f984971509520da6b388ff508f5fd58ccb89873c2c;6:5-6:6,14:5-14:6"}
 IEnumerable<object?> Enumerate()
 {
     int x = 123;

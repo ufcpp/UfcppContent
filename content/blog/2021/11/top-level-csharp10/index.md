@@ -114,7 +114,7 @@ internal class Program
 トップ レベル ステートメントだけを使っている分には特に影響のない修正のはずなんですが…
 例えば以下のようなコードがコンパイル エラーを起こすようになります。
 
-```csharp {title="C# 10.0 ではエラーになるコード"}
+```csharp {title="C# 10.0 ではエラーになるコード" error-text="Program"}
 Console.WriteLine("Hello World!");
 
 internal class Program

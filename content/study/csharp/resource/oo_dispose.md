@@ -490,7 +490,7 @@ ref 構造体を使いたいような場面では `Dispose` したいリソー�
 その結果、C# 8.0 では、ref 構造体に対してだけパターン ベースでの `using` ステートメントを認めることにしました。
 以下のようになります。
 
-```csharp {title="ref 構造体に対するパターン ベース using"}
+```csharp {title="ref 構造体に対するパターン ベース using" error-text="new NonDisposable()"}
 using System;
  
 // これまで通り、using で使える型。

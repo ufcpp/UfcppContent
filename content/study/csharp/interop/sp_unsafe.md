@@ -1010,7 +1010,7 @@ static void SafeStackalloc<T>()
 
 これらは、ちゃんと呼び出し側で制約のチェックが行われます。
 
-```csharp {title="unmanaged 制約"}
+```csharp {title="unmanaged 制約" error-ranges="sha256:2ad2f187a591c8da2128fd0db3ff290c88351259695e6bdf27668664df3dc128;19:9-19:31,22:9-22:47,23:9-23:34"}
 using System;
 using System.Collections.Generic;
 
@@ -1089,7 +1089,7 @@ class Program
 何段入れ子になっていても大丈夫です。
 ちゃんと、すべてがアンマネージかどうかを調べてくれます。
 
-```csharp {highlight-text="string"}
+```csharp {highlight-text="string" error-text="&amp;y"}
 // 何段入れ子になっていても大丈夫
 var x = new KeyValuePair<(float, bool), Wrap<int>>((1, true), new Wrap<int>());
 var px = &x;
@@ -1105,7 +1105,7 @@ var py = &y;
 
 C# では通常、[未初期化](../resource/rm_default.md#uninitialized)のままの変数を読むことはできません。
 
-```csharp {title="未初期化エラー"}
+```csharp {title="未初期化エラー" error-ranges="sha256:f3816a45f02c0b2d2a2593aa33cb08b469a655b417ff59172497302bc89a5451;8:19-8:20"}
 using System;
  
 // ローカル変数には初期化が必須。
@@ -1229,7 +1229,7 @@ C# 11 から、マネージ型のポインターを使えるようになりま�
 `T*` や `R*` みたいなポインター型を書いたり、
 それらの変数 `x` に対して `&x` でアドレス取得できるようになりました。
 
-```csharp {title="マネージ型のポインター型/アドレス取得"}
+```csharp {title="マネージ型のポインター型/アドレス取得" warning-ranges="sha256:c4f90d1bdbbd94b6a92f6c28ec8d0f9e41c46bddf1b31451691e5cef3cfb2496;8:5-8:12,8:18-8:20,9:5-9:16,9:22-9:24"}
 unsafe
 {
     string s = "";

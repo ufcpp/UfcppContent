@@ -726,7 +726,7 @@ static void M(object obj)
 そうなると問題は、式中で宣言した変数のスコープがどうなるかです。
 これには、仕様を決める段階で紆余曲折あったんですが、「式を囲うブロック、埋め込みステートメント、while、for、foreach、using、 case内」ということになりました。
 
-```csharp
+```csharp {error-ranges="sha256:90e6e6d60804ad65cc83823bf5322f7a375aac98764bce2004558f194f5181a6;25:1-25:2"}
 if (true)
 {
     Console.WriteLine(obj is int x ? 1 : 2); // もちろん、ブロック内がスコープ
@@ -807,7 +807,7 @@ void M(string s)
 後者であっても、この中で宣言した変数のスコープはラムダ式内に限られます。
 (要するに、`() => x` みたいなのの`x`の部分は、前述の「埋め込みステートメント」と同じ扱いになっています。)
 
-```csharp {title="ラムダ式中の変数宣言"}
+```csharp {title="ラムダ式中の変数宣言" error-ranges="sha256:3fad362d301dbd498f7d8ec0a24573a3cc809d8ebd010e60ef3d7708506b69a3;3:19-3:20"}
 Func<string, int> f = s => int.TryParse(s, out var x) ? x : -1;
 f("123");
 Console.WriteLine(x); // ここで x は使えない

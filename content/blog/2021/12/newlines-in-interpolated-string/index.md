@@ -21,7 +21,7 @@ C# 11 で、`$"{ここ}"` みたいな「補完穴」(interpolation hole: 補完
 
 C# の[文字列リテラル](../../../../study/csharp/start/st_embeddedtype.md#charl)は、`@` を付けると逐語的(`\` を使ったエスケープをしなくなる)になって、その中には改行を直接入れることができます。
 
-```csharp {title="@ を付けると文字列内での改行 OK になる"}
+```csharp {title="@ を付けると文字列内での改行 OK になる" error-ranges="sha256:186d3369fbec66bf908944d6753172c480ef4ec49908a8229d09f78974a7bfae;7:1-7:2"}
 // @ を付けると文字列内での改行 OK になる。
 
 var s1 = ""; // 改行入れれない。
@@ -33,7 +33,7 @@ var s3 = "
 
 この仕様、[補間文字列](../../../../study/csharp/start/st_string.md#key-interpolated-string)に対しても同様です。
 
-```csharp
+```csharp {error-ranges="sha256:af5c58cb57e1a78c32805261d47fae88ef404b9b3bd18ff41e2f09196b278c3e;10:1-10:2"}
 // @ を付けると文字列内での改行 OK になるのは $"" でも一緒。
 
 var x = 123;
@@ -69,7 +69,7 @@ var
 以下のようなコードを書けていいはずです。
 (C# 10 まではなぜかダメ。)
 
-```csharp {title="{} 中の改行"}
+```csharp {title="{} 中の改行" error-ranges="sha256:aa47b506529b427f160f513c3d06f9f06685ad5524ba5224942546173ee5ccff;7:6-7:7"}
 // なぜかダメだったコード。
 
 var x = 123;

@@ -403,7 +403,7 @@ using (var f = File.OpenRead("test.data"))
 ただし、`Span<T>`相手であっても、`stackalloc`が使える型は[アンマネージ型](../interop/sp_unsafe.md#unmanaged-types)に限られます。
 クラスなどに対しては使えません。
 
-```csharp
+```csharp {error-ranges="sha256:b58afceabe488d3b399211df95a2eee2cc7ce90d25230ed4a5a6ec3aec5930ba;6:29-6:35"}
 // これはOK。
 Span<int> i = stackalloc int[4];
 
@@ -469,7 +469,7 @@ static unsafe void Unsafe()
 C# 8.0 で、式中の任意の場所に `stackalloc` を書けるようになりました。
 例えば以下のような書き方ができます。
 
-```csharp {title="式中の任意の場所に stackalloc"}
+```csharp {title="式中の任意の場所に stackalloc" error-ranges="sha256:1ce085f3155e250956bd14b825d3a866c4045f9d0f6be7a5671bac81a00a594d;36:13-36:23"}
 using System;
 using System.Threading.Tasks;
  
@@ -687,7 +687,7 @@ class Overloads
 
 1つ目、は拡張メソッド呼び出し:
 
-```csharp {title="拡張メソッド呼び出しができなかった例(C# 14 で解決)"}
+```csharp {title="拡張メソッド呼び出しができなかった例(C# 14 で解決)" error-ranges="sha256:76f19f773fb3dd96277a406729953825ccee2e4d04f72eeb27378dece3fcb1fa;1:1-1:11,2:1-2:3"}
 new int[0].M();
 "".M();
 
@@ -700,7 +700,7 @@ static class X
 
 2つ目、ユーザー定義の型変換を介した呼び出し:
 
-```csharp {title="ユーザー定義の型変換ができなかった例(C# 14 で解決)"}
+```csharp {title="ユーザー定義の型変換ができなかった例(C# 14 で解決)" error-ranges="sha256:6ce6bfd61b8820408ab4a06811f0e312f56caee30eb8c94c07adf8e774c96ef7;1:5-1:15,2:5-2:7"}
 X.M(new int[0]);
 X.M("");
 
@@ -718,7 +718,7 @@ struct A
 
 3つ目、ジェネリック型引数の型推論:
 
-```csharp {title="ジェネリック型推論ができなかった例(C# 14 で解決)"}
+```csharp {title="ジェネリック型推論ができなかった例(C# 14 で解決)" error-ranges="sha256:b46de19e80ca0e966f23d9fc5341a2a4225c49960fc0359301b5ae3293268c03;1:3-1:4"}
 X.M(new int[0]);
 
 static class X
@@ -729,7 +729,7 @@ static class X
 
 また、単独ではエラーにならなくても、`IEnumerable<T>` 引数との混在でオーバーロード解決できなくなる例もあります。
 
-```csharp {title="IEnumerable と ReadOnlySpan の解決ができなかった例(C# 14 で解決)"}
+```csharp {title="IEnumerable と ReadOnlySpan の解決ができなかった例(C# 14 で解決)" error-ranges="sha256:2c58e782097733f5aa5b60416f67db0fe106031b00147e437683c46e2e06ec67;3:11-3:12"}
 int[] data = [1, 2, 3];
 
 Overloads.M(data); // 呼び分けができなくてコンパイル エラー(C# 13 まで)。

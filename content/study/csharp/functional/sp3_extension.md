@@ -650,7 +650,7 @@ public struct Quaternion
 すでに触れてはいますが、参照渡しで拡張メソッドを作れるのは[構造体](../resource/rm_struct.md)(値型)だけです。
 以下のように、クラスではできません。また、ジェネリックな型の場合、[`struct`制約](../oop/sp2_generics.md#where)が必要です(ただし、それでも`in`引数は不可)。
 
-```csharp {title="参照渡しの拡張メソッドを作れるのは構造体だけ"}
+```csharp {title="参照渡しの拡張メソッドを作れるのは構造体だけ" error-ranges="sha256:a1fb95ba6e57656c77b4af2756f9efcb8dc3ed3abe0345b528988c3bc45a1473;8:24-8:25,11:24-11:26,17:24-17:26"}
 static class Extensions
 {
     // 構造体(値型)は OK
@@ -722,7 +722,7 @@ public static void M<T>(in this T s)
 この制約に対する救済策として、`ref`引数の拡張メソッドが使えます。
 例えば以下のように、インスタンス メソッドではコンパイル エラーになる`ref`戻り値が、拡張メソッドではコンパイルできます。
 
-```csharp {title="拡張メソッドならフィールドを ref で返せる"}
+```csharp {title="拡張メソッドならフィールドを ref で返せる" error-ranges="sha256:9ee5e4944417180cb6560c077e38cc2c15cc50a37ac095257539ba0242d95721;14:32-14:33,15:32-15:33,16:32-16:33"}
 using System;
 
 struct Point

@@ -91,7 +91,7 @@ static void M<T>(params ReadOnlySpan<T> items) { }
 
 概念的には、以下のように「スタック割り当て」をしたいです。
 
-```csharp
+```csharp {error-text="stackalloc[] { &quot;a&quot;, &quot;b&quot;, &quot;c&quot; }"}
 // int の場合はこれで問題ない。
 ReadOnlySpan<int> temp1 = stackalloc[] { 1, 2, 3 };
 M(temp1);

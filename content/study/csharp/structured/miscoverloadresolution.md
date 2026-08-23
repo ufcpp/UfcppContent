@@ -101,7 +101,7 @@ class Program
 型変換に関しては、候補が複数ある場合は、どちらを呼ぶべきか不明瞭なためコンパイル エラーになります。
 例えば以下のコードはコンパイルできません。
 
-```csharp {title="不明瞭でオーバーロード解決できない例"}
+```csharp {title="不明瞭でオーバーロード解決できない例" error-ranges="sha256:83f09632948caaee51220b1e7be94561cd81d0215957f4643a76f6d38d3456f9;19:9-19:10"}
 using System;
 
 // インターフェイス実装とユーザー定義の型変換を持つ
@@ -261,7 +261,7 @@ C# の構文にはいくつか、左辺値からの型推論をするものが�
 
 推論に推論を重ねることになるので、これらの型を引数にした場合、オーバーロード解決ができない場合が増えます。
 
-```csharp {title="型推論が働かなくなる例"}
+```csharp {title="型推論が働かなくなる例" error-ranges="sha256:0d1c1f7fbcf384652559ef35d4c1db585938cb1b5a831e74cb43375e1df65f02;12:9-12:10,15:9-15:10,21:9-21:10"}
 using System;
 
 // 引数が完全に一致しているデリゲート型を2個用意
@@ -347,7 +347,7 @@ class Program
 ラムダ式の型推論は相当優秀で、結構複雑なオーバーロード解決もできたりします。
 例えば、以下の `M(x => x)` はちゃんとコンパイルできます。
 
-```csharp {title="ラムダ式とオーバーロード解決"}
+```csharp {title="ラムダ式とオーバーロード解決" error-ranges="sha256:8ae0f8cc379f2179f8d70a06ea3e0f2d0f7ace3b39943958587bae01b4b5e008;16:9-16:10"}
 using System;
 
 class Program
@@ -436,7 +436,7 @@ class Program
 同名の静的メソッドとインスタンス メソッドを1つずつ定義していますが、
 間違った引数で呼び出しています。
 
-```csharp {title="同名の静的メソッドとインスタンス メソッド"}
+```csharp {title="同名の静的メソッドとインスタンス メソッド" error-ranges="sha256:68f99ed3f1f7ad2e0b5b9721263f67a9c780021e8cb83218b2a688304a9bfb8d;16:9-16:18,20:9-20:24"}
 using System;
 
 struct Static { }
@@ -477,7 +477,7 @@ C# 7.3でこの順を逆にして、引数の型でオーバーロード解決�
 2つのメソッド`M`が、どちらも`M()`で呼べるようになります。
 C# 7.3からは、これらの呼び分けができるようになりました。
 
-```csharp {title="静的メソッドかインスタンス メソッドかでオーバーロード解決"}
+```csharp {title="静的メソッドかインスタンス メソッドかでオーバーロード解決" error-ranges="sha256:d9fcbd536be4e7be0d85b2edc72d19fe1a07e835f2fa6b750a4b7f78389fdd3f;33:9-33:10"}
 using System;
 
 struct Static { }
@@ -532,7 +532,7 @@ Color Color問題下においても呼び分けできるようになったもの
 末尾の2つはC# 7.3でだけコンパイルできるコード、
 真ん中の `Color.M()` はC# 7.3でもコンパイルできないコードになります。
 
-```csharp
+```csharp {error-ranges="sha256:7eb8adf628e555e2e41f9eb7a17e81781106e4152bb7c3295685c1d5786ab6b2;33:15-33:16"}
 using System;
 
 struct Color
@@ -717,7 +717,7 @@ C# ではなく、.NET 型システムの制約です。
 単に C# コンパイラーだけの仕事ではないので、これを修正するのは少し難しいです。
 そのため、これは引き続き認められていません。
 
-```csharp {title="制約違いのオーバーロードは不可"}
+```csharp {title="制約違いのオーバーロードは不可" error-ranges="sha256:3fb66cf60cb9d87d3b05329842059faa2042a0f60f521afc06cb2ee3fbf13ad9;4:13-4:14"}
 // 以下の2つは呼び分けできるようになった。
 // なのに、定義はできない(C# コンパイラーだけの問題じゃないので直せない)。
 static void M<T>(T x) where T : struct { }
@@ -833,7 +833,7 @@ class C
 
 ちなみに、オーバーロードできないメンバーにこの属性を付けるとコンパイル エラーになります。
 
-```csharp {title="オーバーロードできないメンバーに OverloadResolutionPriority を付けるとコンパイラーに怒られる"}
+```csharp {title="オーバーロードできないメンバーに OverloadResolutionPriority を付けるとコンパイラーに怒られる" error-ranges="sha256:cf0cf662abb807dfdf285ce290bb048d1274124847a633074457dc5f9c88500d;16:6-16:35,19:6-19:35,22:6-22:35,25:6-25:35"}
 using System.Runtime.CompilerServices;
 
 namespace System.Runtime.CompilerServices
@@ -875,7 +875,7 @@ C# の言語機能が増えるにつれて、例えば「`IEnumerable<T>` より
 `IEnumerable<T>` と `ReadOnlySpan<T>` の場合、C# 13 時点ではオーバーロード解決できなくなって困ります。
 (この2者の問題であれば、C# 14 で `Span<T>`/`ReadOnlySpan<T>` の特別扱いが入って問題解消する予定です。)
 
-```csharp
+```csharp {error-ranges="sha256:5449863ce64b16ff4d6ec80a53a509cc39b1617a9fc408be56ecf94cfd7d8cb1;2:3-2:4"}
 // C# 13 時点だと IEnumerable と ReadOnlySpan を選べなくてコンパイル エラーになる。
 C.M(new int[1]);
 
@@ -1036,7 +1036,7 @@ static class FakeLinq
 }
 ```
 
-```csharp {title="ただし、実際にやってみるとうまくいかない(当然)"}
+```csharp {title="ただし、実際にやってみるとうまくいかない(当然)" error-text="Select"}
 // FakeLinq の方が優先されたりはしない。
 // 単に「Enumerable と FakeLinq 間で不明瞭」エラーに。
 "abc".Select(c => (int)c);
@@ -1068,7 +1068,7 @@ static class B
 `OverloadResolutionPriority` は1つのクラス内でしか働かないので、`A` の中のどの `M` が選ばれるかにだけ影響します。
 その結果、以下のように別のクラスの `M` と競合する可能性があります。
 
-```csharp {title="OverloadResolutionPriority を付けたことで他のクラスのメンバーと競合するようになる例"}
+```csharp {title="OverloadResolutionPriority を付けたことで他のクラスのメンバーと競合するようになる例" error-ranges="sha256:b2e474f0df2c07544ec4371f4f98d174bf0c31fe82ea28f93b2e9bb09cee7eec;6:4-6:5"}
 using System.Runtime.CompilerServices;
 
 // OverloadResolutionPriority を付けたことで、A.M の中では A.M(string, int) が選ばれる。
@@ -1095,7 +1095,7 @@ static class B
 C# では戻り値だけが異なるオーバーロードを認めていません。
 例えば以下のコードはコンパイル エラーになります。
 
-```csharp {title="戻り値だけが違うオーバーロードの追加はできない"}
+```csharp {title="戻り値だけが違うオーバーロードの追加はできない" error-ranges="sha256:4ac088f41f67af8c137adae628025cfe058f953fe77848d6d829abc0e89b7e60;7:35-7:41"}
 class C
 {
     public static async Task MAsync() { await Task.Yield(); }

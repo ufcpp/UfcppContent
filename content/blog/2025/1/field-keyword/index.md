@@ -105,7 +105,7 @@ class A
 当初は「既存のコードを壊さない限りにキーワード扱いする」みたいな努力をするかどうかという話もあったんですが、複雑すぎるので断念しています。
 例えば、`field` という名前のローカル変数があったとしてもキーワード扱いです。
 
-```csharp {title="ローカル変数があっても field はキーワード扱い"}
+```csharp {title="ローカル変数があっても field はキーワード扱い" warning-ranges="sha256:087d924f19fed5037e0159db9583e4951160111eefd2d38b81cc1a7b3936c7b6;7:17-7:22,8:20-8:25"}
 class A
 {
     public int X
@@ -122,7 +122,7 @@ class A
 `nameof(field)` もエラーになります。
 `nameof(int)` とかがエラーなのと同じ。
 
-```csharp {title="nameof(field) はダメ"}
+```csharp {title="nameof(field) はダメ" error-text="field" warning-text="X"}
 class A
 {
     public string X
@@ -136,7 +136,7 @@ class A
 
 これと関連して、以下のようなコードを書くと、タプル要素名のやつだけエラーを起こします。
 
-```csharp {title="タプル要素名とか、匿名型のプロパティとか"}
+```csharp {title="タプル要素名とか、匿名型のプロパティとか" error-ranges="sha256:51415403246e24404becd011774f40a5f7fe3780c31658211c488dd69d01ea94;7:27-7:28,7:30-7:31,7:33-7:34"}
 class A
 {
     public int X
@@ -164,7 +164,7 @@ class A
 
 例えば以下のような `??=` を使った遅延初期化コードはよく書くと思います。
 
-```csharp {title="??= で遅延初期化"}
+```csharp {title="??= で遅延初期化" warning-ranges="sha256:67771b771afcd9e05fda48d08b1a8c2bd59ec902353b4a3f5612c0bd9f41be07;4:19-4:23"}
 class A(Type type)
 {
     // Type.Name のキャッシュ。

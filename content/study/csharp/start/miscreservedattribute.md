@@ -47,7 +47,7 @@ aliases: []
 
 以下のように、指定した以外の属性の使い方をするとコンパイル エラーを起こします。
 
-```csharp {title="AttributeUsage の利用例"}
+```csharp {title="AttributeUsage の利用例" error-ranges="sha256:084e0b68c419a8a1166fdff00662ce4e32879711168aa7e659d0659fb8c3301e;7:6-7:14"}
 [AttributeUsage(AttributeTargets.Class)]
 class ForClass : Attribute { }
 
@@ -64,7 +64,7 @@ class A
 `Obsolete` 属性(`System`名前空間)は、もう廃止(obsolete)したいクラスやメソッドに付けて、そのクラスやメソッドの利用者側コードに警告やエラーを出します。
 通常、廃止理由や移行先に関する情報を書いておきます。
 
-```csharp {title="Obsolete 属性の利用例"}
+```csharp {title="Obsolete 属性の利用例" error-text="Cryptograph.AlgorithmA()" warning-text="HighPerformance.AlgorithmA()"}
 HighPerformance.AlgorithmA(); // 警告が出る
 Cryptograph.AlgorithmA();     // エラーになる
 

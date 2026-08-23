@@ -65,7 +65,7 @@ public interface ICollection<T> : IEnumerable<T>, IEnumerable
 問題になり始めたのは C# 4.0 (2010年)で共変性を得てからでして。
 読み書き両方できてしまう `IList<T>` や `ICollection<T>` では、以下のような共変な代入ができません。
 
-```csharp {title="書き込みがあると共変にできない"}
+```csharp {title="書き込みがあると共変にできない" error-ranges="sha256:bc73001ec0c56aa563e17371f59f3af9086f9a2d2545e1b82c0068865e770da8;2:21-2:24"}
 IList<string> str = new List<string>();
 IList<object> obj = str; // ダメ。
 
@@ -255,7 +255,7 @@ class C : ICollection
 というのも、デフォルト実装には「ダイアモンド継承」問題というものがあります。
 以下のような感じで、「分かれ道からの合流がある継承」をやると問題を起こすことがあります。
 
-```csharp {title="ダイアモンド継承問題"}
+```csharp {title="ダイアモンド継承問題" error-ranges="sha256:15b2b7c885e01422d4030048a9ded63869c52b927ef349dbc23a2b6a1d575e17;18:11-18:13"}
 interface IA
 {
     int M();
@@ -282,7 +282,7 @@ class C : IB, IC
 1段自作のインターフェイスとかを挟んでいると問題を踏む可能性が出てきます。
 例えば以下のような感じ。
 
-```csharp {title="IReadOnlyCollection.Count でダイアモンド継承問題を踏む例"}
+```csharp {title="IReadOnlyCollection.Count でダイアモンド継承問題を踏む例" error-ranges="sha256:ab8a0f485eec389b11b937978b05ff0416765203971dedc0e5fc7e2669a93a34;11:11-11:22"}
 // corelib とは別のプロジェクトで、別の開発者が保守
 // anotherlib.dll
 interface ICustomReadonlyList : IReadOnlyCollection

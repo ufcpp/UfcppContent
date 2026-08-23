@@ -114,7 +114,7 @@ class Point
 - get-only プロパティ (`int X { get; }` みたいなの): コンストラクター内でだけ書き換えできる
 - init プロパティ (`int X { get; init; }` みたいなの): コンストラクター内とオブジェクト初期化子でだけ書き換えできる
 
-```csharp {title="init プロパティ"}
+```csharp {title="init プロパティ" error-ranges="sha256:f839a54c8868ab4dc7210dae09850471efcec5bfac36ea6fd0879e1baeb835cd;4:5-4:12,9:1-9:10,10:1-10:7"}
 var p = new Point
 {
     Settable = 1, // OK

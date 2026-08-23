@@ -125,7 +125,7 @@ Working set (作業中)。
 
 [#6926](https://github.com/dotnet/csharplang/issues/6926)
 
-```csharp {title="const is expression"}
+```csharp {title="const is expression" error-text="x is 0"}
 const int x = 123;
 const bool y = x == 0; // これは OK。const 同士に対する式の結果は const。
 const bool z = x is 0; // 今ダメ。 == が行けるんなら is も行けていいんじゃない？

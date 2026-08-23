@@ -304,7 +304,7 @@ public class Program
 以下のように、直接的には`IAsyncDisposable`インターフェイスを実装していなくて、
 パターンも満たさない型に対して`await using`を使うとコンパイル エラーになります。
 
-```csharp
+```csharp {error-ranges="sha256:d6d7b72a94fe78a0986d56e297acc75e1f56cafa8dfcd152b01cbfa0bfdd2675;24:22-24:23"}
 using System;
 using System.Threading.Tasks;
  

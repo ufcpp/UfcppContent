@@ -147,7 +147,7 @@ div に変えようかな。
 
 ### <a id="sec-generated-title-7"></a>source code
 
-```csharp
+```csharp {error-ranges="sha256:f487f56f66d6f2266cc42ba8e1d63e01cdf78097726f506299241709ea5ae690;23:10-23:13" warning-ranges="sha256:f487f56f66d6f2266cc42ba8e1d63e01cdf78097726f506299241709ea5ae690;23:7-23:10"}
 var s = "abcあいう😊😀😁"u8;
 
 foreach (var x in s[..8])
@@ -178,7 +178,7 @@ record R();
 ```
 
 
-```csharp
+```csharp {error-ranges="sha256:b5db83b25c328bd980e9479dfc3548f0116c03a20f1cbaf41810dd16b2e993e4;7:13-7:22" warning-ranges="sha256:b5db83b25c328bd980e9479dfc3548f0116c03a20f1cbaf41810dd16b2e993e4;5:13-5:22"}
 class Program
 {
     static void Main()

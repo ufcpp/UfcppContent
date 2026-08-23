@@ -248,7 +248,7 @@ namespace Namespace
 
 ファイル スコープ名前空間は1つの C# ファイルにつき1つだけ書けます。例えば以下のコードはコンパイル エラーになります。
 
-```csharp {title="複数のファイル スコープ名前空間を書くとエラー"}
+```csharp {title="複数のファイル スコープ名前空間を書くとエラー" error-text="Ns2"}
 namespace Ns1;
 namespace Ns2;
 
@@ -347,7 +347,7 @@ using ディレクティブよりも前に書けるのは、
 コメントや空白のようにプログラムに影響しないものか、
 [プリプロセッサー](../misc/sp_preprocess.md)や[extern alias](#extern)などのめったに使わない構文だけです。
 
-```csharp {title="using よりも前に書けるものはほとんどない"}
+```csharp {title="using よりも前に書けるものはほとんどない" error-text="using System.IO;"}
 // (コメントを除いて) using より前にはほぼ何も書けない。
 using System;
 
@@ -392,7 +392,7 @@ namespace B
 ここで、`using A` と `using B` を同時に書いてしまうと「どちらかわからない」というコンパイル エラーを起こします。
 (こういうエラーを「名前があいまい」(ambiguous)と言います。)
 
-```csharp {title="同列の using でエラーを起こす例"}
+```csharp {title="同列の using でエラーを起こす例" error-ranges="sha256:5093177aaf2a030787cee52ef259c7af477412c161ff76e39c9be00ee1f9a423;7:5-7:6"}
 // A と B の using を同列に並べる。
 using A;
 using B;
@@ -457,7 +457,7 @@ global using Date = System.DateOnly;
 global using は通常の using ディレクティブの前にしか書けません。
 例えば以下のコードはコンパイル エラーになります。
 
-```csharp {title="global using は using の前にしか書けない"}
+```csharp {title="global using は using の前にしか書けない" error-text="global"}
 using System;
 global using System.Text.RegularExpressions;
 ```

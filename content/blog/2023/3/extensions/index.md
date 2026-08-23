@@ -52,7 +52,7 @@ implicit extension Ex for int
 今の拡張メソッドの文法がプロパティなどに向いていなさ過ぎて、導入できずにいます。
 また、静的メンバーにも対応していません。
 
-```csharp {title="プロパティに向かない文法、静的メンバーにも未対応"}
+```csharp {title="プロパティに向かない文法、静的メンバーにも未対応" error-ranges="sha256:00dbcf8fe3f817dcad6049dd4b81f15fb2b877c831066c1811a1764704ddc0d2;8:23-8:31,11:23-11:27,14:32-14:33"}
 static class Extensions
 {
     // x.Method() と呼べる。
@@ -112,7 +112,7 @@ IFormattable f = true;
 既存の拡張メソッドでも起こるんですが、
 複数の拡張があるとき、同名のメソッドが被ってどちらを呼ぶべきか解決できない時があります。
 
-```csharp {title="名前被りで解決できない拡張メソッド"}
+```csharp {title="名前被りで解決できない拡張メソッド" error-ranges="sha256:1779b09f107c42074b5fe896cab0b89662381930fde7f017c0061a8711997b42;4:3-4:9"}
 int x = 0;
 
 // 2つ同名のメソッドがあって優先度解決できないのでコンパイル エラー。
@@ -400,7 +400,7 @@ ref struct Ex
 * ref 構造体をジェネリック型引数にする
 * ref 構造体でインターフェイスを実装する
 
-```csharp {title="C# 11 で無理なものの、extension の実装に欲しいもの"}
+```csharp {title="C# 11 で無理なものの、extension の実装に欲しいもの" error-ranges="sha256:b3151fa0ebd57923d85c1a4223fade83105e771639bc9805e683a018f1c66147;2:16-2:32,5:5-5:10,5:11-5:16,8:20-8:28" warning-text="_refS"}
 // 現状、ref 構造体はインターフェイス実装を持てない。
 ref struct S : IEnumerable<int>
 {

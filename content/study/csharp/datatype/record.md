@@ -444,7 +444,7 @@ record Person(string Name, DateTime Birthday)
 
 ちなみに、プライマリ コンストラクターの引数に [`in`](../resource/sp_ref.md#in) と [`params`](../structured/sp_params.md) を付けることはできます(その引数からプロパティの生成もされます)が、[`ref`](../resource/sp_ref.md#sec-byref) と [`out`](../resource/sp_ref.md#out) は付けれません。
 
-```csharp {title="プライマリ コンストラクター引数に対する in/params"}
+```csharp {title="プライマリ コンストラクター引数に対する in/params" error-ranges="sha256:f448a72828244463accd083f4fac434dd91b6f18795357e29c3f65596a06f6f9;5:23-5:26,5:34-5:37"}
 // in と params は受け付ける。
 public record Record(in int X, params int[] Y);
 
@@ -564,7 +564,7 @@ record B(string S) : Base;
 派生クラスからそのプライマリ コンストラクターの呼び出しが必要です。
 以下のように、基底クラス名の後ろに `()` を付けることで呼び出せます。
 
-```csharp {title="基底クラスのプライマリ コンストラクター呼び出しの例"}
+```csharp {title="基底クラスのプライマリ コンストラクター呼び出しの例" error-ranges="sha256:ea495ecddb828aa5c68d9486bdd86deac23277f8fb821f4dc4f4db3579af47e8;4:8-4:14,18:8-18:14"}
 record Base(int X);
  
 // Base(int X) を呼んでいないのでエラーになる。
@@ -636,7 +636,7 @@ immutable なデータに対しても、「データの一部分だけを書き�
 C# 8.0 以前の書き方でいうと、以下のようなコードを書くことになります。
 (が、1つ問題があって、実際には C# 8.0 で完全にこれと同じことは実現できません。)
 
-```csharp {title="クローンしてから部分書き換え"}
+```csharp {title="クローンしてから部分書き換え" error-text="p2.Name"}
 using System;
  
 var p1 = new Person("天馬飛雄", new(2003, 4, 7));

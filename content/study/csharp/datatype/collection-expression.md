@@ -73,7 +73,7 @@ int[] array1 = new[] { 1, 2, 3 };
 
 `new[] { ... }`の型推論は「要素の中身から型決定」なので、例えば以下のようなコードはエラーになります。
 
-```csharp {title="要素の型からの型推論"}
+```csharp {title="要素の型からの型推論" error-text="new[] { 1, 2, 3 }"}
 byte[] array // byte[] 型
     = new[] { 1, 2, 3 }; // 数値リテラルはデフォルトでは int 型。int からの型推論で int[] 型に。
 ```
@@ -90,7 +90,7 @@ int[] array2 = { 1, 2, 3 };
 
 宣言と初期化を別の行に分けてしまうと `{}` を使えなくなります。(`new[] { }` なら使えます)。
 
-```csharp
+```csharp {error-ranges="sha256:0c74d9f2fba93987ccc9702bc1465fdf547b81ec96a4d990e5cb9e5d3994c20f;3:9-3:10,3:12-3:13,3:15-3:16,3:19-3:20"}
 int[] array; // 宣言
 
 array = { 1, 2, 3 }; // 宣言と別の行ではこの書き方はできない
@@ -110,7 +110,7 @@ List<int> list = new() { 1, 2, 3 };
 配列の場合は `new[] { }` なのに対して、その他のコレクションは `new() { }` になります。
 このせいで、「配列とその他のコレクションを切り替えて使う」みたいなことがちょっと面倒になっています。
 
-```csharp {title="配列とコレクションの切り替えが難しい"}
+```csharp {title="配列とコレクションの切り替えが難しい" error-ranges="sha256:7229f46ce4422eb07d15a14172a336482bff54e73684877016903d5ce4dccc59;10:12-10:29"}
 #if WPF
 using System.Collections.ObjectModel;
 
@@ -140,7 +140,7 @@ Span<int> span = stackalloc[] { 1, 2, 3 };
 ちなみに、`stackalloc` は参照型を含められないという問題があって、
 例えば以下のようなコードはコンパイル エラーになります。
 
-```csharp {title="参照型に対する stackalloc はエラーに"}
+```csharp {title="参照型に対する stackalloc はエラーに" error-text="stackalloc[] { &quot;abc&quot; }"}
 Span<string> span = stackalloc[] { "abc" };
 ```
 
@@ -344,7 +344,7 @@ var x = { var i = 123; i * i };
 
 特に、オブジェクト初期化子とコレクション初期化子が同じ記号を使っていて、混在不可なので以下のようなことが起こります。
 
-```csharp {title="2つの {} 初期化子"}
+```csharp {title="2つの {} 初期化子" error-ranges="sha256:137dc2646eb4854a5cfc94ca799a1962b13df5eef3241d0af6b5bb2906053ff0;2:46-2:47,2:49-2:50,2:52-2:53,14:5-14:13"}
 // オブジェクト初期化子(プロパティの値指定)とコレクション初期化子(Add)の混在不可。
 var list1 = new List<int> { Capacity = 1014, 1, 2, 3 };
 
@@ -414,7 +414,7 @@ _ = list is [1, ..];
 「null 条件 foreach」があったりします。
 これは要するに、以下のようなコードを、
 
-```csharp {title="null があり得る foreach"}
+```csharp {title="null があり得る foreach" warning-ranges="sha256:579eb1da8e5504cb97046c0fbe99198ad9964b57fc763d7e3b399d96936211bf;7:26-7:30"}
 Print([1, 2, 3]);
 Print(null);
 
@@ -550,7 +550,7 @@ if (list is [var first, ..var middle, var last])
 ちなみに、[後述](#after12)しますが、C# 12 時点では以下のような「`var` との組み合わせ」はできません。
 C# 13 以降で検討中です。
 
-```csharp {title="C# 12 時点では型決定できない var"}
+```csharp {title="C# 12 時点では型決定できない var" error-text="[1, 2, 3]"}
 var list = [1, 2, 3];
 ```
 
@@ -741,7 +741,7 @@ class A
 
 ちなみに、以下のような場合には(普通のオーバーロード解決でも、コレクション式でも)不明瞭(オーバーロード解決不能)でコンパイル エラーになります。
 
-```csharp {title="具象型同士は同列"}
+```csharp {title="具象型同士は同列" error-ranges="sha256:746b8274dccd464d4813f8ece3baa394d5a9da978b56ab1cf45ceca6ec76929e;1:3-1:4"}
 A.M([]); // コンパイル エラー
 
 class A
@@ -752,7 +752,7 @@ class A
 }
 ```
 
-```csharp {title="派生関係のないインターフェイスは同列"}
+```csharp {title="派生関係のないインターフェイスは同列" error-ranges="sha256:b15a7f3311e889be80f05978e3ff6198fd0dea1dd5ed611e3cf32f1fcbd440d8;1:3-1:4"}
 A.M([]); // コンパイル エラー
 
 class A
@@ -788,7 +788,7 @@ C# 12 時点でも、`var x = (int[])[1, 2];` みたいにキャストを挟め�
 という問題があって、
 以下のように、拡張メソッドからの型推論が効くようにしてほしいという話があります。
 
-```csharp {title="拡張メソッドからの型推論"}
+```csharp {title="拡張メソッドからの型推論" error-ranges="sha256:773e05ae6a4eaab5c8d91a597de4c8741b630ece17098e8177fdb37ba6be5a7a;2:9-2:15"}
 // (List<int>)[1, 2] よりも、拡張メソッド形式の方が書き心地がいい。
 var x = [1, 2].AsList();
 
@@ -819,7 +819,7 @@ Dictionary<string, int> map =
 
 C# 12 では以下のようなコードに対応しなかったんですが、これも C# 13 で検討中です。
 
-```csharp {title="非ジェネリック コレクション"}
+```csharp {title="非ジェネリック コレクション" error-text="[&quot;a&quot;, 2, null]"}
 using System.Collections;
 
 ICollection c = ["a", 2, null];

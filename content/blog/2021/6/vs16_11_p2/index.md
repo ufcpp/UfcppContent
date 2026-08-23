@@ -122,7 +122,7 @@ global using System;
 
 で、これと同じプロジェクト内で通常の `using` を書く場合、以下のような挙動をします。
 
-```csharp {title="global using System; 影響下のコード"}
+```csharp {title="global using System; 影響下のコード" error-ranges="sha256:8a66cef71416eeb306b97c19d36193e45cf3a20307edbccf8196df549035ea6b;3:11-3:19" warning-ranges="sha256:8a66cef71416eeb306b97c19d36193e45cf3a20307edbccf8196df549035ea6b;1:7-1:13"}
 using System; // すでに global using System; があるので「重複」警告あり
 
 using X = DateTime; // この行はコンパイル エラー。ここでは using System; ありきにはならない。
@@ -157,7 +157,7 @@ global using System.Text.Json;
 
 一方で、一応、<em>ファイルの先頭にしか書けない</em>という縛りはあります。
 
-```csharp {title="先頭以外に global using を書くとさすがにエラー"}
+```csharp {title="先頭以外に global using を書くとさすがにエラー" error-text="global using System.Linq;"}
 using System;
 
 class Program

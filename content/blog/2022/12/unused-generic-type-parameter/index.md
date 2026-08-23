@@ -25,7 +25,7 @@ aliases: []
 C# で、構造体の中にその構造体自身のフィールドを持つことはできません。
 レイアウトの決定が無限再帰を起こすので、これはダメで当然。
 
-```csharp {title="構造体の入れ子はダメ"}
+```csharp {title="構造体の入れ子はダメ" error-text="_nested"}
 struct S { S _nested; }
 ```
 

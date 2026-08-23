@@ -32,7 +32,7 @@ Console.WriteLine(array.Contains(2));
 
 ただ、これのせいで問題を起こしそうだった拡張メソッドとして `Reverse` があったりします。
 
-```csharp {title="Reverse は危うかった"}
+```csharp {title="Reverse は危うかった" error-text="array.Reverse()"}
 int[] array = [1, 2, 3, 4];
 
 // C# 13 まで: Enumerable.Reverse だったから問題なし。
@@ -201,7 +201,7 @@ foreach (var (index, item) in array.Index())
 問題は `IndexEnumerable` が `ref struct` な点で、
 `foreach` 中に `yield` や `await` があるとエラーになります。
 
-```csharp
+```csharp {error-lines="4"}
 int[] array = [1, 2, 3, 4];
 
 // C# 14 で 自作の SpanExtensions.Index が呼ばれようになると…

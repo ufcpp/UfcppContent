@@ -76,7 +76,7 @@ static class MyMath
 ref 構造体にインターフェイス実装を持たせること自体はそこまで問題ではありません。
 問題は、以下のように、「インターフェイス型の変数に直接代入してしまうとボックス化を起こしてまずい」という点です。
 
-```csharp {title="Span をインターフェイス型変数に代入しちゃダメ"}
+```csharp {title="Span をインターフェイス型変数に代入しちゃダメ" error-ranges="sha256:22cfd56643190261f8c3b27fa6cb6e13b99b9edbe68552837722dc0ccdd90efe;6:22-6:26"}
 Span<int> span = [1, 2, 3, 4, 5];
 
 // たとえ、Span が IEnumerable<T> を実装していたとしても、
@@ -87,7 +87,7 @@ IEnumerable<int> e = span;
 
 じゃあどうすべきかというと、ジェネリクスを介します。
 
-```csharp {title="ジェネリクスを介すればいい"}
+```csharp {title="ジェネリクスを介すればいい" error-text="Sum&lt;int, Span&lt;int&gt;&gt;"}
 Span<int> span = [1, 2, 3, 4, 5];
 
 // ジェネリクスを介すれば、ボックス化を起こさずにインターフェイスのメンバーを呼べる。
@@ -115,7 +115,7 @@ Sum<int, Span<int>>(span);
 
 というものになります。
 
-```csharp {title="型制約"}
+```csharp {title="型制約" error-text="M2&lt;object&gt;"}
 // 制限なし。
 static void M1<T>() { }
 

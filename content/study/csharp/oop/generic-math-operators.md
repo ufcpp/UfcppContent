@@ -283,7 +283,7 @@ readonly struct Int2Bit
 
 ちなみに、通常演算子なしで `checked` 演算子だけを定義することはできません。
 
-```csharp {title="checked のみの定義はコンパイル エラーになる"}
+```csharp {title="checked のみの定義はコンパイル エラーになる" error-ranges="sha256:38d57406e061e5dbddcf02a2756e98006510377a47390e234edae4afbf0e2110;12:38-12:39"}
 struct A
 {
     // OK: 通常演算子のみ
@@ -304,7 +304,7 @@ struct A
 [キャスト](oo_operator.md#cast)も `checked` にできます。
 ただし、`explicit` (明示的型変換)のみ OK で、`implicit` (暗黙的型変換)には `checked` は使えません。
 
-```csharp
+```csharp {error-ranges="sha256:00db65787b3c352de290171dc7a5fee2ee3146f2709a276a73f1169e0829a43f;9:37-9:46"}
 struct A
 {
     // OK: explicit キャスト
@@ -352,7 +352,7 @@ C# ではこれまで、シフト演算子の右オペランド(何ビットシ�
 例えば、以下のコードはコンパイル エラーになります。
 「1.1 ビットのシフト」とか言われても意味が解らないので、まあこれは妥当な制限でしょう。
 
-```csharp {title="右オペランドが整数じゃないのでエラー"}
+```csharp {title="右オペランドが整数じゃないのでエラー" error-text="&lt;&lt; 1.1"}
 var x = 1 << 1.1;
 ```
 
@@ -360,7 +360,7 @@ var x = 1 << 1.1;
 右オペランドが `uint` や `long` の場合ですら制限されていて、
 ちょっと厳しい感じがします。
 
-```csharp {title="U や L がついてもダメ"}
+```csharp {title="U や L がついてもダメ" error-ranges="sha256:d901706f0eda345c716645a8bb1d00e929eff2a434f1bfd1ba6b7f9517388712;1:9-1:16,2:9-2:16"}
 var x = 1 << 1U;
 var y = 1 << 1L;
 ```

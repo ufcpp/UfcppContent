@@ -54,7 +54,7 @@ C# 7.X の頃と 8.0 で何が変わったかというと、
 
 無条件に「参照型でも null を拒否する」としてしまうと、既存の C# コードの挙動を壊します。
 
-```csharp {title="opt-in した瞬間に警告"}
+```csharp {title="opt-in した瞬間に警告" warning-ranges="sha256:178dac1f4f13031ce0caf62dafc7bcd867781db6bcd5ca173aa0511274f6dd8c;8:20-8:24,9:27-9:28"}
 using System;
  
 class Program
@@ -111,7 +111,7 @@ null 許容参照型を有効にしたければ`#nullable enable`、
 `#nullable restore`は「1つ前のコンテキストに戻す」という処理になります。
 `warnings`と`annotations`については後述しますが、省略可能で、省略した場合は「両方をオン・オフ」になります。
 
-```csharp {title="null 許容コンテキストの切り替え例"}
+```csharp {title="null 許容コンテキストの切り替え例" warning-ranges="sha256:25db6e1c9f3f4c5778d7fe421fb66f45bf2e6efefd0ed7bd1bf637f6a6fe5256;6:12-6:16"}
 public class Program
 {
     static void Main()
@@ -253,7 +253,7 @@ null 許容参照型は、フロー解析(flow analysis)で成り立っていま
 
 例えば以下のように、変数 `s` に何を代入したかによって、それ以降、`s.Length` というようなメンバー アクセス時に警告が出たり出なかったりします。
 
-```csharp {title="null 許容参照型はフロー解析で null チェックをしてる"}
+```csharp {title="null 許容参照型はフロー解析で null チェックをしてる" warning-ranges="sha256:4974d252ce3a248521159f542a808b10537defece223b15ff0f1318d48db4ad4;14:19-14:20"}
 // null 許容で宣言されていても、
 string? s;
  
@@ -272,7 +272,7 @@ Console.WriteLine(s.Length);
 
 分岐などもきっちり調べられます。
 
-```csharp {title="フロー解析は分岐もちゃんと調べる"}
+```csharp {title="フロー解析は分岐もちゃんと調べる" warning-ranges="sha256:431fd94b26e1e981fe84e45aed8762f564645ff30e8a998cf225c2327aa27ee6;9:23-9:24"}
 private static void M(bool flag)
 {
     string? s;
@@ -295,7 +295,7 @@ private static void M(bool flag)
 null 許容(`?` が付いてる)変数・引数の場合はメンバー アクセスの時点で警告が出ます。
 また、null 代入の有無の他、`is null` や `== null` での null チェックをすれば、それ以降の警告は消えます。
 
-```csharp {title="警告の出方"}
+```csharp {title="警告の出方" warning-ranges="sha256:0c01e60f20bf1be15bf043209ff21db9d2d3dea52e3737acccc4088853eae15e;13:25-13:29,18:27-18:28"}
 using System;
  
 public class Program
@@ -324,7 +324,7 @@ public class Program
 ちなみに、一度何らかのメンバー アクセスをした時点で「null チェックした」扱いを受けます。
 「null 許容型を null チェックなしで使ってる」警告が出るのは最初の1個だけになります。
 
-```csharp {title="メンバー アクセスを持って null チェック扱い"}
+```csharp {title="メンバー アクセスを持って null チェック扱い" warning-ranges="sha256:c8d737e849eae224c8cd1e1da74233db968ee9cc5b680c11de0ed9d554e1de3b;5:23-5:24"}
 #nullable enable
 void M(string? x)
 {
@@ -340,7 +340,7 @@ void M(string? x)
 例えば以下のように、非 null な変数 `x` と一致したら null 許容な変数 `y` も null ではないことが確定します。
 これもちゃんとフロー解析の対象になっています。
 
-```csharp {title="他の変数との比較で null チェック"}
+```csharp {title="他の変数との比較で null チェック" warning-ranges="sha256:bbbf7c5c7ab54ebb2d62f15ab2d1410d79eb9dc0e92ed0f4d965769fc921ffa6;12:27-12:28"}
 void M(string x, string? y)
 {
     // 非 null な x との比較で y が null じゃないことがわかる。
@@ -407,7 +407,7 @@ class Program
 非 null 型のフィールドやプロパティは、コンストラクター内で必ず初期化しなければなりません。
 例えば以下のコードはフィールド `X`、プロパティ `Y` のところに警告が出ます。
 
-```csharp {title="非 null なフィールド・プロパティを初期化しないと警告が出る"}
+```csharp {title="非 null なフィールド・プロパティを初期化しないと警告が出る" warning-ranges="sha256:dce7579f00a81d627063e97266ea25e730aa711cb7c1f36aed6310da593e0880;3:19-3:20,4:19-4:20"}
 class A
 {
     public string X;
@@ -429,7 +429,7 @@ class A
 ちなみに、コンストラクターは書いたものの初期化を忘れると、
 フィールド・プロパティの方だけではなく、コンストラクターの方にも警告が出ます。
 
-```csharp {title="初期か忘れ警告"}
+```csharp {title="初期か忘れ警告" warning-ranges="sha256:ec6a41e29a5346afe12280342a627a850124f75535c31d29edddd32823de919b;3:19-3:20,6:12-6:13"}
 class A
 {
     public string X;
@@ -495,7 +495,7 @@ null 許容参照型の `?` は単なるアノテーション(フロー解析の
 この実装上の差から、使い勝手にも差が出てきます。
 まず、以下のように、`T` と `T?` でオーバーロードできるのは値型だけです。
 
-```csharp {title="オーバーロードの可否"}
+```csharp {title="オーバーロードの可否" error-ranges="sha256:b4c19e75238abfb54dfd79b4f7dde1e8f5aa559be39bea678cd54d5bd527f4b0;4:6-4:7"}
 #nullable enable
 // 参照型の場合、アノテーションだけが違うオーバーロードは作れない。
 void M(string x) { }
@@ -510,7 +510,7 @@ void M(int? x) { }
 参照型の場合は null チェックさえ挟めば以後「null ではない」という扱いを受けますが、
 値型の場合は null チェックを挟んでも `Nullable<T>` は `Nullable<T>` のままです。
 
-```csharp {title="null チェック後の挙動"}
+```csharp {title="null チェック後の挙動" error-ranges="sha256:95f940221d400a0cc5476fce01981d3d3b87edd14841c99fe10f02757b21aee9;17:25-17:31"}
 #nullable enable
 // 参照型の場合
 void M(string? x)
@@ -535,7 +535,7 @@ null 許容参照型は `typeof` 演算子に対しても使えません。
 `T` と `T?` が内部的には同じ型なのに、`typeof(T?)` を認めると混乱の元です。
 以下のコードはコンパイル エラーになります。
 
-```csharp {title="null 許容参照型に対して typeof を使うとコンパイル エラー"}
+```csharp {title="null 許容参照型に対して typeof を使うとコンパイル エラー" error-text="typeof(string?)"}
 var t = typeof(string?);
 ```
 
@@ -766,7 +766,7 @@ null 許容なものを、`is null` や `== null` などによるチェック抜
 前者のわかりやすい例は循環参照がある場合です。
 お互いにインスタンスを持ち合う必要がある場面では、どちらか片方は絶対にコンストラクターよりも後でないとインスタンスを渡せません。
 
-```csharp {title="循環参照があるとき、コンストラクターでは非 null 保証ができない"}
+```csharp {title="循環参照があるとき、コンストラクターでは非 null 保証ができない" warning-ranges="sha256:d9a4d016b519a4d94ddb386357c07e9a6b7dd013925748ee93e596e4782e2170;4:23-4:30"}
 class PairedNode
 {
     // このプロパティに対する警告が消せない。
@@ -793,7 +793,7 @@ null に関するフロー解析は結構ぎりぎりまで作業をしている
 `ReferenceEquals` に関する解析は Visual Studio 16.3 Preview 1 (2019年7月)時点では未対応、
 Preview 2 (同8月) 時点で初めて対応しました。
 
-```csharp {title="ReferenceEquals でも等価チェックになるはずなのに"}
+```csharp {title="ReferenceEquals でも等価チェックになるはずなのに" warning-ranges="sha256:74030331119bdfa428444b01ea9ca3f72d30de1e7edc4eb2417ee23c43da3bf2;7:27-7:28"}
 void M(string x, string? y)
 {
     if (ReferenceEquals(x, y))
@@ -881,7 +881,7 @@ class Program
 ちなみに、2重に `!` を付けようとするとコンパイル エラーになります。
 例えば以下のコードは`x!!` のところでコンパイル エラーが出ます。
 
-```csharp
+```csharp {error-ranges="sha256:f22bd6f32e9b2592de3ecd6ac3752ea3ecd308a9bb724fb70224b5e5555cd36c;3:13-3:14"}
 static void M(string? x)
 {
     var y = x!!;
@@ -900,7 +900,7 @@ null 許容型の `T?` は参照型と値型でだいぶ実装方法が違いま
 以下のコードはコンパイル エラーになります。
 (後述しますが、C# 9.0 でもこの書き方には注意が必要です。)
 
-```csharp {title="制約なしの型引数 T に対して T? は使えない"}
+```csharp {title="制約なしの型引数 T に対して T? は使えない" error-ranges="sha256:b1af60e3762c432312219ac76f24f31ad98c953842b7cb44ff73abd921ca01aa;5:12-5:13"}
 #nullable enable
 class Generic<T>
 {
@@ -913,7 +913,7 @@ class Generic<T>
 `struct` 制約は [null 許容値型](sp2_nullable.md)の仕様によるもので、C# 2.0 の頃から書けます。
 「制約に単に `class` と書くと非 null の意味になる」というのが新仕様になります。
 
-```csharp {title="制約を付けて T? を使えるようにできる例"}
+```csharp {title="制約を付けて T? を使えるようにできる例" warning-text="string?"}
 #nullable enable
 using System;
  
@@ -951,7 +951,7 @@ class Program
 
 その代わり、`class`、基底クラス制約に `?` を付けることで null 許容参照型を受け付けることができます。
 
-```csharp
+```csharp {error-ranges="sha256:027aff01067c84ae5247e45cb43ea6e27fbc69472b4d5b7e8dfdbec3114238c0;8:12-8:13,15:12-15:13"}
 #nullable enable
 using System;
  
@@ -984,7 +984,7 @@ class Program
 また、新たに `notnull` 制約というものが追加されて、
 非 null 参照型もしくは非 null 値型のみを受け付けることができます。
 
-```csharp {title="notnull 制約"}
+```csharp {title="notnull 制約" warning-ranges="sha256:7434abffc302c5e7e8488dd8c427454ab9931d1f550ef96c21db8f791e200096;18:41-18:45,19:41-19:48"}
 #nullable enable
  
 class NotNullConstraint<T>
@@ -1016,7 +1016,7 @@ class Program
 (参照型と値型での null 許容の仕様の差が大きすぎてちょっと難しいようです。
 もし実現しようと思うなら、C# コンパイラーのレベルでは無理で、.NET ランタイムの型システム レベルでの改修が必要。)
 
-```csharp {title="notnull を付けても T? とは書けない"}
+```csharp {title="notnull を付けても T? とは書けない" error-ranges="sha256:3eac31738a3302de403ab552103172e6d007b60e0e40ccb98dc1b83088754c98;7:5-7:7,7:15-7:19,8:11-8:13"}
 #nullable enable
  
 class NotNullConstraint<T>
@@ -1535,7 +1535,7 @@ C# 8.0 のリリース直後の時点では、
 null 許容性に関する属性はメソッドの外に対してだけ影響を及ぼしていました。
 以下のように、メソッド内ではフロー解析に寄与していませんでした。
 
-```csharp {title="アノテーション属性の影響はメソッド内部には及んでなかった(リリース当初)"}
+```csharp {title="アノテーション属性の影響はメソッド内部には及んでなかった(リリース当初)" warning-ranges="sha256:597819bb721fc22e27d07f6c9a89d91b2a226a68a2921d9834c62e6ea0975cbe;9:26-9:30,17:27-17:35"}
 #nullable enable
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -1574,7 +1574,7 @@ class Program
 例えば以下のような状況を考えます
 (実際、標準ライブラリの [`DeflateStream`](https://docs.microsoft.com/ja-jp/dotnet/api/system.io.compression.deflatestream)クラスに似たようなコードが入っています)。
 
-```csharp {title="間接的な初期化をしているフィールド"}
+```csharp {title="間接的な初期化をしているフィールド" warning-ranges="sha256:81a67610ee018f134cf8320035ac6081cf19e32df23ade0001ae18829939057e;5:12-5:25"}
 class DeflateStream
 {
     private Stream _stream; // コンストラクターで初期化していないので警告が出る。
