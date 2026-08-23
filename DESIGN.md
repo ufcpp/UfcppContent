@@ -11,6 +11,7 @@ colors:
   heading: "#483949"
   content-link: "#a35951"
   border: "#dddddd"
+  image-border: "#696969"
   code-keyword: "#0000ff"
   code-control: "#8f08c4"
   code-preprocessor: "#808080"
@@ -129,6 +130,8 @@ high-contrast reading neutrals.
 - **Technical Ink** (`text`): Default prose and navigation-supporting copy.
 - **Heading Plum** (`heading`): Secondary heading color inherited from the live site.
 - **Quiet Rule** (`border`): Hairline surface separation and restrained directional shadows.
+- **Image Frame** (`image-border`): Preserves the original site's boundary around diagrams whose
+  white canvas would otherwise blend into the reading surface.
 
 ### Named Rules
 
@@ -209,6 +212,10 @@ card, its shadow is too strong or its corner treatment is too decorative.
   anchors when available.
 - **Keywords:** Present extracted terms as compact gray links with a key marker, matching the
   original site's dense reference treatment.
+- **Previous / Next Pages:** Place compact gray links after chapter content pages. Follow
+  `sort_order` through all chapters in the current subject, including exercise-list pages,
+  prefix a link with `【章名】` when it crosses a chapter boundary, and show only the available
+  direction at subject boundaries.
 
 ### Headings
 
