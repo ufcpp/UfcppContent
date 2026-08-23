@@ -275,7 +275,7 @@ attributes:
 desktop browsers expose the same native hover tooltip as the legacy site. It
 must be non-empty and cannot contain control characters. When it is omitted,
 the renderer does not emit a `title` attribute. Metadata text is HTML-decoded
-exactly once; the migrator canonically encodes `&`, `"`, `<`, `>`, and backticks
+exactly once; canonical metadata encodes `&`, `"`, `<`, `>`, and backticks
 so quote-rich titles and literal entity spellings remain unambiguous.
 `highlight-lines` accepts
 comma-separated, one-based whole-line numbers and inclusive ranges. Blank lines
@@ -300,6 +300,21 @@ literal use a fingerprinted positional fallback:
 hi
 ```
 ````
+
+The formal grammar shared by all positional annotation properties is:
+
+```text
+highlight-ranges = range-value
+error-ranges     = range-value
+warning-ranges   = range-value
+range-value      = "sha256:" 64-lowercase-hex ";" range *("," range)
+range            = position "-" position
+position         = positive-decimal ":" positive-decimal
+```
+
+`64-lowercase-hex` is exactly 64 lowercase hexadecimal digits.
+`positive-decimal` is greater than zero and has no sign or leading zero; the
+grammar contains no whitespace.
 
 Each range is `startLine:startColumn-endLine:endColumn`, with one-based lines
 and Unicode-scalar columns and an exclusive end. Multiple ranges are
