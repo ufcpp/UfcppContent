@@ -136,6 +136,25 @@
                 {
                     @((MarkupString)BodyHtml)
                 }
+                @if (PreviousPage is not null || NextPage is not null)
+                {
+                    <nav class="around-article" aria-label="前後のページ">
+                        @if (NextPage is not null)
+                        {
+                            <a href="@Url(NextPage.Url)" class="next-article">
+                                @NextPage.Title
+                                <span class="article-navigation-arrow" aria-hidden="true">&#8594;</span>
+                            </a>
+                        }
+                        @if (PreviousPage is not null)
+                        {
+                            <a href="@Url(PreviousPage.Url)" class="previous-article">
+                                <span class="article-navigation-arrow" aria-hidden="true">&#8592;</span>
+                                @PreviousPage.Title
+                            </a>
+                        }
+                    </nav>
+                }
             </article>
         </main>
     </div>
@@ -168,6 +187,8 @@
     [Parameter] public IReadOnlyList<NavigationItem> Breadcrumbs { get; set; } = [];
     [Parameter] public IReadOnlyList<TableOfContentsItem> TableOfContents { get; set; } = [];
     [Parameter] public IReadOnlyList<NavigationItem> Keywords { get; set; } = [];
+    [Parameter] public NavigationItem? PreviousPage { get; set; }
+    [Parameter] public NavigationItem? NextPage { get; set; }
     [Parameter] public string? PublishedAt { get; set; }
     [Parameter] public string? UpdatedAt { get; set; }
     [Parameter] public IReadOnlyList<string> Tags { get; set; } = [];

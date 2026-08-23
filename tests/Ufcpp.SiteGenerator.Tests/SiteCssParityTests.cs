@@ -162,6 +162,18 @@ public sealed class SiteCssParityTests
         Assert.DoesNotContain(bodies, body => MarginShorthand.IsMatch(body));
     }
 
+    [Fact]
+    public void ContentImage_PreservesLegacyBorder()
+    {
+        var palette = RuleBody(":root");
+        var declarations = RuleBody(@"\.content\s+img");
+
+        Assert.NotNull(palette);
+        Assert.Contains("--color-image-border: #696969;", palette);
+        Assert.NotNull(declarations);
+        Assert.Contains("border: 1px solid var(--color-image-border);", declarations);
+    }
+
     /// <summary>
     /// The current ufcpp.net colors syntax keywords without changing their
     /// inherited weight. Generated and legacy token classes must do the same.
