@@ -32,8 +32,8 @@ The command accepts:
 - `--report -`: deterministic JSON on standard output. `-` is the default and
   only accepted destination.
 - `--dry-run`: optional and accepted for clarity. Dry run is the only mode.
-- `--issue 4`: select the Issue #4 title/highlight contract. Omitting it retains
-  the PR 1 all-annotation analysis.
+- `--issue 4` or `--issue 5`: select the corresponding migration contract.
+  Omitting it retains the PR 1 all-annotation analysis.
 - `--format <report|patch>`: select deterministic JSON or a deterministic
   unified patch. The default is `report`. `patch` requires `--issue 4`.
 
@@ -470,6 +470,196 @@ PR 2 is complete only when:
   deterministic patching, failure non-mutation, and idempotency; and
 - the full solution build/tests, content validation, site generation, and
   representative generated-HTML inspection pass.
+
+## Issue #5 migration contract
+
+Issue #5 runs only on a target where the Issue #4 plan is already idempotent.
+It restores the parsed legacy `<span class="error">` and
+`<span class="warning">` selections without rewriting the Issue #4 title or
+highlight contract. A non-idempotent Issue #4 plan blocks Issue #5 patch mode,
+which makes the PR stack dependency explicit.
+
+For each kind, fenced blocks prefer representations in this order:
+
+1. `error-lines` or `warning-lines` for complete current lines;
+2. `error-text` or `warning-text` for one non-empty, single-line,
+   case-sensitive ordinal literal whose exact semantic occurrence is unique; and
+3. `error-ranges` or `warning-ranges` when the remaining selections cannot be
+   represented exactly by the preceding forms.
+
+The range forms use the same fingerprint, one-based logical-line and
+Unicode-scalar-column coordinates, exclusive ends, newline normalization,
+canonical ordering, and exact historical-to-current boundary projection as
+`highlight-ranges`. The grammar is:
+
+```text
+error-ranges   = "sha256:" 64-lowercase-hex ";" range *("," range)
+warning-ranges = "sha256:" 64-lowercase-hex ";" range *("," range)
+range          = position "-" position
+position       = positive-decimal ":" positive-decimal
+```
+
+Within one annotation kind, the planner sorts and merges overlapping or
+adjacent selections before serialization. A hand-written range value must
+already be strictly ordered, disjoint, and non-adjacent. Different annotation
+kinds are never merged, even when their intervals are equal, overlap, or touch.
+For error and warning, `*-text` and `*-ranges` are mutually exclusive while
+`*-lines` may accompany either. Issue #4 remains backward compatible when
+`highlight-text` and `highlight-ranges` coexist. Unlike the existing Issue #4
+`highlight-text` behavior, which intentionally marks every occurrence for
+backward compatibility,
+`error-text` and `warning-text` must occur exactly once. Repeated or otherwise
+ambiguous legacy text therefore uses a fingerprinted range; ambiguous
+hand-authored text fails site generation.
+
+Canonical fenced metadata is serialized in this order, omitting absent values:
+
+1. `title`;
+2. `highlight-lines`, `highlight-text`, `highlight-ranges`;
+3. `error-lines`, `error-text`, `error-ranges`; and
+4. `warning-lines`, `warning-text`, `warning-ranges`.
+
+The Issue #4 one-pass entity encoding rules apply to every value. Duplicate
+properties, a conflicting existing value, noncanonical range spelling or
+ordering, stale fingerprints, malformed Unicode, out-of-bounds coordinates,
+empty or newline-only ranges, incompatible text/range pairs, and ambiguous
+error/warning text are hard errors. None of the metadata properties is copied
+to generated HTML.
+
+### Typed interval rendering
+
+The renderer forms one source interval set per annotation kind and splits at
+every syntax-color and annotation boundary. It emits semantically distinct
+wrappers in this fixed outer-to-inner order:
+
+1. `<mark class="code-highlight">`;
+2. `<span class="error">`;
+3. `<span class="warning">`; and
+4. the syntax-color `<span>` returned by Roslyn or ColorCode.
+
+Only active wrappers are emitted for a segment. A partial overlap closes and
+reopens wrappers at the shared boundary instead of producing crossing HTML
+tags. Equal-boundary selections retain all active kinds. Adjacent intervals of
+different kinds remain distinct. The same algorithm applies to C#, ColorCode
+languages, plain/unknown languages, and `console`; before and after wrapping,
+the exact decoded code text must equal the source code.
+
+### Raw table annotations
+
+Raw `<pre><code>` blocks inside tables cannot carry fenced metadata. The
+migrator inserts the permanent fixed elements
+`<mark class="code-highlight">`, `<span class="error">`, and
+`<span class="warning">` at exact guarded raw-source boundaries. When kinds
+overlap, it uses the same wrapper order and boundary splitting as fenced blocks.
+It may remove and reconstruct only those three exact canonical wrapper forms to
+prove idempotency; any noncanonical annotation element, unsupported existing
+mark/span, boundary inside an entity or element, malformed wrapper, or missing
+structural `<code>` blocks the patch. Decoded visible code, table context, title,
+and all non-annotation markup must remain byte-for-byte equivalent. This does
+not broaden the site's existing raw HTML acceptance.
+
+### CSS contract
+
+The permanent stylesheet scopes the legacy meaning to generated content code:
+
+```css
+.content pre code .error {
+  border-bottom: dotted medium #f00;
+}
+
+.content pre code .warning {
+  border-bottom: dotted medium #008000;
+}
+```
+
+The declarations do not replace syntax colors or the Issue #4 mark background.
+Nested error/warning wrappers therefore retain both the dotted underline and
+the innermost syntax token color.
+
+### Issue #5 exception audit
+
+The six malformed historical diagnostics are guarded and classified
+explicitly:
+
+- `study/csharp/structured/oo_exception.md`, historical block 12, has a stray
+  `</em>` but a live error selection on the second `FormatException`; an exact
+  historical document blob plus current ordinal/line/hash override restores it
+  with `error-ranges`;
+- `blog/2022/1/defaultable/index.md`, historical block 2, has malformed warning
+  markup around `null`, but the current block deliberately changed `new(null)`
+  to `new()`; the warning is evidenced obsolete; and
+- the other three malformed blocks and the orphan `</pre>` contain no Issue #5
+  annotation and are accepted only under their exact pinned guards.
+
+No parsed error or warning block is ambiguous or unmatched on the Issue #4
+base. The 329 line/text representation failures are not exceptions: all use the
+same exact range projection as Issue #4. Approximate text, nearest boundaries,
+and occurrence guesses remain forbidden.
+
+The pinned acceptance inventory is:
+
+| Result | Error | Warning |
+|---|---:|---:|
+| Baseline parsed blocks | 321 | 100 |
+| Baseline line blocks | 3 | 0 |
+| Baseline unique-text blocks | 75 | 14 |
+| Baseline range-fallback blocks | 243 | 86 |
+| Supplemental malformed live blocks | 1 | 0 |
+| Supplemental malformed obsolete blocks | 0 | 1 |
+| Final restored blocks | 322 | 100 |
+| Blocked blocks | 0 | 0 |
+
+The audited exact projection on the Issue #4 base is:
+
+| Result | Error | Warning |
+|---|---:|---:|
+| Parsed individual selections | 568 | 159 |
+| Supplemental malformed selections | 1 | 1 |
+| Restored individual selections | 568 | 159 |
+| Final line blocks | 3 | 0 |
+| Final unique-text blocks | 75 | 14 |
+| Final range blocks | 244 | 86 |
+| Serialized range intervals | 448 | 142 |
+| Raw-table blocks | 4 | 0 |
+
+Two selections are evidenced obsolete: the malformed `defaultable` warning and
+the empty `test.md` error wrapper. The 396 final plans change 120 documents.
+Same-block co-occurrence is 16 error+highlight, 1 warning+highlight, 26
+error+warning, and no all-three block. Exact interval intersection is 0
+error+highlight, 0 warning+highlight, 4 error+warning, and 0 all-three. Different
+kinds remain independently represented in all cases.
+
+The deterministic Issue #5 report pins these totals, exact exception
+dispositions, and the ordered plan. Patch mode is unavailable unless every
+parsed or malformed Issue #5 annotation contributes to exactly one restored or
+evidenced-obsolete disposition and every count reconciles.
+
+### Issue #5 rewrite, reporting, and acceptance
+
+Issue #5 retains the stdout-only trust boundary and the Issue #4 unified-patch
+format, blob preimages, all-or-nothing postimage validation, checked
+`git apply --index` procedure, deterministic report/patch bytes, and exit codes.
+After the patch is committed, two Issue #5 patch runs must emit zero bytes with
+exit code 0; conflicting existing metadata is an error rather than a second
+annotation.
+
+PR 3 is complete only when:
+
+- all 321 parsed error blocks, all 100 parsed warning blocks, and both malformed
+  Issue #5 candidates have exact restored or evidenced-obsolete dispositions;
+- every line/text failure has an exact fingerprinted range plan and no
+  Issue #5 diagnostic is unexplained;
+- generated HTML preserves exact code text and valid nesting for all typed
+  overlaps and syntax-span intersections;
+- raw-table output preserves exact non-annotation markup and decoded text;
+- permanent tests cover grammar, canonicalization, uniqueness, same-kind
+  merging, different-kind overlaps, wrapper order, syntax intersections,
+  multiline/Unicode/newline/entity boundaries, raw tables, CSS, deterministic
+  patching, malformed guards, and idempotency;
+- the content diff changes only fence metadata or narrowly scoped raw
+  annotation markup and does not regress Issue #4 title/mark totals; and
+- the full Release build/tests, content validation, 1,107-page generation, and
+  representative generated-HTML audit pass.
 
 ## Report
 

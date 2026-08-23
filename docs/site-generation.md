@@ -266,7 +266,7 @@ Fenced blocks can carry editorial highlighting metadata in their generic
 attributes:
 
 ````markdown
-```csharp {title="Register the click handler" highlight-lines="2,5-7" highlight-text="Button1_Click"}
+```csharp {title="Register the click handler" highlight-lines="2,5-7" error-text="missingName" warning-lines="9"}
 // Code
 ```
 ````
@@ -282,8 +282,15 @@ comma-separated, one-based whole-line numbers and inclusive ranges. Blank lines
 count toward the numbering; the terminating line break after each selection stays
 outside the generated highlight. `highlight-text` uses case-sensitive ordinal
 literal matching and highlights every occurrence, including overlapping occurrences.
-When both attributes select the same source, their source ranges are combined
-and overlapping or adjacent ranges are merged.
+When both highlight attributes select the same source, their source ranges are
+combined and overlapping or adjacent ranges are merged.
+
+Legacy compiler annotations use parallel `error-lines`, `error-text`,
+`error-ranges`, `warning-lines`, `warning-text`, and `warning-ranges`
+properties. Error/warning text must occur exactly once; repeated text uses the
+fingerprinted range form instead of guessing an occurrence. Within one kind,
+overlapping or adjacent intervals are merged. Different kinds stay distinct
+even at the same boundaries.
 
 Legacy highlights that cannot be expressed exactly by a whole line or a unique
 literal use a fingerprinted positional fallback:
@@ -303,25 +310,31 @@ range-annotated block makes stale metadata fail the build rather than silently
 moving a highlight. Values must use the single canonical ordering and spelling:
 ranges are non-empty, in bounds, strictly increasing, disjoint, and non-adjacent.
 
-`highlight-ranges` composes with line and literal highlights. All selected source
-spans are combined before rendering, so one `<mark>` can cross syntax-token
-boundaries without losing their nested color spans. The named-property allowlist
-contains only `title`, `highlight-lines`, `highlight-text`, and
-`highlight-ranges`; event handlers and other named generic attributes fail site
-generation instead of reaching generated HTML. Author-supplied generic IDs and
-classes on fenced code blocks also fail generation. Markdig-generated attributes
-on its derived block extensions are ignored rather than copied.
-Highlight metadata is consumed by the renderer and is never copied into generated
-HTML. Malformed attributes, invalid line syntax, non-positive or out-of-range
-line numbers, an empty literal, a literal with no match, a stale range fingerprint,
+All three `*-ranges` properties share the same grammar and compose with their
+kind's line selection. Error/warning text and range properties are mutually
+exclusive; existing highlight text/range composition remains supported. The
+renderer splits at every syntax and annotation boundary and
+uses the fixed outer-to-inner order `<mark class="code-highlight">`,
+`<span class="error">`, `<span class="warning">`, then the syntax-color span.
+Partial overlaps are split into valid nested runs rather than crossing tags.
+The named-property allowlist contains only `title` and the three line/text/range
+triples; event handlers and other named generic attributes fail site generation
+instead of reaching generated HTML. Author-supplied generic IDs and classes on
+fenced code blocks also fail generation. Markdig-generated attributes on its
+derived block extensions are ignored rather than copied.
+
+Annotation metadata is consumed by the renderer and is never copied into
+generated HTML. Malformed attributes, incompatible text/range pairs, ambiguous
+error/warning text, invalid line syntax, non-positive or out-of-range line
+numbers, an empty literal, a literal with no match, a stale range fingerprint,
 invalid Unicode, or non-canonical range coordinates fail site generation
-explicitly. Raw table code retained as HTML uses the same permanent
-`<mark class="code-highlight">` element; its migration verifies that decoded
-visible code remains unchanged. Before inserting fixed
-`<mark class="code-highlight">` elements, the renderer parses the trusted
-syntax-highlighter fragment structurally and verifies that its text maps exactly
-to the source code. This preserves syntax-token spans and escaped plain code
-without rewriting generated HTML with regular expressions.
+explicitly. Raw table code retained as HTML uses the same permanent mark/error/
+warning elements; migration verifies that decoded visible code and all
+non-annotation markup remain unchanged. Before inserting fixed annotation
+elements, the renderer parses the trusted syntax-highlighter fragment
+structurally and verifies that its text maps exactly to the source code. This
+preserves syntax-token spans and escaped plain code without rewriting generated
+HTML with regular expressions.
 
 Source-code highlights reproduce the legacy effective style: `#e0ffff`
 background, `0 2px` padding, normal font style, and bold text while nested syntax
@@ -329,6 +342,9 @@ token colors remain intact. Syntax keyword classifications inherit the base code
 weight instead of using bold, matching the current ufcpp.net `.reserved` style.
 Console highlights retain white text on `#606060`, normal weight, and the legacy
 `1px solid #ff8080` bottom border.
+Error annotations retain the legacy dotted medium red (`#f00`) underline and
+warnings the dotted medium green (`#008000`) underline, scoped to
+`.content pre code` so unrelated legacy classes are unaffected.
 
 Roslyn classifications are emitted as scoped `roslyn-*` classes. Same-position
 and overlapping classifications are merged by text interval so embedded

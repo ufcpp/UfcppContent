@@ -12,6 +12,12 @@ internal static class DocumentAnnotationRewriter
         "highlight-lines",
         "highlight-text",
         "highlight-ranges",
+        "error-lines",
+        "error-text",
+        "error-ranges",
+        "warning-lines",
+        "warning-text",
+        "warning-ranges",
     ];
 
     public static DocumentRewriteResult Rewrite(
@@ -75,6 +81,9 @@ internal static class DocumentAnnotationRewriter
             }
 
             var metadata = ExistingMetadata(openingLine);
+            ValidateExistingSelection("highlight", plan.Metadata.Highlight, metadata);
+            ValidateExistingSelection("error", plan.Metadata.Error, metadata);
+            ValidateExistingSelection("warning", plan.Metadata.Warning, metadata);
             foreach (var (name, value) in desired)
             {
                 if (metadata.TryGetValue(name, out var existing)
@@ -124,6 +133,12 @@ internal static class DocumentAnnotationRewriter
         Add("highlight-lines", plan.Highlight?.Lines);
         Add("highlight-text", plan.Highlight?.Text);
         Add("highlight-ranges", plan.Highlight?.Ranges);
+        Add("error-lines", plan.Error?.Lines);
+        Add("error-text", plan.Error?.Text);
+        Add("error-ranges", plan.Error?.Ranges);
+        Add("warning-lines", plan.Warning?.Lines);
+        Add("warning-text", plan.Warning?.Text);
+        Add("warning-ranges", plan.Warning?.Ranges);
         return metadata;
 
         void Add(string name, string? value)
@@ -220,6 +235,33 @@ internal static class DocumentAnnotationRewriter
         }
 
         return metadata;
+    }
+
+    private static void ValidateExistingSelection(
+        string prefix,
+        SelectionMetadataPlan? planned,
+        IReadOnlyDictionary<string, string> existing)
+    {
+        if (planned is null)
+        {
+            return;
+        }
+
+        Validate("lines", planned.Lines);
+        Validate("text", planned.Text);
+        Validate("ranges", planned.Ranges);
+
+        void Validate(string suffix, string? expected)
+        {
+            var name = $"{prefix}-{suffix}";
+            if (existing.TryGetValue(name, out var value)
+                && (expected is null
+                    || !string.Equals(value, expected, StringComparison.Ordinal)))
+            {
+                throw new InvalidDataException(
+                    $"Existing {name} metadata conflicts with the migration plan.");
+            }
+        }
     }
 
     private static string SerializeMetadata(

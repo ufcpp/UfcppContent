@@ -56,13 +56,20 @@ internal static class HighlightRangePlanner
             {
                 return new HighlightRangePlanningResult(
                     null,
-                    "A historical highlight selection is outside its code block.");
+                    "A historical annotation selection is outside its code block.");
             }
 
             var historicalStarts = historical.FindBoundaryIndexes(selection.Start);
             var historicalEnds = historical.FindBoundaryIndexes(selectionEnd);
             var candidates = new HashSet<HighlightSourceRange>();
             var expected = NormalizeNewlines(WebUtility.HtmlDecode(selection.Text));
+            if (!expected.AsSpan().ContainsAnyExcept('\n'))
+            {
+                return new HighlightRangePlanningResult(
+                    null,
+                    "An annotation range must contain visible code text.");
+            }
+
             foreach (var startIndex in historicalStarts)
             {
                 foreach (var endIndex in historicalEnds.Where(index => index > startIndex))
@@ -211,6 +218,13 @@ internal static class HighlightRangePlanner
                 throw new InvalidDataException(
                     "The highlight-ranges coordinates are out of bounds, "
                     + "unordered, overlapping, or adjacent.");
+            }
+
+            if (!code.AsSpan(startOffset, endOffset - startOffset)
+                .ContainsAnyExcept('\r', '\n'))
+            {
+                throw new InvalidDataException(
+                    "A highlight-ranges selection must contain code text.");
             }
 
             ranges.Add(new HighlightSourceRange(startOffset, endOffset));

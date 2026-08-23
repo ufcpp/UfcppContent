@@ -70,7 +70,7 @@ public sealed class MetadataPlannerTests
     }
 
     [Fact]
-    public void Plan_RejectsRepeatedPartialText()
+    public void Plan_RepeatedWarningTextUsesExactRangeFallback()
     {
         const string Code = "token + token";
         var historical = Historical(
@@ -80,10 +80,11 @@ public sealed class MetadataPlannerTests
 
         var result = MetadataPlanner.Plan(historical, Current(Code));
 
-        var diagnostic = Assert.Single(result.Diagnostics);
-        Assert.Equal("UNREPRESENTABLE_REPEATED_TEXT", diagnostic.Code);
-        Assert.Equal(AnnotationKind.Warning, diagnostic.Kind);
-        Assert.Null(result.Plan.Warning);
+        Assert.Empty(result.Diagnostics);
+        Assert.Equal(
+            RangeMetadata(Code, "1:1-1:6"),
+            result.Plan.Warning?.Ranges);
+        Assert.Null(result.Plan.Warning?.Text);
     }
 
     [Fact]
@@ -105,7 +106,7 @@ public sealed class MetadataPlannerTests
     }
 
     [Fact]
-    public void Plan_RejectsMultilinePartialText()
+    public void Plan_MultilineErrorUsesExactRangeFallback()
     {
         const string Code = "prefix one\nsecond suffix";
         var historical = Historical(
@@ -115,10 +116,11 @@ public sealed class MetadataPlannerTests
 
         var result = MetadataPlanner.Plan(historical, Current(Code));
 
+        Assert.Empty(result.Diagnostics);
         Assert.Equal(
-            "UNREPRESENTABLE_MULTILINE_TEXT",
-            Assert.Single(result.Diagnostics).Code);
-        Assert.Null(result.Plan.Error);
+            RangeMetadata(Code, "1:8-2:7"),
+            result.Plan.Error?.Ranges);
+        Assert.Null(result.Plan.Error?.Text);
     }
 
     [Fact]
@@ -210,7 +212,7 @@ public sealed class MetadataPlannerTests
     }
 
     [Fact]
-    public void Plan_RestoresHighlightWhenIssueFiveKindOverlaps()
+    public void Plan_PreservesDifferentlySizedHighlightAndErrorSelections()
     {
         const string Code = "abcdef";
         var historical = Historical(
@@ -221,10 +223,79 @@ public sealed class MetadataPlannerTests
 
         var result = MetadataPlanner.Plan(historical, Current(Code));
 
-        var diagnostic = Assert.Single(result.Diagnostics);
-        Assert.Equal("UNREPRESENTABLE_OVERLAPPING_KINDS", diagnostic.Code);
-        Assert.Equal(AnnotationKind.Error, diagnostic.Kind);
+        Assert.Empty(result.Diagnostics);
         Assert.Equal("1", result.Plan.Highlight?.Lines);
+        Assert.Equal("def", result.Plan.Error?.Text);
+    }
+
+    [Fact]
+    public void Plan_MultiplePartialErrorsUseOrderedRangeFallback()
+    {
+        const string Code = "alpha + beta";
+        var historical = Historical(
+            Code,
+            null,
+            Selection(AnnotationKind.Error, Code, "alpha"),
+            Selection(AnnotationKind.Error, Code, "beta"));
+
+        var result = MetadataPlanner.Plan(historical, Current(Code));
+
+        Assert.Empty(result.Diagnostics);
+        Assert.Equal(
+            RangeMetadata(Code, "1:1-1:6,1:9-1:13"),
+            result.Plan.Error?.Ranges);
+        Assert.Null(result.Plan.Error?.Text);
+    }
+
+    [Fact]
+    public void Plan_ErrorAndWarningPartialOverlapRemainDistinct()
+    {
+        const string Code = "abcdef";
+        var historical = Historical(
+            Code,
+            null,
+            Selection(AnnotationKind.Error, Code, "cde"),
+            Selection(AnnotationKind.Warning, Code, "abcdef"));
+
+        var result = MetadataPlanner.Plan(historical, Current(Code));
+
+        Assert.Empty(result.Diagnostics);
+        Assert.Equal("cde", result.Plan.Error?.Text);
+        Assert.Equal("1", result.Plan.Warning?.Lines);
+    }
+
+    [Fact]
+    public void Plan_EmptySelectionIsDiagnosedWithoutDroppingVisibleSelections()
+    {
+        const string Code = "x();";
+        var historical = Historical(
+            Code,
+            null,
+            new AnnotationSelection(AnnotationKind.Error, 1, 2, "()"),
+            new AnnotationSelection(AnnotationKind.Error, 2, 0, string.Empty));
+
+        var result = MetadataPlanner.Plan(historical, Current(Code));
+
+        var diagnostic = Assert.Single(result.Diagnostics);
+        Assert.Equal("EMPTY_ANNOTATION_SELECTION", diagnostic.Code);
+        Assert.Equal(AnnotationKind.Error, diagnostic.Kind);
+        Assert.Equal("()", result.Plan.Error?.Text);
+    }
+
+    [Fact]
+    public void Plan_NewlineOnlySelectionFailsBeforeEmittingRendererMetadata()
+    {
+        const string Code = "a\nb";
+        var historical = Historical(
+            Code,
+            null,
+            new AnnotationSelection(AnnotationKind.Error, 1, 1, "\n"));
+
+        var result = MetadataPlanner.Plan(historical, Current(Code));
+
+        var diagnostic = Assert.Single(result.Diagnostics);
+        Assert.Equal("UNREPRESENTABLE_RANGE_PROJECTION", diagnostic.Code);
+        Assert.Equal(AnnotationKind.Error, diagnostic.Kind);
         Assert.Null(result.Plan.Error);
     }
 

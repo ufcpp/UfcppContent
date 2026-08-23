@@ -84,6 +84,27 @@ public sealed class DocumentAnnotationRewriterTests
     }
 
     [Fact]
+    public void Rewrite_RejectsAdditionalSameKindMetadata()
+    {
+        const string Code = "value";
+        var range =
+            $"sha256:{HighlightRangePlanner.ComputeHash(Code)};1:1-1:6";
+        var source =
+            $"```text {{error-text=\"value\" error-ranges=\"{range}\"}}\n"
+            + $"{Code}\n```\n";
+        var plan = Plan(
+            Code,
+            new BlockMetadataPlan(
+                null,
+                null,
+                new SelectionMetadataPlan(null, "value"),
+                null));
+
+        Assert.Throws<InvalidDataException>(
+            () => DocumentAnnotationRewriter.Rewrite("sample.md", source, [plan]));
+    }
+
+    [Fact]
     public void Rewrite_EncodesMetadataValueContainingBothQuoteCharacters()
     {
         const string Code = "value";
@@ -97,6 +118,39 @@ public sealed class DocumentAnnotationRewriterTests
         Assert.Contains(
             "title=\"both &quot; and ' quotes with &#96;tick&#96;\"",
             result.Content);
+    }
+
+    [Fact]
+    public void Rewrite_CanonicalizesTypedMetadataInStableKindOrder()
+    {
+        const string Code = "alpha + beta";
+        var hash = HighlightRangePlanner.ComputeHash(Code);
+        var source =
+            "```text {warning-text=\"beta\" title=\"sample\" "
+            + "highlight-text=\"alpha\"}\n"
+            + $"{Code}\n```\n";
+        var plan = Plan(
+            Code,
+            new BlockMetadataPlan(
+                "sample",
+                new SelectionMetadataPlan(null, "alpha"),
+                new SelectionMetadataPlan(null, null, $"sha256:{hash};1:1-1:6"),
+                new SelectionMetadataPlan(null, "beta")));
+
+        var first = DocumentAnnotationRewriter.Rewrite("sample.md", source, [plan]);
+        var second = DocumentAnnotationRewriter.Rewrite(
+            "sample.md",
+            first.Content,
+            [plan]);
+
+        Assert.StartsWith(
+            "```text {title=\"sample\" highlight-text=\"alpha\" "
+            + $"error-ranges=\"sha256:{hash};1:1-1:6\" "
+            + "warning-text=\"beta\"}",
+            first.Content,
+            StringComparison.Ordinal);
+        Assert.Equal(0, second.ReplacementCount);
+        Assert.Equal(first.Content, second.Content);
     }
 
     [Fact]
@@ -153,6 +207,128 @@ public sealed class DocumentAnnotationRewriterTests
         Assert.Contains(
             "alpha <mark class=\"code-highlight\">beta</mark>",
             result.Content);
+    }
+
+    [Fact]
+    public void Rewrite_RawTableTypedOverlapUsesCanonicalNestedElements()
+    {
+        const string Code = "abcdef";
+        const string Source =
+            "<table><tr><td><pre><code>abcdef</code></pre></td></tr></table>\n";
+        var hash = HighlightRangePlanner.ComputeHash(Code);
+        var plan = Plan(
+            Code,
+            new BlockMetadataPlan(
+                null,
+                new SelectionMetadataPlan(null, null, $"sha256:{hash};1:1-1:5"),
+                new SelectionMetadataPlan(null, null, $"sha256:{hash};1:3-1:7"),
+                new SelectionMetadataPlan(null, null, $"sha256:{hash};1:3-1:5")),
+            targetKind: "rawPreInTable");
+
+        var first = DocumentAnnotationRewriter.Rewrite("sample.md", Source, [plan]);
+        var second = DocumentAnnotationRewriter.Rewrite(
+            "sample.md",
+            first.Content,
+            [plan]);
+
+        Assert.Contains(
+            "<mark class=\"code-highlight\">ab</mark>"
+            + "<mark class=\"code-highlight\"><span class=\"error\">"
+            + "<span class=\"warning\">cd</span></span></mark>"
+            + "<span class=\"error\">ef</span>",
+            first.Content);
+        Assert.Equal(
+            Code,
+            Assert.Single(CurrentBlockDiscoverer.Discover(first.Content)).Code);
+        Assert.Equal(0, second.ReplacementCount);
+        Assert.Equal(first.Content, second.Content);
+    }
+
+    [Fact]
+    public void Rewrite_RawTableIssue5PlanPreservesExistingIssue4Mark()
+    {
+        const string Code = "abc";
+        const string Source =
+            "<table><tr><td><pre><code>"
+            + "a<mark class=\"code-highlight\">b</mark>c"
+            + "</code></pre></td></tr></table>\n";
+        var plan = Plan(
+            Code,
+            new BlockMetadataPlan(
+                null,
+                null,
+                new SelectionMetadataPlan(null, "c"),
+                null),
+            targetKind: "rawPreInTable");
+
+        var first = DocumentAnnotationRewriter.Rewrite("sample.md", Source, [plan]);
+        var second = DocumentAnnotationRewriter.Rewrite(
+            "sample.md",
+            first.Content,
+            [plan]);
+
+        Assert.Contains(
+            "a<mark class=\"code-highlight\">b</mark>"
+            + "<span class=\"error\">c</span>",
+            first.Content);
+        Assert.Equal(0, second.ReplacementCount);
+        Assert.Equal(first.Content, second.Content);
+    }
+
+    [Fact]
+    public void Rewrite_RawTableIssue4PlanPreservesExistingIssue5Span()
+    {
+        const string Code = "abc";
+        const string Source =
+            "<table><tr><td><pre><code>"
+            + "a<span class=\"error\">b</span>c"
+            + "</code></pre></td></tr></table>\n";
+        var plan = Plan(
+            Code,
+            new BlockMetadataPlan(
+                null,
+                new SelectionMetadataPlan(null, "c"),
+                null,
+                null),
+            targetKind: "rawPreInTable");
+
+        var first = DocumentAnnotationRewriter.Rewrite("sample.md", Source, [plan]);
+        var second = DocumentAnnotationRewriter.Rewrite(
+            "sample.md",
+            first.Content,
+            [plan]);
+
+        Assert.Contains(
+            "a<span class=\"error\">b</span>"
+            + "<mark class=\"code-highlight\">c</mark>",
+            first.Content);
+        Assert.Equal(0, second.ReplacementCount);
+        Assert.Equal(first.Content, second.Content);
+    }
+
+    [Fact]
+    public void Rewrite_RawTableDoesNotStripAnnotationTextInsideAttribute()
+    {
+        const string Code = "ab";
+        const string Source =
+            "<table><tr><td><pre><code>"
+            + "a<i data-note='<span class=\"error\"></span>'></i>b"
+            + "</code></pre></td></tr></table>\n";
+        var plan = Plan(
+            Code,
+            new BlockMetadataPlan(
+                null,
+                null,
+                new SelectionMetadataPlan(null, "b"),
+                null),
+            targetKind: "rawPreInTable");
+
+        var result = DocumentAnnotationRewriter.Rewrite("sample.md", Source, [plan]);
+
+        Assert.Contains(
+            "<i data-note='<span class=\"error\"></span>'></i>",
+            result.Content);
+        Assert.Contains("<span class=\"error\">b</span>", result.Content);
     }
 
     private static ReportPlan Plan(string code, BlockMetadataPlan metadata) =>
