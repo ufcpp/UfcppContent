@@ -5,6 +5,7 @@ using Markdig.Renderers.Html;
 using Markdig.Syntax;
 using System.Globalization;
 using System.Net;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -558,9 +559,53 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                     "Applying code highlights changed the source code text.");
             }
 
-            return string.Concat(
-                root.Nodes().Select(
-                    static node => node.ToString(SaveOptions.DisableFormatting)));
+            return SerializeNodes(root.Nodes());
+        }
+
+        private static string SerializeNodes(IEnumerable<XNode> nodes)
+        {
+            var output = new StringBuilder();
+            foreach (var node in nodes)
+            {
+                WriteNode(node);
+            }
+
+            return output.ToString();
+
+            void WriteNode(XNode node)
+            {
+                if (node is XText text)
+                {
+                    output.Append(WebUtility.HtmlEncode(text.Value));
+                    return;
+                }
+
+                if (node is not XElement element)
+                {
+                    throw new InvalidDataException(
+                        "The highlighted fragment contains an unsupported node.");
+                }
+
+                output.Append('<').Append(element.Name.LocalName);
+                foreach (var attribute in element.Attributes())
+                {
+                    output.Append(' ')
+                        .Append(attribute.Name.LocalName)
+                        .Append("=\"")
+                        .Append(WebUtility.HtmlEncode(attribute.Value))
+                        .Append('"');
+                }
+
+                output.Append('>');
+                foreach (var child in element.Nodes())
+                {
+                    WriteNode(child);
+                }
+
+                output.Append("</")
+                    .Append(element.Name.LocalName)
+                    .Append('>');
+            }
         }
 
         private static void InsertMarks(

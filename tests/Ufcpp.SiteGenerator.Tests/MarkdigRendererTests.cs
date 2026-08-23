@@ -648,6 +648,23 @@ public sealed class MarkdigRendererTests
     }
 
     [Fact]
+    public void Render_HighlightLines_PreservesEncodedQuotesInColorCodeTextNodes()
+    {
+        var html = Render(
+            """
+            ```html {highlight-lines="1"}
+            <%@ Register TagPrefix="local" Src="~/ShowXml.ascx" %>
+            ```
+            """);
+
+        Assert.Contains("Src=&quot;~/ShowXml.ascx&quot;", html);
+        Assert.DoesNotContain("Src=\"~/ShowXml.ascx\"", html);
+        Assert.Equal(
+            """<%@ Register TagPrefix="local" Src="~/ShowXml.ascx" %>""",
+            ExtractRenderedCodeElement(html).Value.TrimEnd('\r', '\n'));
+    }
+
+    [Fact]
     public void Render_HighlightRanges_ComposesWithWholeLineSelection()
     {
         const string Code = "whole\npartial value";
