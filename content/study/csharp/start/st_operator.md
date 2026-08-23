@@ -475,7 +475,7 @@ C# 8.0 では、[null合体演算子](../resource/sp2_nullable.md#coalescing) (`
 
 例えば以下のような書き方ができます。
 
-```csharp
+```csharp {title="null 合体代入" highlight-text="??="}
 static void M(string s = null)
 {
     s ??= "default string";
@@ -551,12 +551,12 @@ string nonNullStr = str ?? "default string";
 sizeof 演算子は、他の演算子と比べると少し特殊で、
 以下のように、型に対して用います。
 
-```csharp
+```csharp {title="sizeof 演算子"}
 Console.Write("{0}, {1}\n", sizeof(int), sizeof(byte));
 ```
 
 
-```console
+```console {title="sizeof 演算子"}
 4, 1
 ```
 
@@ -606,7 +606,7 @@ sizeof(int), sizeof(byte) はそれぞれ 4, 1 を返します。
 
 例えば、<code>|</code> 演算子と <code>||</code> 演算子の挙動の差を見てみましょう。
 
-```csharp
+```csharp {title="|| 演算子の短絡評価"}
 using System;
 
 class Program
@@ -640,7 +640,7 @@ a
 
 また、条件演算子の短絡評価の例を示すと、以下のようになります。
 
-```csharp
+```csharp {title="条件演算子の短絡評価"}
 using System;
 
 class Program
@@ -764,7 +764,7 @@ C# の構文上は式（expression）と呼ばれるものの一種です。
 #### 解答例 1
 
 
-```csharp
+```csharp {title="整数の四則演算"}
 using System;
 
 class Exercise
@@ -797,7 +797,7 @@ class Exercise
 
 例として double 版を掲載。
 
-```csharp
+```csharp {title="実数の四則演算"}
 using System;
 
 class Exercise
@@ -860,7 +860,7 @@ class Exercise
 #### 解答例 1
 
 
-```csharp
+```csharp {title="円の面積を求める"}
 using System;
 
 class Exercise
@@ -925,7 +925,7 @@ BMIの値が22のときに病気になる可能性が最も低く、BMIが26を�
 </blockquote>
 以下にプログラムの実行結果の例を示す。
 
-```console
+```console {title="結果の例"}
 身長[cm] = 175.5
 体重[kg] = 52.4
 BMI = 17.0128489216808
@@ -936,7 +936,7 @@ BMI = 17.0128489216808
 #### 解答例 1
 
 
-```csharp
+```csharp {title="BMI 値の計算"}
 using System;
 
 class Exercise

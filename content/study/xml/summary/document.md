@@ -41,7 +41,7 @@ aliases:
 このドキュメント自体のソースは以下のようになっています。
 
 
-```xml
+```xml {title="ソース"}
 <document title="ドキュメント" xmlns="http://ufcpp.net/study/document">
   <section title="概要" id="abst">
     <p>

@@ -62,7 +62,7 @@ aliases:
 従って、バケットソートのプログラムは非常に簡単になり、
 以下のようになります。
 
-```csharp
+```csharp {title="バケットソート（int 版）"}
 /// <summary>
 /// [0, max] の範囲の整数をバケットソート。
 /// </summary>
@@ -88,7 +88,7 @@ public static void BucketSort(int[] a, int max)
 （キーが同じ値でも、キー以外のデータが異なる可能性があるので）
 「キーの値が x の要素を入れるバケツ」を「[連結リスト](../collection/col_blist.md#linked)」などを使って実装する必要があります。
 
-```csharp
+```csharp {title="バケットソート（任意のデータ構造対象）"}
 using System.Collections.Generic;
 
 /// <summary>

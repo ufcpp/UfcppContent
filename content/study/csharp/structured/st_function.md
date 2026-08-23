@@ -95,7 +95,7 @@ C# の場合、このページで説明するような「関数」的な動作�
 
 C# では、以下のようにして関数(C# 用語としては、正確にはメソッド)を定義します。
 
-```csharp
+```csharp {title="関数の書式"}
 戻り値の型 関数名(引数一覧)
 {
     関数本体(具体的な処理)
@@ -107,7 +107,7 @@ C# では、以下のようにして関数(C# 用語としては、正確には�
 また、C# 6 では、関数本体の部分が1つの式だけからなる場合、以下のような書き方をすることができるようになりました。
 これを、expression-bodied (本体が式の)関数と呼びます(詳細は後述)。
 
-```csharp
+```csharp {title="関数の書式"}
 戻り値の型 関数名(引数一覧) => 関数本体の式
 ```
 
@@ -120,7 +120,7 @@ C#の関数も同じように、入力出来る値と、出力される値の型
 例えば、実数(浮動小数点数)を入力して、その値のsinを求めるような関数を作りたい場合、
 以下のようにして関数を作ることが出来ます。
 
-```csharp
+```csharp {title="関数の例 sin関数"}
 // sin x を求める関数。
 // テイラー展開を利用。
 // かなり適当に作ってるので、この方法ではそんなに精度はよくない。
@@ -156,7 +156,7 @@ double Sin(double x)
 
 作成した関数を呼び出すには、
 
-```csharp
+```csharp {title="関数の書式"}
 変数 = 関数名(入力)
 ```
 
@@ -167,7 +167,7 @@ double Sin(double x)
 
 ##### <a id="sec-generated-title-6"></a>サンプル
 
-```csharp
+```csharp {title="sin関数を使ったサンプル" highlight-lines="11,21"}
 using System;
 
 class SinSample
@@ -227,7 +227,7 @@ sin(0.09) = 0.089879
 もう一つ違う例を挙げて見ましょう。
 今まで、実数の入力は以下のようにして行っていました。
 
-```csharp
+```csharp {title="値の入力"}
 Console.Write("ユーザーに入力を促すメッセージ");
 x = double.Parse(Console.ReadLine());
 ```
@@ -237,7 +237,7 @@ x = double.Parse(Console.ReadLine());
 これを関数化して見ましょう。
 まず、単純に関数化した結果を以下に示します。
 
-```csharp
+```csharp {title="値を入力する部分を関数化"}
 double GetDouble(string message)
 {
   Console.Write(message);
@@ -249,7 +249,7 @@ double GetDouble(string message)
 
 今までずっと無視してきていたのですが、実はこのままでは、実数に出来ない文字列を入力してしまうとエラーが発生して、以下のようなエラーメッセージを表示してプログラムが途中で止まってしまいます。
 
-```console
+```console {title="不正な値が入力されたときのエラーメッセージ"}
 未処理の例外 : System.FormatException: 入力文字列の形式が正しくありません。
   at System.Number.ParseDouble(String s, NumberStyles style, NumberFormatInfo info)
   at System.Double.Parse(String s, NumberStyles style, IFormatProvider provider)
@@ -262,7 +262,7 @@ double GetDouble(string message)
 (例外処理については「[例外処理](oo_exception.md)」参照。
 <code>try</code>と<code>catch</code>は例外処理を行うための構文です。)
 
-```csharp
+```csharp {title="値を入力する関数に例外処理を追加"}
 double GetDouble(string message)
 {
   double x;
@@ -293,7 +293,7 @@ double GetDouble(string message)
 
 ##### <a id="sec-generated-title-7"></a>サンプル
 
-```csharp
+```csharp {title="値の入力部分を関数化したサンプル"}
 using System;
 
 class StatementSample2
@@ -354,7 +354,7 @@ class StatementSample2
 複数個の`return`を書きたくなる1番の例は[条件分岐](st_branch.md)でしょう。
 以下のように、条件を満たすときと満たさない時で別の値を返したい場合などです。
 
-```csharp
+```csharp {title="条件ごとに異なる値をreturn"}
 static int Max(int x, int y)
 {
     if (x > y) return x;
@@ -364,7 +364,7 @@ static int Max(int x, int y)
 
 分岐なしで関数の途中に`return`を書くこともできますが、この場合は、`return`よりも後ろは実行されません。
 
-```csharp
+```csharp {title="returnの後ろは実行されない" highlight-text="ここは実行されない"}
 static int F(int x)
 {
     Console.WriteLine("ここは実行される");
@@ -385,7 +385,7 @@ C#の関数でもこのように引数が複数ある関数を作れます。
 引数を複数使いたい場合、数学の関数と同じように、関数を定義する際に、以下のように複数の引数を <code>,</code> で区切って並べます。
 このように、引数を <code>,</code> で区切って並べたものを<em>引数リスト</em>といいます。
 
-```csharp
+```csharp {title="引数が複数ある関数の例"}
 double Norm(double x, double y, double z)
 {
   // ノルムの計算
@@ -398,7 +398,7 @@ double Norm(double x, double y, double z)
 数学ではあまり考えられませんが、C#では引数のない関数も定義できます。
 引数のない関数は、以下のように、引数リストを空にして定義します。
 
-```csharp
+```csharp {title="引数のない関数の例"}
 ulong seed = 4275646295673547UL;
 ulong Random()
 {
@@ -415,7 +415,7 @@ ulong Random()
                 <code>void</code>
             </em> (「空の、何もない」という意味)というものにしておきます。
 
-```csharp
+```csharp {title="戻り値のない関数の例"}
 void WriteArray(int[] array)
 {
   Console.Write("{");
@@ -433,7 +433,7 @@ void WriteArray(int[] array)
 
 ちなみに、戻り値がない(`void`)の場合、`return`は書けますが、`return`の後ろには何も値を書かず、関数を途中で抜ける意味だけ持ちます。
 
-```csharp
+```csharp {title="voidの時にはreturnの後ろに値を書かない"}
 static void F(int x)
 {
     if (x <= 0) return;
@@ -451,7 +451,7 @@ static void F(int x)
 例えば、C# では関数を変数に格納して使うことができるんですが、
 戻り値がある場合は`Func`、ない場合は`Action`と、別の型に代入して使うことになります。
 
-```csharp
+```csharp {title="FuncとActionを区別"}
 using System;
 
 class Program
@@ -473,7 +473,7 @@ class Program
 
 そこで、以下のように、空っぽの値を用意して、`void`の代わりに使うことですべて「戻り値あり」で統一する手法を時々使ったりします。
 
-```csharp
+```csharp {title="空っぽの値でvoidを代用"}
 using System;
 
 // 空っぽの型を1個用意
@@ -520,7 +520,7 @@ C#では、基本的には戻り値は1つだけ返せます。
 
 複数の値(多値)を返したいこともありますが、その場合、C# 6以前では[複合型](st_struct.md#about)を1つ作って返していました。
 
-```csharp
+```csharp {title="多値戻り値のための複合型追加"}
 struct SumCount
 {
     public int sum;
@@ -547,7 +547,7 @@ static SumCount Tally(int[] items)
 
 そこで、C# 7では、以下のように書けるようになりました。
 
-```csharp
+```csharp {title="C# 7で導入されたタプルを使って多値戻り値を返す"}
 static (int sum, int count) Tally(int[] items)
 {
     var sum = 0;
@@ -568,7 +568,7 @@ static (int sum, int count) Tally(int[] items)
 
 ##### <a id="sec-generated-title-16"></a>サンプル
 
-```csharp
+```csharp {title="さまざまな関数のサンプル"}
 using System;
 
 class FunctionSample
@@ -652,7 +652,7 @@ norm = 4082
 
 C# 4 から、引数に規定値(default value)を与えて、呼び出し時に省略できたり(optional)、名前付き(named)で引数を書けるようになりました。
 
-```csharp
+```csharp {title="規定値付きのメソッド定義"}
 class OptionalParameterSample
 {
     public static void Sample()
@@ -730,7 +730,7 @@ C# には、いくつか特殊な引数があります。
 関数を作る際、関数の名前が同じで引数リストだけが異なる関数を複数作ることが出来ます。
 例えば、以下のように同じ名前の関数を作成することが出来ます。
 
-```csharp
+```csharp {title="引数リストだけが異なる同じ名前の関数の例"}
 void WriteTypeAndValue(string s)
 {
   Console.Write("文字列 : {0}\n", s);
@@ -752,7 +752,7 @@ void WriteTypeAndValue(double x)
 
 ##### <a id="sec-generated-title-24"></a>サンプル
 
-```csharp
+```csharp {title="関数のオーバーロードのサンプル"}
 using System;
 
 class OverloadSample
@@ -803,7 +803,7 @@ C# のメソッドのオーバーロードにはいくつか制限がありま�
 
 引数の型違いのオーバーロードはできますが、引数名だけが違うオーバーロードは作れません。
 
-```csharp
+```csharp {title="引数名違いのオーバーロードは無理"}
 // F は、引数の型が違うので大丈夫
 static void F(int x) { }
 static void F(string x) { }
@@ -815,7 +815,7 @@ static void G(int y) { }
 
 また、戻り値だけ違うオーバーロードも作れません。
 
-```csharp
+```csharp {title="戻り値違いのオーバーロードも無理"}
 // H は、引数が一致していて、戻り値だけ違う。これもコンパイル エラー
 static int H() => 1;
 static string H() => "";
@@ -828,12 +828,12 @@ static string H() => "";
 
 例えば以下のようなオーバーロードは作れません。
 
-```csharp
+```csharp {title="dynamic の扱い"}
 void D(object x) { }
 void D(dynamic x) { }
 ```
 
-```csharp
+```csharp {title="in, ref, out の扱い"}
 void F(ref int x) { }
 void F(in int x) { }
 
@@ -866,7 +866,7 @@ Swiftでは、引数名違いや戻り値の型違いのオーバーロードが
 すなわち、「いくつかあるメソッド`M`のうちのいずれか」という状態です。
 この状態の`M`を<strong id="key-method-group" class="keyword">メソッド グループ</strong>(method group)と呼びます。
 
-```csharp
+```csharp {title="メソッド グループの例"}
 using System;
 
 class Program
@@ -903,7 +903,7 @@ static double Norm(double x, double y, double z) => x * x + y * y + z * z;
 
 C# 6時点では、メソッド、演算子、プロパティとインデクサー(get-only)を `=>` 記号で書けます。
 
-```csharp
+```csharp {title="C# 6 時点で =&gt; を使って書ける関数メンバー"}
 class Csharp6
 {
     // メソッド
@@ -922,7 +922,7 @@ class Csharp6
 
 また、C# 7では、コンストラクター、ファイナライザー、プロパティとインデクサー(get/set それぞれ)、イベント(add/removeそれぞれ)も `=>` 記号で書けるようになりました。
 
-```csharp
+```csharp {title="C# 7 で追加された =&gt; を使って書ける関数メンバー"}
 class Csharp7
 {
     static int x;
@@ -965,7 +965,7 @@ C# 7では、関数の中で別の関数を定義して使うことができま�
 
 例えば以下のように書けます。
 
-```csharp
+```csharp {title="ローカル関数の例" highlight-text="int f(int n) =&gt; n &gt;= 1 ? n * f(n - 1) : 1;"}
 using System;
 
 class Program
@@ -990,7 +990,7 @@ class Program
 
 以下のような書き方をします。
 
-```csharp
+```csharp {title="匿名関数の例" highlight-ranges="sha256:c4783fc1a1bbc9c27b5869e5691a8b211ad4c8efdf177ad8254bee2f777d5e76;10:20-10:30,11:21-11:31"}
 using System;
 using System.Linq;
 
@@ -1142,7 +1142,7 @@ class Exercise
 
 double 型の値 x の整数冪を求める関数 Power を作成せよ。
 
-```csharp
+```csharp {title="Power の仕様"}
 /// <summary>
 /// x の整数冪を求める。
 /// </summary>
@@ -1159,7 +1159,7 @@ static double Power(
 #### 解答例 1
 
 
-```csharp
+```csharp {title="Power の実装とテスト"}
 using System;
 
 class Exercise

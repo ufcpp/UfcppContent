@@ -56,7 +56,7 @@ async/await の導入でかなり簡素化されることになります。
 URL 指定してダウンロードしてきた文字列をテキストボックスに表示という GUI アプリケーションを考えてみましょう。
 同期的に書くなら、ボタンに対して以下のようなイベント ハンドラーを登録します。
 
-```csharp
+```csharp {title="同期的に文字列をダウンロード"}
 private void Button_Click(object sender, RoutedEventArgs e)
 {
     var client = new WebClient();
@@ -88,7 +88,7 @@ private void Button_Click(object sender, RoutedEventArgs e)
 しかし、これまで、非同期呼び出しは少し面倒な書き方をする必要がありました。
 いくつかのパターンがありますが、例えば、イベント非同期パターン（EAP: Event-based Asynchronous Pattern）と呼ばれるものの場合、以下のようになります。
 
-```csharp
+```csharp {title="非同期に文字列をダウンロード"}
 private void Button_Click(object sender_, RoutedEventArgs e_)
 {
     var client = new WebClient();
@@ -115,7 +115,7 @@ private void Button_Click(object sender_, RoutedEventArgs e_)
 
 ダウンロード先が1個ならまだましで、例えば、複数の URL からダウンロードしてくる場合にはもっと複雑になります。
 
-```csharp
+```csharp {title="複数の URL から文字列をダウンロード"}
 private void Button_Click(object sender, RoutedEventArgs e)
 {
     var client = new WebClient();
@@ -168,7 +168,7 @@ C# 5.0 の新機能で、この手の非ブロッキング処理が簡単にな�
 （背景色を変えて強調表示している部分が同期版との差分です。
 この部分を削除すればそのまま同期処理として動きます。）
 
-```csharp
+```csharp {title="同期的に文字列をダウンロード"}
 private void Button_Click(object sender_, RoutedEventArgs e_)
 {
     var client = new WebClient();
@@ -178,7 +178,7 @@ private void Button_Click(object sender_, RoutedEventArgs e_)
 ```
 
 
-```csharp
+```csharp {title="非同期に文字列をダウンロード" highlight-ranges="sha256:cbdf4677697e670be32cfbf2176db603b20023feda4596b371718f8bafb3e9ea;1:9-1:14,4:16-4:21,4:43-4:52"}
 private async void Button_Click(object sender_, RoutedEventArgs e_)
 {
     var client = new WebClient();
@@ -191,7 +191,7 @@ private async void Button_Click(object sender_, RoutedEventArgs e_)
 複雑な場合でも、ずいぶんと楽に書けるようになります。
 前節の最後で書いた、複数の URL からダウンロードしてくる処理は以下のように書けます。
 
-```csharp
+```csharp {highlight-ranges="sha256:d3a52676d1a13dee518155011184e718932672a011b0399b2a04155c8cd5438c;1:9-1:14,10:20-10:25,10:47-10:56"}
 private async void Button_Click(object sender_, RoutedEventArgs e_)
 {
     var client = new WebClient();
@@ -254,7 +254,7 @@ C# 6まででは、非同期メソッドの戻り値の型は void、Task、も�
 
 （非同期でない）普通のメソッドから、（戻り値が Task 型の）非同期メソッドの完了を待つには以下のように書きます。
 
-```csharp
+```csharp {title="非同期メソッドの完了待ち"}
 static void Main(string[] args)
 {
     RunAsync().Wait();
@@ -271,7 +271,7 @@ static async Task RunAsync()
 通常は、他の作業を並行して行ってから最後に Wait したり、
 複数のタスクを同時実行したりします。
 
-```csharp
+```csharp {title="並行して他の作業"}
 var task = RunAsync();
 // 並行して別の処理
 DoSomeTask();
@@ -279,7 +279,7 @@ task.Wait();
 ```
 
 
-```csharp
+```csharp {title="複数の非同期処理を同時実行"}
 // 複数の処理を並行に実行
 TaskEx.WhenAll(
     RunAsync(),
@@ -291,7 +291,7 @@ TaskEx.WhenAll(
 完了待ちが必要ない（戻り値が void）場合というのは、
 例えば、GUI アプリケーションのイベント ハンドラーなどで利用します。
 
-```csharp
+```csharp {title="イベント ハンドラーで非同期処理"}
 private async void Button_Click(object sender, RoutedEventArgs e)
 {
     var client = new WebClient();
@@ -316,7 +316,7 @@ Task-likeであるための条件は以下の通りです。
 
 最低限の条件を満たす型を書くと以下のようになります。
 
-```csharp
+```csharp {title="Task-likeの例"}
 using System;
 using System.Runtime.CompilerServices;
 
@@ -348,7 +348,7 @@ struct AsyncValueTaskMethodBuilder<TResult>
 最終的には標準ライブラリに含まれると思いますが、もし、標準化される前のバージョンで使いたい場合、自前で用意しても大丈夫です
 (この場合、`internal`でも構いません)。
 
-```csharp
+```csharp {title="AsyncMethodBuilderAttributeの実装例"}
 namespace System.Runtime.CompilerServices
 {
     sealed class AsyncMethodBuilderAttribute : Attribute
@@ -378,7 +378,7 @@ Task-likeを自作しようと思う場面はほとんどないでしょう。
 大部分の非同期が必要ない場面では直接`TResult`を作ることで、パフォーマンスの改善が見込めます。
 例えば以下のようなコードです。
 
-```csharp
+```csharp {title="ValueTaskの使い道"}
 using System;
 using System.Threading.Tasks;
 

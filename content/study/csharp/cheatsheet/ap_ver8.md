@@ -75,7 +75,7 @@ C# 8.0 の全ての機能を一切の小細工なしで満足に使えるのは 
 null 許容参照型と呼びます。
 ただ、これまでと型 `T` の意味を変えてしまうので、opt-in (オプションを明示しないと有効にならない)方式になっています。
 
-```csharp
+```csharp {title="null 許容参照型の例"}
 // 有効化のためのディレクティブ
 #nullable enable
  
@@ -108,7 +108,7 @@ C# 8.0 で追加されるパターンは再帰的なマッチングが可能で�
 
 例えば以下のような感じです(new! と書いている行が再帰パターン)。
 
-```csharp
+```csharp {title="再帰パターンの例" highlight-ranges="sha256:f63711e8e1f05016695070baf6b2d36d11e7029ee23390d3e33b412cce6996eb;16:9-16:21,17:9-17:33"}
 public class Point
 {
     public int X { get; set; }
@@ -134,7 +134,7 @@ class Program
 単に短く書けるというだけではなく、以下のように、
 コンパイラーによるチェックが掛かりやすく、人的ミスの回避にも貢献します。
 
-```csharp
+```csharp {title="再帰パターンはコンパイラーによるチェックがちょっと賢い"}
 void M(object obj)
 {
     switch (obj)
@@ -166,7 +166,7 @@ void M(object obj)
 
 以下のような書き方ができます。
 
-```csharp
+```csharp {title="switch 式の例" highlight-text="switch"}
 public int Compare(int? x, int? y)
     => (x, y) switch
     {
@@ -185,7 +185,7 @@ public int Compare(int? x, int? y)
 
 `a[i..j]` という書き方で「i番目からj番目の要素を取り出す」というような操作ができるようになりました。
 
-```csharp
+```csharp {title=".. 構文"}
 using System;
  
 class Program
@@ -228,7 +228,7 @@ C# 8.0 (.NET Core 3.0)で、インターフェイスの制限が緩和されま�
 
 これら指して「インターフェイスのデフォルト実装」(default implementations of interfaces)と呼びます。
 
-```csharp
+```csharp {title="デフォルト実装"}
 using System;
  
 interface I
@@ -260,7 +260,7 @@ class Program
 }
 ```
 
-```console
+```console {title="デフォルト実装"}
 B
 ```
 
@@ -287,7 +287,7 @@ C# 8.0 では非同期メソッドが大幅に拡張されました。
 
 例えば以下のように書けます。
 
-```csharp
+```csharp {title="非同期イテレーターと非同期foreachの例" highlight-ranges="sha256:901065610c10ba0803d0764f585d8969a7de31129165f5638cf0a5c114c9db78;14:9-14:21,23:9-23:22"}
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -338,7 +338,7 @@ public class Program
 その変数のスコープに紐づいて `using` ステートメントと同じ効果を得られるようになりました。
 これを `using` 変数宣言(using declaration)と呼びます。
 
-```csharp
+```csharp {title="using 変数宣言"}
 using System;
  
 readonly struct DeferredMessage : IDisposable
@@ -371,7 +371,7 @@ class Program
 [ref 構造体](../resource/refstruct.md)に限るんですが、
 パターン ベース(別にインターフェイスを実装していなくても、`Dispose` メソッドさえ持っていればOK)で [`using` ステートメント](../resource/oo_dispose.md#using)を使えるようになりました。
 
-```csharp
+```csharp {title="パターン ベースな using ステートメント"}
 // ref 構造体なので IDisposable インターフェイスは実装できない。
 ref struct RefDisposable
 {
@@ -403,7 +403,7 @@ ref 構造体だけ対応したのは、需要が高く、既存コードを壊�
 
 C# 8.0 では、null合体演算子 (`??`)も複合代入に使えるようになりました(`??=`)。
 
-```csharp
+```csharp {title="null 合体代入" highlight-text="??="}
 static void M(string s = null)
 {
     s ??= "default string";
@@ -419,7 +419,7 @@ C# 8.0 から、外部の変数を捕獲しないことを明示するため、
 ローカル関数に `static` 修飾を付けれるようになりました。
 この機能を<strong id="key-static-local-function" class="keyword">静的ローカル関数</strong>(static local function)と呼びます。
 
-```csharp
+```csharp {title="静的ローカル関数の例"}
 void M(int a)
 {
     // 外部の変数(引数)を捕獲(クロージャ化)。
@@ -444,7 +444,7 @@ C# 8.0では`@$`の順でも認められるようになりました。
 
 C# 8.0 では、ジェネックな構造体に対して再帰的にアンマネージ型かどうかの判定するようになりました。
 型引数全てがアンマネージであれば、その構造体もアンマネージ扱いを受けるようになります。
-```csharp
+```csharp {title="ジェネリックな構造体に対するポインター" highlight-text="KeyValuePair&lt;int, int&gt;* pkv = &amp;kv;"}
 using System.Collections.Generic;
  
 class Program
@@ -463,7 +463,7 @@ class Program
 
 C# 8.0 で、[関数メンバー](../structured/st_function.md#sec-function-member)単位で「フィールドを書き換えてない」ということを保証できるようになりました。
 
-```csharp
+```csharp {title="プロパティを readonly 修飾する例"}
 struct Point
 {
     public float X;
@@ -483,7 +483,7 @@ struct Point
 式中の任意の場所に `stackalloc` を書けるようになりました。
 例えば以下のような書き方ができます。
 
-```csharp
+```csharp {title="式中での stackalloc"}
 using System;
  
 class Program
@@ -507,7 +507,7 @@ class Program
 ほぼ「バグ修正」レベルですが、
 以下のコードがコンパイルできるようになりました。
 
-```csharp
+```csharp {title="ジェネリック型に対する is null"}
 static bool M<T>(T x) => x is null;
 ```
 
@@ -519,7 +519,7 @@ static bool M<T>(T x) => x is null;
 プロパティの get/set アクセサーに対して、どちらか片方にだけ `Obsolete` 属性(`System`名前空間)を指定できるようになりました。
 以下のコードは C# 7.3 以前ではエラーになっていました。
 
-```csharp
+```csharp {title="set にだけ Obsolete"}
 class A
 {
     public int X

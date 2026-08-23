@@ -53,7 +53,7 @@ C# のジェネリクスは C# 2.0 からの導入なわけで、それ以前に
 ここで、多少工夫すると、C# 1.0 の頃でも合法そうな `<>` が書けます。
 例えばこんな感じ:
 
-```csharp
+```csharp {title="&lt;&gt;"}
 X(A<B, C>(D));
 ```
 
@@ -62,7 +62,7 @@ X(A<B, C>(D));
 
 色が付くと多少わかりやすいですかね。
 
-```csharp
+```csharp {title="&lt;&gt; 1.0 VS 2.0"}
 // C# 1.0 解釈
 X(A < B, C > (D));
 
@@ -80,7 +80,7 @@ C# 2.0 当時に踏んだ人はいないんじゃないでしょうか。
 詳細はリンク先を見てもらうとして、
 簡単に言うと以下のコードの実行結果が C# 4.0 以前と 5.0 以降で変わります。
 
-```csharp
+```csharp {title="C# 5.0 の foreach の仕様変更"}
 var data = new[] { 1, 2, 3, 4, 5 };
 
 Action a = null;
@@ -113,7 +113,7 @@ C# 11.0 で[`required`](../../../../study/csharp/cheatsheet/ap_ver11.md#required
 
 ただ、幸い、これらは(当然、[文脈キーワード](../../../../study/csharp/misc/ap_compatibility.md#contextual-keyword)で)「型名として使おうとする時だけまずい」という仕様になっています。
 
-```csharp
+```csharp {title="record の破壊的変更の影響は型名に対してのみ"}
 class A
 {
     // 全然平気。
@@ -152,7 +152,7 @@ class record { }
 今何で困っているかというと、1月にブログに書いた[半自動プロパティ](../../1/semi-auto-property/index.md)です。
 `field` キーワードの追加。
 
-```csharp
+```csharp {title="手動、(全)自動、半自動プロパティ" highlight-ranges="sha256:aeb150bcf9c959b02d8746f97c71b2a91b7b3d7281e0d36101e02cd22f5df71c;18:27-18:32,18:41-18:46"}
 class A
 {
     // 手動プロパティ (manual property)
@@ -178,7 +178,7 @@ class A
 以下のコード、半自動プロパティが実装される前後で意味が変わる可能性が大きくなっています。
 (回避できなくもないものの、コストが高すぎてできれば破壊的変更を認める方向で進めたい。)
 
-```csharp
+```csharp {title="半自動プロパティで壊れる予定のコード"}
 class A
 {
     private int field;
@@ -199,7 +199,7 @@ class A
 C# のコーディング規約上の派閥的な話もあります。
 フィールドの命名規約として「`_` を付ける派」は影響を受けません。
 
-```csharp
+```csharp {title="_ 派"}
 class A
 {
     private int _field; // _ 派。影響を受けない。
@@ -214,7 +214,7 @@ class A
 
 「インスタンス メンバーには常に `this.` を付ける派」も影響を受けません。
 
-```csharp
+```csharp {title="this. 派"}
 class A
 {
     private int field;

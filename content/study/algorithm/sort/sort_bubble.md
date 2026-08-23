@@ -31,7 +31,7 @@ aliases:
 
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/BubbleSort.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/BubbleSort.cs)
 
-```csharp
+```csharp {title="バブルソート"}
 /// <summary>
 /// バブルソート。
 /// </summary>

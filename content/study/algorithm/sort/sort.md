@@ -61,7 +61,7 @@ aliases:
 2つの要素を入れ替えるスワップという処理をよく使用します。
 なので、スワップは以下のように関数化しておきます。
 
-```csharp
+```csharp {title="Swap"}
 /// <summary>
 /// a と b の中身を入れ替える。
 /// </summary>
@@ -94,7 +94,7 @@ ref というキーワードに関しては「[引数の参照渡し](../../csha
 そして、年齢の大小でソートすることを考えて見ましょう。
 まず、年齢と名前のペアは Entry と言う名前で以下のように実装します。
 
-```csharp
+```csharp {title="年齢と名前のペア"}
 class Entry : IComparable<Entry>
 {
   public int age;
@@ -116,7 +116,7 @@ class Entry : IComparable<Entry>
 
 これを使って、以下のようなリストを作ります。
 
-```csharp
+```csharp {title="リスト"}
 Entry[] list = new Entry[]{
   new Entry(10, "a"),
   new Entry(11, "b"),
@@ -134,7 +134,7 @@ Entry[] list = new Entry[]{
 そして、10歳、11歳、12歳のエントリーがそれぞれ複数含まれています。
 これを、Array.Sort メソッドを使ってソートしてみましょう。
 
-```csharp
+```csharp {title="リストのソート"}
 Array.Sort(list);
 foreach (Entry entry in list)
 {
@@ -145,7 +145,7 @@ foreach (Entry entry in list)
 
 結果は以下のようになります。
 
-```console
+```console {title="不安定なソート結果"}
 10, f
 10, a
 11, d
@@ -163,7 +163,7 @@ Array.Sort は、おそらく「[クイックソート](sort_quick.md#quick)」�
 もしも、これを安定なソートアルゴリズムを使ってソートするならば、
 結果は以下のようになります。
 
-```console
+```console {title="安定なソート結果"}
 10, a
 10, f
 11, d

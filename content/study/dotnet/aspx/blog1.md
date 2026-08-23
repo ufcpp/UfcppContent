@@ -69,7 +69,7 @@ aliases:
 図1のような結果を表示します。
 
 
-```xml
+```xml {title="日記データ（20060731.xml）"}
 <?xml version="1.0" encoding="Shift_JIS"?>
 <content>
 
@@ -135,7 +135,7 @@ Visual Studio を使う場合、
 （ファイル名は ShowXml.ascx としておきます。）
 
 
-```html
+```html {title="ShowXml.ascx"}
 <%@ Control Language="C#" AutoEventWireup="true"
   CodeBehind="ShowXml.ascx.cs" Inherits="WebsiteSample.ShowXml" %>
 
@@ -144,7 +144,7 @@ Visual Studio を使う場合、
 コードビハインド側は以下のような感じ。
 （例外処理とかはサボっています。）
 
-```html
+```html {title="ShowXml.ascx.cs"}
 using System;
 using System.Web;
 using System.Xml;
@@ -259,7 +259,7 @@ App_Data フォルダに格納する事にします。
 aspx ファイル中に以下のように書きます。
 
 
-```html
+```html {title="BlogLatest.aspx" highlight-lines="5,14"}
 <%@ Page Language="C#"
   MasterPageFile="~/Site.Master" AutoEventWireup="true"
   CodeBehind="BlogLatest.aspx.cs" Inherits="WebsiteSample.BlogLatest"
@@ -280,7 +280,7 @@ aspx ファイル中に以下のように書きます。
 で、最新の記事を表示したいなら、
 コードビハインドファイルは以下のようにします。
 
-```html
+```html {title="BlogLatest.aspx.cs" highlight-lines="22-23"}
 using System;
 using System.Web;
 using System.IO;

@@ -58,7 +58,7 @@ File クラスからは触れない機能を使いたければ、Windows API を
 
 この2種類に正式に対応（しつつ問題を起こさない実装を）するには、以下のような書き方をします。
 
-```csharp
+```csharp {title="Dispose メソッドの実装方法"}
 class SomeClass : IDisposable
 {
     public void Dispose()
@@ -142,7 +142,7 @@ IDisposable インターフェイスを実装するクラスのインスタン�
 その最たるものが Task クラス(System.Threading.Tasks 名前空間)です。
 例えば、以下のようなコードを見てください。まじめに 全部 Dispose して回るのはかなり面倒です。
 
-```csharp
+```csharp {title="Task の Dispose は呼びにくい"}
 var t1 = Task.Run(() => Work1()); // ここで Task インスタンスが1個できる
 
 t1.ContinueWith(t => Work2()); // ここでも1個

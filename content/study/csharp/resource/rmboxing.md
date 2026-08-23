@@ -58,7 +58,7 @@ C# でこれが可能なのは、次節で説明する「ボックス化」と�
 例えば、`int` 型(.NET の `Int32` 型(`System` 名前空間)の別名)の定義を覗いてみると、以下のようなメソッドを持っています。
 これらは、`object` 型で `virtual` に定義されているもののオーバーライドです。
 
-```csharp
+```csharp {title="int 型の定義(一部)"}
     public struct Int32 : IComparable, IFormattable, IConvertible, IComparable<Int32>, IEquatable<Int32>
     {
         public override bool Equals(object obj);
@@ -71,7 +71,7 @@ C# でこれが可能なのは、次節で説明する「ボックス化」と�
 
 利用例も挙げておきましょう。以下のようになります。
 
-```csharp
+```csharp {title="object のメンバーを int に対して呼ぶ"}
 int x = 5;
 Console.WriteLine(x.ToString());
 Console.WriteLine(x.GetHashCode());
@@ -83,7 +83,7 @@ Console.WriteLine(x.GetType().Name);
 この仕様のおかげで、C# では、int 型と string 型とでなどの、値型と参照型での処理の共通化ができます。
 以下の例は、型名と値をコンソールに出力するものですが、int 型でも string 型でも受け付けることができます。
 
-```csharp
+```csharp {title="int と string の両方を受け取れるメソッド"}
 using System;
 
 class Program
@@ -158,7 +158,7 @@ int z = (int)y; // object から元の型に。ボックス化解除。
 引数が int の方では起きません。
 ToString メソッド(object の仮想メソッド)の呼び出しも、型が明示されている限り、int.ToString (int 側でオーバーライドしたもの)が直接呼ばれます。
 
-```csharp
+```csharp {title="型を明示するとボックス化を避けれる"}
 using System;
 
 class Program
@@ -191,7 +191,7 @@ class Program
 以下の例では、ジェネリック版と非ジェネリック版の2つのメソッドがあって、ほぼ同じ処理を書いていますが、
 ジェネリック版ではボックス化が起きません。
 
-```csharp
+```csharp {title="ジェネリックを使うとボックス化を避けれる"}
 using System;
 
 class Program

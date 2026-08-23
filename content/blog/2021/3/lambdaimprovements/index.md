@@ -24,14 +24,14 @@ C# 2.0 で[メソッドをデリゲート型の変数に代入するときに `n
 C# の文法にはソース型からの推論の方が多いので、デリゲート(特にラムダ式)のターゲット型推論の挙動を「何か変」と思う人は多いんじゃないかと思います。
 一番多いのは、「以下のコードがコンパイルできないのは変じゃない？」みたいに思うこと。
 
-```csharp
+```csharp {title="コンパイルできないことへの不満を目にすることが多いコード"}
 var f = (int x) => x * x;
 ```
 
 大体は、デリゲートが「同じ引数・戻り値でも別の型を作れるし、それらは互いに区別する」という仕様のせい。
 ターゲットの方の型が決まらないとラムダ式の型を決定できません。
 
-```csharp
+```csharp {title="同じ引数・戻り値で別の型なデリゲート"}
 using System;
  
 A a = (int x) => x * x;
@@ -61,7 +61,7 @@ delegate int B(int x);
 
 あと、まあ、ラムダ式の最大の用途である LINQ が「ターゲット型推論だけあれば十分」なのもあります。
 
-```csharp
+```csharp {title="LINQ はターゲット型推論が効くのでラムダ式の型決定で困ることがない"}
 using System.Linq;
  
 var q = new[] { 1, 2, 3, 4, 5, 6 }
@@ -73,7 +73,7 @@ var q = new[] { 1, 2, 3, 4, 5, 6 }
 
 例えば、以下のような短い書き方で所定の URL に対するアクションを登録できるようにしたいそうです。
 
-```csharp
+```csharp {title="任意デリゲートを受け付ける ASP.NET Map メソッド"}
 builder.MapGet("/", () => { });
 builder.MapGet("/category/{c}", (char c) => char.GetUnicodeCategory(c));
 ```
@@ -93,7 +93,7 @@ C# としてもこの路線は支持したいそうで、
 名前通り「式」(どこにでも書ける構文)なのであんまり長いものは書きたくはないですが、
 例えば以下のようなコードは十分に「書ける範囲」かと思います。
 
-```csharp
+```csharp {title="ラムダ式に属性を付ける例"}
 app.MapAction([HttpGet("/")]() => new Todo(Id: 0, Name: "Name"));
 app.MapAction([HttpPost("/")]([FromBody] Todo todo) => todo);
 ```
@@ -107,7 +107,7 @@ C# 10.0 でこれらを認めたいそうです。
 
 例えば戻り値の型を明示できなくて困る？例は以下の通り。
 
-```csharp
+```csharp {title="戻り値の型を明示できなくて困る例"}
 using System;
  
 var a = m(x => x * x, 1); // これはターゲット型推論任せで int, int に決定。
@@ -118,7 +118,7 @@ T2 m<T1, T2>(Func<T1, T2> f, T1 x) => f(x);
 
 この例の場合は以下のように型引数を明示することで一応は解決しますが、これが書き心地いいかと言われると微妙な感じ。
 
-```csharp
+```csharp {title="型引数を明示して型推論が働くように変更"}
 var b = m<short, long>(x => x * x, 1);
 ```
 
@@ -126,7 +126,7 @@ var b = m<short, long>(x => x * x, 1);
 後述する「自然な型」を導入しようと思うと戻り値の型の明示がないと困る場面が出てきます。
 ということで、以下のような「引数リストの後ろに `: T` を書く」という文法で戻り値の型を明示できるようにしたいそうです。
 
-```csharp
+```csharp {title="ラムダ式の戻り値の型を明示する例"}
 var b = m((short x) : long => x * x, 1); // ラムダ式の戻り値の型を明示的に long にする。
 ```
 
@@ -139,7 +139,7 @@ var b = m((short x) : long => x * x, 1); // ラムダ式の戻り値の型を明
 
 ラムダ式の例:
 
-```csharp
+```csharp {title="ラムダ式の自然な型"}
 var f1 = () => default;        // error: no natural type (決定不能)
 var f2 = x => { };             // error: no natural type (決定不能)
 var f3 = x => x;               // error: no natural type (決定不能)
@@ -149,7 +149,7 @@ var f5 = () : string => null;  // System.Func<string>
 
 メソッド グループの例:
 
-```csharp
+```csharp {title="メソッド グループの自然な型"}
 static void F1() { }
 static void F1<T>(this T t) { }
 static void F2(this string s) { }
@@ -169,7 +169,7 @@ var f8 = F2;    // System.Action<string>
 
 一方で、例えば以下のような `is` 分岐はできないはずなので、この用途には使えません。
 
-```csharp
+```csharp {title="引数・戻り値の型が一致していても別デリゲート型になる"}
 using System;
  
 // これはターゲット型からの型推論で成り立っているので OK。

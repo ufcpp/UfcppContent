@@ -25,7 +25,7 @@ aliases: []
 
 まず、[仮想テーブルのポインターを取得](https://github.com/dotnet/coreclr/blob/ef93a727984dbc5b8925a0c2d723be6580d20460/src/System.Private.CoreLib/src/System/Runtime/CompilerServices/RuntimeHelpers.cs#L222)
 
-```csharp
+```csharp {title="仮想テーブルのポインターを取得"}
 private static IntPtr GetObjectMethodTablePointer(object obj)
 {
     return Unsafe.Add(ref Unsafe.As<byte, IntPtr>(ref JitHelpers.GetPinningHelper(obj).m_data), -1);
@@ -37,7 +37,7 @@ private static IntPtr GetObjectMethodTablePointer(object obj)
 
 で、それを使って「配列かどうか」を判定。
 
-```csharp
+```csharp {title="仮想テーブルの中身を見て配列かどうかを判定"}
 internal static unsafe bool ObjectHasComponentSize(object obj)
 {
     return *(int*)GetObjectMethodTablePointer(obj) < 0;

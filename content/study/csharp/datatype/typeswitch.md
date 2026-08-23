@@ -48,7 +48,7 @@ C# 7.0 時点では「型パターン」が主だった機能だったため、
 
 C# 7では、`is`演算子で以下のような書き方ができるようになりました。
 
-```csharp
+```csharp {title="is = 型判定"}
 型を調べたい変数 is 型 新しい変数
 ```
 
@@ -60,14 +60,14 @@ C# 6以前の`is`演算子は少し使い勝手が悪い面がありました。
 
 例えば、以下のように型を判定するだけなら`is`演算子の出番です。
 
-```csharp
+```csharp {title="is = 型判定"}
 // 型判定のみなら、これまでの is 演算子でも十分
 if (obj is string) Console.WriteLine("string");
 ```
 
 ところが、型を判定したうえでダウンキャストしたいという場面では、以下のように、「2度手間」になって、コード量的にも実行効率的にもよくないです。
 
-```csharp
+```csharp {title="ダウンキャストしたい場合、is はいまいち"}
 // 型変換もしたい
 if (obj is string)
 {
@@ -79,7 +79,7 @@ if (obj is string)
 
 結局、以下のように、`as`演算子を使うことが推奨されます。
 
-```csharp
+```csharp {title="ダウンキャストにはasを使う"}
 // 結局、as 演算子 + null チェックを使うことになる
 var s = obj as string;
 if (s != null)
@@ -90,7 +90,7 @@ if (s != null)
 
 これに対して、C# 7では、`is`演算子で以下のような書き方ができるようになりました。
 
-```csharp
+```csharp {highlight-ranges="sha256:bb0d6e435eed7cc146b92c5e1e143d28ec4842239541ad6e24267f5f8220fd96;2:19-2:20"}
 // C# 7での新しい書き方
 if (obj is string s)
 {
@@ -113,7 +113,7 @@ if (obj is string s)
 
 元々の`is`演算子の仕様でもあるんですが、`null`には型がなくて常に`is`に失敗します(`false`を返す)。
 
-```csharp
+```csharp {title="nullは型を持たない"}
 string x = null;
 
 if (x is string)
@@ -127,7 +127,7 @@ if (x is string)
 この仕様は、C# 7からの新しい構文でも引き継いでいて、`null`じゃないときだけだけ何かの処理をしたいときに使えます。
 と言っても、参照型の場合にはあまり使い道はありませんが、以下のような書き方ができます。
 
-```csharp
+```csharp {title="is演算子でnullチェック"}
 static void F(string nullable)
 {
     if (nullable is string nonNull)
@@ -142,7 +142,7 @@ static void F(string nullable)
 この書き方が役に立つのは、値型と[null許容型](../resource/sp2_nullable.md)を使う場合でしょう。
 例えばC# 6以前だと、以下のような書き方になります。
 
-```csharp
+```csharp {title="C# 6以前のnull許容型のnullチェック"}
 static void F(int? x)
 {
     // C# 6以前の書き方
@@ -158,7 +158,7 @@ static void F(int? x)
 
 これが、C# 7で以下のように書けるようになります。
 
-```csharp
+```csharp {title="C# 7からのnull許容型のnullチェック" highlight-ranges="sha256:c9d53b30f52e4221e2f5b00d91cf0897deea20bce98f6e843bcafa066f497316;3:18-3:19"}
 static void F(int? x)
 {
     if (x is int n)
@@ -175,7 +175,7 @@ static void F(int? x)
 ちなみに、C# 8.0 では、[再帰パターン](patterns.md#recursive)が暗黙的に null チェックも含んでいることを使って、手短に null チェックもできます
 (参考: [非 null マッチング](patterns.md#non-null))。
 
-```csharp
+```csharp {title="パターンを使って非 null チェック"}
 string s = null;
  
 // 型を明示した場合、null にマッチしない
@@ -192,7 +192,7 @@ if (s is { }) Console.WriteLine("ここは通らない");
 
 プログラミング言語によっては、以下のように、`is`演算子で型を判定した後には、自動的にその型扱いしてくれる言語もあります。
 
-```csharp
+```csharp {title="is によって変数の意味を変える"}
 static void F(object obj)
 {
     if (obj is string)
@@ -214,7 +214,7 @@ C# では、こういう、「`object`だと思っていたものが一定範囲
 
 また、以下のように、同名の別変数を導入できる言語もありますが、こちらもC#では認めていません。
 
-```csharp
+```csharp {title="is 演算子で同名の別変数を導入"}
 static void F(object x)
 {
     if (x is string x)
@@ -238,7 +238,7 @@ C# 7では、`switch`ステートメントの`case`句に、値だけでなく�
 パターンの書き方は、前節の`is`演算子と同様です。
 また、型による条件に加えて、`when`句というものを付けて追加の条件式を書くこともできます。
 
-```csharp
+```csharp {title="switchステートメントの拡張"}
 switch(変数)
 {
     case 型 変数:
@@ -262,7 +262,7 @@ switch(変数)
 
 例えば以下のような書き方ができます。
 
-```csharp
+```csharp {title="型を見て分岐する switch ステートメントの例"}
 static void F(object obj)
 {
     switch (obj)
@@ -303,7 +303,7 @@ C# 6までの、値による分岐しかなかった`switch`ステートメン�
 
 ジャンプ テーブル化の説明のために、以下のような`switch`を考えましょう。
 
-```csharp
+```csharp {title="値による条件のみのswitchの例"}
 switch(n)
 {
     case 0: return "zero";
@@ -322,7 +322,7 @@ switch(n)
 
 こういう`switch`であれば、以下のように、辞書を引いて結果を得ることもできるはずです。
 
-```csharp
+```csharp {title="switchの辞書化"}
 var map = new Dictionary<int, string>
 {
     { 0, "zero" },
@@ -357,7 +357,7 @@ else return "other";
 以下のように、一番上の`case`と一番下の`case`では、かなりパフォーマンスに差が出ます。
 (なので、パフォーマンスが気になるなら、発生頻度が高いものほど上の方に書く必要があります。)
 
-```csharp
+```csharp {title="逐次判定によるパフォーマンスの変化"}
 using System;
 using System.Diagnostics;
 
@@ -425,7 +425,7 @@ class Program
 
 例として、以下のようなクラス階層を考えます。
 
-```csharp
+```csharp {title="式ノード"}
 public abstract class Node { }
 
 public class Var : Node { }
@@ -462,7 +462,7 @@ public class Mul : Node
 説明都合で簡素化していますが、数式を扱うようなクラスです。
 要するに、例えば、「<math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi><mo>×</mo><mi>x</mi><mo>+</mo><mn>1</mn></math>」というような式を、以下のようなコードで表すためのクラスです。
 
-```csharp
+```csharp {title="x × x + 1"}
 var expression = new Add(
     new Mul(
         new Var(),
@@ -476,7 +476,7 @@ var expression = new Add(
 
 まず、仮想メソッドなら以下のようになるでしょう(必要な部分だけを抜き出してあります)。
 
-```csharp
+```csharp {title="仮想メソッドで実装する例"}
 abstract class Node
 {
     public abstract int Calculate(int x);
@@ -505,7 +505,7 @@ class Mul
 
 一方、型スイッチを使って書くなら以下のようになります。
 
-```csharp
+```csharp {title="型スイッチで実装する例"}
 public static class NodeExtensions
 {
     public static int Calculate(this Node n, int x)
@@ -591,7 +591,7 @@ C# 7.0の時点では、[ジェネリクス](../oop/sp2_generics.md)が絡む場
 例えば以下のようなコードはコンパイル エラーになっていました。
 (ジェネリックな型`T`の変数に対して`switch`できない。ちなみに、一度`object`にキャストすればできる。)
 
-```csharp
+```csharp {title="C# 7.0ではコンパイルできないswitchの例"}
 static void M<T>(T x)
 {
     switch (x)
@@ -608,7 +608,7 @@ static void M<T>(T x)
 
 さらにいうと、以下のような需要が結構ありそうな場面でも、C# 7.0ではコンパイル エラーになりました。
 
-```csharp
+```csharp {title="C# 7.0ではコンパイルできないswitchの例(型制約付き)"}
 class Base { }
 class Derived1 : Base { }
 class Derived2 : Base { }
@@ -633,7 +633,7 @@ static void N<T>(T x)
 C# 7.0でも、以下のように、`as`演算子を使った場合にはちゃんとコンパイルできます。
 型パターンは、内部的には`as`演算子に展開される機能で、`as`演算子にできて型パターンにできないことがあるのは不自然です。
 
-```csharp
+```csharp {title="as 演算子での置き換え"}
 static void N<T>(T x)
     where T : Base
 {
@@ -653,7 +653,7 @@ static void N<T>(T x)
 C# 8.0 から、
 以下のコードがコンパイルできるようになりました。
 
-```csharp
+```csharp {title="ジェネリック型に対する is null"}
 static bool M<T>(T x) => x is null;
 ```
 
@@ -674,7 +674,7 @@ C# 8.0 では、`switch` の[式](../structured/miscexpressions.md#term)版が�
 
 例えば、以下のような列挙型を使った分岐を考えてみます。
 
-```csharp
+```csharp {title="例として使う列挙型(改元で困るやつ)"}
 using static 年号;
  
 enum 年号
@@ -685,7 +685,7 @@ enum 年号
 
 これまでだと、以下のような書き方をせざるを得ないことがあったかと思います。
 
-```csharp
+```csharp {title="switch ステートメントの例"}
 public void M(年号 e)
 {
     int y;
@@ -717,7 +717,7 @@ public void M(年号 e)
 
 ちょこっとごまかす方法として、以下のように別メソッドを1段挟む方法もあるにはありますが、相変わらず`case`や`return`がうっとおしいです。
 
-```csharp
+```csharp {title="1段メソッドを挟んでごまかす"}
 public void M(年号 e)
 {
     int lastYear()
@@ -739,7 +739,7 @@ public void M(年号 e)
 
 これは、C# 8.0 の `switch` 式を使うと、以下のように書き直すことができます。
 
-```csharp
+```csharp {title="switch 式で書き直し"}
 public void M(年号 e)
 {
     var y = e switch
@@ -756,7 +756,7 @@ public void M(年号 e)
 
 文法的には以下のようになります。
 
-```csharp
+```csharp {title="switch式の書式"}
 変数 switch
 {
     パターン1 => 式1,
@@ -775,7 +775,7 @@ public void M(年号 e)
 パターンの部分には「[パターン マッチング](patterns.md)」で説明している任意のパターンを書けます。
 また、[`when`句](#switch)を付けることもできます。
 
-```csharp
+```csharp {title="switch 式に型パターン、破棄パターン、when 句"}
 static int M(object obj) => obj switch
 {
     int x when x > 0 => 1,
@@ -790,7 +790,7 @@ static int M(object obj) => obj switch
 `++x` や `await x` は `switch` 式よりも先に評価されて、
 `x * y` や `x + y` は `switch` 式よりも後に評価されます。
 
-```csharp
+```csharp {title="switch 式の優先度の例"}
 // これは (await b) switch { ... } の意味になって、
 // bool を await できないのでコンパイル エラー。
 static async Task M1(bool b, Task x, Task y)
@@ -816,7 +816,7 @@ static int M2(int x, int y)
 
 多くの場合、末尾に[`var`パターン](patterns.md#var)か[破棄パターン](patterns.md#discard)を書いて漏れを防ぎます。
 
-```csharp
+```csharp {title="var/破棄で「残り全部」を網羅"}
 static int M(int x) => x switch
 {
     1 => 2,
@@ -834,7 +834,7 @@ static int M(object x) => x switch
 
 今のところ、`bool`だけは網羅性を確実にチェックできます。
 
-```csharp
+```csharp {title="bool の網羅性チェック"}
 static int M(bool x) => x switch
 {
     true => 1,
@@ -862,7 +862,7 @@ C# 8.0 前後で挙動が変わるのでご注意ください。
 
 すなわち、以下のような`switch`ステートメントを書いたとき、`default`句に関する扱いが変わります。
 
-```csharp
+```csharp {title="bool の網羅性"}
 static int M(bool b)
 {
     switch (b)
@@ -886,7 +886,7 @@ C# 7.3 以前がどうしてそうなっていたかは以前ブログを書い�
 ここでいうターゲットというのは結果を渡す先のことで、例えば以下のような書き方をした場合、
 null を渡す先が `int?` 型の変数なので、この `int?` が「ターゲットの型」になります。
 
-```csharp
+```csharp {title="ターゲット(渡す先)の型(この場合は int?)"}
 int? x = null;
 ```
 
@@ -895,7 +895,7 @@ int? x = null;
 例えば、以下のように、(例え同じクラスから派生していたとしても)異なる型 `A` と `B` の「共通の型」は判定できず、
 コンパイル エラーを起こします。
 
-```csharp
+```csharp {title="共通の型を見つけられなくてエラーになる例"}
 class Base { }
 class A : Base { }
 class B : Base { }
@@ -917,7 +917,7 @@ static object M(int i)
 これくらいならば `Base` が共通の型だと判定してほしくも思いますが、
 多段派生していたり、インターフェイスも実装していたり複雑な場合のことを考えるとそんなに簡単な話ではありません。
 
-```csharp
+```csharp {title="共通型の決定が難しい例"}
 // 型 D と F の「共通型」といわれると何？
 // インターフェイス J？ それともクラス A？
 interface I { }
@@ -933,7 +933,7 @@ class F : C, J { }
 この問題の回避策は2つあって、1つは特に難しいこともなく、「[キャスト](../start/st_cast.md#cast)しろ」というものです。
 C# コンパイラーが理解できるところまでかみ砕いたコードを書いてあげなきゃいけないということで、ちょっと煩雑なコードになります。
 
-```csharp
+```csharp {title="キャストで解決"}
 // 片方を既定型にキャストしておくことで「共通型は Base」と判定できるようになる
 var x = i switch
 {
@@ -946,7 +946,7 @@ var x = i switch
 先ほどの例では左辺が `var` (型推論)なのでコンパイルできませんが、
 以下のように、ターゲット側の型を明示することで、`switch` 式の側の型を `Base` に決定できます。
 
-```csharp
+```csharp {title="ターゲットからの型決定"}
 // 左辺(Base 型の変数)から switch 式の型を Base に決定。
 // コンパイルできるようになる。
 Base x = i switch
@@ -958,7 +958,7 @@ Base x = i switch
 
 特に役立つのは「1 と null」(`int?` になってほしい)とかでしょう。
 
-```csharp
+```csharp {title="1 と null の共通型を判定できないので代わりにターゲット型で解決"}
 static void M(bool b)
 {
     // これはコンパイル エラー。1 と null の共通型は C# 8.0 時点では決定できない。

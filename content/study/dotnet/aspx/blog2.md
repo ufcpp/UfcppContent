@@ -55,7 +55,7 @@ Request.QueryString["days"] とすることで、"3" という文字列が得ら
 で、Request.QueryString から値を取り出すために、
 以下のようなクラスを用意しておきます。
 
-```csharp
+```csharp {title="Util.cs"}
 using System;
 using System.Collections.Specialized;
 using System.Text.RegularExpressions;
@@ -98,7 +98,7 @@ namespace WebsiteSample
 この GetIntFrom メソッドを使って、
 BlogLatest の Page_Load イベントハンドラを以下のように書き換えます。
 
-```html
+```html {title="BlogLatest.aspx.cs を書き換え" highlight-ranges="sha256:e57dae3f2782a1552a33102f825d23f384879ca4f04cf7cc7c2a29574974e656;3:3-3:67,9:3-9:51"}
 protected void Page_Load(object sender, EventArgs e)
 {
   int days = Util.GetIntFrom(Request.QueryString, 0, "days", "d");
@@ -138,7 +138,7 @@ Page_Load イベントハンドラ内の処理が違うだけで、
 他はほとんど BlogLatest の方と同じなので、
 コードビハインドのみを示します。
 
-```html
+```html {title="BlogDate.aspx.cs"}
 using System;
 using System.Web;
 using System.IO;
@@ -188,7 +188,7 @@ namespace WebsiteSample
 カレンダーコントロールを aspx 中に記述します。
 
 
-```html
+```html {title="BlogSelect.aspx"}
 <%@ Page Language="C#"
   MasterPageFile="~/Site.Master" AutoEventWireup="true"
   CodeBehind="BlogSelect.aspx.cs" Inherits="WebsiteSample.BlogSelect"
@@ -249,7 +249,7 @@ namespace WebsiteSample
 
 ソースコードは以下のようになります。
 
-```html
+```html {title="BlogSelect.aspx.cs"}
 using System;
 using System.Web;
 using System.Web.UI;

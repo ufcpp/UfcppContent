@@ -35,7 +35,7 @@ aliases:
 スタイルというものを使います。
 
 
-```xml
+```xml {title="スタイルの適用"}
 <WrapPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -81,7 +81,7 @@ SolidColorBrush, LinearGradientBrush, RadialGradientBrush を使って説明す�
 この3つに関して例を挙げておきます。
 
 
-```xml
+```xml {title="Brush いろいろ"}
 <WrapPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -153,7 +153,7 @@ x 軸, y 軸方向の拡大を表す ScaleTransform、
 さらに、TransformGroup を使って複数の変形を一度にかけることもできます。
 
 
-```xml
+```xml {title="変形いろいろ"}
 <WrapPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -245,7 +245,7 @@ EventTrigger です。
 以下のようにします。
 
 
-```xml
+```xml {title="EventTrigger"}
 <WrapPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -297,7 +297,7 @@ Binding で設定した値をトリガにする DataTrigger や、
 全ての四角形が同じように点滅し始めます。
 
 
-```xml
+```xml {title="スタイル中のイベントトリガ"}
 <WrapPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -357,7 +357,7 @@ XAML では、ストーリーボードというものを使ってアニメーシ
 マウスが離れた瞬間に点滅を再開できます。
 
 
-```xml
+```xml {title="ストーリーボードの開始、一時停止、再開"}
 <WrapPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -415,7 +415,7 @@ DoubleAnimation や ColorAnimation という子要素を複数並べて、
 先ほどまでにたびたび例示してきた「透明・不透明の点滅」のストーリーボードの部分を抜き出してきてみましょう。
 
 
-```xml
+```xml {title="Storyboard"}
 <Storyboard>
   <DoubleAnimation
     Storyboard.TargetProperty="Opacity"
@@ -461,7 +461,7 @@ Rectangle のプロパティの値を変更していますが、
 これには、以下のように、Storyboard.TargetName 属性を使います。
 
 
-```xml
+```xml {title="Storyboard.TargetName" highlight-text="Storyboard.TargetName=&quot;rect&quot;"}
 <WrapPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -531,7 +531,7 @@ Shape.Fill に 「[Attribute Syntax](wpf_xamlbasic.md#attribute)」 で色を設
 Rectangle の色が変わって回転し始めます（3秒間）。
 
 
-```xml
+```xml {title="色の変化と回転を同時にアニメーション"}
 <WrapPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -597,7 +597,7 @@ TransformGroup 内に ScaleTransform や RotateTransform などを複数並べ�
 こういう場合、以下のように、配列的に [0] とか [1] とかを使って TergetProperty を設定することができます。
 
 
-```xml
+```xml {title="TergetProperty に配列的にアクセス"}
 <WrapPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -687,7 +687,7 @@ Contorol や Shape などは Animatable のサブクラス。）
 （XAML ＋ コードビハインドの C# ファイル）。
 
 
-```xml
+```xml {title="Windows1.xaml"}
 <Window x:Class="WPFApplication1.Window1"
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -698,7 +698,7 @@ Contorol や Shape などは Animatable のサブクラス。）
   <Rectangle Name="rect1" Width="50" Height="50" Fill="#8080ff"/>
 </Window>
 ```
-```xml
+```xml {title="Windows1.xaml.cs" highlight-lines="13-17"}
 using System;
 using System.Windows;
 using System.Windows.Media.Animation;
@@ -768,7 +768,7 @@ namespace WPFApplication1
 例として、距離に反比例する引力が働く3つの物体の運動のシミュレーションを示します。
 
 
-```xml
+```xml {title="Windows1.xaml"}
 <Window x:Class="WPFApplication1.Window1"
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -791,7 +791,7 @@ namespace WPFApplication1
   </Canvas>
 </Window>
 ```
-```xml
+```xml {title="Windows1.xaml.cs" highlight-ranges="sha256:18d5db85d9d54bea3411bb9a3862376cabf0d6c0732d526b414da47607652304;31:7-32:55"}
 using System;
 using System.Windows;
 using System.Windows.Controls;

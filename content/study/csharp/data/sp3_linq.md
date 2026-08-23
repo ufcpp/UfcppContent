@@ -158,7 +158,7 @@ SQL を例に、簡単な説明をしたいと思います。
 その「名」を取り出したい場合、
 以下のような問い合わせを書きます。
 
-```sql
+```sql {title="Generics の例"}
 SELECT 名 FROM 学生名簿
   WHERE 出席番号 <= 15
   ORDER BY 出席番号;
@@ -248,7 +248,7 @@ SELECT などのキーワードに関して、
 で、この2つのテーブル「学生名簿」と「備考欄」に対して、
 以下のような問い合わせ操作をしてみます。
 
-```sql
+```sql {title="Generics の例"}
 SELECT 姓, 名, 備考 FROM 学生名簿, 備考欄
   WHERE 学生名簿.学生番号 == 備考欄.学生番号
 ```
@@ -301,7 +301,7 @@ C# 等の言語に SQL ライクなデータベース操作構文を組み込む
 百聞は一見にしかずということで、
 とりあえず、先ほどの SQL での例を C# 3.0 の構文を使って書いてみましょう。
 
-```csharp
+```csharp {title="C# 3.0 LINQ"}
 var 学生名簿 =
 new[] {
   new {学生番号 = 14, 姓 = "風浦", 名 = "可符香"},
@@ -328,7 +328,7 @@ foreach(var 名 in 出席番号前半名)
 ```
 
 
-```console
+```console {title="C# 3.0 LINQ の例、実行結果"}
 マリア
 可符香
 ```
@@ -390,7 +390,7 @@ C# 3.0 の目玉となる機能は<strong id="query" class="keyword">クエリ�
 すでに何度か例を示していますが、
 以下のように、SQL 風の問い合わせを C# ソースファイル中に直接書ける機能です。
 
-```csharp
+```csharp {title="クエリ式"}
 var list1 =
   from p in list
   where p.id <= 15
@@ -404,7 +404,7 @@ var list1 =
 C# 3.0 のコンパイラは、クエリ式をメソッド（あるいは「[拡張メソッド](../functional/sp3_extension.md#exmethod)」）呼び出しに変換します。
 例えば、以下のようなクエリ式を考えます。
 
-```csharp
+```csharp {title="where を使った簡単なクエリ式"}
 var list1 =
   from p in list
   where p.id <= 15
@@ -414,7 +414,7 @@ var list1 =
 
 これは、C# 3.0 コンパイラによって、以下のように解釈されます。
 
-```csharp
+```csharp {title="where を使った簡単なクエリ式"}
 var list1 = list.Where(p => p.id <= 15).Select(p => p.Name);
 ```
 

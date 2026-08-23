@@ -42,7 +42,7 @@ C# 言語による実装を示します。
 （プログラミングの知識に関しては、
 「[インターフェース](../../csharp/oop/oo_interface.md)」辺りを参照してください。）
 
-```csharp
+```csharp {title="フィルタインターフェース"}
 /// <summary>
 /// ディジタルフィルタインターフェース。
 /// </summary>
@@ -92,7 +92,7 @@ GetValue メソッドです。
 実装も非常に簡単です。
 要点だけ抜き出すと、以下の通り。
 
-```csharp
+```csharp {title="増幅器"}
 public class Amplifier : IFilter
 {
   double amp; // 倍率
@@ -147,7 +147,7 @@ public class Amplifier : IFilter
  
 循環バッファの実装方法は、例えば以下のようになります。
 
-```csharp
+```csharp {title="循環バッファ（その1）"}
 public class CircularBuffer : ICloneable
 {
   double[] buf;
@@ -197,7 +197,7 @@ public class CircularBuffer : ICloneable
 効率がよくありません。
 そこで、以下のような実装方法もあります。
 
-```csharp
+```csharp {title="循環バッファ（その2）"}
 public class CircularBuffer : ICloneable
 {
   double[] buf;
@@ -246,7 +246,7 @@ public class CircularBuffer : ICloneable
 これに対して、バッファ長を2の冪に制限することで、
 剰余演算を論理 AND 演算に置き換える方法もあります。
 
-```csharp
+```csharp {title="循環バッファ（その3）"}
 public class CircularBuffer : ICloneable
 {
   double[] buf;

@@ -35,7 +35,7 @@ Language Feature Status に並んでいるもののうち、いくつかは prev
 「プロパティのバッキング フィールドを表す変数」にしようという案があって、
 今は機能名としても「field キーワード」と呼ばれています。
 
-```csharp
+```csharp {title="field キーワード"}
 class A(int x)
 {
     // (既存の)自動プロパティ。
@@ -80,7 +80,7 @@ Visual Studio 17.12 Preview 3 / .NET 9 RC 2 の頃にはすでに merge され�
 「`field` という名前のフィールドがあって、`this.` は付けずに、プロパティの中で参照している」という状況が破壊的変更になります。
 (「そこまで多くはないけど、まあそういう人も一定数いる」レベル。)
 
-```csharp
+```csharp {title="field キーワードにはそこそこありえる破壊的変更"}
 class A
 {
     int field;
@@ -105,7 +105,7 @@ class A
 当初は「既存のコードを壊さない限りにキーワード扱いする」みたいな努力をするかどうかという話もあったんですが、複雑すぎるので断念しています。
 例えば、`field` という名前のローカル変数があったとしてもキーワード扱いです。
 
-```csharp
+```csharp {title="ローカル変数があっても field はキーワード扱い"}
 class A
 {
     public int X
@@ -122,7 +122,7 @@ class A
 `nameof(field)` もエラーになります。
 `nameof(int)` とかがエラーなのと同じ。
 
-```csharp
+```csharp {title="nameof(field) はダメ"}
 class A
 {
     public string X
@@ -136,7 +136,7 @@ class A
 
 これと関連して、以下のようなコードを書くと、タプル要素名のやつだけエラーを起こします。
 
-```csharp
+```csharp {title="タプル要素名とか、匿名型のプロパティとか"}
 class A
 {
     public int X
@@ -164,7 +164,7 @@ class A
 
 例えば以下のような `??=` を使った遅延初期化コードはよく書くと思います。
 
-```csharp
+```csharp {title="??= で遅延初期化"}
 class A(Type type)
 {
     // Type.Name のキャッシュ。
@@ -182,7 +182,7 @@ class A(Type type)
 
 [解決策](https://github.com/dotnet/csharplang/blob/main/proposals/field-keyword.md#nullability)は検討さいれているんですが、短期的には `MaybeNull` 属性を使って回避してくれと言われています。
 
-```csharp
+```csharp {title="当面、MaybeNull で回避"}
 using System.Diagnostics.CodeAnalysis;
 
 class A(Type type)

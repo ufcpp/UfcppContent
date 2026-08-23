@@ -23,12 +23,12 @@ aliases:
 匿名デリゲート（実行可能なコード）ではなく<strong id="expressiontree" class="keyword">式木</strong>（式の意味を表す木構造データ）としてコンパイルされます。 
 例えば、以下の2つのコードは同じ意味になります。
 
-```csharp
+```csharp {title="ラムダ式から式木を作る"}
 Expression<Func<int, int>> e = x => x + 5
 ```
 
 
-```csharp
+```csharp {title="直接式木を作る"}
 var x = Expression.Parameter(typeof(int), "x");
 var e = 
   Expression.Lambda<Func<int, int>>(
@@ -57,12 +57,12 @@ var e =
 ラムダ式には、以下に例示するような2つの記法、
 1文だけのタイプとブロックを持つタイプがあります。
 
-```csharp
+```csharp {title="1文だけのラムダ式（式木にできる）"}
 Func<int, int> f = x => x + 5
 ```
 
 
-```csharp
+```csharp {title="ブロックタイプのラムダ式（式木にできない）"}
 Func<int, int> f = x =>
   {
     int p = 1;
@@ -86,7 +86,7 @@ Func<int, int> f = x =>
 一方、C# 3.0 で導入されたオブジェクト初期化子（object initializer）（参考：「[初期化子](../functional/sp3_lambda.md#init)」）を使えば、結構複雑な式も書けたりします。
 例えば以下のような感じ。
 
-```csharp
+```csharp {title="初期化子を使ったラムダ式"}
 Expression<Func<LineSegment>> e = () => 
   new LineSegment
   {
@@ -161,7 +161,7 @@ NodeType がそれぞればらばらで、少し複雑なんですが、
 （型推論が働きやすくするために）、
 以下のような補助関数を用意します。
 
-```csharp
+```csharp {title="Expression&lt;T&gt; 型の型推論のための補助関数"}
 static partial class Make
 {
     public static Expression<Func<TR>> Expression<TR>(Expression<Func<TR>> e)
@@ -195,7 +195,7 @@ static partial class Make
 また、（簡易的にではありますが、）
 2つの式木が一致するかどうかを判定する関数を用意します。
 
-```csharp
+```csharp {title="2つの式木が一致性判定"}
 /// <summary>
 /// 式木の構造が一致してれば、少なくとも ToString の結果は一致するので、
 /// それで2つの式木の一致性を判定。
@@ -213,7 +213,7 @@ static void SimpleCheck(Expression e1, Expression e2)
 さらに、Expression.Parameter は頻繁に出てくるものなので、
 あらかじめ Parameter を作って変数に代入しておきます。
 
-```csharp
+```csharp {title="ParameterExpression を事前に準備"}
 static ParameterExpression intX = Expression.Parameter(typeof(int), "x");
 static ParameterExpression intY = Expression.Parameter(typeof(int), "y");
 static ParameterExpression boolX = Expression.Parameter(typeof(bool), "x");
@@ -242,7 +242,7 @@ Lambda メソッドに、ラムダ式の本体（Body）とパラメータリス
 （以後、サンプルコード中では、
 SimpleCheck メソッドの1つ目の引数と2つ目の引数が同じ式木になっています。）
 
-```csharp
+```csharp {title="Lambda"}
 SimpleCheck(
   Make.Expression((int x) => 0),
   Expression.Lambda<Func<int, int>>(
@@ -255,7 +255,7 @@ SimpleCheck(
 ちなみに、ラムダ式中にさらに式木が含まれていた場合、
 その式木は Quote で囲まれます。
 
-```csharp
+```csharp {title="Quote"}
 SimpleCheck(
   Make.Expression(() =>
     (Expression<Func<int>>)(() => 0)
@@ -314,7 +314,7 @@ SimpleCheck(
 
 算術演算には、オーバーフローのチェックを行うかどうかで2つのバージョンがあります。
 
-```csharp
+```csharp {title="checked/unchecked"}
 SimpleCheck(
   Make.Expression((int x) => -x).Body,
   Expression.Negate(intX)
@@ -329,7 +329,7 @@ SimpleCheck(
 int などに単項 + を適用すると、最適化されて + が消えてしまうので注意。
 ユーザ定義型の + の場合はちゃんと + が残ります。
 
-```csharp
+```csharp {title="単項 +"}
 // ↓これは最適化がかかって +x が x になる。
 SimpleCheck(
   Make.Expression((int x) => +x).Body,
@@ -381,7 +381,7 @@ SimpleCheck(
 ちなみに、C# の言語仕様では、オーバーフローのチェックを行うのは整数に対してのみです。
 double などの浮動小数点数では、たとえ checked がついていても、オーバーフローのチェックは行われません。
 
-```csharp
+```csharp {title="浮動小数点数は checked にならない"}
 // たとえ checked がついていても、
 // double 同士の演算はオーバーフローをチェックしない
 SimpleCheck(
@@ -761,14 +761,14 @@ New がコンストラクタ呼び出し、Bindings が初期化子ーによる�
 MemberInit の Bindings は、
 以下のような単純なものは MemberAssingment（Expressin.Bind メソッドで生成）、
 
-```csharp
+```csharp {title="MemberAssingment"}
 new Point { X = 1, Y = 2 }
 ```
 
 
 以下のような、再帰構造を持つものは MemberMemberBinding（Expression.MemberBind で生成）、
 
-```csharp
+```csharp {title="MemberMemberBinding"}
 new LineSegment
 {
   Start = { X = 1, Y = 1 },
@@ -838,7 +838,7 @@ new Polyline
 
 以下に、.NET 4 の式木の例を示します。
 
-```csharp
+```csharp {title=".NET Framework 4 での式木の例"}
 using System;
 using System.Linq.Expressions;
 
@@ -878,7 +878,7 @@ public class Program
 
 これで、以下のコードに相当する式木が作れます。
 
-```csharp
+```csharp {title="ループ持ちのラムダ式"}
 Func<int, int> f = i =>
     {
         int x = 0;

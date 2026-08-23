@@ -46,7 +46,7 @@ Visual Studio 17.13.0 Preview 1 (.NET 9 の正式リリースと同時)で merge
 ユーザー定義型変換を挟む拡張メソッド呼び出しはできません。
 例えば、以下のコードは C# 13 でコンパイル エラーだったものが、preview ではコンパイルできるようになっています。
 
-```csharp
+```csharp {title="配列に対して Span や ReadOnlySpan の拡張メソッドは呼べない"}
 // 拡張メソッドの呼び出しはユーザー定義の型変換を見ない。
 // Span の特別扱いがないと拡張メソッドは呼べない。
 new int[1].M();
@@ -61,7 +61,7 @@ static class Ex
 「`Span<T>` や `ReadOnlySpan<T>` 引数を使った方がパフォーマンスがいいのでこちらを呼んでほしい」という要望があるんですが、
 これまでは `IEnumerable<T>` なオーバーロードがあるとそっちが優先されるという問題もありました。
 
-```csharp
+```csharp {title="IEnumerable よりも Span/ReadOnlySpan を優先する特別扱い"}
 // ユーザー定義の型変換よりも、「派生・実装クラスだから変換可能」の方が優先度が高い。
 Ex.M(new int[1]);
 
@@ -76,7 +76,7 @@ static class Ex
 `ReadOnlySpan<string>` を `ReadOnlySpan<object>` に代入できてもいいはずなのに、
 これが C# 13 まではできませんでしたが、preview にすると受け付けます。
 
-```csharp
+```csharp {title="ReadOnlySpan の共変性"}
 ReadOnlySpan<string> s = [];
 ReadOnlySpan<object> span = s; // C# 13 ではエラー。
 ```
@@ -84,7 +84,7 @@ ReadOnlySpan<object> span = s; // C# 13 ではエラー。
 ちなみに、`Span<T>` と `ReadOnlySpan<T>` の両方のオーバーロードがある場合、
 `ReadOnlySpan<T>` の方が優先されます。
 
-```csharp
+```csharp {title="ReadOnlySpan 優先"}
 string[] s = [];
 
 // ReadOnlySpan の方が優先。
@@ -102,7 +102,7 @@ target-typed で生成される型自体が変わるコレクション式と違�
 じゃあどうしてこういう仕様にしたかというと…
 こうしておかないとまた「[配列の共変性の地雷](../../../2022/11/covariantarrayincident/index.md)を踏むから」とのこと。
 
-```csharp
+```csharp {title="配列の共変性は結構な地雷"}
 string[] s = [];
 object[] o = s; // C# の配列は共変。
 

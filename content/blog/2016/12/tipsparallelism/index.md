@@ -19,7 +19,7 @@ CPU律速になるような計算処理は、ガチガチに最適化するな�
 並列化によって高速化しやすい計算の例として、浮動小数点数のデータ列の積和演算を考えてみます。
 例えば、以下のようなコードになります。
 
-```csharp
+```csharp {title="シングルスレッド実行"}
 private static float SingleThreadScalar(float[] x, float[] y)
 {
     var prod = 0f;
@@ -75,7 +75,7 @@ private static float SingleThreadScalar(float[] x, float[] y)
 そこで、ここでは`Task`クラスを使った例を挙げます。
 以下のような書き方になります。
 
-```csharp
+```csharp {title="マルチスレッド実行"}
 private static float MultiThreadScalar(float[] x, float[] y)
 {
     var windowSize = N / NumWorkerThread;
@@ -126,7 +126,7 @@ C#では、.NET Framework 4.6でSIMD命令対応がありました。
 2つの浮動小数点数データ列の積和を行っています。
 `Vector4.Dot`は、4つの浮動小数点数をまとめたもの(`Vector4`)の内積(積和演算)です。
 
-```csharp
+```csharp {title="SIMD命令化"}
 private static float SingleThreadVector(Vector4[] vx, Vector4[] vy)
 {
     var prod = 0f;
@@ -167,7 +167,7 @@ faddp       st(1),st
 
 `Task`も`Vector`も使って、CPU間並列もCPU内並列も使った例も挙げておきます。
 
-```csharp
+```csharp {title="マルチスレッド化 ＋ SIMD命令化"}
 private static float MultiThreadVector(Vector4[] vx, Vector4[] vy)
 {
     var windowSize = N / NumWorkerThread;

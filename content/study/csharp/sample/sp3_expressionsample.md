@@ -24,7 +24,7 @@ C# 3.0 の Expression Tree の一番すごいところは、匿名デリゲー�
 式木をいろいろいじった後に動的にコンパイルして実行できるところ。
 シンボリックに計算した結果を、動的に実行形式に変換して効率よく実行できるってのはすごい。
 
-```csharp
+```csharp {title="x * x を微分して実行" highlight-lines="7" highlight-text="f = x =&gt; x * x"}
 Expression<Func<double, double>> f = x => x * x;
 var df = f.Derive();
 
@@ -38,7 +38,7 @@ for (int i = -2; i <= 2; ++i)
 ```
 
 
-```console
+```console {title="実行結果"}
 f  = x => (x * x)
 df = x => (2 * x)
 df(-2) = -4
@@ -65,7 +65,7 @@ df(2) = 4
 
 ちなみに、関数 f(x) が与えられたときに、
 
-```csharp
+```csharp {title="数値計算で微分"}
 double Derive(Func<double, double> f, x)
 {
   return (f(x + DX / 2) - f(x - DX / 2)) / 2;
@@ -99,7 +99,7 @@ double Derive(Func<double, double> f, x)
 
 あと、偏微分にも対応しています。
 
-```csharp
+```csharp {title="偏微分"}
 Expression<Func<double, double, double>> f =
   (x, y) => x * x * y + 2 * x * y;
 
@@ -109,7 +109,7 @@ Console.Write("df/dy = {0}\n", f.Derive("y"));
 ```
 
 
-```console
+```console {title="偏微分の結果"}
 f     = (x, y) => (((x * x) * y) + ((2 * x) * y))
 df/dx = (x, y) => ((2 * (x * y)) + (2 * y))
 df/dy = (x, y) => ((x * x) + (2 * x))
@@ -118,7 +118,7 @@ df/dy = (x, y) => ((x * x) + (2 * x))
 
 それから、微分演算子もクラス化しています。
 
-```csharp
+```csharp {title="微分演算子"}
 Expression<Func<double, double, double>> f =
   (x, y) => x * x * y + 2 * x * y;
 var dx = new DifferentialOperator("x");
@@ -131,7 +131,7 @@ Console.Write("Δf   = {0}\n", laplacian.Apply(f));
 ```
 
 
-```console
+```console {title="微分演算子の実行結果"}
 f     = (x, y) => (((x * x) * y) + ((2 * x) * y))
 df/dx = (x, y) => ((2 * (x * y)) + (2 * y))
 Δf   = (x, y) => (2 * y)
@@ -140,7 +140,7 @@ df/dx = (x, y) => ((2 * (x * y)) + (2 * y))
 
 ちなみに、以下のようなマネも可能。
 
-```csharp
+```csharp {title="ラムダ式から微分演算子を作る"}
 var laplacian = new DifferentialOperator(
   (x, y) => x * x + y * y
   );
@@ -194,7 +194,7 @@ CodeDom に関しては右記のページを参考にしました →
 
 以下のように使います。
 
-```csharp
+```csharp {title="文字列から動的に式木を生成"}
 var f = (Expression<Func<double, double>>)CodeDom.GetExpressionFrom(
   "x => x * x"
   );
@@ -208,7 +208,7 @@ var f = (Expression<Func<double, double>>)CodeDom.GetExpressionFrom(
 の中の ConsoleCodeDom プロジェクト。
 実行例は以下の通り。
 
-```console
+```console {title="実行例"}
 x => x * x + 2 * x + 1
 function  : x => (((x * x) + (2 * x)) + 1)
 derivative: x => ((2 * x) + 2)

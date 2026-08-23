@@ -24,7 +24,7 @@ This library calculates symbolically derivative of Expression Tree in C# 3.0.
 Expression Tree is a powerful functionality in C# 3.0, which can be written in the same syntax as anonymous delegates, but treated as data, and dynamically compiled into the MSIL on runtime.
 In the library, Expression Tree is differentiated symbolically and its derivative is executable as a delegate after compilation, for example, as follow:
 
-```csharp
+```csharp {title="differentiation of x * x" highlight-lines="7" highlight-text="f = x =&gt; x * x"}
 Expression<Func<double, double>> f = x => x * x;
 var df = f.Derive();
 
@@ -38,7 +38,7 @@ for (int i = -2; i <= 2; ++i)
 ```
 
 
-```console
+```console {title="execution results"}
 f  = x => (x * x)
 df = x => (2 * x)
 df(-2) = -4
@@ -67,7 +67,7 @@ With some optimization, it achieves good results such as follows:
 
 Additionally, differential operator class is implemented.
 
-```csharp
+```csharp {title="differential operator"}
 Expression<Func<double, double, double>> f =
   (x, y) => x * x * y + 2 * x * y;
 var dx = new DifferentialOperator("x");
@@ -80,7 +80,7 @@ Console.Write("Δf   = {0}\n", laplacian.Apply(f));
 ```
 
 
-```console
+```console {title="execution results"}
 f     = (x, y) => (((x * x) * y) + ((2 * x) * y))
 df/dx = (x, y) => ((2 * (x * y)) + (2 * y))
 Δf   = (x, y) => (2 * y)
@@ -92,7 +92,7 @@ df/dx = (x, y) => ((2 * (x * y)) + (2 * y))
 
 The differential operator can be initialized with a characteristic polynomial written in Lambda.
 
-```csharp
+```csharp {title="initialization with lambda"}
 Expression<Func<double, double, double>> characteristic =
   (x, y) => x * x + y * y;
 var laplacian = new DifferentialOperator(characteristic);
@@ -111,7 +111,7 @@ The library has a class which create Expression dynamically from a string.
 Instead that I implement an original parser, the class uses standard library classes in System.CodeDom and Microsoft.CSharp namespace.
 The usage is as follow:
 
-```csharp
+```csharp {title="dynamic creation of Expression"}
 var f = (Expression<Func<double, double>>)CodeDom.GetExpressionFrom(
   "x => x * x"
   );
@@ -122,7 +122,7 @@ The solution (
 [source files](../../../../assets/media/ufcpp2000/en/source/Differential.zip)
 ) has a demo project of a command-line program which reads a lambda expression as string, dynamically creates an Expression, and then shows the created result and its derivative, like as follow:
 
-```console
+```console {title="execution sample of the command-line demo"}
 x => x * x + 2 * x + 1
 function  : x => (((x * x) + (2 * x)) + 1)
 derivative: x => ((2 * x) + 2)

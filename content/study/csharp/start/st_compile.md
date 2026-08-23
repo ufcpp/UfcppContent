@@ -133,7 +133,7 @@ C# のソースファイルをコンパイルするためには C# コンパイ�
 CSC(C Sharp Compiler)というコンパイラも一緒にインストールされます。
 CSC は、
 
-```console
+```console {title="CSC のパス"}
 [Windowsフォルダ]\Microsoft.NET\Framework\[バージョン番号]
 ```
 
@@ -142,7 +142,7 @@ CSC は、
 例えば、C ドライブに Windows を（標準設定で）インストールしている人で、
 .NET Framework 2.0 の場合なら、
 
-```console
+```console {title="CSC のパス"}
 C:\Windows\Microsoft.NET\Framework\v2.0.50727
 ```
 
@@ -164,7 +164,7 @@ C# のソースファイルはただのテキストファイルですから、Wi
 コマンドプロンプトのウィンドウが開いたら、
 先ほど sample.cs を保存したフォルダに移動します
 
-```console
+```console {title="作業フォルダに移動"}
 cd "\My Documents"
 ```
 
@@ -172,7 +172,7 @@ cd "\My Documents"
 最後に、csc を実行して sample.cs をコンパイルします。
 コンパイルは以下のように入力することで行えます。
 
-```console
+```console {title="コンパイル"}
 csc sample.cs
 ```
 
@@ -188,7 +188,7 @@ sample.exe という名前の実行ファイルが出来ているはずです。
 「<code>sample</code>」と入力することでプログラムを実行することが出来ます。
 以下に実行例を示します。
 
-```console
+```console {title="実行"}
 C:\My Documents> sample
 皆様始めまして。
 ```

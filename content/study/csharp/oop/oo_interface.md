@@ -91,7 +91,7 @@ aliases:
 
 C# のインターフェースの定義は以下のようにして行います。
 
-```csharp
+```csharp {title="インターフェース定義のしかた"}
 interface インターフェース名
 {
   メソッド・プロパティの宣言
@@ -101,7 +101,7 @@ interface インターフェース名
 
 インターフェースの実装はクラスの継承と同じ構文で行います。
 
-```csharp
+```csharp {title="インターフェースの実装"}
 class クラス名 : インターフェース名
 {
   クラスの定義
@@ -136,7 +136,7 @@ C# 8.0 では、制限がいくつか緩和されています。
 `IComparable<T>`インターフェイス(`System`名前空間)は、順序比較ができるものを表します。
 配列の整列などに使います。
 
-```csharp
+```csharp {title="IComparableの例"}
 using System;
 using System.Linq;
 
@@ -245,7 +245,7 @@ class IComparableSample
 
 このうち、`IEnumerable`と`IReadIReadOnlyList`の例を挙げておきます。
 
-```csharp
+```csharp {title="IEnumerableの例"}
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -297,7 +297,7 @@ class IEnumerableSample
 }
 ```
 
-```csharp
+```csharp {title="IReadOnlyListの例"}
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -365,7 +365,7 @@ class IReadOnlyListSample
 `IDisposable`インターフェイス(`System`名前空間)は、[ガベージ コレクション](../resource/rm_gc.md#garbage-collection)任せではなく、
 明示的なタイミングで破棄処理を行いたいものに使います。詳細は「[リソースの破棄](../resource/oo_dispose.md)」で説明します。
 
-```csharp
+```csharp {title="IDisposableの例"}
 using System;
 
 /// <summary>
@@ -483,7 +483,7 @@ class Circle : Shape, IEquatable<Circle>
 
 例えば以下の例を見てください。`IAccumulator`インターフェイスと`IGroup<T>`インターフェイスがどちらも`Add`メソッドを持っていて、それを両方実装している`ImplicitImplementation`クラスは、1つの`Add`メソッドが2つの役割を兼ねることになります。
 
-```csharp
+```csharp {title="複数のインターフェイスの実装" highlight-lines="5,11,20-24"}
 using System.Collections.Generic;
 
 interface IAccumulator
@@ -521,7 +521,7 @@ class ImplicitImplementation : IAccumulator, IGroup<int>
 メンバーを定義する際に、メンバー名の前に「インターフェイス名 + `.`」を加えます。
 例えば、メソッドの場合は以下のように書きます。
 
-```csharp
+```csharp {title="関数の書式" highlight-text="インターフェイス名"}
 戻り値の型 インターフェイス名.メソッド名(引数一覧)
 {
     メソッド本体(具体的な処理)
@@ -533,7 +533,7 @@ class ImplicitImplementation : IAccumulator, IGroup<int>
 これを使って、先ほどの2つのインターフェイスの`Add`メソッドに対して別実装を与えてみましょう。
 以下のようになります。
 
-```csharp
+```csharp {title="インターフェイスの明示的実装の例"}
 /// <summary>
 /// <see cref="IAccumulator.Add(int)"/>と、<see cref="IGroup{int}.Add(int)"/>が完全に被るので、
 /// 別の実装を与えたければ明示的実装が必要。
@@ -557,7 +557,7 @@ class ExplicitImplementation : IAccumulator, IGroup<int>
 ちなみに、明示的実装をしたメンバーは、そのクラスの変数から直接は利用できなくなります。
 一度インターフェイスのキャストしてから呼び出すことになります。
 
-```csharp
+```csharp {title="明示的実装したインターフェイスの呼び出し例"}
 using System;
 
 class ExpliciteImplementationSample
@@ -632,7 +632,7 @@ class ExpliciteImplementationSample
 
 例として`IEnumerable`インターフェイスを隠す方法を示しましょう。というか、すでに[前述](#collection)の例で使っていたりします。再掲すると以下の通りです。
 
-```csharp
+```csharp {title="IEnumerableの例" highlight-text="IEnumerator IEnumerable.GetEnumerator() =&gt; GetEnumerator();"}
 using System.Collections;
 using System.Collections.Generic;
 
@@ -757,7 +757,7 @@ C# 8.0 以降を使っていても、ターゲットとなるランタイム(Tar
 抽象メンバーは派生クラスでの実装が必須で、実装しなければコンパイル エラーを起こします。
 その結果、「後から追加したら派生クラスがコンパイル エラーを起こす」という状態になります。
 
-```csharp
+```csharp {title="抽象メンバーの追加は破壊的変更"}
 interface I
 {
     void X();
@@ -807,7 +807,7 @@ C# の場合には[拡張メソッド](../functional/sp3_extension.md)でも似�
 よく例に上がるのが [LINQ](../data/sp3_linq.md) to Object の `Count` メソッドです。
 `IEnumerable<T>`(`System.Collections.Generic`名前空間) に対する `Count`(含まれている要素数を数える)は、汎用的に書くなら以下のように書くしかありません。
 
-```csharp
+```csharp {title="汎用的な Count"}
 static int Count<T>(IEnumerable<T> source)
 {
     var count = 0;
@@ -824,7 +824,7 @@ static int Count<T>(IEnumerable<T> source)
 
 ということで、インターフェイスが実装を持てるようになりました。
 
-```csharp
+```csharp {title="デフォルト実装"}
 using System;
  
 interface I
@@ -856,7 +856,7 @@ class Program
 }
 ```
 
-```console
+```console {title="デフォルト実装"}
 B
 ```
 
@@ -877,7 +877,7 @@ B
 
 ```
 
-```csharp
+```csharp {title="インターフェイスの静的メンバー"}
 using System;
  
 interface I
@@ -908,7 +908,7 @@ class Program
 C# 7.3 までは、インターフェイスのメンバーは常に `public` で `virtual` でした。
 C# 8.0 からは、明示的に指定することでクラスと同じく、`protected` などのアクセシビリティを指定できます。
 
-```csharp
+```csharp {title="インターフェイスのメンバーにアクセシビリティを明示"}
 interface I
 {
     // 未指定の挙動は今まで通り、public virtual。
@@ -950,7 +950,7 @@ C# のクラスは何も指定しなければ仮想関数にはなりません�
 
 `private` か、あるいは明示的に `sealed` を指定した時だけ、非仮想になります。
 
-```csharp
+```csharp {title="インターフェイスは既定で virtual"}
 interface I
 {
     // 未指定の挙動は今まで通り、public virtual。
@@ -995,7 +995,7 @@ interface IDerived : I
 
 例えば以下のようなコードでは、どの実装を使いたいのか不明瞭なので、コンパイル エラーを起こします。
 
-```csharp
+```csharp {title="実装が不明瞭な場合はコンパイル エラーに"}
 using System;
  
 interface IA
@@ -1024,7 +1024,7 @@ class C : IB, IC
 
 もちろん、自分自身が実装を持てばそれが優先されるので、この「不明瞭」エラーは起きません。
 
-```csharp
+```csharp {title="不明瞭エラーの回避"}
 class C : IB, IC
 {
     // これなら IB.M でも IC.M でもなく、この M が呼ばれるので明瞭
@@ -1055,7 +1055,7 @@ class C : IB, IC
 デフォルト実装を持つメンバーを、派生インターフェイス側で再び抽象メンバーに戻すこともできます。
 以下のように、明示的実装っぽい書き方の前に `abstract` 修飾を付けます。
 
-```csharp
+```csharp {title="再抽象化" highlight-text="abstract void A.M();"}
 using System;
  
 interface A
@@ -1087,7 +1087,7 @@ class C : B
 
 まず、派生インターフェイスでは、オーバーライドは常に[明示的実装](#explicit-impl)が必要です。
 
-```csharp
+```csharp {title="オーバーライドには明示的実装が必須"}
 interface I
 {
     void M() { }
@@ -1117,7 +1117,7 @@ class C : I
 一方、派生側がクラスの場合、デフォルト実装しかない(自分自身はオーバーライドしていない)時にはそのメンバーを直接呼べません。
 また、`protected` なものには触れません。
 
-```csharp
+```csharp {title="派生側での扱い"}
 interface I
 {
     void Abstract();
@@ -1214,7 +1214,7 @@ record struct Point(int X, int Y) : IUtf8Parsable<Point>
 
 文法的には割かし素直で、 `abstract`/`virtual` と `static` を併用できるようになりました。
 
-```csharp
+```csharp {highlight-ranges="sha256:7c99e400d3d8cb748f6ec35b7f13b3e02bdad2da3a11c0f8824eb2e30d8e042e;3:5-3:20,4:5-4:19"}
 interface IA
 {
     static abstract void StaticAbstract();
@@ -1227,7 +1227,7 @@ interface IA
 
 以下のように、インスタンス メンバーと静的メンバーで、何も修飾子を付けないときの挙動が異なります。
 
-```csharp
+```csharp {title="インスタンス メンバーと静的メンバーの挙動の違い"}
 interface IA
 {
     // インスタンス メンバーの場合、abstract 修飾を付けなくても元から abstract。
@@ -1249,7 +1249,7 @@ interface IA
 
 ちなみに、この C# 8 の頃からの「何も付けないと non-virtual」の仕様があるのでわざわざ付ける意味はないんですが、一応、`sealed` 修飾子を付けれるようになっています。
 
-```csharp
+```csharp {title="sealed の明示も OK"}
 interface IA
 {
     // 何もつけない = non-virtual。
@@ -1266,7 +1266,7 @@ interface IA
 以下のように、`public` で同名のメソッドを定義する(暗黙的実装)か、
 `インターフェイス名.` で実装する(明示的実装)かです。
 
-```csharp
+```csharp {title="静的メンバーの実装例"}
 interface IA
 {
     abstract void Instance();
@@ -1294,7 +1294,7 @@ class Explicit : IA
 この点はインスタンス メンバーと同じというわけにはいきません。
 以下のようなコードはエラーになります。
 
-```csharp
+```csharp {title="クラスでは static virtual とは書けない"}
 interface IA
 {
     abstract void Instance();
@@ -1351,7 +1351,7 @@ interface IA
 以下のように、`M<T>()` 内で `T.Static()` と呼び出したとき、
 メソッド `M` を `M<A>()` で呼び出した場合に常に `A.Static` が呼ばれます。
 
-```csharp
+```csharp {title="静的な型に紐づいてメソッドが呼ばれる例"}
 // 静的な型(変数/引数の型)とインスタンスの型(変数に格納した値の型)が一致してるときはそんなに変な挙動はしない。
 
 M(new ABase()); // Base Instance / Base Static
@@ -1403,7 +1403,7 @@ class ADerived : ABase, IA
 
 以下のように、`virtual` (実装を持っている)であれば問題ありません。
 
-```csharp
+```csharp {title="virtual なら実装を持っているので困らない"}
 M<IA>();
 
 static void M<T>()
@@ -1419,7 +1419,7 @@ interface IA
 
 一方で、以下のように `abstract` (実装を持っていない)だとコンパイル エラーになります。
 
-```csharp
+```csharp {title="abstract は実装を持っていないので呼べない"}
 M<IA>(); // ここでエラーに。
 
 M<A>(); // これ(実装クラス)ならOK。
@@ -1447,7 +1447,7 @@ class A : IA
 
 例えばこれまで、以下のようなメソッドすらジェネリックな実装を持てませんでした。
 
-```csharp
+```csharp {title="+ 演算子の例"}
 Console.WriteLine(Sum(new[] { 1, 2, 3, 4 }));
 
 Console.WriteLine(Sum(new float[] { 1, 2, 3, 4 })); // こう書きたいのにエラーに…
@@ -1463,7 +1463,7 @@ static int Sum(int[] items) // Sum<T>(T[]) にしてしまうと += が書けな
 C# 11 でインターフェイスに `virtual` / `abstract` な演算子を持てるようになったことに伴って、
 .NET 7 で標準ライブラリに以下のようなインターフェイスが用意されました。
 
-```csharp
+```csharp {title="+ 演算子を持つインターフェイスが標準ライブラリ入り"}
 namespace System.Numerics;
 
 public interface IAdditionOperators<TSelf, TOther, TResult>
@@ -1478,7 +1478,7 @@ public interface IAdditionOperators<TSelf, TOther, TResult>
 (さらにいうと、この手のインターフェイスをまとめた `INumeber<T>` というインターフェイスを実装しています。)
 その結果、本節冒頭で挙げたような `Sum` メソッドをジェネリックに書けるようになりました。
 
-```csharp
+```csharp {title="ジェネリックな Sum メソッド"}
 using System.Numerics;
 
 // よくある「和を取るコード」なものですら、これまでだとジェネリックに書く手段がなかった。
@@ -1530,7 +1530,7 @@ Console.WriteLine(Sum(new decimal[] { 1, 2, 3, 4, 5 }));
 
 三角形、円に加え、多角形を実装した物を示します。
 
-```csharp
+```csharp {title="さまざまな図形"}
 using System;
 
 /// <summary>

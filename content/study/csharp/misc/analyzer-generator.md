@@ -43,7 +43,7 @@ C# コンパイラーは現在(というかそれぞれ C# 6.0 世代と C# 9.0 
 C# チームや .NET チームが公式に提供する機能としても、今はコンパイラーの内部に実装するよりも、プラグインとして実装するものが増えています。
 例えば、以下のコードを書いたとします。
 
-```csharp
+```csharp {title="C# の文法としては問題ないものの、修正したくなるコード"}
 class C
 {
     int x;
@@ -68,7 +68,7 @@ C# の文法上は特に問題のない書き方なんですが、推奨され�
 
 例えば、[クエリ式](../data/sp3_linq.md#query)がわかりやすい例ですが、以下のコードの `a`、`b`、`c` の3行は全く同じ意味のコードになります。
 
-```csharp
+```csharp {title="クエリ式の展開結果"}
 using System.Linq;
  
 var data = new[] { 1, 2, 3, 4 };
@@ -98,7 +98,7 @@ var c = Enumerable.Select(
 
 例えば、以下のようなコードを書きたい場面があるわけですが、
 
-```csharp
+```csharp {title="PropertyChanged の実装"}
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -126,7 +126,7 @@ class C : INotifyPropertyChanged
 このコードのうち、実質的に意味を持っているのは「`X` プロパティを持っていて、それに `PropertyChanged` を実装したい」というだけです。
 だったら、以下のような簡素なコードから複雑なコードを「コード生成」したいという話になります。
 
-```csharp
+```csharp {title="上記コードのうち意味のある部分(このコードを元にコード生成してほしい)"}
 class C
 {
     [AutoNotify] // 一例。こういう属性が欲しいという話。
@@ -145,7 +145,7 @@ generator のサンプルを提供しています。
 
 この generator を使うと、上記の `AutoNotify` 属性付きのフィールドから以下のようなソースコードを生成します。
 
-```csharp
+```csharp {title="上記のコードからの自動生成物"}
 public partial class C : System.ComponentModel.INotifyPropertyChanged
 {
     public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
@@ -179,7 +179,7 @@ C# では、書いたところからリアルタイムにコンパイルが掛�
 
 例えば以下のようなコードを書いたとします。
 
-```csharp
+```csharp {title="警告が出るソースコードの例"}
 using System;
 var x = 1;
 var y = 2;
@@ -230,7 +230,7 @@ C#/.NET チームによる公式提供のものは .NET SDK や Visual Studio �
 通常は「コピーされてまずいなら構造体を使うな」という方針にすることが多いです。
 ただ、パフォーマンス的にどうしても構造体にした上でコピーを禁止したいという場面がまれにあって、そういう場合に使います。
 
-```csharp
+```csharp {title="構造体のコピーを禁止"}
 // NonCopyableAnalyzer の機能:
 S s1 = new();
 S s2 = s1; // 構造体の代入(コピー)を禁止する
@@ -242,7 +242,7 @@ struct S { }
 StringLiteralGenerator は C# の通常の[文字列リテラル](../start/st_embeddedtype.md#stringl)から UTF-8 のバイト列を生成するものです。
 例えば以下のようなコードを書いて、
 
-```csharp
+```csharp {title="UTF-8 バイト列の生成元の例"}
 partial class Literal
 {
     [Utf8("aあ😀")]
@@ -252,7 +252,7 @@ partial class Literal
 
 以下のようなコードを自動生成します。
 
-```csharp
+```csharp {title="UTF-8 バイト列の生成結果の例"}
 partial class Literal
 {
     public static partial System.ReadOnlySpan<byte> M() => new byte[] {97, 227, 129, 130, 240, 159, 152, 128, };
@@ -264,7 +264,7 @@ partial class Literal
 
 [以下のようなパッケージ参照](https://github.com/ufcpp/UfcppSample/blob/master/Demo/2021/AnalyzerPackageReference/AnalyzerPackageReference/AnalyzerPackageReference.csproj#L8-L11)をすることでこれらのプラグインを追加できます。
 
-```xml
+```xml {title="パッケージ参照の例(csproj 内に以下の行を追加)"}
   <ItemGroup>
     <PackageReference Include="NonCopyableAnalyzer" Version="0.6.0" />
     <PackageReference Include="StringLiteralGenerator" Version="1.0.1" />
@@ -285,7 +285,7 @@ C# 12 から、`class A;` というように、クラスの本体の `{}` を省
 一例が `System.Text.Json` なんですが、
 以下のように、[`JsonSerializable` 属性](https://learn.microsoft.com/ja-jp/dotnet/api/system.text.json.serialization.jsonserializableattribute)を使ったコード生成をします。
 
-```csharp
+```csharp {title="コード生成だよりで中身空っぽのクラスの例"}
 using System.Text.Json.Serialization;
 
 // JsonSerializable 属性を付けていると、シリアライズ処理に必要なメンバーをコード生成する。
@@ -301,7 +301,7 @@ record Person(string FirstName, string LastName);
 ここで `{}` の省略が使えます。
 たかだか2行、1文字の差ですが、以下のように書けるようになります。
 
-```csharp
+```csharp {title="中身空っぽなら ; を使おうという例"}
 using System.Text.Json.Serialization;
 
 // JsonSerializable 属性を付けていると、シリアライズ処理に必要なメンバーをコード生成する。

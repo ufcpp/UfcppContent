@@ -35,7 +35,7 @@ aliases:
 
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/SelectSort.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/SelectSort.cs)
 
-```csharp
+```csharp {title="選択ソート"}
 /// <summary>
 /// 選択ソート。
 /// </summary>

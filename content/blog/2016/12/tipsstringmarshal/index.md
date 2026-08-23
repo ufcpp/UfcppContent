@@ -29,7 +29,7 @@ aliases: []
 
 変換なしでというか、ポインターがそのまま渡ります。例えば、以下のようなネイティブ コードがあったとします。受け取った文字列をすべて「a」の文字で上書きしてしまう関数です。
 
-```cpp
+```cpp {title="C#から呼び出したいC++コード"}
 extern "C"
 {
     // UTF-16 null終端文字列
@@ -54,7 +54,7 @@ extern "C"
 
 これを呼び出すC#コードは以下のようになります。
 
-```csharp
+```csharp {title="C++コードを呼び出すC#"}
 using System;
 using System.Runtime.InteropServices;
 

@@ -55,7 +55,7 @@ C#で`await`を使って非同期処理をする場合、
 
 ということで、ライブラリ作者は、同期コンテキストを拾わないようにするために、以下のようなコードを書くことを強要されます。
 
-```csharp
+```csharp {title="ConfigureAwait"}
 // ConfigureAwait で同期コンテキストを拾うかどうか設定できる
 // 引数を false にすると拾わない
 await FAsync().ConfigureAwait(false);
@@ -71,7 +71,7 @@ await FAsync().ConfigureAwait(false);
 
 冒頭の通り、C# 7では非同期メソッドの戻り値の型を任意に変えれるようになったので、自作してみました。
 
-```csharp
+```csharp {title="ContextFreeTask"}
 // Task の代わりに ContextFreeTask を非同期メソッドの戻り値にできる
 // この中にある await は同期コンテキストを一切拾わない
 private async ContextFreeTask FAsync()
@@ -95,7 +95,7 @@ private async Task GAsync()
 
 概ね、以下のコードと同じ挙動になります。
 
-```csharp
+```csharp {title="ContextFreeTask に対する await = ConfigureAwait(false)"}
 private async ContextFreeTask FAsync()
 {
     await Task.Delay(100).ConfigureAwait(false);
@@ -110,7 +110,7 @@ private async Task GAsync()
 
 戻り値があるとき用、すなわち、`Task<TResult>` の代わりの `ContextFreeTask<T>` もあります。
 
-```csharp
+```csharp {title="ContextFreeTask&lt;T&gt;"}
 private async ContextFreeTask<string> HAsync(int n)
 {
     await Task.Delay(100);
@@ -124,7 +124,7 @@ private async ContextFreeTask<string> HAsync(int n)
 ほとんどの処理は`Task`や、そのawaiter、async method builderへの丸投げです。
 その手前に`ConfigureAwait(false)`や`SetSynchronizationContext(null);`を挟んでいるだけ。
 
-```csharp
+```csharp {title="ContextFreeTask の中身"}
 public struct ContextFreeTask<T>
 {
     public Task<T> Task { get; }

@@ -216,7 +216,7 @@ C# 10.0 で、ついにその案が採用されることになり、
 引数なしコンストラクターを書けるようになりました。
 例えば以下のようなコードが書けるようになります。
 
-```csharp
+```csharp {title="構造体の引数なしコンストラクターの例"}
 struct A
 {
     public int X;
@@ -231,14 +231,14 @@ struct A
 背景説明の通り、`new()` と `default` の意味が変わったので注意が必要です。
 この例の構造体 `A` の場合、以下のような挙動になります。
 
-```csharp
+```csharp {title="new A() と default(A)"}
 Console.WriteLine(new A().X); // コンストラクターが呼ばれて、X == 1 になってる。
 Console.WriteLine(default(A).X); // コンストラクターも呼ばれず 0 初期化で、X == 0 になってる。
 ```
 
 C# 7.1/9.0 で、`new()` や `default` に[ターゲット型からの推論](../start/misctyperesolution.md#target-type)が働くようになったので、以下のようにも書けます。
 
-```csharp
+```csharp {title="new() と default"}
 A a = new();
 Console.WriteLine(a.X); // 1
 
@@ -248,14 +248,14 @@ Console.WriteLine(a.X); // 0
 
 `default` を書く以外に、配列の要素も既定値(0初期化)になるので注意が必要です。
 
-```csharp
+```csharp {title=" 配列の要素は暗黙的に default"}
 // 配列の要素は暗黙的に default…
 Console.WriteLine((new A[1])[0].X); // default(A) と同じ扱いで、X == 0 になってる。
 ```
 
 ちなみに、ジェネリクス越しでも `new()` と `default` の呼び分けが掛かります。
 
-```csharp
+```csharp {title="ジェネリクス越しの new() と default"}
 Console.WriteLine(New<A>().X); // 1
 Console.WriteLine(Default<A>().X); // 0
 
@@ -269,7 +269,7 @@ static T? Default<T>() => default;
 引数なしコンストラクターがない場合には `new()` も既定値扱いですが、
 ある場合には `new()` を渡せなくなります。
 
-```csharp
+```csharp {title="引数なしコンストラクターの有無で new() の意味が変わる例"}
 void m(
     NoCtor n1 = new(),
     NoCtor n2 = default,
@@ -288,7 +288,7 @@ C# 10.0 で構造体に引数なしコンストラクターが使えるように
 フィールド初期化子も使えるようになりました。
 以下のようなコードは C# 10.0 から書けるようになります。
 
-```csharp
+```csharp {title="構造体のフィールド初期化子の例"}
 struct FieldInitializer
 {
     public int X = 1;
@@ -300,7 +300,7 @@ struct FieldInitializer
 
 `new()` だけで、`X`、`Y` の値がそれぞれ1、2に初期化されます。
 
-```csharp
+```csharp {title="引数なしコンストラクターでフィールド初期化子が呼ばれる例"}
 var f = new FieldInitializer();
 Console.WriteLine(f.X); // 1
 Console.WriteLine(f.Y); // 2
@@ -317,7 +317,7 @@ C# 10 リリース当初はその案に基づいた実装になっていまし�
 それとも引数なしコンストラクターの呼び出しになるのか紛らわしくなるので、
 構造体の引数なしコンストラクターは public 以外を認めていません。
 
-```csharp
+```csharp {title="private、internal な引数なしコンストラクターはエラーになる"}
 struct A
 {
     public int X;
@@ -340,7 +340,7 @@ struct B
 
 例えば、以下のコードは、コンストラクター内で `_z` の初期化を忘れているのでコンパイル エラーになっていました。
 
-```csharp
+```csharp {title="_z の初期化忘れ"}
 struct Sample
 {
     int _x;
@@ -389,7 +389,7 @@ C# 11 では、構造体でもフィールドの明示的な初期化が不要�
 
 前節のコードとほぼ同じですが、 C# 11 にすれば以下のようなコードがコンパイルできるようになります。
 
-```csharp
+```csharp {title="構造体のフィールドが自動的に 0 初期化されるように"}
 struct Sample
 {
     int _x;
@@ -418,7 +418,7 @@ struct Sample
 
 C# 5.0 以前の場合、以下のコードはコンパイル エラーを起こします。
 
-```csharp
+```csharp {title="C# 5.0まではエラーになるコード"}
 public struct Point
 {
     public int X { get; private set; }
@@ -441,7 +441,7 @@ public struct Point
 
 このせいで、構造体と自動プロパティは相性が悪く、以下のように、自動プロパティを使わない書き方に書き換える必要がありました。
 
-```csharp
+```csharp {title="C# 5.0までで正しくコンパイルできるようにするには"}
 public struct Point
 {
     private int _x;
@@ -467,7 +467,7 @@ C#の仕様書に以下の1文が追加されたことによります。
 
 ちなみに、C# 6の場合は get のみの自動プロパティ(get-only auto-property)という構文が追加されて、先ほどのコードはさらに、以下のように書けるようになりました。
 
-```csharp
+```csharp {title="C# 6のget-only自動プロパティ"}
 public struct Point
 {
     public int X { get; }
@@ -529,7 +529,7 @@ public class Program
 
 いくつか実例を挙げます。
 
-```csharp
+```csharp {title="ref の語順の例"}
 // OK
 readonly public ref struct Ok1 { }
 readonly public ref partial struct Ok2 { }
@@ -545,7 +545,7 @@ public ref partial readonly struct Ng5 { }
 
 おそらく、以下のような型の入れ子とメソッド定義の区別を楽にするための制限(あくまでコンパイラー都合)と思われます。
 
-```csharp
+```csharp {title="ref の語順に制限がある理由"}
 class Sample
 {
     // 以下のエラー行、エラー内容は「readonly の後ろには型名が必要」になる

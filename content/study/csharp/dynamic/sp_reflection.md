@@ -42,7 +42,7 @@ aliases:
 
 例えば、以下のような構造体を考えます。
 
-```csharp
+```csharp {title="Rect 構造体"}
 struct Rect
 {
   public int Width;
@@ -53,7 +53,7 @@ struct Rect
 
 で、以下のように、Rect 構造体のメンバーにアクセスすることを考えます。
 
-```csharp
+```csharp {title="Rect 構造体の利用"}
 Rect x = new Rect();
 x.Width = 3;
 x.Height = 4;
@@ -108,7 +108,7 @@ x.Height ならば x から4バイト目を見ればいいことになります�
 要するに、Rect 構造体のメンバーへのアクセスは、
 実行時には、以下のような（C 言語風の）コードと同じような扱いになっています。
 
-```csharp
+```csharp {title="C 言語的に書くと"}
 // Rect x;
 char x[8];
 
@@ -139,7 +139,7 @@ C# では、System.Type クラスというものを使って実行時型情報�
 例として、以下のようなコードを考えてみます。
 （あんまり意味のあるコードではないですけども、例ということで。）
 
-```csharp
+```csharp {title="Rect 型のメンバーアクセス（通常のコード）"}
 Rect x = new Rect();
 x.Width = 3;
 x.Height = 4;
@@ -153,7 +153,7 @@ Console.Write("{0} × {1} ＝ {2}\n", x.Width, x.Height, area);
 
 これを、リフレクション（実行時型情報の取得）機能を使って同じことをしようと思うと以下のようになります。
 
-```csharp
+```csharp {title="Rect 型のメンバーアクセス（リフレクション版）"}
 Type t = Type.GetType("Rect");
 
 object o = Activator.CreateInstance(t);
@@ -189,7 +189,7 @@ GetType() メソッドや typeof 演算子を用いることでも Type型のイ
 逆に 「[unsafe](../interop/sp_unsafe.md#unsafe)」 機能・ポインターを使って書くと、
 以下のようになります。
 
-```csharp
+```csharp {title="Rect 型のメンバーアクセス（ポインター版）"}
 // 環境依存だし、ほんとはこんなコード書いちゃ駄目
 
 byte* p = stackalloc byte[sizeof(Rect)];
@@ -225,7 +225,7 @@ Console.Write("{0} × {1} ＝ {2}\n", x.Width, x.Height, area);
 
 以下に、利用例をあげます。
 
-```csharp
+```csharp {title="XML からインスタンス生成"}
 using System;
 using System.Xml.Linq;
 

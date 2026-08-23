@@ -35,7 +35,7 @@ C# 7.1 の時と同様、7.2 を有効にするには `LangVersion` 指定が必
 
 ![LangVersion latest](../../../../../assets/media/1154/langversionlatest.png)
 
-```xml
+```xml {highlight-text="latest"}
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>

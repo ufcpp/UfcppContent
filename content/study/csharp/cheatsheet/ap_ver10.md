@@ -51,7 +51,7 @@ C# 9.0 (レコード型の最初のバージョン)では、レコード型は�
 これに対して C# 10.0 では[値型](../resource/oo_reference.md#valtype)も選べるようにしました。
 そのため、以下のように、`record class` と `record struct` というキーワードで書き分けができるようになりました。
 
-```csharp
+```csharp {title="C# 10.0 の record class と record struct"}
 record class Reference(int X, int Y); // record だけ書いた場合こちらと同じ意味
 record struct Value(int X, int Y);
 ```
@@ -62,7 +62,7 @@ record struct Value(int X, int Y);
 
 構造体に引数なしコンストラクターとかフィールド初期化子を書けるようになりました。
 
-```csharp
+```csharp {title="構造体の引数なしコンストラクターの例"}
 struct A
 {
     public int X;
@@ -83,13 +83,13 @@ struct A
 別の型を使って結構複雑なコードに変換する最適化が入りました。
 条件を満たす場合、
 
-```csharp
+```csharp {title="文字列補間の例"}
 var formatted = $"({x}, {y})";
 ```
 
 このコードは `string.Format` ではなく、以下のようなコードに展開されます。
 
-```csharp
+```csharp {title="C# 10.0 での文字列補間の展開結果の例"}
 DefaultInterpolatedStringHandler handler = new DefaultInterpolatedStringHandler(4, 2);
 handler.AppendLiteral("(");
 handler.AppendFormatted(x);
@@ -106,7 +106,7 @@ string s = handler.ToStringAndClear();
 [文字列補間](../start/st_string.md#string-interpolation)でも、`{}` の中身が `const` 文字列な場合に限り、補完結果も `const` にできます。
 例えば以下のような `const` 文字列を作れます。
 
-```csharp
+```csharp {title="const 文字列補間"}
 const string A = "Abc";
 const string B = "Xyz";
 const string C = $"{nameof(A)}: {A}, {nameof(B)}: {B}"; // "A: Abc, B: Xyz"
@@ -118,7 +118,7 @@ const string C = $"{nameof(A)}: {A}, {nameof(B)}: {B}"; // "A: Abc, B: Xyz"
 
 `CallerArgumentExpression` 属性を使って、メソッド呼び出し元でどの引数にどういう式を渡したかを文字列として取れるようになりました。
 
-```csharp
+```csharp {title="CallerArgumentExpression の利用例"}
 using System.Runtime.CompilerServices;
 
 m(2 * 3 * 5);
@@ -131,7 +131,7 @@ static void m(
 }
 ```
 
-```console
+```console {title="CallerArgumentExpression の利用例"}
 2 * 3 * 5 = 30
 ```
 
@@ -143,7 +143,7 @@ C# 9.0 の[トップ レベル ステートメント](ap_ver9.md#top-level-state
 
 これらの機能によって、いわゆる [Hello World プログラム](https://ja.wikipedia.org/wiki/Hello_world)を以下の1行で書けるようになりました。
 
-```csharp
+```csharp {title="新コンソール アプリ テンプレート"}
 Console.WriteLine("Hello, World!");
 ```
 
@@ -151,7 +151,7 @@ Console.WriteLine("Hello, World!");
 
 また、Web アプリ用のテンプレートも以下のような1ファイルのコードになりました。
 
-```csharp
+```csharp {title="Web アプリの .NET 6 新テンプレート"}
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
@@ -168,7 +168,7 @@ app.Run();
 
 C# 10.0 から `{}` なしの以下のような書き方で名前空間を指定できるようになりました。
 
-```csharp
+```csharp {title="C# 10 からできる名前空間の書き方"}
 namespace Namespace;
 
 class A { }
@@ -176,7 +176,7 @@ class A { }
 
 これで以下のコードと同じ意味になります。
 
-```csharp
+```csharp {title="同じ意味のコード"}
 namespace Namespace
 {
     class A { }
@@ -192,7 +192,7 @@ namespace Namespace
 
 例えば、プロジェクト内のどこか1つのファイルに以下のようなコードを書いたとします。
 
-```csharp
+```csharp {title="global using の例"}
 global using System;
 ```
 
@@ -211,7 +211,7 @@ Web アプリ用テンプレートの `MapGet` を実現するために、
 
 これらにより、ラムダ式やデリゲートを以下のように書けるようになりました。
 
-```csharp
+```csharp {title="ラムダ式の戻り値明示、属性指定と、デリゲートの自然な型決定"}
 var f =
     [A]
     [return: B]
@@ -227,7 +227,7 @@ var f =
 
 入れ子のプロパティ・フィールド参照でプロパティ パターンを書けるようになりました。
 
-```csharp
+```csharp {title="入れ子のプロパティ参照" highlight-text="Name.Length: 1"}
     if (x is { Name.Length: 1 })
     {
         Console.WriteLine("single-char Name");
@@ -240,14 +240,14 @@ var f =
 
 分解代入と分解宣言の混在もできるようになりました。
 
-```csharp
+```csharp {title="分解宣言と分解代入の混在" highlight-text="var u"}
 int x;
 (x, var u) = (1, 2);
 ```
 
 ただし、式の途中に分解宣言 (var 付きの宣言) が来るようなコードは C# 10.0 でも書けません。
 
-```csharp
+```csharp {title="ただし、分解宣言は式の途中には書けない"}
 int x, y;
 (x, var u) = (var v, y) = (1, 2);
 ```
@@ -259,7 +259,7 @@ int x, y;
 
 例えば以下のコードは C# 10 以降でだけコンパイルできます。
 
-```csharp
+```csharp {title="?. == true"}
 // C# 10 から大丈夫な例: ?. == true。
 void m(Dictionary<int, int>? d)
 {

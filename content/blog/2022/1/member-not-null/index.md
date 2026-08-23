@@ -27,7 +27,7 @@ aliases: []
 
 例えば以下のコードはプロパティ定義の行に警告。
 
-```csharp
+```csharp {title="非 null 参照型のプロパティが未初期化"}
 class C
 {
     public string S { get; } // CS8618 警告
@@ -36,7 +36,7 @@ class C
 
 以下のようにコンストラクターを足すと、今度はコンストラクターの行に警告。
 
-```csharp
+```csharp {title="コンストラクター内でも非 null 参照型のプロパティが未初期化"}
 class C
 {
     public string S { get; }
@@ -46,7 +46,7 @@ class C
 
 以下のように書くと警告は消えるんですが、
 
-```csharp
+```csharp {title="ちゃんと非 null 値で初期化したので OK に"}
 class C
 {
     public string S { get; }
@@ -59,7 +59,7 @@ class C
 
 これをメソッド抽出してしまうと再び警告が出ます。
 
-```csharp
+```csharp {title="初期化コードはコンストラクターに直にないとダメ"}
 class C
 {
     public string S { get; private set; }
@@ -79,7 +79,7 @@ class C
 null 許容参照型の初期リリースではこの問題を回避する手段はなかったんですが、後々、[`MemberNotNull`](../../../../study/csharp/resource/nullablereferencetype.md#MemberNotNull) という属性が追加されていて、
 以下のように書けば警告をなくすことができるようになりました。
 
-```csharp
+```csharp {title="MemberNotNull 属性"}
 using System.Diagnostics.CodeAnalysis;
 
 class C
@@ -107,7 +107,7 @@ class C
 実際には「値を代入したかどうか」を見ているようで、
 値型に対しても使えたりします。
 
-```csharp
+```csharp {title="MemberNotNull(値型プロパティ)"}
 using System.Diagnostics.CodeAnalysis;
 
 class C
@@ -128,7 +128,7 @@ class C
 代入さえされていれば `D = default;` でも警告が消えたりします。
 (C# 10.0 時点では。)
 
-```csharp
+```csharp {title="D = default でもよかったりする"}
 using System.Diagnostics.CodeAnalysis;
 
 class C

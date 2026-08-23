@@ -72,7 +72,7 @@ aliases: []
 C# 8.0 では [discard (値の破棄)](../../../../study/csharp/datatype/patterns.md#discard)という機能が入ったわけですが、
 これを使える場所がちょっと増えて、ラムダ式の引数でも使えるようになっています。
 
-```csharp
+```csharp {title="discard をラムダ式の引数に使う"}
 Func<int, int, int> f = (_, _) => 0;
 ```
 
@@ -89,7 +89,7 @@ Func<int, int, int> f = (_, _) => 0;
 
 これも名前通りで、ローカル関数に属性を付けれるようになります。
 
-```csharp
+```csharp {title="ローカル関数に属性を付ける"}
 static void Main()
 {
     [return: NotNullIfNotNull("s")]
@@ -114,7 +114,7 @@ C# 8.0 で [null 許容参照型](../../../../study/csharp/resource/nullablerefe
 その中ではローカル変数の0初期化が行われなくなります。
 影響があるのは [`stackalloc`](../../../../study/csharp/interop/sp_unsafe.md#safe-stackalloc) を使うときくらいです。
 
-```csharp
+```csharp {title="0 初期化のスキップ"}
 void safe()
 {
     Span<byte> span = stackalloc byte[4];

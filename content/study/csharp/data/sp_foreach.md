@@ -71,7 +71,7 @@ foreachとは、コレクションのすべての要素を1回ずつ読み出す
 あくまで例として示すだけなので、単純な実装方法を取っています。
 (本来はもう少しちゃんとした実装の仕方をしないとだめ。)
 
-```csharp
+```csharp {title="連結リストの例"}
 using System;
 using System.IO;
 
@@ -124,7 +124,7 @@ class List
 データの格納方式が違えば、当然データの読み出し方も変わってくるということです。
 例えば、配列の場合、以下のようにすれば全ての要素を読み出せます。
 
-```csharp
+```csharp {title="配列のデータ読み出し"}
 int[] a = new int[]{1, 3, 5, 7};
 for(int i=0; i<a.Length; ++i)
   Console.Write("{0}\n", a[i]);
@@ -161,7 +161,7 @@ for(Node n=list.head; n!=null; n=n.next)
 ここでは <code>IEnumerable</code> インターフェースを介した要素へのアクセスの仕方のみを説明します。
 <code>IEnumerable</code> インターフェースを介した要素へのアクセスは以下のようにします。
 
-```csharp
+```csharp {title="IEnamerable インターフェースを介したコレクションのアクセス"}
 int[] array = new int[]{1, 3, 5, 7};
 
 IEnumerator e = array.GetEnumerator();
@@ -182,7 +182,7 @@ while(e.MoveNext())
 <strong id="foreach" class="keyword">foreach 文</strong>を用いるとこで <code>IEnumerable</code> インターフェースを介した要素へのアクセスを簡単化することが出来ます。
 以下のように、foreachを使うことでコレクションのすべての要素を1回ずつ読み出すことができます。
 
-```csharp
+```csharp {title="foreachの使い方"}
 foreach(型名 変数 in コレクション)
   文
 ```
@@ -190,7 +190,7 @@ foreach(型名 変数 in コレクション)
 
 このコードは以下のように展開されます。
 
-```csharp
+```csharp {title="foreachの実態"}
 try
 {
   IEnumerator e = array.GetEnumerator();
@@ -209,20 +209,20 @@ finally
 「Dispose処理」の部分は、コンパイル時点で`IDisposable`なことがわかっている型かどうかで実際に生成されるコードが変わります。
 コンパイル時点で`IDisposable`なことがわかる場合は以下の通り。
 
-```csharp
+```csharp {title="foreachのDispose処理(コンパイル時点でわかっている場合)"}
     ((IDisposable)e).Dispose();
 ```
 
 逆に、わからない場合は以下のようになります。
 
-```csharp
+```csharp {title="foreachのDispose処理(コンパイル時点でわかっている場合)"}
     IDisposable d = e as IDisposable;
     if (d != null) d.Dispose();
 ```
 
 例えば、<code>int</code>型の配列の要素を読み出して画面に表示するには以下のようにします。
 
-```csharp
+```csharp {title="foreachの例" highlight-lines="3"}
 int[] array = new int[10]{1, 2, 4, 8, 16, 32, 64, 128, 256, 512};
 
 foreach(int n in array)
@@ -241,7 +241,7 @@ foreach文の実態は<code>IEnumerable</code> インターフェースを介し
 <code>IEnumerable</code> インターフェースを実装しているならどんなコレクションクラスの要素でも読み出すことが出来ます。
 例えば、.NET Framework標準ライブラリの<code>ArrayList</code>クラスは<code>IEnumrable</code>インターフェースを実装していますので、以下のようにforeach文を使ってコレクション内の要素を列挙することが出来ます。
 
-```csharp
+```csharp {title="ArrayListに対してforeachを使う" highlight-lines="8" highlight-ranges="sha256:4862f48da986bdb33fd177568b0d5ad579f5ceb4e9efaa6352cdc9540b1b4e82;1:1-1:10"}
 ArrayList list = new ArrayList();
 
 for(int i=0; i<10; ++i)
@@ -322,7 +322,7 @@ static class RangeExtension
 <code>MoveNext</code>メソッドは列挙子をコレクションの次の要素に進めます。
 また、<code>Reset</code>メソッドは列挙子を初期位置、つまりコレクションの最初の要素の前に戻します。
 
-```csharp
+```csharp {title="コレクションクラスと列挙子の自作の例" highlight-ranges="sha256:1ec65c02f9e2a1621a2f6bff28f6d43e5a1a47aeda5b6ec23a529c693cfc3904;7:20-7:31,25:7-25:22,27:40-27:51,41:19-41:26,49:17-49:25,64:17-64:22,88:22-88:35"}
 using System;
 using System.Collections;
 
@@ -456,7 +456,7 @@ C# 2.0 ではこの作業を簡単化するための「[イテレーター](sp2_
 IDispose を実装するクラスの場合には、
 さらに「[using ステートメント](../resource/oo_dispose.md#using)」で囲ったのと同じ扱いになります。）
 
-```csharp
+```csharp {title="foreachの実態"}
 IEnumerator e = array.GetEnumerator();
 while(e.MoveNext())
 {
@@ -483,7 +483,7 @@ C# 8.0で非同期版の`foreach`が追加されました。
 `await foreach` (`foreach`の前に`await`を付ける)という構文で、
 [`IAsyncEnumerable<T>`](https://docs.microsoft.com/ja-jp/dotnet/api/system.collections.generic.iasyncenumerable-1)インターフェイス(`System.Collections.Generic`名前空間)か、それと同じ[パターン](../misc/miscpatternbased.md)を満たす型の列挙ができます。
 
-```csharp
+```csharp {title="非同期 foreach" highlight-text="await foreach"}
 static async Task AsyncForeach(IAsyncEnumerable<int> items)
 {
     await foreach (var item in items)

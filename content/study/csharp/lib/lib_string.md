@@ -20,7 +20,7 @@ C# の組込み型 string の実体は System.String クラスです。
 System.String クラスには以下のようなメソッドが標準で用意されています。
 （以下の例に挙げるもの以外にも、いくつかのメソッドがあります。）
 
-```csharp
+```csharp {title="System.String のメンバー"}
 using System;
 
 class TestString
@@ -62,7 +62,7 @@ class TestString
 ```
 
 
-```console
+```console {title="System.String のメンバー"}
 THIS IS A PROGRAM WHICH ALLOWS YOU TO PLAY IT
 this is a program which allows you to play it
 This Is a Program Which Allows You to View It
@@ -88,7 +88,7 @@ String.Fomat メソッドや、Console.Write メソッドは、
 
 詳細説明に別ページを儲けました: 「[文字列の書式設定](../../dotnet/bcl/bcl_format.md)」
 
-```csharp
+```csharp {title="書式指定出力"}
 using System;
 
 class TestConsoleWrite
@@ -137,7 +137,7 @@ class TestConsoleWrite
 ```
 
 
-```console
+```console {title="書式指定出力"}
 通常     19980
 通貨     \19,980
 , 区切り 19,980.00
@@ -175,7 +175,7 @@ System.Text.RegularExpressions.Regex クラスにより、
 
 Regex クラスの正規表現は、Perl や Awk などの有名な実装との互換性を意識して設計されています。
 
-```csharp
+```csharp {title="Regex クラス"}
 using System;
 using System.Text.RegularExpressions;
 
@@ -215,7 +215,7 @@ support@xxx.yyy
 ```
 
 
-```console
+```console {title="Regex クラス"}
 support@xxx.yyy
 http://www.xxx.yyy/bin/test.exe
 domain: www.xxx.yyy
@@ -231,7 +231,7 @@ contact to      the     support
 正規表現クラス Regex を使って、
 XML の中身を HTML 中に貼り付けれる形に変換します。
 
-```csharp
+```csharp {title="XmlToText"}
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -334,7 +334,7 @@ namespace XmlToText
 入力 XML ファイル。
 
 
-```xml
+```xml {title="入力 XML ファイル"}
 <Page
   xmlns=
     "http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -373,7 +373,7 @@ namespace XmlToText
 （このサイトは、XML でドキュメントを記述して、XSLT で HTML 化しています。）
 
 
-```xml
+```xml {title="出力。"}
 <lt/><element>Page</element>
   <attribute>xmlns</attribute><attvalue>=
     "http://schemas.microsoft.com/winfx/2006/xaml/presentation"</attvalue>

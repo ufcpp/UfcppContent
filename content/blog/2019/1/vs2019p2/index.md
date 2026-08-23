@@ -35,7 +35,7 @@ aliases: []
 
 一応、0引数・1引数での `Deconstruct` ができるようになったりしているみたいです。
 
-```csharp
+```csharp {title="0, 1引数 Deconstructと再帰パターン"}
 using System;
  
 struct X
@@ -67,7 +67,7 @@ class Program
 はい、残念なお知らせ。パターン ベースでの`Dispose`呼び出しが[`ref struct`](../../../../study/csharp/resource/refstruct.md)限定になりました。
 そうしないと破壊的変更を起こす可能性があってやむなく限定したそうです。
 
-```csharp
+```csharp {title="パターン ベースの using"}
 using System;
  
 // インターフェイスなし、ref なし

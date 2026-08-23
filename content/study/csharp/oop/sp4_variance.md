@@ -28,7 +28,7 @@ C# 4.0 で、ジェネリクスの型引数に共変性・反変性を持たせ�
 ジェネリクスの共変性・反変性というものがどういうものかというのを説明する前に、まず背景を。
 ジェネリックコレクションに関して、昔から以下のようなことをしたいという要望がありました。
 
-```csharp
+```csharp {title="string のリストを object のリストに代入"}
 List<string> strings = {"aa", "bb", "cc"};
 List<object> objs = strings;
 ```
@@ -37,7 +37,7 @@ List<object> objs = strings;
 これを認めてしまうと何がまずいかというと、
 以下のような不正な値の書き換えが起こり得る。
 
-```csharp
+```csharp {title="不正な書き換え"}
 // strings と objs は同じオブジェクト
 objs[0] = 5; // int に書き換えられたらまずい
 string str = strings[0];
@@ -50,7 +50,7 @@ List が set も get も可能なインデクサーを持っていることで�
 get しかない場合なら、ここで挙げたような不正な書き換えは起こらないわけです。
 戻り値（あるいは get）でしか使わない型の場合、
 
-```csharp
+```csharp {title="string の列挙子を object の列挙子に代入"}
 IEnumerable<string> strings = new[] {"aa", "bb", "cc"};
 IEnumerable<object> objs = strings;
 // foreach (object x in strings) ってやっても問題ないんだから、
@@ -63,7 +63,7 @@ IEnumerable<object> objs = strings;
 
 逆に、引数（あるいは set）でしか使わない場合も、
 
-```csharp
+```csharp {title="object 引数の Action を string 引数の Action に代入。"}
 Action<object> objAction = x => { Console.Write(x); };
 Action<string> strAction = objAction;
 // objAction("string"); ってやっても問題ないんだから、
@@ -89,7 +89,7 @@ Action<string> strAction = objAction;
 まず、出力（メソッドの戻り値、プロパティの get）にしか使わない型には out という修飾子を指定します。
 例えば、.NET Framework 4.0 では、IEnumerator の型引数に out が付きました。
 
-```csharp
+```csharp {title="IEnumerator に out が付きました"}
 public interface IEnumerator<out T>
 {
   T Current { get; } // get しかない ＝ 出力のみ
@@ -101,7 +101,7 @@ public interface IEnumerator<out T>
 
 こうすることで、共変性が認められます。
 
-```csharp
+```csharp {title="out 型引数の共変性"}
 IEnumerator<string> strEnum = new Enumerator<string>();
 IEnumerator<object> objEnum = strEnum;
 ```
@@ -110,7 +110,7 @@ IEnumerator<object> objEnum = strEnum;
 一方、入力（メソッドの引数、プロパティの set）にしか使わない型には in という修飾子を指定します。
 例えば、IComparer の型引数に in が付きました。
 
-```csharp
+```csharp {title="IComparer に　in が付きました"}
 public interface IComparer<in T>
 {
   int Compare(T a, T b); // T は引数としてしか使われない
@@ -120,7 +120,7 @@ public interface IComparer<in T>
 
 こうすることで、今度は反変性が認められます。
 
-```csharp
+```csharp {title="out 型引数の反変性"}
 IComparer<object> objComp = new Comparer<object>();
 IComparer<string> strComp = objComp;
 ```
@@ -128,12 +128,12 @@ IComparer<string> strComp = objComp;
 
 当然、in/out の組み合わせもあり得ます。
 
-```csharp
+```csharp {title="Func には in/out 両方付いてます"}
 public delegate TResult Func<in T1, in T2, out TResult>(T1 arg1, T2 arg2);
 ```
 
 
-```csharp
+```csharp {title="共変性・反変性両方使う"}
 Func<object, object, string> f1 = (x, y) => string.Format("({0}, {1})", x, y);
 Func<string, string, object> f2 = f1;
 ```
@@ -148,7 +148,7 @@ Func<string, string, object> f2 = f1;
 
 例えば、C# 4.0 で以下のようなソースを書いて、
 
-```csharp
+```csharp {title="in/out 付きのインターフェース定義"}
 namespace ConsoleApplication1
 {
     public interface IEnumerator<out T>
@@ -186,7 +186,7 @@ C# 3.0 以前でも共変性・反変性を使えたりします。
 ちなみに、値型（int とかの組み込み整数型や、struct、enum）には共変性・反変性は使えません。
 （「[IL](../abstract/ab_dotnet.md#il)」 の実装上の制約。）
 
-```csharp
+```csharp {title="値型は共変性・反変性を使えない"}
 IEnumerable<object> e1 = new[] { "abc", "def" }; // こっちは OK。
 IEnumerable<object> e2 = new[] { 1, 2 };         // でも、これは不可。int が値型だから。
 ```
@@ -199,7 +199,7 @@ IEnumerable<object> e2 = new[] { 1, 2 };         // でも、これは不可。i
 
 C#の配列には共変性があります。つまり、以下のコードがコンパイルできます。
 
-```csharp
+```csharp {title="C#の配列は共変"}
 string[] derivedItems = { "Aleph", "Beth", "Gimel" };
 object[] baseItems = derivedItems;
 
@@ -212,7 +212,7 @@ for (int i = 0; i < baseItems.Length; i++)
 
 逆向き(反変な代入)はできません。
 
-```csharp
+```csharp {title="反変ではない"}
 object[] baseItems = { 1, 2, 3 };
 string[] derivedItems = baseItems; // コンパイル エラー
 ```
@@ -224,7 +224,7 @@ C#の配列が共変なのは、ジェネリックがなかった時代(C# 1.0�
 しかし、配列は、同じ型に対して入力(書き込み)もできます。
 配列に対して特別に共変性を認めてしまっているので、以下のような問題が起きます。
 
-```csharp
+```csharp {title="配列に対する不正な操作"}
 string[] derivedItems = { "Aleph", "Beth", "Gimel" };
 object[] baseItems = derivedItems;
 
@@ -242,7 +242,7 @@ baseItems[1] = 100;
 (戻り値の場合は逆転しません。)
 例えば以下のようになります。
 
-```csharp
+```csharp {title="in/out、引数/戻り値の逆転" highlight-text="Func&lt;TOut, TIn&gt;"}
 // 標準ライブラリの System.Func
 public delegate TResult Func<in T, out TResult>(T arg);
 
@@ -253,7 +253,7 @@ delegate Func<TIn, TOut> F<in TIn, out TOut>(Func<TOut, TIn> x);
 in/out 注釈は、値を受け取る(in)か渡す(out)かの区別です。
 引数で受け取ったインターフェイスやデリゲートの場合、「戻り値から値を受け取る」、「引数に値を渡す」ということになるので、こういう逆転が起きます。
 
-```csharp
+```csharp {title="戻り値から値を受け取る、引数に値を渡す"}
 interface INestedVariance<in TIn, out TOut>
 {
     TOut F(TIn x, Func<TOut, TIn> f);
@@ -283,7 +283,7 @@ class NestedVariance<TIn, TOut> : INestedVariance<TIn, TOut>
 実用例の代表は、`IObserver<T>`インターフェイスと`IObservable<T>`インターフェイス(どちらも標準ライブラリの`System`名前空間に含まれるインターフェイス)でしょう。
 以下のようなインターフェイスになっています。
 
-```csharp
+```csharp {title="in/outが逆になる実用例" highlight-ranges="sha256:88f9bfa1ac706698d373f2c6c536e61afecd0ca2072fac63cab4ba0c79f73d66;1:27-1:33,8:29-8:36,10:27-10:39"}
 public interface IObserver<in T>
 {
     void OnCompleted();

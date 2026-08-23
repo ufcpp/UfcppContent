@@ -36,7 +36,7 @@ aliases: []
 
 今でも OK なパターンだと以下のような書き方ができます。
 
-```csharp
+```csharp {title="これは C# 1.0 の頃から書ける"}
 using Ok1 = System.Int32;
 using Ok2 = System.Nullable<int>;
 ```
@@ -44,7 +44,7 @@ using Ok2 = System.Nullable<int>;
 ところが以下のようなやつは現状ではコンパイル エラー。
 ジェネリック型引数の中なら `int` を書けるのに、直接は書けない。
 
-```csharp
+```csharp {title="using エイリアスの右辺にキーワードは直接書けない"}
 using Ng1 = int;
 using Ng2 = int?;
 ```
@@ -52,7 +52,7 @@ using Ng2 = int?;
 以下のようなやつもコンパイル エラー。
 配列の `[]`、nullable の `?`、ポインターの `*`は現状書けません。
 
-```csharp
+```csharp {title="? [] * も付けれない"}
 using Ng3 = System.Int32?;
 using Ng4 = System.Int32[];
 using Ng5 = System.Int32*;
@@ -61,7 +61,7 @@ using Ng5 = System.Int32*;
 あと、頻出で出ている要望がタプルで、
 以下のようなやつも「書きたいのに書けない」筆頭です。
 
-```csharp
+```csharp {title="タプルのエイリアスを作りたいという要望は頻出"}
 using Ng6 = (System.Int32, System.String); // これがダメな時点でお察しだけど…
 using Ng7 = (int, string); // ほんとに書きたいのはこうだし、
 using Ng8 = (int id, string name); // 名前付きタプルも書きたい。
@@ -70,7 +70,7 @@ using Ng8 = (int id, string name); // 名前付きタプルも書きたい。
 この辺り、C# 10.0 でまとめて解消しようという感じになっています。
 ちなみに、似たような話だと、`enum` の基底にキーワードを書けるかどうかみたいなのが C# 6.0 の時に変わっています。
 
-```csharp
+```csharp {title="enum の基底に int を書けるかどうかも C# 6.0 からの変更"}
 // これなら C# 1.0 の頃から書けた。
 enum A : System.Int32 { }
  
@@ -81,7 +81,7 @@ enum B : int { }
 タプルのエイリアスを付けれるようにしようとなると、まあ、「ジェネリックなエイリアス」も作りたくなります。
 これもこの際、C# 10.0 で一緒にやるそうです。
 
-```csharp
+```csharp {title="ジェネリックなエイリアス"}
 using Fix2<T> = (T, T);
 using Fix3<T> = (T, T, T);
 using Fix4<T> = (T, T, T, T);
@@ -89,20 +89,20 @@ using Fix4<T> = (T, T, T, T);
 
 もちろんタプル以外の「ジェネリックなエイリアス」も同じく C# 10.0 で取り組み。
 
-```csharp
+```csharp {title="タプル以外のエイリアスものもジェネリックにしたい"}
 using Option<T> = T ?;
 ```
 
 「部分適用」もできるようにしたいみたいです。
 以下のような、「2引数のうち片方だけ確定」みたいな「ジェネリックなエイリアス」も作れるようにする予定です。
 
-```csharp
+```csharp {title="部分適用なジェネリック エイリアス"}
 using StringDictionary<T> = System.Collections.Generic.Dictionary<string, T>;
 ```
 
 arity (型引数の数)違いのエイリアスは並べられるようにする予定だそうです。
 
-```csharp
+```csharp {title="arity 違いのエイリアスも OK になる予定"}
 using MyDictionary = System.Collections.Generic.Dictionary<string, string>;
 using MyDictionary<T> = System.Collections.Generic.Dictionary<string, T>;
 using MyDictionary<T1, T2> = System.Collections.Generic.Dictionary<T1, T2>;
@@ -110,7 +110,7 @@ using MyDictionary<T1, T2> = System.Collections.Generic.Dictionary<T1, T2>;
 
 ちなみに、以下のようなオープン ジェネリック(引数なしの状態)は C# 10.0 でも書けません。
 
-```csharp
+```csharp {title="これは C# 10.0 でもダメ"}
 // これは引き続き今後もダメ。
 // 空っぽの <> が許されるのは typeof(T<>) だけ
 using OpenGeneric = System.Collections.Generic.List<>;
@@ -121,7 +121,7 @@ using OpenGeneric = System.Collections.Generic.List<>;
 エイリアスを「実際にある型」に近い扱いにしようという感じ。
 (現状あんまり乗り気ではなさげ。)
 
-```csharp
+```csharp {title="選択肢1: エイリアス自体に where 制約"}
 using Optional<T> = Nullable<T>; // 「T に制約が付いてないのでダメ」扱いする
 using Optional<T> = Nullable<T> where T : struct // と言うことはここに型制約(where)を書けるようにする必要あり
 ```
@@ -129,7 +129,7 @@ using Optional<T> = Nullable<T> where T : struct // と言うことはここに�
 もう1つの選択肢は、「エイリアスの時点では素通し」で、現状、こっちが有力みたいです。
 「エイリアスはあくまでエイリアス」で、C 言語のマクロっぽい挙動というか。
 
-```csharp
+```csharp {title="エイリアスの時点では素通し"}
 using Optional<T> = Nullable<T>; // この時点では T のチェックしない。
  
 // Nullable<string> とは書けないので、そのエイリアスの Optional<string> もダメ。
@@ -155,7 +155,7 @@ void m(Optional<string> opt) { }
 
 あと、 ASP.NET なプロジェクトを作るとテンプレート内に `_ViewImports.cshtml` っていうのが最初から存在しますが、その中身は以下のようになっています。
 
-```razor
+```razor {title="テンプレート通りの _ViewImports.cshtml"}
 @using WebApplication1
 @using WebApplication1.Models
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
@@ -166,7 +166,7 @@ void m(Optional<string> opt) { }
 あと例えば、最近の [C# 公式チュートリアル](https://docs.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/tutorials/hello-world?tutorial-step=1)では、普通に以下のコードがコンパイルできたりします。
 どうも、暗黙的に、`System`、`System.Linq`、`System.Collections.Generic` 辺りがデフォルトで `using` されていそうな雰囲気。
 
-```csharp
+```csharp {title="C# 公式チュートリアルではなぜか using System; が要らない"}
 Console.WriteLine("Hello World!");
 ```
 
@@ -174,7 +174,7 @@ Console.WriteLine("Hello World!");
 [Visual Studio Users Community Japan 勉強会 #6 質疑応答枠 1:12:18～](https://www.youtube.com/watch?v=yDrQ2nCPfR8&t=4338s)で話したことがあるですが、
 おそらく、「書いたコードの前に以下のコードを追加」みたいな実装になっていると思います。
 
-```csharp
+```csharp {title="テンプレコードを string.Concat してからコンパイルしてると思う、たぶん"}
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -203,7 +203,7 @@ class Program
 
 で、後は文法なわけですが、`global using` で行くみたいです。
 
-```csharp
+```csharp {title="global using ディレクティブ"}
 global using System;
 global using System.Linq.Enumerable;
 global using System.Collections.Generic;
@@ -213,7 +213,7 @@ global using static System.Linq.Enumerable;
 まあ、迷うとしたら語順くらいですかね。
 普通に `global` という単語を名前空間にもクラス名にも使えてしまうので、`using global` だと「キーワードの `global` か名前空間の `global` か」の弁別が大変だそうで。
 
-```csharp
+```csharp {title="global も文脈キーワード"}
 using global;
  
 namespace global

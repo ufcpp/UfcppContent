@@ -45,13 +45,13 @@ C# 9.0 時点では仕様を詰め切れていなくて「9.0 リリース後に
 
 レコード型は、以下のように `record` キーワードを使って宣言する新しい型で、
 
-```csharp
+```csharp {title="record 型宣言"}
 record Point(int X, int Y);
 ```
 
 内部的には以下のようなクラスの生成になります。
 
-```csharp
+```csharp {title="Point レコードからのクラス生成"}
 class Point
 {
     public int X { get; init; }
@@ -76,7 +76,7 @@ class Point
 わかりやすくまずいのは例えば以下のような場合。
 ハッシュ値が変わってしまうことで `HashSet` や `Dictionary` の挙動を壊します。
 
-```csharp
+```csharp {title="値比較を持っている参照型は immutable でないとまずい"}
 using System;
 using System.Collections.Generic;
  
@@ -114,7 +114,7 @@ class Point
 - get-only プロパティ (`int X { get; }` みたいなの): コンストラクター内でだけ書き換えできる
 - init プロパティ (`int X { get; init; }` みたいなの): コンストラクター内とオブジェクト初期化子でだけ書き換えできる
 
-```csharp
+```csharp {title="init プロパティ"}
 var p = new Point
 {
     Settable = 1, // OK
@@ -149,7 +149,7 @@ shallow コピーを作ってからそのコピーの方を書き換えるとい
 これに関しても C# 9.0 で「`with` 式」という新しい文法が追加されていて、
 以下のような書き方でコピー＆ `init` プロパティの書き換えができます。
 
-```csharp
+```csharp {title="with 式で immutable データの書き換え(コピー後にプロパティ書き換え)"}
 using System;
  
 var p1 = new Point(1, 2);
@@ -258,13 +258,13 @@ record struct (仮) と、(仮) を付けて書いていたのは、具体的な
 必然的に以下のような書き方になって、コンストラクター呼び出しには引数順序に意味があるので、
 これを「位置によるレコード」(positional record)と呼んだりします。
 
-```csharp
+```csharp {title="positional record"}
 var p = new Point(1, 2);
 ```
 
 これに対して、init プロパティだけを書いて、
 
-```csharp
+```csharp {title="プライマリ コンストラクターは使わず init プロパティを定義"}
 record Point
 {
     public int X { get; init; }
@@ -275,7 +275,7 @@ record Point
 オブジェクト初期化子を前提にした書き方をすることもできます。
 こちらはプロパティ名指定が必須で、逆に順序には意味がなくなるので、「名前によるレコード」(nominal record)と呼んだりします。
 
-```csharp
+```csharp {title="nominal record"}
 var p = new Point { X = 1, Y = 2 };
 ```
 
@@ -284,7 +284,7 @@ var p = new Point { X = 1, Y = 2 };
 
 そこで提案されているのが `data` メンバーで、以下のようなコードから `public int X { get; init; } ` をコンパイラー生成したいというものです。
 
-```csharp
+```csharp {title="data キーワードで nominal record を定義"}
 record Point
 {
     data int X;
@@ -314,7 +314,7 @@ record Point
 
 - [discriminated union](https://github.com/dotnet/csharplang/discussions/2962) を考えるとき、例1みたいなのには魅力を感じるけども、例2みたいなのはいまいちで、だったら `data` メンバーはそんなに「求めていたもの」じゃない
 
-```csharp
+```csharp {title="単一行 discriminated union"}
 // 例1: discriminated union (仮) として単一行メンバーなら書きたいモチベーションになる
 record Union
 {
@@ -323,7 +323,7 @@ record Union
 }
 ```
 
-```csharp
+```csharp {title="単一行 discriminated union"}
 // 例2: data メンバーを使って書く場合複数行に。これは魅力的か？
 record Union
 {

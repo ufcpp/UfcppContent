@@ -51,7 +51,7 @@ PowerShell のホスト起動時に読み込まれる。
 
 ## <a id="sec-generated-title-5"></a> <a id="d36e33"></a>ホストの配色
 
-```powershell
+```powershell {title="配色のカスタマイズ"}
 $Host.UI.RawUI.BackgroundColor = 'White'
 $Host.UI.RawUI.ForegroundColor = 'Black'
 $Host.PrivateData.DebugBackgroundColor = 'Gray'

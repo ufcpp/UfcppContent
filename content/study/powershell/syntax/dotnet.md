@@ -26,7 +26,7 @@ aliases:
 例えば、以下のようにして、System.DateTime クラスのインスタンスを作成できます。
 （PowerShell では System. は省略可能ということになってる。）
 
-```console
+```console {title="New-Object"}
 >  $a = New-Object DateTime 2007, 4, 1
 >  $a
 
@@ -40,14 +40,14 @@ aliases:
 あと、まあ、説明するまでもなく今まで散々つかっちゃっていますが、
 . を使ってオブジェクトのプロパティやメソッドにアクセスできます。
 
-```console
+```console {title="プロパティの取得"}
 >  $a = New-Object DateTime 2007, 4, 1
 >  $a.DayOfWeek
 Sunday
 ```
 
 
-```console
+```console {title="メソッド呼び出し"}
 >  $a = "test"
 >  $a.ToUpper()
 TEST
@@ -61,7 +61,7 @@ static メソッドも
 例えば、System.Math クラスにはさまざまな数学関連の関数・定数があるわけですが、
 以下のようにして呼び出すことができます。
 
-```console
+```console {title="static メソッド呼び出し"}
 >  [Math]::Atan(1) * 4
 3.14159265358979
 >  [Math]::PI
@@ -79,7 +79,7 @@ PowerShell では [ref] [out] というように、[] を使って指定しま�
 
 例えば、System.Int.TryParse は以下のようにして呼び出します。
 
-```console
+```console {title="[ref]"}
 >  $a = 0
 >  [int]::TryParse("128", [ref]$a)
 True
@@ -96,7 +96,7 @@ True
 メソッドコールは (a, b, c) と () 付き , 区切りで引数を渡します。
 （関数やスクリプトブロックについては別項で説明。）
 
-```console
+```console {title="メソッドの呼び出し"}
 >  function Pow
 {
   [Math]::Pow($args[0], $args[1])
@@ -111,7 +111,7 @@ True
 ```
 
 
-```console
+```console {title="スクリプトブロックの呼び出し"}
 >  $a = {$args[0] * $args[1]}
 >  &$a 2 5
 # ↓ スクリプトブロック呼び出し
@@ -128,7 +128,7 @@ True
 PowerShell の関数に対して
 「func(2, 3)」と書いてもエラーにはなりません。
 
-```console
+```console {title="陥りがちなミス"}
 >  function ToString
 {
   foreach($x in $args){$x.ToString()}
@@ -146,7 +146,7 @@ System.Object[]
 
 要するに、ToString(2, 3) は以下のコードと同じ意味になります。
 
-```console
+```console {title="陥りがちなミス"}
 >  $a = @(2, 3)
 >  ToString $a
 ```
@@ -157,7 +157,7 @@ New-Object Cmdlet では、以下のように、一見 , 区切りで引数を�
 これも実は単に、New-Object が第2引数に配列を取るというだけです。
 （, は配列化演算子。）
 
-```console
+```console {title="New-Object"}
 >  $a = New-Object DateTime 2007, 4, 1
 ```
 
@@ -265,7 +265,7 @@ COM オブジェクトは、New-Object コマンドに -Com オプションを�
 減色処理とかはしてないんで、
 元々 Excel の色数に合わせて減色した画像を入力しないとまともな絵は出ない。
 
-```powershell
+```powershell {title="exceldot.ps1"}
 param([string]$inName, [string]$outName)
 
 [void][Reflection.Assembly]::LoadWithPartialName('System.Drawing')

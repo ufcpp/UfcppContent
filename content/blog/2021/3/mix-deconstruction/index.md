@@ -28,7 +28,7 @@ aliases: []
 その中で、今日は C# 10.0 候補で、すでに Visual Studio 16.10 にマージ済みの機能の紹介。
 以下のようなコードがコンパイルできるようになっています。
 
-```csharp
+```csharp {title="宣言と変数の混在分解"}
 int x;
 (x, var y) = (1, "abc");
 ```
@@ -45,25 +45,25 @@ int x;
 
 1つ目。`()` 内で変数宣言。
 
-```csharp
+```csharp {title="() 内で変数宣言"}
 (int x, string y) = (1, "abc");
 ```
 
 2つ目。これを型推論(var)で書いたもの。型推論してる点以外は1つ目のコードと同じ。コンパイラーの解釈結果は全く同じです。
 
-```csharp
+```csharp {title="() 内で変数宣言 (&#96;var&#96; 利用)"}
 (var x, var y) = (1, "abc");
 ```
 
 3つ目。タプル変数宣言。頭に1個だけ `var` を書いて、複数の変数の宣言をまとめてやる構文。
 
-```csharp
+```csharp {title="タプル変数宣言"}
 var (x, y) = (1, "abc");
 ```
 
 4つ目。既存の変数を使って分解。
 
-```csharp
+```csharp {title="既存の変数を使って分解"}
 int x;
 string y;
 (x, y) = (1, "abc");
@@ -77,14 +77,14 @@ string y;
 それが今回、16.10 Preview 1 でマージされました。
 以下のコードが通ります。
 
-```csharp
+```csharp {title="変数宣言と既存変数が混在した分解"}
 int x;
 (x, string y) = (1, "abc");
 ```
 
 変数宣言には `var` も使えて、それが冒頭のコードになります。
 
-```csharp
+```csharp {title="変数宣言と既存変数が混在した分解(var 型推論あり)"}
 int x;
 (x, var y) = (1, "abc");
 ```
@@ -97,7 +97,7 @@ int x;
 
 pull request をみるに、式ステートメントと `for` の初期化式(1項目)中でだけ認めるみたいです。
 
-```csharp
+```csharp {title="宣言と変数の混在分解ができる場所"}
 int x;
  
 // OK な例1

@@ -20,7 +20,7 @@ aliases: []
 
 例として、以下のようなC#コードを考えます。単純にvirtualなメソッドを呼び出すだけのコードです。主に、Mainメソッドの中身を見ていきます。
 
-```csharp
+```csharp {title="簡単なC#コード"}
 using System;
 
 class Base { public virtual void M() => Console.WriteLine("Base.M"); }
@@ -48,7 +48,7 @@ class Program
 
 これを使って先ほどのC#コードのコンパイル結果を覗いてみると、`Main`メソッドは以下のようになっています。
 
-```cil
+```cil {title="Mainメソッドの逆アセンブル結果"}
 .method private hidebysig static void  Main() cil managed
 {
   .entrypoint
@@ -97,7 +97,7 @@ ILからネイティブ コードへの変換はJIT (Just-in-Time)、すなわ�
 
 そこで、ちゃんと狙った場所でプログラムを止めるためには、`Debugger`クラス(`System.Diagnostics`名前空間)の`Break`メソッドを使うといいでしょう。このメソッドを書いた位置で必ずプログラムが止まってくれます。
 
-```csharp
+```csharp {title="Debugger.Breakメソッドでプログラムを止める"}
         System.Diagnostics.Debugger.Break();
         Base b = new Derived();
         b.M();
@@ -109,7 +109,7 @@ ILからネイティブ コードへの変換はJIT (Just-in-Time)、すなわ�
 さて、先ほどの`Main`メソッドからどういうネイティブ コードが生成されるかを改めてみてみましょう。
 x64環境で実行すると以下のようになります。
 
-```csharp
+```csharp {title="Mainメソッドから生成されるネイティブ コード"}
 01960450  mov         ecx,1874E58h  
 01960455  call        018630F4  
 0196045A  mov         ecx,eax  

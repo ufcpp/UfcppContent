@@ -21,7 +21,7 @@ aliases:
 "" の場合、中に $a などの変数が出てくると中身を展開します。
 '' の方は $ もそのまま文字として扱います。
 
-```console
+```console {title="文字列リテラル"}
 >  $a = 1
 >  "test $a"
 test 1
@@ -34,7 +34,7 @@ test $a
 '' の中に ' を書きたければ、
 後述するエスケープ文字 ` （バッククオート）を使います。
 
-```console
+```console {title="文字列中にクオートマーク"}
 > "`"test`""
 "test"
 ```
@@ -51,7 +51,7 @@ test $a
 @" "@ と @' '@ の違いは、"", '' と同様、変数を展開するかどうかです。
 また、@" "@ と @' '@ の中には " や ' を書くこともできます。
 
-```console
+```console {title="hear string（１）"}
 >  $a = @"
 >  this is example of here string
 >  $a
@@ -67,7 +67,7 @@ this is example of here string
 ```
 
 
-```console
+```console {title="hear string（２）"}
 >  $a = @'
 >  this is example of here string
 >  $a
@@ -150,7 +150,7 @@ C 言語とかみたいにエスケープに \ 記号を使わないのは、
 
 文字列は、+ 演算子で結合、* 演算子で反復ができます。
 
-```console
+```console {title="2つの文字列を結合"}
 >  $a = "string 1" + "string 2"
 >  $a.length
 16
@@ -159,7 +159,7 @@ string 1string 2
 ```
 
 
-```console
+```console {title="文字列を指定回数繰り返す"}
 >  $a = "string" * 3
 >  $a.length
 18
@@ -249,7 +249,7 @@ stringstringstring
 例えば、Get-Location で取得したファイル一覧の中から特定の名前のファイルを探したければ、
 以下のようにします。
 
-```console
+```console {title="文字列比較"}
 >  ls C:\Windows | %{$_.Name} | ?{$_ -eq "web"}
 Web
 >  ls C:\Windows | %{$_.Name} | ?{$_ -like "we*"}
@@ -265,7 +265,7 @@ Web
 （3項演算に見えなくもないですが、
 -replace の右オペランドが配列なだけ。）
 
-```console
+```console {title="文字列置換"}
 >  $a = "Windows の新しいコマンドライン シェルです。"
 >  $a -replace "です。", "なのですよ。"
 Windows の新しいコマンドライン シェルなのですよ。
@@ -285,7 +285,7 @@ Windows の新しいコマンドライン シェルなのですよ。
 頭に i を付ければ case insensitive、
 c を付ければ case sensitive になります。
 
-```console
+```console {title="アルファベットの大文字・小文字"}
 >  "test" -eq "Test"
 True
 >  "test" -ieq "Test"
@@ -307,7 +307,7 @@ False
 System.String.Format メソッドのものと同じです。
 （詳しくは .NET Framework のヘルプを参照。）
 
-```console
+```console {title="フォーマット演算子"}
 >  "{0:00}:{1:00}:{2:00}" -f 1,3,12
 01:03:12
 >  "|{0,8}|" -f 128
@@ -328,7 +328,7 @@ $(式) と書くと () の中身を式として計算します。
 まあ、たいていの文脈では、$ を付けなくても () だけで中身を式扱いするので、
 そんなに使う必要もありません。
 
-```console
+```console {title="式評価演算子 $"}
 >  echo (1 + 1)
 2
 >  echo $(1 + 1)
@@ -342,7 +342,7 @@ $() というように () の中身を空っぽにすると null 値が得られ
 () だけだと「括弧の中身がない」って言って怒られますが、
 $() なら OK。
 
-```console
+```console {title="$()"}
 >  $() -eq $null
 True
 ```
@@ -353,7 +353,7 @@ True
 変数を展開するわけですが、
 変数同様、$() の中身も式の計算結果に展開されます。
 
-```console
+```console {title="文字列中の式の展開"}
 >  "1 + 1 = $(1 + 1)"
 1 + 1 = 2
 ```

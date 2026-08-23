@@ -41,7 +41,7 @@ C# 8.0 では、[参照型](oo_reference.md#valtype)についても `?` の有�
 <strong id="nullableType" class="keyword">null 許容型</strong>(nullable type)は、値型の型名の後ろに <code>?</code> を付ける事で、元の型の値または <code>null</code> の値を取れる型になるというものです。
 <code>int</code> 型で例に取ると、以下のような書き方が出来ます。
 
-```csharp
+```csharp {title="null 許容型の例"}
 int? x = 123;
 int? y = null;
 ```
@@ -73,7 +73,7 @@ C# 8.0 で、null 許容参照型と呼ばれる新しい機能が入って参�
 コンパイル結果的には、`Nullable<T>`構造体(`System`名前空間) と等価になります。
 例えば、以下の2つの変数x と y は全く同じ型の変数になります。
 
-```csharp
+```csharp {title="T? と Nullable&lt;T&gt;"}
 int? x;
 Nullable<int> y;
 ```
@@ -111,7 +111,7 @@ Nullable<int> y;
 <code>T</code> → <code>T?</code> の変換は常に可能で、
 以下のようなコードの下2行は等価になります。
 
-```csharp
+```csharp {title="int → int?"}
 int? x;
 x = 123;
 x = new int?(123); // x = 123; と等価。
@@ -122,7 +122,7 @@ x = new int?(123); // x = 123; と等価。
 <code>T?</code> → <code>T</code> の変換は、`HasValue` が `true` のときのみ可能で、
 `HasValue` が `false` の時には `InvalidOperationException` がスローされます。
 
-```csharp
+```csharp {title="int? → int"}
 int? x = 123;
 int? y = null;
 int z;
@@ -244,7 +244,7 @@ null 許容型には、`??` 演算という特殊な演算子を使えます。
 この`??`演算子は<strong id="nullableType" class="keyword">null合体演算子</strong><sup>※</sup>と呼ばれ、
 値が <code>null</code> かどうかを判別し、<code>null</code> の場合には別の値を割り当てる演算子です。
 
-```csharp
+```csharp {title="?? 演算子"}
 // x, y は int? 型の変数
 int? z = x ?? y; // x != null ? x : y
 int i = z ?? -1; // z != null ? z.Value : -1
@@ -264,7 +264,7 @@ C# 8.0 では、null合体演算子 (`??`)も複合代入に使えるように�
 
 例えば以下のような書き方ができます。
 
-```csharp
+```csharp {title="null 合体代入" highlight-text="??="}
 static void M(string s = null)
 {
     s ??= "default string";
@@ -281,7 +281,7 @@ C# では、代入や複合代入自体も式になっています。
 `var z = (y += x);` という意味で評価されます。
 この時、ほとんどの場合、`y += x` の部分の結果の型は `y` の型になります。
 
-```csharp
+```csharp {title="複合代入の結果の型"}
 byte x = 1;
 byte y = 2;
 var z = (y += x); // こう書くと y が byte なので z も byte に。
@@ -292,7 +292,7 @@ var w = y + x;    // この場合は int だったりする。C# の int 未満�
 というのも、`??` の最大の目的は「null だった時に何か有効な値に差し替える」というものなので、結果の型は非 null であってほしい場合がほとんどです。
 なので、`y ??= x` の結果の型は `y` の側ではなく、`x` の側から推論されます。
 
-```csharp
+```csharp {title="null 合体代入の戻り値は右辺から推論される"}
 #nullable enable
 string? s1 = null;
 string s2 = s1 ??= ""; // s1 に ? が付いていても、s1 ??= "" の結果は string。
@@ -307,7 +307,7 @@ float? f3 = f2 ??= f1; // 右辺も null 許容なら結果の方も null 許容
 
 [キャッシュ用途](rm_nullusage.md#cache)で以下のような書き方をよくするため、こういう型決定ルールになっていないと使いにくくなります。
 
-```csharp
+```csharp {title="??= の結果からは ? が消えてほしい"}
 public T Property => _cache ??= GetValue();
 private T? _cache;
  

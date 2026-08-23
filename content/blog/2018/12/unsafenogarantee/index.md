@@ -32,7 +32,7 @@ aliases: []
 メモリ上でのフィールドなどのレイアウトが同じ場合です。
 例えば、以下のような、サイズが同じで参照型を含まない構造体同士は強制変換しても大丈夫です。
 
-```csharp
+```csharp {title="レイアウトがわかっている構造体に対して Unsafe"}
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -83,7 +83,7 @@ public class Program
 
 C# の[変性](../../../../study/csharp/oop/sp4_variance.md)はインターフェイスとデリゲートに対してしか働かないわけですが、それを強制的にクラスに対しても適用できたりします。
 
-```csharp
+```csharp {title="共変クラス(動作保証なし)"}
 // string → object の代入が合法なんだったら…
 string s = "abc";
 object o = s;
@@ -105,7 +105,7 @@ Console.WriteLine(result);
 ただ、これは `Task<TResult>`クラス(`System.Threading.Tasks`名前空間)の`TResult`が戻り値にしか使われていないから大丈夫なのであって、
 例えば以下のように、読み書き両方できるとまずいです。
 
-```csharp
+```csharp {title="ほんとに挙動が壊れるダメな Unsafe"}
 using System;
 using System.Runtime.CompilerServices;
  
@@ -133,7 +133,7 @@ public class Program
 
 また、`string` → `object` が大丈夫だから `Task<string>` → `Task<object>` も大丈夫だったのであって、互換性がない型同士での `Task<T>` 間の変換はもちろんダメです。
 
-```csharp
+```csharp {title="ヤバい(ヤバい)"}
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
  
@@ -179,7 +179,7 @@ public class Program
 
 そして、これらのデリゲート間の変換では、以下のように `new` が挟まってしまって、無駄にメモリを食います。
 
-```csharp
+```csharp {title="デリゲートの残念さ"}
 using System;
 using System.Threading;
 using System.Threading.Tasks.Sources;
@@ -205,7 +205,7 @@ class MyValueTaskSource : IValueTaskSource
 
 でも、`Unsafe.As`メソッドを使えば無駄な `new` なしで強制変換できます。
 
-```csharp
+```csharp {title="Unsafe で無理やり変換(動作保証なし)"}
 // でも、これで行けたりする。
 _context.Post(Unsafe.As<Action<object>, SendOrPostCallback>(ref continuation), state);
 ```
@@ -214,7 +214,7 @@ _context.Post(Unsafe.As<Action<object>, SendOrPostCallback>(ref continuation), s
 少なくとも .NET Core 2.1 とかでは動きます
 (再三いうけども動作保証があるわけじゃない)。
 
-```csharp
+```csharp {title="Unsafe で無理やり変換(動作保証なし)"}
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -237,7 +237,7 @@ public class Program
 以下のように、全然無関係なメソッドが呼ばれてしまうことがあり得ます。
 ([仮想呼び出し](../../../../study/csharp/oop/oo_vftable.md)が狂います。本来参照すべきものと違う仮想テーブルをひいちゃうので当然。)
 
-```csharp
+```csharp {title="Unsafe.As の強制変換をすると仮想呼び出しが狂う"}
 using System;
 using System.Runtime.CompilerServices;
  

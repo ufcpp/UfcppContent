@@ -58,7 +58,7 @@ aliases: []
 
 元:
 
-```xml
+```xml {title="WPF プロジェクト(Windows 向け .NET プロジェクト) 修正前" highlight-text="WindowsDesktop"}
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
  
   <PropertyGroup>
@@ -72,7 +72,7 @@ aliases: []
 
 後:
 
-```xml
+```xml {title="WPF プロジェクト(Windows 向け .NET プロジェクト) 修正後" highlight-text="-windows"}
 <Project Sdk="Microsoft.NET.Sdk">
  
   <PropertyGroup>
@@ -99,7 +99,7 @@ C# はこれまで警告の追加も破壊的変更になりうるというこ�
 
 .NET 5.0 をターゲットにしたいし、C# 9.0 の新機能も使いたいけども警告だけは増やしたくないという人は、以下の2つのオプションを csproj に追加してください。
 
-```xml
+```xml {title="警告レベルを昔のまま維持するためのオプション"}
 <Project Sdk="Microsoft.NET.Sdk">
  
   <PropertyGroup>
@@ -112,7 +112,7 @@ C# はこれまで警告の追加も破壊的変更になりうるというこ�
 
 ちなみに、自分が踏んだ「追加警告」は以下のような警告だけでした(CS8881 の追加)。
 
-```csharp
+```csharp {title=".NET 5.0 にすると増える警告"}
 // エラーにならなくなってた条件
 // - X と Y が別 DLL (別 csproj)
 // - X が参照型だけを含む
@@ -165,7 +165,7 @@ struct Y
 
 日本語 Windows がやっている余計なお世話として有名なのが、「いまだに ¥ 記号と `\` (逆スラッシュ)を同一視する」というのがあります。
 
-```csharp
+```csharp {title="ja-jp カルチャーでの破壊的変更"}
 using System;
 using System.Globalization;
 using System.Threading;
@@ -192,7 +192,7 @@ Console.WriteLine(s1.IndexOf(s2)); // CurrentCulture 依存。今まで 0。こ�
 ICU では CR LF は「分割不可」らしく、CR LF と LF は別文字扱いになっています。
 NLS はこの処理をしていないので、以下のコードは NLS と ICU で結果が変わります。
 
-```csharp
+```csharp {title="改行の扱いの変化"}
 using System;
  
 var s1 = "\r\n";
@@ -210,7 +210,7 @@ Console.WriteLine(s1.IndexOf(s2)); // NLS だと 1。ICU だと -1。
 
 NLS に戻すなら、csproj に以下の設定を追加します。
 
-```xml
+```xml {title="国際化対応を .NET 5.0 でも NLS でやるためのオプション"}
   <ItemGroup>
     <RuntimeHostConfigurationOption Include="System.Globalization.UseNls" Value="true" />
   </ItemGroup>
@@ -218,7 +218,7 @@ NLS に戻すなら、csproj に以下の設定を追加します。
 
 一方、カルチャー依存するようなメソッドは大体、第2引数にオプション指定できるので、それを `Ordinal` にしてしまえばカルチャー問題は踏まなくなります。
 
-```xml
+```xml {title="Ordinal 推奨"}
 Console.WriteLine(s1.IndexOf(s2)); // CurrentCulture になってるのが問題
 Console.WriteLine(s1.IndexOf(s2, StringComparison.CurrentCulture)); // \ と ￥ の問題を踏む
 Console.WriteLine(s1.IndexOf(s2, StringComparison.InvariantCulture)); // \r\n と \n の問題を踏む

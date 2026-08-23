@@ -54,7 +54,7 @@ C# 7.2 の頃に [`Span<T>` 構造体](../../../../study/csharp/resource/span.md
 わかりやすい原因は、参照型に対して `stackalloc` を使えない点。
 以下のようなコードはコンパイル エラーになります。
 
-```csharp
+```csharp {title="参照型の stackalloc は禁止"}
 Span<string> span = stackalloc string[4];
 ```
 
@@ -74,7 +74,7 @@ pull request がそっ閉じされてるんで、
 他に、`params Span<T>` に使いたいのであれば固定長配列の類でもいいわけでして。
 例えば以下のようなコードで「長さ4固定の配列もどき」を作ることはできます。
 
-```csharp
+```csharp {title="長さ固定の配列もどき"}
 using System.Runtime.InteropServices;
 
 ValueArray4<string> buffer = default;
@@ -98,7 +98,7 @@ struct ValueArray4<T>
 1 の代わりに `object[]`、2 の代わりに `object[,]`、3 の代わりに `object[,,]`、… みたいな、`object` 配列の次元を整数代わりに使うというすごい実装。
 本来であれば `ValueArray<string, 4>` と書きたいところを `ValueArray<string, object[,,,]>` と書くことになります…
 
-```csharp
+```csharp {title="object[,,,] でジェネリック整数引数を代用…"}
 using System.Runtime.InteropServices;
 
 ValueArray<string, object[,,,]> buffer = default;
@@ -112,7 +112,7 @@ Span<string> span = buffer.AsSpan();
 
 こちらだと、いちいち構造体の定義が要るみたいです。
 
-```csharp
+```csharp {title="InlineArray 属性"}
 using System.Runtime.InteropServices;
 
 ValueArray4<string> buffer = default;

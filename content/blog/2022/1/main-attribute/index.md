@@ -19,7 +19,7 @@ aliases: []
 
 もう、割かし以下の利用例1個で説明終わりな感じ。
 
-```csharp
+```csharp {title="main: 属性" highlight-text="main"}
 [main: STAThread]
 
 using System.Windows;

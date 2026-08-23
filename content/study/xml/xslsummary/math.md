@@ -51,7 +51,7 @@ MathML という数式を表現するための XML 仕様もあるのですが�
 分数一つ書くにしても、
 
 
-```html
+```html {title="分数っぽく見える HTML 記述"}
 <table style="
   display:inline;
   vertical-align:middle;
@@ -76,7 +76,7 @@ y
 さすがにこんなもんがそこら中にちりばめられるのは、書くのも見るのも辛いです。
 同じことを LaTeX で書こうと思うと、
 
-```csharp
+```csharp {title="TeX なら"}
 \begin{math}
 \frac{x}{y}
 \end{math}
@@ -87,7 +87,7 @@ y
 せめて XML を使ってこんな風↓に書ければいくらか書きやすくなりますよね。
 
 
-```xml
+```xml {title="独自に分数用 XML を定義"}
 <math>
  <frac>
   <num>x</num>
@@ -99,7 +99,7 @@ y
 スタイルも CSS 使って指定するようにしました。
 
 
-```xml
+```xml {title="分数用 XML → HTML に変換"}
 <xsl:template match="math">
  <span class="math"><nobr><xsl:apply-templates/></nobr></span>
 </xsl:template>

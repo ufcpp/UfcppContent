@@ -43,7 +43,7 @@ C# 14 では、`Span<T>` 構造体を言語構文的に特別扱いするよう�
 「一定範囲の読み書き」の説明に、まずは配列で例を示します。
 例えば以下のような書き方で、配列の一部分だけの読み書きができます。
 
-```csharp
+```csharp {title="配列の一部分だけを読み書きする例"}
 // 長さ 8 で配列作成
 // C# の仕様で、全要素 0 で作られる
 var array = new int[8];
@@ -70,7 +70,7 @@ foreach (var x in array)
 
 `Span<T>`構造体を作る部分は、以下のように、拡張メソッドでも書けます。
 
-```csharp
+```csharp {title="配列に対する拡張メソッドで Span を作る"}
 var span = array.AsSpan().Slice(2, 3);
 ```
 
@@ -80,7 +80,7 @@ var span = array.AsSpan().Slice(2, 3);
 
 ちなみに、読み書き両方可能な`Span<T>`に加えて、読み取り専用の`ReadOnlySpan<T>`構造体もあります。
 
-```csharp
+```csharp {title="読み取り専用の ReadOnlySpan"}
 // 読み取り専用版
 ReadOnlySpan<int> r = span;
 var a = r[0]; // 読み取りは OK
@@ -98,7 +98,7 @@ r[0] = 1;     // 書き込みは NG
 `Span<T>`は、配列だけでなく、文字列、スタック上の領域、.NET 管理外のメモリ領域などいろいろな場所を指せます。
 以下のような使い方ができます。
 
-```csharp
+```csharp {title="Span でいろいろな場所を指す"}
 using System;
 using System.Runtime.InteropServices;
 
@@ -147,7 +147,7 @@ class Program
 
 例えば以下のようなコードを書いたとします。
 
-```csharp
+```csharp {title="部分文字列の取り出し"}
 var s = "abcあいう亜以宇";
 
 var sub = s.Substring(3, 3);
@@ -175,7 +175,7 @@ C# だけでプログラムを作るにしてもポインターを使いたい�
 例えば以下のようなコードを考えます。
 [unsafe](../interop/sp_unsafe.md) を使うと速い処理の典型例として、一定範囲を 0 クリアする処理を、ポインターを使って書いています。
 
-```csharp
+```csharp {title="unsafe を使うと速い処理の典型例"}
 // unsafe を使うと速い処理の典型例として、一定範囲を 0 クリアする処理
 class Program
 {
@@ -225,7 +225,7 @@ class Program
 
 そこで、通常、以下のようにいくつかのオーバーロードを増やすことになります。
 
-```csharp
+```csharp {title="unsafe を避けるためのオーバーロードいろいろ"}
 // 使う側に unsafe を求めないために要するオーバーロードいろいろ
 static void Clear(ArraySegment<byte> segment) => Clear(segment.Array, segment.Offset, segment.Count);
 static void Clear(byte[] array, int offset = 0) => Clear(array, offset, array.Length - offset);
@@ -243,7 +243,7 @@ static void Clear(byte[] array, int offset, int length)
 
 1セットくらいなら別にまだ平気なんですが、例えばコピー処理(コピー元とコピー先の2セット必要)とか、引数が増えるとかなり大変なことになります。
 
-```csharp
+```csharp {title="コピー元とコピー先の2つになることで面倒になる例"}
 // Clear は1つしか引数がないのでまだマシ。
 // コピー(コピー元とコピー先)とか、2つになるとだいぶ面倒に。
 
@@ -293,7 +293,7 @@ static unsafe void Copy(byte* source, byte* destination, int length)
 この問題に対して、`Span<T>`であれば、この構造体1つで配列でもポインターでも、その全体でも一部分でも受け取れるので、
 オーバーロードは1つで十分です。
 
-```csharp
+```csharp {title="Spanを使ってオーバーロードを減らす"}
 // 作る側
 // Span<T> なら配列でもポインターでも、その全体でも一部分でも受け取れる
 static void Clear(Span<byte> span)
@@ -348,7 +348,7 @@ C# の速度最適化のコツの1つに、「[ガベージ コレクション](
 データは一気に全体を見る必要はなく、一定サイズずつ(仮にここでは128バイトずつ)読んでは捨ててを繰り返せるものとします。
 これまでであれば、以下のように、そのサイズ分の配列を `new` して使うことになります。
 
-```csharp
+```csharp {title="読み出し用の一時配列を new する例"}
 const int BufferSize = 128;
 
 using (var f = File.OpenRead("test.data"))
@@ -379,7 +379,7 @@ using (var f = File.OpenRead("test.data"))
 このコードはunsafeなしでコンパイルできます。
 (※ .NET Core 2.1 で実行するか、他の環境では最新の [System.IO パッケージ](https://www.nuget.org/packages/System.IO/)の参照が必要です。現状ではプレビュー版のみ。)
 
-```csharp
+```csharp {title="Span を使って一時バッファーを stackalloc に変更" highlight-text="Span&lt;byte&gt; buffer = stackalloc byte[BufferSize];"}
 const int BufferSize = 128;
 
 using (var f = File.OpenRead("test.data"))
@@ -417,14 +417,14 @@ Span<string> s = stackalloc string[4];
 そのため、確保したいバッファーのサイズに応じて、`stackalloc`と配列の`new`を切り替えたいと言ったこともあります。
 そこでC# 7.2 では、以下のように、条件演算子で`stackalloc`を使うこともできるようになっています。
 
-```csharp
+```csharp {title="条件 stackalloc"}
 Span<byte> buffer = bufferSize <= 128 ? stackalloc byte[bufferSize] : new byte[bufferSize];
 ```
 
 また、unsafeが不要なことからもわかる通り、`Span<T>`との併用であれば`stackalloc`は安全です。
 以下のように、範囲チェックが掛かって、確保した分を越えての読み書きはできないようになっています。
 
-```csharp
+```csharp {title="Span + stackalloc は安全"}
 // Span 版 = safe
 static void Safe()
 {
@@ -469,7 +469,7 @@ static unsafe void Unsafe()
 C# 8.0 で、式中の任意の場所に `stackalloc` を書けるようになりました。
 例えば以下のような書き方ができます。
 
-```csharp
+```csharp {title="式中の任意の場所に stackalloc"}
 using System;
 using System.Threading.Tasks;
  
@@ -534,7 +534,7 @@ C# 7.3 時点でも、条件演算子の中でだけは `stackalloc` を書け�
 比較のために`ArraySegment<T>`の中身から説明しましょう。
 `ArraySegment<T>`は以下のようなメンバーを持った構造体です。
 
-```csharp
+```csharp {title="ArraySegment の中身"}
 struct ArraySegment<T>
 {
     T[] Array;
@@ -548,7 +548,7 @@ struct ArraySegment<T>
 一方で、`Span<T>`構造体は、論理的には以下のようなメンバーを持った構造体です。
 (「論理的には」と断っているのは、これをそのまま書くことはできないため。)
 
-```csharp
+```csharp {title="Spanの中身(疑似コード。これをそのままは書けない)"}
 struct Span<T>
 {
     ref T Reference;
@@ -577,7 +577,7 @@ struct Span<T>
 .NET Core 2.1 以降向けの `Span<T>` は以下のような構造になっています。
 ([coreclr レポジトリ内にソースコードがあります](https://github.com/dotnet/coreclr/blob/aae414026671e3dc1ccf0f308d351ac04cc746a4/src/mscorlib/shared/System/Span.cs#L29)。)
 
-```csharp
+```csharp {title="fast Span の中身"}
 struct Span<T>
 {
     ByReference<T> _pointer;
@@ -594,7 +594,7 @@ struct Span<T>
 その結果、`Span<T>` は「普通の」ref 構造体になりました。
 おおむね以下のような内容の構造体です。
 
-```csharp
+```csharp {title=".NET 7 以降の Span 構造体"}
 readonly ref struct Span<T>
 {
     readonly ref T _reference;
@@ -610,7 +610,7 @@ readonly ref struct Span<T>
 
 こちらは、概ね以下のような構造です。
 
-```csharp
+```csharp {title="slow Span の中身"}
 struct Span<T>
 {
     Pinnable<T> _pinnable;
@@ -654,7 +654,7 @@ C# 7.2 の頃に `Span<T>` や `ReadOnlySpan<T>` が導入されて以来、
 C# 7.2 以降は `ReadOnlySpan<T>` 構造体を使って実装することが増えました。
 例えば以下のように、引数の型を `IEnumerable<T>` から `ReadOnlySpan<T>` に書き換えるだけで高速になるということが多々あります。
 
-```csharp
+```csharp {title="ReadOnlySpan 構造体を使うと高速になる"}
 class Overloads
 {
     // 昔からある伝統的な書き方。
@@ -687,7 +687,7 @@ class Overloads
 
 1つ目、は拡張メソッド呼び出し:
 
-```csharp
+```csharp {title="拡張メソッド呼び出しができなかった例(C# 14 で解決)"}
 new int[0].M();
 "".M();
 
@@ -700,7 +700,7 @@ static class X
 
 2つ目、ユーザー定義の型変換を介した呼び出し:
 
-```csharp
+```csharp {title="ユーザー定義の型変換ができなかった例(C# 14 で解決)"}
 X.M(new int[0]);
 X.M("");
 
@@ -718,7 +718,7 @@ struct A
 
 3つ目、ジェネリック型引数の型推論:
 
-```csharp
+```csharp {title="ジェネリック型推論ができなかった例(C# 14 で解決)"}
 X.M(new int[0]);
 
 static class X
@@ -729,7 +729,7 @@ static class X
 
 また、単独ではエラーにならなくても、`IEnumerable<T>` 引数との混在でオーバーロード解決できなくなる例もあります。
 
-```csharp
+```csharp {title="IEnumerable と ReadOnlySpan の解決ができなかった例(C# 14 で解決)"}
 int[] data = [1, 2, 3];
 
 Overloads.M(data); // 呼び分けができなくてコンパイル エラー(C# 13 まで)。
@@ -746,7 +746,7 @@ class Overloads
 [C# 13 で入った `params` コレクション](../structured/sp_params.md#params-collections)では、
 `T[]` や `IEnumerable<T>` よりも `Span<T>` や `ReadOnlySpan<T>` を優先的に選ぶように特別な処理が入っています。
 
-```csharp
+```csharp {title="コレクション式や params では ReadOnlySpan の優先度が高い"}
 // int[] を経由すると解決不能になるものの、
 // コレクション式や params を使った場合は ReadOnlySpan の優先度が高い扱い。
 Overloads.M([1, 2, 3]);
@@ -792,7 +792,7 @@ first-class になったことで、まず、
 前述の `IEnumerable<T>` との呼び分けができない問題も、C# 14 にするだけで解消して、
 `ReadOnlySpan<T>` 側が呼ばれるようになります。
 
-```csharp
+```csharp {title="C# 14 では ReadOnlySpan オーバーロードの優先度が上がった"}
 int[] data = [1, 2, 3];
 
 Overloads.M(data); // C# 14 であればエラーにならない。
@@ -814,7 +814,7 @@ class Overloads
 「ユーザー定義の変換なので拡張メソッドの解決に寄与しない」という扱いだったのが、
 C# 14 からは「コンパイラーが保証している変換で、優先的に拡張メソッドの解決に使われる」という扱いになります。
 
-```csharp
+```csharp {title="拡張メソッドでも ReadOnlySpan が特別扱いされるように"}
 int[] data = [1, 2, 3];
 
 // C# 13 まで: IEnumerable の方が呼ばれる。
@@ -836,7 +836,7 @@ static class Extensions
 これが C# 13 まではできませんでした。
 C# 14 からはこれを受け付けます。
 
-```csharp
+```csharp {title="ReadOnlySpan の共変性"}
 ReadOnlySpan<string> s = [];
 ReadOnlySpan<object> span = s; // C# 13 ではエラー。
 ```
@@ -846,7 +846,7 @@ ReadOnlySpan<object> span = s; // C# 13 ではエラー。
 ちなみに、`Span<T>` と `ReadOnlySpan<T>` の両方のオーバーロードがある場合、
 `ReadOnlySpan<T>` の方が優先されます。
 
-```csharp
+```csharp {title="ReadOnlySpan 優先"}
 string[] s = [];
 
 // ReadOnlySpan の方が優先。
@@ -862,7 +862,7 @@ static class Extensions
 これはパフォーマンス(どちらが高速か)の問題ではなく、
 こうしておかないとまた「[配列の共変性の地雷](../../../blog/2022/11/covariantarrayincident/index.md)を踏むから」という理由だそうです。
 
-```csharp
+```csharp {title="配列の共変性は結構な地雷"}
 string[] s = [];
 object[] o = s; // C# の配列は共変(歴史的経緯)。
 

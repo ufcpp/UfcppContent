@@ -49,7 +49,7 @@ YouTube 配信前に作ってある[お品書き issue](https://github.com/ufcpp
 
 入ったのは [Constant  Interpolated Strings](https://github.com/dotnet/csharplang/issues/2951)([文字列補間](../../../../study/csharp/start/st_string.md#string-interpolation)の const 扱い)です。
 
-```csharp
+```csharp {title="Constant  Interpolated Strings"}
 class Sample
 {
     public int A { get; }
@@ -75,7 +75,7 @@ public const string S = $"{123}";
 
 カルチャー依存の例:
 
-```csharp
+```csharp {title="double のカルチャー依存 ToString/Parse"}
 using System;
 using System.Globalization;
  
@@ -90,7 +90,7 @@ System.Threading.Thread.CurrentThread.CurrentCulture = fr;
 Console.WriteLine(double.Parse(1.234.ToString(fr))); // CurrentCulture...
 ```
 
-```console
+```console {title="double のカルチャー依存 ToString/Parse"}
 1234
 1234
 1,234

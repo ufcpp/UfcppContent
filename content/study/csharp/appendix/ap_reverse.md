@@ -49,7 +49,7 @@ aliases:
 
 日本語 Windows 環境では、<code>Encoding.Default</code> でシフト JIS の Encoding が得られる。
 
-```csharp
+```csharp {title="StreamReader/StreamWriter"}
 StreamReader fin  = new StreamReader(
   "in file", Encoding.Default);
 StreamWriter fout = new StreamWriter(
@@ -60,7 +60,7 @@ StreamWriter fout = new StreamWriter(
 ちなみに、シフト JIS のコードページは 932。
 （日本語 Windows では）以下のコードと上のコードは同じ結果に。
 
-```csharp
+```csharp {title="StreamReader/StreamWriter"}
 StreamReader fin  = new StreamReader(
   "in file", Encoding.GetEncoding(932));
 StreamWriter fout = new StreamWriter(
@@ -84,7 +84,7 @@ StreamWriter fout = new StreamWriter(
 シフトJISのコードページは 932 です。
 また、日本語 Windows 環境では <code>Encoding.Default</code> によってシフトJISのエンコーディングクラスを取得できます。
 
-```csharp
+```csharp {title="StreamReader/StreamWriter"}
 Encoding.GetEncoding(932).GetBytes(str);
 Encoding.Default.GetBytes(str);
 ```
@@ -105,7 +105,7 @@ Encoding.Default.GetBytes(str);
 平仮名は文字クラス IsHiraganaに、
 片仮名は IsKatakana、漢字は IsCJKUnifiedIdeographs にマッチする。
 
-```csharp
+```csharp {title="IsHiragana, IsKatakana, IsCJKUnifiedIdeographs"}
 // 平仮名だけからなる単語にマッチ
 Regex hira  = new Regex(@"\b\p{IsHiragana}+\b");
 // 片仮名にマッチ
@@ -129,7 +129,7 @@ Regex kanji = new Regex(@"\p{IsCJKUnifiedIdeographs}");
 <code>DateTime.ParseExact</code> メソッドで、
 以下のようにしてフォーマットを指定。
 
-```csharp
+```csharp {title="DateTime.ParseExact"}
 string str = "08/Jul/2006:03:28:50 +0900";
 
 Date d = DateTime.ParseExact(str,
@@ -150,7 +150,7 @@ Date d = DateTime.ParseExact(str,
 <code>System.Console.Write(string, params object[])</code> を使えばフォーマット出力が可能です。
 パラメータの書式は以下の通り
 
-```csharp
+```csharp {title="Console.Write の書式指定"}
 {N,M:format}
 ```
 
@@ -178,13 +178,13 @@ string.Format メソッドに関しては、
 #### <a id="sec-generated-title-16"></a> <a id="input_01">C の scanf みたいなことをしたい</a>
 
 例)
-```csharp
+```csharp {title="C の scanf"}
 int width, height;
 scanf("width %d height %d", &width, &height);
 ```
 
 1)正規表現を使う
-```csharp
+```csharp {title="Regex を使った入力文字列解析"}
 const string pattern = @"height (?<height>\w+) width (?<width>\w+)"; 
 
 Regex x = new Regex(pattern);
@@ -196,7 +196,7 @@ int height = m.Group("height");
 ```
 
 2) Split を使う
-```csharp
+```csharp {title="string.Split を使った入力文字列解析"}
 string str = Console.ReadLine();
 sring strs = str.Split(' ');
 int width = int.Parse(strs[1]);
@@ -213,7 +213,7 @@ int height = int.Parse(strs[3]);
 
 #### <a id="sec-generated-title-18"></a> <a id="d179e351_01">リソースファイルの作成</a>
 
-```csharp
+```csharp {title="リソースファイルの作成"}
 using System.Drawing;
 using System.Resources; 
 
@@ -236,7 +236,7 @@ class CreateResource
 
 #### <a id="sec-generated-title-19"></a> <a id="d179e351_02">リソースの利用</a>
 
-```csharp
+```csharp {title="リソースの利用"}
 ResourceManager rm = new ResourceManager(
   "アセンブリ名", this.GetType().Assembly);
 this.Icon = (System.Drawing.Icon)rm.GetObject("リソース名");
@@ -270,7 +270,7 @@ this.Icon = (System.Drawing.Icon)rm.GetObject("リソース名");
 構造体のレイアウトを <code>LayoutKind.Explicit</code> にすることで
 C 言語の共用体のような使い方が出来ます。
 
-```csharp
+```csharp {title="LayoutKind.Explicit で C 言語の共用体ライクな構造体を作る"}
 using System;
 using System.Runtime.InteropServices;
 
@@ -334,7 +334,7 @@ class Test
 実行ファイルと同じディレクトリに置く。
 
 
-```xml
+```xml {title="マニフェスト"}
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <assembly
   xmlns="urn:schemas-microsoft-com:asm.v1"

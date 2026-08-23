@@ -192,7 +192,7 @@ class Program
 }
 ```
 
-```csharp
+```csharp {title="test code"}
 using System;
 using System.Text;
 using static System.Text.Unicode.Utf8;
@@ -241,7 +241,7 @@ internal readonly ref struct D { }
 
 Program.cs へのコピペで動くソースコードと、「一部分抜粋」でそれだけだと動かないやつ、css 変えようかな。
 
-```csharp
+```csharp {title="WinForms アプリで、Visual Studio が生成するコード"}
 namespace WinFormsApp1;
 
 partial class Form1

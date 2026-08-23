@@ -44,7 +44,7 @@ $$contents$$ の部分を置換して表示したりすることがあります�
 ASP.NET では、そういう仕組みが標準で用意されているわけです。
 
 
-```html
+```html {title="CGI アプリでたまに使う HTML テンプレート"}
 <html>
 <head>
  <link rel="stylesheet" type="text/css" href="main.css" />
@@ -80,7 +80,7 @@ Visual Studio を使う場合、
 ファイル名は仮に、Site.Master としておきます。
 
 
-```xml
+```xml {title="Site.Master" highlight-lines="35-36"}
 <%@ Master Language="C#" AutoEventWireup="true"
   CodeBehind="Site.master.cs" Inherits="WebsiteSample.Site" %>
 
@@ -140,7 +140,7 @@ Visual Studio を使う場合、
 MasterPageFile のところに、上述のマスタページファイルの名前を書きます。
 
 
-```html
+```html {title="Default.aspx"}
 <%@ Page Language="C#"
   MasterPageFile="~/Site.Master" AutoEventWireup="true"
   CodeBehind="Default.aspx.cs" Inherits="WebsiteSample.Default"
@@ -180,7 +180,7 @@ ASP.NET を使ったサイト構築の一例。
 テキストボックスやボタンを適当に配置。
 
 
-```html
+```html {title="Mail.aspx"}
 <%@ Page Language="C#"
   MasterPageFile="~/Site.Master" AutoEventWireup="true"
   CodeBehind="Mail.aspx.cs" Inherits="WebsiteSample.Mail"
@@ -233,7 +233,7 @@ ASP.NET を使ったサイト構築の一例。
 設定ファイルとかに書いておくのがいいんですが、
 ちょっと手抜き。）
 
-```html
+```html {title="Mail.aspx.cs"}
 using System;
 using System.Web;
 using System.Net.Mail;

@@ -43,7 +43,7 @@ C# 4.0 でオプション引数と名前付き引数が追加されました。
 まず、C++ 同様、
 以下のように規定値(default value)を持ったメソッドを定義します。
 
-```csharp
+```csharp {title="規定値付きのメソッド定義"}
 static int Sum(int x = 0, int y = 0, int z = 0)
 {
   return x + y + z;
@@ -54,7 +54,7 @@ static int Sum(int x = 0, int y = 0, int z = 0)
 すると、以下のように、引数の一部もしくは全てを省略可能になります。
 省略可能ということで、オプション引数（optional parameter）と呼びます。
 
-```csharp
+```csharp {title="オプション引数"}
 int s1 = Sum();     // Sum(0, 0, 0); と同じ意味。
 int s2 = Sum(1);    // Sum(1, 0, 0); と同じ意味。
 int s3 = Sum(1, 2); // Sum(1, 2, 0); と同じ意味。
@@ -66,7 +66,7 @@ int s3 = Sum(1, 2); // Sum(1, 2, 0); と同じ意味。
 定義側でも、以下のようなコードはコンパイルエラーになります。
 （z のところで「オプション引数の後ろに必須引数を置いちゃダメ」みたいなエラーが出ます。）
 
-```csharp
+```csharp {title="こういう真似は無理" highlight-text="int z"}
 static int Sum(int x = 0, int y = 0,
   int z) // コンパイル エラー。後ろの引数に既定値がない
 {
@@ -77,7 +77,7 @@ static int Sum(int x = 0, int y = 0,
 
 ただし、オプション引数の後ろに params（「[可変長引数](sp_params.md)」参照）を続けることは可能です。
 
-```csharp
+```csharp {title="オプション引数の後ろに可変長引数" highlight-text="params int[] rest"}
 static int Sum(int x, int y, int z = 0, params int[] rest)
 {
     var sum = x + y + z;
@@ -90,7 +90,7 @@ static int Sum(int x, int y, int z = 0, params int[] rest)
 オプション引数や可変長引数を使った場合の「[オーバーロード](st_function.md#overload)」の優先順位ですが、
 オプションなし ＞ オプションあり ＞ 可変長引数 の順で優先されます。
 
-```csharp
+```csharp {title="オーバーロードの優先順位"}
 static void Main(string[] args)
 {
     Sum(1);
@@ -121,7 +121,7 @@ static int Sum(params int[] rest) // 引数4つ以上でないと呼ばれない
 ```
 
 
-```console
+```console {title="実行結果"}
 Sum(x)
 Sum(x, y, z)
 Sum(x, y, z)
@@ -138,7 +138,7 @@ Sum(rest)
 
 先ほど定義した引数の規定値付きのメソッドを、以下のような構文で呼び出せます。
 
-```csharp
+```csharp {title="名前付きオプション引数"}
 int s1 = Sum(x: 1, y: 2, z: 3); // Sum(1, 2, 3); と同じ意味。
 int s2 = Sum(y: 1, z: 2, x: 3); // Sum(3, 1, 2); と同じ意味。
 int s3 = Sum(y: 1);             // Sum(0, 1, 0); と同じ意味。
@@ -151,7 +151,7 @@ int s3 = Sum(y: 1);             // Sum(0, 1, 0); と同じ意味。
 1つ気をつけないといけないのは、引数の名前を指定するのに = じゃなくて : を使うところです。
 C# の場合、以下のような構文が許されているので、間違えて = と書いてしまわないよう気をつけましょう。
 
-```csharp
+```csharp {title="= じゃないよ、: だよ"}
 static void Main(string[] args)
 {
     int x = 0;
@@ -169,7 +169,7 @@ static int Square(int x)
 
 また、C# 7.1 以前では、通常の(位置指定の)引数と名前付き引数を混在させる場合、名前付きにできるのは後ろの方の引数だけです。
 
-```csharp
+```csharp {title="混在時、名前付き引数を使えるのは後ろの方の引数だけ"}
 static void Order()
 {
     // OK: 前の方は位置指定、後ろの方は名前指定
@@ -189,7 +189,7 @@ static int Sum(int x = 0, int y = 0, int z = 0) => x + y + z;
 C# 7.2で、前の方の引数を名前付きにできるようになりました。
 例えば、以下のような書き方が許されるようになりました。
 
-```csharp
+```csharp {title="1つ目の引数だけを名前付きにする"}
 // C# 7.2
 // 末尾以外でも名前を書けるように
 Sum(x: 1, 2, 3);
@@ -197,7 +197,7 @@ Sum(x: 1, 2, 3);
 
 ただし、この場合、順序の変更は認められておらず、通常(位置指定)と同じ順で引数を書く必要があります。
 
-```csharp
+```csharp {title="前の方の引数を名前付きにする場合、順序厳守"}
 // C# 7.2 でもダメなやつ
 // 末尾以外の引数を名前付きにしたい場合、順序は厳守する必要あり
 Sum(2, 3, x: 1);
@@ -209,7 +209,7 @@ Sum(2, 3, x: 1);
 例えば、よくある話だと、「`Copy(a, b, length)`では、`a`と`b`のどちらがコピー元でどちらがコピー先かがわからなくて困る」といった問題があったりします。
 この際に、以下のように書ければ便利だろうということで名前付き引数の制限が緩和されました。
 
-```csharp
+```csharp {title="非末尾名前付き引数の用途の例"}
 var a = new[] { 1, 2, 3, 4, 5 };
 var b = new int[3];
 Array.Copy(sourceArray: a, destinationArray: b, 3);
@@ -223,7 +223,7 @@ Array.Copy(sourceArray: a, destinationArray: b, 3);
 実体は Optional 属性と DefaultParameterValue 属性になっています。
 例えば、以下のようなコードを書くと、
 
-```csharp
+```csharp {title="オプション引数"}
 static int Sum(int x = 0, int y = 0, int z = 0)
 {
     return x + y + z;
@@ -234,7 +234,7 @@ static int Sum(int x = 0, int y = 0, int z = 0)
 以下のようなコードと同じコンパイル結果になります。
 （Optional, DefaultParameterValue はいずれも System.Runtime.InteropServices 名前空間内に定義されている属性です。）
 
-```csharp
+```csharp {title="等価なコード"}
 static int Sum(
     [Optional, DefaultParameterValue(0)] int x,
     [Optional, DefaultParameterValue(0)] int y,
@@ -259,7 +259,7 @@ C# （や、VB など、.NET 上の言語）では、元々、コンパイル結
 
 例えば、先ほどの Sum メソッドに対して、以下のようなコードは、
 
-```csharp
+```csharp {title="オプション引数・名前付き引数を使ったメソッド呼び出し"}
 Sum();
 Sum(1);
 Sum(1, 2);
@@ -270,7 +270,7 @@ Sum(y: 1, z: 2, x: 3);
 
 以下のようなコードと完全に同じコンパイル結果になります。
 
-```csharp
+```csharp {title="等価なコード"}
 Sum(0, 0, 0); // 元々 0 を渡していたのか、オプション引数で 0 になったのかはわからない
 Sum(1, 0, 0);
 Sum(1, 2, 0);
@@ -300,7 +300,7 @@ C# でも、かなり初期の頃からずっと、オプション引数・名�
 
 例えば、ライブラリ内で以下のようなコードを書いたとして、
 
-```csharp
+```csharp {title="ライブラリ内にて"}
 static int Sum(int x = 0, int y = 0, int z = 0)
 {
     return x + y + z;
@@ -310,7 +310,7 @@ static int Sum(int x = 0, int y = 0, int z = 0)
 
 このライブラリを使う以下のようなコードを書いたとしてます。
 
-```csharp
+```csharp {title="ライブラリ利用側"}
 Sum();
 ```
 
@@ -319,7 +319,7 @@ Sum();
 
 この後、ライブラリを以下のように更新したとします。
 
-```csharp
+```csharp {title="ライブラリを修正"}
 static int Sum(int x = 1, int y = 2, int z = 3)
 {
     return x + y + z;
@@ -335,7 +335,7 @@ static int Sum(int x = 1, int y = 2, int z = 3)
 メソッドのオーバーロードを使った以下のような実装方法を推奨していました。
 この場合は、利用側の再コンパイルは必要なくなります。
 
-```csharp
+```csharp {title="オーバーロードで引数の規定値相当の機能を実現"}
 static int Sum(int x, int y, int z)
 {
     return x + y + z;
@@ -357,7 +357,7 @@ static int Sum()
 
 例のごとく、以下のような Sum メソッドがあって、
 
-```csharp
+```csharp {title="例のごとく Sum"}
 static int Sum(int x, int y, int z)
 {
     return x + y + z;
@@ -367,14 +367,14 @@ static int Sum(int x, int y, int z)
 
 これを以下のような名前付き引数を使って呼び出しているとします。
 
-```csharp
+```csharp {title="Sum メソッド呼び出し"}
 Sum(x: 0, y: 1, z: 2);
 ```
 
 
 この時、Sum の定義側を以下のように変更すると、
 
-```csharp
+```csharp {title="Sum の引数名変更"}
 static int Sum(int a, int b, int c)
 {
     return a + b + c;
@@ -441,7 +441,7 @@ COM (詰まるところ90年代からあるレガシー資産)では、オプシ
 
 実際、C# 3.0 以前では、例えば C# から Excel の機能を（COM 経由で）呼び出そうとすると、以下のような悲惨なコードになることがありました。
 
-```csharp
+```csharp {title="C#（3.0 以前）で Excel ワークブックを開こうとするとこんなのになるよ(笑)"}
 Workbook workbook = excelApp.Workbooks.Open(
     "sample.xsl", Type.Missing, true, Type.Missing, Type.Missing,
     Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing,
@@ -458,6 +458,6 @@ Type.Missing というのは、
 
 で、これが C# 4.0 なら以下のようにシンプルに書けるようになります。
 
-```csharp
+```csharp {title="C# 4.0 からは　Excel 呼びやすくなる"}
 Workbook workbook = excelApp.Workbooks.Open("sample.xsl", ReadOnly: true);
 ```

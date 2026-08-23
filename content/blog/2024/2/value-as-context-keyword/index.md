@@ -23,7 +23,7 @@ C# 13 向けに検討されている機能の一つに、
 プロパティの `get`/`set` アクセサー内で、`field` を使って
 [バッキング フィールド](../../../../study/csharp/oop/oo_property.md#auto)(自動プロパティの値を保存するためにコンパイラーが生成するフィールド)に明示的にアクセスするというものです。
 
-```csharp
+```csharp {title="半自動プロパティ案"}
 class A
 {
     // 手動プロパティ (manual property)
@@ -60,7 +60,7 @@ C# 12 時点では「これを破壊的変更なしで実装するのは大変�
 
 1つ目、[`@` で「脱キーワード化」](../../../../study/csharp/start/st_variable.md#identifier)ができない。
 
-```csharp
+```csharp {title="キーワードじゃないので…"}
 class A
 {
     public int X
@@ -80,7 +80,7 @@ class A
 
 2つ目、[`nameof`](../../../../study/csharp/start/st_string.md#nameof-operator)。
 
-```csharp
+```csharp {title="nameof が使える"}
 class A
 {
     public int X
@@ -99,7 +99,7 @@ class A
 
 3つ目、外側の識別子の参照。
 
-```csharp
+```csharp {title="外にある「value フィールド」の参照ができない"}
 class A
 {
     int value;

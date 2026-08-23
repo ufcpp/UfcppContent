@@ -41,7 +41,7 @@ C#の型推論って、右辺から左辺の推論が多いです。`var`しか�
 
 以下のような感じ。
 
-```csharp
+```csharp {title="右辺からの左辺の型推論(var、ジェネリック)"}
 class Program
 {
     static void Main()
@@ -58,7 +58,7 @@ class Program
 
 逆に左辺から右辺の型推論なのは、現状ではラムダ式くらい。
 
-```csharp
+```csharp {title="左辺から右辺の型推論(ラムダ式)"}
 using System;
 
 class Program
@@ -75,7 +75,7 @@ class Program
 
 で、今、`default`と`new`の型推論を増やしたいという話が出ています。特に、`var`を使えないフィールドやプロパティに対する初期化子で有効そう。
 
-```csharp
+```csharp {title="defaultやnewの型推論"}
 class Sample<T>
     where T : new()
 {

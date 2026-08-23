@@ -196,7 +196,7 @@ Task クラスからの結果の受け取り方には2通りの方法があり�
 
 1つは、ContinueWith メソッドを使って、タスク完了時にその先続けて行いたい処理を渡します。
 
-```csharp
+```csharp {title="継続呼び出し"}
 var t = Task.Factory.StartNew(() =>
 {
     // 何か重たい計算をして、その計算結果を返す。
@@ -212,7 +212,7 @@ t.ContinueWith(x => Console.WriteLine(x.Result));
 Result プロパティを読もうとしたとき、タスクがまだ完了していない場合、
 完了するまで待つことになります。
 
-```csharp
+```csharp {title="同期的に完了待ち"}
 var t = Task.Factory.StartNew(() =>
 {
     // 何か重たい計算をして、その計算結果を返す。
@@ -230,7 +230,7 @@ Console.WriteLine(t.Result);
 非同期実行中のタスクを途中でキャンセルするための仕組みとして、
 CancellationToken 構造体というものが標準で用意されています。
 
-```csharp
+```csharp {title="タスクのキャンセル"}
 var cts = new CancellationTokenSource();
  
 var t = Task.Factory.StartNew(() =>
@@ -250,7 +250,7 @@ cts.Cancel();
 タスクの中で別の新しいタスクを作りたい場合があります。
 オプションなしの場合、それぞれのタスクは無関係に動くことになります。
 
-```csharp
+```csharp {title="入れ子のタスク"}
 var t = Task.Factory.StartNew(() =>
     {
         Console.WriteLine("タスク1開始");
@@ -265,7 +265,7 @@ Console.WriteLine("完了");
 ```
 
 
-```console
+```console {title="実行結果"}
 タスク1開始
 完了
 ```
@@ -274,7 +274,7 @@ Console.WriteLine("完了");
 これに対して、オプションを指定することで、タスクに親子関係を作ることができます。
 Task.Wait による完了待ちは、子タスクの完了まで含めて待ちます。
 
-```csharp
+```csharp {title="タスクの親子関係を作る"}
 var t = Task.Factory.StartNew(() =>
     {
         Console.WriteLine("タスク1開始");
@@ -289,7 +289,7 @@ Console.WriteLine("完了");
 ```
 
 
-```console
+```console {title="実行結果"}
 タスク1開始
 タスク2開始
 完了

@@ -65,7 +65,7 @@ C# 8.0 では、7.0 のときに先送りされた再帰パターンが入る予
 
 例えば以下のようなクラスがあったとして、
 
-```csharp
+```csharp {title="例"}
 class Base { }
 class A : Base
 {
@@ -85,7 +85,7 @@ class B : Base
 
 以下のようなコードなら C# 7.0 でも書けました。
 
-```csharp
+```csharp {title="C# 7.0 の型パターン"}
 static int M(Base obj)
 {
     switch (obj)
@@ -101,7 +101,7 @@ static int M(Base obj)
 
 C# 8.0 では以下のような、再帰的なパターンが使えるようになります。
 
-```csharp
+```csharp {title="C# 8.0 の再帰パターン"}
 static int M(Base obj)
 {
     switch (obj)
@@ -124,7 +124,7 @@ static int M(Base obj)
 式です。`=>` の後ろとかにも書けます。
 今のところは以下のような構文になる予定。
 
-```csharp
+```csharp {title="switch 式"}
 static int M(Base obj)
     => obj switch
     {
@@ -140,7 +140,7 @@ static int M(Base obj)
 
 ちなみに、プロパティ パターン (`{}` を使ったパターン)には null チェックが伴うそうです。
 
-```csharp
+```csharp {title="{} パターンで null チェック"}
 string s = null;
 
 // null は型情報を持ってなかったり。たとえ、静的な型が一致していても is は常に false。
@@ -160,7 +160,7 @@ if (s is { }) Console.WriteLine("ここは通らない");
 
 あと、タプルに対する switch では、`()` を1重に省略できます。
 
-```csharp
+```csharp {title="タプル switch"}
 static int M(int x, int y)
 {
     // 本来は、switch ((x, y))
@@ -181,7 +181,7 @@ ranges は、`1..3` みたいな書き方で「1から3まで(ただし3は含�
 `Range`構造体と`Index`構造体に展開される予定で、
 [この`range.cs`](https://raw.githubusercontent.com/dotnet/csharplang/master/proposals/ranges.cs)みたいな定義が必要です。
 
-```csharp
+```csharp {title="ranges"}
 using System;
 
 class Program

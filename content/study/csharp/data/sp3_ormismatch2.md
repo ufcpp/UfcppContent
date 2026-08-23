@@ -45,7 +45,7 @@ aliases:
 </figure>
 
 
-```csharp
+```csharp {title="クラスの継承階層の例"}
 public abstract class Shape
 {
     public abstract float GetArea();
@@ -124,7 +124,7 @@ DbContext クラスの OnModelCreating メソッドをオーバーライドす�
 
 table per hierarchy にしたい場合は以下のように書きます。
 
-```csharp
+```csharp {title="table per hierarchy なデータベース コンテキスト"}
 public class TablePerHierarchyContext : DbContext
 {
     public DbSet<Shape> Shapes { get; set; }
@@ -142,7 +142,7 @@ public class TablePerHierarchyContext : DbContext
 一方、
 table per type にしたい場合は以下のように書きます。
 
-```csharp
+```csharp {title="table per type なデータベース コンテキスト"}
 public class TablePerTypeContext : DbContext
 {
     public DbSet<Shape> Shapes { get; set; }
@@ -161,7 +161,7 @@ public class TablePerTypeContext : DbContext
 
 作成した2つのデータベース コンテキストを使って、サンプル データを作成してみましょう。
 
-```csharp
+```csharp {title="サンプル データの作成"}
 private static void Create()
 {
     using (var db = new TablePerHierarchyContext())
@@ -215,7 +215,7 @@ TablePerTypeContext によって作られるデータベースは以下のよう
 
 作成したデータを参照してみましょう。
 
-```csharp
+```csharp {title="データの参照"}
 private static void Query()
 {
     using (var db = new TablePerTypeContext())
@@ -241,7 +241,7 @@ private static void Query(System.Data.Entity.DbSet<Shape> shapes)
 ```
 
 
-```console
+```console {title="実行結果"}
 Table Per Hierarchy
 Rectangle: 200
 Rectangle: 180
@@ -306,7 +306,7 @@ discriminator にしたいプロパティの Column 属性に <code>IsDiscrimina
 例えば、図2のようにしたい場合には、以下のようなコードを書きます。
 
         
-```csharp
+```csharp {title="InheritanceMapping の例1" highlight-ranges="sha256:e93baa0a3ecfaeaa889ebb33a685b12dda14f19b4920c5fe1217dade2c4d5d57;22:4-22:22,23:4-23:22,24:4-24:22,30:13-30:28"}
 using System;
 using System.Data.Linq;
 using System.Data.Linq.Mapping;
@@ -374,7 +374,7 @@ namespace LinqToSqlSample
 あるいは、図3のようにしたい場合には、以下のようなコードを書きます。
 
         
-```csharp
+```csharp {title="InheritanceMapping の例2" highlight-ranges="sha256:58536271b8eebb834dea5c9651b63d263f4e12ffa6d087ec4c5f3403dec98cf3;22:4-22:22,23:4-23:22,24:4-24:22,30:13-30:28"}
 using System;
 using System.Data.Linq;
 using System.Data.Linq.Mapping;
@@ -461,7 +461,7 @@ InheritanceMapping 属性の情報を元にどの派生クラスになるか決�
 以下のようなコードで動作確認ができます。
 
         
-```csharp
+```csharp {title="確認用のコード"}
 var db = new ShapeDataContext("shape.sdf");
 
 if (!db.DatabaseExists())
@@ -488,7 +488,7 @@ foreach (var s in db.Shapes)
 
 
         
-```console
+```console {title="実行結果"}
 Rectangle, area = 6
 Circle, area = 3.141593
 Rectangle, area = 2

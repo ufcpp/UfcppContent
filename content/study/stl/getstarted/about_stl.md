@@ -25,7 +25,7 @@ STL は、template という機能を用いた直交性の高いライブラリ�
 <em>template</em>は型をパラメータとして与えることで、任意の型に対応したコンテナやアルゴリズムを記述できる機能です。
 例えば、2つの値のうち大きいほうを取り出す関数<code>max()</code>を作りたいとします。<code>int</code>型に限定したものなら簡単に作れて以下のようになります。
 
-```csharp
+```csharp {title="int用max関数"}
 inline
 int max(int x, int y)
 {
@@ -40,7 +40,7 @@ int max(int x, int y)
 templateを用いるとこの問題を解決できます。
 template版の<code>max()</code>関数は以下のようになります。
 
-```cpp
+```cpp {title="template版max関数"}
 template<typename T>
 inline
 T max(const T& x, const T& y)

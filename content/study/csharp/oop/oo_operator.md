@@ -60,7 +60,7 @@ C#の組込み型には <code>+</code> や <code>-</code> などの演算子が�
 演算子は <code>operator</code> キーワードを用いることで、
 クラスの「[静的メソッド](oo_static.md#stmethod)」として以下のようにして定義することが出来ます。
 
-```csharp
+```csharp {title="演算子のオーバーロードの方法"}
 public static 戻り値の型 operator演算子 (引数リスト)
 ```
 
@@ -68,7 +68,7 @@ public static 戻り値の型 operator演算子 (引数リスト)
 例えば、これまでに例としてあげてきた複素数クラスに加算演算子 <code>+</code> を定義したい場合、
 以下のように書きます。
 
-```csharp
+```csharp {title="Complexクラスの加算演算子"}
 class Complex
 {
     public static Complex operator+ (Complex z, Complex w)
@@ -93,7 +93,7 @@ class Complex
 
 また、引数のうち少なくとも1つの型は演算子を定義するクラス自身である必要があります。
 
-```csharp
+```csharp {title="Complexクラスの加算演算子(悪い例2)"}
 class Complex
 {
     // ↓この2つはOK。
@@ -176,7 +176,7 @@ class Complex
 <code>true, false</code> 演算子のどちらか一方を定義する場合、もう一方も定義する必要があります。
 また、<code>true, false</code> 演算子の戻り値の型は <code>bool</code> でなければなりません。
 
-```csharp
+```csharp {title="true, false 演算子"}
 class Bool
 {
   int i;
@@ -227,7 +227,7 @@ b==false
 * 別の場所に保存しておいた、 x の変更前の値を戻り値として返す。
 
 
-```csharp
+```csharp {title="++, -- 演算子"}
 class Counter
 {
   int i;
@@ -282,7 +282,7 @@ class OperatorSample
 <code>x || y</code> は
 <code>T.operator true(x) ? x : T.operator |(x, y)</code> として評価されます。
 
-```csharp
+```csharp {title="&amp;&amp;, || 演算子"}
 class Bool
 {
   int i;
@@ -360,7 +360,7 @@ b || a
 
 <strong id="cast" class="keyword">型変換</strong>（cast）演算子は以下のようにして定義します。
 
-```csharp
+```csharp {title="型変換演算子の定義の仕方"}
 public static explicitまたはimplicit operator 変換先の型 (変換元の型 引数名)
 {
   // 変換コード
@@ -382,7 +382,7 @@ public static explicitまたはimplicit operator 変換先の型 (変換元の�
 
 また、変換先の型と変換元の型の少なくともどちらか一方は型変換演算子を定義するクラス自身である必要があります。
 
-```csharp
+```csharp {title="型変換演算子"}
 using System;
 
 class Counter
@@ -417,7 +417,7 @@ count=2
 
 (C# 7.1 以前では) 演算子の引数は[値渡し](../resource/sp_ref.md#sec-byval)である必要があります。
 
-```csharp
+```csharp {title="値渡しはOK。参照渡し(ref引数)はNG"}
 class Complex
 {
     public double X;
@@ -439,7 +439,7 @@ class Complex
 C# 7.2 で[`in` 引数](../resource/sp_ref.md#in)という機能が入りましたが、
 同時に、演算子の引数にこの`in`引数が使えるようになりました。
 
-```csharp
+```csharp {title="in であればOK"}
 class Complex
 {
     public double X;
@@ -469,7 +469,7 @@ C# 13 まで、「`+` をオーバーロードしたら `+=` も使える。`x +
 このやり方だと、`+` のたびに値のコピーが必要になります。
 この路線は、コピーのコストが低い「小さい構造体」(具体的にはおおむね8バイト以下)なら問題にならないんですが、クラスや大きい構造体の時に問題になります。
 
-```csharp
+```csharp {title="C# 13 までの演算子オーバーロードのコスト"}
 using System.Runtime.CompilerServices;
 
 // 小さい構造体は + のコストが低い。
@@ -527,7 +527,7 @@ struct LargeStruct
 必ず静的メンバーとして実装する必要があった二項演算子と違い、
 こちらは必ずインスタンス メンバーになります。
 
-```csharp
+```csharp {title="複合代入演算子のオーバーロードの例"}
 using System.Runtime.CompilerServices;
 
 struct SmallStruct(int value)
@@ -569,7 +569,7 @@ struct LargeStruct
 ちなみに、「`+` があれば `+=` 利用可能」だった二項演算子のオーバーロードと違って、
 `+=` だけあっても `+` は使えません。
 
-```csharp
+```csharp {title="+= だけあっても + は使えない"}
 var x = new X(5);
 
 // += はできる。
@@ -587,7 +587,7 @@ record struct X(int Value)
 `+=`, `-=`, `*=`, `/=`, `%=`, `&=`, `|=`, `^=`, `<<=`, `>>=`, `>>>=` のオーバーロードが可能です。
 このうち、`+=`, `-=`, `*=`, `/=` は [`checked`](generic-math-operators.md#checked-operator-overload) オーバーロードもできます。
 
-```csharp
+```csharp {title="オーバーロード可能な複合代入演算子"}
 record struct X(int Value)
 {
     public void operator +=(int value) => Value += value;
@@ -611,7 +611,7 @@ record struct X(int Value)
 また、同じく自己書き換えなので、インクリメント `++` とデクリメント `--` もインスタンス メンバーとしてオーバーロードできるようになりました
 (これらも [`checked`](generic-math-operators.md#checked-operator-overload) にできます)。
 
-```csharp
+```csharp {title="インクリメントとデクリメントの自己書き換えオーバーロード"}
 record struct X(int Value)
 {
     public void operator ++() => Value++;
@@ -624,7 +624,7 @@ record struct X(int Value)
 ただ、この自己書き換え版のインクリメント/デクリメントは後起き版(書き換える前の値を残す必要がある)の利用に難があります。
 基本的には後起きインクリメント/デクリメントには使えません。
 
-```csharp
+```csharp {title="後起きインクリメントはダメ"}
 var x = new X(1);
 
 // 前置きはどこでも書ける。
@@ -662,7 +662,7 @@ record struct X(int Value)
 変な実装をしてしまわないように気を付けましょう。
 やろうと思えば以下のようなコードも書けてしまいます。
 
-```csharp
+```csharp {title="二項演算子と複合代入演算子に整合性がないと変なことになる例"}
 var x1 = new X(1);
 Console.WriteLine(++x1); // インスタンス ++ が呼ばれる。
 
@@ -696,7 +696,7 @@ X { Value = 0 }
 不整合を避けるために、以下のように、
 複合代入演算子を先に実装して、二項演算子の方は「コピー + 複合代入」で実装するのがいいのではないかと思われます。
 
-```csharp
+```csharp {title="複合代入演算子を先に実装して、二項演算子からはそれを呼ぶ"}
 record struct X(int Value)
 {
     public void operator ++() => Value++;
@@ -721,7 +721,7 @@ record struct X(int Value)
 
 複合代入演算子のオーバーロードはインスタンス メンバーなので、一応、`virtual` や `abstract` にできます。
 
-```csharp
+```csharp {title="複合代入演算子は virtual/abstract にできる"}
 var x = new A();
 SumTo5(x);
 Console.WriteLine(x.Value); // 15
@@ -788,7 +788,7 @@ public static Point operator -(Point a, Point b)
 #### 解答例 1
 
 
-```csharp
+```csharp {title="Point/Triangle"}
 using System;
 
 /// <summary>

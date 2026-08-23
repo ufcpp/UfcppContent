@@ -29,7 +29,7 @@ Where-Object や ForEach-Object などの Cmdlet があります。
 パイプラインで受け取ったオブジェクトに対して処理を行うもので、
 以下のように使います。
 
-```console
+```console {title="ForEach-Object"}
 > 1,2,3,4 | ForEach-Object { $_ * $_ }
 1
 4
@@ -45,7 +45,7 @@ ForEach-Object は頻繁に使うものなので、
 利便性を考えて「[エイリアス](../syntax/basic.md#alias)」が設定されていて、
 foreach という名前と、% という名前でも呼び出せます。
 
-```console
+```console {title="foreach, %"}
 > 2,3,4 | foreach { $_ * $_ }
 4
 9
@@ -61,7 +61,7 @@ foreach という名前と、% という名前でも呼び出せます。
 （挙動は関数の begin, process, end と同じ。
 「[begin, process, end](../syntax/function.md#process)」参照。）
 
-```console
+```console {title="ForEach-Object"}
 > 2,3,4 | % -begin {$num = 0} -process {++$num; $_} -end {"total $num"}
 2
 3
@@ -81,7 +81,7 @@ SQL クエリ的な使い方のできる <strong id="where_object" class="keywor
 指定した条件を満たすものだけを取り出します。
 条件式は、やはり $_ を使って書きます。
 
-```console
+```console {title="Where-Object"}
 > 1,9,3,7,5 | Where-Object {$_ -le 5}
 1
 3
@@ -92,7 +92,7 @@ SQL クエリ的な使い方のできる <strong id="where_object" class="keywor
 Where-Object にも「[エイリアス](../syntax/basic.md#alias)」が設定されていて、
 where と ? でも呼び出せます。
 
-```console
+```console {title="where, ?"}
 > 1,9,3,7,5 | where {$_ -le 5}
 1
 3
@@ -106,7 +106,7 @@ where と ? でも呼び出せます。
 
 まあ、要するに、以下の foreach と同じ挙動です。
 
-```console
+```console {title="foreach で where と同じ処理"}
 > 1,9,3,7,5 | %{if($_ -le 5) {$_}}
 1
 3
@@ -120,7 +120,7 @@ where と ? でも呼び出せます。
 <strong id="select_object" class="keyword">Select-Object</strong> Cmdlet は、パイプラインから受け取ったオブジェクトのうち、
 特定のプロパティのみを取り出したオブジェクトを出力します。
 
-```console
+```console {title="Select-Object"}
 > ls C:\WINDOWS\Web\*.gif | Select-Object Name, LastWriteTime
 
 Name                                              LastWriteTime
@@ -134,7 +134,7 @@ tips.gif                                          2004/08/05 21:00:00
 これも select というエイリアスが付いています。
 where と合わせて、SQL クエリチックな書き方ができます。
 
-```console
+```console {title="where と select の組み合わせ"}
 > ls C:\WINDOWS |
   where {$_.Name -like "d*"} |
   select Name, LastWriteTime
@@ -157,7 +157,7 @@ DOTNETFX                                          2005/03/24 13:22:43
 （SQL の Group By に相当。）
 例えば、以下の通り。
 
-```console
+```console {title="Group-Object"}
 > ls C:\WINDOWS\Web | group Extension
 
 Count Name                      Group
@@ -173,7 +173,7 @@ Count Name                      Group
 Microsoft.PowerShell.Commands.GroupInfo の配列です。
 GroupInfo は Name や Values などのプロパティを持っています。
 
-```console
+```console {title="GroupInfo のプロパティ"}
 > ls C:\WINDOWS\Web | group Extension | ?{$_.Name -like ".h*"}
 
 Count Name                      Group
@@ -188,7 +188,7 @@ Count Name                      Group
 
 もう1個、SQL の sort by に相当する <strong id="sort_object" class="keyword">Sort-Object</strong> （エイリアス: sort）もあります。
 
-```console
+```console {title="Sort-Object"}
 > ls C:\WINDOWS\Web | sort LastWriteTime, Name | select Name, LastWriteTime
 
 Name                                              LastWriteTime

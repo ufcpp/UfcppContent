@@ -28,7 +28,7 @@ aliases: []
 C# 9.0 では、もう1種類、「最初に1回だけ呼ばれる」という性質の処理の書き方ができるようになりました。
 以下のように、`ModuleInitilizer` 属性(`System.Runtime.CompilerServices` 名前空間)を付けた[静的メソッド](oo_static.md#stmethod)を書くと、それが必ず1回呼び出されるようになります。
 
-```csharp
+```csharp {title="ModuleInitialize 属性"}
 using System;
 using System.Runtime.CompilerServices;
  
@@ -63,7 +63,7 @@ class Sample
 C# 9.0 のモジュール初期化子がやっていることはこの「`<Module>` クラスの静的コンストラクターの生成」です。
 例えば以下のようなコードを書いたとすると、
 
-```csharp
+```csharp {title="モジュール初期化子(&lt;Module&gt; クラスの生成元)"}
 using System.Runtime.CompilerServices;
  
 class C1
@@ -85,7 +85,7 @@ class C2
 
 以下のようなコードに相当するものがコンパイラーによって追加されます。
 
-```csharp
+```csharp {title="モジュール初期化子から生成される &lt;Module&gt; クラス"}
 class <Module>
 {
     static <Module>()
@@ -118,7 +118,7 @@ Windows で動いていた .NET とは別系統で保守されていました。
 例えば以下のように、文字列で型名を指定して、その型のインスタンスを生成するということを考えてみます。
 (こういうコードをそのまま書くことはないですが、JSON などにシリアライズ・デシリアライズしたりするときにこれに類する処理が内部的に行われたりします。)
 
-```csharp
+```csharp {title="文字列で型名を指定してインスタンス生成"}
 using System;
 using System.Reflection;
  
@@ -154,7 +154,7 @@ source generator 導入の動機の1つに「これまでリフレクション�
 先ほどの `Activator.CreateInstance` を使っていた処理も、source generator を使って、「最初に1回どこかで初期化処理をする」みたいなものに置き換えることが考えられます。
 例えば、以下のように、`CreateInstance` 的な処理を自前管理することを考えます。
 
-```csharp
+```csharp {title="リフレクションをなくすために、自前で CreateInstance 的なものを管理"}
 using System;
 using System.Collections.Generic;
  
@@ -175,7 +175,7 @@ static class TypeRepository
 ここで静的コンストラクターだと「呼ばれる保証がない」という点が問題になります。
 例えば以下のコードのように変な挙動をしたりします。
 
-```csharp
+```csharp {title="静的コンストラクターだと呼ばれないことがあるので困る例"}
 using System;
 using System.Collections.Generic;
  
@@ -208,7 +208,7 @@ class B
 モジュール初期化子なら確実に呼ばれる保証が強いのでこの問題を解決できます。
 以下のコードであれば意図した挙動になります。
 
-```csharp
+```csharp {title="モジュール初期化子なら呼び出される保証が強いので楽という例"}
 using System;
 using System.Runtime.CompilerServices;
  
@@ -236,7 +236,7 @@ class B
 逆に静的コンストラクターでないと書けないものもあります。
 ジェネリックな型に対してはモジュール初期化子を定義できません。
 
-```csharp
+```csharp {title="ジェネリックな型に対するモジュール初期化はコンパイル エラーになる"}
 public class Generic<T>
 {
     // これはコンパイル エラー。
@@ -250,7 +250,7 @@ public class Generic<T>
 [前節](#module-initialize-usage)で書いたような用途でモジュール初期化をジェネリック型に対して使いたい場合、
 以下のように、非ジェネリックな型を1つ用意して、その中で想定しうるすべての型を列挙するなどの対処が必要になります。
 
-```csharp
+```csharp {title="非ジェネリックな型のモジュール初期化に初期化処理を集約する必要あり"}
 // 前節のようなことをジェネリックな型に対してしようとすると…
 class Generic<T>
 {

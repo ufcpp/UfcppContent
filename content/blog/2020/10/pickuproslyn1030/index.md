@@ -100,7 +100,7 @@ csharplang には、Design Meeting でこの話題が出た12日時点で1500件
 
 C# 9.0 で追加する新しい partial method ですが、以下のようなコードを書くとコンパイル エラーを起こします。
 
-```csharp
+```csharp {title="AllowMultiple = false な属性"}
 partial class C
 {
     [return: MaybeNull]
@@ -148,7 +148,7 @@ C# に UTF-8 関連の特殊対応文法を入れるよりもまず 「`Utf8Stri
 
 今までの、
 
-```csharp
+```csharp {title="名前空間"}
 namespace N
 {
     class C
@@ -159,7 +159,7 @@ namespace N
 
 これを、
 
-```csharp
+```csharp {title="1ライン名前空間"}
 namespace N;
  
 class C
@@ -180,7 +180,7 @@ class C
 その発想でいうと「インデント1段の差は些細な差」ではあります。
 例えばまあ、別に、1ライン名前空間がなくても、以下のように書けばほぼ同じ見た目になります。
 
-```csharp
+```csharp {title="名前空間"}
 namespace N
 {
 class C
@@ -227,7 +227,7 @@ class, record に対しても readonly 修飾(フィールド全部が readonly 
 
 以下のような話。
 
-```csharp
+```csharp {title="() なし名前指定ターゲット型推論"}
 // C# 9.0 で、ターゲットからの型推論で new() と書けるように
 Point a = new(1, 2);
  
@@ -261,7 +261,7 @@ Backlog 入り。
 
 以下のように、初期化子でローカル関数を呼びたいという話が出ていまして。
 
-```csharp
+```csharp {title="初期化子でローカル関数を呼びたい"}
 class Base
 {
     public Base(int x) { }

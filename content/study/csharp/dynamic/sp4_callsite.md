@@ -44,7 +44,7 @@ dynamic を使ったコードは、内部的には CallSite というクラス�
 （多分、「動的呼び出し（call）用の動的コードを生成するための用地（site）というような意味合い。）
 例えば、以下のような C# 4.0 コードは、
 
-```csharp
+```csharp {title="dynamic を使ったメソッド　X の動的呼び出し"}
 public static void CallX(object obj)
 {
     dynamic d = obj;
@@ -60,7 +60,7 @@ public static dynamic GetX(dynamic obj)
 
 以下のようなコードに展開されます。
 
-```csharp
+```csharp {title="CallX の展開結果"}
 // ↓本当は、いかにもコンパイラが自動生成したような変な変数名になってる
 static CallSite<Action<CallSite, object> site1;
 static CallSite<Func<CallSite, object, object> site2;
@@ -125,7 +125,7 @@ public static object GetX([Dynamic] object obj)
 メンバー変数やプロパティ、メソッドの引数や戻り値の型を dynamic にした場合には、
 普通の object と区別するために、Dynamic 属性が付きます。
 
-```csharp
+```csharp {title="メンバー変数、プロパティ、メソッドの引数・戻り値に dynamic"}
 dynamic x;
 public dynamic X { get { return x; } set { x = value; } }
 
@@ -138,7 +138,7 @@ public static dynamic GetX(dynamic obj)
 
 というコードは、以下のようなコードに変換されます。
 
-```csharp
+```csharp {title="Dynamic属性"}
 [Dynamic]
 private object x;
 
@@ -162,7 +162,7 @@ public static object GetX([Dynamic] object obj)
 なので、以下のようなコードはコンパイルエラーを起こしたりします。
 （dynamic 型と object 型でメソッドを「[オーバーロード](../structured/st_function.md#overload)」することはできません。）
 
-```csharp
+```csharp {title="dynamic と object でオーバーロードはできない"}
 // 同じパラメーター型の GetX が2個あるぞって怒られる。
 public static dynamic GetX(dynamic obj)
 {
@@ -179,7 +179,7 @@ public static object GetX(object obj)
 
 ジェネリック型の型引数を dynamic にした場合はどうなるかというと、
 
-```csharp
+```csharp {title="型引数を dynamic に"}
 static void GenericDynamic(
     IDictionary<object, object> a,
     IDictionary<dynamic, object> b,
@@ -192,7 +192,7 @@ static void GenericDynamic(
 
 この例の場合、以下のようなコードに変換されます。
 
-```csharp
+```csharp {title="型引数を dynamix にした結果がこれだよ"}
 private static void GenericDynamic(
     IDictionary<object, object> a,
     [Dynamic(new bool[] { false, true, false })] IDictionary<object, object> b,
@@ -212,7 +212,7 @@ bool[] の引数付きの Dynamic 属性が付きます。
 続いて CallSite の初期化部分。
 上述のコードのうち、以下のようなコードの部分について。
 
-```csharp
+```csharp {title="CallSite の初期化"}
 if (site2 == null)
 {
     // d.X 相当のコードを動的生成するための CallSite を作る。
@@ -252,14 +252,14 @@ C# 4.0 の場合（要するに、CSharpGetMemberBinder の中の挙動として
 最後に、実際に動的コード生成。
 CallSite.Target デリゲートを呼んでいる部分について。
 
-```csharp
+```csharp {title="CallSite.Target 呼び出し"}
     site1.Target.Invoke(site1, d);
 ```
 
 
 Target デリゲートの中身は、初期状態では以下のようなコードと同じ状態になっています。
 
-```csharp
+```csharp {title="CallSite.Target の初期状態"}
 static  object _anonymous(CallSite site, object x)
 {
     return site.Update(site, x);
@@ -273,7 +273,7 @@ Point 型のインスタンスを引数として Target が呼ばれたとしま
 この Update が呼ばれて、動的コード生成が行われます。
 その結果、Target が以下のような状態に更新されます。
 
-```csharp
+```csharp {title="Point 型に対応"}
 static  object _anonymous(CallSite site, object x)
 {
     if (x is Point)
@@ -312,7 +312,7 @@ DLR や C# 4.0 以外（例えば JavaScript とか）でも、同様の手法�
 Point 以外の型のインスタンスが来ると、当然また Target の更新がかかります。
 例えば、Vector3D を使って <code>GetX(new Vector3D(1, 2, 3));</code> とかすると、
 
-```csharp
+```csharp {title="Vector3D 型にも対応"}
 static  object _anonymous(CallSite site, object x)
 {
     if (x is Point)

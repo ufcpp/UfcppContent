@@ -17,7 +17,7 @@ aliases: []
 
 コレクション初期化子ってのは、例えば以下のようなやつのことです。
 
-```csharp
+```csharp {title="コレクション初期化子"}
 // この、{} の部分がコレクション初期化子。
 var x = new List<int> { 1, 2, 3, 4, 5 };
 ```
@@ -26,7 +26,7 @@ var x = new List<int> { 1, 2, 3, 4, 5 };
 
 最低限の実装をしてみると、以下のような感じ。
 
-```csharp
+```csharp {title="コレクション初期化子の最低限の条件を満たす例"}
 class MyList : IEnumerable
 {
     List<int> _list = new List<int>();
@@ -45,7 +45,7 @@ static void ListSample()
 
 この、コレクション初期化子は以下のように展開されます。
 
-```csharp
+```csharp {title="コレクション初期化子の展開結果"}
 var x = new MyList();
 x.Add(1);
 x.Add(2);
@@ -74,7 +74,7 @@ LINQもそうで、`Select`や`Where`など、所定のメソッドさえ持っ�
 
 まあ、問題になるとすると以下のような例ですかね。
 
-```csharp
+```csharp {title="コレクション初期化子の誤用の例"}
 struct Adder
 {
     public int Add(int x, int y) => x + y;
@@ -99,7 +99,7 @@ static void AdderSample()
 もちろん、`IEnumerable`の実装を義務付けたところで、あえて濫用することはできます。
 例えば、以下のような書き方なら現在の仕様でもできます。
 
-```csharp
+```csharp {title="GetEnumeratorを空実装して無理やりコレクション初期化子を使う例"}
 class Accumulator : IEnumerable
 {
     public int Sum { get; set; }

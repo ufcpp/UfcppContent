@@ -34,7 +34,7 @@ PowerShell は Windows XP、Windows Server 2003 もしくは Vista にインス�
 レジストリの値の設定も、いちいち .reg ファイルを書いたりしなくても、
 PowerShell 上からコマンド1行でできるのが素敵。
 
-```console
+```console {title="右クリックメニューに PowerShell を追加（Vista 用）"}
 > New-Item HKLM:\SOFTWARE\Classes\Directory\shell -N psh -Va PowerShell
 > New-Item HKLM:\SOFTWARE\Classes\Directory\shell\psh `
 -N command -Va "`"C:\Windows\system32\WindowsPowerShell\v1.0\powershell.exe`" `
@@ -51,6 +51,6 @@ Vista の場合、PowerShell を「管理者として実行」しないと権限
 上述の右クリックメニュー登録のついでに、
 以下のコマンドも1度実行しておくことをお勧めします。
 
-```console
+```console {title="実行ポリシーを変更"}
 > Set-ExecutionPolicy RemoteSigned
 ```

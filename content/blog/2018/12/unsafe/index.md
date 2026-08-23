@@ -40,7 +40,7 @@ C# の文法を拡張するよりは、こういう IL 実装なクラスを提�
 
 とはいえ、この`Unsafe`クラスをフル活用すると、こんなコードになります。
 
-```csharp
+```csharp {title="Unsafe クラス"}
 using System.Runtime.CompilerServices;
  
 class Program
@@ -60,7 +60,7 @@ class Program
 
 ちなみに、普通に C# で unsafe コードを使って同じものを書くと以下のようになります。
 
-```csharp
+```csharp {title="unsafe コードで同じもの"}
 unsafe static int UnsafeContext(int[] array)
 {
     var sum = 0;
@@ -90,7 +90,7 @@ unsafe static int UnsafeContext(int[] array)
 ですが、
 1つ決定的に違うのが、`ref`なら[ガベコレ](../../../../study/csharp/resource/rm_gc.md#garbage-collection)が追えるという点があります。
 
-```csharp
+```csharp {title="ref とガベコレ"}
 // ref 戻り値ならこんなコードを書いても平気。
 // 戻り値が「参照」されている限り、配列自体の参照がガベコレにトラッキングされる。
 ref int X()
@@ -117,7 +117,7 @@ unsafe int* Y()
 
 `Span<T>`は、以下のように、配列でもポインターでも統一的に扱える型です。
 
-```csharp
+```csharp {title="Span&lt;T&gt;"}
 using System;
 using System.Runtime.InteropServices;
  
@@ -165,7 +165,7 @@ class Program
 C# の unsafe コードの仕様では、ジェネリックな型はポインター化できません。
 とはいえ、この制限は実はちょっと厳しすぎです。
 
-```csharp
+```csharp {title="ジェネリック構造体とポインター"}
 // 値型しか含まない構造体はポインター化 (A*) できる。
 struct A
 {
@@ -195,7 +195,7 @@ C# 7.3 で [unmanaged 制約](../../../../study/csharp/interop/sp_unsafe.md#unma
 
 が、`Unsafe`クラスを使えば(今でも)そんな制限をガン無視できます。
 
-```csharp
+```csharp {title="ジェネリック構造体からポインターを取得"}
 using System;
 using System.Runtime.CompilerServices;
  

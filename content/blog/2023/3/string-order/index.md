@@ -47,7 +47,7 @@ WebAssembly みたいなフットプリントを小さくしたい環境では�
 
 例えば以下のようなコードを実行すると、
 
-```csharp
+```csharp {title="Order がカルチャー依存"}
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
 // InvariantGlobalization true のときはこの行が例外になるのでコメントアウトして実行。
@@ -126,7 +126,7 @@ Ordinal: あ、い、ア、イ。)
 `Order`/`OrderBy` もカルチャー依存ということは…
 ベンチマークを取ってみましょう…
 
-```csharp
+```csharp {title="Order のベンチマーク取ってみる"}
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 

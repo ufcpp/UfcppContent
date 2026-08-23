@@ -54,7 +54,7 @@ C# 7.X の頃と 8.0 で何が変わったかというと、
 
 無条件に「参照型でも null を拒否する」としてしまうと、既存の C# コードの挙動を壊します。
 
-```csharp
+```csharp {title="opt-in した瞬間に警告"}
 using System;
  
 class Program
@@ -102,7 +102,7 @@ opt-in 方式で `T` の意味が変わるnull許容参照型もだいぶ悩ん�
 
 以下のような書き方をします。
 
-```csharp
+```csharp {title="nullable ディレクティブ"}
 #nullable enable|disable|restore [warnings|annotations]
 ```
 
@@ -111,7 +111,7 @@ null 許容参照型を有効にしたければ`#nullable enable`、
 `#nullable restore`は「1つ前のコンテキストに戻す」という処理になります。
 `warnings`と`annotations`については後述しますが、省略可能で、省略した場合は「両方をオン・オフ」になります。
 
-```csharp
+```csharp {title="null 許容コンテキストの切り替え例"}
 public class Program
 {
     static void Main()
@@ -148,13 +148,13 @@ public class Program
 プロジェクト全体で null 許容コンテキストを切り替えるには、コンパイラー オプションを指定します。
 `csc` (C# コンパイラー)コマンドを直接使う場合は `/nullable` オプションで指定します。
 
-```console
+```console {title="csc の /nullable オプション" highlight-text="/nullable:enable"}
 csc source.cs /nullable:enable /langversion:8
 ```
 
 csproj (C# プロジェクト)ファイル中でオプション指定する場合、`<Nullable>` タグを使います。
 
-```xml
+```xml {title="csproj の Nullable オプション" highlight-text="&lt;Nullable&gt;enable&lt;/Nullable&gt;"}
 <Project Sdk="Microsoft.NET.Sdk">
  
   <PropertyGroup>
@@ -190,7 +190,7 @@ null 許容参照型には以下の2つの側面があります。
 
 例えば、元々以下のようなコードがあったとします。
 
-```xml
+```xml {title="既存コード(null 許容参照型に未対応)"}
 string NotNull() => "";
 string MaybeNull() => null;
  
@@ -204,7 +204,7 @@ int M(string s)
 
 これに対して、単に `#nullable enable` を付けるとアノテーションも警告も有効になります。
 
-```xml
+```xml {title="enable のみ指定(アノテーションも警告も有効化)"}
 #nullable enable
 string NotNull() => "";
 string? MaybeNull() => null; // 戻りに ? を追加
@@ -220,7 +220,7 @@ int M(string s) // この s は非 null の意味になる
 `#nullable enable warnings` とすると警告のみ有効化できます。
 この場合、引数の `string` は「C# 7.3 以前と同じ扱い」で、null 許容かどうか「未指定」になります。
 
-```xml
+```xml {title="警告のみ有効化"}
 // 警告のみ有効化
 #nullable enable warnings
 int M(string s) // この s は null 許容かどうか「未指定」
@@ -253,7 +253,7 @@ null 許容参照型は、フロー解析(flow analysis)で成り立っていま
 
 例えば以下のように、変数 `s` に何を代入したかによって、それ以降、`s.Length` というようなメンバー アクセス時に警告が出たり出なかったりします。
 
-```csharp
+```csharp {title="null 許容参照型はフロー解析で null チェックをしてる"}
 // null 許容で宣言されていても、
 string? s;
  
@@ -272,7 +272,7 @@ Console.WriteLine(s.Length);
 
 分岐などもきっちり調べられます。
 
-```csharp
+```csharp {title="フロー解析は分岐もちゃんと調べる"}
 private static void M(bool flag)
 {
     string? s;
@@ -295,7 +295,7 @@ private static void M(bool flag)
 null 許容(`?` が付いてる)変数・引数の場合はメンバー アクセスの時点で警告が出ます。
 また、null 代入の有無の他、`is null` や `== null` での null チェックをすれば、それ以降の警告は消えます。
 
-```csharp
+```csharp {title="警告の出方"}
 using System;
  
 public class Program
@@ -324,7 +324,7 @@ public class Program
 ちなみに、一度何らかのメンバー アクセスをした時点で「null チェックした」扱いを受けます。
 「null 許容型を null チェックなしで使ってる」警告が出るのは最初の1個だけになります。
 
-```csharp
+```csharp {title="メンバー アクセスを持って null チェック扱い"}
 #nullable enable
 void M(string? x)
 {
@@ -340,7 +340,7 @@ void M(string? x)
 例えば以下のように、非 null な変数 `x` と一致したら null 許容な変数 `y` も null ではないことが確定します。
 これもちゃんとフロー解析の対象になっています。
 
-```csharp
+```csharp {title="他の変数との比較で null チェック"}
 void M(string x, string? y)
 {
     // 非 null な x との比較で y が null じゃないことがわかる。
@@ -362,7 +362,7 @@ void M(string x, string? y)
 フィールドやプロパティに対するフロー解析では、利便性を優先して、シングルスレッド動作を前提としたフロー解析をしています。
 例えば、以下のように、マルチスレッド動作をしていて、他のスレッドで書き換えられてしまうと、本来 null が来るはずがなく警告も出ない場面で null 参照例外が起こることがあります。
 
-```csharp
+```csharp {title="別スレッドで null を代入することで不整合が起こる例"}
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -407,7 +407,7 @@ class Program
 非 null 型のフィールドやプロパティは、コンストラクター内で必ず初期化しなければなりません。
 例えば以下のコードはフィールド `X`、プロパティ `Y` のところに警告が出ます。
 
-```csharp
+```csharp {title="非 null なフィールド・プロパティを初期化しないと警告が出る"}
 class A
 {
     public string X;
@@ -417,7 +417,7 @@ class A
 
 以下のように、コンストラクターを追加すれば警告が消えます。
 
-```csharp
+```csharp {title="初期化コードを足すことで警告が消える"}
 class A
 {
     public string X;
@@ -429,7 +429,7 @@ class A
 ちなみに、コンストラクターは書いたものの初期化を忘れると、
 フィールド・プロパティの方だけではなく、コンストラクターの方にも警告が出ます。
 
-```csharp
+```csharp {title="初期か忘れ警告"}
 class A
 {
     public string X;
@@ -442,7 +442,7 @@ class A
 ちなみに、最終的には非 null になるものの、コンストラクターの時点ではどうしても一時的に null を入れておかないといけない場面というものもあったりします。
 そういうときの回避策として、後述する [`!` 演算子](#null-forgiving)というものもあります。
 
-```csharp
+```csharp {title="null をあえて見逃すための ! 演算子" highlight-text="!"}
 class A
 {
     // 一時的に null になってしまうことを強制的に容認
@@ -459,7 +459,7 @@ opt-in にしたので、null 許容(nullable)、非 null (non-nullable, not nul
 要するに、C# 7.3 以前で書かれたコードや、`#nullable enable annotations`になっていない場所で書かれたコードの型が oblivious です。
 oblivious な型の変数は一切フロー解析の対象になりません。
 
-```csharp
+```csharp {title="oblivious な変数"}
 using System;
  
 public class Program
@@ -495,7 +495,7 @@ null 許容参照型の `?` は単なるアノテーション(フロー解析の
 この実装上の差から、使い勝手にも差が出てきます。
 まず、以下のように、`T` と `T?` でオーバーロードできるのは値型だけです。
 
-```csharp
+```csharp {title="オーバーロードの可否"}
 #nullable enable
 // 参照型の場合、アノテーションだけが違うオーバーロードは作れない。
 void M(string x) { }
@@ -510,7 +510,7 @@ void M(int? x) { }
 参照型の場合は null チェックさえ挟めば以後「null ではない」という扱いを受けますが、
 値型の場合は null チェックを挟んでも `Nullable<T>` は `Nullable<T>` のままです。
 
-```csharp
+```csharp {title="null チェック後の挙動"}
 #nullable enable
 // 参照型の場合
 void M(string? x)
@@ -535,7 +535,7 @@ null 許容参照型は `typeof` 演算子に対しても使えません。
 `T` と `T?` が内部的には同じ型なのに、`typeof(T?)` を認めると混乱の元です。
 以下のコードはコンパイル エラーになります。
 
-```csharp
+```csharp {title="null 許容参照型に対して typeof を使うとコンパイル エラー"}
 var t = typeof(string?);
 ```
 
@@ -553,13 +553,13 @@ null 許容参照型のアノテーションのコンパイル結果は、
 例えば以下のようなメソッドを考えます。
 引数が4つあって、非nullとnull許容がそれぞれ2つずつになっています。
 
-```csharp
+```csharp {title="非null引数が2つ、null許容引数が2つのメソッド"}
 public void M(string a, string? b, string c, string? d) { }
 ```
 
 初期の案では `Nullable` 属性だけを使って、以下のようにコンパイルする予定でした。
 
-```csharp
+```csharp {title="初期案(Nullable のみ)"}
 public void M([Nullable(1)]string a, [Nullable(2)]string b, [Nullable(1)]string c, [Nullable(2)]string d) { }
 ```
 
@@ -567,7 +567,7 @@ public void M([Nullable(1)]string a, [Nullable(2)]string b, [Nullable(1)]string 
 その後、少しでも属性の数を減らすために、`NullableContext` 属性が追加され、
 以下のようにコンパイルされる仕様になりました。
 
-```csharp
+```csharp {title="NullableContext の導入"}
 [NullableContext(1)]
 public void M(string a, [Nullable(2)]string b, string c, [Nullable(2)]string d) { }
 ```
@@ -591,7 +591,7 @@ public void M(string a, [Nullable(2)]string b, string c, [Nullable(2)]string d) 
 属性は、総数が極力少なくなるように付きます。
 例えば以下のような2つのメソッドを考えます。
 
-```csharp
+```csharp {title="非 null、null 許容の引数の数"}
 class A
 {
     // 非 null が2個、null 許容が1個
@@ -605,7 +605,7 @@ class A
 これは、以下のようなコードにコンパイルされます。
 要するに、多い方が「context」になることで、属性が必要な引数が減ります。
 
-```csharp
+```csharp {title="多い方を Context で指定"}
 class A
 {
     // 非 null が多いので NullableContext(1)
@@ -623,7 +623,7 @@ class A
 型自体に `NullableContext` が付く例も見てみましょう。
 以下のような2つの型を考えます。
 
-```csharp
+```csharp {title="型に NullableContext が付く例"}
 class A
 {
     public void M1(string a) { }
@@ -651,7 +651,7 @@ class B
 この場合、メソッドに付く属性が減るように、クラスに `NullableContext` 属性が付きます。
 以下のようなコンパイル結果になります。
 
-```csharp
+```csharp {title="型に NullableContext が付いた結果"}
 [NullableContext(1)]
 class A
 {
@@ -684,7 +684,7 @@ class B
 `Nullable`属性の引数が配列になります。
 例えば以下のようなメソッドを考えます。
 
-```csharp
+```csharp {title="引数がジェネリックな型の場合"}
 public void M(
     Dictionary<string, string?> a,
     Dictionary<string, string?>? b,
@@ -696,7 +696,7 @@ public void M(
 また、「`Dictionary` 自体」と「`Dictionary` の型引数」でも null 許容性が違っています。
 こういう場合には、以下のような属性が付きます。
 
-```csharp
+```csharp {title="引数がジェネリックな型の場合の Nullable 属性"}
 public void M(
     [Nullable(new byte[] { 1, 1, 2 })]
     Dictionary<string, string?> a,
@@ -727,7 +727,7 @@ public void M(
 例えば、前述のクラス `A`、`B` のメソッド `M1` の引数を調べたい場合を考えます。
 (`M1` に関連する部分を抜粋して再掲します。)
 
-```csharp
+```csharp {title="型に NullableContext が付いた結果(M1 がらみを抜粋)"}
 [NullableContext(1)]
 class A
 {
@@ -766,7 +766,7 @@ null 許容なものを、`is null` や `== null` などによるチェック抜
 前者のわかりやすい例は循環参照がある場合です。
 お互いにインスタンスを持ち合う必要がある場面では、どちらか片方は絶対にコンストラクターよりも後でないとインスタンスを渡せません。
 
-```csharp
+```csharp {title="循環参照があるとき、コンストラクターでは非 null 保証ができない"}
 class PairedNode
 {
     // このプロパティに対する警告が消せない。
@@ -793,7 +793,7 @@ null に関するフロー解析は結構ぎりぎりまで作業をしている
 `ReferenceEquals` に関する解析は Visual Studio 16.3 Preview 1 (2019年7月)時点では未対応、
 Preview 2 (同8月) 時点で初めて対応しました。
 
-```csharp
+```csharp {title="ReferenceEquals でも等価チェックになるはずなのに"}
 void M(string x, string? y)
 {
     if (ReferenceEquals(x, y))
@@ -814,7 +814,7 @@ void M(string x, string? y)
 そこで用意されているのが後置き `!` 演算子です。
 `a!` というように、式の後ろに `!` を付けると、式 `a` の null 許容性は無視して常に非 null 扱いになります。
 
-```csharp
+```csharp {title="! を付けて強制非 null 扱い" highlight-ranges="sha256:4eb902c5d1f9193636f30cd429b681d268a5fc9247e2b604dd4287af75125c89;8:55-8:60,18:32-18:33"}
 #nullable enable
 using System;
  
@@ -857,7 +857,7 @@ null suppression (null 抑止) 演算子などと呼ばれています。
 実際に `NullReferenceException` を起こすのはメンバー アクセスした瞬間です。
 問題の真の原因と、例外が発生する場所がずれるので注意が必要です。
 
-```csharp
+```csharp {title="! 演算子を誤用するとそれなりに面倒事を起こす例"}
 #nullable enable
 using System;
  
@@ -900,7 +900,7 @@ null 許容型の `T?` は参照型と値型でだいぶ実装方法が違いま
 以下のコードはコンパイル エラーになります。
 (後述しますが、C# 9.0 でもこの書き方には注意が必要です。)
 
-```csharp
+```csharp {title="制約なしの型引数 T に対して T? は使えない"}
 #nullable enable
 class Generic<T>
 {
@@ -913,7 +913,7 @@ class Generic<T>
 `struct` 制約は [null 許容値型](sp2_nullable.md)の仕様によるもので、C# 2.0 の頃から書けます。
 「制約に単に `class` と書くと非 null の意味になる」というのが新仕様になります。
 
-```csharp
+```csharp {title="制約を付けて T? を使えるようにできる例"}
 #nullable enable
 using System;
  
@@ -984,7 +984,7 @@ class Program
 また、新たに `notnull` 制約というものが追加されて、
 非 null 参照型もしくは非 null 値型のみを受け付けることができます。
 
-```csharp
+```csharp {title="notnull 制約"}
 #nullable enable
  
 class NotNullConstraint<T>
@@ -1016,7 +1016,7 @@ class Program
 (参照型と値型での null 許容の仕様の差が大きすぎてちょっと難しいようです。
 もし実現しようと思うなら、C# コンパイラーのレベルでは無理で、.NET ランタイムの型システム レベルでの改修が必要。)
 
-```csharp
+```csharp {title="notnull を付けても T? とは書けない"}
 #nullable enable
  
 class NotNullConstraint<T>
@@ -1030,7 +1030,7 @@ class NotNullConstraint<T>
 
 一応、[次節](#annotation-attributes)で説明する属性を使ってある程度の問題回避はできます。
 
-```csharp
+```csharp {title="アノテーション属性(次節で説明)で問題回避"}
 #nullable enable
 using System.Diagnostics.CodeAnalysis;
  
@@ -1060,7 +1060,7 @@ class Program
 C# 9.0 で、制約なしのジェネリック型引数 `T` に対して `T?` と書けるようになりました。
 ジェネリクスの話の冒頭で「C# 8.0 ではエラーになる」と説明した以下のコードが C# 9.0 では有効です。
 
-```csharp
+```csharp {title="C# 9.0 で有効になったコード"}
 #nullable enable
 class Generic<T>
 {
@@ -1076,7 +1076,7 @@ class Generic<T>
 どちらかというと「defaultable ([規定値](rm_struct.md#default)になる可能性がある)」というべきで、
 以下のように、`T?` であっても null にはならない(規定値の 0 になる)ことがあります。
 
-```csharp
+```csharp {title="ジェネリックな T? はどちらかというと「defaultable」"}
 #nullable enable
  
 using System;
@@ -1107,7 +1107,7 @@ static T? M<T>() => default;
 
 `default` 制約が必要になるのは以下のような状況です。
 
-```csharp
+```csharp {title="default 制約"}
 #nullable disable
  
 // さかのぼること、null 許容参照型導入前にから以下のような書き方ができた。
@@ -1249,7 +1249,7 @@ class Derived : Base
 
 まず、[`Array.Resize`](https://docs.microsoft.com/ja-jp/dotnet/api/system.array.resize) は配列の長さを変更するメソッドですが、参照引数で null を受け付けはするものの、絶対に非 null なインスタンスを作って渡します。そこで、以下のように、`NotNull` 属性が付いています。
 
-```csharp
+```csharp {title="ref の入力と出力で null 許容性が違う例"}
 public class Array
 {
     // null を受け付けるけど、返しはしない。
@@ -1259,7 +1259,7 @@ public class Array
 
 その結果、以下のようなコードが書けます。
 
-```csharp
+```csharp {title="Array.Resize の AllowNull の効果"}
 using System;
  
 class Program
@@ -1283,7 +1283,7 @@ class Program
 そこで、以下のように、`AllowNull` が付いています。
 (`AllowNull` は意味としては「入力(引数とか)に `null` を許す」なので、プロパティに付けると `set` の `value` が nullable の意味になるみたいです。)
 
-```csharp
+```csharp {title="set と get で null 許容性が違う例"}
 public class TextWriter
 {
     [AllowNull] // set だけ null 許容
@@ -1300,7 +1300,7 @@ public class TextWriter
 ジェネリクス都合で `T?` と書けない問題を `MaybeNull` 属性で回避している例としては
 [`StrongBox<T>.Value`](https://docs.microsoft.com/ja-jp/dotnet/api/system.runtime.compilerservices.strongbox-1.value)や[`ThreadLocal<T>.Value`](https://docs.microsoft.com/ja-jp/dotnet/api/system.threading.threadlocal-1.value)などがあります。
 
-```csharp
+```csharp {title="ジェネリクス都合で MaybeNull"}
 public class StrongBox<T>
 {
     [MaybeNull] public T Value => ...
@@ -1320,7 +1320,7 @@ public class ThreadLocal<T>
 また、[`string.IsNullEmpty`](https://docs.microsoft.com/ja-jp/dotnet/api/system.string.isnullorempty) のように、他の処理と兼ねて null チェックしているものがあります。
 こういう場合に `NotNullWhen` などの条件付き事後条件を使います。
 
-```csharp
+```csharp {title="条件付き事後条件の例"}
 public class Version
 {
     // 戻り値が true の時には非 null 値を version 変数に入れて返す。
@@ -1342,7 +1342,7 @@ public class String
 また、[Volatile.Read](https://docs.microsoft.com/ja-jp/dotnet/api/system.threading.volatile.read)/[Write](https://docs.microsoft.com/ja-jp/dotnet/api/system.threading.volatile.write)のように、引数の値を戻り値や他の参照引数に伝搬するものがあって、値の伝搬によって null 許容性も伝搬します。
 こういう場合に使うのが `NotNullIfNotNull` 属性です。
 
-```csharp
+```csharp {title="null 許容性の伝搬"}
 class Path
 {
     // 引数が null のとき、戻り値に null を素通しする仕様。
@@ -1369,7 +1369,7 @@ class Volatile
 一部のメソッドは、そのメソッドを呼んだら最後、もう絶対に正常には戻ってこないものがあります。例えば[Environment.FailFast](https://docs.microsoft.com/ja-jp/dotnet/api/system.environment.failfast)はプログラムを即座に止めてしまう(おかしな状態のままプログラムが進むよりは、一思いにクラッシュした方がマシな場面で使う)メソッドなので、このメソッドの呼び出しから後ろが実行されることは絶対にありません。
 こういう場合、フロー解析もそのメソッドまでで止めてしまいたく、そのために使う属性が `DoesNotReturn` です。
 
-```csharp
+```csharp {title="呼んだら最後、絶対に戻ってこないメソッド"}
 public static class Environment
 {
     [DoesNotReturn]
@@ -1379,7 +1379,7 @@ public static class Environment
 
 これは以下のような使い方を想定しています。
 
-```csharp
+```csharp {title="DoesNotReturn 付きメソッドの利用例"}
 static int M(string? s)
 {
     if (s is null)
@@ -1395,7 +1395,7 @@ static int M(string? s)
 
 プログラムのクラッシュの他、絶対に例外を出すことがわかっているメソッドにも `DoesNotReturn` 属性が使えます。
 
-```csharp
+```csharp {title="絶対に例外を出すメソッドにも DoesNotReturn が使える"}
 static int M(string? s)
 {
     if (s is null)
@@ -1418,7 +1418,7 @@ static void Throw(string name) => throw new ArgumentNullException(name);
 このメソッドは引数が false の時に限ってプログラムを止めます。
 こういうメソッドに対して使うがの `DoesNotReturnIf` 属性です。
 
-```csharp
+```csharp {title="条件次第で戻ってこなくなるメソッドの例"}
 public static class Debug
 {
     public static void Assert([DoesNotReturnIf(false)] bool condition);
@@ -1489,7 +1489,7 @@ null 許容参照型はそれなりの期間を掛けて徐々に完成してい
 (コンストラクター内で全要素に対して 非 null 初期化しているかどうかまで解析したい。)
 しかし、少なくとも C# 8.0 時点では警告を出せません。
 
-```csharp
+```csharp {title="C# 8.0 時点でのフロー解析の不足の例"}
 #nullable enable
 using System;
  
@@ -1535,7 +1535,7 @@ C# 8.0 のリリース直後の時点では、
 null 許容性に関する属性はメソッドの外に対してだけ影響を及ぼしていました。
 以下のように、メソッド内ではフロー解析に寄与していませんでした。
 
-```csharp
+```csharp {title="アノテーション属性の影響はメソッド内部には及んでなかった(リリース当初)"}
 #nullable enable
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -1574,7 +1574,7 @@ class Program
 例えば以下のような状況を考えます
 (実際、標準ライブラリの [`DeflateStream`](https://docs.microsoft.com/ja-jp/dotnet/api/system.io.compression.deflatestream)クラスに似たようなコードが入っています)。
 
-```csharp
+```csharp {title="間接的な初期化をしているフィールド"}
 class DeflateStream
 {
     private Stream _stream; // コンストラクターで初期化していないので警告が出る。
@@ -1595,7 +1595,7 @@ class DeflateStream
 これまでだとこの状況を正しくフロー解析する手段がありませんでした。
 これに対して、`MemberNotNull` 属性が追加されたことで以下のように書けるようになりました。
 
-```csharp
+```csharp {title="MemberNotNull で警告消し"}
 class DeflateStream
 {
     private Stream _stream; // Initialize 内で初期化される。
@@ -1624,7 +1624,7 @@ class DeflateStream
 
 実際例えば、LINQ to Object (`Enumerable`クラス(`System.Linq` 名前空間の各種拡張メソッド)には .NET Core 3.0 (C# 8.0 と同世代)時点では[アノテーション属性](#annotation-attributes)が付いていません。
 
-```csharp
+```csharp {title=".NET Core 3.0 時点のアノテーション不足の例"}
 #nullable enable
 using System;
 using System.Linq;

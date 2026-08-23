@@ -53,7 +53,7 @@ C# 8.0 の変更は大部分もう[null 許容参照型](../../../../study/cshar
 [switch 式](../../../../study/csharp/datatype/typeswitch.md#switch-expression)でターゲットからの型推論が効くようになりました。
 要するに以下のようなコードが 16.3 Preview 2 からコンパイルできるようになります。
 
-```csharp
+```csharp {title="target-typed switch"}
 class Program
 {
     class Base { }

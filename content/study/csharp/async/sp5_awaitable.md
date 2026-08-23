@@ -50,7 +50,7 @@ await の対象にできるのは、
 以下のような Awaitable パターンを実装したクラスです。
 （インターフェイスなどの実装も不要で、いわゆる「[ダックタイピング](../appendix/ap_term.md#ducktype)」的。）
 
-```csharp
+```csharp {title="Awaitable パターン"}
 // 同名のメソッドを持っていれば型は問わない。
 class Awatable
 {
@@ -109,7 +109,7 @@ GetAwaiter は拡張メソッドでもいいので、独自実装で挙動を変
 せっかくの非同期呼び出しを同期化（処理が終わるまでブロッキング）するという、使い道のない実装ですが、
 シンプルなのでサンプルとしては分かりやすいと思います。
 
-```csharp
+```csharp {title="awaitable/awaiter の実装例"}
 public class BlockingAwaitable<T>
 {
     private BlockingAwaiter<T> _awaiter;
@@ -148,7 +148,7 @@ public static class BlockingAwaitableExtensions
 
 以下のように利用します。
 
-```csharp
+```csharp {title="awaitable/awaiter の実装例"}
 varresult = await task.ToBlocking();
 ```
 
@@ -162,7 +162,7 @@ varresult = await task.ToBlocking();
 
 イテレーターの場合には、yield return の部分が以下のようなコードに置き換えられます。
 
-```csharp
+```csharp {title="yield return の置き換え"}
 state = State1; // 次に復帰するときのための状態の記録
 Current = x;    // 戻り値を Current に保持
 return true;    // いったん処理終了
@@ -175,7 +175,7 @@ case State1:    // 次に呼ばれたときに続きから処理するための�
 
 非同期メソッドの場合には、await の部分が以下のようなコードに置き換えられます。
 
-```csharp
+```csharp {title="await の置き換え"}
 state = State1;                  // 次に復帰するときのための状態の記録
 var task = RunAsync();
 var awaiter = task.GetAwaiter();
@@ -197,7 +197,7 @@ awaiter = default(T);            // ガベージ コレクションが働きや�
 ちなみに、awaitable/awaiter を介さない単純な実装に展開するなら、以下のようになります。
 （実際には、await は Task クラス以外にも使えますし、単純に ContinueWith を呼ぶより少しだけ複雑な処理（後述の SynchronizationContext を利用）を行っています。）
 
-```csharp
+```csharp {title="awaitable/awaiter を介さず直接 Task を使うなら"}
 state = State1;                  // 次に復帰するときのための状態の記録
 var task = AnotherTaskAsync();
 if (!task.IsCompleted)
@@ -218,7 +218,7 @@ var y = task.Result;             // タスクの結果を受け取り
 例えば、以下のような非同期メソッドを考えてみましょう。
 要は、複数の URL から文字列をダウンロードしてきて表示するプログラムです（ShowTitle の実装については割愛）。
 
-```csharp
+```csharp {title="非同期メソッドの例"}
 private static async void RunTaskAsync(params string[] uriList)
 {
     var client = new WebClient();
@@ -236,7 +236,7 @@ private static async void RunTaskAsync(params string[] uriList)
 イテレーターを使って似たようなことができなくもないです。
 上記の例は、イテレーターを使って書くと以下のようになります。
 
-```csharp
+```csharp {title="イテレーターを使って疑似的に非同期メソッド"}
 private static void RunPseudoAsync(params string[] uriList)
 {
     AsyncHelper(RunIterator(uriList));
@@ -284,7 +284,7 @@ private static void AsyncHelper(IEnumerable<Task> asyncTask)
 
 さらに、イテレーター相当の処理も展開すると以下のようになります。
 
-```csharp
+```csharp {title="非同期メソッドの展開結果"}
 private static void RunAsyncInside(IEnumerable<string> uriList)
 {
     Action a = null;

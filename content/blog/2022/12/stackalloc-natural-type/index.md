@@ -23,7 +23,7 @@ aliases: []
 C# の文法の中には、「基本的にはターゲットを見て型決定するけども、別にターゲットがなくても型決定できる」ような文法がいくつかあります。
 例えば整数リテラルがそうなんですが、以下のように、ターゲット(左辺)の型が決まっていても決まっていなくても大丈夫です。
 
-```csharp
+```csharp {title="ターゲットからの型推論もできるし、推論できなかった時の自然な型も決まってる"}
 // ターゲット(左辺)の型に合わせて「100」の型を決めてる。
 byte x = 100;
 short y = 100;
@@ -39,7 +39,7 @@ var v = 100;
 
 他だと、補間文字列リテラルも「ターゲット型推論 + 自然な型持ち」です。
 
-```csharp
+```csharp {title="補間文字列の自然な型"}
 using System.Runtime.CompilerServices;
 
 var x = 100;
@@ -65,7 +65,7 @@ var v = $"abc{x}";
 
 そして、安全な `stackalloc` の方が後入りなのもあって、`stackalloc` の自然な型はポインターのままです。
 
-```csharp
+```csharp {title="stackalloc は基本的にはポインター"}
 unsafe
 {
     // stackalloc の昔からの用法。
@@ -89,7 +89,7 @@ var p = stackalloc int[4];
 その後、C# 8.0 で、式の途中に `stackalloc` を書けるようになりました。
 (C# 8.0 未満では、ここまで上げてきた例のように、変数に直接代入する場所にしか書けませんでした。)
 
-```csharp
+```csharp {title="式の途中で stackalloc"}
 // C# 8.0 未満でも書けた書き方:
 Span<int> s = stackalloc int[4];
 
@@ -107,7 +107,7 @@ C# 8.0 のとき、「式の途中に `stackalloc` を書いた場合に限り�
 
 例えば、以下のようなコードを書くと、`M(int*)` と `M(Span<int>)` の呼び分けが掛かります。
 
-```csharp
+```csharp {title="式の途中かどうかで自然な型が違う stackalloc"}
 unsafe
 {
     // こちらは昔ながらの型決定で、 stackalloc の自然な型はポインター。
@@ -136,7 +136,7 @@ class C
 実は `()` の有無で自然な型を変えれます。
 `()` を付ければ safe。
 
-```csharp
+```csharp {title="() を付ければ safe"}
 // 前述のとおり、自然な型が int* で、unsafe 必須。
 // (今は unsafe を付けていないのでコンパイル エラー。)
 var p = stackalloc int[4];
@@ -149,7 +149,7 @@ var s = (stackalloc int[4]);
 そしてまあ、型推論推進派(左辺と右辺で2度同じ型名を書きたくない)にとっては、
 安全な `stackalloc` を使いつつも型推論を掛けるための回避策になります。
 
-```csharp
+```csharp {title="左右に同じ型名を2度も書きたくない"}
 // こう書いてもいいけども…
 Span<int> s1 = stackalloc int[4];
 
@@ -167,7 +167,7 @@ struct LongLongStructName1234567890qwertyuiopasdfghjklzxcvbnm { }
 
 そして、拡張メソッドも呼べるみたいですよ。
 
-```csharp
+```csharp {title="(stackalloc) なら拡張メソッドも呼べる"}
 var x = (stackalloc int[4]).M(123);
 
 static class C
@@ -184,7 +184,7 @@ static class C
 
 というか、以下のようなコードを書いててふと思いつき。
 
-```csharp
+```csharp {title="&quot;&quot;u8 拡張メソッド"}
 using System.Text;
 
 // u8 リテラルの自然な型は ReadOnlySpan<byte> だったはず。
@@ -210,7 +210,7 @@ static class C
 ちなみに、拡張メソッド解決の仕様的に、以下のようなコードだとダメ(コンパイル エラー)だったりします。
 `Span<T>` から `ReadOnlySpan<T>` への暗黙の型変換は、拡張メソッド解決の際には使われません。
 
-```csharp
+```csharp {title="ReadOnlySpan の拡張メソッドに対しては使えない"}
 using System.Text;
 
 // これは呼べない。

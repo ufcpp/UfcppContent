@@ -202,14 +202,14 @@ System.Math クラスに、数学用の関数・定数などが定義されて�
 </table>
 
 
-```csharp
+```csharp {title="数学関数の例"}
 Console.Write("{0}\n", Math.Sin(2.0 / 3.0 * Math.PI));
 Console.Write("{0}\n", Math.Log10(10000));
 Console.Write("{0}\n", Math.Pow(2, 8));
 ```
 
 
-```console
+```console {title="数学関数の例"}
 0.866025403784439
 4
 256
@@ -289,7 +289,7 @@ ToEven の場合は、0.5 のときに条件分岐したりテーブル参照し
 時刻は System.DateTime で、
 時刻の差、すなわち、経過時間は System.TimeSpan クラスで表されます。
 
-```csharp
+```csharp {title="DateTime と TimeSpan"}
 DateTime t = DateTime.Now;
 Console.Write("{0}\n", t);
 Console.Write("{0}/{1,2}/{2,2} ({3}) {4,2}:{5:d02}:{6:d02}\n",
@@ -304,7 +304,7 @@ Console.Write("キーを押すまでの時間: {0}[ms]", ts.TotalSeconds);
 ```
 
 
-```console
+```console {title="DateTime と TimeSpan"}
 2005/09/21 16:51:44
 2005/ 9/21 (Wednesday) 16:51:44
 エンターキーを押して

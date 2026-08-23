@@ -59,7 +59,7 @@ Hello World!<comment>お決まりのあれが表示される</comment>
 
 ## <a id="sec-generated-title-3"></a> <a id="result"></a>結果
 
-```csharp
+```csharp {title="C# ソースファイル"}
 namespace Test
 {
   class ConsoleApp1
@@ -75,7 +75,7 @@ namespace Test
 
 
 
-```xml
+```xml {title="XML"}
 <?xml version="1.0" encoding="utf-8"?>
 <document title="ソースファイル" xmlns="http://ufcpp.net/study/document">
   <section title="概要" id="abst">
@@ -85,7 +85,7 @@ namespace Test
   </section>
 </document>
 ```
-```console
+```console {title="コンソール画面"}
 > csc Test.cs
 > Test.exe
 Hello World!

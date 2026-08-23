@@ -32,7 +32,7 @@ Roslyn 化(C# コンパイラーを C# で書き直し)した初期の頃から�
 配列初期化子とかコレクション初期化子との対称性のためでしたが、
 構文解析的にきつくて断念。
 
-```csharp
+```csharp {title="当初案(没)"}
 var array = new[] { 1, 2 };
 
 // 当初案1:
@@ -53,7 +53,7 @@ if (array is [length] { 1, _ })
 
 結果的に、`[]` だけにすることに。
 
-```csharp
+```csharp {title="[] でリスト パターンを表現"}
 var array = new[] { 1, 2 };
 
 Console.WriteLine(array is []); // 長さ0マッチ。false。
@@ -74,7 +74,7 @@ Console.WriteLine(array is [ 1, .., 2 ]); // 1で開始、2で終了、任意長
 ちなみに、 `..` の後ろには入れ子でパターンを書けます。
 主に [var パターン](../../../../study/csharp/datatype/patterns.md#var)で「マッチ結果の一部分」を抜き出すのに使います。
 
-```csharp
+```csharp {title="..var"}
 ReadOnlySpan<int> a = new[] { 1, 2, 3, 4, 5 };
 
 if (a is [1, ..var middle, 5])
@@ -85,7 +85,7 @@ if (a is [1, ..var middle, 5])
 
 あんまり意味はないですが、`[..[]]` とかも書けます。
 
-```csharp
+```csharp {title=".. の後ろに再度 []"}
 ReadOnlySpan<int> a = new[] { 1, 2, 3, 4, 5 };
 Console.WriteLine(a is [1, ..[2, 3, 4], 5]); // true
 ```
@@ -99,7 +99,7 @@ Console.WriteLine(a is [1, ..[2, 3, 4], 5]); // true
 
 例えば先ほどの `a is [1, ..var middle, 5]` であれば、以下のようなコードと同じ結果になります。
 
-```csharp
+```csharp {title="[1, ..var middle, 5] を展開"}
 ReadOnlySpan<int> a = new[] { 1, 2, 3, 4, 5 };
 
 if (a.Length >= 2 && a[0] == 1)
@@ -114,7 +114,7 @@ if (a.Length >= 2 && a[0] == 1)
 
 `^` と `..` もさらに展開すると以下のコードと同じ意味。
 
-```csharp
+```csharp {title="^ と .. も展開"}
 ReadOnlySpan<int> a = new[] { 1, 2, 3, 4, 5 };
 
 var length = a.Length;
@@ -136,7 +136,7 @@ if (length >= 2 && a[0] == 1)
 ここで逆の発想が出て来たみたいです。
 配列・コレクションの初期化の方も `[]` リテラルでやる案。
 
-```csharp
+```csharp {title="[] でコレクション初期化"}
 using System.Collections.Immutable;
 
 int[] array = [ 1, 2 ];

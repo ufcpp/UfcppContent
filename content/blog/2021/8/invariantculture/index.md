@@ -15,7 +15,7 @@ aliases: []
 
 以下のコード、実行環境によって出力結果が変わります。
 
-```csharp
+```csharp {title="DateTime の ToString がカルチャー依存"}
 Console.WriteLine(new DateTime(2021, 8, 22));
 ```
 
@@ -119,7 +119,7 @@ Blazor では、
 
 以下のようなコードを書くと、北米フォーマットになります。
 
-```csharp
+```csharp {title="Invariant = 北米"}
 using System.Globalization;
 Console.WriteLine(new DateTime(2021, 8, 22).ToString(CultureInfo.InvariantCulture));
 ```

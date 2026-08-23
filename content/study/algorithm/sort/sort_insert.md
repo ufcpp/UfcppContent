@@ -48,7 +48,7 @@ aliases:
 
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/InsertSort.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/InsertSort.cs)
 
-```csharp
+```csharp {title="挿入ソート"}
 /// <summary>
 /// 挿入ソート。
 /// </summary>

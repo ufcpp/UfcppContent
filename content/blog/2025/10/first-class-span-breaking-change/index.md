@@ -17,7 +17,7 @@ C# 14 で導入された [First-class Span](../../../../study/csharp/resource/sp
 
 例えば標準ライブラリの範囲内の拡張メソッド呼び出しでも以下のような差が生じます。
 
-```csharp
+```csharp {title="C# 14 にすると挙動が変わる拡張メソッド呼び出しの例"}
 int[] array = [1, 2, 3, 4];
 
 // C# 13 まで: System.Linq.Enumerable.Contains (IEnumerable 引数) が呼ばれる
@@ -32,7 +32,7 @@ Console.WriteLine(array.Contains(2));
 
 ただ、これのせいで問題を起こしそうだった拡張メソッドとして `Reverse` があったりします。
 
-```csharp
+```csharp {title="Reverse は危うかった"}
 int[] array = [1, 2, 3, 4];
 
 // C# 13 まで: Enumerable.Reverse だったから問題なし。
@@ -65,7 +65,7 @@ static class A
 
 1個目は以下のような `Where` メソッドです。
 
-```csharp
+```csharp {title="Span 自己書き換え Where"}
 static class InPlaceLinq
 {
     // Reverse の例と同様、「Span 相手は自己書き換えでいいだろ」的なメソッド。
@@ -89,7 +89,7 @@ static class InPlaceLinq
 自己書き換えな時点で用途はかなり限定的で、
 本来は以下のような利用を想定しています。
 
-```csharp
+```csharp {title="本来の「自己書き換え Where」利用"}
 struct SomeItem
 {
     public bool Flag { get; }
@@ -122,7 +122,7 @@ class SomeRepository
 ところが、first-class Span が入ったことで、配列に対して `Enumerable.Where` よりも優先度が高くなってしまい…
 意図しないところで呼ばれてしまうことに…
 
-```csharp
+```csharp {title="意図せず「自己書き換え Where」の方が呼ばれてしまった例"}
 int[] array = [1, 2, 3, 4];
 
 // C# 13 まで: System.Linq.Enumerable.Where が呼ばれる。

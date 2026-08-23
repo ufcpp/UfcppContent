@@ -39,7 +39,7 @@ Proposal: "data" classes for C# #1667](https://github.com/dotnet/csharplang/pull
 
 印象としては、[匿名型](../../../../study/csharp/oop/oo_class.md#anonymous)の延長で、ちゃんとしたクラス・構造体に昇格させたいとい時に使うものな感じです。
 
-```csharp
+```csharp {title="data クラス" highlight-ranges="sha256:964c7acb1a6d854722291dcd681a537ce4d72743b7c71dd13e5e4305a0fd44af;4:1-4:5"}
 using System;
 
 // class に data 修飾子を付ける
@@ -81,7 +81,7 @@ private なものや、自動実装でないものは除外されます。
 例えば上記の例では、`X`, `Y` の2つのプロパティは get-only ですが、`new Point { X = 1, Y = 2 }` という書き方が許されます。
 これを認めるために、get-only プロパティを、実際には以下のようにコード生成する予定だそうです。
 
-```csharp
+```csharp {title="get-only プロパティでオブジェクト初期化子を使うためのトリック"}
 class Point
 {
     // <> から始まる名前は、通常の C# コードでは書けない。
@@ -114,7 +114,7 @@ class Program
 
 以下のように、クラス名に続けてタプルみたいなものを書くことで、タプルに名前が付きます。
 
-```csharp
+```csharp {title="名前付きタプル"}
 using System;
 
 // 型名の後ろにタプル的なものを書く

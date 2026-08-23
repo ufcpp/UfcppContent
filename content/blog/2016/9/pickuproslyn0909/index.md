@@ -21,7 +21,7 @@ aliases: []
 
 要するに、例えば以下みたいなswapコード書いたとして、
 
-```csharp
+```csharp {title="タプルと分解を使ったswap"}
 var x = 1;
 var y = 2;
 (x, y) = (y, x);
@@ -29,7 +29,7 @@ var y = 2;
 
 今だとこうなる。
 
-```csharp
+```csharp {title="ValueTupleのコンストラクター呼び出しが発生"}
 var x = 1;
 var y = 2;
 var v = new ValueTuple<int, int>(x, y);
@@ -40,7 +40,7 @@ y = v.Item2;
 これ、実のところこの時点でタプルの特別扱いが掛かってます。
 分解の仕様上は、以下のようなコードになるべきところを、タプルでまでそれをやるのは無駄だってことで、`Item1`、`Item2`の直参照に。
 
-```csharp
+```csharp {title="本来の分解構文の展開結果"}
 var x = 1;
 var y = 2;
 var v = new ValueTuple<int, int>(x, y);
@@ -51,7 +51,7 @@ v.Deconstruct(out x, out y);
 なのでたぶん、以下のような感じのコードに展開されるのではないかと。
 ほぼ、普通のswapコードに。
 
-```csharp
+```csharp {title="最適化でnew ValueTupleを消去"}
 var x = 1;
 var y = 2;
 var tempX = x;

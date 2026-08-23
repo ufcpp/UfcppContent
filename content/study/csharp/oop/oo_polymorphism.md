@@ -47,7 +47,7 @@ aliases:
 このとき、変数の型を<strong id="statictype" class="keyword">静的な型</strong>といい、
 実際に格納されているインスタンスの型を<strong id="dynamictype" class="keyword">動的な型</strong>といいます。
 
-```csharp
+```csharp {title="派生クラスのインスタンスを基底クラスの変数に格納"}
 class Base{}
 class Derived : Base{}
 
@@ -75,7 +75,7 @@ class DynamicTypeTest
 静的な型の情報は以下のように <strong id="typeof" class="keyword">typeof 演算子</strong>を用いて取得することが出来ます。
 typeof 演算子は <code>System.Type</code> というクラスのインスタンスを返します。
 
-```csharp
+```csharp {title="静的型情報 typeof"}
 typeof(クラス名)
 ```
 
@@ -88,7 +88,7 @@ typeof(クラス名)
 
 動的な型の情報は以下のように <code>GetType</code> メソッドを用いて取得します。
 
-```csharp
+```csharp {title="動的型情報 GetType"}
 変数名.GetType()
 ```
 
@@ -96,7 +96,7 @@ typeof(クラス名)
 
 ##### <a id="sec-generated-title-4"></a>サンプル
 
-```csharp
+```csharp {title="動的型情報のサンプル"}
 using System;
 
 class Base{}
@@ -174,7 +174,7 @@ class DowncastTest
 
 is 演算子はキャスト可能かどうかを調べるための演算子で以下のようにして使用します。
 
-```csharp
+```csharp {title="is 演算子"}
 変数名 is 型名
 ```
 
@@ -182,7 +182,7 @@ is 演算子はキャスト可能かどうかを調べるための演算子で�
 is 演算子を適用した結果は bool 型になり、
 左辺の変数が右辺の型にキャスト可能ならば true を、不能ならば false を返します。
 
-```csharp
+```csharp {title="is 演算子の例" highlight-ranges="sha256:ad777eb5165d3ac4a9c8aba50ce68131796cc98070574f205af24cf3e1bb3710;14:8-14:21,18:8-18:21"}
 using System;
 
 class Base{}
@@ -214,7 +214,7 @@ b = new Derived1();
 
 as 演算子はキャストと同じような働きをする演算子で、以下のようにして使用します。
 
-```csharp
+```csharp {title="as 演算子"}
 変換先の変数 = 変換元の変数 as 型名
 ```
 
@@ -222,7 +222,7 @@ as 演算子はキャストと同じような働きをする演算子で、以�
 キャストとの違いは、
 もし型変換が出来ない場合には結果が null になるということです。
 
-```csharp
+```csharp {highlight-ranges="sha256:1478b6a7e13160662a467bb15a56fe14ba02b8cda32166be50931ce59d5ed7f6;15:9-15:22,20:9-20:22"}
 using System;
 
 class Base{}
@@ -261,7 +261,7 @@ b = new Derived1();
 
 C# 7では、`is`演算子で以下のような書き方ができるようになりました。
 
-```csharp
+```csharp {title="is 演算子の拡張"}
 変数名 is 型名 新しい変数名
 ```
 
@@ -269,7 +269,7 @@ C# 7では、`is`演算子で以下のような書き方ができるようにな
 そして、キャストできるとき、そのキャスト結果が新しい変数に入ります。
 例えば、以下のような書き方ができます。
 
-```csharp
+```csharp {title="C# 7の新しいis演算子の例"}
 static void TypeSwitch(object obj)
 {
     // C# 7での新しい書き方
@@ -288,7 +288,7 @@ C# では、何も指定しない通常のメソッド呼び出し時、
 基底クラスと派生クラスに同名のメソッドがある場合、
 どちらのメソッドが呼び出されるかは静的な型によって決定されます。
 
-```csharp
+```csharp {title="静的型情報に基づいたメソッドが呼び出し"}
 using System;
 
 class Base
@@ -331,7 +331,7 @@ Derived.Test()
 以下のように、
 メソッドに <em>virtual</em> という修飾子を付けます。
 
-```csharp
+```csharp {title="動的型情報に基づいたメソッドが呼び出し" highlight-ranges="sha256:aae84d9edcc4f46f43bb91d76c5d95468916f3cbadf09a66003e6a56fe025b29;5:10-5:17,10:10-10:18"}
 using System;
 
 class Base
@@ -397,7 +397,7 @@ Derived.Test()
 年齢を取得するプロパティ <code>Age</code> は、virtual にしておいて、
 とりあえず意味のない値を返しておきます。
 
-```csharp
+```csharp {title="人間の基底クラス"}
 class Person
 {
   protected string name;
@@ -418,7 +418,7 @@ class Person
 次に正直者を表すクラス(<code>Truepenny</code>)を定義します。
 <code>Truepenny</code> の <code>Age</code> プロパティでは実年齢をそのまま返します。
 
-```csharp
+```csharp {title="正直者クラス"}
 /// <summary>
 /// 正直者。
 /// 年齢を偽らない。
@@ -443,7 +443,7 @@ class Truepenny : Person
 <code>Liar</code> の <code>Age</code> プロパティでは、
 歳を取るにつれ大幅に鯖を読んだ値を返します。
 
-```csharp
+```csharp {title="嘘つきクラス"}
 /// <summary>
 /// 嘘つき。
 /// 鯖を読む(しかも、歳取るにつれ大幅に)。
@@ -473,7 +473,7 @@ class Liar : Person
 <code>Equivocator</code> の <code>Age</code> プロパティでは、
 実年齢を四捨五入した値を返します。
 
-```csharp
+```csharp {title="いい加減な人のクラス"}
 /// <summary>
 /// いいかげん。
 /// 大体の歳しか答えない。
@@ -496,7 +496,7 @@ class Equivocator : Person
 
 おまけで永遠の17歳。
 
-```csharp
+```csharp {title="永遠の17歳"}
 /// <summary>
 /// いくつになったって気持ちは17歳。
 /// </summary>
@@ -520,7 +520,7 @@ class Seventeenist : Person
 その人の自己紹介文を画面に表示するメソッドを用意し、
 正直者、嘘つき、いい加減な人のそれぞれに自己紹介をしてもらいます。
 
-```csharp
+```csharp {title="Person クラスとその派生クラスの利用例"}
 using System;
 
 class PolymorphismTest
@@ -595,7 +595,7 @@ C# 9.0 (.NET 5.0)から、仮想メソッドの戻り値に共変性が認めら
 
 例えば以下のようなコードを書けるようになります。
 
-```csharp
+```csharp {title="仮想メソッド戻り値の共変性"}
 class Base
 {
     public virtual Base Clone() => new Base();
@@ -611,7 +611,7 @@ class Derived : Base
 
 get のみのプロパティでも同様に、共変なオーバーライドができます。
 
-```csharp
+```csharp {title="get のみのプロパティの共変戻り値"}
 class Base
 {
     public virtual Base P { get; }
@@ -645,7 +645,7 @@ C# 9.0 時点では共変戻り値を使えるのはクラスの仮想メソッ�
 
 例えば以下のようなコードはおそらく書きたい意図とは異なる挙動になると思います。
 
-```csharp
+```csharp {title="インターフェイスの共変戻り値は C# 9.0 時点ではないという例1"}
 interface IA
 {
     IA M();
@@ -661,7 +661,7 @@ interface IB : IA
 
 以下のようなコードはコンパイル エラーになります。
 
-```csharp
+```csharp {title="インターフェイスの共変戻り値は C# 9.0 時点ではないという例2"}
 interface IA
 {
     public IA M() => null;
@@ -676,7 +676,7 @@ interface IB : IA
 
 以下のような実装クラスもコンパイル エラーになります。
 
-```csharp
+```csharp {title="インターフェイスの共変戻り値は C# 9.0 時点ではないという例3"}
 interface IA
 {
     IA M();
@@ -698,7 +698,7 @@ class ImpleA : IA
 
 まず、三角形や円等の共通の基底クラスとなる <code>Shape</code> クラスを以下のように作成。
 
-```csharp
+```csharp {title="Shape"}
 /// <summary>
 /// 2次元空間上の図形を表すクラス。
 /// 三角形や円等の共通の基底クラス。
@@ -715,7 +715,7 @@ class Shape
 三角形 <code>Triangle</code> クラスと
 円 <code>Circle</code> クラスを作成。
 
-```csharp
+```csharp {title="Triangle"}
 /// <summary>
 /// 2次元空間上の三角形をあらわすクラス
 /// </summary>
@@ -723,7 +723,7 @@ class Triangle : Shape
 ```
 
 
-```csharp
+```csharp {title="Circle"}
 /// <summary>
 /// 2次元空間上の円をあらわすクラス
 /// </summary>
@@ -735,7 +735,7 @@ class Circle : Shape
 #### 解答例 1
 
 
-```csharp
+```csharp {title="Shape、Triangle、Circle"}
 using System;
 
 /// <summary>

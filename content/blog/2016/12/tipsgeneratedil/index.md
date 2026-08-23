@@ -20,15 +20,15 @@ C#は構文糖衣が結構多い言語です。
 
 例えば[クエリ式](../../../../study/csharp/data/sp3_linq.md#query)がわかりやすいですが、以下の3つの式は全く同じ意味になります。
 
-```csharp
+```csharp {title="クエリ式"}
 from x in data where x > 2 select x * x
 ```
 
-```csharp
+```csharp {title="クエリ式 → メソッド呼び出しに展開"}
 data.Where(x => x > 2).Select(x => x * x)
 ```
 
-```csharp
+```csharp {title="拡張メソッド → 静的メソッドに展開"}
 Enumerable.Select(Enumerable.Where(data, x => x > 2), x => x * x)
 ```
 
@@ -57,7 +57,7 @@ C#上の構文糖衣でどうこうできるわけではなくて、.NETのメ�
 
 例えばC# 4.0以降で以下のようなコードを書いたとしましょう。型引数`T`に、共変であることを示す`out`修飾子を付けています。
 
-```csharp
+```csharp {title="共変なジェネリック型引数T"}
 interface IWrapper<out T>
 {
     T Value { get; }
@@ -94,7 +94,7 @@ ILはそんな安全性とか気にしないので、昔から参照戻り値を
 
 例えば、C# 7で以下のようなコードを書いたとします。
 
-```csharp
+```csharp {title="参照戻り値を使ったC#コード"}
 static ref int RefMax(ref int x, ref int y)
 {
     if (x >= y) return ref x;
@@ -104,7 +104,7 @@ static ref int RefMax(ref int x, ref int y)
 
 コンパイル結果は以下の通り。`&`が参照を表す記号です。
 
-```cil
+```cil {title="IL的には参照は &amp;"}
 .method private hidebysig static int32&  RefMax(int32& x,
                                                 int32& y) cil managed
 {
@@ -129,7 +129,7 @@ static ref int RefMax(ref int x, ref int y)
 例えば、以下のようなunsafeなコードを書いてみます。
 ポインターになっただけで、やっていることは先ほどの参照を使ったコードとまったく同じです。
 
-```csharp
+```csharp {title="ポインターを使ったC#コード"}
 unsafe static int* RefMax(int* x, int* y)
 {
     if (*x >= *y) return x;
@@ -139,7 +139,7 @@ unsafe static int* RefMax(int* x, int* y)
 
 こちらのコンパイル結果は以下のようになります。`&`が`*`に変わった以外の部分は一字一句たがわず、先ほどのコードと完全に一致しています。
 
-```cil
+```cil {title="IL的にはポインターは*"}
 .method private hidebysig static int32*  RefMax(int32* x,
                                                 int32* y) cil managed
 {
@@ -180,7 +180,7 @@ unsafe static int* RefMax(int* x, int* y)
 以下のような感じで、実はほぼ素通しです。
 ロード(`ldarg`)して、即リターン(`ret`)。
 
-```cil
+```cil {title="参照とポインターは実はほぼ素通しで変換可能"}
 .method public hidebysig static void* AsPointer<T>(!!T& 'value') cil managed aggressiveinlining
   {
         .custom instance void System.Runtime.Versioning.NonVersionableAttribute::.ctor() = ( 01 00 00 00 )

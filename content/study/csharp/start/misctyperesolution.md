@@ -21,7 +21,7 @@ C# の[変数](st_variable.md#variable)や[式](st_variable.md#expression)はそ
 そして、代入(`=`)などの処理では、左右両辺の型が一致しないとコンパイル時にエラーを起こします。
 例えば以下のコードはコンパイルできません。
 
-```csharp
+```csharp {title="型の不一致でのコンパイル エラー"}
 int x = "abc";
 ```
 
@@ -29,7 +29,7 @@ int x = "abc";
 [ローカル変数の型推論(`var` 変数宣言)](sp3_inference.md#type-inference)が代表例で、
 例えば以下のような書き方をすると、「右辺の型に合わせて `x` の型が自動的に `string` になる」という挙動になります。
 
-```csharp
+```csharp {title="ローカル変数の型推論"}
 var x = "abc";
 ```
 
@@ -37,7 +37,7 @@ var x = "abc";
 [デリゲート](../functional/sp_delegate.md)や[匿名関数](../functional/fun_localfunctions.md#anonymous-function)が代表例で、
 例えば以下のコードは「型が決定できなくてコンパイル エラー」になります。
 
-```csharp
+```csharp {title="左辺の型が必須な構文"}
 using System;
  
 class Program
@@ -63,7 +63,7 @@ class Program
 ただ、同様の型決定は、必ずしも「左右」になっていない構文でも発生します。
 例えば、メソッド呼び出し([オーバーロード解決](../structured/miscoverloadresolution.md))の場合は「左右」というよりは「内外」といった方がいいかもしれません。
 
-```csharp
+```csharp {title="型決定の「左右」、「内外」"}
 using System;
  
 class Program
@@ -101,7 +101,7 @@ class Program
 元々 C# ではソース型の方を明示的に指定して、ターゲット型の方を自動決定することが多いです。
 なので、単に推論(inference)とか解決(resolution)という場合、この向き(ソース型からの決定)なことが多いです。
 
-```csharp
+```csharp {title="ソース型からの型決定"}
 using System;
  
 class Program
@@ -128,7 +128,7 @@ class Program
 また、C# 8.0 で入った [`switch` 式はターゲットからの型決定](../datatype/typeswitch.md#target-typed)をしていますが、
 こちらも「target typed switch」と言われたりします。
 
-```csharp
+```csharp {title="ターゲット型からの型決定"}
 static void M(bool b)
 {
     // 以前の C# では default(DateTime) と書く必要があった。
@@ -182,7 +182,7 @@ static void M(bool b)
 ちなみに、組み合わせも行けます。
 以下のように、`switch` 式中の条件演算子中の `new` みたいな入れ子になった状況でもターゲット型推論が働きます。
 
-```csharp
+```csharp {title="ターゲット型推論の入れ子"}
 using System;
  
 // target-typed switch 式中の
@@ -204,7 +204,7 @@ TimeSpan X(int i, bool b) => i switch
 C# でも、C# 2.0 や 3.0 から導入された構文が多いです。
 例えば、C# 1.0 (2000年発表、2002年正式リリース)時代には以下のような書き方はできませんでした。
 
-```csharp
+```csharp {title="C# 1.0 時代"}
 static void Main()
 {
     // C# 2.0 から。
@@ -223,7 +223,7 @@ static void Main()
 整数リテラルや null などは実は「ターゲット型からの型決定」をしています
 (正確に言うと「暗黙的型変換」なんですが、いずれにせよターゲット型が決まるまで解釈が確定しません)。
 
-```csharp
+```csharp {title="整数リテラルの型決定"}
 // byte リテラルや short リテラルは存在していなくて、「整数リテラル」の暗黙的型変換で代用している。
 byte a = 1;  // この 1 は byte (に代入可能)
 short b = 1; // この 1 は short (に代入可能)
@@ -251,7 +251,7 @@ byte[] e = new[] { 1, 2 };
 ソースから型決定する構文とターゲットから型決定する構文は、当然ですが両立はできません。
 どちらもあいまいでは型決定できません。片方は明示的な型指定が必要になります。
 
-```csharp
+```csharp {title="推論に推論は重ねられない"}
 class Program
 {
     static void Main()
@@ -273,7 +273,7 @@ class Program
 ちなみに、型推論は「後から」競合を起こす原因になり得たりもします。
 例えば以下のようなコードはコンパイルできるコードなんですが、
 
-```csharp
+```csharp {title="有効な型推論"}
 using System;
  
 class Program
@@ -291,7 +291,7 @@ class Program
 
 ここに1行、オーバーロードを増やすとどちらを呼ぶべきか決定できなくてコンパイル エラーになります。
 
-```csharp
+```csharp {title="オーバーロードの追加が破壊的変更になり得る"}
 using System;
  
 class Program
@@ -317,7 +317,7 @@ class Program
 型推論に対しては `int` 扱いになりますし、
 オーバーロード解決では `int` が最優先になります。
 
-```csharp
+```csharp {title="整数リテラルの既定の型は int"}
 // ターゲットの型を見ている。
 byte a = 1;  // この 1 は byte 扱い
 short b = 1; // この 1 は short 扱い
@@ -332,7 +332,7 @@ f(1); // 型引数の推論でも int 扱い
 [文字列補間](st_string.md#string-interpolation)にも優先度があります。
 文字列補間は `IFormattable` 型よりも `string` が優先です。
 
-```csharp
+```csharp {title="文字列補間は IFormattable より string が優先"}
 using System;
  
 class Program
@@ -367,7 +367,7 @@ class Program
 多数の候補の中から1つを選ばないといけないので単純に検索コストがかかります。
 例えば、以下のようなコードでは `Parse("")` で呼び出せるメソッドの候補が4つあります。
 
-```csharp
+```csharp {title="複数の候補があるメソッド呼び出しの例"}
 // この1行によって DateTime.Parse(string) がオーバーロード解決候補に入る。
 using static System.DateTime;
  
@@ -394,7 +394,7 @@ class Derived : Base
 標準ライブラリ中にも多数のオーバーロードを持つメソッドは多く、容易に複雑化します。
 実は、C# ソースコードのコンパイル時間のうち数割程度はオーバーロード解決が占めているといわれています。
 
-```csharp
+```csharp {title="いかにも複雑そうなオーバーロード解決の例"}
 // 以下の5つの Parse が候補に
 // int Parse(ReadOnlySpan<char> s, NumberStyles style = NumberStyles.Integer, IFormatProvider provider = null)
 // int Parse(string s)
@@ -431,7 +431,7 @@ class Program
 これは、作法的な問題(メンバーの型は明示すべきという思想)もありますが、
 簡単に高コストになりうるから認められないという問題もあるそうです。
 
-```csharp
+```csharp {title="メンバーの型推論は認めない"}
 // 以下、仮定的な構文。C# では認めていない(おそらく今後も認めない)。
  
 // 再帰しているので当然型決定が不可能。
@@ -458,7 +458,7 @@ static var F() => M(1.2, new object());
 例えば、以下のように、多重のラムダ式からオーバーロード解決することができます。
 (ただし制限あり。)
 
-```csharp
+```csharp {title="多重ラムダ式からのオーバーロード解決"}
 using System;
  
 class Program
@@ -483,7 +483,7 @@ class Program
 
 暗黙の型変換の類は[タプル](../datatype/tuples.md)の中でも働きますし、この場合、タプルが入れ子になっていても大丈夫です。
 
-```csharp
+```csharp {title="入れ子のタプル"}
 // 整数リテラルはターゲット型を見て暗黙的に変換がかかる。
 // たとえ入れ子のタプルになっていてもこの仕組みは働く。
 (byte, (short, long)) t = (1, (2, 3));
@@ -496,7 +496,7 @@ t = i;
 
 [target-typed な`switch` 式](../datatype/typeswitch.md#target-typed)も、入れ子になっていても平気です。
 
-```csharp
+```csharp {title="入れ子の swtich 式"}
 static byte? M(object obj) => obj switch
 {
     string s => s.Length switch
@@ -513,7 +513,7 @@ static byte? M(object obj) => obj switch
 以下のコードはコンパイル エラーになります。
 (ただし、条件演算子については C# 9.0 でターゲット型推論を導入する予定があります。)
 
-```csharp
+```csharp {title="ターゲット型からの型推論を持っていない構文"}
 static void Fail()
 {
     // 以下のいずれもコンパイル エラー。
@@ -542,7 +542,7 @@ static T M<T>(T x, T y) => x;
 ちょっとわかりにくいと思うので具体例を挙げます。
 まず、以下のようなクラスを用意します。
 
-```csharp
+```csharp {title="型階層の例"}
 class Base { }
 class A : Base { }
 class B : Base { }
@@ -550,7 +550,7 @@ class B : Base { }
 
 このクラスと、あと、int を使って共通型を決定できるかどうかの例を示します。
 
-```csharp
+```csharp {title="共通型の決定"}
 // 型の候補は A, B。それぞれお互いには変換不可なので、共通型の決定不可。
 var ng1 = x ? new A() : new B();
  
@@ -577,7 +577,7 @@ var ok3 = x ? 1 : default(int?);
 こちらは「基底クラスに限る」(共通インターフェイスの場合は相変わらず)という条件付きです。
 インターフェイスが絡むと以下のように多段派生があったり複雑なのでおそらく認められません。
 
-```csharp
+```csharp {title="共通型の決定が難しい例"}
 // 型 D と F の「共通型」といわれると何？
 // インターフェイス J？ それともクラス A？
 interface I { }

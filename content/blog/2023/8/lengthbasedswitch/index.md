@@ -23,7 +23,7 @@ aliases: []
 
 例として以下のような `switch` を考えます。
 
-```csharp
+```csharp {title="文字列に対する switch の例"}
 static int StringSwitch(string s) => s switch
 {
     "abc" => 0,
@@ -70,7 +70,7 @@ Length-based switch dispatch (文字列長ベースの switch 分配)という�
 (実際はもうちょっと goto だらけのコードになりますが、
 見やすさ優先で変更。)
 
-```csharp
+```csharp {title="length-based switch の例"}
 StringSwitch("");
 
 static int StringSwitch(string s) => s.Length switch

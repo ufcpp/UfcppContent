@@ -148,7 +148,7 @@ class Program
 ```
 
 
-```console
+```console {title="実行結果"}
 C:\Windows\Microsoft.NET\Framework\v4.0.30319\mscorlib.dll
 C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System\v4.0_4.0.0.0__b77a5c561934e089\System.dll
 ```

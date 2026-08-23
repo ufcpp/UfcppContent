@@ -38,7 +38,7 @@ aliases: []
 
 例えば以下のようなコードを考えます。
 
-```csharp
+```csharp {title="インターフェイス越しかどうかの差"}
 interface IValue { int Value { get; } }
 class Impl : IValue { public int Value => 0; }
  
@@ -79,7 +79,7 @@ public class VirtualCallBanchmark
 
 以下のようなコードを書いた時、 .NET Core 2.0 以前と 2.1 以降で実行時間が大きく変わります。
 
-```csharp
+```csharp {title="devirtualization の例"}
 public interface IX { void M(); }
 public class X : IX { public void M() { } }
 
@@ -111,7 +111,7 @@ devirtualization が掛かれば、ボックス化のコストももろとも最
 
 以下のような構造体があったとします。
 
-```csharp
+```csharp {title="IDisposable を実装した構造体"}
 struct X : IDisposable
 {
     public bool IsDisposed;
@@ -121,7 +121,7 @@ struct X : IDisposable
 
 で、この `Dispose` メソッドを以下のように呼び出してみます。
 
-```csharp
+```csharp {title="X 構造体の Dispose メソッド呼び出し"}
 // (1) インターフェイス引数で受け取って呼ぶ
 public static void Interface(IDisposable x) => x.Dispose();
  
@@ -142,7 +142,7 @@ public static void Generic<T>(T x) where T : IDisposable => x.Dispose();
 ジェネリックな型のインスタンスに対して等値比較する際、
 `EqualityComparer<T>.Default`をよく使います。
 
-```csharp
+```csharp {title="EqualityComparer&lt;T&gt;.Default"}
 public abstract class EqualityComparer<T> : IEqualityComparer, IEqualityComparer<T>
 {
     public static EqualityComparer<T> Default { get; } // ← こいつ
@@ -166,7 +166,7 @@ public abstract class EqualityComparer<T> : IEqualityComparer, IEqualityComparer
 .NET Core 2.0 では 0.95ns、
 .NET Core 2.1 では 0.05ns と、1桁実行速度が違います。
 
-```csharp
+```csharp {title="EqualityComparer&lt;T&gt;.Default のベンチマーク"}
 public class EqualityComparerDefaultBenchmark
 {
     [Benchmark]

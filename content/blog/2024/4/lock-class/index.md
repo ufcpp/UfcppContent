@@ -24,7 +24,7 @@ aliases: []
 C# は**なぜか**任意のオブジェクト インスタンスを使って排他制御ができます。
 ロックを掛けるために以下のようなコードを書くことになります。
 
-```csharp
+```csharp {title="ロック用のオブジェクトをわざわざ用意"}
 class MultiThreadCode
 {
     private readonly object _syncObj = new object();
@@ -45,7 +45,7 @@ Java の `synchronized` ブロックも同じ仕様のはず。
 本来の思想としては「`lock()` の `()` 内には同時に操作されるとまずいリソースを書く」という感じのはず。
 そういわれると、`lock (任意のオブジェクト)` に正当性があるように感じます。
 
-```csharp
+```csharp {title="lock (任意オブジェクト) の本来の意図"}
 class Resource;
 
 class MultiThreadCode
@@ -69,7 +69,7 @@ class MultiThreadCode
 これがめんどくさく…
 とはいえ、面倒だからといって以下のようなことは**してはいけない**とされています。
 
-```csharp
+```csharp {title="ダメ！絶対！"}
 class MultiThreadCode
 {
     public void Run()
@@ -98,7 +98,7 @@ class MultiThreadCode
 「外に漏れるインスタンスでロックを取ってはいけない」というお作法があるからです。
 以下のようなコードを書かれる可能性があって困ります。
 
-```csharp
+```csharp {title="ダメな lock の例"}
 var x = new MultiThreadCode();
 
 // ここの lock と、MultiThreadCode.Run 内の lock (this) が同じオブジェクトをロックする。
@@ -121,7 +121,7 @@ class MultiThreadCode
 
 さらにいうと、外に漏れてダメなら以下のようなコードもダメになると。
 
-```csharp
+```csharp {title="これもダメ"}
 var x = new MultiThreadCode();
 
 // ここの lock と、MultiThreadCode.Run 内の lock (_items) が同じオブジェクトをロックする。
@@ -190,7 +190,7 @@ syncblock が何かという話は以下の英語の記事がわかりやすそ�
 C# の `lock` ステートメントをどうするかはいったん置いておいて(後述)、
 以下のような使い方を想定しているクラスです。
 
-```csharp
+```csharp {title="Lock クラス導入"}
 using System.Runtime.Versioning;
 
 // 今のペースなら、.NET 9 正式リリースまでには外れる気はする。
@@ -233,7 +233,7 @@ class MultiThreadCode
 この実装、 Visual Studio 17.10.0 Preview 2.0 ([3週間くらい前](https://github.com/ufcpp-live/UfcppLiveAgenda/issues/88))の時点で入ってるみたいです。
 以下のコードを書いて、ILSpy とかでコンパイル結果の中身を覗くと `using (_syncObj.EnterScope())` に置き換わっています。
 
-```csharp
+```csharp {title="Lock インスタンスに対する lock ステートメント"}
 class MultiThreadCode
 {
     private readonly Lock _syncObj = new();
@@ -253,7 +253,7 @@ class MultiThreadCode
 珍しくパターン ベースでなく、`Lock` でないと認識せず。
 まあ、需要がないんでしょうね。
 
-```csharp
+```csharp {title="Lock 専用なので、自作はできず"}
 // これは現状、既存の lock (Monitor.TryEnter を使ったコード)になる。 
 lock (new MyLock())
 {

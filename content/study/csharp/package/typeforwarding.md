@@ -33,7 +33,7 @@ aliases: []
 
 例えば、ActualLibraryという名前のライブラリがあって、この中に以下のようなクラスが定義されているとします。
 
-```csharp
+```csharp {title="ActualLibrary中"}
 public class Class1
 {
     public string Name => GetType().Assembly.GetName().Name + " / " + nameof(Class1);

@@ -81,7 +81,7 @@ C# 7では、タプルや型スイッチなどの機能が入ります。
 
 例えば以下のように書けます。
 
-```csharp
+```csharp {title="タプルの例" highlight-text="(int count, int sum)"}
 using System;
 using System.Collections.Generic;
 
@@ -121,7 +121,7 @@ class Program
 C# 7では、そのための分解構文(deconstruction)も追加されました。
 前節のコードを、分解を使うように書き換えると以下のようになります。
 
-```csharp
+```csharp {title="タプルを分解して受け取る" highlight-text="var (count, sum)"}
 var data = new[] { 1, 2, 3, 4, 5 };
 var (count, sum) = Tally(data);
 Console.WriteLine($"{sum}/{count}");
@@ -129,7 +129,7 @@ Console.WriteLine($"{sum}/{count}");
 
 ちなみに、分解はタプル専用の構文ではなく、以下のように、`Deconstruct`という名前のメソッド(拡張メソッドでも可)を持っている型なら何にでも使うことができます。
 
-```csharp
+```csharp {title="任意の型を分解する例" highlight-text="Deconstruct"}
 using System.Collections.Generic;
 
 class Program
@@ -164,7 +164,7 @@ C# 7では既存の出力引数にも利便性向上のための機能が追加�
 
 以下のように、out引数を受け取ると同時に、式の中で変数宣言できるようになりました。
 
-```csharp
+```csharp {title="out-var" highlight-text="out var x, out var y"}
 using System;
 
 struct Point
@@ -214,7 +214,7 @@ C# 7で、[`is`演算子](../oop/oo_polymorphism.md#downcast)や[`switch`ステ�
 この機能を型スイッチ(type switch)と呼びます。
 以下のような書き方ができます。
 
-```csharp
+```csharp {title="isとcaseの拡張の例" highlight-ranges="sha256:0d7e16f6933255420c8fb81235b9ea9a56a5f27559ba37bcbb5b4f2e4412542c;1:19-1:20,11:10-11:26,15:10-15:15"}
 if (obj is string s)
 {
     Console.WriteLine("string #" + s.Length);
@@ -258,7 +258,7 @@ switch (obj)
 例えば、分解では、複数の値のうち、1つだけを受け取りたい場合があったとします。
 こういう場合に、`_`を使うことで、値を受け取らずに無視することができます。
 
-```csharp
+```csharp {title="_ で値を破棄"}
 static (int quotient, int remainder) DivRem(int dividend, int divisor)
     => (Math.DivRem(dividend, divisor, out var remainder), remainder);
 
@@ -299,7 +299,7 @@ C# 7で入るものの多くが、値型と参照渡しを活用したメモリ�
 
 戻り値とローカル変数でも参照渡しを使えるようになりました。 書き方はほぼ参照引数と同じです。 戻り値の型の前、値を渡す側、値を受ける側それぞれに`ref`修飾子を付けます。
 
-```csharp
+```csharp {title="参照戻り値と参照ローカル変数の例"}
 using System;
 
 class Program
@@ -336,7 +336,7 @@ class Program
 入れ子の関数は、定義した関数の中でだけ使えます。
 この機能をローカル関数と呼びます。
 
-```csharp
+```csharp {title="ローカル関数の例" highlight-text="int f(int n) =&gt; n &gt;= 1 ? n * f(n - 1) : 1;"}
 using System;
 
 class Program
@@ -365,7 +365,7 @@ C# 6までは、[非同期メソッド](../async/sp5_async.md#async)の戻り値
 最も有効と思われる例は、`ValueTask<TResult>`構造体(`System.Threading.Tasks`名前空間)です。
 以下のようなコードが書けるようになります。
 
-```csharp
+```csharp {title="ValueTaskの例"}
 using System;
 using System.Threading.Tasks;
 
@@ -404,7 +404,7 @@ class Program
 2進数リテラルが書けるようになりました。
 また、数値リテラルの途中に、`_` を挟んで桁区切りに使えるようになりました。
 
-```csharp
+```csharp {title="数値リテラルがらみの新機能の例"}
 using System;
 
 class Program
@@ -431,7 +431,7 @@ class Program
 - [null合体演算子](../resource/sp2_nullable.md#nullableType)(`??`)の後ろ
 - [条件演算子](../structured/oo_exception.md)の第2、第3引数(条件式以外の部分。 `:` の前後)
 
-```csharp
+```csharp {title="throw 式"}
 // 式形式メンバーの中( => の直後)
 static void A() => throw new NotImplementedException();
 
@@ -456,7 +456,7 @@ C# 6で、メソッド、演算子、プロパティとインデクサー(get-on
 これが、C# 7では、コンストラクター、ファイナライザー、プロパティとインデクサー(get/set それぞれ)、イベント(add/removeそれぞれ)でも使えるようになりました。
 例えば、コンストラクターとファイナライザーであれば以下のように書けます。
 
-```csharp
+```csharp {title="コンストラクター、ファイナライザーを式形式で定義する例。"}
 class Counter
 {
     static int x;

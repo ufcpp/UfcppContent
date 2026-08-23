@@ -39,7 +39,7 @@ C# 9.0 に今回追加されたのは以下の3つです。
 
 以下のように、`ModuleInitializer` 属性を付けた静的メソッドが、モジュール読み込み時に呼ばれます。
 
-```csharp
+```csharp {title="ModuleInitializer"}
 using System;
 using System.Runtime.CompilerServices;
 
@@ -74,7 +74,7 @@ class Init
 
 [匿名関数](../../../../study/csharp/functional/fun_localfunctions.md#anonymous-function) ([ラムダ式](../../../../study/csharp/functional/sp_delegate.md#lambda)と[匿名メソッド式](../../../../study/csharp/functional/sp_delegate.md#anonymous-method))に対して `static` 修飾を付けて、[キャプチャ](../../../../study/csharp/functional/sp2_anonymousmethod.md#closure)の抑止ができるようになりました。
 
-```csharp
+```csharp {title="静的匿名関数"}
 using System;
 
 // OK
@@ -96,7 +96,7 @@ C# 8.0 時点で[ローカル関数に関しては同様の機能](../../../../s
 
 条件演算子 (`? :`)で、第2項と第3項で共通の型を決められないときに、[ターゲット型](../../../../study/csharp/start/misctyperesolution.md#target-type)を見て型を決定できるようになりました。
 
-```csharp
+```csharp {title="target-typed conditional exrpression"}
 void targetTypedConditional(bool x)
 {
     // target-typed で、1 : null の部分がちゃんと int? になる。

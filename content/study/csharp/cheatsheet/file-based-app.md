@@ -34,13 +34,13 @@ C# 14 の `#!` と `#:` (無視ディレクティブ)について説明します
 改めて、 .NET 10 で C# ファイルを直接1コマンドで実行できるようになりました。
 例えば、以下の1行だけ書いたファイル `app1.cs` を用意して、
 
-```csharp
+```csharp {title="1行だけの .cs ファイル"}
 Console.WriteLine("🐈");
 ```
 
 以下のようなコマンドを打つと、この C# ファイルを単独で実行できます。
 
-```console
+```console {title="app1.cs ファイルを直接実行する"}
 > dotnet app1.cs
 🐈
 ```
@@ -73,7 +73,7 @@ C# コンパイラーからすると「単に無視するもの」なので、�
 C# 14 で、C# にもこの1行を入れることができるようになりました。
 例えば前節の `app1.cs` ファイルにちょっと手を加えて以下のような内容にします。
 
-```csharp
+```csharp {title="shebang 入り .cs ファイル"}
 #!/usr/bin/env dotnet
 Console.WriteLine("🐈");
 ```
@@ -81,7 +81,7 @@ Console.WriteLine("🐈");
 このファイルは [bash](https://ja.wikipedia.org/wiki/Bash) などの Unix 系シェルで `./app1.cs` みたいに直接実行できるようになります。
 (実行権限が必要なので、最初に1回 `chmod +x` などの操作が必要。)
 
-```console
+```console {title="bash 上で app1.cs を直接実行する"}
 $ ls
 app1.cs
 $ chmod +x app1.cs
@@ -100,7 +100,7 @@ C# 上は単に無視されます。
 
 例えば、以下のような `.cs` ファイルをファイル ベース実行するのは、
 
-```csharp
+```csharp {title="#: を使ったファイル ベース実行の例"}
 #:property InvariantGlobalization=true
 Console.WriteLine(new DateTime(2000, 1, 2, 3, 4, 5));
 ```
@@ -109,7 +109,7 @@ Console.WriteLine(new DateTime(2000, 1, 2, 3, 4, 5));
 
 `app1.csproj`:
 
-```xml
+```xml {title="既存の .csproj ベース実行の例(app1.csproj)" highlight-text="&lt;InvariantGlobalization&gt;true&lt;/InvariantGlobalization&gt;"}
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -123,7 +123,7 @@ Console.WriteLine(new DateTime(2000, 1, 2, 3, 4, 5));
 
 `app1.cs`:
 
-```xml
+```xml {title="既存の .csproj ベース実行の例(app1.cs)"}
 Console.WriteLine(new DateTime(2000, 1, 2, 3, 4, 5));
 ```
 
@@ -162,7 +162,7 @@ Console.WriteLine("🐈");
 
 例えば、以下のようなコードで ASP.NET なコードをファイル ベース実行できます。
 
-```csharp
+```csharp {title="ファイル ベース ASP.NET コード"}
 #:sdk Microsoft.NET.Sdk.Web
 
 var app = WebApplication.CreateBuilder(args).Build();
@@ -178,7 +178,7 @@ app.Run();
 [無視ディレクティブの節](#ignored-directive)の冒頭の `InvariantGlobalization` の例もこれになります。
 その他、例えば [unsafe ブロック](../interop/sp_unsafe.md)はオプションを指定しないと使えない構文なわけですが、以下のように書くことでそのオプションを指定できます。
 
-```csharp
+```csharp {title="AllowUnsafeBlocks=true"}
 #:property AllowUnsafeBlocks=true
 
 // unsafe ブロックはオプションをつけないと使えない構文。
@@ -198,7 +198,7 @@ unsafe
 例として `Microsoft.CodeAnalysis.CSharp` パッケージ(C# 中から C# コンパイラー自身を呼ぶためのライブラリ)を参照したコードを書くと以下のようになります。
 (ちなみに、4.14.0 は C# 13 当時のバージョンです。)
 
-```csharp
+```csharp {title="Microsoft.CodeAnalysis.CSharp パッケージを参照する例"}
 #:package Microsoft.CodeAnalysis.CSharp@4.14.0
 
 using Microsoft.CodeAnalysis.CSharp;
@@ -215,7 +215,7 @@ Console.WriteLine(root.GetFirstToken().Text);
 
 例えば以下のような書き方で、`.cs` のある場所からの相対パスで `Lib/Lib.csproj` プロジェクトを参照できます。
 
-```csharp
+```csharp {title="プロジェクトを参照する例"}
 #:project Lib/Lib.csproj
 Console.WriteLine(Lib.Class1.Name);
 ```
@@ -226,7 +226,7 @@ Console.WriteLine(Lib.Class1.Name);
 例えば以下のようなコードを書いて `dotnet app1.cs` コマンド実行すると、
 「認識されないディレクティブ ' aaa' です。」というエラーが出ます。
 
-```csharp
+```csharp {title="わざと変な無視ディレクティブを書いた例"}
 #:aaa
 Console.WriteLine("🐈");
 ```

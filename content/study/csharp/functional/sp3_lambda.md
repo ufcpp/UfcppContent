@@ -62,7 +62,7 @@ C# 3.0 の開発者も、「もし、ラムダ式が先に導入されていれ�
 
 C# 2.0 までの匿名メソッドは、例えば、以下のような書き方をしていました。
 
-```csharp
+```csharp {title="C# 2.0 の匿名メソッド"}
 delegate(int n)
 {
   return n > 0;
@@ -72,21 +72,21 @@ delegate(int n)
 
 この匿名メソッドをラムダ式を使って書き直すと、以下のようになります。
 
-```csharp
+```csharp {title="ラムダ式"}
 (int n) => { return n > 0; };
 ```
 
 
 {} の中身が単文の場合には、{} と return も省略できます。
 
-```csharp
+```csharp {title="ラムダ式"}
 (int n) => n > 0;
 ```
 
 
 要するに、記法としては、以下のようになります。
 
-```csharp
+```csharp {title="ラムダ式の記法"}
 引数リスト => 式
 ```
 
@@ -96,7 +96,7 @@ delegate(int n)
 （var と似たような型推定機能が働く。）
 例えば、以下のようなデリゲートがあるとき、
 
-```csharp
+```csharp {title="デリゲート Pred"}
 delegate bool Pred(int n);
 ```
 
@@ -106,7 +106,7 @@ delegate bool Pred(int n);
 int を省略して以下のように書くことができます。
 （n の型はコンパイラが推論してくれます。）
 
-```csharp
+```csharp {title="引数の型推定" highlight-text="n =&gt; n &gt; 0"}
 Pred p = n => n > 0;
 ```
 
@@ -117,7 +117,7 @@ Func は「[ジェネリック](../oop/sp2_generics.md#generics)」を使って�
 例えば、上述の例の Pred デリゲートのように、
 int 型の引数を1つとって、bool 型を返すようなデリゲートを以下のように表現できます。
 
-```csharp
+```csharp {title="Func デリゲート"}
 Func<int, bool>
 ```
 
@@ -125,7 +125,7 @@ Func<int, bool>
 式が複数になる場合は省略せずに {} でくくります。
 （この場合は、{} の中身は匿名デリゲートと同じ書き方をする。return も書く必要あり。）
 
-```csharp
+```csharp {title="ラムダ式（複文）"}
 Func<int, int, int> f =
   (x, y) =>
   {
@@ -153,7 +153,7 @@ Func<int, int, int> f =
 Expression 型の変数に代入すると、式木データとして扱うことができ、
 以下のように式中の項を取り出したりといった操作が可能です。
 
-```csharp
+```csharp {title="ラムダ式をデータとして扱う"}
 Expression<Func<int, bool>> e = n => n > 0;
 BinaryExpression lt = (BinaryExpression)e.Body;
 ParameterExpression en = (ParameterExpression)lt.Left;
@@ -172,7 +172,7 @@ C# では「実行コードとデータを区別しない」というわけに�
 式木にできるのは、単文の（{} を使わない）ラムダ式だけです。
 以下の例では、1つ目のラムダ式はコンパイル可能ですが、2つ目はエラーになります。
 
-```csharp
+```csharp {title="{} を使って書いたラムダ式は式木にできない"}
 // ↓ これは OK
 Expression<Func<int, bool>> p = n => n > 0;
 
@@ -198,7 +198,7 @@ for や while などの制御構文は式木にできません。
 
 例えば、以下のようなクエリ式を書いたとすると、
 
-```csharp
+```csharp {title="LINQ to SQL の例"}
 var q =
   from c in db
   where c.City == "London"
@@ -212,7 +212,7 @@ foreach (var city in q)
 db.Where や db.Select では、
 データベースサーバに対して以下のような SQL を発行するしくみになっています。
 
-```sql
+```sql {title="上述のクエリ式から作られる SQL 文"}
 SELECT TOP 1 [t0].[City]
 FROM [Customers] AS [t0]
 WHERE [t0].[City] = @p0
@@ -229,14 +229,14 @@ WHERE [t0].[City] = @p0
 C# 3.0 では、オブジェクトの初期化を以下のような記法でできるようになりました。
 このような記法を<strong id="objectinit" class="keyword">オブジェクト初期化子</strong> （object initializer）と呼びます。
 
-```csharp
+```csharp {title="オブジェクト初期化子"}
 Point p = new Point{ X = 0, Y = 1 };
 ```
 
 
 ちなみに、このコードの実行結果は以下のようなコードと等価です。
 
-```csharp
+```csharp {title="オブジェクト初期化子"}
 Point p = new Point();
 p.X = 0;
 p.Y = 1;
@@ -252,7 +252,7 @@ p.Y = 1;
 プロパティへの値の代入を単文で書けるようになります。
 これで何が嬉しいかというと、<em>クラスのメンバー変数の初期化や、式木への代入が可能になります</em>。
 
-```csharp
+```csharp {title="式木への代入時のオブジェクト初期化子"}
 Expression<Func<Point>> f = () => new Point { X = 0, Y = 0 };
 // ↑式木には単文のラムダ式しか代入できない。
 
@@ -267,7 +267,7 @@ Expression<Func<Point>> f = () =>
 ```
 
 
-```csharp
+```csharp {title="クラスのメンバー変数初期化時のオブジェクト初期化子"}
 class Triangle
 {
     public Point A = new Point { X = 0, Y = 0 };
@@ -282,7 +282,7 @@ class Triangle
 オブジェクト初期化子では、[配列の初期化子](../structured/st_array.md#use)と同様に、末尾のコンマはあってもなくてもかまいません。
 以下の2行は同じ意味になります。
 
-```csharp
+```csharp {title="初期化子の末尾コンマ" highlight-ranges="sha256:0c817601cad77a95566deff91511967f955974f1b2a768196dd2beb4eb03b6d9;2:34-2:35"}
 var p1 = new Point { X = 0, Y = 1 };
 var p2 = new Point { X = 0, Y = 1, };
 ```
@@ -294,7 +294,7 @@ var p2 = new Point { X = 0, Y = 1, };
 また、コレクションの初期化を以下のような記法でできるようになりました。
 こちらは<strong id="collectioninit" class="keyword">コレクション初期化子</strong>（collection initializer）と呼びます。
 
-```csharp
+```csharp {title="コレクション初期化子"}
 List<int> list = new List<int> {1, 2, 3};
 ```
 
@@ -302,7 +302,7 @@ List<int> list = new List<int> {1, 2, 3};
 要するに、配列と同じような初期化記法を、任意のコレクションクラス（System.Collections.IEnumerable インターフェースを実装していて、Add メソッドを持つクラス）に対して行うことができます。
 ちなみに、このコードは以下のようなコードと等価です。
 
-```csharp
+```csharp {title="コレクション初期化子"}
 List<int> list = new List<int>();
 list.Add(1);
 list.Add(2);
@@ -315,7 +315,7 @@ IDictionary&lt;TKey,TValue&gt; のような辞書クラスに対しても、
 以下のような記法で初期化ができます。
 （この場合、2引数の Add メソッドが呼ばれます。）
 
-```csharp
+```csharp {title="コレクション初期化子"}
 var map = Dictionary<string, int>
 {
   { "One", 1 },
@@ -347,7 +347,7 @@ C# 6.0 から、[オブジェクト初期化子](#object-initializer)に、イ�
 
 例えば `Dictionary`(`System.Collections.Generic`名前空間)に対して以下のような書き方ができます。
 
-```csharp
+```csharp {title="インデックス初期化子の例"}
 var dic = new Dictionary<string, int>
 {
     ["one"] = 1,
@@ -357,7 +357,7 @@ var dic = new Dictionary<string, int>
 
 プロパティへの代入とインデクサーへの代入を混在させることもできます。
 
-```csharp
+```csharp {title="初期化子内でのプロパティとインデクサーの混在"}
 class Sample
 {
     public string Name { get; set; }
@@ -387,7 +387,7 @@ class Program
 
 ちなみに、再帰的な構造を持ったクラスの初期化もできます。
 
-```csharp
+```csharp {title="再帰的なオブジェクト初期化子"}
 using System.Collections.Generic;
 
 class Point
@@ -449,7 +449,7 @@ class Program
 また、この記法ででの初期化は、以下のようなコードと等価で、Color、Geometry、Indices などに対してインスタンスを new してくれたりはしないので注意が必要です。
 コンストラクターもしくはメンバー初期化子での初期化が必要です。
 
-```csharp
+```csharp {title="再起初期化子の解釈結果"}
         Model m = new Model();
         // ↓ m = new Model() の時点で Color が初期化されていないと NullReferenceException。
         m.Color.R = 128;
@@ -470,7 +470,7 @@ class Program
 
 さもなくば、以下のように、おとなしく new を書きましょう。
 
-```csharp
+```csharp {title="おとなしく new を明示的に書く"}
         Model m = new Model
         {
             Color = new Color { R = 128, G = 128, B = 128 },

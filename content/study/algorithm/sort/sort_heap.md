@@ -39,7 +39,7 @@ aliases:
 
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/HeapSort.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/HeapSort.cs)
 
-```csharp
+```csharp {title="ヒープソート"}
 /// <summary>
 /// ヒープソート。
 /// </summary>

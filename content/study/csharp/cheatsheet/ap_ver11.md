@@ -36,13 +36,13 @@ aliases: []
 
 `"abc"u8` みたいに、文字列リテラルの後ろに u8 接尾辞を付けることで、UTF-8 な byte 列を文字列リテラルの形で書けるようになりました。
 
-```csharp
+```csharp {title="u8 リテラルの例"}
 ReadOnlySpan<byte> hex = "0123456789ABCDEF"u8;
 ```
 
 以下のような byte 列とほぼ同じ意味になります。
 
-```csharp
+```csharp {title="u8 リテラルの展開結果の例"}
 ReadOnlySpan<byte> s = new byte[] { 97, 98, 99 };
 ```
 
@@ -52,7 +52,7 @@ ReadOnlySpan<byte> s = new byte[] { 97, 98, 99 };
 
 C# 11 で、3つ以上の連続した `"` を使うことで、「一切エスケープが必要ない文字列リテラル」を書けるようになりました。
 
-```csharp
+```csharp {title="raw string literal"}
 // """ から始まる文字列リテラル(raw string, 生文字列)。
 var quote = """
     " はそのまま " として使われて、
@@ -64,7 +64,7 @@ var quote = """
 
 この `"""` を使った書き方で、さらに文字列補間をすることもできます。
 
-```csharp
+```csharp {title="$ を2個にすれば、{ 1個はエスケープなしで書ける"}
 Console.WriteLine(format(123, "abc"));
 
 static string format(int id, string name) => $$"""
@@ -84,7 +84,7 @@ static string format(int id, string name) => $$"""
 例えば以下のようなコードを書いたとき、`a1` 以外の `new A` はエラーになります。
 (警告ではなくエラーにします。)
 
-```csharp
+```csharp {title="required 修飾子" highlight-ranges="sha256:b2ab16f5c01f49b3579d37408c360d5558ab23736f76afb1e0feede18550d81f;9:12-9:20,10:12-10:20"}
 var a1 = new A { X = "abc", Y = 123 };
 
 var a2 = new A { X = "abc" }; // Y を代入していないのでエラー。
@@ -105,7 +105,7 @@ class A
 C# 11で、`[]` を使ってリスト(配列や `List<T>` など)に対するパターン マッチングができるようになりました。
 例えば以下のような `switch` を書けます。
 
-```csharp
+```csharp {title="リスト パターンの例"}
 static ReadOnlySpan<byte> removeBom(ReadOnlySpan<byte> utf8)
     => utf8 is [0xEF, 0xBB, 0xBF, .. var noBom] ? noBom : utf8;
 
@@ -138,7 +138,7 @@ generic math 関連で、数値型の演算子関連で3つ新機能が追加さ
 まず、インターフェイスの静的メンバーについてですが、
 例えば以下のようなコードが書けるようになりました。
 
-```csharp
+```csharp {title="ジェネリックな Sum メソッド"}
 using System.Numerics;
 
 // よくある「和を取るコード」なものですら、これまでだとジェネリックに書く手段がなかった。
@@ -166,7 +166,7 @@ Console.WriteLine(Sum(new decimal[] { 1, 2, 3, 4, 5 }));
 符号付き整数(`int` とか `sbyte` とか)でも符号なし整数(`uint` とか `byte` とか)でも無関係に、
 常に「符号なし右シフト(論理シフト)」をするための `>>>`演算子 (`>` の数が3つ)が追加されました。
 
-```csharp
+```csharp {title="C# にも符号なし右シフト演算子を導入" highlight-ranges="sha256:6292cfbfd01ca537fe9b8029d5dd6dc3ffa82531dca0d931cdbb2d2886d575f4;16:10-16:13"}
 using System.Numerics;
 
 sbyte s = -1;
@@ -193,7 +193,7 @@ static T LogicalRightShift<T>(T s, int bits)
 「`checked` 演算子」を定義できるようになりました。
 これにより、ユーザー定義の演算子オーバーロードでも `checked`(オーバーフロー時に例外を投げる)と `unchecked` (オーバーフローしても例外を投げない)を切り替えられるようになります。
 
-```csharp
+```csharp {title="checked 演算子オーバーロードの例" highlight-text="checked"}
 readonly struct Int2Bit
 {
     public readonly byte Value;
@@ -213,7 +213,7 @@ readonly struct Int2Bit
 
 シフト演算子の右オペランドに `int` 以外の型を使えるようになりました。
 
-```csharp
+```csharp {title="C# 11 で operator &lt;&lt;(A x, A y) とかが書けるように" highlight-text="A y"}
 struct A
 {
     // C# 10 以前でも書けるオーバーロード。
@@ -230,7 +230,7 @@ struct A
 
 `file` という修飾子を使って「書いたファイル内からだけアクセスできる型」を作れるようになりました。
 
-```csharp
+```csharp {title="file 修飾付きの型を使う例" highlight-text="file"}
 1.M();
 
 file static class Extensions
@@ -241,7 +241,7 @@ file static class Extensions
 
 これと同じプロジェクト内の別のファイルに以下のようなコードを書いてもエラーにはなりません。
 
-```csharp
+```csharp {title="別のファイルに同名の file 修飾付きの型を定義" highlight-ranges="sha256:bd3266b004cefb39a4c35ea1400844736d98b67545f72862bcc78688a36870d9;1:1-1:5"}
 file static class Extensions
 {
     public static void M(this int x) => Console.WriteLine("別ファイルの file-local Extensions");
@@ -256,7 +256,7 @@ file static class Extensions
 
 ref フィールドの書き方は参照引数や参照戻り値と同じく、型の前に `ref` 修飾を付けます。
 
-```csharp
+```csharp {title="ref フィールド"}
 ref struct ByReference<T>
 {
     public ref T Value;
@@ -298,7 +298,7 @@ var x = s switch
 [`nameof`](../start/st_string.md#nameof-parameter) にちょっとだけ変更が掛かりました。
 以下のように、メソッドに対する属性の中で、そのメソッドの引数の名前が参照できるようになりました。
 
-```csharp
+```csharp {title="nameof(引数名)"}
 using System.Diagnostics.CodeAnalysis;
 
 // C# 10 までこの属性、 NotNullIfNotNull("x") と書かないといけなくて割かしつらかった。
@@ -311,7 +311,7 @@ static string? m(string? x) => x;
 C# 11 では、構造体でもフィールドの明示的な初期化が不要になりました。
 クラスと同じく、明示的に代入しなかったフィールド・自動プロパティには既定値が入ります。
 
-```csharp
+```csharp {title="構造体のフィールドが自動的に 0 初期化されるように"}
 struct Sample
 {
     int _x;
@@ -339,7 +339,7 @@ struct Sample
 [属性をジェネリック クラスにできるようになりました](../dynamic/sp_attribute.md#generic-attribute
 )。
 
-```csharp
+```csharp {title="C# 11 以降"}
 // 属性クラスをジェネリックにできるように。
 class TypeConverter<T> : Attribute { }
 
@@ -353,7 +353,7 @@ class MyClass { }
 [文字列補間](../start/st_string.md#string-interpolation)で、以下のようなコードが書けるようになりました
 (`{}` の中で改行を入れれるようになりました)。
 
-```csharp
+```csharp {title="{} の中の改行"}
 var a = 1;
 var b = 2;
 var s = $"a: {
@@ -363,7 +363,7 @@ var s = $"a: {
 
 ちなみに、以下のように、`$@` (文字列補間、かつ、逐語的文字列リテラル)を使う場合には C# 10.0 以前でも以下のようなコードが普通に書けました。
 
-```csharp
+```csharp {title="$@ なら10以前でもOK"}
 var a = 1;
 var b = 2;
 var s = $@"a: {
@@ -400,7 +400,7 @@ C# 9.0 の頃には、`IntPtr`、`UIntPtr` 型に算術演算子の定義がな�
 一応これが既存のコードに対する破壊的変更になる可能性があって、
 例えば、以下のようなコードはこれまで例外が絶対に出なかったのが、C# 11 以降は例外が出る可能性があります。
 
-```csharp
+```csharp {title="Numeric IntPtr 関連の破壊的変更"}
 unsafe void M(void* x, int y)
 {
     var p = checked((IntPtr)x); // unsigned → singed 変換扱い
@@ -415,7 +415,7 @@ unsafe void M(void* x, int y)
 
 例えば以下のようなコードを考えます。
 
-```csharp
+```csharp {title="ラムダ式と、メソッド グループからのデリゲート化の例"}
 // この X と
 int X(int[] data) => data.Sum(x => x * x);
 
@@ -426,7 +426,7 @@ static int square(int x) => x * x;
 
 C# 10 までは、おおむね以下のようなコードに展開されていました。
 
-```csharp
+```csharp {title="C# 10 までの展開結果"}
 // ラムダ式だと導入当初からキャッシュが効いてた。
 Func<int, int>? _anonymous1 = null;
 
@@ -450,7 +450,7 @@ static int square(int x) => x * x;
 メソッド グループをデリゲート化するとき(`Y` の側)、常に `new Func<int, int>()` のコストがかかっていました。
 これが、C# 11 からは以下のような感じのコードに展開されます。
 
-```csharp
+```csharp {title="C# 11 からの展開結果"}
 // C# 11 で、メソッド グループの場合でも、static なものはキャッシュするようになった。
 Func<int, int>? _square = null;
 
@@ -473,7 +473,7 @@ C# 11 で追加される `required`, `scoped`, `file` の3つも文脈キーワ�
 型名として使えなくしたようです。
 以下のようにコンパイル エラーになります。
 
-```csharp
+```csharp {title="文脈キーワードな型名"}
 // 古めの文脈キーワードはクラス名にしても警告にしかならない。
 // 警告の出方も、古いやつは「小文字始まり ASCII のみの型名はやめて欲しい」の CS8981
 class async { }
@@ -501,7 +501,7 @@ class @class { }
 
 C# 11 から、マネージ型のポインターを使えるようになりました。
 
-```csharp
+```csharp {title="マネージ型のポインター型/アドレス取得"}
 unsafe
 {
     string s = "";

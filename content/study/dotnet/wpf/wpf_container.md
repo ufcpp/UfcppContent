@@ -30,7 +30,7 @@ Canvas の左上からの相対座標を直接指定して子要素を配置し�
 座標は、以下のように、Canvas.Left, Canvas.Top を使って指定します。
 
 
-```xml
+```xml {title="Canvas の例"}
 <Canvas
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -75,7 +75,7 @@ StackPanel による配置はいたってシンプルで、
 上から順に、幅いっぱいに詰め込んでいくだけです。
 
 
-```xml
+```xml {title="StackPanel の例"}
 <StackPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -104,7 +104,7 @@ StackPanel による配置はいたってシンプルで、
 左から右に並べることもできます。
 
 
-```xml
+```xml {title="StackPanel（左から右） の例"}
 <StackPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -139,7 +139,7 @@ WrapPanel がリサイズされた場合、
 折り返し位置が変化します。
 
 
-```xml
+```xml {title="WrapPanel の例"}
 <WrapPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -183,7 +183,7 @@ DockPanel がリサイズされた場合、
 右上に広告欄、右下に本文を表示したりといったようなレイアウトにしたいときに使います。
 
 
-```xml
+```xml {title="DockPanel の例"}
 <DockPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -220,7 +220,7 @@ Grid を使うと、
 <code>Grid.Row</code>, <code>Grid.Column</code> 属性で指定します（行、列の番号は 0 から始まる）。
 
 
-```xml
+```xml {title="Grid の例"}
 <Grid
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

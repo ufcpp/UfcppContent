@@ -25,7 +25,7 @@ C# 7.2 の頃、[`Span<T>` 型](../../../../study/csharp/resource/span.md)が追
 
 例えば直近では、C# 12 でコレクション式を導入するにあたって「[普通にやってたら使い勝手が悪いので `Span` を特別扱い](../../../../study/csharp/datatype/collection-expression.md#priority)」みたいなことをやっています。
 
-```csharp
+```csharp {title="コレクション式の Span 特別対応"}
 // 普通にやると IEnumerable と Span の優先度はつかなくてコンパイルエラー。
 EnumerableVsSpan.M(new int[5]);
 
@@ -55,7 +55,7 @@ class SpanVsReadOnlySpan
 以下のように、コンパイルできてほしくないのに実行時エラーになるのが1件、
 コンパイルできてほしいのにできないのが1件。
 
-```csharp
+```csharp {title="ReadOnlySpan の共変性"}
 var strArray = new string[5];
 
 // 行ける。 Span に implicit operator が定義されているので。

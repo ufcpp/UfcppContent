@@ -131,7 +131,7 @@ WCF では
 * そのインターフェースを実装したクラスがサービスの実体になる。
 
 
-```csharp
+```csharp {title="Contract の例"}
 [ServiceContract(
     CallbackContract = typeof(IGameCharacterCallback),
     SessionMode = SessionMode.Required)]

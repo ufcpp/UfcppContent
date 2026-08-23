@@ -52,7 +52,7 @@ C# の文字列は内部的に UTF-16 だし、.NET の標準ライブラリは�
 C# は仕様上、Letter (書き言葉に使われる文字)なら何でも識別子として使えるはずなんですが、
 今、追加面に入っている Letter は使えないという「仕様違反」があります。
 
-```csharp
+```csharp {title="現状の C# コンパイラーは追加面文字に未対応"}
 // U+FFFF 以下 → 識別子に使える
 var ᚠ = 1; // ルーン文字(U+16A0, OtherLetter)
 var ʬ = 2; // 国際発音記号(U+02AC, LowercaseLetter)
@@ -86,7 +86,7 @@ Unicode カテゴリー判定は以下の2つメソッドがあります。
 
 使い方は以下のような感じ。
 
-```csharp
+```csharp {title=".NET の Unicode カテゴリー判定メソッド"}
 using static System.Console;
 using static System.Globalization.CharUnicodeInfo;
 
@@ -116,7 +116,7 @@ class Program
 
 というか、`Utf8String` の完成を待っていられなくて[自作](https://github.com/ufcpp/UfcppSample/tree/master/Demo/2016/Unicode)したり[自作](https://github.com/neuecc/Utf8Json)したりしてると、今でも困っています。
 
-```csharp
+```csharp {title="コードポイントから直接カテゴリーを得る手段がない"}
 // 𩸽の UTF-8 バイト列
 // ファイルとかネットとか、今時普通は UTF-8 で保存・送受信するでしょ
 var utf8 = new byte[] { 240, 169, 184, 189 };
@@ -136,7 +136,7 @@ WriteLine(category);
 
 これ、もし現状の API でカテゴリー判定をしたければ、以下のような無駄なコードが必要になります。
 
-```csharp
+```csharp {title="仕方なく、文字列化"}
 // 一度 string に変換(= 無駄にヒープ アロケーションが発生)
 var s = char.ConvertFromUtf32(c);
 // string 版の GetUnicodeCategory を呼ぶ

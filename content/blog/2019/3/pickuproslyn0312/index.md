@@ -32,7 +32,7 @@ Visual Studio 2019 (16.0)が RC までいってちょっと落ち着いたのか
 
 `base` 呼び出しって言うのは以下のようなやつのこと。
 
-```csharp
+```csharp {title="base 呼び出し"}
 using System;
  
 class A
@@ -86,7 +86,7 @@ C# 7.3 までのインターフェイスは無条件に全部のメンバーが 
 
 あと、インターフェイスの[明示的実装](../../../../study/csharp/oop/oo_interface.md#explicit-impl)、↓みたいなやつもあるわけですが。
 
-```csharp
+```csharp {title="インターフェイスの明示的実装"}
 interface I
 {
     void M();

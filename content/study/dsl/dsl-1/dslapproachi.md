@@ -144,7 +144,7 @@ PowerShell には本来、クラスを定義するための構文がありませ
 ですが、ちょっとしたライブラリを書くことで、
 以下のような構文でクラスもどきを作ることができます。
 
-```powershell
+```powershell {title="PowerShell で擬似クラス定義"}
 Def-Class Point {
   var x
   var y
@@ -174,7 +174,7 @@ Def-Class Point {
 
 このクラスを利用する側は以下のような感じ。
 
-```powershell
+```powershell {title="PowerShell で擬似クラス利用"}
 $x = New-Instance Point
 $y = New-Instance Point 3 4
 
@@ -327,7 +327,7 @@ VB9 では、（C# 3.0 にも追加された）LINQ に加えて、
 「XML 統合」もありました。
 要するに、以下のような感じで VB のソースコード中に XML を埋め込むことができます。
 
-```vbnet
+```vbnet {title="VB9 の XML 埋め込み"}
 Dim doc = 
   <configuration>
     <window
@@ -403,7 +403,7 @@ Fortress の構文拡張では、まず、
 SQL のパーサ parseSql 関数を書くとします。
 そして、以下のようにして、syntax expander を定義します。
 
-```csharp
+```csharp {title="Fortress の syntax expander"}
 syntax sql e end = parseSql(e)
 ```
 
@@ -411,7 +411,7 @@ syntax sql e end = parseSql(e)
 すると、
 Fortress のソース中に、以下のような構文が書けるようになります。
 
-```csharp
+```csharp {title="自作構文の利用"}
 sql
   SELECT x FROM points
 end

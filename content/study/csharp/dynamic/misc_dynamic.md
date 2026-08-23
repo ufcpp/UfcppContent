@@ -46,7 +46,7 @@ aliases:
 
 以下のような操作をベースに。
 
-```csharp
+```csharp {title="元となる操作"}
 public class Static
 {
     public static int Sum(Point p)
@@ -71,7 +71,7 @@ public class Point
 
 リフレクションを使って、毎度 type.GetProperty するやり方。
 
-```csharp
+```csharp {title="リフレクション"}
 public class Refrection
 {
     public static int Sum(object p)
@@ -117,7 +117,7 @@ public class Refrection
 さすがに、動的コード生成自体はそれなりに重たい処理なので、
 キャッシュしなければあまりいいパフォーマンスはでません。
 
-```csharp
+```csharp {title="IL Generator"}
 public class GenerateIL
 {
     private static Dictionary<Type, Func<object, int>> cache = new Dictionary<Type,Func<object,int>>();
@@ -211,7 +211,7 @@ public class GenerateIL
 IL レベルではなく、構文木レベルでコードを生成できるので、IL Generator と比べればだいぶマシな動的コード生成ができます。
 ただ、キャッシュの仕組みが必要なのは IL Generator と同様です。
 
-```csharp
+```csharp {title="式木"}
 public class ExpressionTree
 {
     private static Dictionary<Type, Func<object, int>> cache = new Dictionary<Type, Func<object, int>>();
@@ -299,7 +299,7 @@ dynamic は、内部的には「式木による動的コード生成」＋「生
 適用される型が多くなってくると、ひょっとすると自前でキャッシュ機構を持つよりも、
 dynamic 任せの方が高速な場合も出て来ると思います。
 
-```csharp
+```csharp {title="dynamic"}
 public class Dynamic
 {
     public static int Sum(dynamic p)
@@ -407,7 +407,7 @@ public class DynamicInside
 
 さすがに毎回リフレクション呼ぶよりは1桁以上速いですが。
 
-```csharp
+```csharp {title="CLR オブジェクト？何それ？辞書じゃダメ？"}
 public class PropertyDictionary
 {
     public static int Sum(Dictionary<string, int> p)

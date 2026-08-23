@@ -42,7 +42,7 @@ Visual Studio 2017 の頃から、所定のフォルダー以下にあるすべ�
 
 公式ドキュメントでは、「Deterministic オプション」を例に挙げています。
 
-```xml
+```xml {title="Deterministic"}
 <Project>
   <PropertyGroup>
     <Deterministic>true</Deterministic>
@@ -65,7 +65,7 @@ Visual Studio 2017 の頃から、所定のフォルダー以下にあるすべ�
 
 僕が常用しているのはこれ。「LangVersion オプション」を常に latest に。
 
-```xml
+```xml {title="LangVersion"}
 <Project>
  <PropertyGroup>
    <LangVersion>latest</LangVersion>
@@ -102,7 +102,7 @@ Visual Studio にはソリューション全体の NuGet パッケージをま�
 例として、`Google.Apis`パッケージでも参照してみましょう。
 `Directory.Build.targets` (`props`だとダメ。最後に読まれる`targets`の方)に、以下のように`Update`属性指定でタグを書きます。
 
-```xml
+```xml {title="PackageReference (targets 中は Update で Version 指定)"}
 <Project>
   <ItemGroup>
     <PackageReference Update="Google.Apis" Version="1.36.1" />
@@ -112,7 +112,7 @@ Visual Studio にはソリューション全体の NuGet パッケージをま�
 
 配下にある `csproj` では、`Version` を指定せず、`Include` だけ指定します。
 
-```xml
+```xml {title="PackageReference (csproj 中は Version 未指定)"}
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
@@ -142,13 +142,13 @@ C# 8.0 で、null 許容参照型(単に `T` と書くと非 null で、参照�
 
 <sup>※</sup> 追記: その後、正式リリースまでの間に `Nullable` タグに変更になりました。
 
-```xml
+```xml {title="2018/12当時の仕様"}
 <PropertyGroup>
   <NullableReferenceTypes>True</NullableReferenceTypes>
 </PropertyGroup>
 ```
 
-```xml
+```xml {title="正式版での仕様"}
 <PropertyGroup>
   <Nullable>enable</Nullable>
 </PropertyGroup>

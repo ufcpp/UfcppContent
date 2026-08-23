@@ -39,7 +39,7 @@ aliases: []
 バッキング フィールドを生成した上で、そのフィールドの読み書きができます。
 例えば前述の例を `field` を使って書き直すと以下のようになります。
 
-```csharp
+```csharp {title="field キーワードの例"}
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 
@@ -81,7 +81,7 @@ class FieldBackedProperties : INotifyPropertyChanged
 代入演算の左側で `?.` や `?[]` を書くことで「null じゃないときだけ代入」ができるようになりました。
 これを null 条件代入(null conditional assignment)といいます。
 
-```csharp
+```csharp {title="null 条件代入の例"}
 static void M(A? a)
 {
     // if (a != null) a.X = 10; とほぼ同じ。
@@ -119,7 +119,7 @@ class A
 
 複合代入演算子を直接オーバーロードできるようになりました。
 
-```csharp
+```csharp {title="複合代入演算子のオーバーロードの例"}
 record struct X(int Value)
 {
     public void operator +=(int value) => Value += value;
@@ -153,7 +153,7 @@ record struct X(int Value)
 
 `ref` や `out` などの修飾子が必須の引数でも、ラムダ式引数の型名を省略できるようになりました。
 
-```csharp
+```csharp {title="修飾子が必須でも引数の型名を省略できるように"}
 // C# 13 までは型名省略不可で、(string text, out int result) のように書く必要があった。
 TryParse<int> m = (text, out result) => { result = 0; return true; };
 
@@ -169,7 +169,7 @@ delegate bool TryParse<T>(string text, out T result);
 [部分プロパティ](../misc/partial-type.md#partial_property) (C# 13)に続いて、
 C# 14 では[イベント](../functional/sp_event.md)と[コンストラクター](../oop/oo_construct.md)も部分定義できるようになりました。
 
-```csharp
+```csharp {title="部分イベントと部分コンストラクターの例"}
 // 元コード(手書き想定)。
 partial class PartialClass
 {
@@ -198,7 +198,7 @@ partial class PartialClass
 
 `T<>` みたいに型引数を埋めていないジェネリック型(これを unbound (未束縛)とか open (開きっぱなし) な型といいます)に対して `nameof` 演算子を使えるようになりました。
 
-```csharp
+```csharp {title="unbound なジェネリック型に対する nameof 演算子"}
 Console.WriteLine(nameof(List<>)); // "List"
 Console.WriteLine(nameof(Dictionary<,>.Keys)); // "Keys"
 Console.WriteLine(nameof(List<>.Enumerator.MoveNext)); // "MoveNext"
@@ -214,7 +214,7 @@ Console.WriteLine(nameof(List<>.Enumerator.MoveNext)); // "MoveNext"
 例えば以下のようなコードが書けて、
 Unix 系シェルの [shebang](https://ja.wikipedia.org/wiki/%E3%82%B7%E3%83%90%E3%83%B3_(Unix)) を書けたり、これまでであればプロジェクト(`.csproj` ファイル中)に書いていた設定の類を C# ソースコード中に書けるようになっています。
 
-```csharp
+```csharp {title="shebang 入り .cs ファイル"}
 #!/usr/bin/env dotnet
 #:sdk Microsoft.NET.Sdk.Web
 

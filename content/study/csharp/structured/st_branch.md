@@ -37,7 +37,7 @@ C#では条件分岐のために <code>if</code>、<code>else</code>、<code>swi
 
 <strong id="if" class="keyword">if</strong> 文は以下のような書き方をします。
 
-```csharp
+```csharp {title="if 文の書式"}
 if(条件式)
   文1 // 条件式が真のときに実行される
 else
@@ -55,7 +55,7 @@ if 文は <code>if</code> の後の括弧内に書かれた条件式の真偽に
 
 ##### <a id="sec-generated-title-4"></a>サンプル
 
-```csharp
+```csharp {title="if 文の例"}
 using System;
 
 class IfSample
@@ -99,7 +99,7 @@ class IfSample
 「[組み込み演算子](../start/st_operator.md#condition)」で紹介した条件演算子`?:`は、「`if`文の[式](miscexpressions.md#term)版」とも言える機能です。
 式なので戻り値が必須ですが、以下のように、条件を満たすときと満たさないときの両方で同じ型の値を返す場合には条件演算子を使った方がすっきり書けることが多いです。
 
-```csharp
+```csharp {title="if 文と条件演算子"}
 using System;
  
 class Program
@@ -131,7 +131,7 @@ C# 9.0 から条件演算子に[ターゲット型](../start/misctyperesolution.
 
 例えば以下のようなコードはコンパイルできません。
 
-```csharp
+```csharp {title="共通型を判別できない例"}
 void M(bool b)
 {
     // C# では整数型と null の共通型判定ができない。
@@ -150,7 +150,7 @@ class B : Base { }
 
 これが、C# 9.0 から、ターゲット型を指定することでコンパイルできるようになります。
 
-```csharp
+```csharp {title="条件演算子に対するターゲット型推論"}
 void M(bool b)
 {
     // var をやめて、int? を明示。
@@ -165,7 +165,7 @@ void M(bool b)
 
 <strong id="switch" class="keyword">switch</strong> 文は以下のような書き方をします。
 
-```csharp
+```csharp {title="switch文の書式"}
 switch(変数)
 {
   case 値1:
@@ -200,7 +200,7 @@ C# 6までは、`case`に書ける条件は値のみでした。その値と一�
 
 一方、C# 7からは、型による分岐ができるようになりました。例えば以下のような書き方ができます。
 
-```csharp
+```csharp {title="switchで型による分岐"}
 static void TypeSwitch(object obj)
 {
     switch (obj)
@@ -221,7 +221,7 @@ static void TypeSwitch(object obj)
 ちなみに、この書き方の場合、各`case`に対してさらに`when`句で条件を付けることができます。
 この書き方では条件が被ることもありますが、そのときは書いた順に上から調べて最初に条件を満たした`case`が実行されます。
 
-```csharp
+```csharp {title="when句付きのcase"}
 static int TypeSwitch(object obj)
 {
     switch (obj)
@@ -245,7 +245,7 @@ static int TypeSwitch(object obj)
 
 C# 8.0 からは、以下のように、複数の値をまとめて `switch` 文に掛けれるようになりました。
 
-```csharp
+```csharp {title="複数の値に対する switch"}
 static string Color(bool r, bool g, bool b)
 {
     switch (r, g, b)
@@ -270,7 +270,7 @@ static string Color(bool r, bool g, bool b)
 C# の先祖に当たる C 言語や C++ 言語では、
 以下のようなコードが許されていました。
 
-```cpp
+```cpp {title="C/C++ では許されたコード"}
 swicth(x)
 {
 case 1:
@@ -294,7 +294,7 @@ case 2:
 以下のように、<code>braek</code> を挿入して、
 case ラベルを超えてコードが実行されないようにします。
 
-```cpp
+```cpp {title="C/C++ では許されたコード" highlight-ranges="sha256:db4a199d6c55517cc99e65614219319d0094385052ce1c995522433633de11c7;5:3-5:9,8:3-8:9"}
 swicth(x)
 {
 case 1:
@@ -326,7 +326,7 @@ C/C++ プログラマの混乱を避けるために break を付ける構文に�
 ただし、C# でも、以下のように、case ラベルが連続している場合に限りフォールスルー可能で、
 break 等が必須ではありません。
 
-```csharp
+```csharp {title="case ラベルの連続"}
 switch(x)
 {
   case 1:
@@ -342,7 +342,7 @@ switch(x)
 
 ##### <a id="sec-generated-title-11"></a>サンプル
 
-```csharp
+```csharp {title="switch文の例"}
 using System;
 
 class SwitchSample
@@ -415,7 +415,7 @@ class SwitchSample
 C# 8.0では、`switch`の[式](miscexpressions.md#term)版が追加されました。
 以下のような書き方をします。
 
-```csharp
+```csharp {title="switch式の書式"}
 変数 switch
 {
     パターン1 => 式1,
@@ -433,7 +433,7 @@ C# 8.0では、`switch`の[式](miscexpressions.md#term)版が追加されまし
 <strong id="goto" class="keyword">goto</strong> 文は if 文や switch 文と異なり、無条件に処理の流れを変えるものです。
 例えば以下のように使います。
 
-```csharp
+```csharp {title="goto 文の例"}
 START: // ジャンプ先を示すラベル
 Console.Write("gotoの例");
 goto START;// START: というラベルのある位置に処理の流れを移す
@@ -448,7 +448,7 @@ goto 文を使用するとプログラムの処理の流れを追いづらくな
 
 1つは以下のように、switch 文で、<code>x</code> の値が1のときも2の時も同じ処理を行いたいといった場合に使います。
 
-```csharp
+```csharp {title="switch 文中で goto を使う例"}
 switch(x)
 {
   case 1:
@@ -468,7 +468,7 @@ switch(x)
 
 もう1つ、以下のように多重ループ(ループについては「[反復処理](st_loop.md)」で説明します)から抜け出すときにも使います。
 
-```csharp
+```csharp {title="多重ループから抜けるための goto の例"}
 while(x != 0)
 {
   while(y != 0)
@@ -493,7 +493,7 @@ LOOPEND:
 #### 解答例 1
 
 
-```csharp
+```csharp {title="奇数・偶数の判定"}
 using System;
 
 class Exercise
@@ -522,7 +522,7 @@ BMI 値から体型(やせ型、普通、やや肥満、肥満、高度肥満)�
 #### 解答例 1
 
 
-```csharp
+```csharp {title="BMI 値の計算と体型の判定"}
 using System;
 
 class Exercise
@@ -563,7 +563,7 @@ switch 文を使って150以下の平方数(4＝2×2、9＝3×3、16＝4×4と�
 #### 解答例 1
 
 
-```csharp
+```csharp {title="平方数の判別"}
 using System;
 
 class Exercise
@@ -611,7 +611,7 @@ class Exercise
 
 単純な条件分岐による方法。
 
-```csharp
+```csharp {title="最大値、最小値"}
 using System;
 
 class Exercise

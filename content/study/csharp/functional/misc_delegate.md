@@ -31,7 +31,7 @@ aliases:
 
 例えば、与えられた条件を満たすものの和を求めるメソッドは以下のように書けます。
 
-```csharp
+```csharp {title="条件を満たしたものの和を求める"}
 static int Sum(int[] a, Predicate<int> pred)
 {
     int sum = 0;
@@ -56,7 +56,7 @@ pred が「外から与える条件」です。
 
 「条件を外から与える」っていうのは、例えば以下のようにします。
 
-```csharp
+```csharp {title="条件「5 より小さい」を与える"}
 var sum = Sum(
     new[] { 1, 5, 3, 8 },
     x => x < 5);
@@ -91,7 +91,7 @@ var sum = Sum(
 （<em>注意</em>: .NET 4 で Task クラスが導入されて以降、この例のような、BeginInvoke を使った非同期処理は書かなくなりました。
 ただし、Task クラスを使う場合も、非同期処理や、そのコールバックにはデリゲートを使います。）
 
-```csharp
+```csharp {title="非同期処理の例"}
 using System;
 using System.Threading;
 
@@ -159,7 +159,7 @@ BeginAsyncWork で、AsyncWork の非同期実行を開始しています。
 
 ということで、出力結果は以下のような感じになります。
 
-```console
+```console {title="実行結果"}
 メイン処理 0
 非同期処理 0
 メイン処理 1
@@ -186,7 +186,7 @@ BeginAsyncWork で、AsyncWork の非同期実行を開始しています。
 ものすごい大雑把に模擬的な書き方をすると、GUI アプリってのは以下のような構造で動いています。
 （メッセージループって言います。）
 
-```csharp
+```csharp {title="GUI アプリのメッセージループ"}
 Message msg;
 while (GetMessage(out msg)) // OS から「マウスクリック」とかのメッセージが来てないか調べる。
 {
@@ -197,7 +197,7 @@ while (GetMessage(out msg)) // OS から「マウスクリック」とかのメ�
 
 ProcessMessage の中身も模擬的に書くと、以下のような感じ。
 
-```csharp
+```csharp {title="メッセージ処理"}
 void ProcessMessage(Message msg)
 {
     if (msg == マウスクリック) MouseClick();
@@ -223,7 +223,7 @@ void ProcessMessage(Message msg)
 で、例えば、クリックされたときにメッセージボックスを出したいとします。
 Windows Forms を使うなら、以下のようなコードを書きます。
 
-```csharp
+```csharp {title="クリックイベントを拾ってメッセージボックスを表示"}
 var form = new Form();
 form.Click += (sender, e) => { MessageBox.Show("Click!"); };
 ```

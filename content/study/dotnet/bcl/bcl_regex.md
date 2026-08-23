@@ -44,7 +44,7 @@ Match メソッド（最初の1件を得る）や、Matches メソッド（マ�
 </ul>
 <div>
 
-```csharp
+```csharp {title="ハイフンで区切られた単語の検索" highlight-text="Matches"}
 var text = @"
 C# (pronounced C sharp) is a programming language that
 is designed for building a variety of applications that
@@ -128,7 +128,7 @@ for x in hyphenedWord do Console.WriteLine x
 </div>
 
 
-```console
+```console {title="実行結果"}
 type-safe
 object-oriented
 C-style
@@ -147,7 +147,7 @@ Split メソッドで、単語の切り出しを行います。
 </ul>
 <div>
 
-```csharp
+```csharp {title="単語の出現頻度" highlight-text="Split"}
 var text = @"
 C# (pronounced C sharp) is a programming language that
 is designed for building a variety of applications that
@@ -203,7 +203,7 @@ Next
 </div>
 
 
-```console
+```console {title="実行結果"}
 前略
 { Count = 2, Word = of }
 { Count = 2, Word = the }
@@ -217,14 +217,14 @@ Next
 作ったインスタンスを取っておけば、文字列で与えた正規表現を、内部的な表現にコンパイルする作業を1度限りにできて、実行効率が良くなります。
 一方、実行効率を気にしない、もしくは、一度きりのパターン マッチングなら、静的メソッド版も使えます。
 
-```csharp
+```csharp {title="静的メソッド版の Match"}
 var text = "abcde";
 Console.WriteLine(Regex.Match(text, "a+"));
 Console.WriteLine(Regex.Match(text, "a.*e"));
 ```
 
 
-```console
+```console {title="実行結果"}
 a
 abcde
 ```
@@ -385,7 +385,7 @@ Console.WriteLine(r.Match("acb").Success); // false
 
 通常、これらの数量指定は「最大一致」になります。一方、これらの記号の後ろに ? （はてな）をつけることで、「最小一致」パターンも作れます。
 
-```csharp
+```csharp {title="最小一致パターン"}
 var r1 = new Regex(@".*,");  // 任意の文字の後ろにコンマ
 var r2 = new Regex(@".*?,"); // 同上。ただし、最小一致
 var str = "aaa,aaa,aaa,";
@@ -611,7 +611,7 @@ Console.WriteLine(r2.Match(str)); // aaa, だけ拾われる
 
 例えば以下のようなコードを見てみましょう。
 
-```csharp
+```csharp {title="正規表現のグループ化"}
 var r = new Regex(@"(\d{4})/(\d{2})/(\d{2})");
 var m = r.Match("2011/12/15");
  
@@ -624,7 +624,7 @@ foreach (var x in m.Groups)
 
 <code>()</code>が3か所あります。マッチ結果（m）のGroupsには、マッチした全体と、<code>()</code> でくくった3か所の結果が格納されています。したがって、実行結果は以下の通りです。
 
-```console
+```console {title="実行結果"}
 2011/12/15
 2011
 12
@@ -634,7 +634,7 @@ foreach (var x in m.Groups)
 
 グループには、名前を付けておくこともできます。<code>(?&lt;id&gt;パターン)</code> というように、<code>()</code> 内の先頭に <code>?&lt;&gt;</code> をつけます。
 
-```csharp
+```csharp {title="正規表現グループに名前を付ける" highlight-ranges="sha256:9cd604c51a12696c240083f7ec68c5da1e84a5f249589db5901cd0029339694f;1:22-1:26,1:34-1:38,1:46-1:50"}
 var r = new Regex(@"(?<y>\d{4})/(?<m>\d{2})/(?<d>\d{2})");
 var m = r.Match("2011/12/15");
 

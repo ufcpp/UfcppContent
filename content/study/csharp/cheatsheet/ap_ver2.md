@@ -62,7 +62,7 @@ C++ で言うところの template。
 （ただし、template とは実装の方式が違います。）
 以下のような感じで、“型をパラメータに持つ型”を作ることが出来ます。
 
-```csharp
+```csharp {title="Generics の例" highlight-ranges="sha256:4aa66c60e8e3de774bb339077efce70f3b2a1b8e3641eb887fbbcbe2c050f677;1:19-1:22,3:2-3:3,5:19-5:20,6:9-6:10"}
 public class Stack<T>
 {
 	T[] items;
@@ -88,7 +88,7 @@ Generics はクラス、構造体、インターフェース、デリゲート�
 例えば、今までなら、イベントハンドラを定義するときに、
 以下のように1度メソッドを定義してからデリゲートにそのメソッドを渡していました。
 
-```csharp
+```csharp {title="イベントハンドラ(今までの書き方)"}
 class InputForm: Form
 {
   ...
@@ -109,7 +109,7 @@ class InputForm: Form
 それに対して、匿名メソッドを使った書き方では、
 以下のようにコード中に直接メソッドを書くことが出来ます。
 
-```csharp
+```csharp {title="イベントハンドラ(匿名メソッドを使った書き方)" highlight-lines="7-10"}
 class InputForm: Form
 {
   ...
@@ -135,7 +135,7 @@ class InputForm: Form
 それから、匿名メソッドとは直接関係のない話ですが、
 以下のように、メソッドを暗黙的にデリゲートに変換することが出来るようになりました。
 
-```csharp
+```csharp {title="メソッド→デリゲートの変換"}
   static double[] Apply(double[] a, Function f) { ... }
 
     Apply(a, new Function(Math.Sin)); // 今までの書き方
@@ -157,7 +157,7 @@ C# の foreach 構文は、コレクションクラスの利用者側から見�
 この実装側の労力を軽減するために、C# 2.0ではイテレータ構文というものが追加されました。
 イテレータ構文は、コレクションクラスから要素を得る(yield: 産出する、利益を生む)ための構文で、以下のような書き方をします。
 
-```csharp
+```csharp {title="イテレータ(GetEnumerator)" highlight-text="yield"}
 using System.Collections.Generic;
 public class Stack<T>: IEnumerable<T>
 {
@@ -179,7 +179,7 @@ public class Stack<T>: IEnumerable<T>
 自動的に <code>IEnumerator</code> インターフェース実装するクラスを生成してくれます。
 また、イテレータは以下のように、<code>IEnumerable</code> を返すメソッド/プロパティとしても定義することが出来ます。
 
-```csharp
+```csharp {title="イテレータ(IEnumerable を返すメソッド)" highlight-ranges="sha256:5681551522ae1e89512624a46e9eaea3f26ed8544d10b656629b660540dfc305;1:10-1:24,6:9-6:14"}
   public IEnumerable<T> BottomToTop
   {
     get
@@ -193,7 +193,7 @@ public class Stack<T>: IEnumerable<T>
 
 利用者側では以下のようにして使用します。
 
-```csharp
+```csharp {title="イテレータ(利用者側のコード)" highlight-ranges="sha256:a46ca33f7b41d156641c5fbd40a513df52e0338174cc000027e23c67183e31c6;3:20-3:28,5:20-5:40"}
     Stack<int> stack = new Stack<int>();
     for (int i = 0; i < 10; i++) stack.Push(i);
     foreach (int i in stack) Console.Write("{0} ", i);
@@ -211,7 +211,7 @@ public class Stack<T>: IEnumerable<T>
 C# 2.0 では、クラスや構造体などの型を複数のソースファイルに分けて記述できるようになりました。
 分けて記述したい型には、以下のように <code>partial</code> キーワードを付けます。
 
-```csharp
+```csharp {title="partial クラス"}
 public partial class Customer
 {
   private int id;
@@ -238,7 +238,7 @@ public partial class Customer
 Nullable 型は、値型の型名の後ろに <code>?</code> を付ける事で、元の型の値または <code>null</code> の値を取れる型になるというものです。
 <code>int</code> 型で例に取ると、以下のような書き方が出来ます。
 
-```csharp
+```csharp {title="Nullable 型の例"}
 int? x = 123;
 int? y = null;
 if (x.HasValue) Console.WriteLine(x.Value); 
@@ -250,7 +250,7 @@ if (y.HasValue) Console.WriteLine(y.Value);
 整数値または <code>null</code> 値の代入および、値を持つかどうかの判別が出来る型になります。
 また、以下のように、Nullable 型同士の演算を行う際には、値が <code>null</code> かを自動的に判別してくれます。
 
-```csharp
+```csharp {title="Nullable 型同士の演算"}
 int? x, y;
 ....
 int? z = x + y;
@@ -259,7 +259,7 @@ int? z = x + y;
 
 上述のようなコードを書いた場合、以下のコードと同じ意味合いになります。
 
-```csharp
+```csharp {title="Nullable 型同士の演算(等価なコード)"}
 int? z = x.HasValue && y.HasValue ? x.Value + y.Value : (int?)null;
 ```
 
@@ -269,7 +269,7 @@ int? z = x.HasValue && y.HasValue ? x.Value + y.Value : (int?)null;
 訳すなら、null 結合演算子。）
 <code>??</code> 演算子は、値が <code>null</code> かどうかを判別し、<code>null</code> の場合には別の値を割り当てる演算子です。
 
-```csharp
+```csharp {title="?? 演算子"}
 // x, y は int? 型の変数
 int? z = x ?? y; // x != null ? x : y
 int i = z ?? -1; // z != null ? z.Value : -1
@@ -283,7 +283,7 @@ int i = z ?? -1; // z != null ? z.Value : -1
 
 以下に示すように、プロパティの set/get アクセサ別個のアクセスレベルが設定可能になりました。
 
-```csharp
+```csharp {title="set/get のアクセスレベルを別個に設定"}
 public class A
 {
   public int P
@@ -315,7 +315,7 @@ C# では、基本的に、名前空間に対しても、クラスに対して�
 <code>using</code> 文で作ったエイリアスに対しても、
 全て <code>.</code> 修飾子(qualifier: 限定子とも訳す)を用いて名前を繋いでいました。
 
-```csharp
+```csharp {title=". 修飾子"}
 namespace Namespace
 {
   public class A{}
@@ -341,7 +341,7 @@ class X
 もし、同一プロジェクト内の他の場所で Alias という名前のクラスまたは名前空間を追加作成すると、
 このコードはエラーを起こしてしまいます。
 
-```csharp
+```csharp {title=". 修飾子の問題点"}
 class Alias{ public class A{} }
 // ↑プロジェクト内のどこか他の場所にこの1行を追加すると・・・
 
@@ -388,7 +388,7 @@ csc /r:X=xxx.dll /Y:yyy.dll test.cs
 ```
 
 
-```csharp
+```csharp {title="外部エイリアス"}
 extern alias X; // コンパイル時にオプションで指定したエイリアス
 extern alias Y;
 class Test
@@ -407,7 +407,7 @@ class Test
 pragma プリプロセッサ命令が追加されました。
 warning メッセージの抑止などが出来ます。
 
-```csharp
+```csharp {title="pragma プリプロセッサ"}
 using System;
 class Program
 {
@@ -456,7 +456,7 @@ unsafe コード内限定で、
 
 Covariance … 戻り値の型が、デリゲートの戻り値の型の派生クラスになっていても OK。
 
-```csharp
+```csharp {title="Covariance"}
 class Mammal {}       // 哺乳類。
 class Dog : Mammal {} // 犬。
 
@@ -484,7 +484,7 @@ class Program
 
 Contravariance … 引数の型が、デリゲートの引数の型の基底クラスになっていても OK。
 
-```csharp
+```csharp {title="Contravariance"}
 class Mammal {}       // 哺乳類。
 class Dog : Mammal {} // 犬。
 

@@ -99,7 +99,7 @@ native int は、
 
 1つはフィールドとかプロパティの初期化子。
 
-```csharp
+```csharp {title="フィールド/プロパティ初期化子での new"}
 using System.Collections.Generic;
  
 class Sample
@@ -152,7 +152,7 @@ C# 7.0 から脈々と、ちょっとずつ拡充されてきた[パターン �
 
 前者は、以下のように、`_` なしで型パターンを使えるというもの。
 
-```csharp
+```csharp {title="simplified type patter"}
 static int M(object obj) => obj switch
 {
     // C# 8.0 までだと _ が必須だった。
@@ -172,7 +172,7 @@ static int M(object obj) => obj switch
 後者は名前通り「パターンを満たさないとき」用の構文です。
 たぶん、`not null` が一番使うと思います。
 
-```csharp
+```csharp {title="not pattern"}
 static int M(object obj) => obj switch
 {
     // string 型のインスタンスじゃないとき
@@ -185,7 +185,7 @@ static int M(object obj) => obj switch
 ちなみに、「こんな変な文法を追加しなくても、既存の構文で `if` とか `when` とか並べればいいんじゃないのか？」と思うかもしれませんが、パターン マッチングは結構賢くて、
 ちゃんと条件が網羅的かどうかの判定をやってくれます。
 
-```csharp
+```csharp {title="条件の網羅性チェック"}
 static int Invalid(object obj)
 {
     if (!(obj is string)) return 1;
@@ -210,7 +210,7 @@ static int Valid(object obj) => obj switch
 あと、数値の範囲を表すパターンとして `min..max` を使いたいという意見も結構あるんですが…
 「両端を含む・含まない」の区別が紛らわしすぎるということで愚直に `<`、`<=`、`>`、`>=` を使うということになりました。
 
-```csharp
+```csharp {title="両端含む・含まない問題の回避策としての比較パターン"}
 static int M(byte b) => b switch
 {
     >= 0 and <= 10 => 1, // 0 も 10 も含んで [0, 10] の範囲

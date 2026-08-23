@@ -52,7 +52,7 @@ C# では[関数メンバー](st_function.md#function-member)に対して、
 例えば以下のようなメソッド `M` を書いた場合、
 上の方に書いたものほど優先的に呼ばれます。
 
-```csharp
+```csharp {title="引数の型の「一致度」の高さ"}
 using System;
 
 // A → B → C の型階層
@@ -101,7 +101,7 @@ class Program
 型変換に関しては、候補が複数ある場合は、どちらを呼ぶべきか不明瞭なためコンパイル エラーになります。
 例えば以下のコードはコンパイルできません。
 
-```csharp
+```csharp {title="不明瞭でオーバーロード解決できない例"}
 using System;
 
 // インターフェイス実装とユーザー定義の型変換を持つ
@@ -135,7 +135,7 @@ C# では、任意の[値型](../resource/oo_reference.md#valtype)は `System.Va
 実際には型変換の一種です。
 そのため、以下のようなコードはコンパイル エラーになります。
 
-```csharp
+```csharp {title="ValueType への変換はインターフェイスへの変換と同列"}
 using System;
 
 struct S : IDisposable
@@ -162,7 +162,7 @@ class Program
 C# では、「ジェネリックかどうか」だけの差があるメソッド オーバーロードも可能です。
 この場合、非ジェネリックな方が優先的に呼ばれます。
 
-```csharp
+```csharp {title="非ジェネリックな方優先"}
 using System;
 
 class Program
@@ -190,7 +190,7 @@ C# には[オプション引数](sp4_optional.md#optional)と[可変長引数](s
 - オプション引数による省略
 - 可変長引数による省略
 
-```csharp
+```csharp {title="引数の省略"}
 using System;
 
 class Program
@@ -222,7 +222,7 @@ C# には[拡張メソッド](../functional/sp3_extension.md)という、
 この場合、インスタンス メソッドの方が優先です。
 拡張メソッドの方を呼びたければ、本来の静的メソッドとして呼ぶ必要があります。
 
-```csharp
+```csharp {title="拡張メソッド"}
 using System;
 
 class A
@@ -261,7 +261,7 @@ C# の構文にはいくつか、左辺値からの型推論をするものが�
 
 推論に推論を重ねることになるので、これらの型を引数にした場合、オーバーロード解決ができない場合が増えます。
 
-```csharp
+```csharp {title="型推論が働かなくなる例"}
 using System;
 
 // 引数が完全に一致しているデリゲート型を2個用意
@@ -299,7 +299,7 @@ class Program
 `var`を使った暗黙的変数宣言では自動的に`string`扱いされます。
 そのため、オーバーロード解決でも特にキャストがない場合、`string`が優先されます。
 
-```csharp
+```csharp {title="文字列補間"}
 using System;
 
 class Program
@@ -323,7 +323,7 @@ class Program
 同様に、ラムダ式は、デリゲート型で受け取る場合と式ツリーで受け取る場合で異なる挙動になります。
 こちらは推論は効かず、オーバーロード解決もできなくなります。
 
-```csharp
+```csharp {title="式ツリー"}
 using System;
 using System.Linq.Expressions;
 
@@ -347,7 +347,7 @@ class Program
 ラムダ式の型推論は相当優秀で、結構複雑なオーバーロード解決もできたりします。
 例えば、以下の `M(x => x)` はちゃんとコンパイルできます。
 
-```csharp
+```csharp {title="ラムダ式とオーバーロード解決"}
 using System;
 
 class Program
@@ -380,7 +380,7 @@ class Program
 以下のように、多段のラムダ式でちゃんとオーバーロード解決できるようになったのは C# 6.0 からです。
 また、「匿名メソッド式はラムダ式と違って式ツリーにならない」という条件が加味されたのも C# 6.0 からです。
 
-```csharp
+```csharp {title="多段のラムダ式など"}
 using System;
 using System.Linq.Expressions;
 
@@ -436,7 +436,7 @@ class Program
 同名の静的メソッドとインスタンス メソッドを1つずつ定義していますが、
 間違った引数で呼び出しています。
 
-```csharp
+```csharp {title="同名の静的メソッドとインスタンス メソッド"}
 using System;
 
 struct Static { }
@@ -477,7 +477,7 @@ C# 7.3でこの順を逆にして、引数の型でオーバーロード解決�
 2つのメソッド`M`が、どちらも`M()`で呼べるようになります。
 C# 7.3からは、これらの呼び分けができるようになりました。
 
-```csharp
+```csharp {title="静的メソッドかインスタンス メソッドかでオーバーロード解決"}
 using System;
 
 struct Static { }
@@ -580,7 +580,7 @@ class Program
 
 ジェネリック メソッドで、型制約だけが違うメソッドのオーバーロード解決ができるようにもなりました。
 
-```csharp
+```csharp {title="型制約での呼び分け"}
 using System;
 
 // オーバーロード用のダミー型
@@ -620,7 +620,7 @@ class Program
 値型の時だけ[null許容型](../resource/sp2_nullable.md)にして、`?`を付ける必要があります。
 この呼び分けが、これまでだとなかなか難しかったですが、C# 7.3ではできるようになります。
 
-```csharp
+```csharp {title="class 制約と struct 制約の呼び分け"}
 using System.Collections.Generic;
 using System.Linq;
 
@@ -661,7 +661,7 @@ C# (というか、.NET)のメソッドは、戻り値の型を[シグネチャ]
 ただ、これまでの例でもたびたび出てきたように、引数の規定値を与えることで戻り値だけが違う「っぽく見える」メソッド オーバーロードはできます。
 また、以下のように、「戻り値違いのデリゲートを受け取るメソッド」は作れます。
 
-```csharp
+```csharp {title="戻り値違いのデリゲートを受け取るメソッド オーバーロード"}
 static void M(Func<int> f) => Console.WriteLine("int");
 static void M(Func<string> f) => Console.WriteLine("string");
 ```
@@ -669,7 +669,7 @@ static void M(Func<string> f) => Console.WriteLine("string");
 [前述の通り](#lambda)、
 ラムダ式であれば、ラムダ式の型推論が賢くて、この2つのメソッドの呼び分けができました。
 
-```csharp
+```csharp {title="ラムダ式は賢い"}
 M(() => 0); // int の方
 M(() => "abc"); // string の方
 ```
@@ -677,7 +677,7 @@ M(() => "abc"); // string の方
 しかし、メソッド グループを引数に渡した場合、これまではオーバーロード解決できませんでした。
 それが、以下のように、C# 7.3からはオーバーロード解決できるようになります。
 
-```csharp
+```csharp {title="メソッドの戻り値でオーバーロード解決"}
 using System;
 
 class Program
@@ -717,7 +717,7 @@ C# ではなく、.NET 型システムの制約です。
 単に C# コンパイラーだけの仕事ではないので、これを修正するのは少し難しいです。
 そのため、これは引き続き認められていません。
 
-```csharp
+```csharp {title="制約違いのオーバーロードは不可"}
 // 以下の2つは呼び分けできるようになった。
 // なのに、定義はできない(C# コンパイラーだけの問題じゃないので直せない)。
 static void M<T>(T x) where T : struct { }
@@ -729,7 +729,7 @@ static void M<T>(T x) where T : class { }
 
 1つは[オプション引数](sp4_optional.md#optional)(引数の規定値)や[可変長引数](sp_params.md)を使う方法で、以下のような書き方で「違うオーバーロードなんだけど、実質的には同じ呼び方ができる」と言うようなメソッドを定義できます。
 
-```csharp
+```csharp {title="オプション引数をダミーにして疑似的に同シグネチャ オーバーロードを実現"}
 class Program
 {
     // 呼び分け用のダミー型
@@ -751,7 +751,7 @@ class Program
 もう1つは拡張メソッドを使う方法です。
 拡張メソッドであれば、別のクラス中で定義してやれば、同じ型を対象とした全く同じシグネチャのメソッドを定義できます。
 
-```csharp
+```csharp {title="拡張メソッドで同シグネチャ オーバーロードを実現"}
 using System.Collections.Generic;
 using System.Linq;
 
@@ -772,7 +772,7 @@ static class StructExtensions
 
 また、`ref`の有無が違うだけの拡張メソッドでもオーバーロード可能です。
 
-```csharp
+```csharp {title="ref の有無でオーバーロード"}
 static class Extensions
 {
     // ref の有無の差 + 型制約
@@ -807,7 +807,7 @@ C# 13 で、オーバーロードの解決優先度を属性を付けて明示�
 `OverloadResolutionPriority` 属性(`System.Runtime.CompilerServices` 名前空間)を使います。
 名前通り優先度を指定できて、正の整数を指定すると優先度が上がって、負の整数なら下がります。
 
-```csharp
+```csharp {title="オーバーロード解決の優先度を変更する例"}
 using System.Runtime.CompilerServices;
 
 // IEnumerable<char> の方が選ばれる。
@@ -833,7 +833,7 @@ class C
 
 ちなみに、オーバーロードできないメンバーにこの属性を付けるとコンパイル エラーになります。
 
-```csharp
+```csharp {title="オーバーロードできないメンバーに OverloadResolutionPriority を付けるとコンパイラーに怒られる"}
 using System.Runtime.CompilerServices;
 
 namespace System.Runtime.CompilerServices
@@ -894,7 +894,7 @@ class C
 
 `Debug.Assert` は、C# 10 で導入された [`CallerArgumentExpression`](../cheatsheet/ap_ver10.md#CallerArgumentExpression) を使いたいものの、既存のオーバーロードに阻害されて呼びようがないという問題が出ています。
 
-```csharp
+```csharp {title="CallerArgumentExpression 付きのオーバーロードを呼べない問題"}
 var x = int.Parse(Console.ReadLine());
 
 // Debug.Assert(x > 0, "x > 0") になってほしいのに、1引数の方が呼ばれちゃう。
@@ -937,7 +937,7 @@ static class String
 
 これらの問題に `OverloadResolutionPriority` 属性が使えます。
 
-```csharp
+```csharp {title="IEnumerable の優先度を下げる"}
 using System.Runtime.CompilerServices;
 
 C.M(new int[1]); // 無事、ReadOnlySpan の方が選ばれる。
@@ -951,7 +951,7 @@ class C
 }
 ```
 
-```csharp
+```csharp {title="1引数オーバーロードの優先度を下げる"}
 using System.Runtime.CompilerServices;
 
 var x = int.Parse(Console.ReadLine());
@@ -968,7 +968,7 @@ class Debug
 }
 ```
 
-```csharp
+```csharp {title="1引数オーバーロードの優先度を下げる"}
 using System.Runtime.CompilerServices;
 
 // 無事、IndexOf(value, StringComparison.Ordinal) で呼ばれる。
@@ -989,7 +989,7 @@ static class String
 ちなみに、`OverloadResolutionPriority` で優先度を下げたメソッドを呼び出すのはかなり困難になったりします。
 場合によっては真っ当な方法で呼ぶ手段がなく、リフレクションや unsafe な手段でしか呼べなくなります。
 
-```csharp
+```csharp {title="優先度を下げたせいで真っ当な手段では呼べず &amp; 真っ当じゃない手段で呼ぶ例"}
 using System.Runtime.CompilerServices;
 
 // OverloadResolutionPriority(-1) のせいで、真っ当な方法ではどうやっても M(string) の方を呼べない。
@@ -1020,7 +1020,7 @@ class C
 
 例えば以下のような所業はできません。
 
-```csharp
+```csharp {title="Linq 乗っ取りを画策"}
 using System.Runtime.CompilerServices;
 
 // わざと System.Linq.Enumerable と競合するようにして、
@@ -1036,7 +1036,7 @@ static class FakeLinq
 }
 ```
 
-```csharp
+```csharp {title="ただし、実際にやってみるとうまくいかない(当然)"}
 // FakeLinq の方が優先されたりはしない。
 // 単に「Enumerable と FakeLinq 間で不明瞭」エラーに。
 "abc".Select(c => (int)c);
@@ -1047,7 +1047,7 @@ static class FakeLinq
 例えば、以下のように複数のクラスで複数の拡張メソッドが定義されていて、
 全体でみれば1つだけ優先度が高くてオーバーロード解決できる場合を考えます。
 
-```csharp
+```csharp {title="複数のクラスの複数の拡張メソッドから1つ選ばれる例"}
 // A.M(string), A.M(string, int), B.M(string, int) が同列で比較されて、
 // デフォルト引数なしの A.M(string) が勝つ。
 "".M();
@@ -1068,7 +1068,7 @@ static class B
 `OverloadResolutionPriority` は1つのクラス内でしか働かないので、`A` の中のどの `M` が選ばれるかにだけ影響します。
 その結果、以下のように別のクラスの `M` と競合する可能性があります。
 
-```csharp
+```csharp {title="OverloadResolutionPriority を付けたことで他のクラスのメンバーと競合するようになる例"}
 using System.Runtime.CompilerServices;
 
 // OverloadResolutionPriority を付けたことで、A.M の中では A.M(string, int) が選ばれる。
@@ -1095,7 +1095,7 @@ static class B
 C# では戻り値だけが異なるオーバーロードを認めていません。
 例えば以下のコードはコンパイル エラーになります。
 
-```csharp
+```csharp {title="戻り値だけが違うオーバーロードの追加はできない"}
 class C
 {
     public static async Task MAsync() { await Task.Yield(); }
@@ -1110,7 +1110,7 @@ class C
 ところが、「引数なし」と「デフォルト引数持ち」なら前者の方が優先されるため、
 追加した新しいオーバーロードもどきが呼ばれることはありません。
 
-```csharp
+```csharp {title="オーバーロードもどき(おしい)"}
 // 残念ながら Task MAsync() の方しか呼ばれない。
 await C.MAsync();
 
@@ -1128,7 +1128,7 @@ class C
 
 これも一応、`OverloadResolutionPriority` 属性で解消できます。
 
-```csharp
+```csharp {title="OverloadResolutionPriority でごり押し"}
 using System.Runtime.CompilerServices;
 
 // ValueTask 戻り値の方が呼ばれるように。

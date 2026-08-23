@@ -125,7 +125,7 @@ VB（Visual Basic）、F#、C++/CLI などに対応します。
 </ul>
 <div>
 
-```csharp
+```csharp {title="最も簡単なC#プログラム"}
 // C#
 Console.WriteLine("Hello World");
 ```
@@ -167,7 +167,7 @@ Console::WriteLine(L"Hello World");
 
 当コンテンツ中でサンプル コードは以下のようなスタイルで書いています。
 
-```csharp
+```csharp {title="サンプルコードの例"}
 // サンプルコード
 if(条件文)
 {
@@ -182,7 +182,7 @@ if(条件文)
 
 また、ユーザーからの入力や、サンプルコードの出力は以下のようなスタイルで書いています。
 
-```console
+```console {title="サンプルコードの出力例"}
 sample input/output
 # ↓ この行に対するコメント
 ユーザーからの入力

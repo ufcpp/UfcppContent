@@ -38,7 +38,7 @@ aliases:
 </ul>
 <div>
 
-```csharp
+```csharp {title="最も簡単なC#プログラム" highlight-lines="5-9"}
 using System;
  
 class Program
@@ -167,7 +167,7 @@ GUI プログラムは文字ベース(CUI: Character User Interfaceという)の
 </ul>
 <div>
 
-```csharp
+```csharp {title="GUI プログラム例（WPF）"}
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -264,7 +264,7 @@ do
 詳しくは、「[GUI アプリケーション](../lib/lib_forms.md)」で説明します。
 
       
-```csharp
+```csharp {title="C#によるGUIプログラムの例"}
 namespace CsharpSample
 {
   using System;
@@ -329,7 +329,7 @@ Visual Studio でこのソースをコンパイルする場合、
 （ソースファイルの名前を WelcomeForm.cs とすると）以下のようなコマンドでコンパイルします。
 
       
-```console
+```console {title="コマンドラインで csc を使ってコンパイルする場合"}
 csc /r:system.windows.forms.dll /r:system.drawing.dll /t:winexe WelcomeForm.cs
 ```
    

@@ -21,7 +21,7 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="source"></a>ソース
 
-```xml
+```xml {title="ソース"}
 <figure>
   <image src="test.png" width="200" height="200" />
   <legend>テスト用の画像</legend>

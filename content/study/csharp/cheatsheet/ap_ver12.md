@@ -35,7 +35,7 @@ aliases: []
 配列だけではなく、コレクション(`List<T>` 型など)、`Span<T>` なども全く同じ書き方で初期化できます。
 これをコレクション式(collection expression)と言います。
 
-```csharp
+```csharp {title="コレクション式" highlight-ranges="sha256:f910249d2a264e3d542e6b64cb3d32585edd0d2a69bea57c15c964163f3ebd18;3:15-3:24,4:18-4:27,5:18-5:27,6:25-6:34,7:33-7:42"}
 using System.Collections.Immutable;
 
 int[] array = [1, 2, 3];
@@ -48,7 +48,7 @@ ImmutableArray<int> immutable = [1, 2, 3];
 また、コレクション式中では、`..` を使うことで「別のコレクションの中身の展開」ができます。
 これを スプレッド (spread)演算子と言います。
 
-```csharp
+```csharp {highlight-ranges="sha256:69f2146a3dd2229ba74d69539a785a324542af8ee84d16dd1e8f9e876feb4108;5:22-5:24,5:32-5:34"}
 int[] array1 = [1, 2, 3];
 int[] array2 = [4, 5, 6];
 
@@ -80,7 +80,7 @@ class A(int x)
 
 C# 11 ではエラーになっていた以下のようなコードをコンパイルできるようになりました。
 
-```csharp
+```csharp {title="C# 12 から書ける using エイリアス"}
 using Primitive = int;
 using Array = int[];
 using Nullable = int?;
@@ -94,7 +94,7 @@ using Tuple = (int, int);
 ラムダ式の引数に[オプション引数](../structured/sp4_optional.md#optional)にできる(既定値を与えられる)ようになりました。
 また、[params 引数](../structured/sp_params.md)も使えるようになりました。
 
-```csharp
+```csharp {title="ラムダ式の引数の既定値と params 引数"}
 // オプション引数(既定値値指定)。
 var f1 = (int x = 1) => 0;
 
@@ -112,7 +112,7 @@ var f3 = (int x = 1, params int[] y) => 0;
 ref 引数、in 引数の亜種として、
 「書き換えはしないけども、右辺値は受け付けたくない」ということを表す ref readonly 引数というものを導入しました。
 
-```csharp
+```csharp {title="ref readonly 引数"}
 // in 引数の代わりに ref readonly 引数。
 void m(ref readonly int x) { }
 
@@ -149,7 +149,7 @@ m(ref a);
 
 .NET 8 で、[`InlineArray` 属性](https://learn.microsoft.com/ja-jp/dotnet/api/system.runtime.compilerservices.inlinearrayattribute) (`System.Runtime.CompilerServices` 名前空間) というものが入って、「値型の固定長配列」みたいなものを作れるようになりました。
 
-```csharp
+```csharp {title="InlineArray 属性"}
 using System.Runtime.CompilerServices;
 
 // この属性を付けると、 .NET ランタイムが特別扱いして、構造体のサイズを拡大する。
@@ -164,7 +164,7 @@ struct FixedBuffer<T>
 基本的には .NET ランタイム側の機能ですが、
 いくつか、C# 側にもこの `InlineArray` 向けの特殊対応が入っています。
 
-```csharp
+```csharp {title="InlineArray 型利用側の特殊対応"}
 FixedBuffer<string> buffer = new();
 
 // InlineArray に対して直接インデクサーを書ける。
@@ -191,7 +191,7 @@ foreach (var x in buffer)
 C# 11 以前だと、以下の例の最後の行のように、
 静的メンバー内から「インスタンス メンバーのインスタンス メンバー」みたいな名前の参照ができなかったようです。
 
-```csharp
+```csharp {title="C# 11 まではエラーになっていたコードの例"}
 class A
 {
     public string? Instance { get; }

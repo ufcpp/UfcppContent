@@ -83,7 +83,7 @@ aliases:
 
 以下のように変数の前にキーワードを付けることでアクセシビリティを制御することが出来ます。
 
-```csharp
+```csharp {title="アクセシビリティの指定"}
 アクセシビリティ 変数宣言やメソッド定義
 ```
 
@@ -104,7 +104,7 @@ aliases:
 
 ##### <a id="sec-generated-title-4"></a>サンプル
 
-```csharp
+```csharp {title="アクセシビリティのサンプル" highlight-ranges="sha256:188a5a299ba0f74191c135a8de32f20590823c3c8b4d69966781c1a50df051cd;3:3-3:9,4:3-4:12,5:3-5:10"}
 class A
 {
   public    int pub; // どこからでもアクセス可能
@@ -164,7 +164,7 @@ test.cs(35,3): error CS0122: 'A.pri' is inaccessible due to its protection level
 以前は実装の隠蔽は行っていませんでしたが、
 ちゃんと実装を隠蔽するように作り直して見ましょう。
 
-```csharp
+```csharp {title="複素数クラス その2"}
 class Complex
 {
   // 実装は外部から隠蔽(privateにしておく)
@@ -210,7 +210,7 @@ class Complex
 ここで、年齢が負の数になるのはおかしいので、
 コンストラクタで年齢が負の数にならないようにチェックを行うように改良してみましょう。
 
-```csharp
+```csharp {title="Person クラスその1"}
 class Person
 {
   public string name; // 名前
@@ -235,7 +235,7 @@ class Person
 年齢が負の数にならないように強制することは無理です。
 例えば、以下のサンプルのようにすると無理やり年齢を負の数に設定することができます。
 
-```csharp
+```csharp {title="メンバー変数に直接アクセスができる場合の問題点"}
 Person p = new Person("範馬刃牙", -5); // 年齢に負の値を設定しようとしても
 Console.Write("{0}は{1}歳です。\n",  // 0歳に修正されている
               p.name, p.age);        // (「範馬刃牙は0歳です」と表示される)
@@ -248,7 +248,7 @@ Console.Write("{0}は{1}歳です。\n",  // 負の年齢になってしまう
 
 この問題を解決するためには、メンバー変数<code>age</code>は外部からは直接アクセスできないようにして、メソッドを通して<code>age</code>の値を設定、取得する必要があります。
 
-```csharp
+```csharp {title="Person クラスその2"}
 class Person
 {
   public string name; // 名前
@@ -285,7 +285,7 @@ class Person
 クラスの実装を隠蔽しない場合、どのような不具合が生じるかを説明するため、
 まず、以下のコードについて考えてみましょう。
 
-```csharp
+```csharp {title="複素数クラスその1の利用"}
 using System;
 
 // クラス定義
@@ -326,7 +326,7 @@ class ConcealSample
 後者の方式に変更したくなったとします。
 この場合、以下のようにクラスの側だけでなく、クラスの利用側のコードも修正する必要があります。
 
-```csharp
+```csharp {title="複素数クラスその1の仕様変更時" highlight-lines="23"}
 using System;
 
 // クラス定義
@@ -362,7 +362,7 @@ class ConcealSample
 
 このような問題は、以下のように実装を隠蔽することで避けることができます。
 
-```csharp
+```csharp {title="複素数クラスその2の利用"}
 using System;
 
 // クラス定義
@@ -400,7 +400,7 @@ class ConcealSample
 「絶対値と偏角をメンバー変数に記憶しておく」方法に変更する場合、
 以下のように、クラス利用側のコードに手を加える必要は一切ありません。
 
-```csharp
+```csharp {title="複素数クラスその2の仕様変更時"}
 using System;
 
 // クラス定義
@@ -457,7 +457,7 @@ class ConcealSample
 
 まず、1つの[プロジェクト](../package/project.md#project)内ではアクセシビリティに応じて以下のような制限がかかります。
 
-```csharp
+```csharp {title="同一プロジェクト内でのアクセス制限"}
 public class Base
 {
     public int Public { get; set; } // どこからでも
@@ -515,7 +515,7 @@ internal class OtherClass
 
 このコードとは別のプロジェクト内では、以下のような制限がかかります。
 
-```csharp
+```csharp {title="他のプロジェクト内でのアクセス制限"}
 public class Derived : ClassLibrary1.Base
 {
     public void MethodInDerived()
@@ -554,7 +554,7 @@ internal class OtherClass
 ちなみに、`protected internal` と `private protected` では、語順は自由です。
 `protected internal`と`internal protected`、`private protected`と`protected private`はそれぞれ同じ意味になります。
 
-```csharp
+```csharp {title="protected internal と private protected の語順は自由"}
 // どちらの順序でも同じ意味
 protected internal int A1;
 internal protected int A2;

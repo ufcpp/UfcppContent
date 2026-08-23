@@ -44,7 +44,7 @@ C# では、プロパティとイベントの場合、実装を省略して書�
 
 例えば、プロパティの場合、以下のようになります。
 
-```csharp
+```csharp {title="抽象プロパティと自動実装プロパティ"}
 interface ISample
 {
     // 抽象定義: これは宣言のみで実装を持たない（規約のみを定める）
@@ -68,7 +68,7 @@ abstract class Sample
 ちなみに、X の自動実装の展開（コンパイラーによる自動生成）結果は以下のようになります。
 （A の側は抽象定義なので、このような展開は起こりません。）
 
-```csharp
+```csharp {title="自動実装プロパティ X の展開結果"}
     public int X
     {
         get { return _X; }
@@ -84,7 +84,7 @@ abstract class Sample
 通常、C# コードからバック フィールドは見えなくなっていますが、
 「[リフレクション](../dynamic/sp_reflection.md#reflection)」を使うことで覗き見ることができます。
 
-```csharp
+```csharp {title="自動実装プロパティのバック フィールド"}
 using System;
 using System.Reflection;
 
@@ -112,7 +112,7 @@ class Program
 結果として表示されるのは X プロパティのバック フィールドになります。
 （繰り返しますが、A の方は抽象プロパティなので、同様のフィールドは生成されません。）
 
-```console
+```console {title="自動実装プロパティのバック フィールド"}
 <X>k__BackingField
 ```
 
@@ -125,7 +125,7 @@ class Program
 
 プロパティは get; set; を明示的に書くだけまだましで、イベント構文はより一層、混乱を招きます。
 
-```csharp
+```csharp {title="抽象イベントと自動実装イベント"}
 interface ISample
 {
     // 抽象定義: 宣言のみ、実装ない
@@ -151,7 +151,7 @@ class Sample
 デリゲート型のフィールドと似て見える点にも注意が必要ですが、
 実際には以下のようなアクセサーが自動生成されています。
 
-```csharp
+```csharp {title="自動実装イベントの展開結果"}
     // 簡易版。本当はこれに、スレッド安全性の保証用コードが入る。
     public event Action<int> X
     {
@@ -170,7 +170,7 @@ class Sample
 イベントの場合、クラス内から普通のデリゲート型のフィールドのように扱えますが、
 これは実際には、自動実装によって生成されたバック フィールドへのアクセスになります。
 
-```csharp
+```csharp {title="クラス内からのイベント利用"}
 using System;
 
 class Sample
@@ -226,6 +226,6 @@ class Program
 X とだけ表示されます（イベントと同名のフィールドが生成されている）。
 （前述のプロパティの例と同様、A の方は抽象イベントなので、同様のフィールドは生成されません。）
 
-```console
+```console {title="自動実装プロパティのバック フィールド"}
 X
 ```

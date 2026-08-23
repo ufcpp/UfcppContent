@@ -74,7 +74,7 @@ C# 3.0 の新機能には、関数型言語や動的言語が由来と思われ�
 var キーワードを用いて、
 暗黙的に型付けされたローカル変数（Implicitly typed local variables）を定義できるようになりました。
 
-```csharp
+```csharp {title="var"}
 var n = 1;
 var x = 1.0;
 var s = "test";
@@ -87,7 +87,7 @@ var s = "test";
 以下のような構文で、
 クラスやインターフェースに対してインスタンスメソッドを擬似的に追加できるようになりました。
 
-```csharp
+```csharp {title="拡張メソッドの定義" highlight-text="this"}
 static class StringExtensions
 {
   public static string ToggleCase(this string s)
@@ -100,7 +100,7 @@ static class StringExtensions
 通常通り、静的メソッドとして呼び出すこともできますが、
 あたかも string 型のインスタンスメソッドであるかのように呼び出せるようになります。
 
-```csharp
+```csharp {title="拡張メソッドの呼び出し" highlight-text="s.ToggleCase()"}
 string s = "This Is a Test String.";
 string s1 = StringExtensions.ToggleCase(s); // 通常の呼び出し方。
 string s1 = s.ToggleCase();                 // 拡張メソッド呼び出し。
@@ -113,14 +113,14 @@ string s1 = s.ToggleCase();                 // 拡張メソッド呼び出し。
 関数型言語でよく使うような記法で匿名メソッドを定義できるようになりました。
 この機能をラムダ式と呼びます。
 
-```csharp
+```csharp {title="ラムダ式" highlight-text="n =&gt; n &gt; 0"}
 Func<int, bool> p = n => n > 0;
 ```
 
 
 この式は、以下のような匿名メソッド同じ意味になります。
 
-```csharp
+```csharp {title="C# 2.0 の匿名メソッド"}
 delegate(int n)
 {
   return n > 0;
@@ -132,7 +132,7 @@ delegate(int n)
 ラムダ式をデリゲートに代入すると匿名メソッド（実行コード）として、
 Expression 型に代入すると式木データとしてコンパイルされます。
 
-```csharp
+```csharp {title="ラムダ式をデータとして扱う"}
 Expression<Func<int, bool>> e = n => n > 0;
 BinaryExpression lt = (BinaryExpression)e.Body;
 ParameterExpression en = (ParameterExpression)lt.Left;
@@ -145,14 +145,14 @@ ConstantExpression zero = (ConstantExpression)lt.Right;
 
 オブジェクトの初期化を以下のような記法でできるようになりました。
 
-```csharp
+```csharp {title="オブジェクト初期化子"}
 Point p = new Point{ X = 0, Y = 1 };
 ```
 
 
 ちなみに、このコードは以下のようなコードと等価です。
 
-```csharp
+```csharp {title="オブジェクト初期化子"}
 Point p = new Point();
 p.X = 0;
 p.Y = 1;
@@ -161,14 +161,14 @@ p.Y = 1;
 
 また、コレクションの初期化を以下のような記法でできるようになりました。
 
-```csharp
+```csharp {title="コレクション初期化子"}
 List<int> list = new List<int> {1, 2, 3};
 ```
 
 
 こちらは以下のようなコードと等価です。
 
-```csharp
+```csharp {title="コレクション初期化子"}
 List<int> list = new List<int>();
 list.Add(1);
 list.Add(2);
@@ -182,7 +182,7 @@ list.Add(3);
 匿名型（anonymous type）を作成できるようになりました。
 匿名型の作り方は以下の通りです。
 
-```csharp
+```csharp {title="匿名型"}
 var x = new { FamilyName = "糸色", FirstName="望"};
 ```
 
@@ -193,7 +193,7 @@ var x = new { FamilyName = "糸色", FirstName="望"};
 new で配列を作成する際、
 型を省略できるようになりました。
 
-```csharp
+```csharp {title="配列の暗黙的型付け" highlight-text="new[] {1, 2, 3, 4}"}
 int[] array = new[] {1, 2, 3, 4};
 ```
 
@@ -220,7 +220,7 @@ C# 等の言語に SQL ライクなデータベース操作構文を組み込む
 というものです。
 例えば、以下のような書き方ができます。
 
-```csharp
+```csharp {title="C# 3.0 LINQ"}
 var 学生名簿 =
 new[] {
   new {学生番号 = 14, 姓 = "風浦", 名 = "可符香"},
@@ -247,7 +247,7 @@ foreach(var 名 in 学籍番号前半名)
 ```
 
 
-```console
+```console {title="C# 3.0 LINQ の例、実行結果"}
 マリア
 可符香
 ```
@@ -277,7 +277,7 @@ C# 3.0 では、
 
 例えば、
 
-```csharp
+```csharp {title="プロパティの set/get の省略"}
 public string Name { get; set; }
 ```
 
@@ -285,7 +285,7 @@ public string Name { get; set; }
 というように、
 <code>get; set;</code> とだけ書いておくと、
 
-```csharp
+```csharp {title="set/get の自動生成結果"}
 private string __name;
 public string Name
 {
@@ -312,7 +312,7 @@ public string Name
 
 例えば、まずクラスの部分定義で以下のようなコードを書いたとします。
 
-```csharp
+```csharp {title="パーシャルメソッドの宣言"}
 partial class Program
 {
   static void Main(string[] args)
@@ -335,7 +335,7 @@ partial class Program
 ここで、以下のような部分定義を追加して、
 パーシャルメソッドに実装を与えます。
 
-```csharp
+```csharp {title="パーシャルメソッドに実装を追加"}
 partial class Program
 {
   static partial void OnBeginProgram()
@@ -354,7 +354,7 @@ partial class Program
 すると、OnBeginProgram、OnEndProgram が呼ばれるようになります。
 実行結果は以下の通り。
 
-```console
+```console {title="パーシャルメソッド実装追加後の実行結果"}
 check pre-condition
 program body
 check post-condition

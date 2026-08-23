@@ -24,7 +24,7 @@ C# 8.0 で、配列などに対して以下のような書き方をできるよ�
 
 例えば、以下のような書き方で配列の前後1要素ずつを削ったものを得ることができます。
 
-```csharp
+```csharp {title=".. 構文"}
 using System;
  
 class Program
@@ -72,7 +72,7 @@ C# 7.2 で、[`Span<T>` 構造体](../resource/span.md)が導入されました�
 `Span<T>` 構造体は特別な最適化の対象になっていて、非常に高速です。
 例えば以下の2つのメソッドでは、`Span<T>` を使った `Sum2` の方が高速です。
 
-```csharp
+```csharp {title="Span を使うと速い"}
 // i番目からj番目までの和。
 [MethodImpl(MethodImplOptions.NoInlining)]
 static int Sum1(int[] array, int i, int j)
@@ -107,7 +107,7 @@ static int Sum2(int[] array, int i, int j)
 実際、 .NET の標準ライブラリ中でもぶれています。
 例えば、[Parallel.For](https://docs.microsoft.com/ja-jp/dotnet/api/system.threading.tasks.parallel.for?view=netstandard-2.1#System_Threading_Tasks_Parallel_For_System_Int32_System_Int32_System_Action_System_Int32__)や[`Random.Next`](https://docs.microsoft.com/ja-jp/dotnet/api/system.random.next?view=netframework-4.8#System_Random_Next_System_Int32_System_Int32_) は (2) の意味ですが、[`Substring`](https://docs.microsoft.com/ja-jp/dotnet/api/system.string.substring?view=netstandard-2.1#System_String_Substring_System_Int32_System_Int32_)や[`AsSpan`](https://docs.microsoft.com/ja-jp/dotnet/api/system.memoryextensions.asspan?view=netstandard-2.1#System_MemoryExtensions_AsSpan__1___0___System_Int32_System_Int32_)は (3) の意味です。
 
-```csharp
+```csharp {title="範囲指定の引数のぶれ"}
 using System;
 using System.Threading.Tasks;
  
@@ -128,7 +128,7 @@ class Program
 
 名前付き引数を使えば、多少混乱を予防することはできます。
 
-```csharp
+```csharp {title="名前付き引数で混乱を予防"}
 Parallel.For(fromInclusive: 1, toExclusive: 3, i => { });
 var v = new Random().Next(minValue: 1, maxValue: 3);
 var span = new[] { 1, 2, 3, 4, 5 }.AsSpan(start: 1, length: 3);
@@ -172,7 +172,7 @@ C# の `i..j` で「j は含まない」の方を採用したのは、明確に�
 配列や文字列からの一定範囲の抜き出しではよく「末尾から i 番目」という場所を取りたいことがあります。
 C# 8.0 では、そのために単項 `^` 演算子を使います。
 
-```csharp
+```csharp {title="^ 演算子"}
 var i = ^1; // Length - 1 の場所
  
 var value = 1;
@@ -183,7 +183,7 @@ var j = ^value; // 変数に対しても ^ を使える
 また、戻り値は `Index` 構造体(`System` 名前空間)になります。
 `Index` は、以下のようなプロパティ・メソッドを持つ構造体です。
 
-```csharp
+```csharp {title="Index 構造体"}
 public readonly struct Index
 {
     public Index(int value, bool fromEnd = false);
@@ -212,7 +212,7 @@ C# では、[配列のインデックスは0以上(非負)という前提](../..
 
 C# 8.0 で `..` という新しい構文が追加されました。
 
-```csharp
+```csharp {title=".. 構文"}
 var r1 = 1..^1;
 var r2 = 1..;
 var r3 = ..^1;
@@ -228,7 +228,7 @@ var r = i..j;
 戻り値は `Range` 型(`System` 名前空間)になります。
 `Range` は、以下のようなプロパティ・メソッドを持つ構造体です。
 
-```csharp
+```csharp {title="Range 構造体"}
 public readonly struct Range
 {
     public Range(Index start, Index end);
@@ -255,7 +255,7 @@ public readonly struct Range
 ちなみに、演算子の優先順位は結構高いです。
 2項演算(乗除算含む)や [`switch` 式](../datatype/typeswitch.md#switch-expression)よりも上になります。
 
-```csharp
+```csharp {title=".. の優先順位"}
 _ = 2 * 3..4; // 2 * (3..4) の意味。そんな掛け算はできないのでコンパイル エラーに。
 _ = 2..3 switch // 2..3 という Range が switch 式の引数になる
 {
@@ -275,14 +275,14 @@ _ = (1 + 2)..(3 + 4); // 足し算とかを優先したければ () 必須
 
 `Index`型の `i` に対するインデクサー `a[i]` は基本的に以下のように展開されます。
 
-```csharp
+```csharp {title="Index 型インデクサーの展開結果"}
 int offset = i.GetOffset(a.Length);
 a[offset];
 ```
 
 また、`Range` 型の `r` に対するインデクサー `a[r]` は基本的に以下のように展開されます。
 
-```csharp
+```csharp {title="Range 型インデクサーの展開結果"}
 var offset1 = r.Start.GetOffset(a.Length);
 var offset2 = r.End.GetOffset(a.Length);
 a.Slice(offset1, offset2 - offset1);
@@ -293,12 +293,12 @@ C# のコレクションは長さを `Length` で取るものと `Count` で取�
 そのどちらにも対応しています。`Length` がなくて `Count` がある場合それを使います
 (`Length` があるならそっちが優先)。
 
-```csharp
+```csharp {title="Index 型インデクサーの展開結果(Count)" highlight-text="Count"}
 int offset = i.GetOffset(a.Count);
 a[offset];
 ```
 
-```csharp
+```csharp {title="Range 型インデクサーの展開結果(Count)" highlight-ranges="sha256:62b99ca45943e030a309af90a4c669933fd957fb0711e0f78cb137d77dea41bf;1:35-1:40,2:33-2:38"}
 var offset1 = r.Start.GetOffset(a.Count);
 var offset2 = r.End.GetOffset(a.Count);
 a.Slice(offset1, offset2 - offset1);
@@ -315,7 +315,7 @@ a.Slice(offset1, offset2 - offset1);
 それぞれ配列、文字列を返します。
 この際、新しい配列・文字列を確保してコピーするコストが発生します。
 
-```csharp
+```csharp {title="Range型インデクサーでコピー発生"}
 var array = new[] { 1, 2, 3, 4, 5 };
 var str = "abcde";
  
@@ -333,7 +333,7 @@ for (int i = 0; i < 100; i++)
 コピーを発生させたくない場合、[`Span<T>`](../resource/span.md)を経由します。
 要するに、`AsSpan()` や `AsMemory()` を挟めばコピーを回避できます。
 
-```csharp
+```csharp {highlight-ranges="sha256:7742c796b8279d9c9634949ab500f37d174ab812445a937fda068d1a42ca46fa;8:25-8:34,9:21-9:30"}
 var array = new[] { 1, 2, 3, 4, 5 };
 var str = "abcde";
  
@@ -354,7 +354,7 @@ for (int i = 0; i < 100; i++)
 今回は「1行1項目で、`:` 区切りでキーと値が並んでいる」というような書式を考えます。
 この書式のテキストの中からキーだけを取り出すようなコードを以下のように書けます。
 
-```csharp
+```csharp {title="書式が決まったテキストから一部分を抜き出す例"}
 using System;
 using System.Collections.Generic;
  
@@ -392,7 +392,7 @@ postal code: 279-0031
     }
 }
 ```
-```console
+```console {title="書式が決まったテキストから一部分を抜き出す例"}
 longitude
 latitude
 postal code

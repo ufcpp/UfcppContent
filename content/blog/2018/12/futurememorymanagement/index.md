@@ -70,7 +70,7 @@ Arena Allocation という手法です。
 以下のように、「ごっそり消す」タイミングを明示するような方式。
 メモリ放棄のまとまった単位を指して arena (舞台、競技場、界)と呼んでいます。
 
-```csharp
+```csharp {title="Arena メモリ管理"}
 Arena arena = new Arena();
 using (arena.Activate())
 {

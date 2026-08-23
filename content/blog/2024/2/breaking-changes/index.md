@@ -37,7 +37,7 @@ C# 13 で導入したい `field` アクセス(自動プロパティのバッキ�
 
 `field` アクセスは以下のような話。
 
-```csharp
+```csharp {title="field アクセス"}
 class こういうのを
 {
     private int _x;
@@ -79,7 +79,7 @@ class こういうコードで困る
 [C# 3.0 の頃からある `var`](../../../../study/csharp/cheatsheet/ap_ver3.md#functional)ですが、
 有名な話、「`class var { }` とかいう型をどこかに書いておけば、型推論の `var` を阻害できる」という問題があります。
 
-```csharp
+```csharp {title="var"}
 // 普通は型推論の var になるはず。
 var x = 1;
 
@@ -110,7 +110,7 @@ class var
 [C# 7 で discard が導入された](../../../../study/csharp/cheatsheet/ap_ver7.md#discard)わけですが、
 これも「`_` を普通に変数として使っていないときに限り、`_` が discard の意味になる」という挙動になっています。
 
-```csharp
+```csharp {title="_ (discard)"}
 void m1(int i, string s)
 {
     // これはいずれも discard。

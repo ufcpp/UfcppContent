@@ -32,7 +32,7 @@ use タグを記述した場所には、変数の文字が表示されます。
 
 ## <a id="sec-generated-title-2"></a> <a id="source"></a>ソース
 
-```xml
+```xml {title="ソース"}
 <section title="結果" id="result">
   <p>
     変数の参照→ <math><use id="freq" /></math>、<math><use id="afreq" /></math>。

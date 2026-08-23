@@ -21,7 +21,7 @@ aliases: []
 
 1つ目:
 
-```csharp
+```csharp {title="Hello World"}
 class Program
 {
     static void Main() => Console.WriteLine("Hello World!");
@@ -30,7 +30,7 @@ class Program
 
 2つ目:
 
-```csharp
+```csharp {title=";"}
 ;
 class Program
 {
@@ -54,14 +54,14 @@ C# 9.0 当初、2つ目のコードもコンパイルできていました。
 
 空じゃないステートメントもある:
 
-```csharp
+```csharp {title="1つでも空じゃないものがあればOK"}
 ;
 Console.WriteLine();
 ```
 
 空ブロック:
 
-```csharp
+```csharp {title="; はダメでも {} は OK"}
 {}
 ```
 
@@ -73,13 +73,13 @@ Console.WriteLine();
 
 トップ レベル ステートメントを使った時、例えば以下のようなコードを書くと、
 
-```csharp
+```csharp {title="トップ レベル ステートメント利用例"}
 Console.WriteLine();
 ```
 
 扱いとしては以下のようなコードに展開されていました。
 
-```csharp
+```csharp {title="C# 9.0 時点でのトップ レベル ステートメントの展開結果"}
 using System;
 
 internal class <Program>$
@@ -99,7 +99,7 @@ internal class <Program>$
 ということで、[クラス名だけは speakable な `Program` に変更](https://github.com/dotnet/roslyn/pull/55368)。
 C# 10.0 では上記のコードは以下のような展開結果に変更されています。
 
-```csharp
+```csharp {title="C# 10.0 時点でのトップ レベル ステートメントの展開結果"}
 using System;
 
 internal class Program
@@ -114,7 +114,7 @@ internal class Program
 トップ レベル ステートメントだけを使っている分には特に影響のない修正のはずなんですが…
 例えば以下のようなコードがコンパイル エラーを起こすようになります。
 
-```csharp
+```csharp {title="C# 10.0 ではエラーになるコード"}
 Console.WriteLine("Hello World!");
 
 internal class Program
@@ -126,7 +126,7 @@ internal class Program
 
 一方で、現状のこの実装を逆手に取ると、以下のようなコードはコンパイルできるようになります。
 
-```csharp
+```csharp {title="現状の実装を逆手に取ったコード"}
 A(); // Program.A が呼ばれる。
 
 partial class Program

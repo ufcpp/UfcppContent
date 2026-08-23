@@ -39,7 +39,7 @@ C# で、このような特定の値しか取らない型を表現するため�
 
 列挙型は以下のようにして定義します。
 
-```csharp
+```csharp {title="列挙型の定義"}
 enum 列挙型名
 {
   メンバー1, メンバー2, …, メンバーn
@@ -49,7 +49,7 @@ enum 列挙型名
 
 列挙型を利用する側では以下のようにします。
 
-```csharp
+```csharp {title="列挙型の利用"}
 列挙型名.メンバー名
 ```
 
@@ -58,7 +58,7 @@ enum 列挙型名
 メンバー名がそのまま表示されます。
 例えば、和暦の年号を列挙型として定義すると以下のようになります。
 
-```csharp
+```csharp {title="列挙型の例(年号)"}
 using System;
 
 enum 年号
@@ -117,7 +117,7 @@ class EnumSample
 <code>Mon, Tue, Wed, Thu, Fri, Sat, Sun</code>
 の値はそれぞれ 0, 1, 2, 3, 4, 5, 6 になります。
 
-```csharp
+```csharp {title="曜日をあらわす列挙型"}
 enum DayOfWeek
 {
   Mon, Tue, Wed, Thu, Fri, Sat, Sun
@@ -127,7 +127,7 @@ enum DayOfWeek
 
 列挙型の型や値は以下のようにすることで明示的に指定することも出来ます。
 
-```csharp
+```csharp {title="列挙型の型と値の指定"}
 enum 列挙型名 : 内部的な型
 {
   メンバー1 = メンバー1の値,
@@ -142,7 +142,7 @@ enum 列挙型名 : 内部的な型
 
 例えば、<code>byte</code> 型で、値が1から始まる列挙型を定義したければ以下のようにします。
 
-```csharp
+```csharp {title="列挙型の型と値を指定する例" highlight-ranges="sha256:7ed5c3472655f6a45bde9bac592b1e1b70362f87b2652a44938bfd2067ec48cd;1:11-1:18,3:10-3:14"}
 enum Month : byte
 {
   January = 1, February, March, April,
@@ -191,7 +191,7 @@ class EnumSample
 
 こういう場合、列挙型を以下のように使って実現したりします。
 
-```csharp
+```csharp {title="フラグとしての列挙体"}
 enum Xyz
 {
   X = 1, // 001
@@ -215,7 +215,7 @@ class Program
 以下の例の場合、X | Y は 3 になるわけですが、値が3のメンバーは Xyz 列挙型には定義されていないので、
 表示結果は数値の3がそのまま表示されます。
 
-```csharp
+```csharp {title="X | Y"}
 enum Xyz
 {
   X = 1, // 001
@@ -238,7 +238,7 @@ class Program
 ```
 
 
-```console
+```console {title="結果"}
 X
 Y
 Z
@@ -249,7 +249,7 @@ Z
 これに対して、列挙型に Flags 属性を付けると、以下のような表示結果が得られるようになります。
 （属性に関しては「[属性](../dynamic/sp_attribute.md)」を参照。）
 
-```csharp
+```csharp {title="Flags 属性を付ける"}
 [Flags]
 enum Xyz
 {
@@ -278,7 +278,7 @@ class Program
 ```
 
 
-```console
+```console {title="結果"}
 X, Y
 Y, Z
 X, Z

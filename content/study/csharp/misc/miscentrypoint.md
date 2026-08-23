@@ -29,7 +29,7 @@ C# 9.0 からはトップ レベル ステートメントという書き方で�
 C# 関連のチュートリアルでのサンプル コードや、
 テンプレート通りに C# プログラムを新規作成すると以下のような内容になっていることが多いと思います。
 
-```csharp
+```csharp {title="よくあるチュートリアル・テンプレート通りの C# コード"}
 using System;
  
 namespace ConsoleApp1
@@ -50,7 +50,7 @@ C# の仕様上、実行可能プログラムを C# で書きたい場合、ど�
 名前空間は必須ではありません。クラス名も何でも構いません。
 例えば以下のようなコードでも、`Main` メソッドがエントリー ポイントになります。
 
-```csharp
+```csharp {title="名前空間はなくてもいい。クラス名も任意"}
 using System;
  
 class X
@@ -71,7 +71,7 @@ class X
 
 つまり、C# 7.0 以前だと以下の4つのうちのいずれかが、
 
-```csharp
+```csharp {title="エントリー ポイントとして許される Main メソッドの書き方"}
 static void Main()
 static void Main(string[] args)
 static int Main()
@@ -80,7 +80,7 @@ static int Main(string[] args)
 
 加えて、C# 7.1 以降だと以下の4つのうちのいずれかが認められます。
 
-```csharp
+```csharp {title="エントリー ポイントとして許される Main メソッドの書き方 (C# 7.1 以降)"}
 using System.Threading.Tasks;
  
 static Task Main()
@@ -97,7 +97,7 @@ static Task<int> Main(string[] args)
 
 例えば、以下のような .NET IL アセンブラー コードを書けば、`A` というクラス内の `B` というメソッドをエントリー ポイントにできます。
 
-```cil
+```cil {highlight-text=".entrypoint"}
 .class public auto ansi beforefieldinit A
        extends [mscorlib]System.Object
 {
@@ -116,7 +116,7 @@ static Task<int> Main(string[] args)
 逆に .NET ランタイム的には `Task` 戻り値のエントリー ポイントを認めていなくて、
 [C# 7.1 の非同期 `Main`](../cheatsheet/ap_ver7_1.md#async-Main) は、C# コンパイラーが以下のようなコードに相当する IL を生成しています。
 
-```csharp
+```csharp {title="非同期メインから生成される実際のエントリー ポイント"}
 using System.Threading.Tasks;
  
 class Program
@@ -160,13 +160,13 @@ class B
 ただ、オプションによってこのうちのどれをエントリー ポイントにするかを指定する方法があります。
 csc (C# コンパイラー)を直接呼び出す場合は `-main` オプションを、
 
-```shell
+```shell {title="よくあるチュートリアル・テンプレート通りの C# コード" highlight-text="-main:A"}
 csc -main:A
 ```
 
 csproj (プロジェクト)に設定を書く場合は `StartupObject` タグでクラス名を指定します。
 
-```xml
+```xml {highlight-lines="6"}
 <Project Sdk="Microsoft.NET.Sdk">
  
   <PropertyGroup>
@@ -188,7 +188,7 @@ C# 9.0 から、トップ レベル(top-leve: クラスや名前空間よりも�
 
 例えば前述の「Hello World」であれば、単に以下のように書けるようになります。
 
-```csharp
+```csharp {title="トップ レベルに直接「Hello World」"}
 using System;
 Console.WriteLine("Hello World!");
 ```
@@ -198,7 +198,7 @@ Console.WriteLine("Hello World!");
 挙動としては、`Main`に相当するメソッドの自動生成になります。
 上記の例の場合、以下のようなコードが生成された上で、`$Main` メソッドに `.entrypoint` が付きます。
 
-```csharp
+```csharp {title="トップ レベル ステートメントから生成されるエントリー ポイント"}
 using System;
  
 class <Program>$
@@ -229,7 +229,7 @@ class <Program>$
 
 例えば以下のようなコードはコンパイル エラーになります。
 
-```csharp
+```csharp {title="クラスよりも下にステートメントを書くことは認められていない"}
 using System;
  
 // ここにステートメントを書くのは OK。
@@ -251,7 +251,7 @@ Console.WriteLine("below class");
 
 例えば以下のようなコードを書いた場合、
 
-```csharp
+```csharp {title="トップ レベルでメソッドを定義"}
 void m(string s) => System.Console.WriteLine(s);
  
 m("abc");
@@ -260,7 +260,7 @@ m("123");
 
 コンパイラーが生成するコードは以下のような感じになります。
 
-```csharp
+```csharp {title="トップ レベルのメソッドは、生成される Main メソッドのローカル関数扱い"}
 class <Program>$
 {
     static void $Main(string[] args)
@@ -276,7 +276,7 @@ class <Program>$
 ただ、定義したメソッドの名前はプロジェクト全域に影響を及ぼします。
 以下のように、「メソッドがあることは全域で見えているけども、使ってはいけない」という扱いを受けます。
 
-```csharp
+```csharp {title="トップ レベルのメソッドの扱い(名前は全域から見えてるけど、使っちゃダメ)"}
 void m(string s) => System.Console.WriteLine(s);
  
 m("abc");
@@ -307,7 +307,7 @@ class Program
 
 例えば、以下のコードはスクリプト実行では有効ですが、トップ レベル ステートメントとしてはコンパイル エラーになります。
 
-```csharp
+```csharp {title="スクリプト実行でだけ有効な C# コード"}
 struct Point
 {
     public int X;
@@ -322,7 +322,7 @@ p.Y
 
 一方で、スクリプト実行では名前空間を書けないので、例えば以下のコードはトップ レベル ステートメントでだけコンパイルできます。
 
-```csharp
+```csharp {title="トップ レベル ステートメントでだけ有効な C# コード"}
 var p = new App1.Point { X = 1, Y = 2 };
  
 namespace App1
@@ -344,7 +344,7 @@ namespace App1
 
 例えば以下のようなトップ レベル ステートメントを書けます。
 
-```csharp
+```csharp {title="トップ レベル ステートメントにおけるコマンドライン引数と終了コード"}
 if (args.Length == 0)
 {
     System.Console.WriteLine("コマンドライン引数が必要です");
@@ -359,7 +359,7 @@ else
 
 このコードは以下のような意味で解釈されます。
 
-```csharp
+```csharp {title="トップ レベル ステートメントから生成される Main メソッド"}
 class <Program>$
 {
     static int $Main(string[] args)

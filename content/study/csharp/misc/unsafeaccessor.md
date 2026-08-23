@@ -21,7 +21,7 @@ aliases: []
 「全くできないと困るので口だけは用意した」系の機能になります。
 例えば、フィールド1個にアクセスするだけでも以下のような書き方になります。
 
-```csharp
+```csharp {title="UnsafeAccessor の例"}
 using System.Runtime.CompilerServices;
 
 A a = new();
@@ -51,7 +51,7 @@ class A
 たとえ型情報が静的に既知であってもリフレクションを使っていました。
 例えば冒頭の例同様に `a._value = 1;` するためだけに、以下のようなコードが必要になっていました。
 
-```csharp
+```csharp {title="リフレクションで private フィールドにアクセスする例"}
 A a = new();
 
 // a._value = 1; 相当のコードをリフレクションでやるとこうなる。
@@ -204,7 +204,7 @@ public class UnitTest1
 
 コンストラクターへのアクセスは以下のように書きます。
 
-```csharp
+```csharp {title="コンストラクターに対する UnsafeAccessor の例"}
 using System.Runtime.CompilerServices;
 
 Console.WriteLine(X.CreateA());
@@ -237,7 +237,7 @@ class A
 
 この機能は構造体に対しても使えます。
 
-```csharp
+```csharp {title="構造体に対しても利用可能"}
 static class X
 {
     // 構造体に対しても使えて、書き方はクラスの場合と同じ。
@@ -258,7 +258,7 @@ struct A
 インスタンス メソッドへのアクセスは以下のように、
 「先頭に1つ引数を足す」書き方をします。
 
-```csharp
+```csharp {title="インスタンス メソッドに対する UnsafeAccessor の例"}
 using System.Runtime.CompilerServices;
 
 var a = new A();
@@ -336,7 +336,7 @@ class A
 自然な書き方をしようとすると `Name` の明示が必要になるかと思いますが、
 メソッド名が変でもいいなら以下のように `Name` の省略もできます。
 
-```csharp
+```csharp {title="メソッド名をフィールドに一致させると Name 省略可能"}
 static class X
 {
     // あまりメソッドに _ 始まりの名前を付けないものの、気にしないのであればこれでも OK。
@@ -350,7 +350,7 @@ static class X
 静的メソッド、静的フィールドへのアクセスには `UnsafeAccessorKind` の `StaticMethod` と `StaticField` を使います。
 インスタンス メソッド、インスタン フィールドの時と同様、引数の先頭にアクセス先の型を足します(静的メンバーなのでこの第1引数は使われず、ダミー引数になります)。
 
-```csharp
+```csharp {title="静的メンバーに対する UnsafeAccessor の例"}
 using System.Runtime.CompilerServices;
 
 X.Value(null) = 2;
@@ -384,7 +384,7 @@ C# のプロパティは内部的にはメソッドになっているので、
 `T get_P()`、 `void set_P(T value)` というメソッドが対応します。
 (元のプロパティ名 + `get_`/`set_` 接頭辞。)
 
-```csharp
+```csharp {title="プロパティへの UnsafeAccessor は get_ / set_ メソッドで代用"}
 using System.Runtime.CompilerServices;
 
 var a = new A();
@@ -420,7 +420,7 @@ class A
 [プロパティ](#property)同様です。
 [C# の仕様](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/classes#153104-member-names-reserved-for-indexers)上、インデクサーからは `get_Item` / `set_Item` というメソッドが作られているはずなので、これを経由してアクセスします。
 
-```csharp
+```csharp {title="インデクサーへの UnsafeAccessor は get_Item / set_Item メソッドで代用"}
 using System.Runtime.CompilerServices;
 
 var a = new A(2);
@@ -464,7 +464,7 @@ C# のユーザー定義の演算子は public でないといけない仕様な
 `+` 演算子の場合は `op_Addition` など、演算子ごとに名前が決まっています。
 (参考: [演算子とメソッド名の対応関係](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/classes#153106-method-names-reserved-for-operators))
 
-```csharp
+```csharp {title="演算子に対するアクセスは op_ から始まるメソッドで代用"}
 using System.Runtime.CompilerServices;
 
 var a = new A(1);
@@ -507,7 +507,7 @@ class A(int value)
 UnsafeAccessor の「静的メソッドにして第1引数を足す」という仕様が拡張メソッドと相性がよく、
 拡張メソッドをそのまま UnsafeAccessor にすることができます。
 
-```csharp
+```csharp {title="拡張メソッドに UnsafeAccessor 属性をつけるだけ"}
 using System.Runtime.CompilerServices;
 
 var a = new A(1);
@@ -534,7 +534,7 @@ class A(int value)
 これは C# 14 で入る `extension` ブロック形式の拡張メンバーでもできて、
 以下のような書き方で UnsafeAccessor を書けたりします。
 
-```csharp
+```csharp {title="extension ブロックで UnsafeAccessor を作る例"}
 using System.Runtime.CompilerServices;
 
 var a = new A(1);
@@ -584,7 +584,7 @@ class A(int value)
 .NET 9 からはジェネリックな型に対して UnsafeAccessor を書けるようになりました。
 型引数は以下のように「型は型に、メソッドはメソッドに」というルールで書けば大丈夫です。
 
-```csharp
+```csharp {title="ジェネリックな UnsafeAccessor の例"}
 using System.Runtime.CompilerServices;
 
 var a = new A<int>(1);
@@ -626,7 +626,7 @@ class A<T>(T value)
 
 例えばまず、`ClassLibrary1` という名前のプロジェクトに以下のようなクラスを用意したとします。
 
-```csharp
+```csharp {title="ClassLibrary1 プロジェクト内に internal なクラスを用意"}
 namespace Lib;
 
 // ClassLibrary1 というプロジェクト内にあるものとする。
@@ -639,7 +639,7 @@ internal class A
 
 この型を別プロジェクトから参照するには以下のように書きます。
 
-```csharp
+```csharp {title="ClassLibaray1 内の Lib.A クラスにアクセスするための UnsafeAccessor の例"}
 using System.Runtime.CompilerServices;
 
 var a = X.CreateA(); // var a = new A();
@@ -704,7 +704,7 @@ static class X
 [ジェネリックな型](#generics)の場合は `` `1 `` みたいな語尾をつける必要があります。
 例として `ClassLibrary1` 側のクラス `A` を以下のようにジェネリック クラスにしてみます。
 
-```csharp
+```csharp {title="internal なジェネリック クラスを用意"}
 namespace Lib;
 
 // ClassLibrary1 というプロジェクト内にあるものとする。
@@ -717,7 +717,7 @@ internal class A<T>
 
 これを参照するためには以下のような書き方になります。
 
-```csharp
+```csharp {title="ClassLibaray1 内の Lib.A&lt;T&gt; クラスにアクセスするための UnsafeAccessor の例"}
 using System.Runtime.CompilerServices;
 
 var a = X<int>.CreateA(); // var a = new A();
@@ -757,7 +757,7 @@ UnsafeAccessor 定義側のクラス(この例だと `X<T>`)の書き方は[前�
 現在の Roslyn の場合、このフィールドの命名ルールは「プロパティ `P` に対して `<P>k__BackingField`」みたいになります。
 この挙動を使えばプロパティのバッキング フィールドを読み書きすることができます。
 
-```csharp
+```csharp {title="バッキング フィールドを UnsafeAccessor を使って読み書き"}
 using System.Runtime.CompilerServices;
 
 var a = new A();

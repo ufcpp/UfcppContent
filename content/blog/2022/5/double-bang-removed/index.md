@@ -20,7 +20,7 @@ aliases: []
 [2月にブログに書きましたが](../../2/parameter-null-check/index.md)、
 Visual Studio 17.1 Preview 3の頃、C# 11 候補として「引数の null チェック」構文が入っていました。
 
-```csharp
+```csharp {title="引数 null チェックの !!" highlight-text="!!"}
 m(null); // ArgumentNull 例外が出る。
 
 void m(string x!!) { }
@@ -128,7 +128,7 @@ NRT のフロー解析が完璧ならそもそもとして「null であって�
 例えば、[`record`](../../../../study/csharp/datatype/record.md) が絡むとどうなの？とか。
 以下のようなコードの挙動を見ると、構文の問題以上にもうちょっと見当が必要かもなー、とかは思います。
 
-```csharp
+```csharp {title="record のプライマリーコンストラクターで !! を使ってみて"}
 // これは例外を出してもらえる。
 var r1 = new R(null);
 

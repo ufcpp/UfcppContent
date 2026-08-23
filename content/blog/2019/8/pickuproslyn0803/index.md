@@ -42,7 +42,7 @@ Design Notes が3件ほど。
 元々、[switch](../../../../study/csharp/datatype/typeswitch.md#switch-expression)式を式ステートメント(式1個だけ + `;` でステートメントを作るやつ)で使えるようにしたいという話があります。
 セットで、戻り値が `void` な式を `switch` 式使えるようにしたいという話もあり。
 
-```csharp
+```csharp {title="switch 式を式ステートメント化け &amp; void を認める"}
 static void M(bool flag)
 {
     static void a() { }
@@ -63,7 +63,7 @@ C# 8.0 を目指してたけどスケジュール的に無理で次に回った�
 
 で、7/10 の議題的には、以下のような「空 switch 式」を認めるかどうか。
 
-```csharp
+```csharp {title="空 switch 式"}
 // 式ステートメントに出来る前提では、空 switch を禁止する十分な理由が見当たらない。
 flag switch { };
 ```
@@ -121,7 +121,7 @@ null 許容参照型のために導入される属性ですが、
 
 例えば現状の文法案(引数の後ろに `!`) は、「式の後ろの `!`」と期待するものが真逆になるのでまずいです。これに対して、適切な文法を考えている余裕はもう C# 8.0 のスケジュールにはありません。
 
-```csharp
+```csharp {title="param! と expression!"}
 static void M(string param!)
 {
     // (C# 8.0 に入れないことが決まった。)
@@ -193,7 +193,7 @@ C# のイベント、特に[自動イベント](../../../../study/csharp/functio
 records は、要は純粋なデータを表すような型のこと。
 現状の C# で書くと、コンストラクター引数をプロパティでほぼ同じものを何度も繰り返し書かないといけなくてしんどいやつです。
 
-```csharp
+```csharp {title="records"}
 class Records
 {
     // public なプロパティでデータをまとめたいというのがこの手の型(レコード)の主目的。
@@ -214,7 +214,7 @@ class Records
 
 最初に提案された records (今回、records V1 とか positional records とか呼ばれるようになっています)は概ね、以下のような書き方から、上記のようなクラスを生成する機能です。
 
-```csharp
+```csharp {title="Records V1"}
 data class Records(int X, int Y);
 ```
 
@@ -224,7 +224,7 @@ data class Records(int X, int Y);
 
 問題は、V1 だとプロパティ初期化子が使えないこと。
 
-```csharp
+```csharp {title="Records に対して初期化子を使いたい"}
 class Records
 {
     public int X { get; }
@@ -255,7 +255,7 @@ public class Program
 そこで今回提案されているのが records V2 (nominal records) で、
 以下のように、「initonly」なプロパティを定義できるようにするのはどうかというものです。
 
-```csharp
+```csharp {title="initonly プロパティ"}
 class Records
 {
     public initonly int X { get; }
@@ -275,7 +275,7 @@ public class Program
 
 仕組み的には、以下のように、「`readonly`が付いてるんだけどコンストラクター以外から書き換えられる set メソッドを用意」を考えているそうです。
 
-```csharp
+```csharp {title="readonly なフィールドを書き換える set メソッド"}
 class Records
 {
     // public initonly int X { get; } に対して
@@ -312,7 +312,7 @@ verifiable にするためにも、`[initonly]` が付いたメソッドには�
 1つ目の primary コンストラクターは、以下のような書き方で、
 コンストラクター(の引数)とプロパティを同時に定義する書き方。
 
-```csharp
+```csharp {title="primary コンストラクター (positional records)"}
 class Records(int X);
    
 // ↓解釈結果
@@ -327,7 +327,7 @@ class Records
 2つ目が今日話した initonly プロパティ。
 immutable なデータ構造に対してプロパティ初期化子が使えるようにするもの。
 
-```csharp
+```csharp {title="initonly プロパティ"}
 class Records
 {
     public initonly int X { get; }
@@ -348,7 +348,7 @@ class Records
 要は、これまでの提案と比べると、primarily コンストラクター が別機能として独立したことになります。
 (キーワードは仮。`data` じゃなくて `record` キーワードになったりはするかも。)
 
-```csharp
+```csharp {title="data class"}
 // data が付く。
 data class Records
 {
@@ -372,7 +372,7 @@ class Records : IEquatable<Records>
 primary コンストラクター を独立させたのと、今回 initonly プロパティを足したわけですが、
 要するに、これらの混在もできる予定です。
 
-```csharp
+```csharp {title="3つの機能の混在"}
 // primary コンストラクターと、
 data class Records(int X)
 {

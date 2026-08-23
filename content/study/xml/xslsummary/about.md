@@ -123,7 +123,7 @@ XSD も書くことでタグを覚える面倒さは軽減されます。
 具体的に例をあげると、 以下のような XML を書いて、
 
 
-```xml
+```xml {title="勉強用ページ内の XML の例"}
 <?xml version="1.0" encoding="utf-8"?>
 
 <document title="概要" xmlns="http://ufcpp.net/study/document">
@@ -138,7 +138,7 @@ XSD も書くことでタグを覚える面倒さは軽減されます。
 以下のような HTML に変換しています。
 
 
-```html
+```html {title="XML の変換結果"}
 <html lang="ja-JP" xmlns:ufcpp="http://ufcpp.net/study/document">
   <head>
   <head>

@@ -38,7 +38,7 @@ aliases:
 .NET では、WeakReference クラス(System 名前空間）を使うことで弱参照を扱えます。
 例えば以下のように使います。
 
-```csharp
+```csharp {title="WeakReference クラスの使い方"}
 using System;
 using System.Threading.Tasks;
 
@@ -163,7 +163,7 @@ Dictionary のキー側を弱参照にすればいいわけです。
 ConditionalWeakTable というクラス(System.Runtime.CompilerServices 名前空間)です。
 (実際には WeakReference クラスを使って弱参照管理しているのではなく、ネイティブ実装で弱参照管理しているようですが。)
 
-```csharp
+```csharp {highlight-text="ConditionalWeakTable&lt;Person, string&gt;()"}
 var people = new[]
 {
     new Person {Id = 1, Name = "Jurian Naul" },
@@ -220,7 +220,7 @@ event 構文で弱イベントを使いにくい理由は、「[【雑記】イ�
 IDisposable Subscribe 型のイベント購読なら、意外と簡単に書けます。
 例えば、[Reactive Extensions](https://rx.codeplex.com/) を使って実装するなら以下のような感じ。
 
-```csharp
+```csharp {title="弱イベント購読"}
 using System;
 using System.Reactive.Disposables;
 
@@ -272,7 +272,7 @@ public static class WeakEventExtensions
 
 利用例も示しましょう。以下のようになります。
 
-```csharp
+```csharp {title="WeakSubcribe の利用例"}
 using System;
 using System.Reactive.Subjects;
 using System.Threading;
@@ -343,7 +343,7 @@ class Program
 ```
 
 
-```console
+```console {title="WeakSubcribe の利用例"}
 ちゃんと Dispose
 subscribe 0
 weak subscribe 0

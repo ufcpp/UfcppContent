@@ -32,7 +32,7 @@ aliases: []
 「[`Unsafe`クラス](https://www.nuget.org/packages/System.Runtime.CompilerServices.Unsafe/)使ってnull返せるよ」とかいう。
 以下のようなコードでできます。
 
-```csharp
+```csharp {title="null参照戻り値"}
     unsafe static ref T NullRef<T>() where T : struct => ref Unsafe.AsRef<T>((void*)0);
     unsafe static bool IsNull<T>(ref T r) where T : struct => Unsafe.AsPointer(ref r) == (void*)0;
 ```
@@ -51,7 +51,7 @@ C#でも「そのつもり」です。
  
 ところが、先ほどのコード、再掲になりますが以下のようなものが入ったライブラリを作るとします。 
  
-```csharp
+```csharp {title="null参照戻り値"}
     unsafe static ref T NullRef<T>() where T : struct => ref Unsafe.AsRef<T>((void*)0);
     unsafe static bool IsNull<T>(ref T r) where T : struct => Unsafe.AsPointer(ref r) == (void*)0;
 ```

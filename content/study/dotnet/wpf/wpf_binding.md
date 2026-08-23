@@ -93,7 +93,7 @@ WPF では、Binding クラスまたは Binding 「[マークアップ拡張](wp
 「[Attribute Syntax](wpf_xamlbasic.md#attribute)」 と Binding 「[マークアップ拡張](wpf_xamladv.md#extension)」 を使って、以下のように書きます。
 
 
-```xml
+```xml {title="バインディングの簡単な例（attribute syntax）" highlight-text="Text=&quot;{Binding ElementName=slider1, Path=Value}&quot;"}
 <StackPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -106,7 +106,7 @@ WPF では、Binding クラスまたは Binding 「[マークアップ拡張](wp
 あるいは、「[Property Element Syntax](wpf_xamlbasic.md#property)」 と Binding クラスを使うなら、以下のような感じ。
 
 
-```xml
+```xml {title="バインディングの簡単な例（property syntax）"}
 <StackPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -157,7 +157,7 @@ Binding だけで、
 前節と似たようなものですが、再び例を挙げてみましょう。
 
 
-```xml
+```xml {title="テキストブロックの中身をテキストボックスの中身と同期" highlight-text="&lt;Binding ElementName=&quot;textBox&quot; Path=&quot;Text&quot; /&gt;"}
 <StackPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -198,7 +198,7 @@ Path プロパティに同期したいプロパティの名前を指定します
 以下に示す XAML ファイルでは、簡単化のために、キャンバスの中身ははしょってあります。
 
 
-```xml
+```xml {title="Windows1.xaml"}
 <Window x:Class="BindingDependencyProperty.Window1"
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -238,7 +238,7 @@ Slider の Value プロパティの値の範囲は 0～10 なので、
 この手の変換を実現するのが、Binding.Converter プロパティ（System.Windows.Data.IValueConverter 型）です。
 まず、IValueConverter を実装する変換クラスを作ります。
 
-```csharp
+```csharp {title="値の変換用のクラス"}
 using System.Windows.Data;
 
 namespace BindingDependencyProperty
@@ -275,7 +275,7 @@ namespace BindingDependencyProperty
 で、XAML 側では、以下のようにして Binding に Converter を設定します。
 
 
-```xml
+```xml {title="Converter の設定" highlight-ranges="sha256:5b4e874344729671a57ecef15e613f05922bde2587a0aa1d397d4f52ec74c4d3;8:5-8:52,16:9-16:49,22:13-22:53"}
 <Window x:Class="BindingDependencyProperty.Window1"
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -320,7 +320,7 @@ WPF の Binding では、値の有効性の確認機能もあります。
 まず、ValidationRule を継承する確認用のクラスを作ります。
 不正な入力があった場合には、ValidationResult のコンストラクタの第一引数を false に設定します。
 
-```csharp
+```csharp {title="値の確認用のクラス"}
 using System.Windows.Controls;
 
 namespace BindingDependencyProperty
@@ -348,7 +348,7 @@ namespace BindingDependencyProperty
 XAML 側では、以下のようにして Binding に ValidationRules を設定します。
 
 
-```xml
+```xml {title="ValidationRules の設定" highlight-lines="18-20"}
 <Window x:Class="BindingDependencyProperty.Window1"
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -394,7 +394,7 @@ XAML 側では、以下のようにして Binding に ValidationRules を設定�
 （コントロールテンプレートに関しては、「[テンプレート（WPF）](wpf_template.md)」で説明。）
 
 
-```xml
+```xml {title="Validation.ErrorTemplate" highlight-lines="22-28"}
 <Window x:Class="BindingDependencyProperty.Window1"
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -489,7 +489,7 @@ XML をバインディング
 XmlDataSouce とバインド→XPath
 
 
-```xml
+```xml {title="XML データをバインド"}
 <Page
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

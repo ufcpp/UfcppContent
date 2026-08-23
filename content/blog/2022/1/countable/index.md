@@ -53,7 +53,7 @@ C# の文法的に対応しなくても、ライブラリ側で `RemoveAt(Index)
 パターン ベースな構文は無節操にやると結構「意図せずパターンを満たしてしまった」と言うことが起こります。
 今回の場合も、以下のような書き方ができてしまうという懸念あり。
 
-```csharp
+```csharp {title="Add(int)"}
 List<int> list = new();
 list.Add(^1);
 ```
@@ -86,7 +86,7 @@ list.Add(^1);
 
 `Vector<T>` 型(`System.Numerics` 名前空間)はインデクサーを持っているわけですが、以下のような[リスト パターン](../../../2021/12/list-pattern/index.md)を書きたいかどうかという話もあります。
 
-```csharp
+```csharp {title="Vector に対するリスト パターン"}
 using System.Numerics;
 
 Vector<byte> v = new();

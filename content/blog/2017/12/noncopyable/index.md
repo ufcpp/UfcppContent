@@ -56,7 +56,7 @@ mutable 構造体で問題が起きるのはコピーが発生するせいです
 自分が作った NonCopyableAnalyzer も完璧なものではないです。
 例えば、ジェネリクスが絡むと誤判定あり。
 
-```csharp
+```csharp {title="non-copyable 誤判定"}
 static void Main()
 {
     var x = new NonCopyableStruct();

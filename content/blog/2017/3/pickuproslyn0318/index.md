@@ -35,7 +35,7 @@ C#でもインターフェイスのデフォルト実装(まんま、Javaのデ�
 
 というくらい。後者の方は要するに、以下のような話。
 
-```csharp
+```csharp {title="デフォルト実装でGetEnumeratorの実装を楽に"}
 namespace System.Collections.Generic
 {
     public interface IEnumerable<out T> : IEnumerable

@@ -29,7 +29,7 @@ C# でのファイル操作の楽さには目を見張るものがあります�
 System.IO.Directory と System.IO.File には、
 ディレクトリやファイルを読み書きするための static メソッドがあります。
 
-```csharp
+```csharp {title="Directory, File"}
 using System;
 using System.IO;
 
@@ -53,7 +53,7 @@ class TestIO
 
 プログラムを実行した後のディレクトリ内の様子です。
 
-```console
+```console {title="Directory, File"}
 > ls
 ConsoleApplication2.exe  ConsoleApplication2.vshost.exe
 ConsoleApplication2.pdb  test
@@ -71,7 +71,7 @@ Test file No. 1
 System.IO.DirectoryInfo と System.IO.FileInfo は、
 ディレクトリやファイルの情報を取り出すためのクラスです。
 
-```csharp
+```csharp {title="DirectoryInfo, FileInfo"}
 using System;
 using System.IO;
 
@@ -95,7 +95,7 @@ class TestRexex
 ```
 
 
-```console
+```console {title="DirectoryInfo, FileInfo"}
 0.txt
 ext: .txt, time: 02:34:36
 1.txt
@@ -115,7 +115,7 @@ ext: .txt, time: 02:34:36
 System.IO.StreamReader, System.IO.StreamWriter を用いることで、
 テキストファイルの読み書きができます。
 
-```csharp
+```csharp {title="StreamReader, StreamWriter"}
 using System;
 using System.IO;
 
@@ -147,7 +147,7 @@ class TestRexex
 ```
 
 
-```console
+```console {title="StreamReader, StreamWriter"}
 基本的に、Console クラスの文字列出力メソッドと同じ。
 WriteLine では末尾に改行文字が加えられます。
 書式指定出力もできます → n = 5, x = 3.14
@@ -160,7 +160,7 @@ WriteLine では末尾に改行文字が加えられます。
 バイナリ形式での読み書きには、
 System.IO.BinaryReader, System.IO.BinaryWriter クラスを用います。
 
-```csharp
+```csharp {title="BinaryReader, BinaryWriter"}
 using System;
 using System.IO;
 
@@ -205,7 +205,7 @@ class TestRexex
 ```
 
 
-```console
+```console {title="BinaryReader, BinaryWriter"}
 0123456715cd5b07d00f4940
 01, 23, 45, 67
 123456789

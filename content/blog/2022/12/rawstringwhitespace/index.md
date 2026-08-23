@@ -33,7 +33,7 @@ Unicode に対応している言語は結構こういう仕様のものが多い
 「空白の有無」は、`A B` と `AB` みたいな単語区切りを除けば、
 自分の思いつく限り、意味が変わるのは `x +++ y` くらいでした。
 
-```csharp
+```csharp {title="+++"}
 var x = 1;
 var y = 2;
 
@@ -44,7 +44,7 @@ Console.WriteLine((x, y, z));
 
 ちなみに、以下のような差。
 
-```csharp
+```csharp {title="++ + と + ++ と + + +"}
 var z1 = x++ + y; // (x++) + y
 var z2 = x + ++y; // x + (++y)
 var z3 = x + + +y; // x + (+(+y))
@@ -92,7 +92,7 @@ C# は「空白かどうか」を Unicode カテゴリーを見て判定して�
 こんな文字は入力する方が大変なんですが…
 頑張って入力すると、[以下のようなソースコード](https://gist.github.com/ufcpp/3eeebaf3c79c0af2f76336f8e38b3104)が書けたりします。
 
-```csharp
+```csharp {title="スペース混在"}
 var a = new[] {
 				0,
 1,
@@ -122,7 +122,7 @@ var a = new[] {
 
 ちなみに今回は、以下のコードでコード生成しました。
 
-```csharp
+```csharp {title="スペース混在コード生成"}
 using var f = new StreamWriter("a.cs");
 
 var ws = new[] { 0x0009, 0x000B, 0x000C, 0x20, 0xA0, 0x1680, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006, 0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000 }.Select(i => (char)i).ToArray();
@@ -153,7 +153,7 @@ C# についてまとめると以下の通り。
 
 ところで、C# 11 では以下のような「[複数行文字列リテラル](../../../../study/csharp/start/st_string.md#multiline-indent)」を書けるようになりました。
 
-```csharp
+```csharp {title="生文字列で複数行文字列リテラルを書く例"}
 var raw = """
     raw string literals (生文字列リテラル)
     | ← ここよりも左側にあるインデントは無視される。
@@ -169,13 +169,13 @@ Console.WriteLine(raw); // 「raw」から始まる。「    raw」にはなら�
 試してみると、コンパイル エラーでした。
 CS9003「閉じ行と異なる空白を含んでいます」エラー。
 
-```csharp
+```csharp {title="異なる空白文字を使うとコンパイル エラー"}
 _ = """
 　　　　全角スペース4つ。
     """; // スペース4つ。
 ```
 
-```csharp
+```csharp {title="1個だけ変えてもダメ"}
 _ = """
    　4つ中1個だけ全角。
     """; // スペース4つ。
@@ -184,7 +184,7 @@ _ = """
 おっ？異なる文字がダメということは？
 もしや？…
 
-```csharp
+```csharp {title="順序まで完全一致していればOK！"}
 _ = """
 　 	 　全角、半角、タブ、半角、全角。
 　 	 　"""; // 全角、半角、タブ、半角、全角。
@@ -194,7 +194,7 @@ _ = """
 
 じゃあ、こんな感じで…
 
-```csharp
+```csharp {title="空白文字全部入りコード生成"}
 using var f = new StreamWriter("a.cs");
 
 var ws = new[] { 0x0009, 0x000B, 0x000C, 0x20, 0xA0, 0x1680, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006, 0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000 }.Select(i => (char)i).ToArray();
@@ -209,7 +209,7 @@ f.WriteLine($""""
 
 どうかな？
 
-```csharp
+```csharp {title="空白文字全部入り(コンパイルできる)"}
 _ = """
 	                　abc
 	                　""";

@@ -27,7 +27,7 @@ System.Windows.Controls 名前空間内に、
 ユーザからの入力操作を受け付けるためのコントロール類が定義されています。
 
 
-```xml
+```xml {title="コントロールの例"}
 <Grid
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -93,7 +93,7 @@ System.Windows.Shapes 名前空間内に、
 拡大・縮小してもふちがギザギザになったりしません。
 
 
-```xml
+```xml {title="図形の例"}
 <Canvas
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -140,7 +140,7 @@ System.Windows.Media 名前空間内には多彩な機能が用意されてい�
 さらに、静止画、音声、動画などを再生・表示する機能があります。
 
 
-```xml
+```xml {title="グラデーションの例"}
 <Canvas
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -193,7 +193,7 @@ System.Windows.Media 名前空間内には多彩な機能が用意されてい�
 
 
 
-```xml
+```xml {title="回転・拡大・傾斜・平行移動の例"}
 <Canvas
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -261,7 +261,7 @@ System.Windows.Media.Media3D 名前空間内には、
 （本当は手抜きしてて、8面体の表から見える側だけ作ってる。）
 
 
-```xml
+```xml {title="3次元モデル表示の例"}
 <Canvas
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

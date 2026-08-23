@@ -42,7 +42,7 @@ C#以前からある良いとされる習慣の1つに、「クラスの持つ�
 
 そこで、例えば`X`というデータを読み書きする際には、`GetX`, `SetX`というメソッドを介する習慣ができました。これらのメソッドをそれぞれgetter/setterといい、2つ合わせてアクセサー(accessor)と呼びます。単純なデータの読み書きであっても以下のように`Get`/`Set`メソッドを書くべきということです。
 
-```csharp
+```csharp {title="Get/Setメソッド" highlight-ranges="sha256:f72a626cae8404cbc83db4897675fcdb1ec2500a0b245c249a4570cc166ca23e;4:16-4:20,5:17-5:21"}
 class Sample
 {
     private int _x;
@@ -53,14 +53,14 @@ class Sample
 
 このような書き方には前述のようなメリットがある一方で、クラス利用側のコードが煩雑になるという問題があります。例えば、`X`の値に1加えるだけでも以下のような書き方が必要になります。
 
-```csharp
+```csharp {title="クラス利用側のGet/Setメソッド参照"}
 var s = new Sample();
 s.SetX(s.GetX() + 1);
 ```
 
 そこで、C#では、プロパティという構文を用意しました。以下のように書きます。
 
-```csharp
+```csharp {title="C# 1.0のプロパティ" highlight-lines="4-8"}
 class Sample
 {
     private int _x;
@@ -74,7 +74,7 @@ class Sample
 
 `get`, `set`に続けて、メソッド的に振る舞いを書けます。一方で、利用側のコードは以下のように、フィールドの読み書きと同じように書けます。
 
-```csharp
+```csharp {title="クラス利用側のプロパティ参照" highlight-lines="2"}
 var s = new Sample();
 s.X += 1;
 ```
@@ -85,7 +85,7 @@ s.X += 1;
 
 そこで、C# 2.0で、プロパティのgetとsetの[アクセシビリティ](../oop/oo_conceal.md#level)を[別々に設定できる](../oop/oo_property.md#level)ようになりました。例えばgetだけpublicにして、setをprivateにするには以下のような書き方をします。
 
-```csharp
+```csharp {title="getとsetで異なるアクセシビリティを指定" highlight-text="private set"}
 class Sample
 {
     private int _x;
@@ -104,7 +104,7 @@ class Sample
 
 そこで、C# 3.0では、自動的に上記のようなフィールドとそれに対する読み書きを生成する[自動プロパティ](../oop/oo_property.md#auto)(auto property)という機能が追加されました。以下のように、getやsetの後ろのブロックを省略することで自動プロパティになります。
 
-```csharp
+```csharp {title="自動プロパティ" highlight-text="get; private set;"}
 class Sample
 {
     public int X { get; private set; }
@@ -120,7 +120,7 @@ class Sample
 
 C# 5.0までは、immutableであることを確実に保証するためには以下のような書き方でプロパティを作る必要がありました。
 
-```csharp
+```csharp {title="C# 5.0までのimmutableプロパティの書き方"}
 class Sample
 {
     private readonly int _x;
@@ -133,7 +133,7 @@ class Sample
 
 そこで、C# 6ではimmutableなプロパティを書きやすくするため、[get-onlyプロパティ](../oop/oo_property.md#get-only)という構文が追加されました。以下のように、getだけを書くことで、前述のようなreadonlyフィールドを自動生成してくれます。書き込みはコンストラクター内でだけ行えます。
 
-```csharp
+```csharp {title="get-onlyプロパティ" highlight-text="get;"}
 class Sample
 {
     public int X { get; }
@@ -147,7 +147,7 @@ immutableなプロパティは、値の初期化をコンストラクターで�
 
 そこで、以下のような書き方で、コンストラクターとimmutableなプロパティを自動生成する構文の追加が検討がされています(C# 7には入らず、そのさらに先)。
 
-```csharp
+```csharp {title="レコード型(予定)"}
 class Sample(int X);
 ```
 

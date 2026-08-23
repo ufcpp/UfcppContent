@@ -34,7 +34,7 @@ XAML では、
 DependencyObject は、SetValue と GetValue というメソッドを持っていて、
 以下のようにして依存プロパティの取得・設定を行います。
 
-```csharp
+```csharp {title="DependencyObject の GetValue / SetValue"}
 object val = GetValue(DependencyPropertyIdentifier);
 SetValue(DependencyPropertyIdentifier, val);
 ```
@@ -46,7 +46,7 @@ DependencyProperty クラスのインスタンスを渡します。
 static readonly なメンバー変数としてクラス中に定義します。
 例えば、TextBlock という名前のクラス中に Text という名前の依存プロパティを作りたければ、以下のようにします。
 
-```csharp
+```csharp {title="依存プロパティ識別子の定義"}
 public class TextBlock
 {
   public static readonly DependencyProperty TextProperty =
@@ -58,7 +58,7 @@ public class TextBlock
 通常、利便性のために、
 同名の CLR プロパティも用意しておきます。
 
-```csharp
+```csharp {title="同名のプロパティ定義"}
 public class TextBlock : DependencyObject
 {
   public static readonly DependencyProperty TextProperty =
@@ -76,13 +76,13 @@ public class TextBlock : DependencyObject
 これで、XAML 中で、
 
 
-```xml
+```xml {title="XAML から依存プロパティの値を設定"}
 <TextBlock Name="textBlock" Text="テキスト" />
 ```
 と書けば、（通常の Text プロパティよりも、依存プロパティの TextProperty が優先されて、）
 以下のコードと同じ効果が得られます。
 
-```csharp
+```csharp {title="同名のプロパティ定義"}
 textBlock.SetValue(TextProperty, "テキスト");
 ```
 
@@ -99,7 +99,7 @@ Grid は、子要素をテーブル状にレイアウトするためのもので
 Grid.Row と Grid.Column を使って指定します。
 
 
-```xml
+```xml {title="Grid と添付プロパティ" highlight-ranges="sha256:d19b09078a7b1a0f721ffab8c551f101e10dc3c1b9d32ba86cf1fa2a33950396;15:13-15:41,17:13-17:41,19:13-19:41,21:13-21:41"}
 <Page
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -159,7 +159,7 @@ Resources プロパティ中で定義します。
 以下のようにします。
 
 
-```xml
+```xml {title="リソースの例" highlight-ranges="sha256:470a86c57bc712fce7fd959bb703ea20de2d7d68e29b3e3914d9ca8b18ff6510;4:3-4:19,10:3-10:20"}
 <Page
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -179,13 +179,13 @@ x:Key 属性をつけておきます。
 「[Attribute Syntax](wpf_xamlbasic.md#attribute)」 の場合には、
 
 
-```html
+```html {title="リソースの参照方法1"}
 <object property="{StaticResource key}" .../>
 ```
 「[Property Element Syntax](wpf_xamlbasic.md#property)」 の場合には、
 
 
-```html
+```html {title="リソースの参照方法2"}
 <object>
   <object.property>
     <StaticResource ResourceKey="key" .../>
@@ -197,13 +197,13 @@ x:Key 属性をつけておきます。
 以下のように書きます。
 
 
-```xml
+```xml {title="リソースの参照" highlight-text="Background=&quot;{StaticResource brush1}&quot;"}
 <TextBlock Background="{StaticResource brush1}" Text="textblock 1"/>
 ```
 
 ##### <a id="sec-generated-title-4"></a>サンプル
 
-```xml
+```xml {title="リソースの例"}
 <Page
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -238,7 +238,7 @@ ResourceDictionary の Source プロパティを指定することで、
 例えば、まず、以下のような XAML を StyleForLabel.xaml という名前で保存して、
 
 
-```xml
+```xml {title="StyleForLabel.xaml"}
 <ResourceDictionary
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -252,7 +252,7 @@ ResourceDictionary の Source プロパティを指定することで、
 StyleForLabel.xaml 中の設定が反映されます。
 
 
-```xml
+```xml {title="ResourceDictionary の Source プロパティ"}
 <WrapPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -272,7 +272,7 @@ StyleForLabel.xaml 中の設定が反映されます。
 以下のように、MergedDictionaries プロパティを設定します。
 
 
-```xml
+```xml {title="MergedDictionaries"}
 <WrapPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -325,7 +325,7 @@ StaticResourceExtension というクラスによって提供されています�
 例えば、前節の例、
 
 
-```xml
+```xml {title="リソースの参照"}
 <TextBlock
   Name="textblock1"
   Background="{StaticResource brush1}"
@@ -333,7 +333,7 @@ StaticResourceExtension というクラスによって提供されています�
 ```
 の場合、以下のようなコードと同じような意味合いになります。
 
-```csharp
+```csharp {title="StaticResourceExtension"}
 StaticResourceExtension ex = new StaticResourceExtension();
 ex.ResourceKey = "brush1";
 
@@ -385,7 +385,7 @@ XAML のスタイルでもほぼ同様のことが実現できます。
 以下のようにします。
 
 
-```xml
+```xml {title="TextBlock に一律スタイルを適用" highlight-lines="6-10"}
 <Page
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -421,7 +421,7 @@ Style 中には、Setter というものを並べて、
 適用したい要素には、Style 属性を付けます。
 
 
-```xml
+```xml {title="特定の TextBlock にスタイルを適用" highlight-ranges="sha256:9861b61236b7a6160449f97c2878ce6c6d3271648de3ac0d76438169e39f4199;6:35-6:45,14:16-14:43"}
 <Page
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -481,7 +481,7 @@ Style 要素に対して BasedOn 属性を指定します。
 BasedOn 属性には、x:Key 名か TargetType で指定した型を参照するようにします。
 
 
-```xml
+```xml {highlight-ranges="sha256:1315de650c467e0eb1e8ef82065dd16631b90ac74950eefa4e8e59f2b56e7900;10:12-10:57,14:12-14:41"}
 <Page
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

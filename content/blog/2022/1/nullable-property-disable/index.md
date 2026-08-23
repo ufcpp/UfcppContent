@@ -19,7 +19,7 @@ aliases: []
 
 [null 許容参照型](../../../../study/csharp/resource/nullablereferencetype.md)の仕様が入って以来、以下のようなコードに警告が出るようになりました。
 
-```csharp
+```csharp {title="NRT 警告がどうしても出てしまう例"}
 class A
 {
     public string X;
@@ -30,7 +30,7 @@ class A
 
 C# 10.0 現在、この警告を回避する唯一の方法は「ちゃんとコンストラクターで初期化すること」です。
 
-```csharp
+```csharp {title="C# 10.0 現在の唯一の回避方法" highlight-text="(X, Y, Z) = (x, y, z)"}
 class A
 {
     public string X;
@@ -51,7 +51,7 @@ class A
 将来的には解消する予定です。
 今のところ C# 11.0 目標で、`required` 修飾子を付けるという案が進められています。
 
-```csharp
+```csharp {title="required 修飾子" highlight-ranges="sha256:1ee69f0f34e96938847ed0233e2fbac240c5774242b45d180490adbdbc795b1d;3:12-3:20,4:12-4:20,5:12-5:20"}
 class A
 {
     public required string X;
@@ -62,7 +62,7 @@ class A
 
 これが付いていると、オブジェクト初期化子で非 null な値を渡すことを義務付けられるようになるので、クラス定義側には警告が出なくなります。
 
-```csharp
+```csharp {title="required の効果"}
 var a1 = new A(); // required プロパティ/フィールドに値を与えていないので警告
 
 var a2 = new A()
@@ -96,7 +96,7 @@ var a3 = new A()
 
 選択肢1. 該当行を `nullable disable`
 
-```csharp
+```csharp {title="nullable disable"}
 class A
 {
 #nullable disable warnings
@@ -109,7 +109,7 @@ class A
 
 選択肢2. 該当行を `pragma warning disable`
 
-```csharp
+```csharp {title="pragma warning disable"}
 class A
 {
 #pragma warning disable CS8618
@@ -122,7 +122,7 @@ class A
 
 選択肢3. とりあえず `default!` や `null!` を代入
 
-```csharp
+```csharp {title="null!"}
 class A
 {
     public string X = null!;
@@ -133,7 +133,7 @@ class A
 
 選択肢4. ノーガード。警告出っぱなしなのをあきらめる
 
-```csharp
+```csharp {title="あきらめて警告出っぱなし"}
 class A
 {
     public string X;

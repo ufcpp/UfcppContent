@@ -277,7 +277,7 @@ f<span class="paren" style="font-size:em;">(</span>x<span class="paren" style="f
 （参考：
 「[C# によるプログラミング入門](../../csharp/index.md)」「[C# 3.0 の新機能](../../csharp/cheatsheet/ap_ver3.md)」）
 
-```csharp
+```csharp {title="数値計算例"}
 using Func2 = System.Linq.Func<double, double, double>;
 using Func4 = System.Linq.Func<double, double, double, double, double>;
 

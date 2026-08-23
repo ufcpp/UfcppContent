@@ -64,7 +64,7 @@ generics は「形容詞 + s」で名詞化している単語で、通常、s �
 例えば、2つの値の大きいほうをとる関数（静的メソッド）、Max を作りたいとします。
 <code>int</code>型に限定したものなら簡単に作れて、以下のようになります。
 
-```csharp
+```csharp {title="Max 関数(int限定版)"}
 int Max(int x, int  y)
 {
   return x > y ? x : y;
@@ -74,7 +74,7 @@ int Max(int x, int  y)
 
 ところが、同じことを<code>double</code>型で行おうとすると、同じような関数をもう一つ追加してやる必要があります。
 
-```csharp
+```csharp {title="Max 関数(double限定版)"}
 double Max(double x, double y)
 {
   return x > y ? x : y;
@@ -90,7 +90,7 @@ double Max(double x, double y)
 必要に応じていろいろな型に対応した Max 関数を生成できます。
 Max 関数のジェネリック版は以下のようになります。
 
-```csharp
+```csharp {title="Max 関数(genereics 版)" highlight-text="&lt;Type&gt;"}
 public static Type Max<Type>(Type a, Type b)
   where Type : IComparable
 {
@@ -112,7 +112,7 @@ public static Type Max<Type>(Type a, Type b)
 
 ジェネリック版の <code>Max</code> 関数は以下のようにして呼び出します。
 
-```csharp
+```csharp {title="generic メソッドの呼び出し例"}
 int    n1 = Max<int>(5, 10);   // int 版の Max を明示的に呼び出し
 int    n2 = Max(5, 10);        // int 版の Max が自動的に生成される
 double x  = Max(5.0, 10.0);    // double 版の Max が自動的に生成される
@@ -129,7 +129,7 @@ string s  = Max("abc", "cat"); // string 版の Max (辞書式順序で比較)
 ここでは例としてスタックを考えて見ましょう。
 これも格納できる型を特定の型に限ったものは簡単に作成できます。
 
-```csharp
+```csharp {title="Stack クラス（int 限定版）"}
 // int 専用版スタッククラス
 // エラー処理とかはサボっています
 class StackInt
@@ -147,7 +147,7 @@ class StackInt
 
 これを任意の型を格納できるように、ジェネリックを使って記述すると以下のようになります。
 
-```csharp
+```csharp {title="Stack クラス（generics 版）" highlight-ranges="sha256:702a9b46b35e79583bcb1d022cb3fd61db37202ae8fca5f693886803247bd7ed;2:12-2:18,4:3-4:7,6:42-6:46,7:20-7:24,8:10-8:14"}
 // generics 版スタッククラス
 class Stack<Type>
 {
@@ -167,7 +167,7 @@ class Stack<Type>
 
 このジェネリック版の Stack クラスを参照するには、以下のように書きます。
 
-```csharp
+```csharp {title="generic クラスの参照"}
 const int SIZE = 5;
 Stack<int>    si = new Stack<int>(SIZE);    // int型を格納できるスタックになる
 Stack<double> sd = new Stack<double>(SIZE); // double型を格納できるスタックになる
@@ -305,7 +305,7 @@ C# の「[配列](../structured/st_array.md#array)」や、
 例だけ見ても、もうほとんど分かるかと思いますが、
 C# では以下のようにしてジェネリックな（どんな型に対しても総称的に使える）クラス・メソッドを定義できます。
 
-```csharp
+```csharp {title="generic クラス"}
 class クラス名<型引数>
   where 型引数中の型が満たすべき条件
 {
@@ -314,7 +314,7 @@ class クラス名<型引数>
 ```
 
 
-```csharp
+```csharp {title="generic メソッド"}
 アクセスレベル 戻り値の型 メソッド名<型引数>(引数リスト)
   where 型引数中の型が満たすべき条件
 {
@@ -347,7 +347,7 @@ class クラス名<型引数>
 一方で、`Max`メソッドのように何かを呼びたい場合は、それが何のメンバーなのかを示すため、
 後述する「インターフェイス制約」などが必要になります。
 
-```csharp
+```csharp {title="generic メソッド"}
 // 一番目の引数だけを帰す単純なメソッド。
 static Type First<Type>(Type a, Type b)
 {
@@ -371,7 +371,7 @@ static Type Max<Type>(Type a, Type b)
 「`IComparable`を実装している任意の型に対して呼べるメソッド」が作れて、
 メソッド中では`IComparable`のメンバーを呼び出せるようになります。
 
-```csharp
+```csharp {title="Max 関数(genereics 版)" highlight-text="where Type : IComparable"}
 static Type Max<Type>(Type a, Type b)
   where Type : IComparable
 {
@@ -420,7 +420,7 @@ C# で指定できる型制約には以下のようなものがあります。
 複数の型引数に対して制約を付けたい場合は `where` を複数並べます。
 また、1つの型引数に対して複数の制約を付けたい場合は `,` で制約を並べます。
 
-```csharp
+```csharp {title="複数の型引数に、複数の制約"}
 using System;
 using System.Collections.Generic;
 
@@ -437,7 +437,7 @@ class X<TItem, TList>
 ちなみに、互いに矛盾したり、意味が重複していて無駄な制約は同時には指定できません。
 具体的には、`class`、`struct`、基底型は同時には指定できません。
 
-```csharp
+```csharp {title="排他な制約"}
 class X<T>
     where T : struct, class // 「クラス、かつ、構造体」なんてことはあり得ない。エラーに
 {
@@ -452,7 +452,7 @@ class X<T>
 
 また、`class`、`struct`、基底型の3つは、インターフェイス、`new()`の2つよりも前に書く必要があります。
 
-```csharp
+```csharp {title="制約の順序"}
 using System;
 
 class Ok<T>
@@ -535,7 +535,7 @@ C# 8.0 で `notnull` 制約が増えました。
 `class` 制約や、基底クラス制約は「非 null」の意味になり、
 null 許容参照型を受け付けたい場合は制約に `?` を付けることになります。
 
-```csharp
+```csharp {title="null 許容参照型がらみの制約"}
 #nullable enable
 using System;
  
@@ -579,7 +579,7 @@ class Program
 
 例えば以下のように、`new T()`で要素を初期化しながら配列を作るなどの処理ができます。
 
-```csharp
+```csharp {title="new() の利用例"}
 // 既定値ではなく、new T() で要素を初期化しながら配列生成
 static T[] Array<T>(int n)
     where T : new()
@@ -715,7 +715,7 @@ C# 13 時点でアンチ制約(= `allows` を使うもの)は `ref struct` だ�
 
 これまで、`where T : struct` 制約を指定すると null 許容値型を `T` に渡せなくなるという制約がありました。
 
-```csharp
+```csharp {title="where T : struct では null 許容値型を使えなくなる"}
 // struct 制約が付いていると null 許容型を指定できなくなる。
 M<int?>();
 
@@ -730,7 +730,7 @@ static void M<T>()
 
 そこで、`allows nullable` (仮)アンチ制約を導入してはどうかという案が出ています。
 
-```csharp
+```csharp {title="null 許容値型アンチ制約を追加する案"}
 // これができるようになってほしい。
 M<int?>();
 
@@ -753,7 +753,7 @@ static void M<T>()
 <code>class Stack&lt;int&gt;</code> というクラスを作ることを、
 「<code>int</code> で <code>Stack</code> をインスタンス化する」といいます。
 
-```csharp
+```csharp {title="generic クラスの参照"}
 const int SIZE = 5;
 Stack<int>    si = new Stack<int>(SIZE);    // Stack を int でインスタンス化
 Stack<double> sd = new Stack<double>(SIZE); // Stack を double でインスタンス化
@@ -769,7 +769,7 @@ string s = Max("abc", "cat"); // Max を string でインスタンス化
 
 型引数は複数の型を含んでいてもかまいません。
 
-```csharp
+```csharp {title="複数の型を含む型引数" highlight-text="&lt;K, V&gt;"}
 class Pair<K, V>
 {
   K key;
@@ -784,7 +784,7 @@ class Pair<K, V>
 また、ジェネリッククラス・メソッド内では型引数を使って、
 他のジェネリッククラスのインスタンス化ができます。
 
-```csharp
+```csharp {title="型引数を使ってインスタンス化" highlight-text="System.Collections.Generic.IList&lt;Type&gt;"}
 class TestGenerics
 {
   // リスト中の要素を Console.Write で画面に出力。
@@ -819,7 +819,7 @@ class TestGenerics
 また、構造体に対しては、
 構造体の全てのメンバーに対して 0 または <code>null</code> で初期化したものを与えます。
 
-```csharp
+```csharp {title="既定値" highlight-text="default(Type)"}
 class TestGenerics
 {
   // 配列を 0 または null で満たします。
@@ -916,7 +916,7 @@ C# 4.0 から、ジェネリックの型引数に共変性・反変性を持た�
 
 例えば、以下のようなコードを書いたとします。単純なジェネリック クラスと、その利用側コードです。
 
-```csharp
+```csharp {title="単純なジェネリック クラスと、その利用例"}
 public class Wrapper<T>
 {
     public T Value;
@@ -952,7 +952,7 @@ C++ではこの手法でジェネリックを実現しています。
 
 先ほどのコードを「全展開」で実装すると、以下のようなものに相当するコードが生成されます。
 
-```csharp
+```csharp {title="全展開"}
 // 使った分だけそれぞれ別の型に展開
 public class Wrapper_int { public int Value; }
 public class Wrapper_byte { public byte Value; }
@@ -997,7 +997,7 @@ Javaではこの手法でジェネリックを実現しています。
 
 先ほどのコードを「型消去」で実装すると、以下のようなものに相当するコードが生成されます。
 
-```csharp
+```csharp {title="型消去"}
 // object 型な1つのクラスに集約
 // 元の型情報を残さない = 型消去
 public class Wrapper { public object Value; }
@@ -1056,7 +1056,7 @@ C#の実装は全展開と型消去の間くらいの手法になっています
 
 要するに、先ほどのコードから、以下のようなものに相当するコードが生成されます。
 
-```csharp
+```csharp {title="値型だけ展開"}
 // 値型の場合: 使った分だけそれぞれ別の型に展開
 public class Wrapper_int { public int Value; }
 public class Wrapper_byte { public byte Value; }
@@ -1108,7 +1108,7 @@ C#のジェネリックでは、メソッドなどのメンバーを参照する
 例えば、以下のようなコードでは、前者の書き方ではだめで、
 後者のように、`where`句を付けて初めてコンパイルできます。
 
-```csharp
+```csharp {title="ジェネリックな引数のメンバー参照"}
 // コンパイル エラー: T に Count プロパティがない
 static int M<T>(T x) => x.Count;
 
@@ -1124,7 +1124,7 @@ static int M<T>(T x)
 (※ C# 11 以降は静的メソッド呼ぶ方法が追加されました。
 詳しくは「[インターフェイスの静的抽象メンバー](oo_interface.md#static-abstract)」で説明しています。)
 
-```csharp
+```csharp {title="ジェネリックを使うと静的メソッドを呼べない"}
 // interface 制約では静的メソッドを呼べない
 // なので、ジェネリックを使うと静的メソッドを呼ぶ手段がない
 // コンパイル エラーに
@@ -1141,7 +1141,7 @@ static T Add<T>(T x, T y) => x + y;
 特に、構造体が絡むと顕著で、かなり実行性能に影響があります。
 例えば以下のコードを見てください。
 
-```csharp
+```csharp {title="構造体のボックス化を避けるためのジェネリック"}
 using System;
 
 // 無駄なヒープ確保をしないように構造体に
@@ -1204,7 +1204,7 @@ C#のジェネリックでは値型を使ったときにコードを展開して
 たとえば、以下のような累算処理を考えてみます。
 `int`配列の全要素の和と積を求めるコードです。
 
-```csharp
+```csharp {title="累算処理"}
 static int Sum(int[] items)
 {
     var sum = 0;
@@ -1232,7 +1232,7 @@ static void M()
 標準ライブラリにある`Aggregate`メソッド(`System.Linq.Enumerable`クラスの拡張メソッド)を使って以下のように書けはするんですが。
 これはこれで、デリゲート(インターフェイスと同程度の負担)を介することになります。
 
-```csharp
+```csharp {title="Aggregateを使って累算"}
 var sum = items.Aggregate(0, (x, y) => x + y);
 var prod = items.Aggregate(1, (x, y) => x * y);
 ```
@@ -1243,7 +1243,7 @@ var prod = items.Aggregate(1, (x, y) => x * y);
 そこで、値型のジェネリックが展開される性質を使ってみます。
 まず、以下のようなインターフェイスと構造体を作ります。
 
-```csharp
+```csharp {title="2項演算を表すインターフェイスと、和、積の構造体"}
 interface IBinaryOperator<T>
 {
     T Zero { get; }
@@ -1269,7 +1269,7 @@ struct Mul : IBinaryOperator<int>
 (具体的にいうと、仮想メソッド呼び出しが消えて、小さいメソッドを最適化オプション付きで実行すると[インライン展開](../structured/miscinlining.md)も掛かります。
 この例はまさにそういう最適化が掛かって、ジェネリックなしの場合と比べて10倍以上速くなったりします。)
 
-```csharp
+```csharp {title="値型ジェネリックを使ったメソッド呼び出し"}
 static T Sum<T, TOperator>(T[] items, TOperator op)
     where TOperator : struct, IBinaryOperator<T>
 {
@@ -1292,7 +1292,7 @@ static void M()
 `default(Add)`とか、呼び出し側でダミーのインスタンスを作って引数として渡すのも無駄なので、
 これもメソッドの中でやってしまいましょう。
 
-```csharp
+```csharp {title="型引数だけを渡すバージョン"}
 static T Sum<T, TOperator>(T[] items)
     where TOperator : struct, IBinaryOperator<T>
 {

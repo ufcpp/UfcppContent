@@ -34,7 +34,7 @@ C# では、`Main`という名前の関数が自動的にエントリーポイ�
 `Main`の引数と戻り値は、以下のいずれかである必要があります。
 これ以外のオーバーロードはエントリーポイントになりません。
 
-```csharp
+```csharp {title="Main の引数と戻り値"}
 static int Main()
 static int Main(string[] args)
 static void Main()
@@ -78,7 +78,7 @@ GUI アプリや Web アプリでは、`Main`関数を書かない場合があ�
 
 C# 7.1で、以下のように、`Main`関数の戻り値に`Task`クラス(`System.Threading.Tasks`名前空間)を使えるようになりました。
 
-```csharp
+```csharp {title="Main関数の引数と戻り値(C# 7.1 から)"}
 static Task<int> Main()
 static Task<int> Main(string[] args)
 static Task Main()
@@ -88,7 +88,7 @@ static Task Main(string[] args)
 もちろん、[非同期メソッド](../async/sp5_async.md)を使えるようにするためです。
 例えば以下のような`Main`関数が、ちゃんとエントリーポイントとして認識されます。
 
-```csharp
+```csharp {title="非同期Mainの例"}
 static async Task Main()
 {
     for (int i = 10; i > 0; i--)
@@ -106,7 +106,7 @@ static async Task Main()
 ちなみに、この機能は、コンパイラーが通常の(`void`/`int`戻り値の)エントリーポイントを別途自動生成することで実現しています。
 例えば、先ほどの例のように、`Task Main()`を書くと、追加で以下のような関数が作られ、これが実際のエントリーポイントとして機能します。
 
-```csharp
+```csharp {title="非同期Mainから自動生成される通常のMain"}
 // 実際には <Main> というような、C# で本来使えない名前で生成される
 static void _Main_(string[] args)
 {
@@ -123,7 +123,7 @@ static void _Main_(string[] args)
 
 C# 7.1 では、通常の(`void`/`int`戻り値の)`Main`関数がある場合、そちらだけをエントリーポイント扱いします。
 
-```csharp
+```csharp {title="Main の優先度"}
 static void Main(string[] args)
 {
     Console.WriteLine("こちらがエントリーポイント扱い");

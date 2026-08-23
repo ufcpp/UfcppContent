@@ -37,7 +37,7 @@ C# 8.0 ではこれらの非同期版が入るわけですが、
 それが[`IAsyncEnumerable<T>`](https://docs.microsoft.com/ja-jp/dotnet/api/system.collections.generic.iasyncenumerable-1)インターフェイス(`System.Collections.Generic`名前空間)です。
 以下のような構造になっています。
 
-```csharp
+```csharp {title="IAsyncEnumerable の構造"}
 public interface IAsyncEnumerable<out T>
 {
     IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default);
@@ -72,7 +72,7 @@ public interface IAsyncDisposable
 以下のように、`await foreach` と書くことで、
 `IAsyncEnumerable<T>` (と同じパターンを持つ型)の列挙ができます。
 
-```csharp
+```csharp {title="非同期 foreach" highlight-text="await foreach"}
 static async Task AsyncForeach(IAsyncEnumerable<int> items)
 {
     await foreach (var item in items)
@@ -87,7 +87,7 @@ static async Task AsyncForeach(IAsyncEnumerable<int> items)
 
 このコードは、同期版の`foreach`と似たような感じで、以下のように展開されます。 同期版と比べて、`MoveNext`と`Dispose`が非同期になっただけです。
 
-```csharp
+```csharp {title="非同期foreachの展開結果"}
 static async Task AsyncForeach(IAsyncEnumerable<int> items)
 {
     var e = items.GetAsyncEnumerator();
@@ -120,7 +120,7 @@ static async Task AsyncForeach(IAsyncEnumerable<int> items)
 所定のメソッドさえ持っていれば非同期`foreach`で使えます。
 以下はその一例です。
 
-```csharp
+```csharp {title="パターン ベースで非同期foreachに対応する型の例"}
 using System;
 using System.Threading.Tasks;
  
@@ -163,7 +163,7 @@ public class Program
 
 また、後から追加された構文だけあって、同期版の`foreach`よりもパターンの条件が緩いです。以下のように、オプション引数や可変長引数が付いていても平気です(同期版はダメ)。
 
-```csharp
+```csharp {title="非同期foreachは求められるパターンが緩い"}
 using System.Threading;
 using System.Threading.Tasks;
  
@@ -203,7 +203,7 @@ public class Program
 
 非同期`foreach`と同様`await using`という書き方をします。
 
-```csharp
+```csharp {title="非同期using" highlight-text="await using"}
 static async Task AsyncUsing(IAsyncDisposable d)
 {
     await using (d)
@@ -218,7 +218,7 @@ static async Task AsyncUsing(IAsyncDisposable d)
 展開結果は、同期版で`Dispose()`呼び出しだった部分が`await DisposeAsync()`に変わっているだけです。
 上記のコードは以下のように展開されます。
 
-```csharp
+```csharp {title="非同期usingの展開結果"}
 static async Task AsyncUsing(IAsyncDisposable d)
 {
     try
@@ -240,7 +240,7 @@ static async Task AsyncUsing(IAsyncDisposable d)
 以下のように、`IAsyncDisposable`インターフェイスを実装せず、
 単に`DisposeAsync`メソッドを持っていれば`await using`で使えます。
 
-```csharp
+```csharp {title="パターン ベースな非同期using"}
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -275,7 +275,7 @@ class Program
 
 また、オプション引数や可変長引数があっても構いません。
 
-```csharp
+```csharp {title="オプション引数などがあってもawait using可能"}
 using System.Threading.Tasks;
  
 struct A
@@ -335,7 +335,7 @@ public class Program
 
 ジェネリック型引数に対して使う場合にも、`IAsyncDisposable`制約が必要になります。
 
-```csharp
+```csharp {title="IAsyncDisposable 制約が必須"}
 static async Task M<T>(T x)
     where T : IAsyncDisposable // この制約がないと await using の行でコンパイル エラーに。
 {
@@ -348,7 +348,7 @@ static async Task M<T>(T x)
 [`using`変数宣言](../resource/oo_dispose.md#using-declaration)との併用も可能です。
 以下のような書き方ができます。
 
-```csharp
+```csharp {title="非同期using変数宣言の例"}
 using System.Threading.Tasks;
  
 struct AsyncDisposable
@@ -375,7 +375,7 @@ public class Program
 以下の例では、`using`の行では`Dispose`だけが呼ばれますし、
 `await using`の行では`DisposeAsync`だけが呼ばれます。
 
-```csharp
+```csharp {title="usingとawait usingは独立"}
 using System;
 using System.Threading.Tasks;
  
@@ -411,7 +411,7 @@ public class Program
 
 例えば以下のような書き方で、1秒に1回、整数値を生成するイテレーターになります。
 
-```csharp
+```csharp {title="非同期イテレーターの例" highlight-ranges="sha256:0e2c9c79a3db26d3897b26e5b938ceaaa2cd94cc6eabe50e0d837b7f652a870c;1:8-1:13,5:9-5:21,6:9-6:14"}
 static async IAsyncEnumerable<int> GenerateAsync()
 {
     for (int i = 0; ; i++)
@@ -456,7 +456,7 @@ static async IAsyncEnumerable<int> GenerateAsync()
 原理だけ簡単に説明すると、非同期イテレーター中に`yield return x`と書くと、
 概ね以下のようなコードが生成されます。
 
-```csharp
+```csharp {title="yield return の置き換え"}
 _state = State1;             // 次に復帰するときのための状態の記録
 Current = x;                 // 戻り値を Current に保持
 _taskSource.SetResult(true); // MoveNextAsync の戻り値で返した Task を完了させる
@@ -478,7 +478,7 @@ case: State1:                // 時宜に呼ばれたときに続きから処理
 例えば、以下のようなコードでは`yield`や`await`がキーワード扱いされず、
 普通に変数として使えています。
 
-```csharp
+```csharp {title="yield変数とawait変数"}
 static void M()
 {
     var yield = 2;
@@ -506,7 +506,7 @@ static void M()
 
 非同期イテレーターでは、以下のように、引数に`EnumeratorCancellation`属性(`System.Runtime.CompilerServices`名前空間)を付けることでこの`CancellationToken`を受け取れるようになります。
 
-```csharp
+```csharp {title="非同期イテレーターへのCancellationTokenの渡し方" highlight-text="cts.Token"}
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -553,7 +553,7 @@ public class Program
 `WithCancellation` の引数で渡した`CancellationToken`が`GetAsyncEnumerator`に伝搬し、
 最終的に`GenerateAsync`の`ct`引数に渡ります。
 
-```csharp
+```csharp {title="WithCancellation での CancellationToken 伝搬"}
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -594,7 +594,7 @@ public class Program
 この場合、2個のうちどちらか片方でも`Cancel`が掛かった時点でキャンセル扱いになります。
 (正確に言うと、[CreateLinkedTokenSource ](https://docs.microsoft.com/ja-jp/dotnet/api/system.threading.cancellationtokensource.createlinkedtokensource)を使って新たに作った`CancellationToken`が渡ります。)
 
-```csharp
+```csharp {title="CancellationToken が2個渡る例"}
 // CancellationToken を2個用意。
 var ct1 = new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token;
 var ct2 = new CancellationTokenSource(TimeSpan.FromSeconds(5)).Token;

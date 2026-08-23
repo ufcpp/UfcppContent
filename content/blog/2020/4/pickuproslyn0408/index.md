@@ -139,7 +139,7 @@ init-only プロパティというのを足す方向で議論が進んでいま�
 
 以下のようなやつ。
 
-```csharp
+```csharp {title="プロパティ内の field キーワード"}
 public int P
 {
     get => field ;

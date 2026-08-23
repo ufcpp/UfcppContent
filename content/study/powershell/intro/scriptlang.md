@@ -117,7 +117,7 @@ HTML と組み合わせてリッチでインタラクティブなウェブペー
 具体的な説明のために、
 以下のような C# コードを考えてみます。
 
-```csharp
+```csharp {title="連想配列の例（C#）"}
 Dictionary<string, int> dic = new Dictionary<string, int>();
 dic.Add("test", 1);
 Console.Write(dic["test"]);
@@ -132,7 +132,7 @@ dictionary（辞書）という単語を知っている人なら大体このコ�
 
 で、これと似たようなことを PowerShell のスクリプトを使って書いてみると、以下のようになります。
 
-```powershell
+```powershell {title="連想配列の例（PowerShell）"}
 $dic = @{}
 $dic.test = 1
 $dic.test

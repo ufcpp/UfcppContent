@@ -46,7 +46,7 @@ aliases:
 
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/MergeSort.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/MergeSort.cs)
 
-```csharp
+```csharp {title="ソート"}
 /// <summary>
 /// マージソート。
 /// </summary>

@@ -39,7 +39,7 @@ aliases:
 
 例えば、以下のようなコードを見てください。
 
-```csharp
+```csharp {title="リテラルをちりばめたコード" highlight-ranges="sha256:66585cf0ccfb14dedf6796d506c873fc904267fbb4d16eba00e4ce81d4baee10;1:23-1:24,3:16-3:17,16:21-16:22,17:24-17:25"}
 int[] array = new int[5];
 
 for(int i=0; i<5; ++i)
@@ -74,7 +74,7 @@ Console.Write("平均: {0}\n分散: {1}\n", mean, var);
 なので、普通はリテラルを直接使うということはしません。
 例えば、以下のように、5 と言う値を一度変数に代入して使うことを考えます。
 
-```csharp
+```csharp {title="一度変数に代入" highlight-lines="1"}
 int NUM = 5;
 int[] array = new int[NUM];
 
@@ -125,7 +125,7 @@ Console.Write("平均: {0}\n分散: {1}\n", mean, var);
 こちらのことを指します。
 （リテラルの方は直定数と訳す。）
 
-```csharp
+```csharp {title="定数定義" highlight-text="const"}
 const int NUM = 5;
 int[] array = new int[NUM];
 
@@ -153,7 +153,7 @@ const を付けて宣言された定数は、宣言文中における初期化�
 定数というくらいですから、当然、
 その他の場所で値を書き換えることは出来ません。
 
-```csharp
+```csharp {title="定数に値を代入（エラー）"}
 const int NUM = 5; // 宣言時の初期化のみ可能
 NUM = 6; // ここでエラーになる
 ```
@@ -175,7 +175,7 @@ const を使った定数は、
 クラスのメンバーにする事も出来ます。
 （「[クラス](../oop/oo_class.md#class)」に関しては別章参照: 「[クラス](../oop/oo_class.md)」。）
 
-```csharp
+```csharp {title="クラスの const メンバー"}
 class Math
 {
   public const double PI = 3.1415926535897932;
@@ -246,7 +246,7 @@ const との違いは以下のようになります。
 </table>
 
 
-```csharp
+```csharp {title="readonly メンバー" highlight-text="readonly int num;"}
 class A
 {
   readonly int num;
@@ -276,7 +276,7 @@ class A
 
 その代替として、`readonly`なフィールドや、[get-onlyなプロパティ](../oop/oo_property.md#get-only)が使えます。
 
-```csharp
+```csharp {title="const の代替としての readonly"}
 class A
 {
     // const はあんまり public にしたくない
@@ -306,7 +306,7 @@ C# で `const` を使った定数にできるものには以下のようなも�
 
 例えば、以下のように複数のリテラル、定数を組み合わせたものも再び定数にできます。
 
-```csharp
+```csharp {title="const にできるもの"}
 // enum
 const DayOfWeek D1 = DayOfWeek.Friday;
 const DayOfWeek D2 = DayOfWeek.Wednesday;
@@ -329,7 +329,7 @@ const object N = null;
 
 ちなみに、特殊なものでは [`nameof` 演算子](st_string.md#nameof-operator)は完全にリテラルと同列の扱いを受けるので、`const` に使えます。
 
-```csharp
+```csharp {title="nameof は const に使える"}
 const string A = nameof(A); // "A" と同じ結果になる。
 const string B = A + nameof(B); // 他の const + リテラル という扱い。
 ```
@@ -341,7 +341,7 @@ const string B = A + nameof(B); // 他の const + リテラル という扱い�
 C# 10.0 からは、[文字列補間](st_string.md#string-interpolation)でも、`{}` の中身が `const` 文字列な場合に限り、補完結果も `const` にできます。
 例えば以下のような `const` 文字列を作れます。
 
-```csharp
+```csharp {title="const 文字列補間"}
 const string A = "Abc";
 const string B = "Xyz";
 const string C = $"{nameof(A)}: {A}, {nameof(B)}: {B}"; // "A: Abc, B: Xyz"
@@ -351,7 +351,7 @@ const string C = $"{nameof(A)}: {A}, {nameof(B)}: {B}"; // "A: Abc, B: Xyz"
 
 一方で、`{}` の中身が文字列でない場合、たとえ `const` であっても文字列補間結果は `const` にできなくなります。
 
-```csharp
+```csharp {title="補完結果を const 文字列にできない例"}
 const int A = 1;
 const string C = $"{A}"; // A が文字列じゃないので $"" の結果を const にできない。
 ```
@@ -360,7 +360,7 @@ const string C = $"{A}"; // A が文字列じゃないので $"" の結果を co
 これは、文字列補間の結果が一定にならないためです。
 例えば、以下のように、浮動小数点数を文字列化した結果は国によって異なります。
 
-```csharp
+```csharp {title="C# で数値を文字列化した結果は国によって異なる"}
 using System.Globalization;
 
 // 東南アジアの多くの国は . を小数点に使う。
@@ -372,7 +372,7 @@ Thread.CurrentThread.CurrentCulture = new CultureInfo("fr-fr");
 Console.WriteLine(1.234);
 ```
 
-```csharp
+```csharp {title="C# で数値を文字列化した結果は国によって異なる"}
 1.234
 1,234
 ```

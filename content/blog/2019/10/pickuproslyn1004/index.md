@@ -37,7 +37,7 @@ aliases: []
 
 [`switch` 式](../../../../study/csharp/cheatsheet/ap_ver8.md#switch-expression)でも、以下のような書き方に需要があるので、式ステートメント化をしたいという話は前々からあります。
 
-```csharp
+```csharp {title="switch 式ステートメントの例"}
 static void A() => Console.WriteLine("A");
 static void B() => Console.WriteLine("B");
 static void C() => Console.WriteLine("C");
@@ -61,7 +61,7 @@ C# 8.0 には間に合わなかったので、9.0 での提案に。
 
 これは要するに以下のような奴。
 
-```csharp
+```csharp {title="共変戻り値の例"}
 class Base { }
 class Derived : Base { }
  

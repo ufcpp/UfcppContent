@@ -60,7 +60,7 @@ IL 上はどちらも1命令で、
 命令の差でパフォーマンスの違い推測できないんで、ここは実測してみます。
 for ループの中でキャストか as するだけの関数を書いて、
 
-```csharp
+```csharp {title="キャストと as のパフォーマンスを実測"}
 Stopwatch sw = new Stopwatch();
 
 sw.Reset();
@@ -88,7 +88,7 @@ Console.Write("{0}\n", sw.ElapsedTicks);
 以下のようなコードを書けば実行速度が速くなるかというと、
 そんなことはない。
 
-```csharp
+```csharp {title="is で確認してからキャスト"}
 B b = new D(); // D extends B
 
 if (b is D)
@@ -101,7 +101,7 @@ if (b is D)
 なぜかというと、is は、内部的には as とまったく同じコードになるから。
 以下のような2つのコードがほぼ同じコンパイル結果になります。
 
-```csharp
+```csharp {title="as ＋ null 比較"}
 B b = new D(); // D extends B
 D d = b as D;
 if (d != null)
@@ -109,7 +109,7 @@ if (d != null)
 ```
 
 
-```csharp
+```csharp {title="is"}
 B b = new D(); // D extends B
 if (b is D)
   ...

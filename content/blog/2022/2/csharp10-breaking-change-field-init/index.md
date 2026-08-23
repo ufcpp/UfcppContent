@@ -18,7 +18,7 @@ aliases: []
 これをインストールすると、ちょこっと C# 10.0 の構造体のフィールド初期化子の挙動が変わります。
 以下のようなコード、17.0/17.1 Preview 時代はコンパイルできていたんですが、17.1/17.2 Preview ではコンパイル エラーになります。
 
-```csharp
+```csharp {title="しれっと破壊的変更が掛かった文法"}
 struct S
 {
     public int X = 1; // ここが原因。
@@ -36,7 +36,7 @@ struct S
 まあ、暗黙的に引数なしコンストラクターが追加されています。
 以下のような挙動。
 
-```csharp
+```csharp {title="17.0 時代の挙動"}
 Console.WriteLine(new S().X); // 1
 
 struct S
@@ -49,7 +49,7 @@ struct S
 問題は、このコードに引数ありコンストラクターを足したとき。
 以下のようになっていたそうです。
 
-```csharp
+```csharp {title="引数ありコンストラクターを手動で足すと、引数なしコンストラクターの自動生成がなくなる"}
 Console.WriteLine(new S().X); // 0。 default(S).X 扱い…
 
 struct S
@@ -71,7 +71,7 @@ C# 10.0 リリース後のユーザーの反応的には相当に強い懸念の
 
 以下のように直すのが自然な気がしなくもないわけですが…
 
-```csharp
+```csharp {title="案2: 常に引数なしコンストラクターを生成する"}
 Console.WriteLine(new S().X); // ちゃんと1になればいいわけで。
 
 struct S
@@ -86,7 +86,7 @@ struct S
 
 プライマリ コンストラクターがある場合、「全てのコンストラクターは最終的にプライマリ コンストラクターにたどり着く必要がある」ということになっています。
 
-```csharp
+```csharp {title="必ず最終的にはプライマリ コンストラクターにたどり着く"}
 record struct S(int X)
 {
     // 必ず S(int X) にたどり着くように書かないとダメ。
@@ -98,7 +98,7 @@ record struct S(int X)
 ここで、じゃあ、先ほどの、フィールド初期化子があるときにどうするか。
 コンパイラーが自動的に引数なしコンストラクターを追加するのであれば、プライマリ コンストラクターには何を渡すべきかという問題がでます。
 
-```csharp
+```csharp {title="引数なしコンストラクターはどう実装されるべきか…"}
 record struct S(string X)
 {
     public int Y = 1;
@@ -116,7 +116,7 @@ record struct S(string X)
 
 以下のコードがエラーになりました。
 
-```csharp
+```csharp {title="しれっと破壊的変更が掛かった文法"}
 struct S
 {
     public int X = 1;
@@ -129,7 +129,7 @@ struct S
 
 ただ、最初から以下のようなコードを書くと罠っぽい挙動になるのは今と同じ。
 
-```csharp
+```csharp {title="引数ありコンストラクターを手動で足すと new S() が default(S) 扱い"}
 Console.WriteLine(new S().X); // 0。 default(S).X 扱い…
 
 struct S
@@ -144,7 +144,7 @@ struct S
 
 エラーにならないようにするのは元々が以下のようなコードのはずで、
 
-```csharp
+```csharp {title="エラーにならないコード"}
 struct S
 {
     public int X = 1;
@@ -155,7 +155,7 @@ struct S
 ここに引数ありコンストラクターを足すはずなので、
 以下のような挙動が期待されます。
 
-```csharp
+```csharp {title="コンストラクターが明示的にあれば解決"}
 Console.WriteLine(new S().X); // ちゃんと1。
 
 struct S

@@ -44,7 +44,7 @@ C# では、デバッグ モードでのコンパイルをすれば、元のソ�
 
 例えば、以下のようなコードを実行したとします。
 
-```csharp
+```csharp {title="スタックトレースの例"}
 using System;
 
 public class Program
@@ -92,7 +92,7 @@ public class Program
 
 (デバッグ モードなら)以下のような実行結果が得られます。
 
-```console
+```console {title="スタックトレースの例"}
 **** X ****
 message: throw from X
 stack trace:
@@ -147,7 +147,7 @@ catch 句の中での再 throw の場合、<em>その時点のスタックトレ
 スタックトレースを紛失する例と、その回避方法を見てみましょう。
 以下のようなコードを書いたとします。
 
-```csharp
+```csharp {title="再 throw とスタックトレース"}
 using System;
 using System.Runtime.CompilerServices;
 
@@ -255,7 +255,7 @@ public class Program
 
 (デバッグ モードなら)実行結果は以下のようになります。
 
-```console
+```console {title="スタックトレースの例"}
 **** ThrowEx ****
 rank: 0
 message: throw from X at line 51
@@ -299,7 +299,7 @@ stack trace:
 `catch` 句の外で例外の再 throw を、スタックトレースを紛失せずに行えるよう、`ExceptionDispatchInfo` というクラスが追加されました。
 ([非同期メソッドの実装](../async/sp5_awaitable.md)に必要だったため、これと同世代の .NET Framework 4.5 の頃に追加されたものです。)
 
-```csharp
+```csharp {title="ExceptionDispatchInfo"}
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 

@@ -31,7 +31,7 @@ aliases: []
 
 [C# 7.2](../../../../study/csharp/cheatsheet/ap_ver7_2.md) の頃に入った [`Span<T>` 構造体](../../../../study/csharp/resource/span.md)ですが、理屈上は以下のような構造体です。
 
-```csharp
+```csharp {title="Span&lt;T&gt; の理屈上の中身" highlight-text="ref T _field"}
 readonly ref struct Span<T>
 {
     private readonly ref T _field;
@@ -54,7 +54,7 @@ readonly ref struct Span<T>
 
 ということで、C# 10.0 / .NET 6 時点での `Span<T>` の中身は概ね以下のようになっています。
 
-```csharp
+```csharp {title=".NET 6 時点の Span&lt;T&gt; の理屈上の中身"}
 public readonly ref struct Span<T>
 {
     private readonly ByReference<T> _pointer;

@@ -34,7 +34,7 @@ params を配列以外のコレクションに対して使えるようにする�
 コレクション式を実装した今改めて検討して、
 むしろ「コレクション式とそろえるのがいいのではないか」という感じに変わったみたいです。
 
-```csharp
+```csharp {title="params コレクション(案)"}
 // ReadOnlySpan を優先するようになる予定。
 C.M(1, 2, 3);
 
@@ -56,7 +56,7 @@ params に配列以外の型を認めたいという話の前提には、パフ�
 
 で、ref struct にはスコープの概念があって、引数や変数を [`scoped`](../../../../study/csharp/resource/refstruct.md#scoped) で修飾するかどうかでちょっと挙動が変わります。
 
-```csharp
+```csharp {title="scoped の有無"}
 M(true);
 
 static S M(bool b)
@@ -97,7 +97,7 @@ readonly ref struct S(Span<int> span)
 こうなるともう1つ問題が、オーバーライドをどうするかという話があるみたいです。
 というのも、params 配列の場合、実はオーバーライド側には params 修飾を付けなくてもいいそうで。
 
-```csharp
+```csharp {title="params 配列のオーバーライドには params 修飾不要"}
 class Base
 {
     public virtual void M(params int[] x) { }
@@ -122,7 +122,7 @@ class Derived : Base
 なので、「params の部分を `[]` で覆っても同じ結果になる」というのは**成り立たない**ことになります。
 例えば以下のようなもの。
 
-```csharp
+```csharp {title="params と []"}
 C.M([1, 2, 3]); // こちらは解決できなくてエラーに。
 C.M(1, 2, 3); // こちらは int[] 側に解決。
 
@@ -141,7 +141,7 @@ class C
 引数をどういう順で評価するかは決めておかないと混乱のもとです。
 C# は基本的に「呼び出し側で並べた順」で、例えば名前付き引数を使うと順序を変えることができたりします。
 
-```csharp
+```csharp {title="引数の評価は並べた順"}
 Test(GetA(), GetB()); // A → B
 Test(b: GetB(), a: GetA()); // B → A
 
@@ -153,7 +153,7 @@ static int GetB() { Console.WriteLine("B"); return 0; }
 
 で、名前付き引数を使うと params 引数の場所も末尾以外に移せたり。
 
-```csharp
+```csharp {title="params 引数を真ん中に。GetC の評価順も真ん中に"}
 Test(b: GetB(), c: GetC(), a: GetA()); // B → C → A
 
 static void Test(int a, int b, params int[] c) { }
@@ -166,7 +166,7 @@ static int GetC() { Console.WriteLine("C"); return 0; }
 ちなみにこの時、`params int[] c` のための配列は、`Test` を呼ぶ直前になるそうです。
 ということで、展開結果は以下のような感じ。
 
-```csharp
+```csharp {title="先ほどのコードの展開結果"}
 var b = GetB();
 var c = GetC();
 var a = GetA();
@@ -177,7 +177,7 @@ Test(a, b, paramsC);
 ところが、params コレクションとなるとどうなるべきかという話になります。
 コレクションのインスタンスはいつ作られるべきなのか。
 
-```csharp
+```csharp {title="params を自作の型に変更"}
 Test(b: GetB(), c: GetC(), a: GetA());
 
 static void Test(int a, int b, params MyCollection c) { }
@@ -202,7 +202,7 @@ class MyCollection : IEnumerable<int>
 引数 `c:` の場所で生成。`GetC` を呼ぶよりも前。
 要するに、以下のように展開したいんでしょうね。
 
-```csharp
+```csharp {title="params 部分の展開の例"}
 var b = GetB();
 var a = GetA();
 var paramsC = new MyCollection();

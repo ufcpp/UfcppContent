@@ -21,14 +21,14 @@ aliases:
 すなわち、
 今までなら、
 
-```csharp
+```csharp {title="静的メソッド"}
 int x = int.Parse("1");      
 ```
 
 
 と書いていたものを、
 
-```csharp
+```csharp {title="拡張メソッドの定義"}
 static class Extensions
 {
     public static int Parse(this string str)
@@ -42,7 +42,7 @@ static class Extensions
 というような静的メソッドを用意することで、
 以下のような構文で呼び出せるようになります。
 
-```csharp
+```csharp {title="拡張メソッドの利用"}
 int x = "1".Parse();
 ```
 
@@ -76,7 +76,7 @@ C# 2.0 までの常識で言うと、
 <em>「[静的クラス](../oop/oo_static.md#stclass)」中に、
       第一引数に this キーワードを修飾子として付けた static メソッドを書きます</em>。
 
-```csharp
+```csharp {title="拡張メソッドの定義" highlight-text="this"}
 static class StringExtensions
 {
   public static string ToggleCase(this string s)
@@ -89,7 +89,7 @@ static class StringExtensions
 通常通り、静的メソッドとして呼び出すこともできますが、
 あたかも string 型のインスタンスメソッドであるかのように呼び出せるようになります。
 
-```csharp
+```csharp {title="拡張メソッドの呼び出し" highlight-text="s.ToggleCase()"}
 string s = "This Is a Test String.";
 string s1 = StringExtensions.ToggleCase(s); // 通常の呼び出し方。
 string s1 = s.ToggleCase();                 // 拡張メソッド呼び出し。
@@ -98,7 +98,7 @@ string s1 = s.ToggleCase();                 // 拡張メソッド呼び出し。
 
 上述のような拡張メソッドの利用例のソース全てを以下に示します。
 
-```csharp
+```csharp {title="拡張メソッドの例"}
 using System;
 
 namespace ConsoleApplication1
@@ -138,7 +138,7 @@ namespace ConsoleApplication1
 ```
 
 
-```console
+```console {title="拡張メソッドの例"}
 tHIS iS A tEST sTRING.
 ```
 
@@ -154,7 +154,7 @@ tHIS iS A tEST sTRING.
 
 そのため、同じ名前空間内に2つ以上同名の拡張メソッドを定義してはいけません。
 
-```csharp
+```csharp {title="同名の拡張メソッドがあるせいでエラーに"}
 namespace ConsoleApplication1
 {
     class Program
@@ -186,7 +186,7 @@ namespace ConsoleApplication1
 
 同名の拡張メソッドが定義されている名前空間を同時に using するのもご法度です。
 
-```csharp
+```csharp {title="using でどのメソッドが呼ばれるかが決まる"}
 using System;
 
 namespace ConsoleApplication1
@@ -244,7 +244,7 @@ namespace NamespaceB
 
 まず、拡張メソッドよりも通常のインスタンスメソッドの方が優先されます。
 
-```csharp
+```csharp {title="インスタンスメソッド優先"}
 using System;
 
 class Program
@@ -272,7 +272,7 @@ static class Extensions
 通常、オーバーロードが複数ある場合は一番引数の一致度が高いものが呼ばれます。
 例えば、以下のコードの場合は、`object`引数のものより`string`引数のものがまず優先、`string`に合わない場合だけ`object`のものが呼ばれます。
 
-```csharp
+```csharp {title="オーバーロード解決"}
 using static System.Console;
 
 class X
@@ -291,7 +291,7 @@ class Program
     }
 }
 ```
-```console
+```console {title="実行結果"}
 string abc
 object 10
 ```
@@ -300,7 +300,7 @@ object 10
 しかし、拡張メソッドよりもインスタンス メソッドの方が優先的に呼ばれます。
 引数の一致度が高くても、拡張メソッドの方は呼ばれません。
 
-```csharp
+```csharp {title="インスタンス メソッドと拡張メソッドの混在"}
 using static System.Console;
 
 class X
@@ -325,7 +325,7 @@ class Program
     }
 }
 ```
-```console
+```console {title="実行結果"}
 string abc
 object 10
 ```
@@ -343,7 +343,7 @@ object 10
 以下のように、使う場所に近いほど優先、直接的なものほど優先で呼べます。
 同優先度のものが複数ある場合はコンパイル エラーになります。
 
-```csharp
+```csharp {title="複数の名前空間にある拡張メソッドの呼び分け"}
 using static System.Console;
 using A;
 
@@ -402,7 +402,7 @@ namespace C
 しかしながら、拡張メソッドを利用することで、
 インスタンスメソッド定義っぽいことが実現できます。
 
-```csharp
+```csharp {title="インターフェースに対する拡張メソッド定義"}
 using System;
 using System.Collections;
 
@@ -488,7 +488,7 @@ using 文1つでどの静的メソッドが呼ばれるのかが切り替わっ�
 
 まず、条件付けや値の加工のために以下のような静的メソッドを用意します。
 
-```csharp
+```csharp {title="データ列の選択・加工用のメソッド"}
 static class Extensions
 {
     public static IEnumerable<int> Where(this IEnumerable<int> array, Func<int, bool> pred)
@@ -509,7 +509,7 @@ static class Extensions
 
 これを、静的メソッド呼び出しの構文で書くと以下のようになります。
 
-```csharp
+```csharp {title="静的メソッドによるデータ列のパイプライン処理"}
 var input = new[] { 8, 9, 10, 11, 12, 13 };
 
 var output =
@@ -527,7 +527,7 @@ var output =
 
 これに対して、拡張メソッド構文を使うと、以下のようになります。
 
-```csharp
+```csharp {title="拡張メソッドによるデータ列のパイプライン処理"}
 var input = new[] { 8, 9, 10, 11, 12, 13 };
 
 var output = input
@@ -555,7 +555,7 @@ var output = input
 
 すなわち、以下のようなコードは合法です。
 
-```csharp
+```csharp {title="拡張メソッドのデリゲートへの代入"}
 using System;
 
 namespace ConsoleApplication1
@@ -601,7 +601,7 @@ C# 7.2 から、拡張メソッドの第1引数(`this`が付いている引数)�
 
 以下のように書けます。`ref`引数の拡張メソッドで構造体の書き換えができたり、コピー除けのために`in`引数が使えます。
 
-```csharp
+```csharp {title="参照渡しの拡張メソッドの例" highlight-ranges="sha256:7f04dc66ff248c81ab7f966ee3b9b61d4a481bf56cc0ffd359206755b79b3dcb;4:34-4:42,14:37-14:44"}
 public static class QuaternionExtensions
 {
     // 構造体の書き換えを拡張メソッドでやりたい場合に ref 引数が使える
@@ -650,7 +650,7 @@ public struct Quaternion
 すでに触れてはいますが、参照渡しで拡張メソッドを作れるのは[構造体](../resource/rm_struct.md)(値型)だけです。
 以下のように、クラスではできません。また、ジェネリックな型の場合、[`struct`制約](../oop/sp2_generics.md#where)が必要です(ただし、それでも`in`引数は不可)。
 
-```csharp
+```csharp {title="参照渡しの拡張メソッドを作れるのは構造体だけ"}
 static class Extensions
 {
     // 構造体(値型)は OK
@@ -677,7 +677,7 @@ static class Extensions
 `s`が書き換わる可能性があることが呼ぶ側でもわかりやすいです。
 一方で、拡張メソッドの場合は`ref`を付けない仕様なので、知らないうちに書き換わる可能性があり、これを禁止したかったわけです。
 
-```csharp
+```csharp {title="クラスの引数を ref this にできない理由"}
 // (もしもこれをコンパイル エラーにしなかった場合)
 public static void M(ref this string s)
 {
@@ -700,7 +700,7 @@ static void Main()
 正しく使わないとかえってパフォーマンスを損ねます。
 ジェネリックな構造体に対する`in`引数はまさにパフォーマンスを損ねるため、最初から禁止することにしました。
 
-```csharp
+```csharp {title="ジェネリックな構造体を in this にできない理由"}
 // (もしもこれをコンパイル エラーにしなかった場合)
 public static void M<T>(in this T s)
     where T : IDisposable
@@ -722,7 +722,7 @@ public static void M<T>(in this T s)
 この制約に対する救済策として、`ref`引数の拡張メソッドが使えます。
 例えば以下のように、インスタンス メソッドではコンパイル エラーになる`ref`戻り値が、拡張メソッドではコンパイルできます。
 
-```csharp
+```csharp {title="拡張メソッドならフィールドを ref で返せる"}
 using System;
 
 struct Point

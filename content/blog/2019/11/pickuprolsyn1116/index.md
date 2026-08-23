@@ -33,14 +33,14 @@ C# で関数ポインター的なものというと[デリゲート](../../../..
 
 元々の案だと以下のような構文を考えていたんですが、これだと他の構文と不明瞭で、結構先までソースコードを先読みしないといけないのが負担になりすぎるとのこと。
 
-```csharp
+```csharp {title="関数ポインター(旧案)"}
 func*(int, int)
 ```
 
 なので、以下のような構文にしたいとのこと。
 既存の文法では `*<` が連続することがないので、これなら構文解析が楽というのが主な理由。
 
-```csharp
+```csharp {title="関数ポインター(新案)"}
 func*<void>
 ```
 
@@ -54,7 +54,7 @@ func*<void>
 
 特に要望として大きいのが整数と null を混在させたときに `int?` などとして扱ってほしいというもの。
 
-```csharp
+```csharp {title="int と null の共通型"}
 // 以下のいずれも int? になってほしいけど、現状はコンパイル エラーに
 var x = b ? 1 : null;
 var y = b switch { true => 1, false => null };
@@ -67,7 +67,7 @@ var z = new[] { 1, null };
 この問題に対する解決策としては「Common Type」の他に、Target-Typed 型推論というものもあります。
 C# 8.0 で入りたての `swtich` 式だけはこの Target-Typed 型推論を行っていて、たとえば以下のコードはコンパイル可能です。
 
-```csharp
+```csharp {title="switch 式の Target-Typed 型推論"}
 // switch 式に限り、以下の書き方はコンパイルできる。
 // 変数の型から推論(terget-typed 型推論)
 int? targetTyped = b switch { true => 1, false => null };
@@ -87,7 +87,7 @@ int? targetTyped = b switch { true => 1, false => null };
 
 C# 8.0 だと、以下のようなコードを書くと null 警告が出ます。
 
-```csharp
+```csharp {title="MaybeNull が働いてない"}
 #nullable enable
 [return: MaybeNull]
 T M<T>() => default;
@@ -110,7 +110,7 @@ T M<T>() => default;
 [`const`](../../../../study/csharp/start/sp_const.md#const) な文字列リテラルだけを使って[文字列補間](../../../../study/csharp/start/st_string.md#string-interpolation)をする場合、
 その結果も `const` 扱いできるようにしようという話。
 
-```csharp
+```csharp {title="定数文字列補間"}
 const string A = "abc";
 const string B = $"{A}123"; // 今はエラーに。これを認めたい。
 ```
@@ -130,7 +130,7 @@ const string B = $"{A}123"; // 今はエラーに。これを認めたい。
 今までこれができなかった理由は、型パターンと定数パターンが競合するからで、優先度を決めないといけません。
 例えば以下のように、型名にも `X` があって、定数にも `X` があるとき、パターン中の `X` はどちらになるかという話。
 
-```csharp
+```csharp {title="型 X と定数 X"}
 class X { }
 class A
 {
@@ -154,7 +154,7 @@ class A
 Target-Typed な推論は、型の決定だけじゃなくて、メンバー名のルックアップにも使えるんじゃないかという話。
 要するに、以下のようなコードを認めるようにしようという話です。
 
-```csharp
+```csharp {title="Target-Typed なメンバー ルックアップ"}
 enum E { A, B }
 
 class Program
@@ -179,7 +179,7 @@ F# に同名の機能があるやつ。
 
 「いずれかの型」は、オブジェクト指向言語としては利便性を抜きにすれば単に「派生クラス」でできたりするんですが。
 
-```csharp
+```csharp {title="派生で「いずれか」を表現"}
 // Base 型は A もしくは B のいずれかである
 class Base { }
 class A : Base { }
@@ -197,7 +197,7 @@ class B : Base { }
 ということで、その Records に合わせた文法で、網羅性も考慮に入れた構文として、以下のような案が出ています。
 enum class ですって。
 
-```csharp
+```csharp {title="enum class"}
 enum class Shape
 {
     Rectangle(float Width, float Length),
@@ -208,7 +208,7 @@ enum class Shape
 ちなみに、以下のような感じで解釈されます。
 (`data class` は Records で提案されている構文。)
 
-```csharp
+```csharp {title="enum class = 入れ子の data class"}
 partial abstract class Shape
 {
     public data class Rectangle(float Width, float Length) : Shape,

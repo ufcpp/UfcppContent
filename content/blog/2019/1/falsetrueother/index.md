@@ -15,7 +15,7 @@ aliases: []
 
 これまで(C# 7.3 まで)、C# の `switch` ステートメントで `bool` 型を使う場合、以下のように、`default` 句が必須になることが多々ありました。
 
-```csharp
+```csharp {title="true, false, default..."}
 static int X(bool b)
 {
     switch (b)
@@ -65,7 +65,7 @@ static int X(bool b)
 
 具体的にはいくつか書き方があるんですが、1つ目は素直にポインターを使うもの。
 
-```csharp
+```csharp {title="ポインターを使って変な bool を作る"}
 unsafe bool toBool(byte b) => *((bool*)&b);
 Console.WriteLine(toBool(2));
 ```
@@ -73,7 +73,7 @@ Console.WriteLine(toBool(2));
 もう1つは、[`Unsafe` クラス](../../../2018/12/unsafe/index.md)を使う書き方。
 これもまあ、書き方が違うだけでポインターと大差ないです。
 
-```csharp
+```csharp {title="Unsafe クラスを使って変な bool を作る"}
 bool toBool(byte b) => Unsafe.As<byte, bool>(ref b);
 Console.WriteLine(toBool(2));
 ```
@@ -83,7 +83,7 @@ Console.WriteLine(toBool(2));
 そもそも unsafe コードなしで使えること自体が疑問視されていたりもします。
 要するに、実質 unsafe。
 
-```csharp
+```csharp {title="LayoutKind.Explicit を使って変な bool を作る"}
 static void Main()
 {
     bool toBool(byte b)
@@ -126,7 +126,7 @@ C# の `if` ステートメントはこの命令(もしくはその逆の [brfal
 「0 以外の値」は全て `true` 扱いになります。
 実際、前述の方法で作った「中身が2の`bool`値」を `if` に渡すと `true` 側に分岐します。
 
-```csharp
+```csharp {title="中身が2のboolは、if 中では true 扱い"}
 using System;
 
 class Pointer
@@ -148,7 +148,7 @@ class Pointer
 }
 ```
 
-```console
+```console {title="中身が2のboolは、if 中では true 扱い"}
 if (false)
 if (true)
 if (true)
@@ -164,7 +164,7 @@ if (true)
 これが、冒頭のコードで `default` 句が必須になる理由です。
 [実際、`case true` を通らないようなコード](https://github.com/ufcpp/UfcppSample/blob/master/Demo/2019/BoolExhaustiveness/BoolOtherThan01/Program.cs)を書けます。
 
-```csharp
+```csharp {title="case false も case true も通らない bool 値"}
 static void Main()
 {
     // 0 → false
@@ -197,7 +197,7 @@ static void Branch(bool b)
 
 C# 7.0 から入った、[パターン マッチングを使った `switch`](../../../../study/csharp/datatype/typeswitch.md#switch)(いやゆる「型 switch」)の場合には brtrue 命令が使われるようになって、[`if` ステートメントと同じ挙動になります](https://github.com/ufcpp/UfcppSample/blob/master/Demo/2019/BoolExhaustiveness/BoolOtherThan01/TypeSwitch.cs)。
 
-```csharp
+```csharp {title="型 switch は brtrue と同じ挙動" highlight-text="when true"}
 using System;
 
 class TypeSwitch
@@ -247,7 +247,7 @@ class TypeSwitch
 }
 ```
 
-```console
+```console {title="型 switch は brtrue と同じ挙動" highlight-text="other"}
 value = 0
     traditional switch: false
     type switch: false
@@ -266,14 +266,14 @@ value = 2
 
 例えば、以下のような Rust コードを lib.dll 中で定義しておいて、
 
-```rust
+```rust {title="8ビット整数値を素通しする Rust 関数"}
 #[no_mangle]
 pub extern fn id(x: i8) -> i8 { x }
 ```
 
 これを C# 側から以下のように呼び出します。
 
-```csharp
+```csharp {title="id 関数を C# から呼び出し"}
 using System;
 using System.Runtime.InteropServices;
 
@@ -327,7 +327,7 @@ class Program
 
 また、C# 8.0 では [`switch` 式](../../../2018/12/cs8switchexpr/index.md)も入るので、網羅性のチェック(「`true` と `false` で全パターン網羅している」という判定)をしたい需要が高まったので、ついに折れて、`bool` に対する `switch` の挙動を変えることにしたみたいです。
 
-```csharp
+```csharp {title="bool に対する switch の仕様変更"}
 using System;
 
 class Program

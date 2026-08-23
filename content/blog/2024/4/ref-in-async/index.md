@@ -15,7 +15,7 @@ aliases: []
 
 [前回の `Lock` クラスの話](../lock-class/index.md)を見てから、とりあえず以下のコードを見てほしい。
 
-```csharp
+```csharp {title="非同期メソッド中でエラーに"}
 using System.Runtime.Versioning;
 
 [module: RequiresPreviewFeatures]
@@ -55,7 +55,7 @@ class MultiThreadCode
 [前回の話]で、今回関係するのは、`Lock` インスタンスに対する `lock` ステートメントが `using (x.EnterScope())` み化けるという点。
 で、さらにいうと、`using` は以下のように展開されます。
 
-```csharp
+```csharp {title="lock → using → try-finally"}
 class MultiThreadCode
 {
     private static readonly Lock _syncLock = new();
@@ -91,7 +91,7 @@ class MultiThreadCode
 これが先ほどのコードで非同期メソッド中の `lock (_syncLock)` がエラーになる原因です。
 問題の本質としては以下のようなコードと同じ。
 
-```csharp
+```csharp {title="非同期メソッド中では ref struct を使えない"}
 class A
 {
     public static IEnumerable<object?> MIterator()
@@ -123,7 +123,7 @@ class A
 
 例えば以下のようなコードを書いたとき、
 
-```csharp
+```csharp {title="イテレーターの例"}
 foreach (var x in M())
 {
     Console.WriteLine(x);
@@ -152,7 +152,7 @@ IEnumerable<int> M()
 おおむね、以下のようなクラスが生成されます。
 (簡単化のためちょこっとさぼっています。要点のみ。)
 
-```csharp
+```csharp {title="上記イテレーターの解釈結果"}
 var e = new MImpl();
 while (e.MoveNext())
 {
@@ -207,7 +207,7 @@ class MImpl
 ただまあ、これはあくまで「原理的には」という話であって、じゃあ、現在の実装がどうなっているかというと…
 C# 12 時点では以下のような感じ。
 
-```csharp
+```csharp {title="C# 12 時点での、ref/ref struct のイテレーター/非同期メソッド中での挙動"}
 class A
 {
     public static void M()
@@ -271,7 +271,7 @@ ref struct RefStruct
 
 先ほどの、以下のようなコード、すべて「`yield`/`await` さえまたがなければ認める」ということになりそうです。
 
-```csharp
+```csharp {title="C# 12 時点での、ref/ref struct のイテレーター/非同期メソッド中での挙動"}
 RefStruct rs = new();
 
 using (rs) { }
@@ -294,7 +294,7 @@ ref int r = ref x;
 逆に、「これまで書けちゃっていたけども、実はまずかった」というものに警告を出そうという話もあります。
 それが「`lock` ステートメント中の `yield`」です。
 
-```csharp
+```csharp {title="まずそうなコード: lock 中の yield"}
 class MultiThreadCode
 {
     private static readonly object _syncObj = new();
@@ -326,7 +326,7 @@ class MultiThreadCode
 で、イテレーターの方も使い方によっては「`yield` をまたぐと別スレッドになることがある」という意味では危険で、
 例えば、以下のようなコードを書くと実行時に `SynchronizationLockException` 例外が出ます。
 
-```csharp
+```csharp {title="lock 中 yield で例外を起こす例"}
 object syncObj = new();
 
 IEnumerable<object?> M()

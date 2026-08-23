@@ -20,7 +20,7 @@ C# 11 で、`file` という修飾子を使って「書いたファイル内か�
 
 例えば、あるファイルに以下のようなコードを書いたとします。
 
-```csharp
+```csharp {title="file 修飾付きの型を使う例" highlight-text="file"}
 1.M();
 
 file static class Extensions
@@ -31,7 +31,7 @@ file static class Extensions
 
 これと同じプロジェクト内の別のファイルに以下のようなコードを書いてもエラーにはなりません。
 
-```csharp
+```csharp {title="別のファイルに同名の file 修飾付きの型を定義" highlight-ranges="sha256:bd3266b004cefb39a4c35ea1400844736d98b67545f72862bcc78688a36870d9;1:1-1:5"}
 file static class Extensions
 {
     public static void M(this int x) => Console.WriteLine("別ファイルの file-local Extensions");
@@ -50,7 +50,7 @@ file static class Extensions
 `Disposable.FromAction` 越しに `IDisposable` でインスタンスを返し、
 実装クラスである `ActionDisposable` は直接は使わせないというようなことがしたいことがあります。
 
-```csharp
+```csharp {title="実装クラスを隠す例"}
 // file 修飾子を付けると、このファイル内からしかアクセスできない。
 file class ActionDisposable : IDisposable
 {
@@ -74,7 +74,7 @@ public static class Disposable
 
 `private` の例:
 
-```csharp
+```csharp {title="private で実装を隠す例"}
 public static class Disposable
 {
     // private にしておけば Disposable クラスの外からは触れない。
@@ -91,7 +91,7 @@ public static class Disposable
 
 `internal` の例:
 
-```csharp
+```csharp {title="internal で実装を隠す例"}
 // internal にしておけば別プロジェクトからは触れない。
 internal class ActionDisposable : IDisposable
 {
@@ -124,7 +124,7 @@ C# 10 以前ではこれでしのいできました。
 実際これは、.NET 6 で追加された `Regex` の Source Generator 対応(`GeneratedRegex`)から出て来た要望で、
 `GeneratedRegex` は .NET 7 で早速この `file` 修飾子を使ったコード生成をするようになりました。
 
-```csharp
+```csharp {title="GeneratedRegex の例"}
 using System.Text.RegularExpressions;
 
 namespace FileLocal;
@@ -146,7 +146,7 @@ internal partial class R
 `file` 修飾子は型にのみ適用できます。
 以下のように、フィールドやメソッドなどに使おうとするとコンパイル エラーになります。
 
-```csharp
+```csharp {title="file は型のみ"}
 class A
 {
     file int _x;
@@ -158,7 +158,7 @@ class A
 一方、型であれば何でもよくて、インターフェイス、列挙型、デリゲートなどにも使えます。
 以下のコードはいずれも問題なくコンパイルできます。
 
-```csharp
+```csharp {title="型なら何でも file を付けれる"}
 file interface IA { }
 file enum E { }
 file delegate void D();
@@ -170,7 +170,7 @@ file record struct RS;
 インターフェイスであれば、file ローカルなインターフェイスを `public` な型で実装することもできます。
 これを使って、「file ローカルなメソッド」の代用にはなったりします。
 
-```csharp
+```csharp {title="file ローカルなインターフェイスを public なクラスで実装する例"}
 // file ローカルなインターフェイスも OK だし、
 // それを public な型で実装するのも OK。
 
@@ -190,7 +190,7 @@ file interface IX
 また、`file` 修飾子は[アクセシビリティ修飾子](../oop/oo_conceal.md#level)と同時に使うことはできません。
 例えば以下のコードはコンパイル エラーになります。
 
-```csharp
+```csharp {title="アクセシビリティとの併用不可" highlight-text="internal file"}
 internal file static class X
 {
 }
@@ -200,7 +200,7 @@ internal file static class X
 言い換えると、入れ子の型は file ローカルにできません。
 以下のコードはコンパイル エラーになります。
 
-```csharp
+```csharp {title="入れ子の型不可" highlight-text="file"}
 class A
 {
     file class NestedFileClass

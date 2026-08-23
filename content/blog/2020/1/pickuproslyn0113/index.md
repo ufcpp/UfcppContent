@@ -25,7 +25,7 @@ C# 9.0 に向けた [null 許容参照型](../../../../study/csharp/resource/nul
 
 C# 8.0 だと、以下のような感じのコードの null 警告は [`!` 演算子](../../../../study/csharp/resource/nullablereferencetype.md#null-forgiving) で無視する以外に消す方法がありません。
 
-```csharp
+```csharp {title="属性がメソッド内に効いてない"}
 bool TryGetValue<T>([NotNullWhen(true)]out T t) where T: class
 {
     t = null; // 今、警告が出る
@@ -46,7 +46,7 @@ C# 8.0 ではスケジュール都合で放置(属性をメソッドの中にま
 
 Task-like (= 要は非同期メソッドの戻り値)の[変性](../../../../study/csharp/oop/sp4_variance.md)も不便な場面がよくあります。
 
-```csharp
+```csharp {title="Task の null 許容共変性"}
 Task<string> A() => Task.FromResult("");
 Task<string?> B() => A(); // async/await が付いていればOKなものの、この書き方だと警告
 ```
@@ -84,7 +84,7 @@ static void Main()
 
 今、以下のようなコードは警告が出るようになっています。非 null 型にキャストしたければそれより前に null チェックが必須。
 
-```csharp
+```csharp {title="null チェックなしで非 null な型にキャスト"}
 static void M(string? nullable)
 {
     string nonNull = (string)nullable;
@@ -117,7 +117,7 @@ C# 8.0 で [`switch` 式](../../../../study/csharp/datatype/typeswitch.md#switch
 
 末尾のたった1個の `;` の有無で意味が変わるというのはだいぶ気持ち悪いんですが… 他に適切な記号もなさげ。
 
-```csharp
+```csharp {title="; の有無で意味が違う"}
 f = () => { F(); G(); }; // block body
 f = () => { F(); G() };  // expression body
 ```

@@ -25,7 +25,7 @@ C# 3.0 の「[LINQ](../cheatsheet/ap_ver3.md#linq)」を使うと、lazy list �
 
 例えば、以下のようなコードを見てみましょう。
 
-```csharp
+```csharp {title="LINQ の例"}
 int[] x = {-15, -10, -5, 0, 5, 10, 15};
 int min = -10;
 int max = 10;
@@ -49,7 +49,7 @@ int の配列 x から、
       </span> の範囲に入っている物だけを取り出し、
 さらに、値の2乗を返しています。
 
-```console
+```console {title="LINQ の例、実行結果"}
 100
 25
 0
@@ -62,7 +62,7 @@ int の配列 x から、
 これが具体的にどういうことをしているのかを考えてみましょう。
 実は、このコードの from, where, select の部分は以下のように展開されます。
 
-```csharp
+```csharp {title="from, where, selet の展開結果"}
   var y = x.Where(p => min <= p && p <= max)
     .Select(q => q * q);
 ```
@@ -97,7 +97,7 @@ Where や Select は IEnumerable → IEnumerable を得るメソッドなんで�
 以下のような感じになります。
 （第1引数の前に this とか付いてるのが「[拡張メソッド](../functional/sp3_extension.md#exmethod)」です。）
 
-```csharp
+```csharp {title="Where, Select の実装（IList 版）"}
 public static class Extensions
 {
   public static IList<int> Where(
@@ -130,7 +130,7 @@ public static class Extensions
 select の所に“重たい処理”を挟んだ上で、
 実行時間を計測しています。
 
-```csharp
+```csharp {title="Where, Select（IList 版）のテスト"}
 using System;
 using System.Collections.Generic;
 using System.Query;
@@ -201,7 +201,7 @@ Extensions の方の Where, Select が呼び出されます。
 
 実行結果は以下の通りです。
 
-```console
+```console {title="Where, Select（IList 版）のテストの実行結果"}
 5468750
 0: 100
 0: 25
@@ -227,7 +227,7 @@ Extensions の方の Where, Select が呼び出されます。
 C# 2.0 の「[イテレーター](sp2_iterator.md#iterator)」機能を用いて、
 例えば以下のようにして実現できる物です。
 
-```csharp
+```csharp {title="無限シーケンス"}
 public static IEnumerable<int> CountUp()
 {
   for(long i = 0; ; ++i)
@@ -250,7 +250,7 @@ IEnumerable を用いた実装が必要となります。
 この IEnumerable 版実装ですが、以下のようになります。
 （ちなみに、System.Query.Sequence クラス内の実装もこんな感じのはず。）
 
-```csharp
+```csharp {title="Where, Select の実装（IEnumerable 版）"}
 public static class Extensions
 {
   public static IEnumerable<int> Where(
@@ -282,7 +282,7 @@ public static class Extensions
 コード全体の再掲は割愛します。
 実行結果は以下の通り。
 
-```console
+```console {title="Where, Select（IList 版）のテストの実行結果"}
 0
 1093750: 100
 1093750: 25
@@ -325,7 +325,7 @@ lazy list 風の操作がより簡便に行えるようになりました。
 特に、クエリ式中で副作用のあるコードを書く場合にはちょっと注意が必要です。
 例えば、以下のようなコードを書いたとします。
 
-```csharp
+```csharp {title="2度 foreach すると2度同じ処理が行われる"}
 static void Main(string[] args)
 {
   var a =
@@ -344,7 +344,7 @@ static int SideEffect(int n)
 ```
 
 
-```console
+```console {title="実行結果"}
 012012
 ```
 
@@ -356,7 +356,7 @@ foreach 1回につき 012 が1回表示されます。
 ToList() が呼ばれた時点で処理が実行され、
 「必要になるまで計算を実行しない」というのはできなくなります。
 
-```csharp
+```csharp {title="ToList()"}
 static void Main(string[] args)
 {
   var a =
@@ -376,7 +376,7 @@ static int SideEffect(int n)
 ```
 
 
-```console
+```console {title="実行結果"}
 012
 ```
 

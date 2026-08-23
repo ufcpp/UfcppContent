@@ -24,7 +24,7 @@ aliases: []
 
 例えば、以下のようなコードを考えます。
 
-```csharp
+```csharp {title="if (true) は else 側が消える"}
 static int X()
 {
     if (true) return 1;
@@ -44,7 +44,7 @@ JIT のタイミングでは定数と判明して、最適化が掛かるもの�
 例えば以下のようなコードは C# コンパイラーは条件分岐を生成しますが、
  JIT 時の最適化が掛かって、条件式が一致している行だけを残して消えてくれます。
 
-```csharp
+```csharp {title="静的に解決できる typeof は JIT 時に消える"}
 static long MaxValue<T>()
 {
     if (typeof(T) == typeof(byte)) return byte.MaxValue;
@@ -60,7 +60,7 @@ static long MaxValue<T>()
 
 ということで、この手の分岐を書いて、ジェネリックな `HasFlag` を書いてみましょう。
 
-```csharp
+```csharp {title="sizeof が JIT 時定数なのを利用した HasFlag 最適化"}
 using System;
 using System.Runtime.CompilerServices;
  
@@ -83,7 +83,7 @@ public static class EnumExtensions
 
 このコードで、非ジェネリックな場合の、
 
-```csharp
+```csharp {title="参考: 非ジェネリック実装"}
 static bool HasFlag(A x, A y) => (((int)x) & ((int)y)) != 0;
 ```
 

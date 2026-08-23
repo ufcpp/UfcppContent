@@ -39,7 +39,7 @@ C# には <code>int</code> 型から <code>double</code> 型というように�
 暗黙的(implicit)な型変換とは、ある型の変数を別の型の変数に代入するだけで自動的に型を変換してくれる機能です。
 以下に暗黙的な型変換の例を挙げます。
 
-```csharp
+```csharp {title="暗黙的な型変換の例"}
 short   m = 365;
 long    n = m; // short から long への暗黙的な型変換。
 double  x = n; // long から double への暗黙的な型変換。
@@ -112,7 +112,7 @@ C# における暗黙的な型変換の基本的なルールは以下のとお�
 
 暗黙的に変換を行えない型同士の変換は以下のように明示的(explicit)に行う必要があります。
 
-```csharp
+```csharp {title="明示的な型変換"}
 int     i = 365;
 short   j = (short)i; // int から short への明示的な型変換。
 int     m = 365;
@@ -145,7 +145,7 @@ C# では、すべての数値型同士の間で明示的な型変換を行う�
 #### 解答例 1
 
 
-```csharp
+```csharp {title="文字コードの表示"}
 using System;
 
 class Exercise
@@ -179,7 +179,7 @@ class Exercise
 #### 解答例 1
 
 
-```csharp
+```csharp {title="整数と浮動小数点数の割り算"}
 using System;
 
 class Exercise
@@ -210,7 +210,7 @@ double → int にキャストすると、値が整数に切り詰められま�
 #### 解答例 1
 
 
-```csharp
+```csharp {title="double → int"}
 using System;
 
 class Exercise
@@ -236,7 +236,7 @@ class Exercise
 ```
 
 
-```console
+```console {title="double → int"}
 3.8 → 3
 3.1 → 3
 2.7 → 2

@@ -34,7 +34,7 @@ C# では <em>
 例えば、可変個の整数のうち最大の整数を求めるメソッドを作りたいとします。
 可変長引数を使わずにメソッドを実装すると以下のようになるでしょう。
 
-```csharp
+```csharp {title="最大値を求めるメソッド"}
 using System;
 
 class ParamsTest
@@ -75,7 +75,7 @@ class ParamsTest
 C# では <code>params</code> というキーワードを使って可変個の引数を取るメソッドを定義することが出来ます。
 例えば、上の例を <code>params</code> キーワードを使って書き直すと以下のようになります。
 
-```csharp
+```csharp {title="最大値を求めるメソッド(可変長引数版)" highlight-ranges="sha256:aace9ed932acd97fb7f781504ad6c65badda73c4ad4806b22c7e87c73b40f98c;10:19-10:32,16:18-16:24"}
 using System;
 
 class ParamsTest
@@ -117,7 +117,7 @@ class ParamsTest
 ここでは、params の例として、
 かなり簡略化したものですが、Console.Write もどきを作ってみます。
 
-```csharp
+```csharp {title="Console.Write もどき"}
 using System;
 
 class TestParams
@@ -150,7 +150,7 @@ class TestParams
 ```
 
 
-```console
+```console {title="Console.Write もどき"}
 x = 3.14, n = 99, s = test string, b = True
 ```
 
@@ -165,7 +165,7 @@ C# 13 で、配列以外にも `params` にできる型が増えました。
 [コレクション式](../datatype/collection-expression.md)で使える型であれば何でも `params` にできます。
 例えば、以下のコードの `M1`～`M4` のようなコードを書けます。
 
-```csharp
+```csharp {title="任意のコレクションに対して params を付ける例"}
 static void M1(params List<int> x) { }
 static void M2(params IEnumerable<int> x) { }
 static void M3(params Span<int> x) { }
@@ -189,7 +189,7 @@ M4(1, 2);
 そうなると今度は、「コレクション式だけもう十分なのでは？」という話になります。
 なんせ、コレクション式のおかげで、`params` がなくても `[]` のたった2文字の追加だけでほぼ同様のことができます。
 
-```csharp
+```csharp {title="params の価値とは…"}
 static void A(params ReadOnlySpan<int> x) { }
 static void B(ReadOnlySpan<int> x) { }
 
@@ -211,7 +211,7 @@ B([1, 2, 3]);
 
 例えば元コードとして以下のようなものがあったとします。
 
-```csharp
+```csharp {title="params T[] な元コード"}
 // 初期状態。
 static void A(params int[] x) { }
 
@@ -224,7 +224,7 @@ A(1, 2, 3);
 
 これが、以下のように、メソッド定義側だけの書き換えで、利用側はノータッチでパフォーマンス改善が見込めます。
 
-```csharp
+```csharp {title="params ReadOnlySpan に書き換え"}
 // メソッド定義側だけ ReadOnlySpan に変更。
 static void A(params ReadOnlySpan<int> x) { }
 
@@ -241,7 +241,7 @@ A(1, 2, 3);
 実際、 .NET 9 では、`string.Join` や `Task.WhenAll` などのメソッドに
 `params ReadOnlySpan<T>` なオーバーロードが増えています。
 
-```csharp
+```csharp {title="params ReadOnlySpan オーバーロードが増えている例"}
 // .NET 8 以前なら Join(string, string[])
 // .NET 9 以降なら Join(string, ReadOnlySpan<string>)
 var joiend = string.Join(",", "a", "b", "c");
@@ -258,7 +258,7 @@ var joiend = string.Join(",", "a", "b", "c");
 
 幸い、[コレクション式の時点でこの辺りは考慮していて](../datatype/collection-expression.md#priority)、`params` でも同様に配列よりも `ReadOnlySpan<T>` (パフォーマンス的に有利)の方が優先度が高い仕様になっています。
 
-```csharp
+```csharp {title="ReadOnlySpan が優先"}
 // ReadOnlySpan の方が呼ばれる。
 A.M(1, 2, 3);
 
@@ -272,7 +272,7 @@ class A
 
 こういった背景から、基本的に、コレクション式と `params` コレクションでは、どちらからも生成されるコードはほぼ同じになります。
 
-```csharp
+```csharp {title="コレクション式と params コレクション"}
 static void M1(params int[] x) { }
 
 // どちらで呼んでも new int[] { 1 } 生成。
@@ -297,7 +297,7 @@ M3([1, 2]);
 ただ、実装都合でどうしても「全く同じ」にはできないこともあるそうで、ちょっとだけ差があります。
 例えば以下のようなコードの場合、`[]` の有無で呼ばれるオーバーロード解決ルールが変わるそうです。
 
-```csharp
+```csharp {title="コレクション式と params コレクション利用時で結果がちょっと変わる珍しい例"}
 A.M([1, 2, 3]); // こちらは解決できなくてエラーに。
 A.M(1, 2, 3); // こちらは int[] 側に解決。
 
@@ -313,7 +313,7 @@ class A
 ref 構造体 (`Span<T>` や `ReadOnlySpan<T>` など)に `params` を付けた場合、
 暗黙的に [`scoped`](../resource/refstruct.md#scoped-modifier) 扱い(`scoped` 修飾子を付けた場合と同じルールで解析)になるそうです。
 
-```csharp
+```csharp {title="params を付けた場合、暗黙的に scoped"}
 class A
 {
     // 普通の ReadOnlySpan 引数は、戻り値に素通し可能。
@@ -338,7 +338,7 @@ class A
 可変長引数にしたメソッドは、引数なしで呼ぶこともできます。
 この場合、呼び出された側のメソッドには、空配列(長さ0の配列)が渡ります。
 
-```csharp
+```csharp {title="可変長引数メソッドを引数なしで呼ぶと空配列が渡る"}
 using System;
 
 class Program
@@ -368,14 +368,14 @@ class Program
 
 つまり、上記の`var x = Sum()`は、.NET Framework 4.5以前であれば以下のように解釈されます。
 
-```csharp
+```csharp {title=".NET 4.5以前での空配列の作り方"}
 // .NET Framework 4.5 以前はこういう扱い
 var x = Sum(new int[0]);
 ```
 
 一方、.NET Framework 4.6以降であれば以下のように解釈されます。
 
-```csharp
+```csharp {title=".NET 4.6以降での空配列の作り方"}
 // .NET Framework 4.6 以降はこういう扱い
 var x = Sum(Array.Empty<int>());
 ```
@@ -388,7 +388,7 @@ var x = Sum(Array.Empty<int>());
 狙ってやらないと起こせないような珍しい問題ですが、
 例えば以下のようなコードの挙動は、.NET Framework のバージョンによって変化します。
 
-```csharp
+```csharp {title="破壊的変更になる例"}
 using System;
 
 class Program

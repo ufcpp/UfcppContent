@@ -33,7 +33,7 @@ aliases:
 「[名前のない複合型](../structured/st_anonymoustype.md)」で説明したように、
 戻り値の型として「個数と和」みたいな名前(`CountAndSum`とか)しか思い浮かばないようなものです。
 
-```csharp
+```csharp {title="個数と和を返すメソッド"}
 static (int count, int sum) Tally(IEnumerable<int> items)
 {
     var count = 0;
@@ -52,7 +52,7 @@ static (int count, int sum) Tally(IEnumerable<int> items)
 通常、ローカル変数であれば適当な名前でもそこまで問題ではないので、
 `x`とか`y`とか、本当に意味がない名前を付けることになると思います。
 
-```csharp
+```csharp {title="個数と和の受け取り"}
 var x = Tally(new[] { 1, 2, 3, 4, 5 });
 Console.WriteLine(x.count);
 Console.WriteLine(x.sum);
@@ -62,7 +62,7 @@ Console.WriteLine(x.sum);
 であれば、最初から`count`変数と`sum`変数に分解して受け取りたいと思うでしょう。
 要するに、以下のようなことを1行で書ける構文がほしいです。
 
-```csharp
+```csharp {title="タプルの分解"}
 // この3行に相当する構文がほしい
 var x = Tally(new[] { 1, 2, 3, 4, 5 });
 var count = x.count;
@@ -77,7 +77,7 @@ Console.WriteLine(sum);
 
 そこで、C# 7では、タプルと一緒に、以下のような分解のための構文を追加しました。
 
-```csharp
+```csharp {title="分解代入構文"}
 (var count, var sum) = Tally(new[] { 1, 2, 3, 4, 5 });
 Console.WriteLine(count);
 Console.WriteLine(sum);
@@ -90,7 +90,7 @@ Console.WriteLine(sum);
 以下のような書き方で、分解と同時に変数を宣言できます。
 これを分解宣言(deconstruction declaration)と言います。
 
-```csharp
+```csharp {title="分解宣言"}
 // count, sum を宣言しつつ、タプルを分解
 (int count, int sum) = Tally(items);
 
@@ -101,7 +101,7 @@ Console.WriteLine(sum);
 この例の後半のコメントのように、分解宣言はタプルの型宣言の書き方によく似ています。
 ただ、タプルの型宣言と違って、型推論の`var`が使えます。
 
-```csharp
+```csharp {title="var での型推論付きの分解宣言"}
 // 型推論で count, sum を宣言しつつ、タプルを分解
 (var count, var sum) = Tally(items);
 
@@ -111,21 +111,21 @@ Console.WriteLine(sum);
 
 このとき、部分的に型推論(`var`)を使うこともできます。
 
-```csharp
+```csharp {title="部分的に var を使う"}
 // 部分的に var を使う
 (var count, long sum) = Tally(items);
 ```
 
 一方で、宣言したいすべての変数を型推論する場合であれば、先頭に1つだけ `var` キーワードを書く以下のような書き方もできます。
 
-```csharp
+```csharp {title="var + 変数リスト"}
 // 「var + 変数リスト」でタプルを分解
 var (count, sum) = Tally(items);
 ```
 
 この書き方は、`foreach`、`for`などでの変数宣言でも使えます。
 
-```csharp
+```csharp {title="foreachやforの中で分解宣言"}
 (int x, int y)[] array = new[] { (1, 2), (3, 4) };
 
 foreach (var (x, y) in array)
@@ -146,7 +146,7 @@ for ((int i, int j) = (0, 0); i < 10; i++, j--)
 既存の変数を使って分解することもできます。
 こちらは分解代入(deconstruction assignment)といいます。
 
-```csharp
+```csharp {title="分解代入"}
 int x, y;
 
 // 既存の変数を使って分解
@@ -157,7 +157,7 @@ int x, y;
 再代入(既存の変数`x`、`y`の書き換え)の必要性があまりありません。
 実際は、以下の例のように、ループで書き換えたりすることになるでしょう。
 
-```csharp
+```csharp {title="分解代入で変数を書き換え"}
 var x = 1.0;
 var y = 5.0;
 
@@ -170,7 +170,7 @@ for (int i = 0; i < 100; i++)
 分解代入の左辺には、書き換え可能なものであれば何でも書けます。
 例えば、配列アクセスや参照戻り値などを分解代入の左辺に書けます。
 
-```csharp
+```csharp {title="配列アクセスや参照戻り値を使って分解代入"}
 private static void DeconstractionAssingment()
 {
     var a = new[] { 1, 2 };
@@ -193,7 +193,7 @@ static ref T Mod<T>(T[] array, int index) => ref array[index % array.Length];
 フィールドに対しても使えるので、
 例えば以下のように、コンストラクターを記述を簡素にできたりもします。
 
-```csharp
+```csharp {title="分解代入を使ったコンストラクターの簡素化の例"}
 struct Point
 {
     public int X;
@@ -207,14 +207,14 @@ struct Point
 
 タプルを作る構文と分解代入の構文は似ているわけですが、これらは、以下のようにつなげて書くこともできます。
 
-```csharp
+```csharp {title="分解、かつ、タプル構築"}
 int x, y;
 var t = (x, y) = (1, 2);
 ```
 
 これは、以下のように、分解後に改めてタプルを作るのと同じ意味になります。
 
-```csharp
+```csharp {title="分解 → タプル構築"}
 int x, y;
 (x, y) = (1, 2); // 分解代入
 var t = (x, y);  // 改めてタプルを構築
@@ -226,14 +226,14 @@ var t = (x, y);  // 改めてタプルを構築
 
 C# 10.0 では以下のように、分解代入と分解宣言の混在もできるようになりました。
 
-```csharp
+```csharp {title="分解宣言と分解代入の混在" highlight-text="var u"}
 int x;
 (x, var u) = (1, 2);
 ```
 
 ただし、式の途中に分解宣言 (var 付きの宣言) が来るようなコードは C# 10.0 でも書けません。
 
-```csharp
+```csharp {title="ただし、分解宣言は式の途中には書けない"}
 int x, y;
 (x, var u) = (var v, y) = (1, 2);
 ```
@@ -243,7 +243,7 @@ int x, y;
 分解時には、[タプル間の型変換](tuples.md#conversion)と同じルールで暗黙の型変換が働きます。
 すなわち、宣言位置で分解されます(メンバー名は見ない)し、メンバーごとに暗黙的型変換が効くなら分解でも暗黙的型変換が効きます。
 
-```csharp
+```csharp {title="分解時の型変換"}
 // Tally の戻り値は (count, sum) の順
 var t = Tally(new[] { 1, 2, 3, 4, 5 });
 
@@ -277,7 +277,7 @@ C#の言語機能としてのタプルの他にも、
 例として`KeyValuePair`と`Tuple`に対する`Deconstruct`の書き方を示しましょう。
 以下のような拡張メソッドがあれば分解できます。
 
-```csharp
+```csharp {title="KeyValuePairとTupleの分解用のDeconstructメソッド"}
 static class Extensions
 {
     public static void Deconstruct<T, U>(this KeyValuePair<T, U> pair, out T key, out U value)
@@ -299,7 +299,7 @@ static class Extensions
 
 これで、`KeyValuePair`と`Tuple`に対して分解構文が使えます。以下のようなコードが書けます。
 
-```csharp
+```csharp {title="任意の型に対する分解宣言"}
 var pair = new KeyValuePair<string, int>("one", 1);
 var (k, v) = pair;
 // 以下のようなコードに展開される
@@ -320,7 +320,7 @@ var (x, y) = tuple;
 分解構文では、引数の数が同じ`Deconstruct`メソッドを呼び分けることができません。
 例えば以下の例のように、引数の型が`double, double`のものと、`double, Radian`のものという2つの`Deconstruct`メソッドを定義してしまうと、2変数の分解ができなくなります。
 
-```csharp
+```csharp {title="Deconstructメソッドの呼び分けができない(引数の数が同じ)例"}
 using static System.Math;
 
 struct Radian
@@ -364,7 +364,7 @@ class Program
 一方で、引数の数が違えば複数の`Deconstruct`メソッドがあっても大丈夫です。
 例えば以下のようなコードであれば、ちゃんと分解が使えます。
 
-```csharp
+```csharp {title="Deconstructメソッドの呼び分けができる(引数の数が違う)例"}
 struct Vector3D
 {
     public double X { get; }
@@ -397,7 +397,7 @@ class Program
 
 例えば以下のようなコード(いわゆるSwap処理)を書いたとします。
 
-```csharp
+```csharp {title="タプル構築後にすぐに分解する例(swap)"}
 var x = 1;
 var y = 2;
 (x, y) = (y, x);
@@ -408,7 +408,7 @@ var y = 2;
 前述の`Deconstruct`に展開される仕様を考えると、
 これは以下のような意味にとることができます。
 
-```csharp
+```csharp {title="(一般の型の分解と同列に考える場合の)タプル構築と分解の展開結果"}
 var t = new ValueTuple<int, int>(y, x);
 t.Deconstruct(out x, out y);
 ```
@@ -416,7 +416,7 @@ t.Deconstruct(out x, out y);
 しかし、タプルに限り、単なる一時変数の追加やメンバーアクセスに展開され得ます<sup>※</sup>。
 上記の `(x, y) = (y, x)` は、以下のように展開できます。
 
-```csharp
+```csharp {title="タプルの場合は構築も分解も最適化で消える"}
 var t1 = y; // この t1 の方はさらに最適化で消える可能性あり
 var t2 = x;
 x = t1;
@@ -434,7 +434,7 @@ y = t2;
 「常に」というところが少し曲者です。
 例えば以下のような2つのステートメントを考えます。
 
-```csharp
+```csharp {title="タプル構築と、タプル構築＋分解"}
 // タプルの仕様上、ValueTuple<int, int> 構造体が作られる
 var t = (1, 2);
 
@@ -463,7 +463,7 @@ var (x, y) = (1, 2);
 分解構文では、各メンバーへの代入が同時に行われるかのような結果を生みます。
 例えば、`x`と`y`という2つの変数の値を入れ替え(swap)ようとするとき、逐次実行であれば、以下のような書き方は間違いです。
 
-```csharp
+```csharp {title="逐次実行でのswap"}
 var x = 1;
 var y = 2;
 
@@ -481,7 +481,7 @@ Console.WriteLine(y); // 1
 
 これが、分解代入を使って以下のように書くと、正しく値が入れ替わります。
 
-```csharp
+```csharp {title="分解代入を使ったswap"}
 var x = 1;
 var y = 2;
 
@@ -494,7 +494,7 @@ Console.WriteLine(y); // 1
 
 値が並行して同時に書き換わっているような結果を得るために、一時変数が挟まります。
 
-```csharp
+```csharp {title="実際の評価のされ方"}
 // 左辺の (y, x) を受け取る一時変数をまず用意
 var t1 = y;
 var t2 = x;
@@ -507,7 +507,7 @@ y = t2;
 例として、分解代入の両辺に、悪名高いインクリメント演算を混ぜてみましょう。
 各メンバーは、左から順に評価されます。
 
-```csharp
+```csharp {title="分解代入の両辺にインクリメントを混ぜてみる"}
 var a = new[] { 0, 1, 2, 3 };
 var i = 0;
 
@@ -520,7 +520,7 @@ Console.WriteLine(string.Join(", ", a)); // 2, 3, 2, 3
 
 これと同じ動作をタプルと分解なしで書くと、以下のようなコードになります。
 
-```csharp
+```csharp {title="左から順に評価するため、一時変数が挟まる"}
 var a = new[] { 0, 1, 2, 3 };
 var i = 0;
 

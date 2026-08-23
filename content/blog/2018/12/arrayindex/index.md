@@ -31,14 +31,14 @@ aliases: []
 corefx/coreclr のプルリクエストで、ここ1年くらいの間、頻出する最適化がありまして。
 配列操作で以下のようなコードはよく書くと思います。
 
-```csharp
+```csharp {title="配列の範囲チェック(書き換え前)"}
 if (index < 0 || index >= length)
     throw new IndexOutOfRangeException();
 ```
 
 これを、以下のように書き換えるだけ。
 
-```csharp
+```csharp {title="配列の範囲チェック(書き換え後)"}
 if ((uint)index >= (uint)length)
     throw new IndexOutOfRangeException();
 ```
@@ -55,7 +55,7 @@ if ((uint)index >= (uint)length)
 
 ところで、以下のコードはどう思います。
 
-```csharp
+```csharp {title="Array.CreateInstance なら、lower bound 指定可能"}
 using System;
  
 public class Program
@@ -87,7 +87,7 @@ VB 6 時代の名残っぽいんですけども、
 ということで、先ほどの「配列長は0以上」を前提にしたコードがいいのかどうか、という話になったりもするんですが。
 どうも、`T[]` 型にキャストすることができなくなるから大丈夫みたいです。
 
-```csharp
+```csharp {title="0開始じゃない配列は T[] じゃない"}
 // 開始インデックス 0 を明示して CreateInstance
 // それを string[] にキャスト。
 // これは問題なく動きます。
@@ -126,7 +126,7 @@ C++ の template みたいに、C# のジェネリクスでも型引数に整数
 例えば、[`Memory<T>`構造体](https://source.dot.net/#q=System.Private.CoreLib%20System.Memory%3CT%3E)がそうなんですが、これの中身は以下のような感じ。
 (`_object`には配列、もしくは、`MemoryManager<T>`型が入ります。)
 
-```csharp
+```csharp {title="Memory構造体"}
 public readonly struct Memory<T>
 {
     private readonly object _object;
@@ -147,7 +147,7 @@ public readonly struct Memory<T>
 C# 8.0 では、以下のような構文で、
 配列の一部分を`Span<T>`として切り出すことができるようになります。
 
-```csharp
+```csharp {title="C# 8.0 の range 構文"}
 int[] array = { 1, 2, 3, 4, 5 };
 var sub = array[1..^1]; // 先頭から1 ～ 末尾から1 の範囲
  
@@ -161,7 +161,7 @@ foreach (var x in sub)
 この、インデックスの値が先頭からなのか末尾からなのかを表すために、
 以下のような [`Index` 構造体](https://github.com/dotnet/coreclr/blob/3464b60b85c8e10d69d8da86d2eb3f9e7aaa7c4b/src/System.Private.CoreLib/shared/System/Index.cs)が追加されています(主要部分のみ抜き出し)。
 
-```csharp
+```csharp {title="Index 構造体"}
 public readonly struct Index
 {
     private readonly int _value;

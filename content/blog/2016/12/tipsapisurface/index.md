@@ -19,7 +19,7 @@ aliases: []
 
 要点を抜き出すと以下のような感じ。
 
-```csharp
+```csharp {title="なぜかフィールドの初期化が不要になってしまう例"}
 using System;
 
 struct DateTimeWrapper
@@ -114,7 +114,7 @@ C#では、構造体のフィールドは、コンストラクター内で必ず
 
 でも、空っぽの構造体は初期化しなくてもいいらしい。
 
-```csharp
+```csharp {title="空っぽの構造体の初期化は不要"}
 struct EmptyStruct { }
 struct Integer { private int _x; }
 
@@ -148,7 +148,7 @@ struct DefiniteAssignement
 そうすると、以下のような問題のあるコードが書けてしまいます。
 (そうならないように、赤線の部分をコンパイル エラーにしている。)
 
-```csharp
+```csharp {title="managedな型のポインターが作れた場合の問題"}
 using System.Runtime.InteropServices;
 
 // 参照型を含む構造体
@@ -183,7 +183,7 @@ class ManagedPointer
 構造体の中にそれ自身の型のフィールドを持とうとすると、当然ですが無限再帰を起こします。
 無限に再帰する構造体のレイアウトなんて決定できない(オーバーフローする)ので、当然禁止事項です。
 
-```csharp
+```csharp {title="無限に再帰する構造体レイアウト"}
 struct Container<T>
 {
     public T Item;
@@ -211,7 +211,7 @@ PCLプロジェクトから参照しているいくつかの参照アセンブ�
 
 1つ目。確実な初期化に漏れるケース。
 
-```csharp
+```csharp {title="本来は未初期化エラーになるはず"}
 using System;
 
 struct DefiniteAssignment
@@ -225,7 +225,7 @@ struct DefiniteAssignment
 
 2つ目。ポインター化できるかどうかの判定をミスるケース。
 
-```csharp
+```csharp {title="本来はポインター化できない型をポインター化"}
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -249,7 +249,7 @@ class ManagedPointer
 
 3つ目。無限再帰なレイアウトを作れてしまうケース。
 
-```csharp
+```csharp {title="無限再帰レイアウト"}
 using System.Collections.Generic;
 
 struct RecursiveLayout

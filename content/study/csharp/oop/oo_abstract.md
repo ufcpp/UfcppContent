@@ -45,7 +45,7 @@ aliases:
 このプロパティ自体は意味のある値を返さず、
 実装は派生クラスの <code>Age</code> プロパティで行っていました。
 
-```csharp
+```csharp {title="人間の基底クラス"}
 class Person
 {
   // ここではあんまり関係ないんで name は省略。
@@ -76,7 +76,7 @@ class Person
 性悪説を信じて <code>Person</code> がデフォルトで鯖を読むようにするか、
 とにかく、<code>Person</code> の <code>Age</code> プロパティが何らかの意味を持つ値を返すようにします。
 
-```csharp
+```csharp {title="性善説を信じた人間クラス"}
 class Person
 {
   protected int age;
@@ -99,7 +99,7 @@ class Person
 そして、もう1つの方法は、<code>Person</code> クラスのインスタンスを生成出来ないようにすることです。
 例えば、<code>Person</code> クラスのコンストラクタを protected にしてしまえば、<code>Person</code> クラスのインスタンスは外部から生成できなくなります。
 
-```csharp
+```csharp {title="Person クラスのインスタンスを生成不能に" highlight-ranges="sha256:4d3bf539bb3def74623e5a19e5145d5f597cb55af9633b72ab0be961a131d804;7:3-7:12"}
 class Person
 {
   protected int age;
@@ -127,7 +127,7 @@ C# にはインスタンスを作成できないクラスや、
         <code>abstract</code>
       </em> 修飾子を付けます。
 
-```csharp
+```csharp {title="抽象クラスの定義" highlight-text="abstract"}
 abstract class Person
 {
   protected int age;
@@ -147,7 +147,7 @@ abstract class Person
 ちなみに、「[プロパティ](oo_property.md#property)」も、内部的に見るとメソッドのようなものなので、
 abstract を付けて抽象プロパティにすることができます。
 
-```csharp
+```csharp {title="抽象メソッドの定義" highlight-ranges="sha256:f585a65a72130778627f57f2078515994a15c1590613c008a461eb78db928a3b;7:10-7:18"}
 abstract class Person
 {
   protected int age;
@@ -308,7 +308,7 @@ I'm 17 years old.
 
 必要な箇所（Shape クラスの部分）だけ抜粋。
 
-```csharp
+```csharp {title="Shape"}
 /// <summary>
 /// 2次元空間上の図形を表すクラス。
 /// 三角形や円等の共通の抽象基底クラス。

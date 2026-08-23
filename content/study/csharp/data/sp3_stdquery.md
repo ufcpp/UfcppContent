@@ -41,7 +41,7 @@ aliases:
 
 次節以降の説明では、例として以下のようなデータを使います。
 
-```csharp
+```csharp {title="クエリ式説明のためのデータ例"}
 var a = new[]
 {
   new { X = 0, Y = 10, Z = new[]{ 1, 2, 3} },
@@ -120,7 +120,7 @@ C# 3.0 のクエリ式は <strong id="from" class="keyword">from 句</strong>か
 また、クエリ式は select 句または group 句で終わります。
 select, group については次節以降で説明します。
 
-```csharp
+```csharp {title="from"}
 var b =
   from p in a
   select p.X;
@@ -130,7 +130,7 @@ var b =
 繰り返しになりますが、C# 3.0 自体がクエリの解釈能力を持っているわけではなく、
 この式は以下のようなメソッド呼び出しに変換されます。
 
-```csharp
+```csharp {title="from の変換結果"}
 var b = a.Select(p => p.X);
 ```
 
@@ -145,7 +145,7 @@ a に対する標準クエリ演算子メソッド呼び出しに変換されま
 基本的には、クエリ式は上から順番に、句単位でメソッド呼び出しに変換されます。
 要するに、例えば、
 
-```csharp
+```csharp {title="クエリ式の例"}
 var b =
   from p in a
   where p.Y < 12
@@ -197,7 +197,7 @@ var b =
 <code>a.Where(p =&gt; p.Y &lt; 12);</code> だけになります。
 （要するに、Select の中身が <code>.Select(x =&gt; x)</code> みたいに、素通しになる場合。）
 
-```csharp
+```csharp {title="末尾の Select が省略される場合" highlight-ranges="sha256:15f683cdfe258c152c0f4dc0ef55e5262d0c7771b627ba3e0867235b695d529b;2:8-2:9,4:10-4:11"}
 var b =
   from p in a
   where p.Y < 12
@@ -209,7 +209,7 @@ select や group by の後ろにさらにクエリを続けたい場合には、
 select / group by 句の後ろに into をつけます。
 例えば、
 
-```csharp
+```csharp {title="select into"}
 var b =
   from p in a
   select p.X into x
@@ -220,7 +220,7 @@ var b =
 
 は、以下のように変換されます。
 
-```csharp
+```csharp {title="select into 変換結果"}
 var b = a
   .Select(p => p.X)
   .Where(x => x > 2);
@@ -232,7 +232,7 @@ var b = a
 
 from 句では、from の直後に型を指定することができます。
 
-```csharp
+```csharp {title="from 句で型を指定"}
 var a = new[,] { { 1, 2 }, { 3, 4 } };
 
 var b =
@@ -242,7 +242,7 @@ var b =
 
 これは、以下のように Cast 演算子に変換されます。
 
-```csharp
+```csharp {title="Cast 演算子への変換"}
 var b = 
   from p in a.Cast<int>()
   select p;
@@ -252,7 +252,7 @@ var b =
 この場合、select 句で何もしていない（素通し）ので、
 最終的には以下のように解釈されます。
 
-```csharp
+```csharp {title="最終的な変換結果"}
 var b = a.Cast<int>();
 ```
 
@@ -269,7 +269,7 @@ Select 演算子（射影演算子、projection）は、どういう形式でデ
 クエリ式中の <strong id="select" class="keyword">select 句</strong>は Select 演算子に変換されます。
 以下に、select の例、その出力結果、および、Select 演算子への変換結果を示します。
 
-```csharp
+```csharp {title="select" highlight-text="select p.X;"}
 var b =
   from p in a
   select p.X; // X だけ取り出す。
@@ -279,12 +279,12 @@ foreach (var p in b)
 ```
 
 
-```console
+```console {title="select"}
 0 1 2 3 4 
 ```
 
 
-```csharp
+```csharp {title="select の変換結果"}
 var b = a.Select(p => p.X);
 ```
 
@@ -294,7 +294,7 @@ select の後にさらにクエリを続けたい場合
 （標準クエリ演算子で書くなら、a.Select(...).Where(...); のようなことをしたい場合）、
 以下のように select ... into を利用します。
 
-```csharp
+```csharp {title="select ... into の例"}
 var b =
   from p in a
   select new { p.X, p.Y } into x
@@ -306,7 +306,7 @@ foreach (var p in b)
 ```
 
 
-```csharp
+```csharp {title="select ... into の変換結果"}
 var b =
   a.Select(p => new { p.X, p.Y })
   .Where(p => p.X > 2);
@@ -315,7 +315,7 @@ var b =
 
 ちなみに、この into は、以下のような2段クエリに変換されていると考えてもいいようです。
 
-```csharp
+```csharp {title="into と2段クエリ"}
   from x in
     from p in a
     select new { p.X, p.Y }
@@ -330,7 +330,7 @@ var b =
 <strong id="let" class="keyword">let 句</strong>を使うことで、
 クエリ式中で計算した値を変数に格納しておくことができます。
 
-```csharp
+```csharp {title="let"}
 var b =
   from p in a
   let sumZ = p.Z.Sum()
@@ -341,7 +341,7 @@ foreach (var p in b)
 ```
 
 
-```console
+```console {title="let"}
 { X = 0, sumZ = 6 }
 { X = 1, sumZ = 15 }
 { X = 2, sumZ = 24 }
@@ -352,7 +352,7 @@ foreach (var p in b)
 
 このクエリ式は、以下のような2重クエリと同じ意味になります。
 
-```csharp
+```csharp {title="let と2重クエリ"}
 var b =
   from p2 in
     from p in a
@@ -363,7 +363,7 @@ var b =
 
 これはまた、以下のような select into 句と同じ意味です。
 
-```csharp
+```csharp {title="let と select into"}
 var b =
   from p in a
   select new { p, sumZ = p.Z.Sum() } into p2
@@ -373,7 +373,7 @@ var b =
 
 さらに、以下のように Select 演算子に変換されます。
 
-```csharp
+```csharp {title="let の変換結果"}
 var b = a
   .Select(p => new { p, SumZ = p.Z.Sum() })
   .Select(p2 => new { p2.p.X, p2.SumZ });
@@ -393,7 +393,7 @@ Where 演算子（制限演算子、restriction）は、指定した条件を満
 クエリ式中の <strong id="where" class="keyword">where 句</strong>は Where 演算子に変換されます。
 以下に、where の例、その出力結果、および、Where 演算子への変換結果を示します。
 
-```csharp
+```csharp {title="where" highlight-text="where p.X &gt; 2"}
 var b = 
   from p in a
   where p.X > 2 // この条件を満たすものだけ取り出す
@@ -404,13 +404,13 @@ foreach (var p in b)
 ```
 
 
-```console
+```console {title="where"}
 { X = 3, Y = 13, Z = System.Int32[] }
 { X = 4, Y = 14, Z = System.Int32[] }
 ```
 
 
-```csharp
+```csharp {title="where の変換結果"}
 var b = a.Where(p => p.Y > 0);
 ```
 
@@ -423,7 +423,7 @@ SelectMany 演算子は、1対多の射影を行います。
 例えば、select を使って Z プロパティ（int 型の配列）を射影すると、
 結果は「int 型の配列のリスト（IEnumerable&lt;int[]&gt;）」になります。
 
-```csharp
+```csharp {title="select を使うと"}
 var b =
   from p in a
   where p.X > 2
@@ -434,7 +434,7 @@ foreach (var p in b)
 ```
 
 
-```console
+```console {title="select 時"}
 System.Int32[]
 System.Int32[]
 ```
@@ -442,14 +442,14 @@ System.Int32[]
 
 一方、SelectMany を使うと、「配列のリスト」が1本のリスト（正確には IEnumerable）に展開されます。
 
-```csharp
+```csharp {title="SelectMany を使うと"}
 var b = a.Where(p => p.X > 2).SelectMany(p => p.Z);
 foreach (var p in b)
   Console.Write("{0}\n", p);
 ```
 
 
-```console
+```console {title="select 時"}
 0
 1
 2
@@ -462,7 +462,7 @@ foreach (var p in b)
 クエリ式では、from 句を2重に使った場合に SelectMany に変換されます。
 以下に、2重の from 句の例、その出力、および、SelectMany への変換結果を示します。
 
-```csharp
+```csharp {title="2重の from"}
 var b =
   from p in a
   where p.X > 2
@@ -474,7 +474,7 @@ foreach (var p in b)
 ```
 
 
-```console
+```console {title="2重 from の結果"}
 { X = 3, Z = 0 }
 { X = 3, Z = 1 }
 { X = 3, Z = 2 }
@@ -484,7 +484,7 @@ foreach (var p in b)
 ```
 
 
-```csharp
+```csharp {title="SelectMany への変換結果"}
 var b =
   a.Where(p => p.X > 2)
   .SelectMany(p => p.Z, (p, q) => new {p, q})
@@ -512,7 +512,7 @@ GroupJoin 演算子は join ... into 句に相当します。
 例えば、この節のはじめに定義したデータ a に加えて、
 以下のようなデータ a2 を用意します。
 
-```csharp
+```csharp {title="2つのデータシーケンス"}
 var a = new[] {
   new { X = 0, Y = 10, Z = new[]{ 1, 2, 3} },
   new { X = 1, Y = 11, Z = new[]{ 4, 5, 6} },
@@ -540,7 +540,7 @@ join q in a2 on p.X equals q.X
 
 というクエリ式で
 
-```console
+```console {title="Join 後のデータの模式図"}
 { p = { X = 0, Y = 10, Z = { 1, 2, 3} }, q = { X = 0, W = 1 } }
 { p = { X = 0, Y = 10, Z = { 1, 2, 3} }, q = { X = 0, W = 2 } }
 { p = { X = 1, Y = 11, Z = { 4, 5, 6} }, q = { X = 1, W = 3 } }
@@ -559,7 +559,7 @@ join q in a2 on p.X equals q.X into r
 
 というクエリ式で
 
-```console
+```console {title="GroupJoin 後のデータの模式図"}
 {
   p = { X = 0, Y = 10, Z = { 1, 2, 3} },
   r = { { X = 0, W = 1 }, { X = 0, W = 2 } }
@@ -586,7 +586,7 @@ join q in a2 on p.X equals q.X into r
 
 以下に、join 句の例と、その出力結果、および、Join 演算子への変換結果を示します。
 
-```csharp
+```csharp {title="join 句の例"}
 var b =
   from p in a
   join q in a2 on p.X equals q.X
@@ -597,7 +597,7 @@ foreach (var p in b)
 ```
 
 
-```console
+```console {title="join 句の出力結果"}
 { X = 0, Y = 10, W = 1 }
 { X = 0, Y = 10, W = 2 }
 { X = 1, Y = 11, W = 3 }
@@ -605,7 +605,7 @@ foreach (var p in b)
 ```
 
 
-```csharp
+```csharp {title="Join 演算子への変換結果"}
 var b =
   a.Join(a2, p => p.X, q => q.X,
     (p, q) => new { p.X, p.Y, q.W });
@@ -614,7 +614,7 @@ var b =
 
 以下に、join ... into 句の例と、その出力結果、および、GroupJoin 演算子への変換結果を示します。
 
-```csharp
+```csharp {title="join ... into 句の例"}
 var b =
   from p in a
   join q in a2 on p.X equals q.X into r
@@ -625,7 +625,7 @@ foreach (var p in b)
 ```
 
 
-```console
+```console {title="join ... into 句の出力結果"}
 { X = 0, Y = 10, SumW = 3 }
 { X = 1, Y = 11, SumW = 7 }
 { X = 2, Y = 12, SumW = 0 }
@@ -634,7 +634,7 @@ foreach (var p in b)
 ```
 
 
-```csharp
+```csharp {title="GroupJoin 演算子への変換結果"}
 var b =
   a.GroupJoin(a2, p => p.X, q => q.X,
     (p, r) => new { p.X, p.Y, SumW = r.Sum(q => q.W) });
@@ -663,7 +663,7 @@ descending を指定すると降順（OrderByDescending / ThenByDescending）に
 
 以下に、orderby の例、その出力結果、および、コンパイラによる問い合わせ構文の変換結果を示します。
 
-```csharp
+```csharp {title="orderby 句の例"}
 var a = new[] {
   new { X = 1, Y = 0, Z = 1 },
   new { X = 0, Y = 1, Z = 0 },
@@ -684,7 +684,7 @@ foreach (var p in b)
 ```
 
 
-```console
+```console {title="orderby"}
 { X = 0, Y = 1, Z = 0 }
 { X = 0, Y = 0, Z = 7 }
 { X = 1, Y = 2, Z = 3 }
@@ -695,7 +695,7 @@ foreach (var p in b)
 ```
 
 
-```csharp
+```csharp {title="orderby の変換結果"}
 var b =
   a.OrderBy(p => p.X)
   .ThenByDescending(p => p.Y)
@@ -722,7 +722,7 @@ GroupBy 演算子（グループ化演算子、grouping）は、キーを指定�
 
 例えば、
 
-```csharp
+```csharp {title="グループ化したいデータの例"}
 var a2 = new[] {
   new { X = 0, W = 1 },
   new { X = 0, W = 2 },
@@ -734,7 +734,7 @@ var a2 = new[] {
 
 というデータシーケンスを X でグループ化するなら、
 
-```console
+```console {title="グループ化後のデータの構造"}
 Key = 0, { 1, 2 }
 Key = 1, { 3, 4 }
 ```
@@ -745,7 +745,7 @@ Key = 1, { 3, 4 }
 クエリ式中の <strong id="groupby" class="keyword">group ... by 句</strong>は GroupBy 演算子に変換されます。
 以下に、group ... by の例、その出力結果、および、GroupBy 演算子への変換結果を示します。
 
-```csharp
+```csharp {title="group ... by の例"}
 var b =
   from p in a2
   group p.W by p.X;
@@ -760,13 +760,13 @@ foreach (var p in b)
 ```
 
 
-```console
+```console {title="group by の出力結果"}
 0 -> ( 1 2 )
 1 -> ( 3 4 )
 ```
 
 
-```csharp
+```csharp {title="GroupBy への変換結果"}
 var b = a2.GroupBy(p => p.X, p => p.W);
 ```
 
@@ -777,7 +777,7 @@ group ... by 句も後ろにクエリを続けることはできません。
 group ... by の後にさらにクエリを続ける場合、
 group ... by ... into 句を使います。
 
-```csharp
+```csharp {title="group ... by ... into 句の例"}
 var b =
   from p in a2
   group p.W by p.X into g
@@ -794,12 +794,12 @@ foreach (var p in b)
 ```
 
 
-```console
+```console {title="group by into の例の出力結果"}
 1 -> ( 3 4 )
 ```
 
 
-```csharp
+```csharp {title="GroupBy への変換結果"}
 var b =
   a2.GroupBy(p => p.X, p => p.W)
   .Where(g => g.Sum(q => q) > 5);
@@ -857,7 +857,7 @@ C# 3.0 のクエリ式では、以下のようなクエリが可能です。
 
 ##### <a id="sec-generated-title-15"></a>サンプル
 
-```csharp
+```csharp {title="クエリ式総まとめ"}
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -934,7 +934,7 @@ namespace ConsoleApplication1
 ```
 
 
-```console
+```console {title="クエリ式総まとめ"}
 糸色望 : 超ネガティブ
 久藤准 : 天才ストーリーテラー
 関内マリア : 不法入国 難民

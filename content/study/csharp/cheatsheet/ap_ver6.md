@@ -137,8 +137,8 @@ C# 6 では、自動プロパティに初期化子(プロパティの後ろに =
 		<td markdown="1" rowspan="2">
 <pre class="source" title="" lang=""><code class="language-csharp">class Point
 {
-    public int X { get; set; } = 10;
-    public int Y { get; set; } = 20;
+    public int X { get; set; } = <mark class="code-highlight">10</mark>;
+    public int Y { get; set; } = <mark class="code-highlight">20</mark>;
 }</code></pre>
 
 </td>
@@ -306,8 +306,8 @@ C# 6 では、関数メンバーの関数本体の部分が1つの式だけか�
     public int Y { get; set; }
     public Point(int x = 0, int y = 0) { X = x; Y = y; }
 
-    public int InnerProduct(Point p) =&gt; X * p.X + Y * p.Y;
-    public static Point operator -(Point p) =&gt; new Point(-p.X, -p.Y);
+    public int InnerProduct(Point p) <mark class="code-highlight">=&gt;</mark> X * p.X + Y * p.Y;
+    public static Point operator -(Point p) <mark class="code-highlight">=&gt;</mark> new Point(-p.X, -p.Y);
 }</code></pre>
 
 </td>
@@ -352,8 +352,8 @@ C# 6 では、関数メンバーの関数本体の部分が1つの式だけか�
 {
     private Point[] _vertexes;
 
-    public int Count =&gt; _vertexes.Length;
-    public Point this[int i] =&gt; _vertexes[i];
+    public int Count <mark class="code-highlight">=&gt;</mark> _vertexes.Length;
+    public Point this[int i] <mark class="code-highlight">=&gt;</mark> _vertexes[i];
 }</code></pre>
 
 </td>
@@ -395,7 +395,7 @@ C# 6 では、関数メンバーの関数本体の部分が1つの式だけか�
 {
     public string Name { get; set; }
 
-    public static int? X(Sample s) =&gt; s?.Name?.Length;
+    public static int? X(Sample s) =&gt; <mark class="code-highlight">s?.Name?.Length</mark>;
 }</code></pre>
 
 </td>
@@ -405,7 +405,7 @@ C# 6 では、関数メンバーの関数本体の部分が1つの式だけか�
 
 「[インデクサー](../oop/oo_indexer.md#indexer)」に対しても、?[] という形で、null 条件付きの値の取得ができます。
 
-```csharp
+```csharp {highlight-text="s?[i]"}
 static char? X(string s, int i) => s?[i];
 ```
 
@@ -413,7 +413,7 @@ static char? X(string s, int i) => s?[i];
 一方で、デリゲートに対して ?() で呼び出しはできません。条件演算子 ? : との区別などで、文法上の問題があるからです。
 ただし、この場合でも、 ?.Invoke() という形で null 条件付きの呼び出しができます。
 
-```csharp
+```csharp {highlight-text="f?.Invoke()"}
 static T Y<T>(Func<T> f)
     where T : class
     => f?.Invoke();
@@ -489,7 +489,7 @@ class MyClass
     public void MyMethod()
     {
         var myLocal = 10;
-        Console.WriteLine(nameof(MyClass));
+        Console.WriteLine(<mark class="code-highlight">nameof(MyClass)</mark>);
         Console.WriteLine(nameof(MyProperty) + &quot; = &quot; + MyProperty);
         Console.WriteLine(nameof(myField) + &quot; = &quot; + myField);
         Console.WriteLine(nameof(MyMethod));
@@ -532,14 +532,14 @@ class Program
 </td>
 		<td markdown="1">
 <pre class="source" title="" lang=""><code class="language-csharp">using System;
-using static System.Math;
+<mark class="code-highlight">using static System.Math</mark>;
 
 class Program
 {
     static void Main()
     {
-        var pi = 2 * Asin(1);
-        Console.WriteLine(PI == pi);
+        var pi = 2 * <mark class="code-highlight">Asin(1)</mark>;
+        Console.WriteLine(<mark class="code-highlight">PI</mark> == pi);
     }
 }</code></pre>
 
@@ -797,7 +797,7 @@ C# 6はコンパイラーを1から作りなおしたのもあって、「計画
 
 ### <a id="sec-generated-title-17"></a> <a id="struct-property-init"></a>構造体のプロパティ初期化
 
-```csharp
+```csharp {title="構造体のプロパティ初期化"}
 struct Point
 {
     public int X { get; private set; }
@@ -817,7 +817,7 @@ C# 6では、自動実装プロパティのsetは、対応する[バックフィ
 
 ### <a id="sec-generated-title-18"></a> <a id="cyclic-ctor"></a>コンストラクターの循環参照
 
-```csharp
+```csharp {title="コンストラクターの循環参照"}
 class C
 {
     public C(int x) : this() { }

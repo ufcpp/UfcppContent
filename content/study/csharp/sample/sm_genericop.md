@@ -36,7 +36,7 @@ aliases:
 
 ちょっと考えてみた結果、以下のようなクラスを作ると便利なんじゃないかという考えに至る。
 
-```csharp
+```csharp {title="動的にジェネリック型 T の加減乗除関数を作る"}
 using System;
 using System.Linq.Expressions;
 
@@ -99,7 +99,7 @@ C# の generics において、メソッド呼び出しにインターフェー�
 
 例えば、C++ ならば以下のような書き方ができます。
 
-```cpp
+```cpp {title="C++ で複素数に + 演算子を定義"}
 template<typename T>
 Complex<T> operator +(Complex<T> x, Complex<T> y)
 {
@@ -113,7 +113,7 @@ Complex<T> operator +(Complex<T> x, Complex<T> y)
 
 ところが、同じことを C# でやろうとすると、コンパイルエラーになります。
 
-```csharp
+```csharp {title="C# で複素数に + 演算子を定義（失敗例）"}
 public static Complex<T> operator +(Complex<T> x, Complex<T> y)
 {
   //↓ エラー： 演算子 '+' を 'T' と 'T' 型のオペランドに適用することはできません。
@@ -148,7 +148,7 @@ C# ジェネリクスでできないことも、動的コード生成などを�
 
 2つ目のリフレクションを使えば、例えば以下のようなことができます。
 
-```csharp
+```csharp {title="ジェネリクスとリフレクションの組み合わせ" highlight-lines="11-16,20-25"}
 using System;
 using System.IO;
 using System.Text;
@@ -232,7 +232,7 @@ static class Serializer
 
 .NET Framework 3.0 で導入された式木を使うと、以下のようなことができます。
 
-```csharp
+```csharp {title="式木を使ってジェネリックに加算"}
 using System;
 using System.Linq.Expressions;
 
@@ -268,7 +268,7 @@ class Test
 汎用化するために、このページの冒頭で載せたようなクラスを定義。
 要点だけ抜粋すると、以下のような感じ。
 
-```csharp
+```csharp {title="動的にジェネリック型 T の加減乗除関数を作る" highlight-text="public static readonly Func&lt;T, T, T&gt; Add = Lambda(Expression.Add);"}
 using Binary = Func<ParameterExpression, ParameterExpression, BinaryExpression>;
 
 public static class Operator<T>
@@ -287,7 +287,7 @@ public static class Operator<T>
 
 これを使えば、ジェネリックな複素数の加算を以下のような感じで作れます。
 
-```csharp
+```csharp {title="C# で複素数に + 演算子を定義"}
 static T Add(T x, T y) { return Operator<T>.Add(x, y); }
 
 public static Complex<T> operator +(Complex<T> x, Complex<T> y)
@@ -325,7 +325,7 @@ C++ の template には少々及びませんが、
 
 利用例としては以下のような感じ。
 
-```csharp
+```csharp {title="Complex&lt;T&gt; クラスの利用例"}
 static void Main(string[] args)
 {
     ShowFourOperations(
@@ -353,7 +353,7 @@ static void ShowFourOperations<T>(Complex<T> x, Complex<T> y)
 ```
 
 
-```console
+```console {title="実行結果"}
 Int32
 (4 + i5) + (2 + i4) = 6 + i9
 (4 + i5) - (2 + i4) = 2 + i1

@@ -21,7 +21,7 @@ aliases: []
 
 以下のコードで示すような修正内容です。
 
-```csharp
+```csharp {title="オブジェクト初期化子中の ^ 演算子"}
 // これがコンパイル エラーを起こす。
 // (Visual Studio 17.9 Preview 3 以降を使うとコンパイルできるようになった。)
 var c = new C { [^1] = 1 };
@@ -44,7 +44,7 @@ class C
 こんなのでも一応悩むポイントはありまして。
 1つは、例えば入れ子で `new C() { [^1] = { [2] = 42, [3] = 43 } }` とか書いたとき、
 
-```csharp
+```csharp {title="2度 Length を評価"}
 // 2行に分かれる = Length - 1 の計算が2度走る。
 var c = new C();
 c[^1][2] = 42;
@@ -54,7 +54,7 @@ c[^1][3] = 43;
 
 か
 
-```csharp
+```csharp {title="^i をキャッシュして Length は1回限り評価"}
 // ^ の結果をキャッシュする。
 var c = new C();
 var cachedIndexArgument = ^1;

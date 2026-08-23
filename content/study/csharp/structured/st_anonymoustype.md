@@ -46,7 +46,7 @@ C#には、歴史的経緯から、[匿名型](../start/sp3_inference.md#anonymo
 関数を作るとき、複数の値を返したい場合があります。
 例えば、「最小値、最大値、平均値を同時に求めるメソッド」があったとしましょう。
 
-```csharp
+```csharp {title="最小値、最大値、平均値を同時に求めるメソッド"}
 static X Measure(IEnumerable<int> items)
 {
     var count = 0;
@@ -77,7 +77,7 @@ static X Measure(IEnumerable<int> items)
 
 こういう場合には、「名前のない型」を認めるべきです。例えば、以下のような書き方です。
 
-```csharp
+```csharp {title="タプルを使った書き方" highlight-text="(int min, int max, double average)"}
 static (int min, int max, double average) Measure(IEnumerable<int> items)
 {
     var count = 0;
@@ -121,7 +121,7 @@ static (int min, int max, double average) Measure(IEnumerable<int> items)
 
 このデータを以下のような型で読み込んで使うとします。
 
-```csharp
+```csharp {title="個人情報を表すクラス"}
 class Person
 {
     public int Id { get; }
@@ -136,7 +136,7 @@ class Person
 このデータ列に対して、性別・年代ごとの人数構成を調べたいとします。
 C# には、グループ化するための関数(`GroupBy`)や、個数を調べるための関数(`Count`)が備わっているのでそれを使いたいと思います。
 
-```csharp
+```csharp {title="性別・年代ごとの人数調査"}
 var persons = ReadAll("personal_infomation.csv").ToArray();
 
 // 性別・年代(10年区切り)ごとに何人いるかを集計
@@ -155,7 +155,7 @@ var histgram = persons
 
 こういう場合もやはり、「名前のない型」を認めるべきです。例えば以下のような書き方です。
 
-```csharp
+```csharp {title="匿名型を使った書き方"}
 var persons = ReadAll("personal_infomation.csv").ToArray();
 
 // 性別・年代(10年区切り)ごとに何人いるかを集計
@@ -168,7 +168,7 @@ var histgram = persons
 
 コード全体: [AnonymousTypes.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/StructuredProgramming/Tuples/AnonymousTypes.cs)
 
-```console
+```console {title="実行結果"}
 { Sex = Male, BirthDecade = 195, Count = 45 }
 { Sex = Female, BirthDecade = 195, Count = 43 }
 { Sex = Male, BirthDecade = 196, Count = 117 }

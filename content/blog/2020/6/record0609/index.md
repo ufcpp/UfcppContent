@@ -27,7 +27,7 @@ aliases: []
 まず、基本方針として、record は class/struct に対する修飾子ではなくて、enum とか delegate とかと同じく1種の型みたいな扱いにしたみたいです。
 なので、以下のような書き方に。
 
-```csharp
+```csharp {title="record 型"}
 record Point(int X, int Y);
 ```
 
@@ -61,7 +61,7 @@ record のものと近いコード生成をすることになったとします
 という点になります。
 で、この2つ、struct の場合は標準で作られます。
 
-```csharp
+```csharp {title="struct には自動的に Equals が作られてる"}
 using System;
  
 struct Point
@@ -98,7 +98,7 @@ class Program
 nominal record のために、data 修飾子も用意する流れのようです。
 以下のような書き方ができます。一見、data 修飾子を付けたフィールドっぽい書き方ですが、`get; init;` な public プロパティが生成されます。
 
-```csharp
+```csharp {title="data 修飾子による「nominal record」"}
 record Point
 {
     data int X;
@@ -111,7 +111,7 @@ record Point
 あとは細かい話。
 record 型は派生もできるんですが、その場合、以下のような書き方ができます。
 
-```csharp
+```csharp {title="record の派生"}
 record Person(string FirstName, string LastName)
 {
     public string Fullname => $"{FirstName} {LastName}";

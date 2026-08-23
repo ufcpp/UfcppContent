@@ -39,7 +39,7 @@ C# では、[クラス](../oop/oo_class.md)のフィールドや[配列](../stru
 まずわかりやすい例から見ていきましょう。
 分岐も何もなければ簡単です。以下のようなコードはコンパイル エラーになります。
 
-```csharp
+```csharp {title="未初期化変数を使おうとしてエラーになる例"}
 int x;
 
 // x に何も代入しないまま値を取り出そうとした。
@@ -50,7 +50,7 @@ Console.WriteLine(x);
 変数の宣言と同時に初期値を与えるのでもいいですし、
 後からの代入でも構いません。
 
-```csharp
+```csharp {title="ちゃんと代入"}
 // 変数宣言と同時に初期値を与える。
 int x = 1;
 
@@ -69,7 +69,7 @@ Console.WriteLine(y);
 C# では、この明確な代入を判定する際、分岐も見てくれます。
 全ての分岐先でちゃんと代入していれば OK です。
 
-```csharp
+```csharp {title="if-else 両方で代入"}
 // 大丈夫な例: if-else 両方で代入。
 static void m(bool condition)
 {
@@ -89,7 +89,7 @@ static void m(bool condition)
 }
 ```
 
-```csharp
+```csharp {title="if でだけ代入"}
 // ダメな例: if でだけ代入。
 static void m(bool condition)
 {
@@ -107,7 +107,7 @@ static void m(bool condition)
 
 `if` だけではなく、`switch` でも判定してくれます。
 
-```csharp
+```csharp {title="case が全ての値を網羅"}
 // 大丈夫な例: case が全ての値を網羅しているなら大丈夫。
 static void m(byte condition)
 {
@@ -125,7 +125,7 @@ static void m(byte condition)
 }
 ```
 
-```csharp
+```csharp {title="case に漏れ"}
 // ダメな例: case に漏れがあるとダメ。
 static void m(byte condition)
 {
@@ -144,7 +144,7 @@ static void m(byte condition)
 }
 ```
 
-```csharp
+```csharp {title="結構ちゃんと網羅性をチェックしてる"}
 // 大丈夫な例: 結構ちゃんと網羅性をチェックしてる。
 static void m(sbyte condition)
 {
@@ -167,7 +167,7 @@ static void m(sbyte condition)
 例えば、`while (false)` や、`break` なども追ってくれます。
 
 
-```csharp
+```csharp {title="通らないループ"}
 // ダメな例: 通らないループ。
 int x;
 
@@ -181,7 +181,7 @@ while (false)
 Console.WriteLine(x);
 ```
 
-```csharp
+```csharp {title="早すぎる break"}
 // ダメな例: 早すぎる break。
 int x;
 
@@ -196,7 +196,7 @@ while (true)
 Console.WriteLine(x);
 ```
 
-```csharp
+```csharp {title="break 前に代入"}
 // 大丈夫な例: break 前に代入。
 int x;
 
@@ -211,7 +211,7 @@ while (true)
 Console.WriteLine(x);
 ```
 
-```csharp
+```csharp {title="永久ループ"}
 // 大丈夫な例: 永久ループの下。
 int x;
 
@@ -236,7 +236,7 @@ Console.WriteLine(x);
 それが C# 10 で改善されました。
 例えば以下のコードは C# 10 以降でだけコンパイルできます。
 
-```csharp
+```csharp {title="?. == true"}
 // C# 10 から大丈夫な例: ?. == true。
 void m(Dictionary<int, int>? d)
 {
@@ -249,7 +249,7 @@ void m(Dictionary<int, int>? d)
 }
 ```
 
-```csharp
+```csharp {title="?. ??"}
 // C# 10 から大丈夫な例: ?. ??。
 void m(Dictionary<int, int>? d)
 {

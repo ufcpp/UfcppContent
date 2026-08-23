@@ -50,7 +50,7 @@ Function pointers だけで相当な時間しゃべることになったのが�
 
 以下のコード、解釈の仕方を間違う人があまりにも多いらしく。
 
-```csharp
+```csharp {title="!is"}
 if (x !is 0) { }
 ```
 
@@ -65,13 +65,13 @@ if (x !is 0) { }
 
 リファクタリング1: 意味がないので `!` を消す
 
-```csharp
+```csharp {title="!is → is"}
 if (x is 0) { }
 ```
 
 リファクタリング2: “ちゃんと”真逆に直す
 
-```csharp
+```csharp {title="!is → is"}
 if (x is not 0) { }
 ```
 
@@ -81,7 +81,7 @@ if (x is not 0) { }
 微妙に今回の 16.7 Preview 3 リリースで入った修正もあります。
 以下のようなコードが有効になりました。
 
-```csharp
+```csharp {title="is not T x"}
 static void M(object x)
 {
     // not パターンでも変数宣言できる
@@ -104,7 +104,7 @@ static void M(object x)
 `Program.Main` が要らなくなります。
 C# スクリプト モードじゃなくても以下のように、Top-level  (クラスとか名前空間の外)にコードが書けます。
 
-```csharp
+```csharp {title="Top-level にステートメントを書けるように"}
 using System;
  
 Console.WriteLine("Hellow World!");
@@ -146,7 +146,7 @@ Top-level ステートメントの方が優先されます(書いてしまった
 以下のように、`delegate*` で「関数ポインター型」を作って、
 `&` でメソッドのアドレスを取得できる機能です。
 
-```csharp
+```csharp {title="関数ポインター"}
 using System;
  
 class Program
@@ -178,7 +178,7 @@ P/Invoke の類も、 .NET Runtime の中で特殊対応するよりも、事前
 ただ、関数ポインターで `<void>` を認めてくれるんなら、普通のデリゲートでも同じように書きたい…
 (書けないし、今後もたぶんずっと無理)
 
-```csharp
+```csharp {title="要望としてはある(たぶん今後も無理)"}
 using System;
  
 class Program
@@ -202,7 +202,7 @@ class Program
 プライマリ コンストラクター構文。
 引数の順序(position, 位置)に意味があるので positional record と言ったりもします。
 
-```csharp
+```csharp {title="プライマリ コンストラクターを使った “positional” record"}
 using System;
  
 // 一番シンプルな書き方はこうなる
@@ -222,7 +222,7 @@ class Program
 
 ちなみに上記コードは以下のコードとほぼ同じ意味になります。
 
-```csharp
+```csharp {title="プライマリ コンストラクターの展開結果"}
 // プライマリ コンストラクターの展開結果
 record Point
 {
@@ -243,7 +243,7 @@ record Point
 一方、`init` は `class` や `struct` でも使えます。
 例えば、以下のようなコードは有効な C# 9.0 コードになります。
 
-```csharp
+```csharp {title="init アクセサー"}
 // init に関しては çlass でも struct でも使える
 class Point
 {
@@ -275,7 +275,7 @@ class Point
 ということになっています。
 ただ、以下のコードを自前で用意すれば、現時点の .NET 5 Preview や古い .NET ランタイムでも `record` や `init` を使えます。
 
-```csharp
+```csharp {title="IsExternalInit 属性"}
 namespace System.Runtime.CompilerServices
 {
     internal class IsExternalInit { }
@@ -315,7 +315,7 @@ immutable なクラスの部分書き換えをする場合、基本的には Clo
 
 それをやってくれるのが `with` 式で、`record` に対して以下のような書き方ができます。
 
-```csharp
+```csharp {title="with 式"}
 using System;
  
 record Point(int X, int Y);
@@ -337,7 +337,7 @@ class Program
 
 これと同じことを `class` の手書きでやろうとすると、以下のように、Clone 後の書き換えで immutable であることが破たんします。
 
-```csharp
+```csharp {title="with 式を使わず手書きしようとすると…"}
 using System;
  
 class Point
@@ -381,7 +381,7 @@ C# 9.0 時点では `record` 専用構文になりそうです。
 プロパティのアクセサーに、`set` の代わりに `init` を使うことで、
 初期化子や `with` 式でだけ書き換え可能なプロパティができます。
 
-```csharp
+```csharp {title="init アクセサー"}
 class InitOnly
 {
     public int X { get; init; }

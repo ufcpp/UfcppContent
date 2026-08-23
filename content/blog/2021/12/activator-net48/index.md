@@ -17,7 +17,7 @@ aliases: []
 
 C# 10.0 で[構造体の引数なしコンストラクター](../../../../study/csharp/cheatsheet/ap_ver10.md#struct-parameterless-ctor)が書けるようになりました。
 
-```csharp
+```csharp {title="構造体の引数なしコンストラクター"}
 struct A
 {
     public int X;
@@ -40,7 +40,7 @@ C# の構造体は `new T()` と `default(T)` が同じ「0初期化」を表し
 
 例えば、先ほどの、引数なしコンストラクターで `X` を 1 に初期化しているはずの構造体 `A` を使って以下のようなコードを書いたとします。
 
-```csharp
+```csharp {title="引数なしコンストラクターが呼ばれなかったコードの例"}
 var a = New<A>();
 
 // 古いランタイムだとこれで a.X == 0 に
@@ -76,7 +76,7 @@ C# 6.0 当時の話なので確か、
 先ほどと同じ構造体 `A` と `New<T>` メソッドを使った場合、
 .NET Framework 4.8 で実行すると「2度目がおかしい」という状態になります。
 
-```csharp
+```csharp {title=".NET Framework 限定 Activator バグ"}
 Console.WriteLine(New<A>().X); // 1回目は大丈夫。ちゃんと 1。
 Console.WriteLine(New<A>().X); // 2回目以降なぜか 0 に… (.NET Framework 限定のバグ)
 ```
@@ -89,7 +89,7 @@ Console.WriteLine(New<A>().X); // 2回目以降なぜか 0 に… (.NET Framewor
 
 1. netstandard2.0 なライブラリで以下のようなコードを書く (LangVersion 指定で明示的に C# のバージョンを 10.0 に上げる)
 
-```csharp
+```csharp {title="netstandard2.0 で C# 10.0 を有効化して書く"}
 namespace ClassLibrary1;
 
 public struct A
@@ -101,7 +101,7 @@ public struct A
 
 2. 以下のようなアプリ コードを書く (これは C# 7.3 でも動く)
 
-```csharp
+```csharp {title="アプリ コード"}
 using System;
 
 class Program

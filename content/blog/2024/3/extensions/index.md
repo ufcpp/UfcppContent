@@ -62,7 +62,7 @@ C# 3.0 から[拡張メソッド](../../../../study/csharp/functional/sp3_extens
 ということで、改めて Extensions の話を。
 今、以下のような構文を足そうとしています。
 
-```csharp
+```csharp {title="extension 構文"}
 // 拡張の構文例。
 implicit extension SomeExtension for SomeClass : IEquatable<SomeExtension>
 {
@@ -107,7 +107,7 @@ C# 13 時点では入らない可能性がかなり高いです。
 一時期は以下のような ref struct を使った実装になりそうだったんですが、
 この案は結局没になりました。
 
-```csharp
+```csharp {title="ref struct 案"}
 var value = new SomeStruct();
 var extension = new SomeExtension(ref value);
 
@@ -141,7 +141,7 @@ struct SomeStruct
 
 この案に変わって、普通の構造体 + Unsafe.As を使う路線で考えているそうです。
 
-```csharp
+```csharp {title="Unsafe.As 案"}
 using System.Runtime.CompilerServices;
 
 var value = new SomeStruct();
@@ -181,7 +181,7 @@ Extensions は普通の型と同じように使えたりします。
 メソッドの引数などに拡張型を書くと、実際には「元の型 + 属性」(いわゆる「型消去」方式)になる予定です。
 例えば、以下のようなメソッドを書いたとして、
 
-```csharp
+```csharp {title="拡張型を引数に書く例"}
 static int Sum(SomeExtension a, List<SomeExtension> b)
 {
     var sum = a.Property;
@@ -192,7 +192,7 @@ static int Sum(SomeExtension a, List<SomeExtension> b)
 
 以下のような類のコードに置き換わる予定です。
 
-```csharp
+```csharp {title="拡張型を引数に書く例の展開結果"}
 static int Sum(
     // SomeExtension は属性の中にしか残らない。
     // 元の、 SomeStruct に置き換わる。
@@ -223,7 +223,7 @@ static int Sum(
 
 近い側優先:
 
-```csharp
+```csharp {title="基底クラスと同名のメンバー参照"}
 class Base
 {
     public void M(int x) { }
@@ -243,7 +243,7 @@ class Derived : Base
 
 もうちょっとわかりにくい例:
 
-```csharp
+```csharp {title="基底クラスと同名で、引数の型が違うメンバー参照"}
 class Base
 {
     public void M(int x) { }
@@ -267,7 +267,7 @@ class Derived : Base
 
 あと、既存の拡張メソッドには以下のような優先度があります。
 
-```csharp
+```csharp {title="インスタンス メソッド優先"}
 namespace Ex1
 {
     static class AExtension
@@ -294,7 +294,7 @@ namespace App1
 }
 ```
 
-```csharp
+```csharp {title="同じ名前空間内の拡張メソッド優先"}
 namespace Ex1
 {
     static class AExtension
@@ -323,7 +323,7 @@ namespace App1
 }
 ```
 
-```csharp
+```csharp {title="内側で using した方優先"}
 using Ex1;
 
 namespace Ex1
@@ -359,7 +359,7 @@ namespace App1
 }
 ```
 
-```csharp
+```csharp {title="優劣がない場合はコンパイル エラー"}
 namespace Ex1
 {
     static class AExtension
@@ -400,7 +400,7 @@ namespace App1
 現状は「優劣つけない」という方向で検討されています。
 というか、新旧混在した時点でコンパイル エラーにしようかという話もあるみたいです。
 
-```csharp
+```csharp {title="優劣がない場合はコンパイル エラー"}
 namespace Ex1
 {
     static class AExtension
@@ -445,7 +445,7 @@ namespace App1
 
 インターフェイス実装に関する部分だけ残して、以下のようにしたとします。
 
-```csharp
+```csharp {title="拡張型でインターフェイス実装"}
 var value = new SomeClass { Value = 1 };
 SomeExtension extension = value;
 
@@ -464,7 +464,7 @@ class SomeClass
 
 ラッパー構造体で展開するとしたら以下のようになります。
 
-```csharp
+```csharp {title="ラッパー構造体で展開"}
 using System.Runtime.CompilerServices;
 
 var value = new SomeClass { Value = 1 };
@@ -496,7 +496,7 @@ class SomeClass
 まず、インターフェイス型の変数で受けてみましょう。
 `ReferenceEquals` や `is` 判定であまり期待通りとは言えない挙動を起こします。
 
-```csharp
+```csharp {title="インターフェイス型の変数で受けてみる"}
 using System.Runtime.CompilerServices;
 
 var value = new SomeClass { Value = 1 };
@@ -514,7 +514,7 @@ Console.WriteLine(boxedExtension is SomeClass); // false
 
 ジェネリク メソッドでは、以下のように、元の型と拡張型の両方の型情報を使う必要がでてきます。
 
-```csharp
+```csharp {title="ジェネリク メソッドに拡張型を渡す"}
 var value = new SomeClass { Value = 1 };
 List<SomeClass> list = [new() { Value = 2 }, new() { Value = 1 }, new() { Value = 0 }];
 

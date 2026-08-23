@@ -89,14 +89,14 @@ C# 3.0 の「[LINQ](../data/sp3_linq.md#linq)」を使うと、リスト内包�
 で、プログラミング言語的には、
 外延記法の方は、C 言語の配列でもできます。
 
-```csharp
+```csharp {title="配列の外延記法による初期化"}
 int evens[] = { 0, 2, 4, 6, 8 };
 ```
 
 
 でも、内包記号の方は無理です。これと近いことを C 言語でやろうとすると、以下のようになります。
 
-```csharp
+```csharp {title="内包記法の真似事"}
 int evens[5];
 int i = 0;
 for (int k = 0; k < 10; ++k)
@@ -113,7 +113,7 @@ for (int k = 0; k < 10; ++k)
 C# の List を使って書くとほんの少しだけ数学の記法に近づく事ができて、
 以下のようになります。
 
-```csharp
+```csharp {title="C# の List で内包記法の真似事"}
 var _10 = Enumerable.Range(0, 10);
 
 List<int> evens = new List<int>();
@@ -142,7 +142,7 @@ foreach (var n in _10)
 特に、関数型言語にそういう機能を持った言語が多いんですが、
 例えば、Erlang では以下のようにしてリストを作れます。
 
-```csharp
+```csharp {title="Erlang のリスト内包"}
 Ten = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 Evens = [n || n <- Ten, n rem 2 == 0]
 ```
@@ -150,7 +150,7 @@ Evens = [n || n <- Ten, n rem 2 == 0]
 
 関数型言語でも F# の場合、以下のように for とか when が必要。
 
-```fsharp
+```fsharp {title="F# のリスト内包"}
 let evens = { for n in 0 .. 9 when n % 2= 0 -> n }
 ```
 
@@ -158,7 +158,7 @@ let evens = { for n in 0 .. 9 when n % 2= 0 -> n }
 関数型言語以外でも、例えば、Python はリスト内包構文を持っています。
 F# と同様、数学の集合の内包記法とは違って、for とか if とかいうキーワードが必要になります。
 
-```python
+```python {title="Python のリスト内包"}
 ten = range(0, 10)
 evens = [n for n in ten if n % 2 == 0]
 ```
@@ -167,7 +167,7 @@ evens = [n for n in ten if n % 2 == 0]
 これは、以下のように解釈されるようです。
 （Python にはそんなに詳しくないんで、もしかすると間違ってるかも。）
 
-```python
+```python {title="Python のリスト内包"}
 ten = range(0, 10)
 evens = []
 for n in ten :
@@ -183,7 +183,7 @@ for n in ten :
 
 さて、前節の Python コード
 
-```python
+```python {title="Python のリスト内包"}
 ten = range(0, 10)
 evens = [n for n in ten if n % 2 == 0]
 ```
@@ -191,7 +191,7 @@ evens = [n for n in ten if n % 2 == 0]
 
 と、以下の C# コードを比べてみてください。
 
-```csharp
+```csharp {title="C# のクエリ式"}
 var ten = Enumerable.Range(0, 10);
 var evens = from n in ten where n % 2 == 0 select n;
 ```
@@ -271,7 +271,7 @@ if が where に変わっていますが、
 
 まず、3次元上の格子点は C# 3.0 的に書くと以下のような感じ。
 
-```csharp
+```csharp {title="3次元上の格子点"}
 var points3d =
   from x in Enumerable.Range(-N, 2 * N)
   from y in Enumerable.Range(-N, 2 * N)
@@ -287,7 +287,7 @@ Enumerable は .NET Framework 3.5 で追加された System.Linq.Enumerable ク�
 
 平面への投影は、平面の基底ベクトル i1, i2 を与えて、以下のようにします。
 
-```csharp
+```csharp {title="i1, i2 の張る平面への投影"}
 var projectedPoints =
   from p in points3d
   let x = Vector3D.DotProduct(p, i1)
@@ -302,7 +302,7 @@ var projectedPoints =
 法線ベクトル normal から適当な平面状の基底ベクトル2つを求めるには、
 以下のような関数を使います。
 
-```csharp
+```csharp {title="法線から平面上の基底2つを求める"}
 static void GetOrthogonalBase(
   Vector3D normal, out Vector3D i1, out Vector3D i2)
 {
@@ -325,7 +325,7 @@ static void GetOrthogonalBase(
 「平面から遠い点」と「表示可能な範囲外」の点を除外するために、
 以下のような条件をつけておきます。
 
-```csharp
+```csharp {title="探索範囲の限定"}
 var points3d = (
   from x in Enumerable.Range(-M, 2 * M)
   from y in Enumerable.Range(-M, 2 * M)

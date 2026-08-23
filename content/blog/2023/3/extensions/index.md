@@ -39,7 +39,7 @@ aliases: []
 
 例えば、`int` に対する「拡張」を書くのなら、以下のような書き方をします。
 
-```csharp
+```csharp {title="int に対する extension"}
 implicit extension Ex for int
 {
 }
@@ -52,7 +52,7 @@ implicit extension Ex for int
 今の拡張メソッドの文法がプロパティなどに向いていなさ過ぎて、導入できずにいます。
 また、静的メンバーにも対応していません。
 
-```csharp
+```csharp {title="プロパティに向かない文法、静的メンバーにも未対応"}
 static class Extensions
 {
     // x.Method() と呼べる。
@@ -72,7 +72,7 @@ static class Extensions
 
 `extension` を使った定義では、インスタンス フィールドと[自動プロパティ](../../../../study/csharp/oop/oo_property.md#auto)・[自動イベント](../../../../study/csharp/functional/sp_event.md#auto-event)(暗黙的にフィールドが必要)を除いて、どのメンバーでも使えます。
 
-```csharp
+```csharp {title="プロパティやインデクサー、静的メンバーにも対応"}
 implicit extension Ex for int
 {
     public void Method() { }
@@ -87,7 +87,7 @@ implicit extension Ex for int
 ちなみに、インターフェイスも実装できる予定です。
 既存の(第3者が作っていて自分では手を入れられない)型にインターフェイスを後挿しできます。
 
-```csharp
+```csharp {title="拡張インターフェイス実装"}
 implicit extension Ex for bool : IFormattable
 {
     public void ToString(string? format, IFormatProvider? formatProvider) => this ? "true" : "false";
@@ -96,7 +96,7 @@ implicit extension Ex for bool : IFormattable
 
 これで、以下のような呼び出しができるようになる予定です。
 
-```csharp
+```csharp {title="拡張定義したプロパティ、インデクサー、静的メソッドを呼び出し"}
 int x = 0;
 
 x.Method();
@@ -112,7 +112,7 @@ IFormattable f = true;
 既存の拡張メソッドでも起こるんですが、
 複数の拡張があるとき、同名のメソッドが被ってどちらを呼ぶべきか解決できない時があります。
 
-```csharp
+```csharp {title="名前被りで解決できない拡張メソッド"}
 int x = 0;
 
 // 2つ同名のメソッドがあって優先度解決できないのでコンパイル エラー。
@@ -136,7 +136,7 @@ static class Ex2
 また、拡張メソッドは元々あるインスタンス メソッドよりも優先度が低いので、
 同名のメソッドで「上書き」することもできません。
 
-```csharp
+```csharp {title="拡張メソッドでは同名インスタンス メソッドの上書きはできない"}
 int x = 0;
 
 // インスタンス メソッドの方が優先度が高く、この書き方で Ex1.ToString は呼べない。
@@ -156,7 +156,7 @@ static class Ex1
 
 一方、`extension` では、以下のように、キャスト的な文法で解決します。
 
-```csharp
+```csharp {title="キャストで拡張を使う"}
 int x = 0;
 
 // 「暗黙」にやろうとすると、extension を使ったやり方でも解決不能・元々あるメソッド優先。
@@ -194,7 +194,7 @@ implicit extension Ex2 for int
 
 変数だけではなく、引数、型引数などにも使えます。
 
-```csharp
+```csharp {title="拡張型引数"}
 using System.Collections;
 
 int x = 0;
@@ -226,7 +226,7 @@ implicit extension Ex1 for int
 名前通り型の明示が必須になって、
 `int` などの元の型のままでメンバーを呼ぶことができなくなります。
 
-```csharp
+```csharp {title="explicit exntension" highlight-ranges="sha256:b259e4cf19f2e4fbcece9e3b080b7673955cefe8d83523c810a8ad5e88a871aa;10:1-10:9"}
 // (implicit なら呼べるけど) explicit extension では呼べない。
 1.Method();
 int.StaticMethod();
@@ -249,7 +249,7 @@ explicit extension Ex for int
 
 ちなみに、同じ型に対する別の extension はお互い型変換させるつもりはないそうです。
 
-```csharp
+```csharp {title="2つの異なる explicit exntension"}
 // 基となる型から extension への変換は暗黙 OK。
 Ex1 ex1 = 1;
 Ex2 ex2 = 2;
@@ -275,7 +275,7 @@ extension は別の extension からの派生もOKで、
 例えば以下のような感じ。
 (`T` は通常の型、`I` 始まりのものがインターフェイス、`X` 始まりのものが extension。)
 
-```csharp
+```csharp {title="extension 定義(文法まとめ)"}
 implicit extension X for T : XA, XB, IA, IB
 {
 }
@@ -289,7 +289,7 @@ extension の場合は `for` を使って `:` とは分ける方向で考えて�
 基底型をいくつも持てるし、ただでさえ基底型とインターフェイスの混在があるのに、さらに基になる型 `T` も並べた時に、「同じ `:` を使って、一番先頭という縛りを設ける」というのはいささか不安だったそうです。
 特に、`partial` を認めるつもりなので、その場合に「一番先頭」があやふやになるのを懸念したみたいです。
 
-```csharp
+```csharp {title="partial extension"}
 implicit partial extension X for T : XA, IA
 {
 }
@@ -302,7 +302,7 @@ implicit partial extension X : XB, IB
 また、既存の拡張メソッドがトップレベルの型での定義以外を認めていないのに対して、
 新しい extension は入れ子を認めるそうです。
 
-```csharp
+```csharp {title="partial extension"}
 using static Ex;
 using static C;
 
@@ -329,7 +329,7 @@ class C
 
 さらに、ジェネリックにもできるそうです。
 
-```csharp
+```csharp {title="generic extension"}
 implicit extension X<T> for T : XA, IA
     where T : IT
 {
@@ -339,7 +339,7 @@ implicit extension X<T> for T : XA, IA
 派生 extension を作る際には、
 基となる型の条件を強める方向でなら、基となる型の変更もできるみたいです。
 
-```csharp
+```csharp {title="基となる型の変更"}
 implicit extension XBase for IEnumerable<object>
 {
 }
@@ -364,7 +364,7 @@ implicit extension XDerived2 : XBase
 
 例えば、前述の(以下に再掲) extension に対して、
 
-```csharp
+```csharp {title="前述の extension"}
 implicit extension Ex for int
 {
     public void Method() { }
@@ -400,7 +400,7 @@ ref struct Ex
 * ref 構造体をジェネリック型引数にする
 * ref 構造体でインターフェイスを実装する
 
-```csharp
+```csharp {title="C# 11 で無理なものの、extension の実装に欲しいもの"}
 // 現状、ref 構造体はインターフェイス実装を持てない。
 ref struct S : IEnumerable<int>
 {

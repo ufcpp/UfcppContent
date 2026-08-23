@@ -50,7 +50,7 @@ C# 7.0 からあるパターンは1層限り、8.0 で追加されたパター�
 C# 6.0以前から元々あった [`is` 演算子](../oop/oo_polymorphism.md#is-operator)の自然な拡張になっているのが型パターン(type pattern)です。
 以下のように、型の後ろに続けて、マッチした結果を変数で受け取れます。
 
-```csharp
+```csharp {title="型パターンの例" highlight-ranges="sha256:31e5778ca46661b7315087a65e0073918fb7d815ed30e5fbfe9f4eb61cce00c1;3:14-3:19,4:19-4:27"}
 static void M(object x)
 {
     if (x is int i) Console.WriteLine("int " + i);
@@ -64,7 +64,7 @@ static void M(object x)
 型パターンは、旧来からある `is` 演算子や `as` 演算子とほぼ同じ挙動です。
 上記の例は、概ね以下のコードと同じ動作になります。
 
-```csharp
+```csharp {title="型パターンの挙動"}
 if (x is int)
 {
     var i = (int)x;
@@ -84,7 +84,7 @@ else
 型パターンは null にはマッチしません。
 (以下のように、たとえ変数の型が一致していたとしても、null にはマッチしません。)
 
-```csharp
+```csharp {title="型パターンは null にはマッチしない"}
 static void Main()
 {
     M("abc"); // matched abc
@@ -107,7 +107,7 @@ C# 9.0 で型パターンがちょっとだけシンプルになりました。
 ところが、`is` の場合は `x is T` と書けるのに、`switch` では `T _` のように変数宣言か `_` (破棄) を伴う必要がありました。
 これが C# 9.0 で改善されています。
 
-```csharp
+```csharp {title="型パターンの簡単化"}
 int Is(object x)
 {
     if (x is string)
@@ -139,7 +139,7 @@ C# 9.0 時点でこれが書けたなかったのは次節の[定数パターン
 例えば C# 9.0 では以下のようなコードが書けます。
 こんなコードを書くこと自体少ないと思いますが、`is`の場合と`switch`の場合で、型と定数、どちらが優先されるかが違うので注意が必要です。
 
-```csharp
+```csharp {title="型パターンと定数パターンの区別"}
 class X { }
  
 class Program1
@@ -171,7 +171,7 @@ class Program2
 単体で見ると普通に `==` を使えば済むことも多いわけですが、
 定数パターンであれば他のパターンとの混在ができます。
 
-```csharp
+```csharp {title="定数パターンの例"}
 switch (x)
 {
     // 定数パターン
@@ -185,7 +185,7 @@ switch (x)
 名前通り定数しか使えません。
 変数との値比較がしたければ、`when`句を使うなどが必要です。
 
-```csharp
+```csharp {title="文字通り、定数パターンは定数のみ受け付ける"}
 static int M(object x, int comparand)
 {
     switch (x)
@@ -201,7 +201,7 @@ static int M(object x, int comparand)
 ちなみに、定数パターンでは、[ユーザー定義演算子](../oop/oo_operator.md#udo)を見ません。
 以下のように、`==`と`is`で挙動が違う場合があります。
 
-```csharp
+```csharp {title="定数パターンはユーザー定義の演算子を見ない"}
 using System;
  
 class X
@@ -287,7 +287,7 @@ C# チーム自身はそれほど実装に乗り気ではなく、外部から�
 
 `switch` の最後に書いて「その他全部」な分岐に使ったりします。
 
-```csharp
+```csharp {title="var パターンを「その他全部」の意味で使う例" highlight-text="var other"}
 static int M(object x)
 {
     switch(x)
@@ -303,7 +303,7 @@ static int M(object x)
 
 あと、少し悪用気味ではありますが、式中での変数宣言に使えたりします。
 
-```csharp
+```csharp {title="式中での変数宣言代わりに var パターンを利用" highlight-text="var line"}
 while (Console.ReadLine() is var line && !string.IsNullOrEmpty(line))
 {
     Console.WriteLine(line);
@@ -312,7 +312,7 @@ while (Console.ReadLine() is var line && !string.IsNullOrEmpty(line))
 
 1つ注意が必要な点として、var パターンは型パターンと違って、null にもマッチします。
 
-```csharp
+```csharp {title="var パターンは null にもマッチ"}
 string s = null;
 Console.WriteLine(s is string x); // false
 Console.WriteLine(s is var y);    // true
@@ -329,7 +329,7 @@ null をはじきたい場合は、var ではなく、後述するプロパテ�
 再帰はしないんですが、`switch`式の中と、再帰パターン内でしか使えないので C# 8.0 での実装になります。
 `is`やステートメントの方の`switch`の`case`の後ろでは`var _`と書く必要がありますが、`switch`式の場合は`_`だけで値を破棄します。
 
-```csharp
+```csharp {title="switch 式中では、_ だけで値を破棄できる" highlight-text="_"}
 static int M(object x)
     => x switch
     {
@@ -344,7 +344,7 @@ static int M(object x)
 ちなみに、`is` や `switch`ステートメント内で `_` だけでの値の破棄ができないのは既存コードとの互換性のためです。
 普通書かないようなコードですが、一応、以下のようなコードが元々合法なため、意味を変えることができませんでした。
 
-```csharp
+```csharp {title="_ クラス、 _ 定数"}
 using System;
  
 class _Type
@@ -385,7 +385,7 @@ C# 8.0 で、再帰的に使えるパターンが追加されて、ようやく�
 
 例えば以下のような感じです。
 
-```csharp
+```csharp {title="再帰パターンの例" highlight-ranges="sha256:cec146ec782bcf929f31a52b1b79c2f300a7bbc6831d70979c8b028a23cee7ab;16:9-16:21,17:9-17:33"}
 public class Point
 {
     public int X { get; set; }
@@ -417,7 +417,7 @@ class Program
 それぞれのメンバーの値に対してマッチングを行います。
 例えば、先ほど例として使った`Point`クラスを引き続き使うとして、以下のように書けます。
 
-```csharp
+```csharp {title="位置パターンの例"}
 static int M(Point p)
     => p switch
 {
@@ -429,7 +429,7 @@ static int M(Point p)
 
 このコードは概ね以下のような意味になります。
 
-```csharp
+```csharp {title="位置パターンの展開結果"}
 p.Deconstruct(out var x, out var y);
 if (x is 1 && y is 2) return 0;
 if (x > 0) return x;
@@ -441,7 +441,7 @@ return -1;
 上記の例では元々型が`Point`だとわかっているので型名を省略していますが、
 型の明示もできます。
 
-```csharp
+```csharp {title="位置パターンでの型の明示" highlight-text="Point(var x, var y)"}
 static int M(object obj)
     => obj switch
 {
@@ -455,7 +455,7 @@ static int M(object obj)
 また、後述しますが、プロパティ パターンとの混在や、
 型パターンのように変数を付け足すこともできます。
 
-```csharp
+```csharp {title="位置パターン、プロパティ パターン、型パターンの組み合わせ"}
 obj switch
 {
     Point (var x, _) { Y: var y } p => x * y
@@ -464,7 +464,7 @@ obj switch
 
 位置パターンとか言いつつ、名前付き引数のノリで、名前付きなパターン マッチングもできます。
 
-```csharp
+```csharp {title="名前付き位置パターン" highlight-ranges="sha256:85d59d9b77dd1ed12b7adc16900a3a17f8077d539a7a05c3ccd6aff5c430e213;4:6-4:8,4:12-4:14,5:6-5:8,5:16-5:18"}
 static int NamedPattern(Point p)
     => p switch
 {
@@ -479,7 +479,7 @@ static int NamedPattern(Point p)
 位置パターンは、コンストラクター呼び出し(`new`)の逆に当たる構文です。
 書き方も、コンストラクターと対になっています。
 
-```csharp
+```csharp {title="コンストラクター呼び出しと位置パターン"}
 // 位置指定で構築できるんなら、位置指定でマッチングできるべき
 var p1 = new Point(1, 2);
 var r1 = p1 is Point (1, 2);
@@ -506,13 +506,13 @@ var r4 = line is ((1, 2), (3, 4));
 まず、タプルの場合、コンパイラーの最適化によって、タプルのフィールドを直接参照するようなコードが生成されます。
 例えば以下のようなコードを書いた場合、
 
-```csharp
+```csharp {title="タプルに対する位置パターン"}
 public bool TupleSyntax((int a, int b) x) => x is (1, 2);
 ```
 
 以下のようなコードと同じような挙動をします。
 
-```csharp
+```csharp {title="タプルに対する位置パターンの展開結果"}
 // ValueTuple の場合は直接フィールドを参照する。
 public bool TupleSyntax((int a, int b) x)
 {
@@ -524,7 +524,7 @@ public bool TupleSyntax((int a, int b) x)
 見つかった場合は、それを使うコードが生成されます。
 例として以下のようなクラスを用意します。
 
-```csharp
+```csharp {title="分解可能なクラス"}
 using System.Runtime.CompilerServices;
 
 class X : ITuple
@@ -537,13 +537,13 @@ class X : ITuple
 
 この型に対して以下のようなコードを書いた場合、
 
-```csharp
+```csharp {title="コンパイル時に Deconstruct メソッドが見つかる場合"}
 public bool Deconstruct(X x) => x is (1, 2);
 ```
 
 以下のようなコードと同じような挙動をします。
 
-```csharp
+```csharp {title="コンパイル時に Deconstruct メソッドが見つかる場合の展開結果"}
 // コンパイル時に Deconstruct メソッドが見つかる場合はそれを使って分解。
 public bool Deconstruct(X x)
 {
@@ -556,13 +556,13 @@ public bool Deconstruct(X x)
 この場合、`ITuple`インターフェイス(`System.Runtime.CompilerServices`名前空間)を使って分解を試みます。
 例えば以下のように`object`で値を渡すコードを書いた場合、
 
-```csharp
+```csharp {title="コンパイル時に Deconstruct メソッドが見つからない場合"}
 public bool Object(object x) => x is (1, 2);
 ```
 
 以下のようなコードと同じような挙動をします。
 
-```csharp
+```csharp {title="コンパイル時に Deconstruct メソッドが見つからない場合の展開結果"}
 // コンパイル時の解決ができない場合、ITuple を実装しているかどうかを見る。
 // Length とインデクサーを使ってマッチング。
 public bool Object(object x)
@@ -579,7 +579,7 @@ public bool Object(object x)
 
 位置パターンに伴って、`switch`ステートメントの `()` の中に、複数の値を `,` 区切りで書けるようになりました。
 
-```csharp
+```csharp {title="複数の値に対する switch" highlight-text="switch (a, b)"}
 int Compare(int? a, int? b)
 {
     switch (a, b)
@@ -643,7 +643,7 @@ class Program
 以下のように、すべて `_` で値を破棄してしまう場合には `Deconstruct` メソッドを呼び出す必要がなく、
 実際、呼び出しが消えてなくなります。
 
-```csharp
+```csharp {title="Deconstruct が常に呼ばれる保証はない"}
 using System;
  
 class X
@@ -685,7 +685,7 @@ class Program
 
 また、引数の数が同じ位置パターンをいくつか並べた際にも、`Deconstruct` メソッドの呼び出しは1回にまとめられます。
 
-```csharp
+```csharp {title="引数の数が同じ位置パターンを並べる例"}
 class X
 {
     public int Value { get; }
@@ -724,7 +724,7 @@ class Program
 再び `Point` クラス(`int` 型の2つのプロパティ `X`、`Y` を持つ)を例に挙げます。
 以下のような書き方ができます。
 
-```csharp
+```csharp {title="プロパティ パターンの例"}
 static int M(Point p)
     => p switch
 {
@@ -736,7 +736,7 @@ static int M(Point p)
 
 このコードは概ね以下のような意味になります。
 
-```csharp
+```csharp {title="プロパティ パターンの展開結果"}
 var x = p.X;
 var y = p.Y;
 if (x is 1 && y is 2) return 0;
@@ -746,7 +746,7 @@ return -1;
 
 位置パターンと同様、型の明示もできます。
 
-```csharp
+```csharp {title="プロパティ パターンでの型の明示" highlight-text="Point { X: 0, Y: 0 }"}
 static int M(object obj)
     => obj switch
 {
@@ -760,7 +760,7 @@ static int M(object obj)
 
 ちなみに、プロパティ パターンと言いつつ、フィールドも参照できます。
 
-```csharp
+```csharp {title="プロパティ パターンでフィールドを参照する例"}
 using System;
  
 class X
@@ -796,7 +796,7 @@ class Program
 「位置パターンはコンストラクター呼び出しの逆」という話をしましたが、
 同様に、プロパティ パターンは[オブジェクト初期化子](../oop/oo_construct.md#member_initializer)と対になるものです。
 
-```csharp
+```csharp {title="オブジェクト初期化子とプロパティ パターン"}
 // 初期化子でプロパティ指定できるんなら、プロパティ指定でマッチングできるべき
 var p1 = new Point { X = 1, Y = 2 };
 var r1 = p1 is { X: 1, Y: 2 };
@@ -816,7 +816,7 @@ var r2 = p2 is (1, _) { Y: 2 };
 
 残念ながら、以下のようなコードには動作保証がないそうです。
 
-```csharp
+```csharp {title="順序保障がないとまずいコードの例"}
 using System;
  
 enum Type { A, B }
@@ -860,7 +860,7 @@ class Program
 
 C# 7.0 までのパターンだと、null チェックを楽に書く手段がなかったです。
 
-```csharp
+```csharp {title="C# 7.0 時点のパターンでの非 null パターン"}
 struct LongLongNamedStruct { }
  
 void M1(LongLongNamedStruct? x)
@@ -889,7 +889,7 @@ void M2(LongLongNamedStruct? x)
 そこで先ほどの `x is { }` を使います。
 以下のような書き方で、null 許容型の null チェックをしつつ、値を変数に受け取れます。
 
-```csharp
+```csharp {title="C# 8.0 での非 null パターン"}
 void M3(LongLongNamedStruct? x)
 {
     // (C# 8.0) プロパティ パターンであれば、null チェックを含む。
@@ -906,7 +906,7 @@ void M3(LongLongNamedStruct? x)
 
 C# 10.0 で、以下のように、入れ子のプロパティ・フィールド参照でプロパティ パターンを書けるようになりました。
 
-```csharp
+```csharp {title="入れ子のプロパティ参照" highlight-text="Name.Length: 1"}
 m(null);
 m(new X { Name = "" });
 m(new X { Name = "a" });
@@ -932,7 +932,7 @@ class X
 `Name.Length` と言う書き方でも `Name` の null チェックを含んでいます。
 `{ Name: { Length: 1 } }` をさらに展開すると、以下のようなコードとほぼ同じ意味になります。
 
-```csharp
+```csharp {title="入れ子のプロパティ パターンは null チェックを含む"}
     if (x is not null)
     {
         var name = x.Name;
@@ -954,7 +954,7 @@ class X
 C# 11で、`[]` を使ってリスト(配列や `List<T>` など)に対するパターン マッチングができるようになりました。
 例えば以下のような `switch` を書けます。
 
-```csharp
+```csharp {title="リストパターンの例"}
 var array = new[] { 1, 2 };
 
 Console.WriteLine(array switch
@@ -983,7 +983,7 @@ C# で新文法を追加する際には、既存の文法と比べて違和感�
 
 これに対して、(C# 11 では入らなかったんですが、将来) 「コレクション リテラル」みたいな文法で `[]` を使う事を考えたりもしているようです。
 
-```csharp
+```csharp {title="[] でコレクション初期化"}
 // (C# 11 時点で提案段階)
 using System.Collections.Immutable;
 
@@ -1000,7 +1000,7 @@ ImmutableArray<int> immutable = [1, 2];
 
 パターンに対して `[a, b]` と書く場合、2要素ピッタリのリスト出ないとマッチしません。
 
-```csharp
+```csharp {title="個数がピッタリでないとマッチしない"}
 var array = new[] { 1, 2 };
 
 Console.WriteLine(array is [1, 2]); // true
@@ -1010,7 +1010,7 @@ Console.WriteLine(array is [1]);    // false。部分一致ではダメ。
 部分一致させたい場合、余る部分に `..` を置けばマッチさせることができます。
 例えば、以下のようなコードで、「1, 2 で始まって、長さ2以上のリスト」にマッチできます。
 
-```csharp
+```csharp {title="「1, 2 で始まって、長さ2以上のリスト」にマッチ"}
 var array = new[] { 1, 2 };
 
 match(new[] { 1 }); // false
@@ -1029,7 +1029,7 @@ static void match(int[] array)
 
 `..` は先頭や中間にも書けます。
 
-```csharp
+```csharp {title="先頭、中間の .."}
 var a1 = new[] { 1, 2 };
 var a2 = new[] { 1, 2, 2 };
 var a3 = new[] { 1, 2, 1, 2 };
@@ -1047,7 +1047,7 @@ Console.WriteLine(a3 is [.., 1, 2]); // true
 
 ちなみに、2か所以上に `..` を置いてしまうとコンパイル エラーになります。
 
-```csharp
+```csharp {title="2か所以上に .. を置くとコンパイル エラー"}
 var array = new[] { 1, 2 };
 
 Console.WriteLine(array is [.., ..]);
@@ -1058,7 +1058,7 @@ Console.WriteLine(array is [.., ..]);
 [リスト パターン](#list)はカテゴライズするなら[再帰パターン](#recursive)の一種です。
 `[]` の中の各要素には任意のパターンを書くことができます。
 
-```csharp
+```csharp {title="リスト パターン中の再帰パターン"}
 using System.Numerics;
 
 static bool match1(int[] array)
@@ -1081,7 +1081,7 @@ static bool match2((int x, int y)[] points)
 
 また、スライス パターンも、`..` の後ろに続けてパターンを書くことができます。
 
-```csharp
+```csharp {title=".. に再帰でパターンを付ける"}
 static bool match1(ReadOnlySpan<int> span) => span switch
 {
     [> 0, .. var rest] => match1(rest), // 先頭が正の数で、残りを再帰的に判定
@@ -1095,7 +1095,7 @@ static bool match2(int[] array)
 
 よく使いそうな例でいうと、「先頭数バイトが特定のパターンの時に読み飛ばし」みたいなことができます。
 
-```csharp
+```csharp {title="UTF-8 の BOM 読み飛ばし"}
 var utf8 = File.ReadAllBytes("a.txt");
 
 foreach (var b in removeBom(utf8))
@@ -1113,7 +1113,7 @@ static ReadOnlySpan<byte> removeBom(ReadOnlySpan<byte> utf8)
 割かしべたに長さ (`Length` もしくは `Count` プロパティ)、インデックス (`a[i]`) やスライス (`a[..]`) に展開されます。
 例えば以下のようなリスト パターンを書いた場合、
 
-```csharp
+```csharp {title="リスト パターンを使った回文判定の例"}
 Console.WriteLine(palindrome(new int[0]));              // true
 Console.WriteLine(palindrome(new[] { 1 }));             // true
 Console.WriteLine(palindrome(new[] { 1, 2 }));          // false
@@ -1131,7 +1131,7 @@ static bool palindrome(ReadOnlySpan<int> list) => list switch
 
 以下のようなコードとほぼ同じ意味になります。
 
-```csharp
+```csharp {title="palindrome の展開結果"}
 static bool palindrome(ReadOnlySpan<int> list) => list.Length switch
 {
     0 or 1 => true,
@@ -1146,7 +1146,7 @@ static bool palindrome(ReadOnlySpan<int> list) => list.Length switch
 `list[i..j]` がパフォーマンス的にいまいちなコードになっている場合、
 リスト パターンも非効率になります。
 
-```csharp
+```csharp {title="スライス パターンは文字通りスライスを作る"}
 static void m1(int[] array)
 {
     // 配列に対するスライスは新しい配列を作っちゃう(= 遅い)。
@@ -1175,7 +1175,7 @@ static void m2(ReadOnlySpan<int> span)
 使った題材は、数式を扱うようなクラスです。
 要するに、例えば、「<math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi><mo>×</mo><mi>x</mi><mo>+</mo><mn>1</mn></math>」というような式を、以下のようなクラスで表します。
 
-```csharp
+```csharp {title="数式を表す Node クラス"}
 public abstract class Node
 {
     public static readonly Node X = new Var();
@@ -1222,7 +1222,7 @@ public class Mul : Node
 こういう処理は、`switch`式と位置パターンを使って以下のように書けます。
 (コード全体: [Expressions/Program.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Data/Patterns/Expressions/Program.cs))
 
-```csharp
+```csharp {title="switch 式と位置パターンを使って式の簡約化"}
 public static Node Simplify(this Node n)
     => n switch
 {
@@ -1251,7 +1251,7 @@ public static Node Simplify(this Node n)
 
 C# 7.3 までだと、この処理は以下のように書くことになります。
 
-```csharp
+```csharp {title="C# 7.3 以前での書き方"}
 public static Node ClassicSimplify(this Node n)
 {
     if (n is Add a)
@@ -1310,7 +1310,7 @@ C# 9.0 で `and` や `or` などのキーワードを使ってパターンの組
 
 例えば、複数のインターフェイスをすべて実装しているかを判定するとかに使えます。
 
-```csharp
+```csharp {title="and パターンで複数のインターフェイスを実装しているか判定"}
 int M(object x) => x switch
 {
     // 2つのインターフェイスを両方実装している場合にマッチ。
@@ -1325,7 +1325,7 @@ interface IB { int B { get; } }
 
 その他、後述する関係演算パターンと組み合わせて、「0～10まで」みたいな数値の範囲を表すことができます。
 
-```csharp
+```csharp {title="数値の範囲指定パターン"}
 int M(byte x) => x switch
 {
     >= 0 and < 10 => 0,
@@ -1341,7 +1341,7 @@ int M(byte x) => x switch
 
 単純に複数の値にマッチさせたり、複数の型にマッチさせることができます。
 
-```csharp
+```csharp {title="複数の値にマッチ"}
 bool IsSmallPrime(int x) => x is 2 or 3 or 5 or 7;
  
 bool IsTrue(bool? x) => x switch
@@ -1355,13 +1355,13 @@ bool IsTrue(bool? x) => x switch
 
 また、複数の型にマッチさせたりもできます。
 
-```csharp
+```csharp {title="複数の型にマッチ"}
 bool IsByte(object x) => x is byte or sbyte;
 ```
 
 `and` と同様、後述する関係演算パターンとの組み合わせでも使えます。
 
-```csharp
+```csharp {title="関係演算と or パターンの組み合わせ"}
 int Triangular(int x) => x switch
 {
     < -1 or > 1 => 0,
@@ -1376,7 +1376,7 @@ C# のキーワード追加では恒例行事ですが、
 
 例えば、あまり意味のあるコードではないものの以下のようなコードは有効な C# コードになります。
 
-```csharp
+```csharp {title="and, or は文脈キーワード"}
 // 水色の部分は型名の or, and。青色の部分はキーワードの or, and。
 bool M(object x) => x is or or and and and;
  
@@ -1391,7 +1391,7 @@ class or { }
 
 おそらく一番使い道があるのは `not null` だと思います。
 
-```csharp
+```csharp {title="not null"}
 using System;
  
 #nullable enable
@@ -1411,7 +1411,7 @@ void M(string? s)
 あと、いわゆる early return に使えます。
 以下のように、特定条件を満たさないときに早々に `return` ステートメントで関数を抜けてしまうときに `not` パターンが使えます。
 
-```csharp
+```csharp {title="not パターンで early return"}
 using System;
  
 void PositivePattern(object x)
@@ -1441,7 +1441,7 @@ void EarlyReturn(object x)
 
 例えば以下のような書き方をすると、`and` の結合が優先されます。
 
-```csharp
+```csharp {title="and が優先"}
 bool IsAsciiLetter(char c) => c is >= 'a' and <= 'z' or >= 'A' and <= 'Z';
 ```
 
@@ -1452,14 +1452,14 @@ bool IsAsciiLetter(char c) => c is >= 'a' and <= 'z' or >= 'A' and <= 'Z';
 (括弧付きパターン(parenthesized patterns)と言ったりもします。)
 先ほどの `IsAsciiLetter` の例は以下のようにも書けます。
 
-```csharp
+```csharp {title="() を付けて優先度を明示"}
 // () を付けて優先度を明示。
 bool IsAsciiLetter(char c) => c is (>= 'a' and <= 'z') or (>= 'A' and <= 'Z');
 ```
 
 前述の「複数のインターフェイスをすべて実装しているかを判定」と「`not` パターンを使った early return」の組み合わせもできます。
 
-```csharp
+```csharp {title="not (and)"}
 using System;
  
 void M(object x)
@@ -1510,7 +1510,7 @@ int M(byte x) => x switch
 `byte` も高々256個の値しか持ちません。
 [型スイッチのページにも書いていますが](typeswitch.md#exhaustive)、パターン マッチングではこれらの値をすべて網羅しているかどうか(exhaustiveness: 網羅性)の検査をしてくれます。
 
-```csharp
+```csharp {title="bool, bool? の網羅性検査"}
 // 無警告
 int A(bool x) => x switch
 {
@@ -1536,7 +1536,7 @@ int C(bool? x) => x switch
 また、数値型に対しては、[関係演算パターン](#relational-patterns)を使って「100未満」と「100以上」というように相補的に値を網羅しているかを検査できます。
 例えば以下のコードには条件漏れがあって警告を起こします。
 
-```csharp
+```csharp {title="実は条件漏れがあるコード"}
 // 警告を起こす
 int M(byte x) => x switch
 {
@@ -1549,7 +1549,7 @@ int M(byte x) => x switch
 
 値パターンや `or` パターンとの組み合わせでも網羅性の検査がかかります。
 
-```csharp
+```csharp {title="値パターンや or パターンとの組み合わせでの網羅性検査"}
 // 整数の場合は値パターンとかその or パターン、関係演算パターンの組み合わせでも網羅性検査がかかる
 int M(uint x) => x switch
 {
@@ -1561,7 +1561,7 @@ int M(uint x) => x switch
 
 一般の型に対しても、「null か非 null か」みたいな条件が相補的で、これに対しても網羅性の検査がかかります。
 
-```csharp
+```csharp {title="null か非 null かの網羅性"}
 // null か非 null かで網羅性検査がかかっていて、どれか1行でも欠けていると警告
 int M(int? x, int? y) => (x, y) switch
 {
@@ -1581,7 +1581,7 @@ int M(int? x, int? y) => (x, y) switch
 
 一番わかりやすいのは[破棄パターン](#discard)で、これは「何にでも一致するパターン」なので、その下に何かを書くとエラーになります。
 
-```csharp
+```csharp {title="破棄パターンの下に別条件を書いても絶対に到達できない"}
 int M(object obj) => obj switch
 {
     _ => 0,
@@ -1591,7 +1591,7 @@ int M(object obj) => obj switch
 
 当然ですが、全く同じ条件が2つ以上ある場合にも、1つ目以外には絶対に到達しないのでエラーになります。
 
-```csharp
+```csharp {title="同じ条件が並ぶとエラー"}
 int M(object obj) => obj switch
 {
     string s => s.Length,
@@ -1602,7 +1602,7 @@ int M(object obj) => obj switch
 ちなみに、[`when`句](typeswitch.md#switch)だと重複チェックが漏れることがあります。
 一方、同じような条件でも、[再帰パターン](#recursive)を使うとチェックが働きやすいです。
 
-```csharp
+```csharp {title="再帰パターンの方が重複チェックが正確"}
 int M1(object obj) => obj switch
 {
     // when 句を使うと「同じ条件」判定ができなくなる。コンパイルできてしまう。
@@ -1624,7 +1624,7 @@ int M2(object obj) => obj switch
 全ての値を網羅済みのところの後ろに条件を足しても、その行には絶対に来ないのでエラーにできます。
 例えば以下のコードはコンパイル エラーになります。
 
-```csharp
+```csharp {title="網羅済みのところの後ろに追加の条件を足すとエラー"}
 int M(bool a, bool b) => (a, b) switch
 {
     (false, false) => 0,

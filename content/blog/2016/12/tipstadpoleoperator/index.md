@@ -23,7 +23,7 @@ C#には隠しキーワードとして[`__makeref`などの見慣れないキー
 副作用を起こさない(非変)インクリメント、デクリメント(non-modified increment/decrement)です。
 実際、以下のようなコードを実行することができます。
 
-```csharp
+```csharp {title="非変インクリメント・デクリメント"}
 var a = 10;
 Console.WriteLine(-~a); // 11
 Console.WriteLine(~-a); // 9
@@ -113,7 +113,7 @@ ideoneは確かMonoで動いているはずで、MonoのC#コンパイラーも�
 
 例えば、以下のようなコードを書くと、`throw`の行は通らずプログラムが正常終了します。
 
-```csharp
+```csharp {title="~x + 1 == -x の確認"}
 using System;
 
 class Program
@@ -182,7 +182,7 @@ C#でも、`~-`みたいに書かれると、一瞬それを期待しちゃう�
 - `a+ ++b`
 - `a+ + +b`
 
-```csharp
+```csharp {title="a+++b"}
 using static System.Console;
 
 class Program

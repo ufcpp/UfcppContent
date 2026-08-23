@@ -66,7 +66,7 @@ aliases: []
 
 - [Remove char[] allocation in CheckIriUnicodeRange #33641](https://github.com/dotnet/corefx/pull/33641)
 
-```csharp
+```csharp {title="配列を stackalloc に置き換え"}
 //before
 char[] chars = new char[2] { highSurr, lowSurr };
  
@@ -86,7 +86,7 @@ ReadOnlySpan<char> chars = stackalloc char[2] { highSurr, lowSurr };
 
 以下のような条件演算子は結構頻出です。
 
-```csharp
+```csharp {title="データが短い時だけ stackalloc"}
 Span<byte> datetimeBuffer = ((uint)length <= 16) ? stackalloc byte[16] : new byte[length];
 ```
 

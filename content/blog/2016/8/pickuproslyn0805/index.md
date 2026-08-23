@@ -64,7 +64,7 @@ C# 7/VB 15には状況が「Finishing(最終作業中)」のものばっかり�
 
 ちなみにもう1つの問題として、今、↓みたいな書き方してるコードが結構たくさんあるはずで、これの互換性を崩しかねないからって話もあります。
 
-```csharp
+```csharp {title="MainからMainAsyncを呼ぶコード"}
 class Program
 {
     static void Main()
@@ -129,7 +129,7 @@ VS "15" Previewのリリース ノートでも、「VS "15"で新たに入る機
 
 現状、とりあえず相当厳しい方に倒して実装しています。すなわち、「`x`は、その式を含むステートメント内でだけ使える」というものです。要するに、以下のコードはコンパイル エラーに。
 
-```csharp
+```csharp {title="2016/8/5時点での実装"}
 static void X(string s)
 {
     var value = int.TryParse(s, out var x) ? x : 0; // x はこのステートメント内でしか使えない

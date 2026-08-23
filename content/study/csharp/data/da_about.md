@@ -215,7 +215,7 @@ IEnumerable インターフェイスとイテレーターブロック（「[イ�
 例えば、C# 2.0 までで書きがちだった（IEnumrable の実装が面倒だったため）のは以下のようなコードです。
 （データ列に対して、全ての要素を二乗したデータ列を作る。）
 
-```csharp
+```csharp {title="List でデータ処理"}
 static List<int> Square(int[] source)
 {
     var results = new List<int>();
@@ -231,7 +231,7 @@ static List<int> Square(int[] source)
 
 C# 3.0 以降では以下のように書きます。
 
-```csharp
+```csharp {title="イテレーターブロックでデータ処理"}
 static IEnumerable<int> Square(IEnumerable<int> source)
 {
     foreach (var x in source)
@@ -248,7 +248,7 @@ static IEnumerable<int> Square(IEnumerable<int> source)
 
 もちろん、実際にはさらに、<code>x * x</code> の部分を外に出してしまって、以下のように書きます。
 
-```csharp
+```csharp {title="標準関数の Enumerable.Select 的に実装"}
 static IEnumerable<int> Select(IEnumerable<int> source, Func<int, int> filter)
 {
     foreach (var x in source)
@@ -269,7 +269,7 @@ C# 3.0 以降では、「[拡張メソッド](../functional/sp3_extension.md#exm
 例えば、前節（「[データに対する基本的な操作](#basic_sample)」）の最後の例を、
 拡張メソッドを使わずに書くと、以下のようになります。
 
-```csharp
+```csharp {title="拡張メソッドを使わない場合"}
 Enumerable.Aggregate(
     Enumerable.Where(
         Enumerable.Select(
@@ -293,7 +293,7 @@ Enumerable と書かなきゃいけなくなった分うっとおしいという
 
 一方で、拡張メソッドを使えば、以下のように書き換えることができます。
 
-```csharp
+```csharp {title="拡張メソッドを使う場合"}
 data.Where(x => (x % 2) == 1)
     .Select(x => x * x)
     .Where(x => x > 20)
@@ -339,7 +339,7 @@ C# なら、「[イテレーター](sp2_iterator.md#iterator)」を使って以�
 
 まず始めに、連続した同じ値を1つにまとめる処理：
 
-```csharp
+```csharp {title="連続した同じ値を1つにまとめる"}
 /// <summary>
 /// 隣り合ってる同じ値を1つにまとめてしまう。
 /// </summary>
@@ -367,7 +367,7 @@ public static IEnumerable<T> DistinctAdjacently<T>(this IEnumerable<T> seq)
 次に、連番になっている部分をグループ化する処理は、2段階に分けて考えましょう。
 まずは、階差を求めます。
 
-```csharp
+```csharp {title="階差を求める"}
 /// <summary>
 /// 整数列の階差を作る。
 /// </summary>
@@ -394,7 +394,7 @@ public static IEnumerable<ValueDifferencePair> Differences(this IEnumerable<int>
 
 そして、「特定の条件を満たす場所でデータ列を切る」という処理を考えます。
 
-```csharp
+```csharp {title="特定の条件を満たす場所でデータ列を切る"}
 /// <summary>
 /// 特定の条件を満たすところでデータ列を分割する。
 /// （条件を満たした箇所がサブ データ列の末尾になる。）
@@ -436,7 +436,7 @@ public static IEnumerable<IEnumerable<T>> Split<T>(this IEnumerable<T> seq, Pred
 
 これらを繋いで、結局、所望の処理は、以下のようになります。（まさに、データストリームに対するパイプライン処理になっています。）
 
-```csharp
+```csharp {title="所望の処理"}
 /// <summary>
 /// 整数列から、連番になっている部分を、{ 初項, 項数 } のペアで抜き出す。
 /// </summary>
@@ -457,7 +457,7 @@ public static IEnumerable<ContinuousSequence> GetContinuousSequence(this IEnumer
 じゃあ、日本語になっていたらどうでしょうか。
 （C# では、変数名やメソッド名に日本語を利用できます。）
 
-```csharp
+```csharp {title="所望の処理"}
 seq.連続した同じ値を1つにまとめる()
    .階差を求める()
    .分割(x => x.Difference != 1)

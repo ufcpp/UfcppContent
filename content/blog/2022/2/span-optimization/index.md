@@ -29,13 +29,13 @@ aliases: []
 今日は、以下のような、
 全要素が定数の配列を書いたときの最適化の話になります。
 
-```csharp
+```csharp {title="全要素が定数の配列"}
 ReadOnlySpan<int> data = new[] { 1, 2, 3, 4, 5, 6, 7, 8 };
 ```
 
 例えば以下のような2つのメソッドを比べてみましょう。
 
-```csharp
+```csharp {title="ReadOnlySpan int と sbyte"}
 static int M1(int i)
 {
     ReadOnlySpan<int> table = new[] { 1, 0, -1, 0 }; // 差はこの行だけ

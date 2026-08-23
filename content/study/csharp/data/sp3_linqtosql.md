@@ -282,7 +282,7 @@ LINQ to SQL が使える状態になりました。
 
 あとは、例えば、以下のようにしてデータベースにアクセスすることができます。
 
-```csharp
+```csharp {title="LINQ to SQL でデータベースアクセス"}
 static string basedir = AppDomain.CurrentDomain.BaseDirectory;
 static string ConnectionString =
   "Data Source=.\\SQLEXPRESS;AttachDbFilename=\"" +
@@ -305,7 +305,7 @@ foreach (var s in q)
 ConnectionString の .mdf ファイルのパスの部分は好きな場所に変更してもかまいません。
 例えば、以下のように My Documents フォルダにデータを記憶するのもいいと思います。
 
-```csharp
+```csharp {title="My Documents フォルダに .mdf ファイルを保存"}
 static string basedir =
   System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\";
 ```
@@ -322,7 +322,7 @@ static string basedir =
 データベースへのデータの追加も非常に簡単で、
 例えば以下のように、DataContext を作ってメンバー Table に InsertOnSubmit するだけです。
 
-```csharp
+```csharp {title="データの追加"}
 var db = new ComicDataContext(ConnectionString);
 Author a = new Author();
 a.Name = "赤松健";
@@ -337,7 +337,7 @@ SubmitChanges メソッドを呼び出した時点で反映します。
 
 値の更新も、単にエンティティクラスのメンバーの値を変更するだけで OK です。
 
-```csharp
+```csharp {title="データの更新"}
 var db = new ComicDataContext(ConnectionString);
 Author a = db.Author.Single(x => x == "赤松健");
 a.Kana = "あかまつけん";
@@ -369,7 +369,7 @@ DataContext には Log プロパティ（TextWriter 型）があって、
 
 例えば、標準出力にログを表示したい場合、以下のようにします。
 
-```csharp
+```csharp {title="標準出力にログを出力"}
 var db = new ComicDataContext(ConnectionString);
 db.Log = Console.Out;
 ```
@@ -380,7 +380,7 @@ db.Log = Console.Out;
 
 各シリーズの、作家名・出版社名・既刊の巻数を表示。
 
-```csharp
+```csharp {title="テーブル全部結合"}
 var db = new ComicDataContext(ConnectionString);
 db.Log = Console.Out;
 
@@ -410,7 +410,7 @@ C# のコードはシンプルですが、生成される SQL 文は結構でか
 クエリ式はなくて、一見するとデータベース問い合わせをしているようなコードには見えないんですが、
 Author、Series テーブルへのアクセスの際、サーバに問い合わせが行われます。
 
-```csharp
+```csharp {title="テーブルに直接アクセス"}
 var db = new ComicDataContext(ConnectionString);
 db.Log = Console.Out;
 
@@ -429,7 +429,7 @@ foreach (var a in db.Author) // ここと
 IQueryable は、クエリ式を使って作ったタイミングではなく、
 foreach のところでサーバへの問い合わせを行います。
 
-```csharp
+```csharp {title="サーバへの問い合わせのタイミングは foreach のところ"}
 var db = new ComicDataContext(ConnectionString);
 db.Log = Console.Out;
 
@@ -456,7 +456,7 @@ Console.Write("end foreach\n");
 foreach のたびにサーバに問い合わせるのが嫌なら、
 以下のようにあらかじめ ToList などで in-memory オブジェクトに変換しておきます。
 
-```csharp
+```csharp {title="あらかじめリスト化"}
 var db = new ComicDataContext(ConnectionString);
 db.Log = Console.Out;
 
@@ -509,7 +509,7 @@ str LIKE xxx%、
 str LIKE %xxx、
 str LIKE %xxx% というような感じで解釈されます。
 
-```csharp
+```csharp {title="クエリ式中のメソッド呼び出し"}
 var db = new ComicDataContext(ConnectionString);
 db.Log = Console.Out;
 
@@ -529,7 +529,7 @@ foreach (var s in q)
 
 あと、面白そうなのでは、Array.Contains が IN 演算子に変換されます。
 
-```csharp
+```csharp {title="Array.Contains"}
 var db = new ComicDataContext(ConnectionString);
 db.Log = Console.Out;
 

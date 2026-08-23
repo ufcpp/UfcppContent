@@ -36,7 +36,7 @@ C# 7では、関数の中で別の関数を定義して使うことができま�
 
 例えば以下のように書けます。
 
-```csharp
+```csharp {title="ローカル関数の例" highlight-text="int f(int n) =&gt; n &gt;= 1 ? n * f(n - 1) : 1;"}
 using System;
 
 class Program
@@ -61,7 +61,7 @@ class Program
 
 また、メソッド内に限らず、[関数メンバー](../structured/st_function.md#sec-function-member)ならどれの中でも定義できます。
 
-```csharp
+```csharp {title="メソッドに限らず、プロパティやコンストラクター、演算子等の中でローカル関数を定義する例"}
 class Sample
 {
     public Sample()
@@ -92,7 +92,7 @@ class Sample
 
 ローカル関数の追加当初、ローカル関数には属性を付けれなかったんですが、C# 9.0 でできるようになりました。
 
-```csharp
+```csharp {title="ローカル関数に属性を付ける"}
 using System;
 using System.Diagnostics.CodeAnalysis;
  
@@ -132,7 +132,7 @@ C# 8.0 の [null 許容参照型](../resource/nullablereferencetype.md)がらみ
 あるメソッド`M`の中から、その`M`でしか使わないメソッドを呼び出したい場面が時々あります。
 このとき、ローカル関数を使わないと、`M`でしか使わないメソッドに`MInternal`など、あまり意味のない名前を付ける羽目になり、不格好です。
 
-```csharp
+```csharp {title="不格好な Internal メソッド"}
 static void M()
 {
     // 何らかの前準備とか
@@ -149,7 +149,7 @@ static void MInternal()
 この`MInternal`は、`M`以外のメソッドからも呼べてしまうという問題が発生します。
 こういう場合に、ローカル関数を使えば、以下のように書くことができ、呼びたい場所からだけ呼べるようになります。
 
-```csharp
+```csharp {title="ローカル関数を使って呼べる場所をメソッド内に限定"}
 static void M()
 {
     // 何らかの前準備とか
@@ -170,7 +170,7 @@ static void M()
 例として、標準ライブラリ中の処理を1つ自作してみましょう。`Enumerable`クラス(`System.Linq`名前空間)の`Where`メソッドをまねてみます。
 まず、単純な書き方をしてみましょう。この書き方には、コメントに書いてあるように、少し欠陥があります。
 
-```csharp
+```csharp {title="Whereをまねたもの(欠陥あり)"}
 using System;
 using System.Collections.Generic;
 
@@ -193,7 +193,7 @@ static class MyEnumerable
 コメント中に「メソッドを呼んだ時点では引数チェックが働かない」とありますが、使う側のコードも書いてみると問題がよりはっきりするでしょう。
 以下のように、期待されるのと異なるタイミングで例外が起きます。
 
-```csharp
+```csharp {title="欠陥版の問題点の例"}
 using Iterator1;
 using System;
 using System.Collections.Generic;
@@ -220,7 +220,7 @@ class Program
 
 そこで、よく以下のような書き方をします。
 
-```csharp
+```csharp {title="Whereをまねたもの(実物に近い書き方)"}
 using System;
 using System.Collections.Generic;
 
@@ -247,7 +247,7 @@ static class MyEnumerable
 こういう場面こそ、ローカル関数の出番です。
 以下のように書き直すことができます。
 
-```csharp
+```csharp {title="Whereをまねたもの(ローカル関数を使った実装)"}
 using System;
 using System.Collections.Generic;
 
@@ -279,7 +279,7 @@ static class MyEnumerable
 この場合も、1つのメソッドからしか呼ばれないメソッドが作られがちです。
 例えば以下のようなコードになります。
 
-```csharp
+```csharp {title="ToArrayするためだけに作られるメソッド"}
 using System.Collections.Generic;
 using System.Linq;
 
@@ -301,7 +301,7 @@ static class MyEnumerable
 
 これも、以下のように書き直せます。
 
-```csharp
+```csharp {title="ローカル関数を使って書き直し"}
 using System.Collections.Generic;
 using System.Linq;
 
@@ -327,7 +327,7 @@ static class MyEnumerable
 非同期メソッドを呼び出すと、呼び出すたびに`Task`クラス(`System.Threading.Tasks`名前空間)のインスタンスが作られます。
 しかし、これを、1度だけ呼んで、2度目以降はキャッシュして持っている`Task`を返したいことがあります。
 
-```csharp
+```csharp {title="Taskをキャッシュする例"}
 static async Task MainAsync()
 {
     // 何度か呼ぶけども、キャッシュされているので通信は1回きり
@@ -355,7 +355,7 @@ static async Task<string> LoadAsyncInternal()
 
 これも、以下のように書き直せます。
 
-```csharp
+```csharp {title="ローカル関数を使って書き直し"}
 static Task<string> LoadAsync()
 {
     async Task<string> inner()
@@ -389,7 +389,7 @@ C#開発者も、「ラムダ式が最初からあれば、匿名メソッド式
 
 ラムダ式は、以下の例のように、引数リストと関数本体を `=>`でつないで書きます。
 
-```csharp
+```csharp {title="ラムダ式の例1"}
 (int x) =>
 {
     var sum = 0;
@@ -407,24 +407,24 @@ C#開発者も、「ラムダ式が最初からあれば、匿名メソッド式
 
 `=>` の後ろの関数本体の部分は、式が1つだけの場合、`{}`と`return`を省略して、以下のように書くことができます。
 
-```csharp
+```csharp {title="ラムダ式の例2 (本体が式1つだけの場合)"}
 (int x) => x * x
 ```
 
 また、`=>`の前の引数リストでは、引数の型を推論できる場合には型を省略できます。
 このとき、引数が1つだけであれば、`()`も省略できます。
 
-```csharp
+```csharp {title="ラムダ式の例3 (引数の型の省略)"}
 (x, y) => x * y
 ```
 
-```csharp
+```csharp {title="ラムダ式の例3 (引数の型の省略)"}
 x => x * x
 ```
 
 例えば、以下のような使い方ができます。
 
-```csharp
+```csharp {title="匿名関数の例" highlight-ranges="sha256:c4783fc1a1bbc9c27b5869e5691a8b211ad4c8efdf177ad8254bee2f777d5e76;10:20-10:30,11:21-11:31"}
 using System;
 using System.Linq;
 
@@ -461,7 +461,7 @@ class Program
 - ジェネリックにできない
 - 引数の既定値を持てない
 
-```csharp
+```csharp {title="匿名関数の再帰呼び出しは面倒"}
 // ローカル関数は素直に再帰を書ける
 int f1(int n) => n >= 1 ? n * f1(n - 1) : 1;
 
@@ -470,7 +470,7 @@ Func<int, int> f2 = null;
 f2 = n => n >= 1 ? n * f2(n - 1) : 1;
 ```
 
-```csharp
+```csharp {title="匿名関数はイテレーターにできない"}
 // ローカル関数ならイテレーターにできる
 IEnumerable<int> g1(IEnumerable<int> items)
 {
@@ -486,7 +486,7 @@ Func<IEnumerable<int>, IEnumerable<int>> g2 = items =>
 }
 ```
 
-```csharp
+```csharp {title="匿名関数はジェネリックにできない"}
 // ローカル関数ならジェネリックに使える
 bool eq1<T>(T x, T y) where T : IComparable<T> => x.CompareTo(y) == 0;
 Console.WriteLine(eq1(1, 2));
@@ -501,7 +501,7 @@ Console.WriteLine(eq2(1, 2));
 Console.WriteLine(eq2("aaa", "aaa"));
 ```
 
-```csharp
+```csharp {title="匿名関数の引数には既定値を与えられない"}
 // ローカル関数の引数には既定値を与えられる
 int f1(int n = 0) => 2 * n;
 Console.WriteLine(f1());
@@ -538,7 +538,7 @@ Console.WriteLine(f2(5));
 ローカル関数でも匿名関数でも、周りの(定義している関数内の)ローカル変数や引数を取り込んで使うことができます。
 例えば以下のようなコードが書けます。
 
-```csharp
+```csharp {title="ローカル変数の取り込みの例" highlight-ranges="sha256:d126a79f993140dc6a218ba0a8fce848a2771ae15a1c87a02dee29a5bba6c0c0;15:35-15:36,19:26-19:27"}
 using System;
 using System.Linq;
 
@@ -572,7 +572,7 @@ class Program
 
 捕獲したローカル変数は書き換えることもできます。
 
-```csharp
+```csharp {title="捕獲したローカル変数をクロージャ内で書き換える例"}
 using System;
 
 class Program
@@ -612,7 +612,7 @@ C# 8.0 から、外部の変数を捕獲しないことを明示するため、
 ローカル関数に `static` 修飾を付けれるようになりました。
 この機能を<strong id="key-static-local-function" class="keyword">静的ローカル関数</strong>(static local function)と呼びます。
 
-```csharp
+```csharp {title="静的ローカル関数の例"}
 void M(int a)
 {
     // 外部の変数(引数)を捕獲(クロージャ化)。
@@ -630,7 +630,7 @@ void M(int a)
 
 ちなみに、「静的」の名前が示す通り、インスタンス メンバーの参照もできません。
 
-```csharp
+```csharp {title="静的ローカル関数はインスタンス メンバーに触れない" highlight-ranges="sha256:230f1ec87abe00b1645c51a902f8d4e182da4ec4cf724c6824839fdbb57dc72f;9:9-9:15,12:9-12:15"}
 class LocalFunction
 {
     public static int StaticProperty { get; set; }
@@ -650,7 +650,7 @@ class LocalFunction
 ちなみに、定数や `nameof` であれば外側のスコープにあるものに触ることができます。
 例えば以下のコードはコンパイルできます。
 
-```csharp
+```csharp {title="定数なのでセーフ"}
 using System;
  
 const string s = "bc";
@@ -670,7 +670,7 @@ Console.WriteLine(m());
 意味的には[静的ローカル関数](#static-local-function)と全く同じで、「外部の変数を捕獲しない」という宣言になります。
 ラムダ式、匿名メソッド式ともに、式の前に `static` を付けます。
 
-```csharp
+```csharp {title="静的匿名関数" highlight-ranges="sha256:42eef5c0699fe151a666f45b42c553970dd1b7c1451a5c27fa7b6789c8afdeb6;6:22-6:28,7:22-7:28,10:22-10:28,11:22-11:28"}
 using System;
  
 int a = 0;
@@ -693,7 +693,7 @@ Func<int, int> ng2 = static delegate (int x) { return a * x; };
 静的ローカル関数にしても静的匿名関数にしても、ローカル変数の捕獲(によるパフォーマンスのペナルティ)は避けることができますが、静的フィールドの読み書きは普通にできます。
 例えば以下のコードは有効な C# 8.0 コードになります。
 
-```csharp
+```csharp {title="副作用がある静的ローカル関数の例"}
 class StaticLocalFunction
 {
     private static int _count;
@@ -720,7 +720,7 @@ class StaticLocalFunction
 新たに変数・引数を定義できる機能です。
 外側のものを「影で覆い隠す」という意味で shadowing と呼びます。
 
-```csharp
+```csharp {title="シャドーイングの例"}
 void M(int a)
 {
     int x;
@@ -745,7 +745,7 @@ C# 10.0 で、ラムダ式の戻り値を明示できるようになりました
 また、属性も付けられるようになりました。
 例えば以下のようなコードが書けます。
 
-```csharp
+```csharp {title="ラムダ式の戻り値の明示と属性の追加" highlight-ranges="sha256:98f154b82b53f4c47a83a0ab82b10ff983f6b13c7c2b5c2e27f2790cdb3f80a8;2:5-2:8,3:5-3:8"}
 Func<int, int, int> f =
     [A]
     int (int x, int y)
@@ -759,7 +759,7 @@ class AAttribute : Attribute { }
 「[自然な型](sp_delegate.md#natural-type)」の方でも書いていますが、
  .NET 6.0 (C# 10.0 と同世代)の Web アプリ テンプレートで作られるコードは以下のようになっています。
 
-```csharp
+```csharp {title="Web アプリの .NET 6 新テンプレート"}
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
@@ -781,7 +781,7 @@ app.Run();
 戻り値の型は、引数の `()` の前に書きます。
 例えば以下のような書き方ができます。
 
-```csharp
+```csharp {title="ラムダ式の戻り値の型を明示する例" highlight-ranges="sha256:fa52fc5713a71f6f1ef60b90433644b058c7f46be60607a9469fa5936eb80061;4:21-4:24,12:21-12:24"}
 // 新文法。
 // ラムダ式に戻り値の型を明示。
 // (引数も明示。)
@@ -805,7 +805,7 @@ Func<int, int> f4 = int x => x;
 必要になる場面はそう多くないかもしれません。
 以下のようなコード(右辺のラムダ式の部分は C# 9.0 でも有効)でも問題なく自然な型決定ができます。
 
-```csharp
+```csharp {title="引数の型だけでも自然な型決定がたいてい可能"}
 // 引数の int から、戻り値の型が int に決定する。
 // その後、ラムダ式の型は Func<int, int> として決定できる。
 var f = (int x) => x;
@@ -818,7 +818,7 @@ var f = (int x) => x;
 ラムダ式の中身自体がターゲット型推論に依存している場合などです。
 サンプル コードとして[条件演算子のターゲット型推論](../cheatsheet/ap_ver9.md#target-typed-conditional)を使いますが、以下のような式は後者のみ有効になります。
 
-```csharp
+```csharp {title="ラムダ式の中身にターゲット型推論を含む場合の例"}
 // 条件演算子だけでは int と null の共通型が決定できなくて、戻り値の型が決まらない。
 // (条件演算子の後方互換性のために掛かってる制限。)
 var f1 = (bool x, int y) => x ? y : null;
@@ -831,14 +831,14 @@ var f2 = int? (bool x, int y) => x ? y : null;
 ちなみに、[静的匿名関数](#static-local-function)の `static` と併用する場合、戻り値の型を書く場所は `static` の後ろです。
 (通常のメソッドと同じ。)
 
-```csharp
+```csharp {title="static の後ろに戻り値の型"}
 // 戻り値の型を各場所は static の後ろ。
 var f = static int (int x) => x;
 ```
 
 また、明示した戻り値の型からラムダ式の引数の型を推論することはできません。
 
-```csharp
+```csharp {title="戻り値の型から引数の型の推論はできない"}
 // 戻り値の型から引数の型の推論はできない。
 // 結果的に、Func<T, int> への代入はできても、自然な型決定(var などへの代入)はできない。
 var f6 = int (x) => x;
@@ -848,7 +848,7 @@ var f6 = int (x) => x;
 
 同じくラムダ式に属性を付けれるようになりました。
 
-```csharp
+```csharp {title="ラムダ式に対する属性付与" highlight-ranges="sha256:920c615b4f7e4a1f750420a7c3967fccf7a1d11934230a2daf6f34838a7ca8a7;2:5-2:8,3:5-3:16,4:17-4:20"}
 var f =
     [A]
     [return: B]
@@ -873,7 +873,7 @@ class CAttribute : Attribute { }
 `MapGet` などのメソッドでは、引数などに属性を付けて Web API の挙動をカスタマイズできます。
 例えば以下のような書き方ができます。
 
-```csharp
+```csharp {title="新 Web テンプレートに対して属性で挙動を制御する例"}
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -906,7 +906,7 @@ class Counter
 C# 12 でラムダ式の引数に[オプション引数](../structured/sp4_optional.md#optional)にできる(既定値を与えられる)ようになりました。
 また、[params 引数](../structured/sp_params.md)も使えるようになりました。
 
-```csharp
+```csharp {title="ラムダ式の引数の既定値と params 引数"}
 // オプション引数(既定値値指定)。
 var f1 = (int x = 1) => 0;
 
@@ -925,7 +925,7 @@ var f3 = (int x = 1, params int[] y) => 0;
 匿名デリゲート型が生成されて、既定値や params の情報が残ります。
 例えば `(int x = 1) => x` であれば `delegate int F(int x = 1)` 相当の匿名デリゲート型が生成されます。
 
-```csharp
+```csharp {title="既定値、params の情報が残る例"}
 // 引数にデフォルト値指定。
 // delegate int <anonymous>(int x = 1); みたいな匿名デリゲート型になる。
 var f1 = (int x = 1) => 0;
@@ -943,7 +943,7 @@ f2(1, 2, 3); // f2(new int[] { 1, 2, 3 }) と同じ。
 この場合、既定値などの情報は消えます。
 (ちょっと罠なので、一応、警告はしてくれます。)
 
-```csharp
+```csharp {title="既定値違い、params 違いのデリゲート型への代入"}
 // 既定値の情報がないデリゲート型に代入。
 Action<int> f1 = (int x = 1) => { };
 
@@ -960,7 +960,7 @@ f2(1, 2, 3); // エラー。 f2(new int[] { 1, 2, 3 }) と書かないとダメ�
 リフレクションで値を取るときに変なことが起きたりもします。
 `Delegate.Method` で取る情報(ラムダ式側)と、`Type.GetMethod` で取る情報(デリゲート型型)が食い違います。
 
-```csharp
+```csharp {title="異なる既定値が取れちゃう例"}
 using System.Reflection;
 
 // ラムダ式としては既定値 2。
@@ -988,7 +988,7 @@ delegate void A(int x = 1);
 例えば、`int` などをはじめ多くの型が以下のような `TryParse` メソッドを持っています。
 
 
-```csharp
+```csharp {title="int などが持っている TryParse メソッド"}
 using System.Diagnostics.CodeAnalysis;
 
 readonly struct Int32
@@ -1002,13 +1002,13 @@ readonly struct Int32
 
 以下のように、この類の処理用のデリゲート型があったとして、
 
-```csharp
+```csharp {title="int.TryParse などを受け取るためのデリゲート型"}
 delegate bool TryParse<T>(string text, out T result);
 ```
 
 C# 13 までは以下のように書くことができませんでした。
 
-```csharp
+```csharp {title="C# 13 までは (out x) みたいな型名省略ができない"}
 // C# 13 までは書けなかった。
 TryParse<int> m = (text, out result) => { result = 0; return true; };
 
@@ -1023,7 +1023,7 @@ delegate bool TryParse<T>(string text, out T result);
 
 これが C# 14 では認められます。
 
-```csharp
+```csharp {title="C# 14 で (out x) の類が可能に" highlight-text="out result"}
 // C# 14 で可能に。
 TryParse<int> m = (text, out result) => { result = 0; return true; };
 ```
@@ -1043,7 +1043,7 @@ delegate void M(in int a, ref int b, out int c, ref readonly int d, scoped Span<
 ラムダ式は、引数が1つだけの時は `x => { }` というように引数リストの `()` も省略できるわけですが、
 この場合は `ref x => { }` みたいな書き方はできません(というか元々、`int x => { }` みたいな型名指定も許されていません)。
 
-```csharp
+```csharp {title="修飾子をつけたい場合、() は必須"}
 // 修飾子をつけたい場合、() は必須。
 In m1 = (in int a) => { };
 In m2 = (in a) => { };

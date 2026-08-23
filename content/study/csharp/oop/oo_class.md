@@ -82,7 +82,7 @@ aliases:
 
 C#では以下のようにしてクラスを定義します。
 
-```csharp
+```csharp {title="クラス定義のしかた"}
 class クラス名
 {
   クラスの実装
@@ -94,7 +94,7 @@ class クラス名
 メソッドの定義はクラスの内部で宣言される[関数](../../../../assets/st_function.html)のことだと思ってもらって結構です。
 以下に例を示します。
 
-```csharp
+```csharp {title="クラス定義の例"}
 class Sample
 {
   // メンバー変数の定義 ここから↓
@@ -153,7 +153,7 @@ class Sample
 まず、実部と虚部の取り出し・変更と、絶対値の取り出しを、
 実部と虚部を記憶しておく方式で実装してみます。
 
-```csharp
+```csharp {title="複素数クラス その1"}
 class Complex
 {
   public double re; // 実部を記憶しておく(外部からの読み出し・書き換えも可能)
@@ -178,7 +178,7 @@ class Complex
 そのためにまず、インスタンスを格納するための変数を定義します。
 変数定義の仕方は以下のような構文になります。
 
-```csharp
+```csharp {title="インスタンスを格納するための変数の定義"}
 クラス名 変数名;
 ```
 
@@ -191,20 +191,20 @@ class Complex
 （空っぽの入れ物だけができる。）
 以下のように、<code>new</code> して始めてインスタンスが生成されます。
 
-```csharp
+```csharp {title="インスタンスの作成"}
 変数 = new クラス名();
 ```
 
 そして、以下のように変数の後に「 <code>.</code> 」で区切ってメンバー名を書くことでメンバー変数やメンバー関数を利用できます。
 
-```csharp
+```csharp {title="メンバーの呼び出し"}
 変数名.メンバー名
 ```
 
 
 例として先ほど作成した複素数クラスのインスタンスを生成し、利用してみましょう。
 
-```csharp
+```csharp {title="インスタンスの作成例"}
 Complex z;         // インスタンスを格納するための変数を定義
 z = new Complex(); // new を使ってインスタンスを生成
 
@@ -218,7 +218,7 @@ Console.Write("abs = {0}\n", abs); // abs = 5 と表示される
 
 また、組込み型や配列と同様に変数の宣言と同時にインスタンスを作成して初期化することも出来ます。
 
-```csharp
+```csharp {title="宣言時に初期化"}
 int n = 5;
 string s = "abcde";
 int[] array = new int[]{1, 2, 3, 4, 5};
@@ -229,7 +229,7 @@ Complex z = new Complex();
 
 ##### <a id="sec-generated-title-6"></a>サンプル
 
-```csharp
+```csharp {title="クラスのサンプル"}
 using System;
 
 /// <summary>
@@ -307,14 +307,14 @@ class ClassSample
 
 C# では、「有効なインスタンスを持っていない」という状態を<strong id="null" class="keyword">null</strong>（ヌル: 空っぽ、0）と呼び、`null` キーワードで表します。
 
-```csharp
+```csharp {title="null 値"}
 変数 = null;
 ```
 
 よくある用途としては、必要になるまでインスタンス生成を遅らせたり(遅延初期化と言ったりします)です。
 [プロパティ](oo_property.md)や[null 合体演算子](../resource/sp2_nullable.md#coalescing)を使うことが多く、今は「こういう書き方がある」くらいの説明しかできませんが、以下のような使い方ができます。
 
-```csharp
+```csharp {title="必要になるまでインスタンスを作らない例"}
 using System;
 using System.ComponentModel;
 using System.Reflection;
@@ -339,7 +339,7 @@ class TypeInfo
 
 また、「有効なインスタンスを取れなかった」ということを表すのに使ったりもします。
 
-```csharp
+```csharp {title="有効なものがないことを表すために null を使う例"}
 class Program
 {
     static void Main()
@@ -388,7 +388,7 @@ C# 2.0 からは[null許容値型](../resource/sp2_nullable.md)という機能�
 通常はあってもなくてもいいものなんですが、
 例えば、ローカル変数と同名のフィールドがあったときに、フィールドの方を参照するために使えます。
 
-```csharp
+```csharp {title="this でフィールドとローカル変数を弁別"}
 class Point
 {
     // 小文字 x, y でフィールドを定義
@@ -414,7 +414,7 @@ class Point
 
 あるいは、メソッドの引数に自分自身を渡したりするときに使います。
 
-```csharp
+```csharp {title="this で、メソッドの引数に自分自身を渡す"}
 class Point
 {
     // 前略
@@ -432,7 +432,7 @@ class Point
 
 その他、[インデクサー](oo_indexer.md)や[拡張メソッド](../functional/sp3_extension.md)など、`this`を常に必要とする構文があります。
 
-```csharp
+```csharp {title="this を常に必要とする構文"}
 using System;
 
 class Point
@@ -530,14 +530,14 @@ static class PointExtensions
 C# 3.0 では<strong id="anonytype" class="keyword">匿名型</strong>（anonymous type）を作成できるようになりました。
 匿名型の作り方は以下の通りです。
 
-```csharp
+```csharp {title="匿名型"}
 var x = new { FamilyName = "糸色", FirstName="望"};
 ```
 
 
 このようなコードから、自動的に、以下のような型が生成されます。
 
-```csharp
+```csharp {title="匿名型によって自動生成されるクラス"}
 // ↓この __Anonymous という名前はプログラマが参照できるわけではない。
 class __Anonymous1
 {
@@ -568,7 +568,7 @@ class __Anonymous1
 単体で使う場面はそれほど多くないと思いますが、
 例えば、以下のような書き方ができます。
 
-```csharp
+```csharp {title="匿名型の利用"}
 var rectangle = new { Width = 2, Height = 3 };
 
 Console.Write("幅  : {0}\n高さ: {1}\n面積: {2}\n",

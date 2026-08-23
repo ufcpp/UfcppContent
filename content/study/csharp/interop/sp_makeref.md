@@ -33,7 +33,7 @@ C# には参照関連の隠しキーワード `__makeref`, `__refvalue`, `__reft
 (一種の制限付きのポインター)。
 例えば、以下のコードは C++ のものですが、変数 r が、別の変数 x の参照になっています。
 
-```cpp
+```cpp {title="C++" highlight-text="int&amp; r = x;"}
 #include <stdio.h>
 
 void sample()
@@ -102,7 +102,7 @@ void sample()
 
 C# でも、内部的には(コンパイル結果の IL 的には)、値型の this 参照や、値型の入れ子の書き換えなどで参照が使われます。
 
-```csharp
+```csharp {title="this 参照"}
 struct A
 {
     public int x;
@@ -138,7 +138,7 @@ class Program
 
 先ほどの C++ の例を、__makeref キーワードを使って書きなおすと以下のようになります。
 
-```csharp
+```csharp {title="__makeref の例"}
 using System;
 
 class Program
@@ -163,7 +163,7 @@ __makeref で参照を作って、__refvalue で値の読み書きをします�
 
 ちなみに、型推論も利きます。
 
-```csharp
+```csharp {title="__makeref の型推論"}
 var x = 10; // int
 var r = __makeref(x); // TypedReference
 ```
@@ -182,7 +182,7 @@ C# の配列引数の場合、このスタック上で消費される数は固�
 これに対して、隠しキーワード __arglist を使うと、C# で本当に可変個引数なメソッドを作りことができます。
 例えば、以下のようなコードになります。
 
-```csharp
+```csharp {title="__arglist の例"}
 using System;
 
 class Program
@@ -216,7 +216,7 @@ class Program
 ```
 
 
-```console
+```console {title="実行結果"}
 Int32: 1
 String: aaa
 Char: x
@@ -291,7 +291,7 @@ public static void Set1<T>(ref T value)
 ちなみに、この用途は [`Unsafe` クラス](https://docs.microsoft.com/en-us/dotnet/api/system.runtime.compilerservices.unsafe)を使った方法の方がパフォーマンスがいいので、
 このクラスが使えるようになって以降はこの用途で `__makeref` が使われることはなくなりました。
 
-```csharp
+```csharp {title="Unsafe クラスで同様の処理"}
 using System.Runtime.CompilerServices;
 
 static void Set1<T>(ref T value)

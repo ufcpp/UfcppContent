@@ -74,7 +74,7 @@ C++では、変数の宣言するとき、
 逆に、ポインターの参照先の値を読み書きするには、
 ポインター変数の前に `*` を付けます。
 
-```csharp
+```csharp {title="ポインターの宣言、アドレス取り出し(C++)"}
 // 注: C++ です。
 
 int* p; // ポインターの宣言
@@ -145,7 +145,7 @@ C# では <em>unsafe キーワード</em>を用いて宣言されたメソッド
 そのメソッド内でポインターを使用できるようになります。
 また、<code>unsafe{}</code> と言うように、ブロックの手前に unsafe キーワードを付けることで、そのブロック内部でのポインター使用が可能になります。
 
-```csharp
+```csharp {title="unsafe メソッド、unsafe ブロックの例"}
 unsafe void UnsafeMethod()
 {
   // unsafe メソッド。
@@ -174,7 +174,7 @@ C# ではこのような強い制限を設けています。
 
 ちなみに、C# コンパイラーのオプションは `/unsafe` ですが、csproj ファイルに書くタグとしては `AllowUnsafeBlocks` という名前になっています。
 
-```xml
+```xml {title="AllowUnsafeBlocks オプション" highlight-ranges="sha256:cede241731a1aac8962fe75fbcf7ba75467e006349313f3c55c2667d774c1da1;5:6-5:23"}
 <Project Sdk="Microsoft.NET.Sdk">
  
   <PropertyGroup>
@@ -207,7 +207,7 @@ managed ポインターと unmanaged ポインターを相互に変換できた�
 「GCによるトラッキング」のも兼ねて、実際に変換を行うコードを示しましょう。
 (このコードの実行には [Unsafe パッケージ](https://www.nuget.org/packages/System.Runtime.CompilerServices.Unsafe/)が必要です。)
 
-```csharp
+```csharp {title="managed/unmanaged ポインターの強制変換の例"}
 using System;
 using System.Runtime.CompilerServices;
 using static System.Console;
@@ -339,7 +339,7 @@ C# では、C++ 言語と似た文法でポインターを使用できます。
 
 ちなみに、`&` を アドレス取得式(address-of expression)、`*` を間接参照式(pointer indirection expression)と呼びます。
 
-```csharp
+```csharp {title="ポインターの使用例" highlight-text="unsafe"}
 using System;
 
 class UnsafeTest
@@ -378,7 +378,7 @@ class UnsafeTest
 
 例えば以下のように使います。
 
-```csharp
+```csharp {title="ポインター用演算子"}
 using System;
 
 struct Point
@@ -429,7 +429,7 @@ C# 12 で [using エイリアスで使える型が増えました](../structured
 ただし、これらの型は unsafe な型なので、unsafe 修飾子を必要とします。
 そのため、using ディレクティブにも unsafe 修飾を付けます(以下のように、using の後ろに unsafe を書きます)。
 
-```csharp
+```csharp {title="unsafe 型に対する using エイリアス"}
 using unsafe Pointer = int*;
 using unsafe FuncPointer = delegate*<int, void>;
 ```
@@ -442,7 +442,7 @@ C# で通常使用している配列はヒープ領域にメモリを確保し�
 
 スタック上への配列確保は以下に示すように、 <code>stackalloc</code> キーワードを用いて行います。
 
-```csharp
+```csharp {title="stackalloc"}
 型名* 変数名 = stackalloc 型名[配列長];
 ```
 
@@ -453,7 +453,7 @@ C# で通常使用している配列はヒープ領域にメモリを確保し�
 
 ##### <a id="sec-generated-title-11"></a>サンプル
 
-```csharp
+```csharp {title="stackalloc の例" highlight-text="stackalloc int[N]"}
 using System;
 
 class UnsafeTest
@@ -511,7 +511,7 @@ unsafe なしで `stackalloc` 演算子を使うことができるようにな�
 といっても、unsafe なしで危険なことができるわけではありません。
 安全性は`Span<T>`構造体が保証してくれます。
 
-```csharp
+```csharp {title="安全な stackalloc"}
 using System;
 
 class Program
@@ -548,7 +548,7 @@ Span<int> x3 = stackalloc[] { 0xEF, 0xBB, 0xBF };
 `stackalloc` で確保したスタック領域は、実は関数を抜けるまで解放されません。
 例えば以下のようにループ中で `stackalloc` を使うと結構あっさり stack overflow (要はメモリ不足)を起こします。
 
-```csharp
+```csharp {title="ループ中の stackalloc が原因で stack overflow"}
 using System;
  
 class Program
@@ -570,7 +570,7 @@ class Program
 
 解決方法ですが、関数を抜ければ解放されるので、以下のようにローカル関数を1個挟むだけでよかったりします。
 
-```csharp
+```csharp {title="ループ中で stackalloc を使いたい場合は別関数(ローカル関数可)を挟む"}
 using System;
  
 class Program
@@ -638,7 +638,7 @@ CPU の種類によって、最適な間隔は変わります。）
 そのための構文として、C# には `fixed` ステートメントというものがあります。
 `fixed` ステートメントは以下のような形で書かれます。
 
-```csharp
+```csharp {title="fixed ステートメント"}
 fixed(型名* 変数名 = アドレス取得式) 実行したい文
 ```
 
@@ -647,7 +647,7 @@ fixed(型名* 変数名 = アドレス取得式) 実行したい文
 アドレスが変化しないことが保証されます。
 例えば、参照型のメンバーのアドレスをポインターに代入する場合、以下のようにします。
 
-```csharp
+```csharp {title="fixed ステートメントの例" highlight-lines="3"}
 // Complex クラスは re, im というdouble 型のメンバーを持っているものとする。
 Complex c = new Complex(1, 0);
 fixed(double* p = &c.re)
@@ -665,7 +665,7 @@ Console.Write("({0}, {1})\n", c.re, c.im); // (10, 0) と表示される
 `fixed`ステートメント中で、
 配列をポインターに暗黙的に変換することができます。
 
-```csharp
+```csharp {title="ポインターを介して配列を操作"}
 int[] array = new int[10];
 fixed (int* p = array)
 {
@@ -674,7 +674,7 @@ fixed (int* p = array)
 
 例えば以下のように、ポインター`px`を介して配列 `array` の内容を書き換えられます。
 
-```csharp
+```csharp {title="fixed で配列をポインター越しに書き換える例"}
 class Program
 {
     unsafe static void Main()
@@ -703,7 +703,7 @@ class Program
 - `array`からの変換の場合、空配列を渡すと 0 (null ポインター)が得られる
 - `&array[0]`の場合、空配列を渡すと IndexOutOfRange 例外が発生する
 
-```csharp
+```csharp {title="空配列に対する fixed"}
 using System;
 using static System.Console;
 
@@ -733,7 +733,7 @@ class Program
 配列と同様に、文字列に対しても `fixed` ステートメントが使えます。
 この場合は先頭1文字の場所のアドレスが得られます。
 
-```csharp
+```csharp {title="string に対する fixed の例"}
 using static System.Console;
 
 unsafe class Program
@@ -780,7 +780,7 @@ unsafe class Program
 .NET の文字列(`string`)は、通常は書き換えできません。
 しかし、unsafe を使ってポインター越しになら書き換えできてしまいます。
 
-```csharp
+```csharp {title="ポインターを使った文字列の書き換え"}
 unsafe class Program
 {
     static void Main()
@@ -817,7 +817,7 @@ unsafe class Program
 そこで、C# 7.3では、所定のパターンを満たす型に対して `fixed` ステートメントが使えるようになりました。
 以下のように、`GetPinnableReference`という名前のメソッドを用意すれば使えます。
 
-```csharp
+```csharp {title="ユーザー定義型に対する fixed ステートメント"}
 // ただの配列のラッパー
 readonly struct Array<T>
 {
@@ -858,7 +858,7 @@ class Program
 ちなみに、[配列の時の特殊処理](#array)、すなわち「空配列だったら 0 (null ポインター)を返す」と同じ結果にしたければ、`GetPinnableReference`を以下のように書く必要があります。
 (現状、[`Unsafe`クラス](https://www.nuget.org/packages/System.Runtime.CompilerServices.Unsafe/)が必須です。)
 
-```csharp
+```csharp {title="null ポインター相当の ref を返す方法"}
 using System.Runtime.CompilerServices;
 
 // ただの配列のラッパー
@@ -886,7 +886,7 @@ C 言語の配列風の固定長バッファを定義できるようになりま
 通常の C# の配列と異なり、型名[] ではなく、
 変数名[要素数] と書きます。
 
-```csharp
+```csharp {title="固定長バッファ" highlight-text="fixed byte reserved[3];"}
 [System.Runtime.InteropServices.StructLayout(
   System.Runtime.InteropServices.LayoutKind.Sequential,
   Pack=1)]
@@ -935,7 +935,7 @@ unsafeコードが名前通りunsafe(安全でない)なところを、一例出
 ですが、unsafeコードを使うと、文字列を書き換えれてしまいます。
 例えば以下のようなコードが書けます。
 
-```csharp
+```csharp {title="unsafeコードで文字列の書き換え"}
 using System;
 
 class Program
@@ -978,7 +978,7 @@ class Program
 しかし、C# 7.3では、`unmanaged`という型制約が増えて、
 ジェネリック型引数に対してもポインターなどを使えるようになりました。
 
-```csharp
+```csharp {highlight-ranges="sha256:70eaca64c44565fd615908ecca41730836427e4fbe68d39ce8561373017fb4fd;2:15-2:24"}
 unsafe static void MemSet0<T>(ref T x)
     where T : unmanaged
 {
@@ -1010,7 +1010,7 @@ static void SafeStackalloc<T>()
 
 これらは、ちゃんと呼び出し側で制約のチェックが行われます。
 
-```csharp
+```csharp {title="unmanaged 制約"}
 using System;
 using System.Collections.Generic;
 
@@ -1056,7 +1056,7 @@ C# 8.0 では、ジェネックな構造体に対して再帰的にアンマネ�
 
 前節の例の末尾2行もコンパイルできるようになっています。
 
-```csharp
+```csharp {title="unmanaged 制約の緩和"}
         // C# 7.3 ではダメだったけど、8.0 では OK
         SafeStackalloc<KeyValuePair<int, int>>();
         SafeStackalloc<Wrap<int>>();
@@ -1064,7 +1064,7 @@ C# 8.0 では、ジェネックな構造体に対して再帰的にアンマネ�
 
 以下のように、ポインターも使えます。
 
-```csharp
+```csharp {title="ジェネリックな構造体に対するポインター"}
 using System.Collections.Generic;
  
 class Program
@@ -1089,7 +1089,7 @@ class Program
 何段入れ子になっていても大丈夫です。
 ちゃんと、すべてがアンマネージかどうかを調べてくれます。
 
-```csharp
+```csharp {highlight-text="string"}
 // 何段入れ子になっていても大丈夫
 var x = new KeyValuePair<(float, bool), Wrap<int>>((1, true), new Wrap<int>());
 var px = &x;
@@ -1105,7 +1105,7 @@ var py = &y;
 
 C# では通常、[未初期化](../resource/rm_default.md#uninitialized)のままの変数を読むことはできません。
 
-```csharp
+```csharp {title="未初期化エラー"}
 using System;
  
 // ローカル変数には初期化が必須。
@@ -1119,7 +1119,7 @@ Console.WriteLine(y);
 ただ、[`stackalloc`](#stackalloc)を使った場合、その要素までは初期化が必須にはなりません。
 この時、通常は、未初期化領域を参照してしまわないように、 .NET ランタイムが「規定値(0)で埋める」という処理を行っています。
 
-```csharp
+```csharp {title="stackalloc の中身の0初期化"}
 using System;
  
 // スタック上に4要素の int を確保。
@@ -1138,7 +1138,7 @@ for (int i = 0; i < span.Length; i++)
 (かつ、何かミスがあったときに未初期化領域を参照してしまうのは「自己責任」と割り切れる)
 場合、0初期化は無駄です。
 
-```csharp
+```csharp {title="0初期化が「余計なお世話」な状況"}
 using System;
 using System.Text.Unicode;
  
@@ -1185,7 +1185,7 @@ static void m(string s)
 現状、ポインターや[ネイティブ相互運用](sp_pinvoke.md)を使わずに未初期化領域を参照できてしまう唯一の機能になります。
 例えば、以下のようなコードを書くと「不定な値」が返ってきます。
 
-```csharp
+```csharp {title="SkipLocalsInit で不定な値を取得"}
 using System;
 using System.Runtime.CompilerServices;
  
@@ -1229,7 +1229,7 @@ C# 11 から、マネージ型のポインターを使えるようになりま�
 `T*` や `R*` みたいなポインター型を書いたり、
 それらの変数 `x` に対して `&x` でアドレス取得できるようになりました。
 
-```csharp
+```csharp {title="マネージ型のポインター型/アドレス取得"}
 unsafe
 {
     string s = "";

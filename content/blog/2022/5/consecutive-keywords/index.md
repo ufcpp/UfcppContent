@@ -48,7 +48,7 @@ Gist に全体像:
 
 とりあえず重複を許容して62個、44種並べられたもの:
 
-```csharp
+```csharp {title="キーワードを並べられるだけ並べた物(重複を許容して62個、44種)"}
 in await value is not bool or char or byte or sbyte or short
 or ushort or int or uint or nint or nuint or long or ulong or
 float or double or decimal or string and var _ as dynamic as
@@ -58,7 +58,7 @@ orderby null descending group null by static ref readonly global
 
 これ、多少インデントをまともに整形すると以下のようなコードです。
 
-```csharp
+```csharp {title="上記コードを整形"}
 from x in value
 join y
     in await value
@@ -81,7 +81,7 @@ group null by
 
 ちなみに、重複を一切認めなくても27個のキーワードを並べられました。
 
-```csharp
+```csharp {title="キーワードを並べられるだけ並べた物(重複なし27個)"}
 in await value is not bool or byte and var _ as object on false equals
 null where this orderby default ascending group true by static ref readonly int
 ```
@@ -114,7 +114,7 @@ Kirill さんもこれを想定してつぶやいていたんじゃないかな�
 以下のように、「`object` 引数で何でも受け付ける拡張メソッド」を置いておくことでさらに自由度が増します。
 `where null` でも `group default by false` でも何でもありです。
 
-```csharp
+```csharp {title="何でも受け付けるLINQ演算子(拡張メソッド)"}
 static partial class Ex
 {
     public static object Select(this object x, Func<object, object> f) => null;
@@ -137,7 +137,7 @@ static partial class Ex
 「じゃあ `case` とか `when` を使えば伸びるのでは… と思っていたものの、
 ここもクエリ式を組み込めなくて没になりました(キーワード14個)。
 
-```csharp
+```csharp {title="case, when (没案)"}
 case not null and bool or byte when true as object is var _
 ```
 
@@ -160,7 +160,7 @@ case not null and bool or byte when true as object is var _
 
 `join` から始めて、`in` から後ろを使うのが最長の候補です。
 
-```csharp
+```csharp {title="クエリ式の最長候補"}
 from x in n join y
 // ここから下がキーワード候補
 in a on b equals c
@@ -213,7 +213,7 @@ group f by g
 
 以下のようなコードの、`static ref readonly global` の部分が使えました。
 
-```csharp
+```csharp {title="ラムダ式戻り値"}
 using static System.Runtime.CompilerServices.Unsafe;
 
 var f = static ref readonly global::System.Int32 () => ref NullRef<int>()
@@ -229,7 +229,7 @@ var f = static ref readonly global::System.Int32 () => ref NullRef<int>()
 
 `await` も以下のような拡張メソッドを用意しておくことで任意のオブジェクトに対して使えます。
 
-```csharp
+```csharp {title="任意のオブジェクトを awaitable にする拡張メソッド"}
 using System.Runtime.CompilerServices;
 
 static partial class Ex
@@ -241,7 +241,7 @@ static partial class Ex
 ただ、前述の通り、`value` を使いたければプロパティの `set` 内である必要があります。
 プロパティは非同期にはできないので、1段工夫が必要で、以下のように、ラムダ式で覆う必要がありました。
 
-```csharp
+```csharp {title="プロパティ内で await を使う"}
 public object X
 {
     set => _x = async () => ...
@@ -257,7 +257,7 @@ public object X
 
 重複なしなら以下のパターン。
 
-```csharp
+```csharp {title="not or and var _"}
 is not bool or int and var _
 ```
 

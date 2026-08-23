@@ -25,7 +25,7 @@ aliases: []
 
 C# 8.0 で[null 許容参照型](../../../../study/csharp/resource/nullablereferencetype.md)(nullable reference type、通称 NRT)が入って、以下のように、null 参照例外が出そうな箇所にはコンパイル時に警告を出してくれるようになりました。
 
-```csharp
+```csharp {title="C# 8.0 の NRT"}
 #nullable enable
 
 // 警告: ? が付いてない変数に null を渡してる。
@@ -49,7 +49,7 @@ if (n is not null) Console.WriteLine(n.Length);
 
 例えば以下のようなコードで、簡単に判定から漏れた null を残せます。
 
-```csharp
+```csharp {title="default を介して null が紛れ込む例"}
 #nullable enable
 
 // これは警告にしてもらえる: 非 null な S に null を渡した。
@@ -67,7 +67,7 @@ record struct A(string S);
 この問題を一番深刻に踏み抜いてるのが、
 最近のブログで何度か出て来た [`ImmutableArray`](../../../2021/12/immutable-array-init/index.md) なわけです。
 
-```csharp
+```csharp {title="ImmutableArray の default によるぬるぽ"}
 #nullable enable
 using System.Collections.Immutable;
 
@@ -100,7 +100,7 @@ nullable reference type (null 許容参照型)との対比でこんな名前に�
 C# 2.0 の頃から null 許容値型があるので、
 null → default → 有効な値 みたいな「2段の無効な値」ができてしまうという問題があります。
 
-```csharp
+```csharp {title="2段の無効な値"}
 using System.Collections.Immutable;
 
 // null
@@ -133,7 +133,7 @@ Console.WriteLine(a6.IsDefault); // false
 
 この仮の `~` を使って話を進めると、とりあえず書きたいコードは以下のようなものになります。
 
-```csharp
+```csharp {title="defaultable value type の例 (~ 案)" highlight-text="~"}
 using System.Collections.Immutable;
 
 m1(default); // 警告
@@ -170,7 +170,7 @@ void m2(ImmutableArray<int>~ a)
 
 という判定を自動的にする予定です。
 
-```csharp
+```csharp {title="非 null 参照型フィールドで自動判定"}
 A a = default;
 
 // 警告: default のまま使った。
@@ -197,7 +197,7 @@ record struct A(string S);
 それとも属性か何かでアノテーションを付けるかはまだ検討の余地がありますが、
 仮に属性を使う案でいうと以下のような感じになります。
 
-```csharp
+```csharp {title="属性を使って defaultable value type opt-in"}
 [MaybeDefault] // 「default 放置はダメ」を表す何らかの属性
 public struct BlobHandle
 {
@@ -235,7 +235,7 @@ M2(default); // warning
 
 というのも、以下のようなコード(また `ImmutableArray` が起こす問題)を考えます。
 
-```csharp
+```csharp {title="ImmutableArray に対してパターン マッチングでぬるぽる"}
 using System.Collections.Immutable;
 
 void m(ImmutableArray<int> a)
@@ -259,7 +259,7 @@ m(default);
 
 で、「何か特定のプロパティを呼ぶ」とかよりは、以下のように、`operator default` みたいなものを書けるようにした方がいいのではないかという案も出ています。
 
-```csharp
+```csharp {title="operator default"}
 public struct ImmutableArray<T>
 {
     public static bool operator default(ImmutableArray<T> arr) => arr._array is null;

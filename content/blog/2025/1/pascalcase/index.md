@@ -15,7 +15,7 @@ aliases: []
 
 今日は C# 配信をやっててちょくちょく話題になるやつの話。
 
-```csharp
+```csharp {title="Utf8? UTF8?"}
 using System.Text;
 using System.Text.Unicode;
 

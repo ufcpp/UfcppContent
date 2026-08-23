@@ -26,7 +26,7 @@ C# の言語機能のいくつか(というか結構多くのもの)は、「所
 例えば C# 3.0 の[クエリ式](../data/sp3_linq.md#query)がパターン ベースな構文の代表例です。
 以下のような書き方をした場合、
 
-```csharp
+```csharp {title="クエリ式の例"}
 from x in source
 where x < 10
 select x * x;
@@ -34,7 +34,7 @@ select x * x;
 
 C# コンパイラーが以下のようなメソッド呼び出しに展開します。
 
-```csharp
+```csharp {title="クエリ式の展開結果の例"}
 source
     .Where(x => x < 10)
     .Select(x => x * x);
@@ -61,7 +61,7 @@ C# コンパイラーは「`select`句を見たら`Select`メソッドに置き�
 逆に、インターフェイスの実装が必須の構文が1つだけあって、[`using` ステートメント](../resource/oo_dispose.md#using)がそうです。
 (ただし、C# 8.0 で、[`ref struct` に対してだけは緩和されています](../resource/oo_dispose.md#pattern-based-using)。)
 
-```csharp
+```csharp {title="using ステートメントはインターフェイス必須"}
 using System;
  
 struct Disposable
@@ -132,7 +132,7 @@ C# コンパイラーだけの修正で済むなら実装コストがだいぶ�
 
 例えば以下のような型があったとします。
 
-```csharp
+```csharp {title="分解可能な型の例"}
 interface IDeconstructibleTo2Ints
 {
     void Deconstruct(out int x, out int y);
@@ -156,7 +156,7 @@ struct Point : IDeconstructibleTo2Ints
 `Sum1` はパターン ベース(`Point`構造体の`Deconstruct`が直接呼ばれる)、
 `Sum2` はインターフェイスを介しています。
 
-```csharp
+```csharp {title="分解がインターフェイスを介するかどうか"}
 // Point を直接分解。
 // 最終的にインライン展開が働いて、単なる p.X + p.Y に展開される(ものすごく高速)。
 static int Sum1(Point p)
@@ -190,7 +190,7 @@ static int Sum2(IDeconstructibleTo2Ints p)
 例えば、クエリ式(の`where`と`select`)を使える最低限のコードを書くと以下のようになります。
 (意味のあることはしていません。単に、クエリ式で使えるというだけです。)
 
-```csharp
+```csharp {title="クエリ式を使うための最低限の型の例"}
 using System;
  
 struct Queryable
@@ -218,7 +218,7 @@ class Program
 
 例えば、上記のコードは以下のように書き換えてもコンパイルできます。
 
-```csharp
+```csharp {title="拡張メソッドやオプション引数の許容" highlight-ranges="sha256:8d1becb1264fad7b76d31b16d94659ea1f5499449b2f01a1ea24818b9aa3770a;5:47-5:65,10:36-10:40,10:72-10:85"}
 using System;
  
 struct Queryable

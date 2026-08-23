@@ -26,7 +26,7 @@ aliases: []
 たぶん、徐々に、以下のように `while (true)` になっていくのかなぁとか。
 まあ、そもそも、ループの大半が `foreach` ですけど。`do-while` どころか `while` もそこそこレア。
 
-```csharp
+```csharp {title="while (true)"}
 while (true)
 {
     // 前にも書きたいことあるし、
@@ -52,7 +52,7 @@ while (true)
 
 どういうことかというと、例えば、`do-while`は以下のように展開されます。
 
-```csharp
+```csharp {title="do-whileの展開"}
 static void DoWhile(int x)
 {
     do
@@ -71,7 +71,7 @@ static void DoWhileCompiled(int x)
 
 これに対して、`while`だと以下のように、`goto` (IL 的には `br` 命令。x64 系 CPU のネイティブコード的には jmp 命令)が1個多く展開されたりします。
 
-```csharp
+```csharp {title="whileの展開"}
 static void While(int x)
 {
     while (x > 0)

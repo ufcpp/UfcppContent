@@ -125,7 +125,7 @@ GUI アプリのウィンドウサイズ設定を例にとってみましょう�
 一昔前だと、
 ini ファイルに保存することが多かったです。
 
-```csharp
+```csharp {title="ini 形式の設定ファイル"}
 [window]
 width=480
 height=360
@@ -137,7 +137,7 @@ height=360
 一方、最近だったら XML なんかが流行りですね。
 
 
-```xml
+```xml {title="XML 形式の設定ファイル"}
 <configuration>
   <window
     width="480"
@@ -151,7 +151,7 @@ height=360
 最近だと Json なんていう形式も流行っています。
 JavaScript の文法そのままで記述するので、JavaScript ならそのまま読めるというのが利点です。
 
-```csharp
+```csharp {title="ini 形式の設定ファイル"}
 {
   "window":
   {
@@ -165,7 +165,7 @@ JavaScript の文法そのままで記述するので、JavaScript ならその�
 あと、設定変更するたびに再コンパイルが必要ですが、
 以下のように、C# ソースファイル中に埋め込んでもいい。
 
-```csharp
+```csharp {title="設定直書き"}
 public static class Configuration
 {
   public static class Window
@@ -236,7 +236,7 @@ var configuration = new
 外部設定ファイルに書いておきたいと思います。
 例えば以下のような感じで。
 
-```csharp
+```csharp {title="シナリオファイル"}
 主人公：
 今日はもうクタクタだ。
 でも、何か忘れているような・・・
@@ -260,7 +260,7 @@ var configuration = new
 でも、サウンドノベルなんで、条件分岐くらいは欲しくなります。
 なので、設定ファイルで条件分岐できるようにします。
 
-```csharp
+```csharp {title="条件分岐を追加"}
 主人公：
 今日はもうクタクタだ。
 でも、何か忘れているような・・・
@@ -286,7 +286,7 @@ else
 高感度パラメータなんかも持ったりしたいですよね。
 とかやってると、どんどんプログラミング言語チックになってきます。
 
-```csharp
+```csharp {title="パラメータの更新などの機能も追加"}
 [scene 9-11]
 主人公：
 今日はもうクタクタだ。
@@ -327,7 +327,7 @@ nextscene 10-1
 結局、何かのプログラミング言語を参考にする方が早いわけで。
 例えば、C# 的に書くなら以下のような感じですか。
 
-```csharp
+```csharp {title="C# 風の文法にしてみた"}
 scene 9-11
 {
   ShowText(characters.主人公,
@@ -396,7 +396,7 @@ C# のライブラリとしてサウンドノベルフレームワークを提�
 当然、元言語の文法に準拠せざるを得ません。
 例えば以下のような感じ。
 
-```csharp
+```csharp {title="元言語の文法に準拠"}
 XDocument doc = 
   new XDocument(
     new XElement("configuration",
@@ -416,7 +416,7 @@ XDocument doc =
 それでは2つ目、
 XML を文字列としてソースファイル中に埋め込んでみます。
 
-```csharp
+```csharp {title="文字列で持つ"}
 XDocument doc = 
   new XDocument(
 @"
@@ -445,7 +445,7 @@ XML 自体に対してツールによる文法チェックができません。
 言語を拡張してしまうことも考えられます。
 汎用プログラミング言語中に別文法の言語（XML）を含められるようにしてしまう。
 
-```csharp
+```csharp {title="言語の構文を拡張"}
 XDocument doc = 
   <configuration>
     <window
@@ -471,7 +471,7 @@ XDocument doc =
 VB9 に導入されることになりました。
 VB9 なら、本当に以下のようなコードがかけます。
 
-```vbnet
+```vbnet {title="VB9 の XML 埋め込み"}
 Dim doc = 
   <configuration>
     <window

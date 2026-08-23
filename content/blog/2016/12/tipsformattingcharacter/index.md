@@ -18,7 +18,7 @@ aliases: []
 C#では、以下のようなコードが書けたりします。変数`ab`を用意して、`a\u200db`って変数に書き込むと、`ab`の値が変わるという。
 要するに、この2つは識別子としては同一扱いされます。
 
-```csharp
+```csharp {title="Zero Width Joiner 識別子"}
 using System;
 
 class Program
@@ -41,7 +41,7 @@ class Program
 
 1つのUnicodeエスケープ シーケンスは、`\u`に続けて4桁の16進数を打つか、`\U`に続けて8桁の16進数を打つと、その番号に対応したUnicode文字に変換されるというものです。このエスケープ シーケンスは、文字列リテラルの外、どこででも有効です。例えば、以下のようなことも可能。aの文字は、UnicodeではU+61です。
 
-```csharp
+```csharp {title="a と \u0061 は同じ"}
 using System;
 
 class Program

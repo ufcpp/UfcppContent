@@ -110,7 +110,7 @@ C# 5.0 で、foreach の仕様が少しだけ変わるそうです。
 
 C# 4.0 までは、foreach ステートメントは以下のように展開されていました。
 
-```csharp
+```csharp {title="C# 4.0 までの foreach"}
 static void ForeachSample<T>(IEnumerable<T> data)
 {
     // 展開前
@@ -136,7 +136,7 @@ static void ForeachSample<T>(IEnumerable<T> data)
 これで何が嫌かというと、ラムダ式で、foreach のループ変数（上記の例でいう x）をキャプチャしたときの挙動がいまいちなことです。
 例えば、以下のコードを実行したとします。
 
-```csharp
+```csharp {title="forach のループ変数をラムダ式中で利用"}
 var data = new[] { 1, 2, 3, 4, 5 };
 
 Action a = null;
@@ -152,7 +152,7 @@ a();
 
 C# 4.0 まででは、以下のような結果が得られる仕様になっていました。
 
-```console
+```console {title="C# 4.0 での実行結果"}
 5
 5
 5
@@ -163,7 +163,7 @@ C# 4.0 まででは、以下のような結果が得られる仕様になって�
 
 C# 5.0 では foreach の展開結果が以下のように変わる予定です。ループ変数の位置が、while ループの中に移動しました。
 
-```csharp
+```csharp {title="C# 5.0 からの foreach" highlight-text="T x;"}
 static void ForeachSample<T>(IEnumerable<T> data)
 {
     // 展開前
@@ -188,7 +188,7 @@ static void ForeachSample<T>(IEnumerable<T> data)
 
 これで、先ほどのラムダ式の例の実行結果は、以下のように変わります。
 
-```console
+```console {title="C# 5.0 での実行結果"}
 1
 2
 3

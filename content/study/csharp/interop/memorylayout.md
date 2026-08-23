@@ -39,7 +39,7 @@ C#では、クラスと構造体に対してレイアウトのカスタマイズ
 
 例えば、以下のような構造体を書いたとします。A, C (`byte`型)が1バイト、B (`long`型)が8バイトのデータです。
 
-```csharp
+```csharp {title="アラインメント説明用のサンプル構造体"}
 struct Sample
 {
     public byte A;
@@ -60,7 +60,7 @@ struct Sample
 C#でも、[unsafe](sp_unsafe.md#unsafe)コードを使えば、構造体のレイアウトを調べることができます。
 以下のように、ポインターを使って、構造体の先頭と、各フィールドのアドレスの差を見れば、レイアウトがわかります。
 
-```csharp
+```csharp {title="ポインターを使ってレイアウトを調べるコード"}
 using System;
 
 struct Sample
@@ -92,7 +92,7 @@ C: {(long)pc - (long)p}
 ただし、1つ注意があります。C#では、たとえunsafeコード内であっても、参照型のアドレスは取れないようになっています。
 そのため、参照型や、参照型を含んだ構造体の場合はレイアウトを調べられません。
 
-```csharp
+```csharp {title="参照型のアドレスは取れないので、レイアウトも調べられない"}
 using System;
 
 struct Sample
@@ -135,7 +135,7 @@ C#では、`StructLayout`属性(`System.Runtime.InteropServices`名前空間)を
 Sequentialレイアウトでは、複合型のフィールドは宣言した順序通りにレイアウトされます。
 `StructLayout`属性の引数に、`LayoutKind.Sequential`を渡します。
 
-```csharp
+```csharp {title="Sequentialレイアウトの例"}
 using System.Runtime.InteropServices;
 
 [StructLayout(LayoutKind.Sequential)]
@@ -162,7 +162,7 @@ struct Sample
 
 Packを明示的に指定したい場合には、以下のように、`StructLayout`属性の`Pack`プロパティに数値を与えます。
 
-```csharp
+```csharp {title="StructLayout属性のPackプロパティを指定"}
 using System.Runtime.InteropServices;
 
 [StructLayout(LayoutKind.Sequential, Pack = 8)]
@@ -212,7 +212,7 @@ Autoレイアウトでは、コンパイラー裁量でフィールドの順序�
 
 例えば、以下のような構造体を書いた場合を考えます。
 
-```csharp
+```csharp {title="Autoレイアウトの例"}
 using System.Runtime.InteropServices;
 
 [StructLayout(LayoutKind.Auto, Pack = 8)]
@@ -242,7 +242,7 @@ struct Sample
 
 例えば、以下のような構造体を書いた場合を考えます。
 
-```csharp
+```csharp {title="Explicitレイアウトの例"}
 using System.Runtime.InteropServices;
 
 [StructLayout(LayoutKind.Explicit)]
@@ -268,7 +268,7 @@ Explicitレイアウトを使うと、複数のフィールドの位置を重ね
 
 例えば、以下のようなことができます。
 
-```csharp
+```csharp {title="union的な使い方の例"}
 using System;
 using System.Runtime.InteropServices;
 
@@ -304,7 +304,7 @@ class Program
 }
 ```
 
-```console
+```console {title="実行結果"}
 78
 56
 34
@@ -334,7 +334,7 @@ Explicitレイアウトでフィールドの位置を重ねられることで、
 しかし、別の型のフィールドと重ねて、無理やり上書きすることで、他の値にできます。
 例えば以下のようなコードが書けます。
 
-```csharp
+```csharp {title="Explicitレイアウトの悪用例"}
 using System;
 using System.Runtime.InteropServices;
 
@@ -385,7 +385,7 @@ class Program
 }
 ```
 
-```console
+```console {title="実行結果"}
 False
 True
 False
@@ -411,7 +411,7 @@ Explicitレイアウトには1つ制限があります。
 (C#の制限ではなくて、.NETランタイムの制限なので、実行時にしかエラーを拾えない。)
 例えば、以下のようなコードを書くと、`TypeLoadException`が発生します。
 
-```csharp
+```csharp {title="Explicitレイアウトで値と参照を重ねる例"}
 using System.Runtime.InteropServices;
 
 [StructLayout(LayoutKind.Explicit)]

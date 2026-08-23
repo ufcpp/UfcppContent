@@ -43,7 +43,7 @@ JavaやC++がこの機能を持ってないことからも分かると思いま�
 オブジェクトの状態の変更はすべてメソッドを通して行うべきだと書きました。
 これを忠実に実行すると、クラスを利用する側のコードは以下の例のように少々見栄えの悪いものになってしまいます。
 
-```csharp
+```csharp {title="「実装の隠蔽」で作った複素数クラスその2の利用例"}
 using System;
 
 // 「実装の隠蔽」で作った複素数クラス
@@ -132,7 +132,7 @@ get 以降のに値の取得用の処理を書きます。
 
 例えば先ほどの複素数クラスのアクセサーをプロパティを使って書き換えると以下のようになります。
 
-```csharp
+```csharp {title="複素数クラス その3" highlight-lines="11,23"}
 using System;
 
 // クラス定義
@@ -192,7 +192,7 @@ class PropertySample
 「絶対値と偏角をメンバー変数に記憶しておく」方法に変更しても、
 以下のように、クラス利用側のコードに手を加える必要は一切ありません。
 
-```csharp
+```csharp {title="複素数クラスその3の実装を変更" highlight-lines="53-54"}
 using System;
 
 // クラス定義
@@ -263,7 +263,7 @@ class PropertySample
 C# 2.0 の新機能で、
 プロパティの set/get アクセサーそれぞれ異なるアクセスレベルを設定できるようになりました。
 
-```csharp
+```csharp {title="異なるアクセスレベル" highlight-text="protected"}
 class A
 {
   private int n;
@@ -287,7 +287,7 @@ C# 3.0 では、プロパティの get/set の中身の省略もできるよう�
 
 例えば、
 
-```csharp
+```csharp {title="プロパティの set/get の省略"}
 public string Name { get; set; }
 ```
 
@@ -295,7 +295,7 @@ public string Name { get; set; }
 というように、
 <code>get; set;</code> とだけ書いておくと、
 
-```csharp
+```csharp {title="set/get の自動生成結果"}
 private string __name;
 public string Name
 {
@@ -318,7 +318,7 @@ C# プログラミングでは、
 
 複素数の例でも、直交座標による実装のものは、以下のようにだいぶシンプルに書けるようになります。
 
-```csharp
+```csharp {title="自動プロパティを使った複素数クラス定義"}
 using System;
 
 class Complex
@@ -348,7 +348,7 @@ class Complex
 C# 6 では、get アクセサーだけのプロパティを定義できるようになりました。
 この場合、コンストラクターでだけ値を代入できて、以降は書き換え不能になります。
 
-```csharp
+```csharp {title="get-only なプロパティ" highlight-ranges="sha256:5cce1aa043a02d3e9541a1f127de137a61e7026b744d974525cab4159ce39090;5:24-5:28,6:24-6:28"}
 using System;
 
 class Complex
@@ -370,7 +370,7 @@ class Complex
 「コンストラクターでだけ値を代入できる」という挙動は [readonly フィールド](../start/sp_const.md#readonly)と同じです。
 実際、上記の get-only プロパティからは以下のように、readonly なバッキング フィールドが作られます。
 
-```csharp
+```csharp {title="get-only なプロパティから生成されるコード"}
 using System;
 
 class Complex
@@ -395,7 +395,7 @@ class Complex
 
 同じくC# 6.0から、自動プロパティに対して初期化子を与えられるようになりました。
 
-```csharp
+```csharp {highlight-ranges="sha256:9722a7311933e59eb28a0f30572455e368db90523deced1a0d84ebaacd9e95e0;3:31-3:37,4:32-4:37"}
 class Point
 {
     public int X { get; set; } = 10;
@@ -412,7 +412,7 @@ get-only のプロパティに限りますが、他のいくつかの関数メ�
 
 先ほどから例に挙げている複素数クラスでいうと、Abs プロパティの定義が楽になります。
 
-```csharp
+```csharp {highlight-lines="8"}
 using static System.Math;
 
 class Complex
@@ -432,7 +432,7 @@ VB にはある「インデックス付きプロパティ」は、C# にはあ�
 C# の流儀的には、「インデックス付きプロパティ」よりも、「コレクションクラスを返す普通のプロパティ」推奨です。
 （その方が、foreach が使えたり、色々便利だから。）
 
-```csharp
+```csharp {title="ダメな例： インデックス付きプロパティ"}
 int[] x;
 // ↓これは文法違反。
 public int X[int i]
@@ -443,7 +443,7 @@ public int X[int i]
 ```
 
 
-```csharp
+```csharp {title="一応、可能： 配列を返すプロパティ"}
 int[] x;
 // ↓これなら OK。
 public int[] X
@@ -456,7 +456,7 @@ public int[] X
 C# 2.0 や C# 3.0 を見こすなら、以下のように、配列や ICollection ではなく、IEnumerable を返すようにする方がいいかもしれません。
 （詳細は「[イテレーター](../data/sp2_iterator.md)」参照。）
 
-```csharp
+```csharp {title="C# 2.0 的には： イテレーターを使って IEnumerable で返す"}
 int[] x;
 public IEnumerable<int> X
 {
@@ -480,7 +480,7 @@ C# からは get_X(0) というように呼び出します。
 C# 9.0 では、`set` に代わって、`init` という名前のアクセサーを定義できるようになりました。
 例えば以下のように書けます(ちなみに、`set` と `init` は同時には書けません。排他です)。
 
-```csharp
+```csharp {title="init アクセサー" highlight-ranges="sha256:636c732609e9ab5ea4adda8c122b8b072f7ad0e1d15994242948a6bb10807115;3:29-3:33,4:29-4:33"}
 class Complex
 {
     public double Re { get; init; }
@@ -496,7 +496,7 @@ class Complex
 
 まず、`readonly` と同じ点として、コンストラクター内での書き換えはできます。
 
-```csharp
+```csharp {title="init はコンストラクター内から書き換え可能"}
 class Complex
 {
     public double Re { get; init; }
@@ -519,7 +519,7 @@ class Complex
 
 例えば、以下のコード(get-only プロパティを利用)はコンパイルできませんが、
 
-```csharp
+```csharp {title="get-only プロパティはオブジェクト初期化子を使えない"}
 var p = new Point { X = 1, Y = 2 };
  
 class Point
@@ -531,7 +531,7 @@ class Point
 
 以下のように init-only プロパティに書き換えるとコンパイルできます。
 
-```csharp
+```csharp {title="init-only プロパティならオブジェクト初期化子を使える" highlight-ranges="sha256:b341cabc7933534ba4e5870561633ae577dad42607ce5d1394a2160830041325;5:25-5:29,6:25-6:29"}
 var p = new Point { X = 1, Y = 2 };
  
 class Point
@@ -551,7 +551,7 @@ p.X = 3; // ダメ。
 `with` 式については別途解説予定(トラッキング issue: [C# 9.0](https://github.com/ufcpp/UfcppSample/issues/297))ですが、
 例えば以下のようなコードが書けます。
 
-```csharp
+```csharp {title="with 式で init-only プロパティを書き換え"}
 var p0 = new Point(1, 2);
 var p1 = p0 with { X = 3 }; // p0 のクローンを作った上で、X だけ 3 で上書き。
  
@@ -560,7 +560,7 @@ record Point(int X, int Y);
 
 他の `init` アクセサーからの書き換えは、例えば以下のようなコードを書けます。
 
-```csharp
+```csharp {title="他の init アクセサーからの書き換え"}
 using System;
  
 var x = new Squared { ValueSquared = 4 };
@@ -580,7 +580,7 @@ class Squared
 
 ちなみに、`init` アクセサー内では `readonly` フィールドも書き換え可能です。
 
-```csharp
+```csharp {title="init アクセサー内で readonly フィールドを書き換え"}
 class Squared
 {
     public readonly double Value;
@@ -617,7 +617,7 @@ C# 11 でプロパティとフィールドに対する `required` 修飾子と�
 例えば以下のようなコードを書いたとき、`a1` 以外の `new A` はエラーになります。
 (警告ではなくエラーにします。)
 
-```csharp
+```csharp {title="required 修飾子" highlight-ranges="sha256:b2ab16f5c01f49b3579d37408c360d5558ab23736f76afb1e0feede18550d81f;9:12-9:20,10:12-10:20"}
 var a1 = new A { X = "abc", Y = 123 };
 
 var a2 = new A { X = "abc" }; // Y を代入していないのでエラー。
@@ -651,7 +651,7 @@ C# 3 当時は名前指定初期化という考え方もなくて、あくまで
 まず、単にコンストラクターが増えるだけで手間。
 よく言われる話ですが、プロパティ1個に対して同じような文字列を4回は繰り返す必要が出ます。
 
-```csharp
+```csharp {title="コンストラクターを用意する手間"}
 var a = new A("abc", 123); // 使う側は簡潔。
 
 class A
@@ -670,7 +670,7 @@ class A
 さらに、このクラス `A` を継承して、もう1個 `Z` プロパティを持った型 `B` を作ることを考えます。
 以下のように、さらに追加で2か所同じ文字列を追加する必要があります。
 
-```csharp
+```csharp {title="継承するとさらにかかる手間"}
 class A
 {
     // A の中身はさっきと一緒。
@@ -691,7 +691,7 @@ class B : A
 
 これに対して、名前指定初期化の場合はプロパティだけ書けばいいのでずいぶんと楽です。
 
-```csharp
+```csharp {title="名前指定初期化はクラス定義側が楽"}
 // 使う側は多少長いものの、名前を明示してる分読みやすいかも。
 var a = new B
 {
@@ -722,7 +722,7 @@ class B : A
 そこで `required` が導入されました。
 「名前指定にはしたいけど、明示的な初期化も義務付けたい」という要件です。
 
-```csharp
+```csharp {title="名前指定にはしたいけど、明示的な初期化も義務付けたいときには required"}
 var a = new A
 {
     X = "abc", // 非 null に初期化される保証がこの行でできる.
@@ -742,7 +742,7 @@ class A
 別にその他の場面でも `required` は使えます。
 とにかく「初期化を明示させたい」というものなので、値型や null 許容型でも使えます。
 
-```csharp
+```csharp {title="とにかく「初期化を明示させたい」"}
 // 全部 0 か null なので、別に new A() でも結果は同じものの、明示させたいという意図があるなら required。
 var a1 = new A { X = null, Y = 0, Z = null };
 
@@ -762,7 +762,7 @@ class A
 `required` は、`virtual` や `abstract` なプロパティに対しても使えます。
 ただし、基底クラス側が `required` なものは派生クラス側にも `required` を付ける必要があります。
 
-```csharp
+```csharp {title="派生と required"}
 abstract class A
 {
     public required abstract int X { get; init; }
@@ -789,7 +789,7 @@ class C : A
 そして、`required` はオブジェクト初期化で使うことが前提なので、
 `new` できないインターフェイスに対しては使えません。
 
-```csharp
+```csharp {title="インターフェイスには required を使えない"}
 interface I
 {
     // エラー。
@@ -802,7 +802,7 @@ interface I
 例えば、`internal` クラスの `internal` プロパティには使えますが、
 `public` クラスの `protected` プロパティには使えません。
 
-```csharp
+```csharp {title="required メンバーのアクセシビリティの制限"}
 internal class A
 {
     // internal クラスの internal プロパティなので OK。
@@ -828,7 +828,7 @@ public class B
 `SetsRequiredMembers` という属性(`System.Diagnostics.CodeAnalysis` 名前空間)を使って「このコンストラクターを呼んだ場合は `required` メンバーの初期化をする必要はない」
 という指定もできます。
 
-```csharp
+```csharp {title="SetsRequiredMembers 属性の例"}
 using System.Diagnostics.CodeAnalysis;
 
 // required メンバーは A() (引数なしコンストラクター)で初期化するので、
@@ -853,7 +853,7 @@ class A
 作る側(コンストラクターの実装側)では特に何もしてくれません。
 単にエラーを消します。
 
-```csharp
+```csharp {title="自称 SetsRequiredMembers"}
 using System.Diagnostics.CodeAnalysis;
 
 // 自称 SetsRequiredMembers を信じてエラーは出さない。
@@ -883,7 +883,7 @@ class A
 required メンバーを含む型は、内部的には属性を付けて表現しているようです。
 例えば、以下のようなクラスがあったとします。
 
-```csharp
+```csharp {title="シンプルな required メンバーの例"}
 class A
 {
     public required int X { get; init; }
@@ -892,7 +892,7 @@ class A
 
 これをコンパイルすると、以下のようなコードに展開されます。
 
-```csharp
+```csharp {title="上記の例の展開結果"}
 using System.Runtime.CompilerServices;
 
 [RequiredMember]
@@ -949,7 +949,7 @@ class A
 これに対して、ちょこっとだけ実装をいじりたいことが結構あります。
 特によくあるのが「バッキング フィールドの生成は自動でやってほしいけど、`get`/`set` の中身は自分で書きたい」という状況で、例えば下のような例があります。
 
-```csharp
+```csharp {title="惜しくも自動にならないプロパティ"}
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 
@@ -994,7 +994,7 @@ class FieldBackedProperties : INotifyPropertyChanged
 バッキング フィールドを生成した上で、そのフィールドの読み書きができます。
 例えば前述の例を `field` を使って書き直すと以下のようになります。
 
-```csharp
+```csharp {title="field キーワードを使って書き直し"}
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 
@@ -1050,7 +1050,7 @@ class FieldBackedProperties : INotifyPropertyChanged
 
 以下は一例ですが、「`get` だけ書くと [get-only プロパティ](#get-only)になる」という挙動は完全に一致します。
 
-```csharp
+```csharp {title="field-backed プロパティの get-only 化"}
 class GetOnly
 {
     // 元々ある get-only プロパティ。
@@ -1079,7 +1079,7 @@ class GetOnly
 
 他の例として、`ref` 付きのバッキング フィールドは作れないという制限も共通です。
 
-```csharp
+```csharp {title="ref 付きのプロパティは field-backed プロパティにできない"}
 ref struct RefField
 {
     // ref 付きのプロパティは自動実装にできない。
@@ -1100,7 +1100,7 @@ ref struct RefField
 他の例にもれず `field` は[文脈キーワード](../misc/ap_compatibility.md#contextual-keyword)です。
 プロパティの `get`/`set` 内でだけキーワード扱いされます。
 
-```csharp
+```csharp {title="field は文脈キーワード"}
 class A
 {
     // これは普通にフィールド。
@@ -1133,7 +1133,7 @@ class B
 `field` キーワードの追加はたとえ文脈キーワードだとしても破壊的変更です。
 以下のコードは C# 13 と 14 で解釈が異なります。
 
-```csharp
+```csharp {title="field キーワードの追加は破壊的変更"}
 class A
 {
     private int field;
@@ -1158,7 +1158,7 @@ class A
 プロパティ初期化子を使う場合ちょっと注意が必要になります。
 初期化子で値を渡す場合、プロパティの `set` アクセサー呼び出しではなく、バッキング フィールドへの直代入になります。
 
-```csharp
+```csharp {title="プロパティ初期化子では set が呼ばれない"}
 var x = new PropertyInitializer(10);
 
 // x.X は 10 になる。
@@ -1177,7 +1177,7 @@ class PropertyInitializer(int x)
 
 コンストラクターの場合はこんなことはなくて、ちゃんと `set` アクセサーが呼ばれます。
 
-```csharp
+```csharp {title="コンストラクター内で初期化するとちゃんと set が呼ばれる"}
 var x = new Constructor(10);
 
 // x.X は 11 になる。
@@ -1212,7 +1212,7 @@ class Constructor
 本節冒頭の例でも挙げたように、`field` キーワードの用途の1つに遅延初期化があります。
 この場合、「`T` 型のプロパティのバッキング フィールドは `T?` の方が都合がいい」ということになります。
 
-```csharp
+```csharp {title="T 型の遅延初期化では T? が都合がいい"}
 class LazyInit
 {
     // field は string? でも大丈夫。
@@ -1225,7 +1225,7 @@ class LazyInit
 かといって常に `T?` にすればいいというものでもなく、`T` でないとまずい場合もあります。 
 ちょっと複雑な例ですが、以下のコードを見てください。
 
-```csharp
+```csharp {title="string プロパティのバッキング フィールドは string か string? か"}
 using System.Diagnostics.CodeAnalysis;
 
 class AllowNullSetter
@@ -1257,7 +1257,7 @@ class AllowNullSetter
 `get` 側で `field` が `T?` だと思ってフロー解析してみて警告にならなかった場合、
 `set` 側も `field` が `T?` かもしれない前提でフロー解析します。
 
-```csharp
+```csharp {title="get の解析結果を踏まえて set をフロー解析"}
 class Nullability
 {
     public string X
@@ -1318,7 +1318,7 @@ class Nullability
 #### 解答例 1
 
 
-```csharp
+```csharp {title="Point/Triangle"}
 using System;
 
 /// <summary>

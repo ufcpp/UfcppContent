@@ -49,7 +49,7 @@ dynamic の用途の1つとして、多重ディスパッチというものを�
 
 実装例を挙げると以下のような感じ。
 
-```csharp
+```csharp {title="Shape の実装例"}
 interface Shape
 {
     double GetArea();
@@ -72,7 +72,7 @@ class Circle : Shape
 
 で、以下のように、仮想メソッド呼び出しをします。
 
-```csharp
+```csharp {title="仮想メソッド呼び出し"}
 Shape s;
 // どこかで s に Rectangle もしくは Circle を代入。
 s.GetArea();
@@ -101,7 +101,7 @@ C# や C++ などの言語では、このディスパッチ処理を「[仮想�
 「[仮想関数テーブル](../oop/oo_vftable.md#vftable)」という仕組みに乗っかるだけが動的ディスパッチの実現方法ではありません。
 例えば、以下のようなコードを書くことで動的ディスパッチを実現できます。
 
-```csharp
+```csharp {title="自前で動的ディスパッチする"}
 static class ShapeMethods
 {
     public static double GetArea(this Shape s)
@@ -155,7 +155,7 @@ static class ShapeMethods
 
 ということで、やむを得ず、先ほどのような「自前ディスパッチ」の仕組みを作ります。
 
-```csharp
+```csharp {title="多重ディスパッチ"}
 public static bool Contains(this Shape s, Shape t)
 {
     if (s is Rectangle && t is Rectangle) return Contains((Rectangle)s, (Rectangle)t);
@@ -201,7 +201,7 @@ Visitor パターンを使った多重ディスパッチはあまりきれいな
 
 そこで C# 4.0 の dynamic を使ってみましょう。
 
-```csharp
+```csharp {title="dynamic を使った多重ディスパッチ" highlight-lines="11-15"}
 //public static bool Contains(this Shape s, Shape t)
 //{
 //    if (s is Rectangle && t is Rectangle) return Contains((Rectangle)s, (Rectangle)t);

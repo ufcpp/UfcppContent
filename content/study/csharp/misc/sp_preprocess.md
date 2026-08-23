@@ -106,7 +106,7 @@ C# のプリプロセス命令には以下のようなものがあります。
 (例えば、<code>DEBUG</code> という名前のシンボルが定義されている場合のみコンパイルされる部分を作ることが出来ます。)
 シンボルの定義は以下のようにして行います。
 
-```csharp
+```csharp {title="#define 命令"}
 #define シンボル名
 ```
 
@@ -116,7 +116,7 @@ C# のプリプロセス命令には以下のようなものがあります。
 (ちなみに、<code>DEBUG</code> はデバッグ用のコードを生成したいときに、
 <code>QUIET</code> はエラーメッセージを画面等に出力したくないときに使うことが多いシンボル名です。)
 
-```console
+```console {title="define オプション" highlight-text="/define:DEBUG;QUIET"}
 csc /define:DEBUG;QUIET test.cs
 ```
 
@@ -128,7 +128,7 @@ csc /define:DEBUG;QUIET test.cs
 <code>#define</code> 命令で定義したシンボルを消すことが出来ます。
 シンボルの削除は以下のようにして行います。
 
-```csharp
+```csharp {title="#define 命令"}
 #undef シンボル名
 ```
 
@@ -146,7 +146,7 @@ csc /define:DEBUG;QUIET test.cs
 
 条件付きコンパイル命令は以下のようにして用います。
 
-```csharp
+```csharp {title="条件付きコンパイル命令"}
 #if 条件1
 条件1成立時に実行する部分
 #elif 条件2
@@ -173,7 +173,7 @@ csc /define:DEBUG;QUIET test.cs
 
 例えば、以下のコードは <code>DEBUG</code> が定義されていてかつ <code>QUIET</code> が定義されていない場合にのみ真として評価されます。
 
-```csharp
+```csharp {title="#if の例" highlight-lines="1"}
 #if DEBUG && !QUIET
 Console.Write("a = {0}, b = {0}", a, b); // デバッグ用に変数の値を画面に出力
 #endif
@@ -183,7 +183,7 @@ Console.Write("a = {0}, b = {0}", a, b); // デバッグ用に変数の値を画
 
 ##### <a id="sec-generated-title-11"></a>サンプル
 
-```csharp
+```csharp {title="条件付きコンパイルの例"}
 #define B
 
 using System;
@@ -222,7 +222,7 @@ A という名前のシンボルが定義されています。
 <code>#warning</code> 命令を用いることでユーザー定義の警告メッセージを、
 <code>#error</code> 命令を用いることでユーザー定義のエラーメッセージを表示することが出来ます。
 
-```csharp
+```csharp {title="警告、エラーの報告"}
 #warning 警告メッセージ
 #error   エラーメッセージ
 ```
@@ -230,7 +230,7 @@ A という名前のシンボルが定義されています。
 
 例えば、以下のようにして使用します。
 
-```csharp
+```csharp {title="warning, error の例"}
 #if A
 #warning まだ準備できてないから A を define しないで欲しいな。
 #if B
@@ -242,7 +242,7 @@ A という名前のシンボルが定義されています。
 
 また、<code>#line</code> 命令を用いることで、警告やエラー報告用の行番号を変更できます。
 
-```csharp
+```csharp {title="#line 命令"}
 #line 行番号もしくは 'default'
 ```
 
@@ -250,7 +250,7 @@ A という名前のシンボルが定義されています。
 
 ##### <a id="sec-generated-title-13"></a>サンプル
 
-```csharp
+```csharp {title="#line, #warning のサンプル"}
 using System;
 
 class PreProcessTest
@@ -286,7 +286,7 @@ c:\test\class1.cs(201,10): warning CS1030: #warning : '201行目'
 <code>#region</code>、<code>#endregion</code> 命令を用いることで、
 コードを領域分けすることが出来ます。
 
-```csharp
+```csharp {title="領域分け"}
 #region 領域の名前
 プログラムコード
 #endregion
@@ -305,7 +305,7 @@ Visual Studio のコードエディタのアウトライン機能
 折り畳むことが出来ます。
 例えば、以下のようなコードを書いたとします。
 
-```csharp
+```csharp {title="#region の例" highlight-lines="10-14"}
 using System;
 
 class PreProcessTest
@@ -370,7 +370,7 @@ C# の <code>#pragma</code> 命令には、
 警告メッセージの抑制（<code>#pragma warning</code>）と、
 ソースファイルの改変確認のためのチェックサム生成機能（<code>#pragma checksum</code>）があります。
 
-```csharp
+```csharp {title="pragma プリプロセッサ"}
 using System;
 class Program
 {

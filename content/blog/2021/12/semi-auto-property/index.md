@@ -30,7 +30,7 @@ C# 11 目標で、自動プロパティにちょっと手が入りそうです�
 
 C# 1.0 の頃からの一番煩雑な書き方だとプロパティは以下のように書いていました。追加でフィールドが1個必要。
 
-```csharp
+```csharp {title="C# 初期のプロパティ"}
 class A
 {
     private int _x;
@@ -41,7 +41,7 @@ class A
 それに対して C# 3.0 で書けるようになった簡易記法が自動プロパティ(automatically implemented property、通称 auto-property)。
 `get; set;` だけ書くと、上記の `_x` フィールド相当のものを自動的に作ってくれます。
 
-```csharp
+```csharp {title="C# 3.0 の自動プロパティ"}
 class A
 {
     public int X { get; set; }
@@ -57,7 +57,7 @@ C# 3.0～10.0 までの “完全に自動な” プロパティだと一部の�
 
 1． PropertyChanged
 
-```csharp
+```csharp {title="PropertyChanged のためにフィールドが必要"}
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -78,7 +78,7 @@ class A : INotifyPropertyChanged
 
 2. 遅延初期化
 
-```csharp
+```csharp {title="初回限りの重たい処理を、プロパティの初アクセス時に呼びたい"}
 class A
 {
     private string? _x;
@@ -99,7 +99,7 @@ class A
 
 1． PropertyChanged
 
-```csharp
+```csharp {highlight-ranges="sha256:851826c9564b993aabafe1e424d7009b13c15b3c72266e8b56066be3ab3f0546;3:27-3:32,3:57-3:62"}
 class A : INotifyPropertyChanged
 {
     public int X { get => field; set => SetProperty(ref field, value); }
@@ -110,7 +110,7 @@ class A : INotifyPropertyChanged
 
 2. 遅延初期化
 
-```csharp
+```csharp {title="field キーワードで遅延初期化" highlight-text="field"}
 class A
 {
     public string X => field ?? GetX();
@@ -152,7 +152,7 @@ field は明確に「文脈キーワード」です。補足説明の通り、`n
 とりあえず、Visual Studio 上では「青」(キーワード扱いの色)です。
 (↓ うちのサイトの色付けは Visual Studio 初期設定準拠。)
 
-```csharp
+```csharp {title="value は青"}
 class A
 {
     private int _x;
@@ -164,7 +164,7 @@ class A
 ところで、この `value`、仕様書上は「`set` アクセサーには暗黙の引数 `value` がある」みたいな書かれ方になっています。
 そして、結果的に `nameof(value)` は許されるという。
 
-```csharp
+```csharp {title="nameof(value)"}
 class A
 {
     private string _x;
@@ -180,13 +180,13 @@ class A
 
 ちなみに、同じく仕様からして「暗黙の引数」とされている[トップ レベル ステートメント](../../../../study/csharp/misc/miscentrypoint.md#top-level-statements)の[コマンドライン引数の `args`](../../../../study/csharp/misc/miscentrypoint.md#args-returns) はちゃんと「群青」(変数・引数の色)です。
 
-```csharp
+```csharp {title="args は群青"}
 Console.WriteLine(args[0]);
 ```
 
 まあ、`field` キーワードは最初から「キーワード扱い」の予定です。
 
-```csharp
+```csharp {title="field は青"}
 class A
 {
     public int X { set => field = value; }

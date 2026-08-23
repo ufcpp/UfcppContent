@@ -21,7 +21,7 @@ aliases: []
 
 例えば、以下のようなコードを考えます。非常に小さい型`Distance`があって、ループの中でそのインスタンスが`new`されています。
 
-```csharp
+```csharp {title="小さいオブジェクトの new"}
 using System;
 using System.Linq;
 

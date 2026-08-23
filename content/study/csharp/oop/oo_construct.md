@@ -32,7 +32,7 @@ aliases:
 コンストラクターはインスタンスを正しく初期化するための特別なメソッドです。
 コンストラクターは以下のように、型名と同じ名前のメソッドを書くことで定義できます。
 
-```csharp
+```csharp {title="コンストラクターの例"}
 class SampleClass
 {
   // ↓これがコンストラクター
@@ -50,7 +50,7 @@ class SampleClass
 説明を簡単にするために、この名簿では名前と年齢だけを管理することにします。
 そのため、<code>Person</code> は <code>name</code> と <code>age</code> という2つのメンバーのみを定義します。
 
-```csharp
+```csharp {title="Person クラスその1"}
 class Person
 {
   public string name; // 名前
@@ -63,7 +63,7 @@ class Person
 名前を <code>""</code> (空の文字列)で、年齢を <code>0</code> で初期化したいとします。
 そのためには以下のようなコンストラクターを作成します。
 
-```csharp
+```csharp {title="Person クラスその2"}
 class Person
 {
   public string name; // 名前
@@ -82,7 +82,7 @@ class Person
 コンストラクターは <code>new</code> を用いてインスタンスを作成する際に呼び出されます。
 例えば、下記のようなコードを実行した場合、
 
-```csharp
+```csharp {title="コンストラクターが呼び出されるタイミング"}
 using System;
 
 class Test
@@ -121,7 +121,7 @@ Main の末尾
 インスタンスの作成時に名前と年齢の値を設定したい場合、
 以下のようなコンストラクターを作成します。
 
-```csharp
+```csharp {title="Person クラスその3"}
 class Person
 {
   public string name; // 名前
@@ -146,7 +146,7 @@ class Person
 
 引数つきのコンストラクターを呼び出すためには、<code>new</code> を使ってインスタンスを生成する際に、以下のようにして引数を渡します。
 
-```csharp
+```csharp {title="引数つきコンストラクターの呼び出し"}
 型名 変数名 = new 型名(引数リスト);
 ```
 
@@ -154,7 +154,7 @@ class Person
 
 例えば、先ほど定義した<code>Person</code>クラスのコンストラクターを呼び出すためには以下のようにします。
 
-```csharp
+```csharp {title="引数つきコンストラクターの例"}
 Person p = new Person("ビスケット・クルーガー", 57);
 Console.Write(p.age); // 57 と表示される
 ```
@@ -163,7 +163,7 @@ Console.Write(p.age); // 57 と表示される
 また、コンストラクターはオーバーロードすることができます。
 例えば、<code>Person</code> クラスに、名前と年齢を引数として与えるコンストラクターと、何も引数を与えないコンストラクターの両方を定義することができます。
 
-```csharp
+```csharp {title="Person クラスその4"}
 class Person
 {
   public string name; // 名前
@@ -189,7 +189,7 @@ class Person
 
 ##### <a id="sec-generated-title-4"></a>サンプル
 
-```csharp
+```csharp {title="コンストラクターのサンプル"}
 using System;
 
 /// <summary>
@@ -281,7 +281,7 @@ class ConstructorSample
 フィールドに初期値を与えるだけなら、
 コンストラクターを使わなくても、以下の様な書き方で初期化できます。
 
-```csharp
+```csharp {title="フィールドに対するフィールド初期化子" highlight-lines="3-4"}
 class Person
 {
     public string name = "";
@@ -300,7 +300,7 @@ class Person
 場合によっては、あるコンストラクターから別のコンストラクターを呼びだしたいことがあります。
 このような場合に、以下のような書き方で、別のコンストラクターを呼び出すことができます。
 
-```csharp
+```csharp {title="コンストラクター初期化子" highlight-text=": this(&quot;&quot;, 0)"}
 class Person
 {
     public string name;
@@ -333,7 +333,7 @@ class Person
 3. 呼び先のコンストラクター
 4. 呼び元のコンストラクター
 
-```csharp
+```csharp {title="初期化子やコンストラクターの呼び出し順序の例"}
 // コンストラクターを空呼び。
 _ = new A();
 
@@ -361,7 +361,7 @@ class A
 }
 ```
 
-```console
+```console {title="実行結果"}
 コンストラクター初期化子引数
 フィールド初期化子 1
 フィールド初期化子 2
@@ -372,7 +372,7 @@ class A
 この初期化の順序との兼ね合いで、フィールド初期化子ではインスタンス メソッドを呼ぶことができません。
 例えば以下のようなコードを認めてしまうと、「まだ初期化していないフィールドを読んでしまう」問題が起きます。
 
-```csharp
+```csharp {title="初期化子内ではインスタンス メソッドを呼んではいけない"}
 class C
 {
     // ここで M を呼べてしまうと、未初期化の _otherField を読んでしまう。
@@ -389,14 +389,14 @@ class C
 
 C# 3.0 から、以下のような記法でメンバーを初期化できるようになりました。
 
-```csharp
+```csharp {title="オブジェクト初期化子"}
 Point p = new Point{ X = 0, Y = 1 };
 ```
 
 
 ちなみに、このコードの実行結果は以下のようなコードと等価です。
 
-```csharp
+```csharp {title="オブジェクト初期化子"}
 Point p = new Point();
 p.X = 0;
 p.Y = 1;
@@ -413,7 +413,7 @@ p.Y = 1;
 プログラムを書く上で、「確保したら必ず後片付けが必要なリソース」と言うものが存在します。
 コンストラクターでリソースを確保したら、セットで後片付けを書く場所がファイナライザーです。
 
-```csharp
+```csharp {title="コンストラクターの逆操作2: ファイナライザー"}
 using System.Buffers;
 
 class Resource
@@ -434,7 +434,7 @@ class Resource
 コンストラクターは複数の値を1つの複合型にまとめる操作でもあります。
 この意味でのコンストラクターにあたるのが分解処理です。
 
-```csharp
+```csharp {title="コンストラクターの逆操作2: 分解"}
 class Point
 {
     public int X;
@@ -472,7 +472,7 @@ C# 9.0 から、状況によっては `new 型名()` の `型名` の部分を�
 例えば、以下のような書き方をできます。
 (この機能を target-typed new と呼んだりします)。
 
-```csharp
+```csharp {title="ターゲットからの new 型推論"}
 // new Person(17, new DateTime(1964, 9, 25)) と同じ意味
 Person p = new(17, new(1964, 9, 25));
  
@@ -483,7 +483,7 @@ record Person(int Age, DateTime Birthday);
 
 ローカル変数の場合には [`var`](../start/sp3_inference.md#type-inference) が使えるのでそれほど便利ではないんですが、[フィールド初期化子](#variable-initializer)やメソッドの引数などでは便利です。
 
-```csharp
+```csharp {title="フィールド初期化子で特に便利"}
 using System.Collections.Generic;
  
 class Sample
@@ -494,7 +494,7 @@ class Sample
 }
 ```
 
-```csharp
+```csharp {title="メソッドの引数でも便利"}
 using System.Collections.Generic;
  
 static void m(Dictionary<string, string> options) { }
@@ -510,7 +510,7 @@ m(new()
 型名の省略をできるだけの機能で、
 元々 `new T(a, b, ...)` みたいに書けて、型 `T` を推論できるのであれば、`new(a, b, ...)` と書くことができます。
 
-```csharp
+```csharp {title="型名省略前からダメなものはダメ"}
 using System.Globalization;
  
 // new UnicodeCategory() とは元々書けるので、new() と省略可能。
@@ -530,7 +530,7 @@ dynamic d = new();
 
 ちなみに、[null 許容型](../resource/sp2_nullable.md) に対する `new()` は、元となる型(`T?` に対する `T` 型) の方の意味になります。
 
-```csharp
+```csharp {title="null 許容型に対する new()"}
 using System;
  
 void m(DateTime? d) => Console.WriteLine(d);
@@ -551,7 +551,7 @@ C# 12 から、クラス名の直後に `()` を付けることでコンスト�
 
 例えば、これまで以下のように書いていたコードがあったとします。
 
-```csharp
+```csharp {title="既存のコンストラクター"}
 class Person
 {
     public string Name;
@@ -582,7 +582,7 @@ class Person(string name, int age)
 
 例えば以下のコードはコンパイル エラーになりますが、
 
-```csharp
+```csharp {title="プライマリ コンストラクターを呼ばないとエラー"}
 class Person(string name, int age)
 {
     public string Name = name;
@@ -596,7 +596,7 @@ class Person(string name, int age)
 
 以下のようなコードなら大丈夫です。
 
-```csharp
+```csharp {title="他のコンストラクターからプライマリ コンストラクターを呼び出す例"}
 class Person(string name, int age)
 {
     public string Name = name;
@@ -619,7 +619,7 @@ C# 9 で[レコード型](../datatype/record.md)が導入された際、
 
 例えば以下のような(通常の)クラスとレコードがあったとして、
 
-```csharp
+```csharp {title="プライマリ コンストラクター持ちのクラスとレコード"}
 class Class(int X, int Y);
 
 record Record(int X, int Y);
@@ -627,7 +627,7 @@ record Record(int X, int Y);
 
 これらの型は以下のような感じに展開されます。
 
-```csharp
+```csharp {title="コンパイラーが生成するコードの例"}
 class Class
 {
     // 空っぽのコンストラクターができるだけ(引数未使用)。
@@ -655,7 +655,7 @@ class Record
 レコード型では、以下のように `{}` を省略可能でした。
 (ただし、その場合、`;` を付ける必要があります。)
 
-```csharp
+```csharp {title="{} を省略したレコード型"}
 // プライマリ コンストラクターだけ持つレコード。
 // 「X 以外にメンバーは不要」みたいなことは多々あり、{} 省略にはそれなりの需要あり。
 record R1(int X);
@@ -673,7 +673,7 @@ C# 12 で、普通のクラスに対してもプライマリ コンストラク�
 インターフェイスと列挙型に対しても同様に `{}` 省略を認めることになりました。
 (`{}` が `;` に変わるだけなのでたかだか1文字差ですが。)
 
-```csharp
+```csharp {title="いろんな型の {} 省略"}
 // クラス、構造体、インターフェイス、列挙型で {} 省略が可能に。
 class C;
 struct S;
@@ -685,7 +685,7 @@ enum E;
 コード生成前提で「手書きでは何も書くものがない」というような場合に使えなくもないです。
 実際例えば、[`JsonSerializable` 属性](https://learn.microsoft.com/ja-jp/dotnet/api/system.text.json.serialization.jsonserializableattribute)を使うときにそういうコードになったりします。
 
-```csharp
+```csharp {title="コード生成だよりで中身空っぽのクラスの例"}
 using System.Text.Json.Serialization;
 
 // JsonSerializable 属性を付けていると、シリアライズ処理に必要なメンバーをコード生成する。
@@ -700,7 +700,7 @@ record Person(string FirstName, string LastName);
 
 プライマリ コンストラクターの引数は、クラス内の全域で参照できます。
 
-```csharp
+```csharp {title="プライマリ コンストラクターの引数を参照"}
 class C(int x)
 {
     public int Fiedl = x; // フィールド初期化子で使う。
@@ -714,7 +714,7 @@ class C(int x)
 
 なんなら [`partial`](oo_class.md#partial)で複数のファイルに分割されていても参照できます。
 
-```csharp
+```csharp {title="partial で分かれてても参照可"}
 // C1.cs
 partial class C(int x)
 {
@@ -733,7 +733,7 @@ partial class C
 例えば、以下のコードの `C1` と `C2` には差がありません。
 (クラスの継承が絡まない限りは同じで、[継承があった場合でも初期化の実行順](misc_construct.md#primary-constructor)にちょっと影響があるだけです。)
 
-```csharp
+```csharp {title="プライマリ コンストラクターと通常のコンストラクターの比較例"}
 class C1(int x)
 {
     private readonly int _x = x;
@@ -757,7 +757,7 @@ class C2
 例えば以下のように、メソッドや[プロパティ](oo_property.md)の中で参照した場合、
 コンパイラーがフィールドを生成します。
 
-```csharp
+```csharp {title="メソッドやプロパティの中でプライマリ コンストラクター引数を参照する例"}
 class C(int x)
 {
     // = (代入)じゃなくて => (式形式のプロパティ)。
@@ -773,7 +773,7 @@ class C(int x)
 
 この例の場合、以下のようなコードと同じ意味になります。
 
-```csharp
+```csharp {title="キャプチャの展開結果の例"}
 class C
 {
     // コンパイラー生成のフィールドは実際には <x>P みたいな、通常の C# では書けない名前になる。
@@ -792,7 +792,7 @@ class C
 
 ちょっと注意が必要なのは、以下のようなコードを書いてしまうと(おそらく意図せず)フィールドが2重に生成されることがあるという点です。
 
-```csharp
+```csharp {title="2重にフィールド生成がかかってしまう例"}
 class C(int x)
 {
     // こちらは「キャプチャ」。
@@ -807,7 +807,7 @@ class C(int x)
 
 このコードはおおむね以下のような意味になります。
 
-```csharp
+```csharp {title="2重にフィールド生成がかかった結果の例"}
 class C
 {
     // キャプチャに対応するため、「引数 x に対応するフィールド」を生成。
@@ -842,7 +842,7 @@ class C
 現状、C# には引数を[readonly](../start/sp_const.md#readonly)にする手段がないので、
 プライマリ コンストラクター引数は常に書き換え可能です。
 
-```csharp
+```csharp {title="プライマリ コンストラクター引数は常に書き換え可能"}
 partial class C(int x)
 {
     public int X => ++x; // x を書き換え放題。
@@ -857,7 +857,7 @@ partial class C
 
 これが嫌なら、一度 readonly フィールドで受けましょう。
 
-```csharp
+```csharp {title="一度 readonly フィールドで受け取る"}
 partial class C(int x)
 {
     // フィールドで受け取る。
@@ -880,7 +880,7 @@ partial class C
 前節[クラス](oo_class.md)の[問題 1](oo_class.md#exercise-str1)の <code>Point</code> 構造体および <code>Triangle</code> クラスに、
 以下のようなコンストラクターを追加せよ。
 
-```csharp
+```csharp {title="Point クラスコンストラクター"}
 /// <summary>
 /// 座標値 (x, y) を与えて初期化。
 /// </summary>
@@ -890,7 +890,7 @@ public Point(double x, double y)
 ```
 
 
-```csharp
+```csharp {title="Triangle クラスコンストラクター"}
 /// <summary>
 /// 3つの頂点の座標を与えて初期化。
 /// </summary>
@@ -905,7 +905,7 @@ public Triangle(Point a, Point b, Point c)
 #### 解答例 1
 
 
-```csharp
+```csharp {title="Point/Triangle クラス"}
 using System;
 
 /// <summary>

@@ -79,7 +79,7 @@ C#などのソース コードのコンパイル結果、つまり、.NET向け�
 
 ## <a id="sec-generated-title-5"></a> <a id="metadata"></a>メタデータ
 
-```csharp
+```csharp {title="C#"}
 public class Sample
 {
     private readonly string _name;
@@ -98,7 +98,7 @@ public class Sample
 
 メタデータの例:
 
-```cil
+```cil {title="IL"}
 .class public auto ansi beforefieldinit Sample
        extends [mscorlib]System.Object
 {
@@ -141,7 +141,7 @@ TypeRef （型の弁別情報だけ）
 
 IL コードの例:
 
-```cil
+```cil {title="IL"}
 .method public hidebysig specialname rtspecialname 
         instance void  .ctor(string name,
                              [opt] int32 'value') cil managed

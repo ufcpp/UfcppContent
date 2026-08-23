@@ -76,7 +76,7 @@ null 許容参照型(NRT)がらみの話3件と、switch 式の「target-typed�
 
 [switch 式](../../../../study/csharp/datatype/typeswitch.md#switch-expression)に関しては、
 
-```csharp
+```csharp {title="terget-typed switch 式"}
 byte M(bool b) => b switch { false => 0, true => 1 };
 ```
 
@@ -91,7 +91,7 @@ byte M(bool b) => b switch { false => 0, true => 1 };
 [ちょっと前](https://github.com/dotnet/csharplang/issues/2447)からの決定事項なんですが、
 非同期イテレーター(`await`と`yield return`の混在)に対する `CancellationToken` の渡し方は、引数に属性を付けることでやりたい、(属性名は本決定してないけど仮に)以下のような書き方をするという話があります。
 
-```csharp
+```csharp {title="非同期イテレーターへの CancellationToken の渡し方"}
 async IAsyncEnumerable<T> M<T>([DefaultCancellation] CancellationToken cancellationToken)
 {
     ...

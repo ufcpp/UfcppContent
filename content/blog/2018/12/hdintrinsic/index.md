@@ -36,7 +36,7 @@ C# は、これら C や C++ と比較してどこがボトルネックでしょ
 例えば、32ビット整数の中から、特定のビットだけを抜き出すことを考えてみます。
 普通に C# で書くと以下のような感じ。
 
-```csharp
+```csharp {title="uint 中の特定のビットを抜き出し"}
 struct SingleView
 {
     public uint Value;
@@ -88,7 +88,7 @@ intrinsic というのは固有の、内在的な、内因的な、本質的な�
 `mmintrin.h` とかで検索してもらうとサンプル コードがすぐに見つかると思います。
 以下のような感じで、普通の C++ コードを書くと、それが特定の Intel CPU 命令に置き換わります。
 
-```cpp
+```cpp {title="C++ での Intel Intrisics"}
 #include <immintrin.h>
 // 中略
 __m128 c = _mm_mul_ps(a, b);
@@ -121,7 +121,7 @@ MyGet (daily ビルド用の CI サーバー)からのみ取得できます。
 
 例えば、最初に出した「特定のビットだけを抜き出す」コードは以下のように書けます。
 
-```csharp
+```csharp {title="System.Runtime.Intrinsics"}
 using System.Runtime.Intrinsics.X86;
  
 struct SingleView

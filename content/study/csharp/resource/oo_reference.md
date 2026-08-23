@@ -56,7 +56,7 @@ C# の型の中で、構造体とクラスは非常に似通った機能です�
 この<em>参照を持つ</em>というのがどういうことなのか説明するために、
 以下のような2つのコードについて考えてみましょう。
 
-```csharp
+```csharp {title="値型の代入"}
 // 値型(構造体は値型になる)
 struct Point
 {
@@ -85,7 +85,7 @@ class ValueTypeSample
 ```
 
 
-```csharp
+```csharp {title="参照型の代入"}
 // 参照型(クラスは参照型になる)
 class Point
 {
@@ -377,7 +377,7 @@ C#には組込み型、クラス、構造体など、さまざまな型があり
 ここでは、ベクトルの加算を例にとってみます。多少大き目のデータの例を出したいので、8元ベクトル(`double`型(8バイト)が8つで64バイト)で考えましょう。
 以下のような構造体になります。
 
-```csharp
+```csharp {title="8元ベクトルの例(値型かつ自己書き換え)"}
 public struct Vector
 {
     public double A, B, C, D, E, F, G, H;
@@ -406,7 +406,7 @@ public struct Vector
 
 これに対して、以下のように、新しい値を作って返す実装も考えられます。
 
-```csharp
+```csharp {title="8元ベクトルの例(値型かつ書き換え不能)"}
 public struct Vector
 {
     public readonly double A, B, C, D, E, F, G, H;
@@ -465,7 +465,7 @@ public class Vector
 
 これらに対して、以下のような、ランダムな配列データの作成と、総和の計算を行います(これは「値型かつ自己書き換え」向けの実装です。他はちょっとずつコードが違います)。
 
-```csharp
+```csharp {title="ランダムな配列データの作成と、総和の計算"}
 // ランダムに配列データの生成
 public Vector[] GetSeries(Random r, int count) => Enumerable.Range(0, count).Select(_ => GetRandom(r)).ToArray();
 private static Vector GetRandom(Random r) => Get(() => r.NextDouble(-1, 1));

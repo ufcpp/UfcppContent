@@ -33,7 +33,7 @@ unbound (未束縛)というのは、`List<>` みたいに、型実引数を渡�
 
 例えば以下のような感じ。
 
-```csharp
+```csharp {title="nameof の中に unbound な型を書けるように"}
 var name = nameof(List<>.Count);
 
 Console.WriteLine(name); // Count
@@ -55,7 +55,7 @@ Console.WriteLine(name); // Count
 `typeof(T<>)` の方では `typeof(T<>.X)` とメンバー参照することはないので、
 `nameof` では「似て非なるものの再実装」が必要とのことです。
 
-```csharp
+```csharp {title="似て非なる nameof と typeof"}
 // unbound でメンバー参照(特にインスタンス メンバーの参照)をするのは nameof だけ。
 var name = nameof(List<>.Count);
 
@@ -79,7 +79,7 @@ var m1 = typeof(List<>.Count);
 これまでは「型制約の関係でどうやっても `nameof` を使いにくい」という場面がありえました。
 一例として、以下のような場面があり得ます。
 
-```csharp
+```csharp {title="型制約のせいで nameof が使いにくくなる例"}
 var name1 = nameof(A<_>); // これは書けるけど、
 var name2 = nameof(B<_>); // これは書けない。
 

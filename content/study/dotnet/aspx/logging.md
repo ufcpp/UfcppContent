@@ -40,7 +40,7 @@ Global.asax は、
 以下のように &lt;script&gt; タグを1つだけ書いてその中で処理に記述するか、
 
 
-```xml
+```xml {title="Global.asax（インラインコード）"}
 <%@ Application Language="C#" %>
 
 <script Language="C#" runat="Server">
@@ -58,13 +58,13 @@ void Session_Start(object sender, EventArgs e)
 あるいは、以下のように、コードビハインドで処理を記述します。
 
 
-```xml
+```xml {title="Global.asax（コードビハインド）"}
 <%@ Application
     Codebehind="Global.asax.cs"
     Inherits="WebApplication1.Global"
     Language="C#" %>
 ```
-```csharp
+```csharp {title="Glocal.asax.cs"}
 namespace WebApplication1
 {
   public class Global : System.Web.HttpApplication
@@ -161,7 +161,7 @@ Request.PhysicalApplicationPath プロパティの値は C:\Users\user1\wwwroot 
 以下のようにします。
 （この例では、日付に応じて、yyyyMM.csv という形式の名前で保存します。）
 
-```csharp
+```csharp {title="PhysicalApplicationPath"}
 string basePath = Request.PhysicalApplicationPath + @"\accesslog\";
 DateTime now = DateTime.Now;
 string filename = basePath +
@@ -178,7 +178,7 @@ Web アプリケーションにいつ誰がアクセスしてくるかは分か�
 
 例えば、単に以下のようなコードを書いたとします。
 
-```csharp
+```csharp {title="ログ記録（排他制御なし）"}
 using (StreamWriter sw = new StreamWriter(filename, true))
 {
   sw.Write("\"" + DateTime.Now.ToString() + "\",");
@@ -227,7 +227,7 @@ Lock() と UnLock() で囲まれた領域は、
 そういう観点からすると、Application でロックするのは作法的にはあまりよくないかも。
 でも、Application.Lock() は使いやすいから。）
 
-```csharp
+```csharp {title="ログ記録（排他制御なし）"}
 Application.Lock();
 using (StreamWriter sw = new StreamWriter(filename, true))
 {
@@ -249,7 +249,7 @@ Application.UnLock();
 まとめると、
 Global.asax.cs（Global.asax のコードビハインド）に以下のようなコードを書くことでアクセスログの記録ができます。
 
-```csharp
+```csharp {title="Global.asax.cs"}
 using System;
 using System.Web;
 using System.IO;
@@ -303,7 +303,7 @@ namespace WebApplication1
 まあ、単純に、ユーザエージェントを見て、それっぽい文字が含まれていたらログを記録しないだけなので、
 以下のようなコードを Global.asax.cs に追加するだけで簡単に実現可能です。
 
-```csharp
+```csharp {title="Global.asax.cs に追加"}
 static readonly string[] excludeList = new string[]
 {
   "Googlebot",
