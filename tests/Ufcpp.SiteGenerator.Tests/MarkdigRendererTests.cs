@@ -609,6 +609,31 @@ public sealed class MarkdigRendererTests
     }
 
     [Fact]
+    public void Render_HighlightRanges_FingerprintUsesExactMarkdigCodeValue()
+    {
+        const string WithoutFinalBlankLine =
+            "sha256:8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4;1:1-1:3";
+        const string WithFinalBlankLine =
+            "sha256:98ea6e4f216f2fb4b69fff9b3a44842c38686ca685f3f55dc48c5d3fb1107be4;1:1-1:3";
+        const string Utf8WithoutPreamble =
+            "sha256:77710aedc74ecfa33685e33a6c7df5cc83004da1bdcef7fb280f5c2b2e97e0a5;1:1-1:4";
+
+        var ordinary = Render(
+            $"```text {{highlight-ranges=\"{WithoutFinalBlankLine}\"}}\r\n"
+            + "hi\r\n```");
+        var finalBlankLine = Render(
+            $"```text {{highlight-ranges=\"{WithFinalBlankLine}\"}}\r\n"
+            + "hi\r\n\r\n```");
+        var unicode = Render(
+            $"```text {{highlight-ranges=\"{Utf8WithoutPreamble}\"}}\n"
+            + "日本語\n```");
+
+        Assert.Equal("hi", ExtractRenderedCodeElement(ordinary).Value);
+        Assert.Equal("hi\n", ExtractRenderedCodeElement(finalBlankLine).Value);
+        Assert.Equal("日本語", ExtractRenderedCodeElement(unicode).Value);
+    }
+
+    [Fact]
     public void Render_HighlightRanges_PreservesEncodedEntitySpelling()
     {
         const string Code = "value &lt; limit";

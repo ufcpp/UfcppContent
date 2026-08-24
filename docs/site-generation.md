@@ -278,7 +278,7 @@ attributes:
 desktop browsers expose the same native hover tooltip as the legacy site. It
 must be non-empty and cannot contain control characters. When it is omitted,
 the renderer does not emit a `title` attribute. Metadata text is HTML-decoded
-exactly once; the migrator canonically encodes `&`, `"`, `<`, `>`, and backticks
+exactly once; canonical metadata encodes `&`, `"`, `<`, `>`, and backticks
 so quote-rich titles and literal entity spellings remain unambiguous.
 `highlight-lines` accepts
 comma-separated, one-based whole-line numbers and inclusive ranges. Blank lines
@@ -319,14 +319,62 @@ hi
 ```
 ````
 
+The formal grammar shared by all positional annotation properties is:
+
+```text
+highlight-ranges = range-value
+error-ranges     = range-value
+warning-ranges   = range-value
+range-value      = "sha256:" 64-lowercase-hex ";" range *("," range)
+range            = position "-" position
+position         = positive-decimal ":" positive-decimal
+```
+
+`64-lowercase-hex` is exactly 64 lowercase hexadecimal digits.
+`positive-decimal` is greater than zero and has no sign or leading zero; the
+grammar contains no whitespace.
+
 Each range is `startLine:startColumn-endLine:endColumn`, with one-based lines
 and Unicode-scalar columns and an exclusive end. Multiple ranges are
 comma-separated. CRLF and bare CR count as one logical line break; tabs count as
-one scalar and are not expanded. The lowercase SHA-256 prefix fingerprints the
-entire Markdig code value after newline normalization, so editing any part of a
-range-annotated block makes stale metadata fail the build rather than silently
-moving a highlight. Values must use the single canonical ordering and spelling:
-ranges are non-empty, in bounds, strictly increasing, disjoint, and non-adjacent.
+one scalar and are not expanded.
+
+The fingerprint input is exactly the string consumed by the renderer from
+`FencedCodeBlock.Lines.ToString()`: Markdig's parsed code content only, without
+the opening or closing fence, language/info string, or attributes. Entity
+spellings and all spaces, tabs, and blank content lines remain literal. The line
+break that merely terminates the last code line before the closing fence is not
+part of this value. An additional empty content line is significant, however:
+the example above produces `hi`, while an empty line between `hi` and the
+closing fence produces `hi\n`.
+
+Before hashing, every CRLF pair and lone CR in that string is replaced with one
+LF. The normalized string is encoded with UTF-8 and the resulting bytes are
+passed directly to SHA-256; no byte-order mark or other prefix is included. A
+minimal equivalent C# recipe is:
+
+```csharp
+using System;
+using System.Security.Cryptography;
+using System.Text;
+
+static string Fingerprint(string markdigCodeValue)
+{
+    var normalized = markdigCodeValue
+        .Replace("\r\n", "\n", StringComparison.Ordinal)
+        .Replace('\r', '\n');
+    var bytes = Encoding.UTF8.GetBytes(normalized);
+    return Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
+}
+
+Console.WriteLine(Fingerprint("hi"));
+// 8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4
+```
+
+Editing any part of a range-annotated block makes stale metadata fail the build
+rather than silently moving a highlight. Values must use the single canonical
+ordering and spelling: ranges are non-empty, in bounds, strictly increasing,
+disjoint, and non-adjacent.
 
 All three `*-ranges` properties share the same grammar and compose with their
 kind's line selection. Error/warning text and range properties are mutually
