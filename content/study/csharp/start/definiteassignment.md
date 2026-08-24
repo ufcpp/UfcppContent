@@ -39,7 +39,7 @@ C# では、[クラス](../oop/oo_class.md)のフィールドや[配列](../stru
 まずわかりやすい例から見ていきましょう。
 分岐も何もなければ簡単です。以下のようなコードはコンパイル エラーになります。
 
-```csharp {title="未初期化変数を使おうとしてエラーになる例" error-ranges="sha256:e9eb136ddf7a7b25df7f020c1f626584a8dfda6a0ba2cf6d217a6416abfe6b19;4:19-4:20"}
+```csharp {title="未初期化変数を使おうとしてエラーになる例" error-ranges="sha256:e9eb136ddf7a7b25df7f020c1f626584a8dfda6a0ba2cf6d217a6416abfe6b19;4:19-4:20" error-diagnostics="sha256:e9eb136ddf7a7b25df7f020c1f626584a8dfda6a0ba2cf6d217a6416abfe6b19;CS0165@4:19-4:20"}
 int x;
 
 // x に何も代入しないまま値を取り出そうとした。
@@ -89,7 +89,7 @@ static void m(bool condition)
 }
 ```
 
-```csharp {title="if でだけ代入" error-ranges="sha256:d92d76fbf7c096c32489790d8c40e719b6d0f4e6c40c16eaaa56701830fd54b1;12:23-12:24"}
+```csharp {title="if でだけ代入" error-ranges="sha256:d92d76fbf7c096c32489790d8c40e719b6d0f4e6c40c16eaaa56701830fd54b1;12:23-12:24" error-diagnostics="sha256:d92d76fbf7c096c32489790d8c40e719b6d0f4e6c40c16eaaa56701830fd54b1;CS0165@12:23-12:24"}
 // ダメな例: if でだけ代入。
 static void m(bool condition)
 {
@@ -125,7 +125,7 @@ static void m(byte condition)
 }
 ```
 
-```csharp {title="case に漏れ" error-ranges="sha256:0325d9e4776d8b5b5044cf6ceefe2decd142907f1d7869af90d078c523f93280;15:23-15:24"}
+```csharp {title="case に漏れ" error-ranges="sha256:0325d9e4776d8b5b5044cf6ceefe2decd142907f1d7869af90d078c523f93280;15:23-15:24" error-diagnostics="sha256:0325d9e4776d8b5b5044cf6ceefe2decd142907f1d7869af90d078c523f93280;CS0165@15:23-15:24"}
 // ダメな例: case に漏れがあるとダメ。
 static void m(byte condition)
 {
@@ -167,7 +167,7 @@ static void m(sbyte condition)
 例えば、`while (false)` や、`break` なども追ってくれます。
 
 
-```csharp {title="通らないループ" error-ranges="sha256:50ed806e4eabe2b2e1c31cc5116ab76f2bec888221f5224e21140e3376231650;11:19-11:20" warning-ranges="sha256:50ed806e4eabe2b2e1c31cc5116ab76f2bec888221f5224e21140e3376231650;7:5-7:6"}
+```csharp {title="通らないループ" error-ranges="sha256:50ed806e4eabe2b2e1c31cc5116ab76f2bec888221f5224e21140e3376231650;11:19-11:20" error-diagnostics="sha256:50ed806e4eabe2b2e1c31cc5116ab76f2bec888221f5224e21140e3376231650;CS0165@11:19-11:20" warning-ranges="sha256:50ed806e4eabe2b2e1c31cc5116ab76f2bec888221f5224e21140e3376231650;7:5-7:6" warning-diagnostics="sha256:50ed806e4eabe2b2e1c31cc5116ab76f2bec888221f5224e21140e3376231650;CS0162@7:5-7:6"}
 // ダメな例: 通らないループ。
 int x;
 
@@ -181,7 +181,7 @@ while (false)
 Console.WriteLine(x);
 ```
 
-```csharp {title="早すぎる break" error-ranges="sha256:a5f72f354119ad8dd3bb06cadc375c2da47618c88350d441e729ace6e07efa09;12:19-12:20" warning-ranges="sha256:a5f72f354119ad8dd3bb06cadc375c2da47618c88350d441e729ace6e07efa09;8:5-8:6"}
+```csharp {title="早すぎる break" error-ranges="sha256:a5f72f354119ad8dd3bb06cadc375c2da47618c88350d441e729ace6e07efa09;12:19-12:20" error-diagnostics="sha256:a5f72f354119ad8dd3bb06cadc375c2da47618c88350d441e729ace6e07efa09;CS0165@12:19-12:20" warning-ranges="sha256:a5f72f354119ad8dd3bb06cadc375c2da47618c88350d441e729ace6e07efa09;8:5-8:6" warning-diagnostics="sha256:a5f72f354119ad8dd3bb06cadc375c2da47618c88350d441e729ace6e07efa09;CS0162@8:5-8:6"}
 // ダメな例: 早すぎる break。
 int x;
 
@@ -211,7 +211,7 @@ while (true)
 Console.WriteLine(x);
 ```
 
-```csharp {title="永久ループ" warning-text="Console"}
+```csharp {title="永久ループ" warning-text="Console" warning-diagnostics="sha256:21980867f0ae9c912b0735a6d19915d76f7ce7e8c59918d22204b7474d414ead;CS0162@11:1-11:8"}
 // 大丈夫な例: 永久ループの下。
 int x;
 

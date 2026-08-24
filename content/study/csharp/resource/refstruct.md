@@ -335,7 +335,7 @@ ref struct Span<T>
 ちなみに、ref フィールドを持てるのは ref 構造体だけです。
 以下のコードはコンパイル エラーになります。
 
-```csharp {error-ranges="sha256:4df87f7f312500514be780bfeaec1b1f2ab42a9c426e6ac960899fb29957e6a8;3:13-3:15,8:13-8:15"}
+```csharp {error-ranges="sha256:4df87f7f312500514be780bfeaec1b1f2ab42a9c426e6ac960899fb29957e6a8;3:13-3:15,8:13-8:15" error-diagnostics="sha256:4df87f7f312500514be780bfeaec1b1f2ab42a9c426e6ac960899fb29957e6a8;CS9059@3:13-3:15,CS9059@8:13-8:15"}
 class A
 {
     ref int _x; // class 中はダメ。
@@ -372,7 +372,7 @@ ref struct A
 
 で、`ref readonly` の方は C# 7.2 の頃からある意味と同じで、「参照先の値の変更不可」です。
 
-```csharp {title="✔「どこを参照するか変更」と✖「参照先の値の変更」" highlight-text="ref readonly" error-ranges="sha256:3348e2bc44d0c115fe63f1248c879244bc80cd27cdab7b3e5201137225d3c587;6:1-6:2"}
+```csharp {title="✔「どこを参照するか変更」と✖「参照先の値の変更」" highlight-text="ref readonly" error-ranges="sha256:3348e2bc44d0c115fe63f1248c879244bc80cd27cdab7b3e5201137225d3c587;6:1-6:2" error-diagnostics="sha256:3348e2bc44d0c115fe63f1248c879244bc80cd27cdab7b3e5201137225d3c587;CS8331@6:1-6:2"}
 scoped var a = new A();
 
 int x1 = 0;
@@ -388,7 +388,7 @@ ref struct A
 
 一方、C# 11 から書ける `readonly ref` は、要は、ref フィールド `ref T X` を readonly にするという意味なので、「どこを参照するか変更」の方ができなくなります。
 
-```csharp {title="✖「どこを参照するか変更」と✔「参照先の値の変更」" highlight-text="readonly ref" error-ranges="sha256:3e6728379b323087e6997d53e83c27bcd33be4b649995b106fd9f535f915fe66;7:1-7:2"}
+```csharp {title="✖「どこを参照するか変更」と✔「参照先の値の変更」" highlight-text="readonly ref" error-ranges="sha256:3e6728379b323087e6997d53e83c27bcd33be4b649995b106fd9f535f915fe66;7:1-7:2" error-diagnostics="sha256:3e6728379b323087e6997d53e83c27bcd33be4b649995b106fd9f535f915fe66;CS0191@7:1-7:2"}
 int x0 = 0;
 
 // readonly フィールドはコンストラクターでしか初期化できないので引数で渡す。
@@ -408,7 +408,7 @@ ref struct A
 
 当然、両方の `readonly` を付けると両方不可です。
 
-```csharp {title="✖「どこを参照するか変更」と✖「参照先の値の変更」" error-ranges="sha256:ad817c7072c47a5bef9e8c17874bfdfdf1fd6c3918624a1729801e5742a8a07c;7:1-7:2,9:1-9:2"}
+```csharp {title="✖「どこを参照するか変更」と✖「参照先の値の変更」" error-ranges="sha256:ad817c7072c47a5bef9e8c17874bfdfdf1fd6c3918624a1729801e5742a8a07c;7:1-7:2,9:1-9:2" error-diagnostics="sha256:ad817c7072c47a5bef9e8c17874bfdfdf1fd6c3918624a1729801e5742a8a07c;CS0191@7:1-7:2,CS8331@9:1-9:2"}
 int x0 = 0;
 
 // readonly フィールドはコンストラクターでしか初期化できないので引数で渡す。
@@ -432,7 +432,7 @@ ref struct A
 簡単に言うと、メソッド内のローカル変数はメソッドを抜けると消えるので、
 その参照は外に漏らしてはいけません。
 
-```csharp {title="ローカル変数への参照は外に漏らせない" error-ranges="sha256:5f48aa4c2ba845117b07c56ea239e2614d49912e6bccdbe48179cfd12283ee3e;4:16-4:17"}
+```csharp {title="ローカル変数への参照は外に漏らせない" error-ranges="sha256:5f48aa4c2ba845117b07c56ea239e2614d49912e6bccdbe48179cfd12283ee3e;4:16-4:17" error-diagnostics="sha256:5f48aa4c2ba845117b07c56ea239e2614d49912e6bccdbe48179cfd12283ee3e;CS8168@4:16-4:17"}
 static ref int M()
 {
     int x = 123; // メソッド内の変数はメソッド抜けると消える。
@@ -445,7 +445,7 @@ static ref int M()
 上記の例の場合は単純ですが、
 参照変数などがあるため、間接的に何段も追いかける必要があります。
 
-```csharp {title="エスケープ阻止のため、多段に追う必要あり" error-ranges="sha256:586b9f44d07c96260b9ff1ef99e3b2f991db511b2e06390057cc1535c93fdf67;6:16-6:17"}
+```csharp {title="エスケープ阻止のため、多段に追う必要あり" error-ranges="sha256:586b9f44d07c96260b9ff1ef99e3b2f991db511b2e06390057cc1535c93fdf67;6:16-6:17" error-diagnostics="sha256:586b9f44d07c96260b9ff1ef99e3b2f991db511b2e06390057cc1535c93fdf67;CS8157@6:16-6:17"}
 static ref int M()
 {
     int x = 123; // メソッド内の変数はメソッド抜けると消える。
@@ -463,7 +463,7 @@ C# 11 で ref フィールドが入ったわけですが、
 
 例えばわざとちょっと複雑なことをすると、以下のように、いろいろなところに参照が伝搬するコードが書けます。
 
-```csharp {title="参照がいろんなところに伝搬する例" error-ranges="sha256:cb4826a5b8a1acd6301f85ea78ef982e34f9558dc631e3ea51702a4281d3091c;9:14-9:20,10:14-10:15,11:14-11:17"}
+```csharp {title="参照がいろんなところに伝搬する例" error-ranges="sha256:cb4826a5b8a1acd6301f85ea78ef982e34f9558dc631e3ea51702a4281d3091c;9:14-9:20,10:14-10:15,11:14-11:17" error-diagnostics="sha256:cb4826a5b8a1acd6301f85ea78ef982e34f9558dc631e3ea51702a4281d3091c;CS8352@9:14-9:20,CS8352@10:14-10:15,CS8352@11:14-11:17"}
 static void M(out Span<int> result)
 {
     int x = 123;
@@ -546,7 +546,7 @@ ref 構造体(`Span<T>` など)に関しては実際にこの2択で、
 実際のコードを見てみましょう。
 まず、何もつけない場合(`ref T` は return-only、ref 構造体は unscoped):
 
-```csharp {title="何もつけない: ref T は return-only、ref 構造体は unscoped" error-ranges="sha256:e682e6731b20012df389fa795a76ecaa0f15e69cffba8ffa3c4ab815698457b6;21:38-21:48"}
+```csharp {title="何もつけない: ref T は return-only、ref 構造体は unscoped" error-ranges="sha256:e682e6731b20012df389fa795a76ecaa0f15e69cffba8ffa3c4ab815698457b6;21:38-21:48" error-diagnostics="sha256:e682e6731b20012df389fa795a76ecaa0f15e69cffba8ffa3c4ab815698457b6;CS9079@21:38-21:48"}
 ref struct Default
 {
     private ref int _x;
@@ -573,7 +573,7 @@ ref struct Default
 
 続いて、`scoped` 修飾子を付けた場合(いずれも scoped 扱い)、たいていのものがダメになります:
 
-```csharp {title="scoped 修飾子を付けた場合" error-ranges="sha256:98753644ca7b8781c150a7954d488f2467a0517766a75da2a24a2d107ecedcff;13:40-13:50,14:55-14:56,15:45-15:55,17:47-17:48,18:56-18:57,19:53-19:54"}
+```csharp {title="scoped 修飾子を付けた場合" error-ranges="sha256:98753644ca7b8781c150a7954d488f2467a0517766a75da2a24a2d107ecedcff;13:40-13:50,14:55-14:56,15:45-15:55,17:47-17:48,18:56-18:57,19:53-19:54" error-diagnostics="sha256:98753644ca7b8781c150a7954d488f2467a0517766a75da2a24a2d107ecedcff;CS8374@13:40-13:50,CS9075@14:55-14:56,CS8374@15:45-15:55,CS8352@17:47-17:48,CS8352@18:56-18:57,CS8352@19:53-19:54"}
 ref struct Scoped
 {
     private ref int _x;
@@ -599,7 +599,7 @@ ref struct Scoped
 最後に、`UnscopedRef` 属性を付けた場合、たいていのものが OK になります
 (ただし、ref 構造体は何も付けなくても unscoped 扱いなので、追加で属性を付けようとするとエラーになります):
 
-```csharp {error-ranges="sha256:be89bc73d9db69dfdee2004f1caa2f33c0013ba6f5cf94f97c58c63b456c40a2;17:22-17:33,18:34-18:45,19:26-19:37,20:26-20:37"}
+```csharp {error-ranges="sha256:be89bc73d9db69dfdee2004f1caa2f33c0013ba6f5cf94f97c58c63b456c40a2;17:22-17:33,18:34-18:45,19:26-19:37,20:26-20:37" error-diagnostics="sha256:be89bc73d9db69dfdee2004f1caa2f33c0013ba6f5cf94f97c58c63b456c40a2;CS9063@17:22-17:33,CS9063@18:34-18:45,CS9063@19:26-19:37,CS9063@20:26-20:37"}
 using System.Diagnostics.CodeAnalysis;
 
 ref struct Unscoped
@@ -631,7 +631,7 @@ ref struct Unscoped
 例えば、unscoped (何も修飾子を付けていない ref 構造体)の場合、以下のように、
 `Builder.Replace` の中で制限がない代わり、それを呼んでいる場所でのエラーが増えます。
 
-```csharp {title="unscoped な挙動" error-ranges="sha256:6fe3f1ca6e2da301f5f7636e90f3dad8f4eea8535de9dd20c63b6eb1f776c46d;8:5-8:31"}
+```csharp {title="unscoped な挙動" error-ranges="sha256:6fe3f1ca6e2da301f5f7636e90f3dad8f4eea8535de9dd20c63b6eb1f776c46d;8:5-8:31" error-diagnostics="sha256:6fe3f1ca6e2da301f5f7636e90f3dad8f4eea8535de9dd20c63b6eb1f776c46d;CS8350@8:5-8:31,CS8352@8:21-8:30"}
 var builder = new Builder();
 
 Replace(ref builder);
@@ -692,7 +692,7 @@ ref struct Builder(Span<char> initialBuffer)
 構造体の `this` は参照になっています。
 この参照はデフォルトで scoped 扱いになっていて、外に漏らすことができません。
 
-```csharp {title="this は scoped 扱い" error-ranges="sha256:8f09812c59cebc45fc2bf98a521466e4df4ffd7527e60dc60d49b3252142a273;7:35-7:39,9:34-9:36"}
+```csharp {title="this は scoped 扱い" error-ranges="sha256:8f09812c59cebc45fc2bf98a521466e4df4ffd7527e60dc60d49b3252142a273;7:35-7:39,9:34-9:36" error-diagnostics="sha256:8f09812c59cebc45fc2bf98a521466e4df4ffd7527e60dc60d49b3252142a273;CS8170@7:35-7:39,CS8170@9:34-9:36"}
 using System.Diagnostics.CodeAnalysis;
 
 struct S
@@ -740,7 +740,7 @@ ref struct S : IFormattable
 ただ、前述の[「スタックのみ」制約](#stack-only)のせいで直接インターフェイス型の変数に代入することは C# 13 でもできません。
 以下のコードは引き続きエラーになります。
 
-```csharp {title="インターフェイスを実装できるようになったのに、インターフェイスに代入できない" error-text="new S()"}
+```csharp {title="インターフェイスを実装できるようになったのに、インターフェイスに代入できない" error-text="new S()" error-diagnostics="sha256:969dadb1c4f9e8a1909502bb8fc2d491cd1d4c43419cdbd3701607da25607b9a;CS0029@1:18-1:25"}
 IFormattable f = new S();
 
 ref struct S : IFormattable
@@ -810,7 +810,7 @@ M<ReadOnlySpan<char>>();
 
 その代わり、`allows ref struct` を付けると、メソッド内でボックス化を起こすようなコードを書けなくなります。
 
-```csharp {title="allows ref struct な型の変数はボックス化できない" error-ranges="sha256:bffa6a1d1eac41e449a2c4178ca35cdf555f2f74edcfe0d8aa718da579fbaaf0;4:16-4:17,5:23-5:24,6:23-6:24"}
+```csharp {title="allows ref struct な型の変数はボックス化できない" error-ranges="sha256:bffa6a1d1eac41e449a2c4178ca35cdf555f2f74edcfe0d8aa718da579fbaaf0;4:16-4:17,5:23-5:24,6:23-6:24" error-diagnostics="sha256:bffa6a1d1eac41e449a2c4178ca35cdf555f2f74edcfe0d8aa718da579fbaaf0;CS0103@4:16-4:17,CS0103@5:23-5:24,CS0103@6:23-6:24"}
 static void M<T>() where T : allows ref struct
 {
     // 先ほどのボックス化を起こすコードはすべてエラーに。
@@ -827,7 +827,7 @@ static void M<T>() where T : allows ref struct
 これで、ボックス化を起こさないようにインターフェイスのメンバーを呼べるようになったので、
 ref 構造体のインターフェイス実装を活用できるようになります。
 
-```csharp {title="allows ref struct なジェネリック メソッドを介して、ref 構造体のインターフェイス実装を呼ぶ" error-ranges="sha256:932ebd5b6b45447eda33f7a31881441fdc008eaf413dd8799ace8e1f16fcdef4;4:18-4:19"}
+```csharp {title="allows ref struct なジェネリック メソッドを介して、ref 構造体のインターフェイス実装を呼ぶ" error-ranges="sha256:932ebd5b6b45447eda33f7a31881441fdc008eaf413dd8799ace8e1f16fcdef4;4:18-4:19" error-diagnostics="sha256:932ebd5b6b45447eda33f7a31881441fdc008eaf413dd8799ace8e1f16fcdef4;CS0029@4:18-4:19"}
 S x = new(); // S は IFormattable を実装してる。
 
 // これはボックス化を起こすから C# 13 でもエラーになる。
@@ -899,7 +899,7 @@ ref 構造体がらみで非常に多い要望の1つに、`Span<T>`、`ReadOnly
 しかし、ref 構造体にインターフェイスを実装できるようになっても、`Span<T>` に `IEnumerable<T>` は実装できなくて、この要望はかないません。
 問題は、以下のように、`IEnumerator<T>` インターフェイスを戻り値に返す部分が ref 構造体と合いません。
 
-```csharp {title="ref 構造体は IEnumerable と相性がよくない" error-text="new Enumerator(this)"}
+```csharp {title="ref 構造体は IEnumerable と相性がよくない" error-text="new Enumerator(this)" error-diagnostics="sha256:40dc0e120a14bdbaec1d029b7696edf03e9a72ceb7787fba610e3ae7b69002a1;CS0029@18:46-18:66"}
 using System.Collections;
 
 ref struct Span<T> : IEnumerable<T>

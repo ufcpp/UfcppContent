@@ -53,7 +53,7 @@ class A : IEnumerable<int>
 }
 ```
 
-```csharp {title="インターフェイス実装を消したらエラー" error-text="[1]"}
+```csharp {title="インターフェイス実装を消したらエラー" error-text="[1]" error-diagnostics="sha256:ed612b57922aca7e16eb791f05ece902c145a69d883eb2fb478c11d2d802ba18;CS9174@5:7-5:10"}
 // foreach はインターフェイスがなくても GetEnumerator っていう名前のメソッドさえ持っていれば OK なのに。
 foreach (var x in new A()) { }
 
@@ -68,7 +68,7 @@ class A
 }
 ```
 
-```csharp {title="コレクション初期化子は使えるのに…" error-ranges="sha256:ab21d0c37865d4eefac9e717466164cfc316c4d3b0a60bb6f2765cd49fbdc3eb;11:8-11:11"}
+```csharp {title="コレクション初期化子は使えるのに…" error-ranges="sha256:ab21d0c37865d4eefac9e717466164cfc316c4d3b0a60bb6f2765cd49fbdc3eb;11:8-11:11" error-diagnostics="sha256:ab21d0c37865d4eefac9e717466164cfc316c4d3b0a60bb6f2765cd49fbdc3eb;CS9215@11:8-11:11,CS1503@11:8-11:11"}
 using System.Collections;
 
 // foreach なんとか OK。
@@ -92,7 +92,7 @@ class A : IEnumerable
 ちなみに、この「`IEnumerable<T>` の `T`」以外は受け付けなかったりします。
 これも、コレクション初期化子時代はできたこと。
 
-```csharp {title="コレクション初期化子は使えるのに… (再)" error-ranges="sha256:d610bf543182b50b79ba1552196ffd61664fa32e3284ebb941fe1ecf73277ec3;7:12-7:15"}
+```csharp {title="コレクション初期化子は使えるのに… (再)" error-ranges="sha256:d610bf543182b50b79ba1552196ffd61664fa32e3284ebb941fe1ecf73277ec3;7:12-7:15" error-diagnostics="sha256:d610bf543182b50b79ba1552196ffd61664fa32e3284ebb941fe1ecf73277ec3;CS0029@7:12-7:15"}
 using System.Collections;
 
 // 旧来のコレクション初期化子は string を受け付けるのに…
@@ -117,7 +117,7 @@ class A : IEnumerable<int>
 
 * [False positive for CS1503 with MSBuild 17.10, but not dotnet build #72098](https://github.com/dotnet/roslyn/issues/72098)
 
-```csharp {error-ranges="sha256:bf1cc619f238fd0786746092dd5e7f0cde9580bf4e4be7bfe1be209cab8d1cfe;8:8-8:16"}
+```csharp {error-ranges="sha256:bf1cc619f238fd0786746092dd5e7f0cde9580bf4e4be7bfe1be209cab8d1cfe;8:8-8:16" error-diagnostics="sha256:bf1cc619f238fd0786746092dd5e7f0cde9580bf4e4be7bfe1be209cab8d1cfe;CS9215@8:8-8:16,CS1503@8:8-8:16"}
 using System.Collections;
 
 // 旧来のコレクション初期化子は string を受け付けるのに…

@@ -628,8 +628,8 @@ C# 13 で [`allows ref struct`](../resource/refstruct.md#ref-struct-interface) �
 
 <pre class="source" title="制約あり"><code class="language-csharp">M&lt;int&gt;();
 M&lt;object&gt;();
-<span class="error">M&lt;string&gt;</span>(); // 書けなくなる。
-<span class="error">M&lt;Uri&gt;</span>();    // 書けなくなる。
+<span class="error" title="CS0310">M&lt;string&gt;</span>(); // 書けなくなる。
+<span class="error" title="CS0310">M&lt;Uri&gt;</span>();    // 書けなくなる。
 
 static object M&lt;T&gt;()
     where T : new()
@@ -650,7 +650,7 @@ static object M&lt;T&gt;()
     // 制約なしの場合
 {
     // こっちが書けない。
-    return <span class="error">new T()</span>;
+    return <span class="error" title="CS0304">new T()</span>;
 }</code></pre>
 
 </td>
@@ -680,7 +680,7 @@ static object? M&lt;T&gt;()
     where T : allows ref struct
 {
     // ref struct を object に渡せない。
-    return <span class="error">default(T)</span>;
+    return <span class="error" title="CS0029"><span class="error" title="CS0029">default(T)</span></span>;
 }</code></pre>
 
 </td>
@@ -688,8 +688,8 @@ static object? M&lt;T&gt;()
 
 <pre class="source" title="アンチ制約なし"><code class="language-csharp">M&lt;int&gt;();
 M&lt;object&gt;();
-<span class="error">M&lt;Span&lt;string&gt;&gt;</span>();      // 書けない。
-<span class="error">M&lt;ReadOnlySpan&lt;int&gt;&gt;</span>(); // 書けない。
+<span class="error" title="CS9244">M&lt;Span&lt;string&gt;&gt;</span>();      // 書けない。
+<span class="error" title="CS9244">M&lt;ReadOnlySpan&lt;int&gt;&gt;</span>(); // 書けない。
 
 static object? M&lt;T&gt;()
     // アンチ制約なしの場合
@@ -715,7 +715,7 @@ C# 13 時点でアンチ制約(= `allows` を使うもの)は `ref struct` だ�
 
 これまで、`where T : struct` 制約を指定すると null 許容値型を `T` に渡せなくなるという制約がありました。
 
-```csharp {title="where T : struct では null 許容値型を使えなくなる" error-text="M&lt;int?&gt;" warning-text="x"}
+```csharp {title="where T : struct では null 許容値型を使えなくなる" error-text="M&lt;int?&gt;" error-diagnostics="sha256:49cab88cb9d9cb6c654dcedf98d16669674f89b9da5e05d538c723177f634655;CS0453@2:1-2:8" warning-text="x" warning-diagnostics="sha256:49cab88cb9d9cb6c654dcedf98d16669674f89b9da5e05d538c723177f634655;CS0219@9:8-9:9"}
 // struct 制約が付いていると null 許容型を指定できなくなる。
 M<int?>();
 
@@ -730,7 +730,7 @@ static void M<T>()
 
 そこで、`allows nullable` (仮)アンチ制約を導入してはどうかという案が出ています。
 
-```csharp {title="null 許容値型アンチ制約を追加する案" error-text="T?" warning-text="x"}
+```csharp {title="null 許容値型アンチ制約を追加する案" error-text="T?" warning-text="x" warning-diagnostics="sha256:fc0348a16eafecb583e0e9e51397f99889f446135d89651d2686e60633005c07;CS0219@8:8-8:9"}
 // これができるようになってほしい。
 M<int?>();
 

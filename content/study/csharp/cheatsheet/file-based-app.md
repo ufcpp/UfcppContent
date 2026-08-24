@@ -133,7 +133,7 @@ Console.WriteLine(new DateTime(2000, 1, 2, 3, 4, 5));
 例えば以下のコードでは、5行目(`LangVersion` の行)は問題なく、
 9行目(`ImplicitUsings` の行)でだけコンパイル エラーを起こします。
 
-```csharp {error-ranges="sha256:0f676e14a6df2a426f564b2d53fc5dee7b671f4734a76fbf0ba433d11c4b0bb5;9:2-9:3"}
+```csharp {error-ranges="sha256:0f676e14a6df2a426f564b2d53fc5dee7b671f4734a76fbf0ba433d11c4b0bb5;9:2-9:3" error-diagnostics="sha256:0f676e14a6df2a426f564b2d53fc5dee7b671f4734a76fbf0ba433d11c4b0bb5;CS9297@9:2-9:3"}
 #!/usr/bin/env dotnet
 
 // コメントはあってもいい。

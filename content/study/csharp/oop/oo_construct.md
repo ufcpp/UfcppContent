@@ -372,7 +372,7 @@ class A
 この初期化の順序との兼ね合いで、フィールド初期化子ではインスタンス メソッドを呼ぶことができません。
 例えば以下のようなコードを認めてしまうと、「まだ初期化していないフィールドを読んでしまう」問題が起きます。
 
-```csharp {title="初期化子内ではインスタンス メソッドを呼んではいけない" error-ranges="sha256:0913eb4afb7c5179cdcad58e99722d39b79d6ee5eccd3e904539e952ab7192d3;4:30-4:31" warning-ranges="sha256:0913eb4afb7c5179cdcad58e99722d39b79d6ee5eccd3e904539e952ab7192d3;6:17-6:28"}
+```csharp {title="初期化子内ではインスタンス メソッドを呼んではいけない" error-ranges="sha256:0913eb4afb7c5179cdcad58e99722d39b79d6ee5eccd3e904539e952ab7192d3;4:30-4:31" error-diagnostics="sha256:0913eb4afb7c5179cdcad58e99722d39b79d6ee5eccd3e904539e952ab7192d3;CS0236@4:30-4:31" warning-ranges="sha256:0913eb4afb7c5179cdcad58e99722d39b79d6ee5eccd3e904539e952ab7192d3;6:17-6:28" warning-diagnostics="sha256:0913eb4afb7c5179cdcad58e99722d39b79d6ee5eccd3e904539e952ab7192d3;CS0649@6:17-6:28"}
 class C
 {
     // ここで M を呼べてしまうと、未初期化の _otherField を読んでしまう。
@@ -582,7 +582,7 @@ class Person(string name, int age)
 
 例えば以下のコードはコンパイル エラーになりますが、
 
-```csharp {title="プライマリ コンストラクターを呼ばないとエラー" error-ranges="sha256:78f8a4044c8f4f56d7ce98f7e4ed5c3382a538568f710d89fbb43ee122040216;8:12-8:18"}
+```csharp {title="プライマリ コンストラクターを呼ばないとエラー" error-ranges="sha256:78f8a4044c8f4f56d7ce98f7e4ed5c3382a538568f710d89fbb43ee122040216;8:12-8:18" error-diagnostics="sha256:78f8a4044c8f4f56d7ce98f7e4ed5c3382a538568f710d89fbb43ee122040216;CS8862@8:12-8:18"}
 class Person(string name, int age)
 {
     public string Name = name;
@@ -619,7 +619,7 @@ C# 9 で[レコード型](../datatype/record.md)が導入された際、
 
 例えば以下のような(通常の)クラスとレコードがあったとして、
 
-```csharp {title="プライマリ コンストラクター持ちのクラスとレコード" warning-ranges="sha256:56fca73ec373c2d04cfb2dccc9be384a527896c67cffc1f932220540772cd293;1:17-1:18,1:24-1:25"}
+```csharp {title="プライマリ コンストラクター持ちのクラスとレコード" warning-ranges="sha256:56fca73ec373c2d04cfb2dccc9be384a527896c67cffc1f932220540772cd293;1:17-1:18,1:24-1:25" warning-diagnostics="sha256:56fca73ec373c2d04cfb2dccc9be384a527896c67cffc1f932220540772cd293;CS9113@1:17-1:18,CS9113@1:24-1:25"}
 class Class(int X, int Y);
 
 record Record(int X, int Y);
@@ -792,7 +792,7 @@ class C
 
 ちょっと注意が必要なのは、以下のようなコードを書いてしまうと(おそらく意図せず)フィールドが2重に生成されることがあるという点です。
 
-```csharp {title="2重にフィールド生成がかかってしまう例" warning-ranges="sha256:f034bc2ac58c547a99e00bffa7fbd5d1b17efe602294922bb872f9de670becb0;7:30-7:31"}
+```csharp {title="2重にフィールド生成がかかってしまう例" warning-ranges="sha256:f034bc2ac58c547a99e00bffa7fbd5d1b17efe602294922bb872f9de670becb0;7:30-7:31" warning-diagnostics="sha256:f034bc2ac58c547a99e00bffa7fbd5d1b17efe602294922bb872f9de670becb0;CS9124@7:30-7:31"}
 class C(int x)
 {
     // こちらは「キャプチャ」。
@@ -857,7 +857,7 @@ partial class C
 
 これが嫌なら、一度 readonly フィールドで受けましょう。
 
-```csharp {title="一度 readonly フィールドで受け取る" error-ranges="sha256:2f1c62e871c8e8bb2371b727463f571176de98625230811d0486317693aa6d19;12:25-12:27" warning-ranges="sha256:2f1c62e871c8e8bb2371b727463f571176de98625230811d0486317693aa6d19;4:31-4:32"}
+```csharp {title="一度 readonly フィールドで受け取る" error-ranges="sha256:2f1c62e871c8e8bb2371b727463f571176de98625230811d0486317693aa6d19;12:25-12:27" error-diagnostics="sha256:2f1c62e871c8e8bb2371b727463f571176de98625230811d0486317693aa6d19;CS0191@12:25-12:27" warning-ranges="sha256:2f1c62e871c8e8bb2371b727463f571176de98625230811d0486317693aa6d19;4:31-4:32" warning-diagnostics="sha256:2f1c62e871c8e8bb2371b727463f571176de98625230811d0486317693aa6d19;CS9124@4:31-4:32"}
 partial class C(int x)
 {
     // フィールドで受け取る。

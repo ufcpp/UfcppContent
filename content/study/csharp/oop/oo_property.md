@@ -617,7 +617,7 @@ C# 11 でプロパティとフィールドに対する `required` 修飾子と�
 例えば以下のようなコードを書いたとき、`a1` 以外の `new A` はエラーになります。
 (警告ではなくエラーにします。)
 
-```csharp {title="required 修飾子" highlight-ranges="sha256:b2ab16f5c01f49b3579d37408c360d5558ab23736f76afb1e0feede18550d81f;9:12-9:20,10:12-10:20" error-ranges="sha256:b2ab16f5c01f49b3579d37408c360d5558ab23736f76afb1e0feede18550d81f;3:14-3:15,4:14-4:15,5:14-5:15"}
+```csharp {title="required 修飾子" highlight-ranges="sha256:b2ab16f5c01f49b3579d37408c360d5558ab23736f76afb1e0feede18550d81f;9:12-9:20,10:12-10:20" error-ranges="sha256:b2ab16f5c01f49b3579d37408c360d5558ab23736f76afb1e0feede18550d81f;3:14-3:15,4:14-4:15,5:14-5:15" error-diagnostics="sha256:b2ab16f5c01f49b3579d37408c360d5558ab23736f76afb1e0feede18550d81f;CS9035@3:14-3:15,CS9035@4:14-4:15,CS9035@5:14-5:15,CS9035@5:14-5:15"}
 var a1 = new A { X = "abc", Y = 123 };
 
 var a2 = new A { X = "abc" }; // Y を代入していないのでエラー。
@@ -691,7 +691,7 @@ class B : A
 
 これに対して、名前指定初期化の場合はプロパティだけ書けばいいのでずいぶんと楽です。
 
-```csharp {title="名前指定初期化はクラス定義側が楽" warning-ranges="sha256:a50557e199fdc8b1aa2a4d72490610c39495d57d651c975d8cd4643daf6e34f6;12:19-12:20"}
+```csharp {title="名前指定初期化はクラス定義側が楽" warning-ranges="sha256:a50557e199fdc8b1aa2a4d72490610c39495d57d651c975d8cd4643daf6e34f6;12:19-12:20" warning-diagnostics="sha256:a50557e199fdc8b1aa2a4d72490610c39495d57d651c975d8cd4643daf6e34f6;CS8618@12:19-12:20"}
 // 使う側は多少長いものの、名前を明示してる分読みやすいかも。
 var a = new B
 {
@@ -742,7 +742,7 @@ class A
 別にその他の場面でも `required` は使えます。
 とにかく「初期化を明示させたい」というものなので、値型や null 許容型でも使えます。
 
-```csharp {title="とにかく「初期化を明示させたい」" error-ranges="sha256:1f18efaad3df16bf26ab703d88115045f519ff307cae4e8f5541e467c9ba317e;4:14-4:15"}
+```csharp {title="とにかく「初期化を明示させたい」" error-ranges="sha256:1f18efaad3df16bf26ab703d88115045f519ff307cae4e8f5541e467c9ba317e;4:14-4:15" error-diagnostics="sha256:1f18efaad3df16bf26ab703d88115045f519ff307cae4e8f5541e467c9ba317e;CS9035@4:14-4:15"}
 // 全部 0 か null なので、別に new A() でも結果は同じものの、明示させたいという意図があるなら required。
 var a1 = new A { X = null, Y = 0, Z = null };
 
@@ -762,7 +762,7 @@ class A
 `required` は、`virtual` や `abstract` なプロパティに対しても使えます。
 ただし、基底クラス側が `required` なものは派生クラス側にも `required` を付ける必要があります。
 
-```csharp {title="派生と required" error-ranges="sha256:12012aea37489db2d75ccb2ee26c49f2424db7590bab3c3ba4999e6d9ee88902;20:25-20:26"}
+```csharp {title="派生と required" error-ranges="sha256:12012aea37489db2d75ccb2ee26c49f2424db7590bab3c3ba4999e6d9ee88902;20:25-20:26" error-diagnostics="sha256:12012aea37489db2d75ccb2ee26c49f2424db7590bab3c3ba4999e6d9ee88902;CS9030@20:25-20:26"}
 abstract class A
 {
     public required abstract int X { get; init; }
@@ -789,7 +789,7 @@ class C : A
 そして、`required` はオブジェクト初期化で使うことが前提なので、
 `new` できないインターフェイスに対しては使えません。
 
-```csharp {title="インターフェイスには required を使えない" error-text="X"}
+```csharp {title="インターフェイスには required を使えない" error-text="X" error-diagnostics="sha256:c5a8fb6ab60af2db5dd5f732cbd2d0ed88b44ddd9bfbe90d85d84739440b1214;CS0106@4:18-4:19"}
 interface I
 {
     // エラー。
@@ -802,7 +802,7 @@ interface I
 例えば、`internal` クラスの `internal` プロパティには使えますが、
 `public` クラスの `protected` プロパティには使えません。
 
-```csharp {title="required メンバーのアクセシビリティの制限" error-ranges="sha256:2b77e7d89da253e4c829518db04664597fa29ee9d63ae123b119947a822dc35b;10:28-10:30,11:27-11:29,12:37-12:39,13:36-13:38,14:26-14:28"}
+```csharp {title="required メンバーのアクセシビリティの制限" error-ranges="sha256:2b77e7d89da253e4c829518db04664597fa29ee9d63ae123b119947a822dc35b;10:28-10:30,11:27-11:29,12:37-12:39,13:36-13:38,14:26-14:28" error-diagnostics="sha256:2b77e7d89da253e4c829518db04664597fa29ee9d63ae123b119947a822dc35b;CS9032@10:28-10:30,CS9032@11:27-11:29,CS9032@12:37-12:39,CS9032@13:36-13:38,CS9032@14:26-14:28"}
 internal class A
 {
     // internal クラスの internal プロパティなので OK。
@@ -853,7 +853,7 @@ class A
 作る側(コンストラクターの実装側)では特に何もしてくれません。
 単にエラーを消します。
 
-```csharp {title="自称 SetsRequiredMembers" warning-ranges="sha256:355955ab97121a4cdf2a2c57d59756b629464567b1d373f6fcbf09129b765c7b;14:12-14:13"}
+```csharp {title="自称 SetsRequiredMembers" warning-ranges="sha256:355955ab97121a4cdf2a2c57d59756b629464567b1d373f6fcbf09129b765c7b;14:12-14:13" warning-diagnostics="sha256:355955ab97121a4cdf2a2c57d59756b629464567b1d373f6fcbf09129b765c7b;CS8618@14:12-14:13"}
 using System.Diagnostics.CodeAnalysis;
 
 // 自称 SetsRequiredMembers を信じてエラーは出さない。
@@ -1079,7 +1079,7 @@ class GetOnly
 
 他の例として、`ref` 付きのバッキング フィールドは作れないという制限も共通です。
 
-```csharp {title="ref 付きのプロパティは field-backed プロパティにできない" error-ranges="sha256:8475aab6f4375d7949d4df0e6bd1e4ec6a485253b8cbf527bd30afca1a1b80d9;4:20-4:21,7:20-7:21" warning-ranges="sha256:8475aab6f4375d7949d4df0e6bd1e4ec6a485253b8cbf527bd30afca1a1b80d9;10:21-10:23"}
+```csharp {title="ref 付きのプロパティは field-backed プロパティにできない" error-ranges="sha256:8475aab6f4375d7949d4df0e6bd1e4ec6a485253b8cbf527bd30afca1a1b80d9;4:20-4:21,7:20-7:21" error-diagnostics="sha256:8475aab6f4375d7949d4df0e6bd1e4ec6a485253b8cbf527bd30afca1a1b80d9;CS8145@4:20-4:21,CS8145@7:20-7:21" warning-ranges="sha256:8475aab6f4375d7949d4df0e6bd1e4ec6a485253b8cbf527bd30afca1a1b80d9;10:21-10:23" warning-diagnostics="sha256:8475aab6f4375d7949d4df0e6bd1e4ec6a485253b8cbf527bd30afca1a1b80d9;CS9265@10:21-10:23"}
 ref struct RefField
 {
     // ref 付きのプロパティは自動実装にできない。
@@ -1100,7 +1100,7 @@ ref struct RefField
 他の例にもれず `field` は[文脈キーワード](../misc/ap_compatibility.md#contextual-keyword)です。
 プロパティの `get`/`set` 内でだけキーワード扱いされます。
 
-```csharp {title="field は文脈キーワード" warning-ranges="sha256:c2409a3dbfb5811157ebca1be916ad406bf061575306a4787847f3a8a448c0ba;4:17-4:22,15:21-15:26,20:7-20:12"}
+```csharp {title="field は文脈キーワード" warning-ranges="sha256:c2409a3dbfb5811157ebca1be916ad406bf061575306a4787847f3a8a448c0ba;4:17-4:22,15:21-15:26,20:7-20:12" warning-diagnostics="sha256:c2409a3dbfb5811157ebca1be916ad406bf061575306a4787847f3a8a448c0ba;CS0169@4:17-4:22,CS9258@15:21-15:26,CS8981@20:7-20:12"}
 class A
 {
     // これは普通にフィールド。
@@ -1133,7 +1133,7 @@ class B
 `field` キーワードの追加はたとえ文脈キーワードだとしても破壊的変更です。
 以下のコードは C# 13 と 14 で解釈が異なります。
 
-```csharp {title="field キーワードの追加は破壊的変更" warning-ranges="sha256:3d4f677d80a21041fb64fd6a9b5f64ef23439279ec446833230dbe04bd8c0846;3:17-3:22,8:21-8:26"}
+```csharp {title="field キーワードの追加は破壊的変更" warning-ranges="sha256:3d4f677d80a21041fb64fd6a9b5f64ef23439279ec446833230dbe04bd8c0846;3:17-3:22,8:21-8:26" warning-diagnostics="sha256:3d4f677d80a21041fb64fd6a9b5f64ef23439279ec446833230dbe04bd8c0846;CS0649@3:17-3:22,CS9258@8:21-8:26"}
 class A
 {
     private int field;
@@ -1257,7 +1257,7 @@ class AllowNullSetter
 `get` 側で `field` が `T?` だと思ってフロー解析してみて警告にならなかった場合、
 `set` 側も `field` が `T?` かもしれない前提でフロー解析します。
 
-```csharp {title="get の解析結果を踏まえて set をフロー解析" warning-ranges="sha256:2c7ba1d3b01a8a31d4891c9445d94f922bae73f36faa9ed88695f4d6cb0ae00e;9:24-9:29,13:19-13:20,40:24-40:29"}
+```csharp {title="get の解析結果を踏まえて set をフロー解析" warning-ranges="sha256:2c7ba1d3b01a8a31d4891c9445d94f922bae73f36faa9ed88695f4d6cb0ae00e;9:24-9:29,13:19-13:20,40:24-40:29" warning-diagnostics="sha256:2c7ba1d3b01a8a31d4891c9445d94f922bae73f36faa9ed88695f4d6cb0ae00e;CS8600@9:24-9:29,CS9264@13:19-13:20,CS8600@40:24-40:29"}
 class Nullability
 {
     public string X

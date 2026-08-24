@@ -84,7 +84,7 @@ static string format(int id, string name) => $$"""
 例えば以下のようなコードを書いたとき、`a1` 以外の `new A` はエラーになります。
 (警告ではなくエラーにします。)
 
-```csharp {title="required 修飾子" highlight-ranges="sha256:b2ab16f5c01f49b3579d37408c360d5558ab23736f76afb1e0feede18550d81f;9:12-9:20,10:12-10:20" error-ranges="sha256:b2ab16f5c01f49b3579d37408c360d5558ab23736f76afb1e0feede18550d81f;3:14-3:15,4:14-4:15,5:14-5:15"}
+```csharp {title="required 修飾子" highlight-ranges="sha256:b2ab16f5c01f49b3579d37408c360d5558ab23736f76afb1e0feede18550d81f;9:12-9:20,10:12-10:20" error-ranges="sha256:b2ab16f5c01f49b3579d37408c360d5558ab23736f76afb1e0feede18550d81f;3:14-3:15,4:14-4:15,5:14-5:15" error-diagnostics="sha256:b2ab16f5c01f49b3579d37408c360d5558ab23736f76afb1e0feede18550d81f;CS9035@3:14-3:15,CS9035@4:14-4:15,CS9035@5:14-5:15,CS9035@5:14-5:15"}
 var a1 = new A { X = "abc", Y = 123 };
 
 var a2 = new A { X = "abc" }; // Y を代入していないのでエラー。
@@ -400,7 +400,7 @@ C# 9.0 の頃には、`IntPtr`、`UIntPtr` 型に算術演算子の定義がな�
 一応これが既存のコードに対する破壊的変更になる可能性があって、
 例えば、以下のようなコードはこれまで例外が絶対に出なかったのが、C# 11 以降は例外が出る可能性があります。
 
-```csharp {title="Numeric IntPtr 関連の破壊的変更" warning-text="M"}
+```csharp {title="Numeric IntPtr 関連の破壊的変更" warning-text="M" warning-diagnostics="sha256:fcdf06f64dce3e4a222179d0425ace8790fbac28fc57ff2dcb33f82ea3630a6e;CS8321@1:13-1:14"}
 unsafe void M(void* x, int y)
 {
     var p = checked((IntPtr)x); // unsigned → singed 変換扱い
@@ -473,7 +473,7 @@ C# 11 で追加される `required`, `scoped`, `file` の3つも文脈キーワ�
 型名として使えなくしたようです。
 以下のようにコンパイル エラーになります。
 
-```csharp {title="文脈キーワードな型名" error-ranges="sha256:fd11071cade4c0f3f48f77ea838d253196c5e23e84fc7b221700e815a257d7c2;12:7-12:15,13:7-13:13,14:7-14:11" warning-ranges="sha256:fd11071cade4c0f3f48f77ea838d253196c5e23e84fc7b221700e815a257d7c2;3:7-3:12,4:7-4:12,5:7-5:14,9:7-9:13"}
+```csharp {title="文脈キーワードな型名" error-ranges="sha256:fd11071cade4c0f3f48f77ea838d253196c5e23e84fc7b221700e815a257d7c2;12:7-12:15,13:7-13:13,14:7-14:11" error-diagnostics="sha256:fd11071cade4c0f3f48f77ea838d253196c5e23e84fc7b221700e815a257d7c2;CS9029@12:7-12:15,CS9062@13:7-13:13,CS9056@14:7-14:11" warning-ranges="sha256:fd11071cade4c0f3f48f77ea838d253196c5e23e84fc7b221700e815a257d7c2;3:7-3:12,4:7-4:12,5:7-5:14,9:7-9:13" warning-diagnostics="sha256:fd11071cade4c0f3f48f77ea838d253196c5e23e84fc7b221700e815a257d7c2;CS8981@3:7-3:12,CS8981@4:7-4:12,CS8981@5:7-5:14,CS8860@9:7-9:13"}
 // 古めの文脈キーワードはクラス名にしても警告にしかならない。
 // 警告の出方も、古いやつは「小文字始まり ASCII のみの型名はやめて欲しい」の CS8981
 class async { }
@@ -501,7 +501,7 @@ class @class { }
 
 C# 11 から、マネージ型のポインターを使えるようになりました。
 
-```csharp {title="マネージ型のポインター型/アドレス取得" warning-ranges="sha256:c4f90d1bdbbd94b6a92f6c28ec8d0f9e41c46bddf1b31451691e5cef3cfb2496;8:5-8:12,8:18-8:20,9:5-9:16,9:22-9:24"}
+```csharp {title="マネージ型のポインター型/アドレス取得" warning-ranges="sha256:c4f90d1bdbbd94b6a92f6c28ec8d0f9e41c46bddf1b31451691e5cef3cfb2496;8:5-8:12,8:18-8:20,9:5-9:16,9:22-9:24" warning-diagnostics="sha256:c4f90d1bdbbd94b6a92f6c28ec8d0f9e41c46bddf1b31451691e5cef3cfb2496;CS8500@8:5-8:12,CS8500@8:18-8:20,CS8500@9:5-9:16,CS8500@9:22-9:24"}
 unsafe
 {
     string s = "";

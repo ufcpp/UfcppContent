@@ -146,7 +146,7 @@ internal partial class R
 `file` 修飾子は型にのみ適用できます。
 以下のように、フィールドやメソッドなどに使おうとするとコンパイル エラーになります。
 
-```csharp {title="file は型のみ" error-ranges="sha256:2e2b04079fdeb6f451c9a4a73258ab427a76a63c014359447d0f74cbf02e27a0;3:14-3:16,5:14-5:15"}
+```csharp {title="file は型のみ" error-ranges="sha256:2e2b04079fdeb6f451c9a4a73258ab427a76a63c014359447d0f74cbf02e27a0;3:14-3:16,5:14-5:15" error-diagnostics="sha256:2e2b04079fdeb6f451c9a4a73258ab427a76a63c014359447d0f74cbf02e27a0;CS0106@3:14-3:16,CS0106@5:14-5:15"}
 class A
 {
     file int _x;
@@ -190,7 +190,7 @@ file interface IX
 また、`file` 修飾子は[アクセシビリティ修飾子](../oop/oo_conceal.md#level)と同時に使うことはできません。
 例えば以下のコードはコンパイル エラーになります。
 
-```csharp {title="アクセシビリティとの併用不可" highlight-text="internal file" error-text="X"}
+```csharp {title="アクセシビリティとの併用不可" highlight-text="internal file" error-text="X" error-diagnostics="sha256:658ee13f42cd602824630a0888f375696aa7e54dbd686405423d74f81b9c83ba;CS9052@1:28-1:29"}
 internal file static class X
 {
 }
@@ -200,7 +200,7 @@ internal file static class X
 言い換えると、入れ子の型は file ローカルにできません。
 以下のコードはコンパイル エラーになります。
 
-```csharp {title="入れ子の型不可" highlight-text="file" error-text="NestedFileClass"}
+```csharp {title="入れ子の型不可" highlight-text="file" error-text="NestedFileClass" error-diagnostics="sha256:11d4858fc1aacf3b62168dea2ad9f0172d01977443a7fc960f02f4af7f953094;CS9054@3:16-3:31"}
 class A
 {
     file class NestedFileClass

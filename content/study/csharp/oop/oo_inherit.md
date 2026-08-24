@@ -217,7 +217,7 @@ Derived コンストラクター
 以下のように「基底クラスの未初期化のフィールドを読めてしまう」ということが起きます。
 (クラスが分かれているので、派生がない場合よりも深刻です。)
 
-```csharp {title="初期化子内ではインスタンス メソッドを呼んではいけない" error-ranges="sha256:0242fc8e3b028f6e49a711ac6bf3776df28d137c245a1e03b6521966f201a38f;11:31-11:32" warning-ranges="sha256:0242fc8e3b028f6e49a711ac6bf3776df28d137c245a1e03b6521966f201a38f;3:16-3:25"}
+```csharp {title="初期化子内ではインスタンス メソッドを呼んではいけない" error-ranges="sha256:0242fc8e3b028f6e49a711ac6bf3776df28d137c245a1e03b6521966f201a38f;11:31-11:32" error-diagnostics="sha256:0242fc8e3b028f6e49a711ac6bf3776df28d137c245a1e03b6521966f201a38f;CS0236@11:31-11:32" warning-ranges="sha256:0242fc8e3b028f6e49a711ac6bf3776df28d137c245a1e03b6521966f201a38f;3:16-3:25" warning-diagnostics="sha256:0242fc8e3b028f6e49a711ac6bf3776df28d137c245a1e03b6521966f201a38f;CS0649@3:16-3:25"}
 class Base
 {
     public int BaseField;

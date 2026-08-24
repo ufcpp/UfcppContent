@@ -943,7 +943,7 @@ f2(1, 2, 3); // f2(new int[] { 1, 2, 3 }) と同じ。
 この場合、既定値などの情報は消えます。
 (ちょっと罠なので、一応、警告はしてくれます。)
 
-```csharp {title="既定値違い、params 違いのデリゲート型への代入" error-ranges="sha256:a063af16d2f5ccdad78e593369991d2271666966233831dcda3a86ff46ece878;4:1-4:3,9:1-9:3" warning-ranges="sha256:a063af16d2f5ccdad78e593369991d2271666966233831dcda3a86ff46ece878;2:23-2:24,7:34-7:35"}
+```csharp {title="既定値違い、params 違いのデリゲート型への代入" error-ranges="sha256:a063af16d2f5ccdad78e593369991d2271666966233831dcda3a86ff46ece878;4:1-4:3,9:1-9:3" error-diagnostics="sha256:a063af16d2f5ccdad78e593369991d2271666966233831dcda3a86ff46ece878;CS7036@4:1-4:3,CS1593@9:1-9:3" warning-ranges="sha256:a063af16d2f5ccdad78e593369991d2271666966233831dcda3a86ff46ece878;2:23-2:24,7:34-7:35" warning-diagnostics="sha256:a063af16d2f5ccdad78e593369991d2271666966233831dcda3a86ff46ece878;CS9099@2:23-2:24,CS9100@7:34-7:35"}
 // 既定値の情報がないデリゲート型に代入。
 Action<int> f1 = (int x = 1) => { };
 
@@ -960,7 +960,7 @@ f2(1, 2, 3); // エラー。 f2(new int[] { 1, 2, 3 }) と書かないとダメ�
 リフレクションで値を取るときに変なことが起きたりもします。
 `Delegate.Method` で取る情報(ラムダ式側)と、`Type.GetMethod` で取る情報(デリゲート型型)が食い違います。
 
-```csharp {title="異なる既定値が取れちゃう例" warning-ranges="sha256:22a0d9d6bbaa006a64f9799e5bd21cc8e800b62baa31abe98849aa6377e21b35;5:12-5:13"}
+```csharp {title="異なる既定値が取れちゃう例" warning-ranges="sha256:22a0d9d6bbaa006a64f9799e5bd21cc8e800b62baa31abe98849aa6377e21b35;5:12-5:13" warning-diagnostics="sha256:22a0d9d6bbaa006a64f9799e5bd21cc8e800b62baa31abe98849aa6377e21b35;CS9099@5:12-5:13"}
 using System.Reflection;
 
 // ラムダ式としては既定値 2。
@@ -1008,7 +1008,7 @@ delegate bool TryParse<T>(string text, out T result);
 
 C# 13 までは以下のように書くことができませんでした。
 
-```csharp {title="C# 13 までは (out x) みたいな型名省略ができない" error-text="out result"}
+```csharp {title="C# 13 までは (out x) みたいな型名省略ができない" error-text="out result" error-diagnostics="sha256:1b93b3da9c4c60b1a0ea5c3422075557c373e60d744582c9cf79a820f5c154b4;CS9260@2:26-2:36"}
 // C# 13 までは書けなかった。
 TryParse<int> m = (text, out result) => { result = 0; return true; };
 
@@ -1043,7 +1043,7 @@ delegate void M(in int a, ref int b, out int c, ref readonly int d, scoped Span<
 ラムダ式は、引数が1つだけの時は `x => { }` というように引数リストの `()` も省略できるわけですが、
 この場合は `ref x => { }` みたいな書き方はできません(というか元々、`int x => { }` みたいな型名指定も許されていません)。
 
-```csharp {title="修飾子をつけたい場合、() は必須" error-ranges="sha256:cc64e7b6a47463fa514495dd48ce0caad56509782f5ba574ac9cedcd3db9102a;6:9-6:11,6:23-6:24,7:9-7:11,7:19-7:20,10:14-10:15,11:10-11:11,12:9-12:10"}
+```csharp {title="修飾子をつけたい場合、() は必須" error-ranges="sha256:cc64e7b6a47463fa514495dd48ce0caad56509782f5ba574ac9cedcd3db9102a;6:9-6:11,6:23-6:24,7:9-7:11,7:19-7:20,10:14-10:15,11:10-11:11,12:9-12:10" error-diagnostics="sha256:cc64e7b6a47463fa514495dd48ce0caad56509782f5ba574ac9cedcd3db9102a;CS1003@6:9-6:11,CS1525@6:9-6:11,CS1022@6:23-6:24,CS1002@6:23-6:24,CS1525@7:9-7:11,CS1003@7:9-7:11,CS1022@7:19-7:20,CS1002@7:19-7:20,CS1676@10:14-10:15,CS1676@11:10-11:11,CS1676@12:9-12:10"}
 // 修飾子をつけたい場合、() は必須。
 In m1 = (in int a) => { };
 In m2 = (in a) => { };
