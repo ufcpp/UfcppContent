@@ -687,7 +687,7 @@ class Overloads
 
 1つ目、は拡張メソッド呼び出し:
 
-```csharp {title="拡張メソッド呼び出しができなかった例(C# 14 で解決)" error-ranges="sha256:76f19f773fb3dd96277a406729953825ccee2e4d04f72eeb27378dece3fcb1fa;1:1-1:11,2:1-2:3"}
+```csharp {title="拡張メソッド呼び出しができなかった例(C# 14 で解決)" error-ranges="sha256:76f19f773fb3dd96277a406729953825ccee2e4d04f72eeb27378dece3fcb1fa;1:1-1:11,2:1-2:3" error-diagnostics="sha256:76f19f773fb3dd96277a406729953825ccee2e4d04f72eeb27378dece3fcb1fa;CS1929@1:1-1:11,CS1929@2:1-2:3"}
 new int[0].M();
 "".M();
 
@@ -700,7 +700,7 @@ static class X
 
 2つ目、ユーザー定義の型変換を介した呼び出し:
 
-```csharp {title="ユーザー定義の型変換ができなかった例(C# 14 で解決)" error-ranges="sha256:6ce6bfd61b8820408ab4a06811f0e312f56caee30eb8c94c07adf8e774c96ef7;1:5-1:15,2:5-2:7"}
+```csharp {title="ユーザー定義の型変換ができなかった例(C# 14 で解決)" error-ranges="sha256:6ce6bfd61b8820408ab4a06811f0e312f56caee30eb8c94c07adf8e774c96ef7;1:5-1:15,2:5-2:7" error-diagnostics="sha256:6ce6bfd61b8820408ab4a06811f0e312f56caee30eb8c94c07adf8e774c96ef7;CS1503@1:5-1:15,CS1503@2:5-2:7"}
 X.M(new int[0]);
 X.M("");
 
@@ -718,7 +718,7 @@ struct A
 
 3つ目、ジェネリック型引数の型推論:
 
-```csharp {title="ジェネリック型推論ができなかった例(C# 14 で解決)" error-ranges="sha256:b46de19e80ca0e966f23d9fc5341a2a4225c49960fc0359301b5ae3293268c03;1:3-1:4"}
+```csharp {title="ジェネリック型推論ができなかった例(C# 14 で解決)" error-ranges="sha256:b46de19e80ca0e966f23d9fc5341a2a4225c49960fc0359301b5ae3293268c03;1:3-1:4" error-diagnostics="sha256:b46de19e80ca0e966f23d9fc5341a2a4225c49960fc0359301b5ae3293268c03;CS0411@1:3-1:4"}
 X.M(new int[0]);
 
 static class X
@@ -729,7 +729,7 @@ static class X
 
 また、単独ではエラーにならなくても、`IEnumerable<T>` 引数との混在でオーバーロード解決できなくなる例もあります。
 
-```csharp {title="IEnumerable と ReadOnlySpan の解決ができなかった例(C# 14 で解決)" error-ranges="sha256:2c58e782097733f5aa5b60416f67db0fe106031b00147e437683c46e2e06ec67;3:11-3:12"}
+```csharp {title="IEnumerable と ReadOnlySpan の解決ができなかった例(C# 14 で解決)" error-ranges="sha256:2c58e782097733f5aa5b60416f67db0fe106031b00147e437683c46e2e06ec67;3:11-3:12" error-diagnostics="sha256:2c58e782097733f5aa5b60416f67db0fe106031b00147e437683c46e2e06ec67;CS0121@3:11-3:12"}
 int[] data = [1, 2, 3];
 
 Overloads.M(data); // 呼び分けができなくてコンパイル エラー(C# 13 まで)。

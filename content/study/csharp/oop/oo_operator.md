@@ -569,7 +569,7 @@ struct LargeStruct
 ちなみに、「`+` があれば `+=` 利用可能」だった二項演算子のオーバーロードと違って、
 `+=` だけあっても `+` は使えません。
 
-```csharp {title="+= だけあっても + は使えない" error-text="x + 10"}
+```csharp {title="+= だけあっても + は使えない" error-text="x + 10" error-diagnostics="sha256:7139cf3eb271fdcf677d70a13bf012ff60fbff9a4885d48f28080a9c10ae7ec1;CS0019@7:5-7:11"}
 var x = new X(5);
 
 // += はできる。
@@ -624,7 +624,7 @@ record struct X(int Value)
 ただ、この自己書き換え版のインクリメント/デクリメントは後起き版(書き換える前の値を残す必要がある)の利用に難があります。
 基本的には後起きインクリメント/デクリメントには使えません。
 
-```csharp {title="後起きインクリメントはダメ" error-ranges="sha256:45da9e6607c4a49c8db1b751f7a79deadff29ab0677d4883475a54bfcf77bdc5;7:9-7:12"}
+```csharp {title="後起きインクリメントはダメ" error-ranges="sha256:45da9e6607c4a49c8db1b751f7a79deadff29ab0677d4883475a54bfcf77bdc5;7:9-7:12" error-diagnostics="sha256:45da9e6607c4a49c8db1b751f7a79deadff29ab0677d4883475a54bfcf77bdc5;CS0023@7:9-7:12"}
 var x = new X(1);
 
 // 前置きはどこでも書ける。

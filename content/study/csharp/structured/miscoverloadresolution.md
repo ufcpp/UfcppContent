@@ -833,7 +833,7 @@ class C
 
 ちなみに、オーバーロードできないメンバーにこの属性を付けるとコンパイル エラーになります。
 
-```csharp {title="オーバーロードできないメンバーに OverloadResolutionPriority を付けるとコンパイラーに怒られる" error-ranges="sha256:cf0cf662abb807dfdf285ce290bb048d1274124847a633074457dc5f9c88500d;16:6-16:35,19:6-19:35,22:6-22:35,25:6-25:35"}
+```csharp {title="オーバーロードできないメンバーに OverloadResolutionPriority を付けるとコンパイラーに怒られる" error-ranges="sha256:cf0cf662abb807dfdf285ce290bb048d1274124847a633074457dc5f9c88500d;16:6-16:35,19:6-19:35,22:6-22:35,25:6-25:35" error-diagnostics="sha256:cf0cf662abb807dfdf285ce290bb048d1274124847a633074457dc5f9c88500d;CS9262@16:6-16:35,CS9262@19:6-19:35,CS9262@22:6-22:35,CS9262@25:6-25:35"}
 using System.Runtime.CompilerServices;
 
 namespace System.Runtime.CompilerServices
@@ -875,7 +875,7 @@ C# の言語機能が増えるにつれて、例えば「`IEnumerable<T>` より
 `IEnumerable<T>` と `ReadOnlySpan<T>` の場合、C# 13 時点ではオーバーロード解決できなくなって困ります。
 (この2者の問題であれば、C# 14 で `Span<T>`/`ReadOnlySpan<T>` の特別扱いが入って問題解消する予定です。)
 
-```csharp {error-ranges="sha256:5449863ce64b16ff4d6ec80a53a509cc39b1617a9fc408be56ecf94cfd7d8cb1;2:3-2:4"}
+```csharp {error-ranges="sha256:5449863ce64b16ff4d6ec80a53a509cc39b1617a9fc408be56ecf94cfd7d8cb1;2:3-2:4" error-diagnostics="sha256:5449863ce64b16ff4d6ec80a53a509cc39b1617a9fc408be56ecf94cfd7d8cb1;CS0121@2:3-2:4"}
 // C# 13 時点だと IEnumerable と ReadOnlySpan を選べなくてコンパイル エラーになる。
 C.M(new int[1]);
 
@@ -1036,7 +1036,7 @@ static class FakeLinq
 }
 ```
 
-```csharp {title="ただし、実際にやってみるとうまくいかない(当然)" error-text="Select"}
+```csharp {title="ただし、実際にやってみるとうまくいかない(当然)" error-text="Select" error-diagnostics="sha256:121f610bf8281f50ca9f3639df7c5bd659e20b03c8c6a29b793cd18af4c67d26;CS0121@3:7-3:13"}
 // FakeLinq の方が優先されたりはしない。
 // 単に「Enumerable と FakeLinq 間で不明瞭」エラーに。
 "abc".Select(c => (int)c);
@@ -1068,7 +1068,7 @@ static class B
 `OverloadResolutionPriority` は1つのクラス内でしか働かないので、`A` の中のどの `M` が選ばれるかにだけ影響します。
 その結果、以下のように別のクラスの `M` と競合する可能性があります。
 
-```csharp {title="OverloadResolutionPriority を付けたことで他のクラスのメンバーと競合するようになる例" error-ranges="sha256:b2e474f0df2c07544ec4371f4f98d174bf0c31fe82ea28f93b2e9bb09cee7eec;6:4-6:5"}
+```csharp {title="OverloadResolutionPriority を付けたことで他のクラスのメンバーと競合するようになる例" error-ranges="sha256:b2e474f0df2c07544ec4371f4f98d174bf0c31fe82ea28f93b2e9bb09cee7eec;6:4-6:5" error-diagnostics="sha256:b2e474f0df2c07544ec4371f4f98d174bf0c31fe82ea28f93b2e9bb09cee7eec;CS0121@6:4-6:5"}
 using System.Runtime.CompilerServices;
 
 // OverloadResolutionPriority を付けたことで、A.M の中では A.M(string, int) が選ばれる。
@@ -1095,7 +1095,7 @@ static class B
 C# では戻り値だけが異なるオーバーロードを認めていません。
 例えば以下のコードはコンパイル エラーになります。
 
-```csharp {title="戻り値だけが違うオーバーロードの追加はできない" error-ranges="sha256:4ac088f41f67af8c137adae628025cfe058f953fe77848d6d829abc0e89b7e60;7:35-7:41"}
+```csharp {title="戻り値だけが違うオーバーロードの追加はできない" error-ranges="sha256:4ac088f41f67af8c137adae628025cfe058f953fe77848d6d829abc0e89b7e60;7:35-7:41" error-diagnostics="sha256:4ac088f41f67af8c137adae628025cfe058f953fe77848d6d829abc0e89b7e60;CS0111@7:35-7:41"}
 class C
 {
     public static async Task MAsync() { await Task.Yield(); }

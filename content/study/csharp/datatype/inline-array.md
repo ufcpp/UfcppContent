@@ -54,7 +54,7 @@ C# の配列はヒープに割り当てられるのに対して、この inline 
 
 要は、以下のような「N 個のフィールドを並べる」みたいな構造体を、ランタイム側で自動的に作ってくれる機能です。
 
-```csharp {title="N 個のフィールドを手書きで並べた例" warning-ranges="sha256:3f5c0a6ce557a17a46ec944e437efabc2203b9065e4a6431700f453d0f3def96;8:15-8:22,9:15-9:22"}
+```csharp {title="N 個のフィールドを手書きで並べた例" warning-ranges="sha256:3f5c0a6ce557a17a46ec944e437efabc2203b9065e4a6431700f453d0f3def96;8:15-8:22,9:15-9:22" warning-diagnostics="sha256:3f5c0a6ce557a17a46ec944e437efabc2203b9065e4a6431700f453d0f3def96;CS0169@8:15-8:22,CS0169@9:15-9:22"}
 using System.Runtime.InteropServices;
 
 struct FixedBuffer3<T>
@@ -82,7 +82,7 @@ struct FixedBuffer3<T>
 (これを認めようとすると[ガベコレ](../../computer/essential-software/memorymanagement.md#garbage-collection)の負担が上がって、パフォーマンス的にかえって不利になるそうです)。
 例えば以下のコードでは、`string` 以下の型に対してコンパイル エラーになります。
 
-```csharp {title="参照を含むときには stackalloc は使えない" error-ranges="sha256:2c7edf6a27b9762f600c0fe7430e4abbae47c53d7e246fb8acefbb912b6dfd18;7:29-7:35,11:39-11:54,12:6-12:22,12:40-12:56" warning-ranges="sha256:2c7edf6a27b9762f600c0fe7430e4abbae47c53d7e246fb8acefbb912b6dfd18;16:19-16:25,21:20-21:23"}
+```csharp {title="参照を含むときには stackalloc は使えない" error-ranges="sha256:2c7edf6a27b9762f600c0fe7430e4abbae47c53d7e246fb8acefbb912b6dfd18;7:29-7:35,11:39-11:54,12:6-12:22,12:40-12:56" error-diagnostics="sha256:2c7edf6a27b9762f600c0fe7430e4abbae47c53d7e246fb8acefbb912b6dfd18;CS0208@7:29-7:35,CS0208@11:39-11:54,CS0306@12:6-12:22,CS0208@12:40-12:56" warning-ranges="sha256:2c7edf6a27b9762f600c0fe7430e4abbae47c53d7e246fb8acefbb912b6dfd18;16:19-16:25,21:20-21:23" warning-diagnostics="sha256:2c7edf6a27b9762f600c0fe7430e4abbae47c53d7e246fb8acefbb912b6dfd18;CS0649@16:19-16:25,CS0649@21:20-21:23"}
 // 構造体に対しては使える。
 Span<int> i = stackalloc int[100];
 Span<DateTimeOffset> d = stackalloc DateTimeOffset[100];

@@ -218,7 +218,7 @@ class A
 
 ただし、`&` 演算子で関数ポインターを取れるのは静的メソッドだけです。
 
-```csharp {title="&amp; で関数ポインターを取れるのは静的メソッドのみ" error-ranges="sha256:bda89d12dac2738ebc4f71560130d75df9fb536bab8d129df5436ad393cc99e8;7:27-7:37,10:27-10:43,13:27-13:37"}
+```csharp {title="&amp; で関数ポインターを取れるのは静的メソッドのみ" error-ranges="sha256:bda89d12dac2738ebc4f71560130d75df9fb536bab8d129df5436ad393cc99e8;7:27-7:37,10:27-10:43,13:27-13:37" error-diagnostics="sha256:bda89d12dac2738ebc4f71560130d75df9fb536bab8d129df5436ad393cc99e8;CS8759@7:27-7:37,CS8759@10:27-10:43,CS8759@13:27-13:37"}
 unsafe
 {
     // 静的メソッドは OK。

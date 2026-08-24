@@ -1294,7 +1294,7 @@ class Explicit : IA
 この点はインスタンス メンバーと同じというわけにはいきません。
 以下のようなコードはエラーになります。
 
-```csharp {title="クラスでは static virtual とは書けない" error-ranges="sha256:5e58e6c1ca1c3c00a6ae40c17f94d27e47634a6dfc37af441bba02beb69221fe;13:32-13:38"}
+```csharp {title="クラスでは static virtual とは書けない" error-ranges="sha256:5e58e6c1ca1c3c00a6ae40c17f94d27e47634a6dfc37af441bba02beb69221fe;13:32-13:38" error-diagnostics="sha256:5e58e6c1ca1c3c00a6ae40c17f94d27e47634a6dfc37af441bba02beb69221fe;CS0112@13:32-13:38"}
 interface IA
 {
     abstract void Instance();
@@ -1419,7 +1419,7 @@ interface IA
 
 一方で、以下のように `abstract` (実装を持っていない)だとコンパイル エラーになります。
 
-```csharp {title="abstract は実装を持っていないので呼べない" error-ranges="sha256:ee9a19689553f5b3154985a028b7eda8ad0362d86839a9761d6ab6b000f1e9c7;1:1-1:2"}
+```csharp {title="abstract は実装を持っていないので呼べない" error-ranges="sha256:ee9a19689553f5b3154985a028b7eda8ad0362d86839a9761d6ab6b000f1e9c7;1:1-1:2" error-diagnostics="sha256:ee9a19689553f5b3154985a028b7eda8ad0362d86839a9761d6ab6b000f1e9c7;CS8920@1:1-1:2"}
 M<IA>(); // ここでエラーに。
 
 M<A>(); // これ(実装クラス)ならOK。
@@ -1447,7 +1447,7 @@ class A : IA
 
 例えばこれまで、以下のようなメソッドすらジェネリックな実装を持てませんでした。
 
-```csharp {title="+ 演算子の例" error-text="new float[] { 1, 2, 3, 4 }"}
+```csharp {title="+ 演算子の例" error-text="new float[] { 1, 2, 3, 4 }" error-diagnostics="sha256:68147047b5dc86a81ae9c70e51dccfe0f5929de8843749f0f220eb6992289e5e;CS1503@3:23-3:49"}
 Console.WriteLine(Sum(new[] { 1, 2, 3, 4 }));
 
 Console.WriteLine(Sum(new float[] { 1, 2, 3, 4 })); // こう書きたいのにエラーに…

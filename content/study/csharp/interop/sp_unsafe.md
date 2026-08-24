@@ -1229,7 +1229,7 @@ C# 11 から、マネージ型のポインターを使えるようになりま�
 `T*` や `R*` みたいなポインター型を書いたり、
 それらの変数 `x` に対して `&x` でアドレス取得できるようになりました。
 
-```csharp {title="マネージ型のポインター型/アドレス取得" warning-ranges="sha256:c4f90d1bdbbd94b6a92f6c28ec8d0f9e41c46bddf1b31451691e5cef3cfb2496;8:5-8:12,8:18-8:20,9:5-9:16,9:22-9:24"}
+```csharp {title="マネージ型のポインター型/アドレス取得" warning-ranges="sha256:c4f90d1bdbbd94b6a92f6c28ec8d0f9e41c46bddf1b31451691e5cef3cfb2496;8:5-8:12,8:18-8:20,9:5-9:16,9:22-9:24" warning-diagnostics="sha256:c4f90d1bdbbd94b6a92f6c28ec8d0f9e41c46bddf1b31451691e5cef3cfb2496;CS8500@8:5-8:12,CS8500@8:18-8:20,CS8500@9:5-9:16,CS8500@9:22-9:24"}
 unsafe
 {
     string s = "";

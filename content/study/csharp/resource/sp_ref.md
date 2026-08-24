@@ -461,7 +461,7 @@ m(in temp);
 例えば `Nullable` 型には .NET 7 から [`GetValueRefOrDefaultRef`](https://learn.microsoft.com/ja-jp/dotnet/api/system.nullable.getvaluerefordefaultref) というメソッドが追加されたんですが、
 これが問題になりました。
 
-```csharp {title="GetValueRefOrDefaultRef に右辺値を渡せて困った" warning-ranges="sha256:da93053c86658070428457b69f1a3ddd5344250cc90c84f8d7c1147ef6a6cd50;10:60-10:91,11:72-11:77"}
+```csharp {title="GetValueRefOrDefaultRef に右辺値を渡せて困った" warning-ranges="sha256:da93053c86658070428457b69f1a3ddd5344250cc90c84f8d7c1147ef6a6cd50;10:60-10:91,11:72-11:77" warning-diagnostics="sha256:da93053c86658070428457b69f1a3ddd5344250cc90c84f8d7c1147ef6a6cd50;CS9193@10:60-10:91,CS9193@11:72-11:77"}
 using System.Numerics;
 
 Quaternion? x = new(1, 2, 3, 0);
@@ -483,7 +483,7 @@ C# 11 時点/ .NET 7 時点では警告が出ません。)
 そこで C# 12 では改めて、「書き換えはしないけども、右辺値は受け付けたくない」ということを表す、
 ref readonly 引数というものを導入しました。
 
-```csharp {title="ref readonly 引数" warning-ranges="sha256:671d5346c53107f1303255ddd7b42227765e4cfc3cc7b07d499c04a19b36c9ca;4:3-4:5,8:3-8:8,11:3-11:4"}
+```csharp {title="ref readonly 引数" warning-ranges="sha256:671d5346c53107f1303255ddd7b42227765e4cfc3cc7b07d499c04a19b36c9ca;4:3-4:5,8:3-8:8,11:3-11:4" warning-diagnostics="sha256:671d5346c53107f1303255ddd7b42227765e4cfc3cc7b07d499c04a19b36c9ca;CS9193@4:3-4:5,CS9193@8:3-8:8,CS9192@11:3-11:4"}
 // 冒頭の例から in を ref readonly に変更。
 void m(ref readonly int x) { }
 

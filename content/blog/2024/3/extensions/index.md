@@ -243,7 +243,7 @@ class Derived : Base
 
 もうちょっとわかりにくい例:
 
-```csharp {title="基底クラスと同名で、引数の型が違うメンバー参照" warning-ranges="sha256:6104729db7603219bd7f917550b2efe2b547d396228b79e1e60e9ad3e7543db7;8:21-8:22"}
+```csharp {title="基底クラスと同名で、引数の型が違うメンバー参照" warning-ranges="sha256:6104729db7603219bd7f917550b2efe2b547d396228b79e1e60e9ad3e7543db7;8:21-8:22" warning-diagnostics="sha256:6104729db7603219bd7f917550b2efe2b547d396228b79e1e60e9ad3e7543db7;CS0109@8:21-8:22"}
 class Base
 {
     public void M(int x) { }
@@ -359,7 +359,7 @@ namespace App1
 }
 ```
 
-```csharp {title="優劣がない場合はコンパイル エラー" error-ranges="sha256:676bb31ee507b958191239a72c596375ce2af00ce89356aff8626a969f887f3e;29:21-29:22"}
+```csharp {title="優劣がない場合はコンパイル エラー" error-ranges="sha256:676bb31ee507b958191239a72c596375ce2af00ce89356aff8626a969f887f3e;29:21-29:22" error-diagnostics="sha256:676bb31ee507b958191239a72c596375ce2af00ce89356aff8626a969f887f3e;CS0121@29:21-29:22"}
 namespace Ex1
 {
     static class AExtension
@@ -400,7 +400,7 @@ namespace App1
 現状は「優劣つけない」という方向で検討されています。
 というか、新旧混在した時点でコンパイル エラーにしようかという話もあるみたいです。
 
-```csharp {title="優劣がない場合はコンパイル エラー" error-ranges="sha256:9ea7ee1f09011a386df6ad2bd2d9caa892f55cdf2546992529f04155eb551ac7;30:21-30:22"}
+```csharp {title="優劣がない場合はコンパイル エラー" error-ranges="sha256:9ea7ee1f09011a386df6ad2bd2d9caa892f55cdf2546992529f04155eb551ac7;30:21-30:22" error-diagnostics="sha256:9ea7ee1f09011a386df6ad2bd2d9caa892f55cdf2546992529f04155eb551ac7;CS0121@30:21-30:22"}
 namespace Ex1
 {
     static class AExtension
@@ -514,7 +514,7 @@ Console.WriteLine(boxedExtension is SomeClass); // false
 
 ジェネリク メソッドでは、以下のように、元の型と拡張型の両方の型情報を使う必要がでてきます。
 
-```csharp {title="ジェネリク メソッドに拡張型を渡す" error-ranges="sha256:f2b88c79e11b4cdb314e66dd73e4e3bd1a1cb073e8a49851311a336892bd28e7;5:18-5:27,10:33-10:37,10:39-10:44"}
+```csharp {title="ジェネリク メソッドに拡張型を渡す" error-ranges="sha256:f2b88c79e11b4cdb314e66dd73e4e3bd1a1cb073e8a49851311a336892bd28e7;5:18-5:27,10:33-10:37,10:39-10:44" error-diagnostics="sha256:f2b88c79e11b4cdb314e66dd73e4e3bd1a1cb073e8a49851311a336892bd28e7;CS0119@5:18-5:27,CS1503@10:33-10:37,CS1503@10:39-10:44"}
 var value = new SomeClass { Value = 1 };
 List<SomeClass> list = [new() { Value = 2 }, new() { Value = 1 }, new() { Value = 0 }];
 

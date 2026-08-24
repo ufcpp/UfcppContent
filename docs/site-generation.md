@@ -295,6 +295,21 @@ fingerprinted range form instead of guessing an occurrence. Within one kind,
 overlapping or adjacent intervals are merged. Different kinds stay distinct
 even at the same boundaries.
 
+Compiler/analyzer IDs use selection-level `error-diagnostics` and
+`warning-diagnostics` metadata rather than a block-level title:
+
+````markdown
+```csharp {error-ranges="sha256:…;1:1-1:6" error-diagnostics="sha256:…;CS0219@1:1-1:2,CS0453@1:1-1:6"}
+// Code
+```
+````
+
+Each entry is `CS####@range` or `CA####@range`; the fingerprint and one-based
+Unicode-scalar/end-exclusive coordinates match `*-ranges`. Entry order
+preserves legacy outer-to-inner opening order. Identical/nested ranges,
+different IDs on one range, and duplicate same-ID occurrences remain separate;
+crossing same-kind ranges and non-CS/CA titles are invalid.
+
 Legacy highlights that cannot be expressed exactly by a whole line or a unique
 literal use a fingerprinted positional fallback:
 
@@ -366,13 +381,16 @@ kind's line selection. Error/warning text and range properties are mutually
 exclusive; existing highlight text/range composition remains supported. The
 renderer splits at every syntax and annotation boundary and
 uses the fixed outer-to-inner order `<mark class="code-highlight">`,
-`<span class="error">`, `<span class="warning">`, then the syntax-color span.
-Partial overlaps are split into valid nested runs rather than crossing tags.
-The named-property allowlist contains only `title` and the three line/text/range
-triples; event handlers and other named generic attributes fail site generation
-instead of reaching generated HTML. Author-supplied generic IDs and classes on
-fenced code blocks also fail generation. Markdig-generated attributes on its
-derived block extensions are ignored rather than copied.
+error spans, warning spans, then the syntax-color span. Multiple active titled
+spans of one kind are nested in diagnostic-list order. The renderer retains
+common outer wrappers across inner boundaries; partial different-kind overlaps
+are split into valid nested runs rather than crossing tags.
+The named-property allowlist contains only `title`, the three line/text/range
+triples, and the error/warning diagnostic identity lists; event handlers and
+other named generic attributes fail site generation instead of reaching
+generated HTML. Author-supplied generic IDs and classes on fenced code blocks
+also fail generation. Markdig-generated attributes on its derived block
+extensions are ignored rather than copied.
 
 Annotation metadata is consumed by the renderer and is never copied into
 generated HTML. Malformed attributes, incompatible text/range pairs, ambiguous
@@ -386,6 +404,11 @@ elements, the renderer parses the trusted syntax-highlighter fragment
 structurally and verifies that its text maps exactly to the source code. This
 preserves syntax-token spans and escaped plain code without rewriting generated
 HTML with regular expressions.
+
+Rendered diagnostic spans use the browser-native tooltip only:
+`<span class="error|warning" title="CS####|CA####">`. They receive no event,
+data, style, ARIA, role, ID, anchor, focus, or JavaScript attributes. Untitled
+diagnostic spans remain class-only and retain the existing visual merging.
 
 Source-code highlights reproduce the legacy effective style: `#e0ffff`
 background, `0 2px` padding, normal font style, and bold text while nested syntax

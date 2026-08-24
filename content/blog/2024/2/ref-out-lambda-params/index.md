@@ -20,7 +20,7 @@ aliases: []
 ラムダ式は、状況が許すなら、`x => { }` などといったように非常に簡素に書けます。
 ところが、[`ref`](../../../../study/csharp/resource/sp_ref.md#sec-byref) や [`out`](../../../../study/csharp/resource/sp_ref.md#out) が絡むとそうもいかなくて、型推論が効く状況でも型名を省略できません。
 
-```csharp {title="ref, out などが絡むと型名の省略ができない" error-ranges="sha256:0857f6df9fc97c7b9eafa1dfd58a7fb67cf9ef5f47ae2d96331849aeaebd22ab;11:21-11:22,12:19-12:20"}
+```csharp {title="ref, out などが絡むと型名の省略ができない" error-ranges="sha256:0857f6df9fc97c7b9eafa1dfd58a7fb67cf9ef5f47ae2d96331849aeaebd22ab;11:21-11:22,12:19-12:20" error-diagnostics="sha256:0857f6df9fc97c7b9eafa1dfd58a7fb67cf9ef5f47ae2d96331849aeaebd22ab;CS1676@11:21-11:22,CS1676@12:19-12:20"}
 // 通常、ラムダ式は型推論が効く限り、引数の型を省略できる。
 Action<int> a = x => { };
 
@@ -40,7 +40,7 @@ delegate void OutFunc<T>(out T arg);
 
 特に、「他にも引数が多かったり、他の引数のどれかに型名が長くて書きたくない引数がある」みたいな状況では相当に不便です。
 
-```csharp {title="引数が多くて型の省略したい…" error-ranges="sha256:d0a842f314048b7ba41430eaad2c56a9ac6eeec250db804219323e67d38b2147;5:27-5:28,8:31-8:34,8:35-8:36"}
+```csharp {title="引数が多くて型の省略したい…" error-ranges="sha256:d0a842f314048b7ba41430eaad2c56a9ac6eeec250db804219323e67d38b2147;5:27-5:28,8:31-8:34,8:35-8:36" error-diagnostics="sha256:d0a842f314048b7ba41430eaad2c56a9ac6eeec250db804219323e67d38b2147;CS1676@5:27-5:28,CS0748@8:31-8:34,CS1676@8:35-8:36"}
 // 全部の引数に型の明示が必要。
 ManyParams a = (int x, int y, int z, ref int r) => { };
 
@@ -53,7 +53,7 @@ ManyParams a2 = (x, y, z, ref int r) => { };
 delegate void ManyParams(int x, int y, int z, ref int r);
 ```
 
-```csharp {title="型名が長くて省略したい…" error-ranges="sha256:647c8cb30e82ed48750d9012346d540b094a0d6d0f0df2e2268cb45129f8a78d;5:23-5:24,8:27-8:30,8:31-8:32"}
+```csharp {title="型名が長くて省略したい…" error-ranges="sha256:647c8cb30e82ed48750d9012346d540b094a0d6d0f0df2e2268cb45129f8a78d;5:23-5:24,8:27-8:30,8:31-8:32" error-diagnostics="sha256:647c8cb30e82ed48750d9012346d540b094a0d6d0f0df2e2268cb45129f8a78d;CS1676@5:23-5:24,CS0748@8:27-8:30,CS1676@8:31-8:32"}
 // 全部の引数に型の明示が必要。
 LongTypeName a = (IReadOnlyDictionary<(int x, int y), List<string[,]>> x, ref int r) => { };
 
@@ -68,7 +68,7 @@ delegate void LongTypeName(IReadOnlyDictionary<(int x, int y), List<string[,]>> 
 
 これに対して、`ref x => { }` みたいな書き方は認めてもいいんじゃない？という話があります。
 
-```csharp {title="ref x, out x なら型名省略できてもいいのでは？" error-ranges="sha256:aba08c90241bdc11b1057e30a94101bc0f1371bf45de3ff068fd22e6c807c9a5;2:25-2:27,3:23-3:25,3:29-3:34,4:30-4:31,5:26-5:27"}
+```csharp {title="ref x, out x なら型名省略できてもいいのでは？" error-ranges="sha256:aba08c90241bdc11b1057e30a94101bc0f1371bf45de3ff068fd22e6c807c9a5;2:25-2:27,3:23-3:25,3:29-3:34,4:30-4:31,5:26-5:27" error-diagnostics="sha256:aba08c90241bdc11b1057e30a94101bc0f1371bf45de3ff068fd22e6c807c9a5;CS0246@2:25-2:26,CS1001@2:26-2:27,CS0246@3:23-3:24,CS1001@3:24-3:25,CS0177@3:29-3:34,CS0118@4:30-4:31,CS0118@5:26-5:27"}
 // 現状ダメ。でも、これくらいはできてもいいのでは？
 RefAction<int> r = (ref x) => { };
 OutFunc<int> o = (out x) => x = 1;
@@ -108,7 +108,7 @@ Desing Meeting では対案も2点ほど検討されたんですがそちらは�
 対案その1は、`x => { }` だけで `ref`/`out` も「推論」してもいいのでは？という案。
 ただ、C# の `ref` 引数、`out` 引数は、呼び出し元にも `ref`/`out` の明示を求めるくらいなので、さすがに `x => { }` というような書き方はちょっと C# 的には違和感があります(なのでリジェクト)。
 
-```csharp {title="呼び出し元にも ref/out の明示が必須" error-ranges="sha256:424def8943806101507ec033691c7d48844a89c96b966da2cd847e1df934d8b9;12:21-12:22,13:19-13:20"}
+```csharp {title="呼び出し元にも ref/out の明示が必須" error-ranges="sha256:424def8943806101507ec033691c7d48844a89c96b966da2cd847e1df934d8b9;12:21-12:22,13:19-13:20" error-diagnostics="sha256:424def8943806101507ec033691c7d48844a89c96b966da2cd847e1df934d8b9;CS1676@12:21-12:22,CS1676@13:19-13:20"}
 RefAction<int> r = (ref int x) => { };
 OutFunc<int> o = (out int x) => x = 1;
 
@@ -132,7 +132,7 @@ delegate void OutFunc<T>(out T arg);
 それをやると[部分型推論](../partial-inference/index.md)の話と同様、
 推論を頑張ろうとすると指数的なコンパイル時間になってしまう可能性があってちょっと怖いそうです(なのでリジェクト、やるとしても部分型推論と一緒に)。
 
-```csharp {title="ラムダ式引数の部分型指定は型推論が複雑になりそう" error-ranges="sha256:0d7af606a5d07bcdb05ec225a2f366a7b1bdfa41a6c327d1b293b4c7573c1018;4:10-4:16,4:31-4:34" warning-ranges="sha256:0d7af606a5d07bcdb05ec225a2f366a7b1bdfa41a6c327d1b293b4c7573c1018;3:22-3:28"}
+```csharp {title="ラムダ式引数の部分型指定は型推論が複雑になりそう" error-ranges="sha256:0d7af606a5d07bcdb05ec225a2f366a7b1bdfa41a6c327d1b293b4c7573c1018;4:10-4:16,4:31-4:34" error-diagnostics="sha256:0d7af606a5d07bcdb05ec225a2f366a7b1bdfa41a6c327d1b293b4c7573c1018;CS0411@4:10-4:16,CS0748@4:31-4:34" warning-ranges="sha256:0d7af606a5d07bcdb05ec225a2f366a7b1bdfa41a6c327d1b293b4c7573c1018;3:22-3:28" warning-diagnostics="sha256:0d7af606a5d07bcdb05ec225a2f366a7b1bdfa41a6c327d1b293b4c7573c1018;CS8321@3:22-3:28"}
 // ラムダ式引数の部分型指定 + 型引数の推論。
 // 結構推論機構が複雑になるはず。
 static ManyParams<T> Create<T>(ManyParams<T> a) => a;
@@ -143,7 +143,7 @@ delegate void ManyParams<T>(T x, T y, T z, ref T r);
 
 あと、元の提案に残っていた「属性や、引数のデフォルト値はどうしよう？」という未解決の議題についても「大変そうなわりに需要がない」ということで、やらないことになりそうです。
 
-```csharp {title="属性やデフォルト値が付いているときの型省略" error-ranges="sha256:b1752ab9e0122dbdf611028c279cf5154f3dc739262b0366cf25ec8de4d9dff2;8:37-8:38" warning-ranges="sha256:b1752ab9e0122dbdf611028c279cf5154f3dc739262b0366cf25ec8de4d9dff2;4:23-4:55,8:24-8:49"}
+```csharp {title="属性やデフォルト値が付いているときの型省略" error-ranges="sha256:b1752ab9e0122dbdf611028c279cf5154f3dc739262b0366cf25ec8de4d9dff2;8:37-8:38" error-diagnostics="sha256:b1752ab9e0122dbdf611028c279cf5154f3dc739262b0366cf25ec8de4d9dff2;CS9098@8:37-8:38" warning-ranges="sha256:b1752ab9e0122dbdf611028c279cf5154f3dc739262b0366cf25ec8de4d9dff2;4:23-4:55,8:24-8:49" warning-diagnostics="sha256:b1752ab9e0122dbdf611028c279cf5154f3dc739262b0366cf25ec8de4d9dff2;CS8622@4:23-4:55,CS9099@4:43-4:44,CS8625@4:47-4:51,CS8622@8:24-8:49"}
 using System.Diagnostics.CodeAnalysis;
 
 // C# 10 と 12 で、こんな感じで属性を付けたりデフォルト値を指定できるようになった。

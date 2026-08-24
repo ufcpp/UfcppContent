@@ -15,7 +15,7 @@ aliases: []
 
 [前回の `Lock` クラスの話](../lock-class/index.md)を見てから、とりあえず以下のコードを見てほしい。
 
-```csharp {title="非同期メソッド中でエラーに" error-ranges="sha256:9980cc7b5f7bd7484c1f849aa36a92f4787aabf320c98c5c6536459ab9013a59;21:15-21:24"}
+```csharp {title="非同期メソッド中でエラーに" error-ranges="sha256:9980cc7b5f7bd7484c1f849aa36a92f4787aabf320c98c5c6536459ab9013a59;21:15-21:24" error-diagnostics="sha256:9980cc7b5f7bd7484c1f849aa36a92f4787aabf320c98c5c6536459ab9013a59;CS9217@21:15-21:24"}
 using System.Runtime.Versioning;
 
 [module: RequiresPreviewFeatures]
@@ -91,7 +91,7 @@ class MultiThreadCode
 これが先ほどのコードで非同期メソッド中の `lock (_syncLock)` がエラーになる原因です。
 問題の本質としては以下のようなコードと同じ。
 
-```csharp {title="非同期メソッド中では ref struct を使えない" error-ranges="sha256:bae7d1fb1f35f642b066b0bd904ecc8f839e148f024d5b07dc560d480d06a127;15:9-15:18"}
+```csharp {title="非同期メソッド中では ref struct を使えない" error-ranges="sha256:bae7d1fb1f35f642b066b0bd904ecc8f839e148f024d5b07dc560d480d06a127;15:9-15:18" error-diagnostics="sha256:bae7d1fb1f35f642b066b0bd904ecc8f839e148f024d5b07dc560d480d06a127;CS4012@15:9-15:18"}
 class A
 {
     public static IEnumerable<object?> MIterator()
@@ -207,7 +207,7 @@ class MImpl
 ただまあ、これはあくまで「原理的には」という話であって、じゃあ、現在の実装がどうなっているかというと…
 C# 12 時点では以下のような感じ。
 
-```csharp {title="C# 12 時点での、ref/ref struct のイテレーター/非同期メソッド中での挙動" error-ranges="sha256:de6fcd0a7664abd4bd717e717001b6ff699eec36e2d42e679e0d6a975ad21078;19:9-19:16,22:17-22:18,29:9-29:18,31:16-31:18,32:9-32:16,35:17-35:18"}
+```csharp {title="C# 12 時点での、ref/ref struct のイテレーター/非同期メソッド中での挙動" error-ranges="sha256:de6fcd0a7664abd4bd717e717001b6ff699eec36e2d42e679e0d6a975ad21078;19:9-19:16,22:17-22:18,29:9-29:18,31:16-31:18,32:9-32:16,35:17-35:18" error-diagnostics="sha256:de6fcd0a7664abd4bd717e717001b6ff699eec36e2d42e679e0d6a975ad21078;CS8344@19:9-19:16,CS8176@22:17-22:18,CS4012@29:9-29:18,CS9104@31:16-31:18,CS8344@32:9-32:16,CS8177@35:17-35:18"}
 class A
 {
     public static void M()
@@ -294,7 +294,7 @@ ref int r = ref x;
 逆に、「これまで書けちゃっていたけども、実はまずかった」というものに警告を出そうという話もあります。
 それが「`lock` ステートメント中の `yield`」です。
 
-```csharp {title="まずそうなコード: lock 中の yield" error-text="await Task.Yield()"}
+```csharp {title="まずそうなコード: lock 中の yield" error-text="await Task.Yield()" error-diagnostics="sha256:265f49bdb28f7dcb17434cd704912d8cc64f9d09b2794060653563bdbd133179;CS1996@19:13-19:31"}
 class MultiThreadCode
 {
     private static readonly object _syncObj = new();
