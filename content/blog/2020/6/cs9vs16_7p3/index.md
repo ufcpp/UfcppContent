@@ -178,7 +178,7 @@ P/Invoke の類も、 .NET Runtime の中で特殊対応するよりも、事前
 ただ、関数ポインターで `<void>` を認めてくれるんなら、普通のデリゲートでも同じように書きたい…
 (書けないし、今後もたぶんずっと無理)
 
-```csharp {title="要望としてはある(たぶん今後も無理)"}
+```csharp {title="要望としてはある(たぶん今後も無理)" error-ranges="sha256:ae84428479e81f8ba734ca3085c6502f627520ad36544e02f5b143b1fc43ae27;7:19-7:23"}
 using System;
  
 class Program
@@ -381,7 +381,7 @@ C# 9.0 時点では `record` 専用構文になりそうです。
 プロパティのアクセサーに、`set` の代わりに `init` を使うことで、
 初期化子や `with` 式でだけ書き換え可能なプロパティができます。
 
-```csharp {title="init アクセサー"}
+```csharp {title="init アクセサー" error-text="p.X"}
 class InitOnly
 {
     public int X { get; init; }

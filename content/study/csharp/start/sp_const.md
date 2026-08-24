@@ -351,7 +351,7 @@ const string C = $"{nameof(A)}: {A}, {nameof(B)}: {B}"; // "A: Abc, B: Xyz"
 
 一方で、`{}` の中身が文字列でない場合、たとえ `const` であっても文字列補間結果は `const` にできなくなります。
 
-```csharp {title="補完結果を const 文字列にできない例"}
+```csharp {title="補完結果を const 文字列にできない例" error-text="$&quot;{A}&quot;"}
 const int A = 1;
 const string C = $"{A}"; // A が文字列じゃないので $"" の結果を const にできない。
 ```

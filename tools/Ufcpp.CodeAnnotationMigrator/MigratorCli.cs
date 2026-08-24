@@ -69,10 +69,14 @@ internal static class MigratorCliOptionsParser
                     break;
                 case "--issue":
                     var issueValue = ReadValue(arguments, ref index, argument);
-                    issue = issueValue == "4"
-                        ? 4
-                        : throw new MigrationInputException(
-                            "Only Issue #4 is supported by this migration mode.");
+                    issue = issueValue switch
+                    {
+                        "4" => 4,
+                        "5" => 5,
+                        _ => throw new MigrationInputException(
+                            "Only Issue #4 or Issue #5 is supported by "
+                            + "this migration mode."),
+                    };
                     break;
                 case "--format":
                     format = ReadValue(arguments, ref index, argument) switch
@@ -92,10 +96,10 @@ internal static class MigratorCliOptionsParser
             }
         }
 
-        if (format == MigratorOutputFormat.Patch && issue != 4)
+        if (format == MigratorOutputFormat.Patch && issue is not (4 or 5))
         {
             throw new MigrationInputException(
-                "Patch format requires --issue 4.");
+                "Patch format requires --issue 4 or --issue 5.");
         }
 
         return new MigratorCliOptions(
@@ -182,6 +186,35 @@ internal static class MigratorCli
                                 item.Value),
                             StringComparer.Ordinal))
                     : Issue4MigrationReportWriter.Serialize(
+                        outcome.Report,
+                        migration);
+                exitCode = 0;
+            }
+            else if (options.Issue == 5)
+            {
+                Issue5MigrationResult migration;
+                try
+                {
+                    migration = Issue5MigrationPlanner.Plan(input, outcome.Report);
+                }
+                catch (InvalidDataException exception)
+                {
+                    await standardError.WriteLineAsync(
+                        $"Issue #5 migration blocked: {exception.Message}");
+                    return 3;
+                }
+
+                bytes = options.Format == MigratorOutputFormat.Patch
+                    ? UnifiedPatchWriter.Write(
+                        repository.ResolvedCurrentCommit,
+                        migration.ChangedDocuments.ToDictionary(
+                            item => JoinGitPath(repository.CurrentPath, item.Key),
+                            item => new DocumentChange(
+                                repository.CurrentDocuments[item.Key],
+                                item.Value),
+                            StringComparer.Ordinal))
+                    : Issue5MigrationReportWriter.Serialize(
+                        input,
                         outcome.Report,
                         migration);
                 exitCode = 0;

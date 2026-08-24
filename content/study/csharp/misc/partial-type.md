@@ -156,7 +156,7 @@ partial record struct RS { }
 ただ、部分クラスにしたい場合、すべての型定義に `partial` 修飾子を付ける必要があります。
 これは、「ファイルを分けるつもりがなかったのに、他の誰かに勝手に部分定義を足された」みたいなことを避けるためです。
 
-```csharp {title="partial はすべての型定義に付ける必要あり"}
+```csharp {title="partial はすべての型定義に付ける必要あり" error-ranges="sha256:284f0a306e34a4ee4822d32005b9f54a36897e0eb3aecbcb56f87d299cd0c4ed;2:7-2:8" error-diagnostics="sha256:284f0a306e34a4ee4822d32005b9f54a36897e0eb3aecbcb56f87d299cd0c4ed;CS0260@2:7-2:8"}
 // 片方に partial が付いてないとエラー。
 class C { }
 
@@ -424,7 +424,7 @@ partial class PartialClass
 
 アクセシビリティ、`static`, `readonly`, `ref` の有無が違うとエラーになります。
 
-```csharp {title="シグネチャが合わなくてエラーになる例"}
+```csharp {title="シグネチャが合わなくてエラーになる例" error-ranges="sha256:299ba4addb8e960ad6f8ef3b5ed1469167ba0dc212d4f38805fa8306845bb5e3;17:45-17:47,20:45-20:47,21:37-21:39,22:31-22:33,23:35-23:37" error-diagnostics="sha256:299ba4addb8e960ad6f8ef3b5ed1469167ba0dc212d4f38805fa8306845bb5e3;CS8817@17:45-17:47,CS8799@20:45-20:47,CS0763@21:37-21:39,CS8818@22:31-22:33,CS8818@23:35-23:37" warning-ranges="sha256:299ba4addb8e960ad6f8ef3b5ed1469167ba0dc212d4f38805fa8306845bb5e3;22:31-22:33,23:35-23:37" warning-diagnostics="sha256:299ba4addb8e960ad6f8ef3b5ed1469167ba0dc212d4f38805fa8306845bb5e3;CS8826@22:31-22:33,CS8826@23:35-23:37"}
 partial class PartialClass
 {
     public static partial ref readonly int M0();
@@ -453,7 +453,7 @@ partial class PartialClass
 
 タプル要素名の差もエラーになります。
 
-```csharp {title="タプル要素名が違うとエラー"}
+```csharp {title="タプル要素名が違うとエラー" error-ranges="sha256:1a5ca1994d593fb72d9a33f9635d48c461bad588d8257e26a8ecfe8ea4edd96c;14:35-14:37,15:35-15:37" error-diagnostics="sha256:1a5ca1994d593fb72d9a33f9635d48c461bad588d8257e26a8ecfe8ea4edd96c;CS8142@14:35-14:37,CS8142@15:35-15:37"}
 partial class PartialClass
 {
     public partial (int x, int y) M0((int x, int y) t);
@@ -475,7 +475,7 @@ partial class PartialClass
 
 引数名、[null 許容参照型](../resource/nullablereferencetype.md)のアノテーションの差は警告になります。
 
-```csharp {title="引数名、nullability の差は警告に"}
+```csharp {title="引数名、nullability の差は警告に" warning-ranges="sha256:b7e307dd082101e2038229cb62213b62ce90ae1f05acaaa4c879779acb28677c;14:25-14:27,17:25-17:27" warning-diagnostics="sha256:b7e307dd082101e2038229cb62213b62ce90ae1f05acaaa4c879779acb28677c;CS8826@14:25-14:27,CS8611@17:25-17:27,CS8826@17:25-17:27"}
 partial class PartialClass
 {
     public partial void M0(int x, string? y);
@@ -616,7 +616,7 @@ abstract class C
 
 部分プロパティの場合は後者の意味になります。
 
-```csharp {title="partial の get; set;"}
+```csharp {title="partial の get; set;" error-text="X" error-diagnostics="sha256:9f6fb176e74617c27fa8fc614d414db66038ce35c0fae57c6dbc3b02124c0b4c;CS9248@4:24-4:25"}
 partial class C
 {
     // 宣言(「partial の片割れで get も set も実装してほしい」という意思表示)。
@@ -627,7 +627,7 @@ partial class C
 「片方が宣言、片方が自動実装」みたいなことにはならないので、
 以下のコードはコンパイル エラーを起こします。
 
-```csharp {title="実装がいない問題"}
+```csharp {title="実装がいない問題" error-ranges="sha256:2ea4624365918012e2d89a205bcf19b50fe5c114449af0b504332e57db623f91;4:24-4:25,11:24-11:25" error-diagnostics="sha256:2ea4624365918012e2d89a205bcf19b50fe5c114449af0b504332e57db623f91;CS9248@4:24-4:25,CS0102@11:24-11:25,CS9250@11:24-11:25"}
 partial class C
 {
     // 宣言。
@@ -684,7 +684,7 @@ partial class PartialClass
 (前節の[拡張部分メソッド](../oop/oo_class.md#extended_partial_method)の場合は戻り値の型の直前だけ。)
 その結果、以下のように、語順に制約があります。
 
-```csharp {title="partial には語順に制約がある"}
+```csharp {title="partial には語順に制約がある" error-ranges="sha256:fbb96f6173aaf9270196a6f856cdc05ffc56ddc5e33ec95b2ba129e11fe1fe92;6:8-6:15,7:1-7:8,8:8-8:15,16:5-16:12"}
 // OK
 public static partial class Ok1 { }
 static public partial class Ok2 { }

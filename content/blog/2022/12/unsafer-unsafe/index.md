@@ -75,7 +75,7 @@ readonly record struct A(int Value);
 
 なので、先ほどと同じノリで ref struct に対して `Unsafe.As` (とか、それ相当の unsafe コード)を書こうとしてもうまくいきません。
 
-```csharp {title="Span には Unsafe.As が使えない"}
+```csharp {title="Span には Unsafe.As が使えない" error-ranges="sha256:3be6be25b891bceb3cd0154b5a4023a60a05fde391a6f68fca78e1a38bfa0437;6:24-6:40" error-diagnostics="sha256:3be6be25b891bceb3cd0154b5a4023a60a05fde391a6f68fca78e1a38bfa0437;CS0306@6:24-6:40,CS0306@6:24-6:40"}
 using System.Runtime.CompilerServices;
 
 var span = (stackalloc int[] { 0xDE, 0xAD, 0xBE, 0xEF });

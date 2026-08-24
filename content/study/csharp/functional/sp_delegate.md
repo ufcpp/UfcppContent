@@ -929,7 +929,7 @@ var a17 = (int a, int b, int c, int d, int e, int f, int g, int h, int i, int j,
 
 ちなみに、`var` 変数宣言している時点で型が確定しているので、後から別のデリゲート型に代入することはできません。
 
-```csharp {title="var に代入した時点で Action/Func に型が確定してる例"}
+```csharp {title="var に代入した時点で Action/Func に型が確定してる例" error-ranges="sha256:b0d7b119bd64d3648c4d2aae183cca0df7d19b8d661f147daf70438ea088e3f6;10:5-10:6"}
 // Func<int, bool> になる。
 var a = (int x) => true;
 

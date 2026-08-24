@@ -62,7 +62,7 @@ class A
 
 この破壊的変更に際して、そもそもとして、「`record` という名前の型自体に警告」というのも追加しています。
 
-```csharp
+```csharp {warning-text="record"}
 // C# 8.0 までは無警告。
 // C# 9.0 で CS8860 警告を追加。
 class record { }

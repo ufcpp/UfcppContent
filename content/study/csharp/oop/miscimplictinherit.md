@@ -167,7 +167,7 @@ int Count(X x)
 
 本項で紹介しているような「特殊な基底クラス」は、これまでジェネリクスの型制約には指定できませんでした。
 
-```csharp {title="Array は型制約には使えない"}
+```csharp {title="Array は型制約には使えない" error-text="System.Array"}
 static void M<T>()
     where T : System.Array // エラーになる
 { }

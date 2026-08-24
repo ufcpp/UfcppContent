@@ -55,7 +55,7 @@ Console.WriteLine(name); // Count
 `typeof(T<>)` の方では `typeof(T<>.X)` とメンバー参照することはないので、
 `nameof` では「似て非なるものの再実装」が必要とのことです。
 
-```csharp {title="似て非なる nameof と typeof"}
+```csharp {title="似て非なる nameof と typeof" error-ranges="sha256:aa97d5012ebfe579118e763ac7b08e4e03b89249b1bb7557570fb431b58e7a46;8:1-8:7,11:5-11:17,17:24-17:29" error-diagnostics="sha256:aa97d5012ebfe579118e763ac7b08e4e03b89249b1bb7557570fb431b58e7a46;CS7003@8:1-8:7,CS0120@11:5-11:17,CS0305@11:5-11:11,CS0426@17:24-17:29" warning-ranges="sha256:aa97d5012ebfe579118e763ac7b08e4e03b89249b1bb7557570fb431b58e7a46;2:5-2:9,5:22-5:24,8:19-8:21" warning-diagnostics="sha256:aa97d5012ebfe579118e763ac7b08e4e03b89249b1bb7557570fb431b58e7a46;CS0219@2:5-2:9,CS0219@5:22-5:24,CS0219@8:19-8:21"}
 // unbound でメンバー参照(特にインスタンス メンバーの参照)をするのは nameof だけ。
 var name = nameof(List<>.Count);
 
@@ -79,7 +79,7 @@ var m1 = typeof(List<>.Count);
 これまでは「型制約の関係でどうやっても `nameof` を使いにくい」という場面がありえました。
 一例として、以下のような場面があり得ます。
 
-```csharp {title="型制約のせいで nameof が使いにくくなる例"}
+```csharp {title="型制約のせいで nameof が使いにくくなる例" error-ranges="sha256:6f93b12e221c6b2607339f0a68f3567424251a95f5c8b74486c3b2095c36a749;2:22-2:23" error-diagnostics="sha256:6f93b12e221c6b2607339f0a68f3567424251a95f5c8b74486c3b2095c36a749;CS0453@2:22-2:23" warning-ranges="sha256:6f93b12e221c6b2607339f0a68f3567424251a95f5c8b74486c3b2095c36a749;1:5-1:10,2:5-2:10" warning-diagnostics="sha256:6f93b12e221c6b2607339f0a68f3567424251a95f5c8b74486c3b2095c36a749;CS0219@1:5-1:10,CS0219@2:5-2:10"}
 var name1 = nameof(A<_>); // これは書けるけど、
 var name2 = nameof(B<_>); // これは書けない。
 

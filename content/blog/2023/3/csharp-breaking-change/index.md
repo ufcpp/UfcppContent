@@ -113,7 +113,7 @@ C# 11.0 で[`required`](../../../../study/csharp/cheatsheet/ap_ver11.md#required
 
 ただ、幸い、これらは(当然、[文脈キーワード](../../../../study/csharp/misc/ap_compatibility.md#contextual-keyword)で)「型名として使おうとする時だけまずい」という仕様になっています。
 
-```csharp {title="record の破壊的変更の影響は型名に対してのみ"}
+```csharp {title="record の破壊的変更の影響は型名に対してのみ" warning-ranges="sha256:72ecb3615ba7d634bdc624dc4959702c9203ece1b6274c3050d3a141609e4b92;15:12-15:13,18:7-18:13" warning-diagnostics="sha256:72ecb3615ba7d634bdc624dc4959702c9203ece1b6274c3050d3a141609e4b92;CS8981@15:12-15:13,CS8860@18:7-18:13"}
 class A
 {
     // 全然平気。

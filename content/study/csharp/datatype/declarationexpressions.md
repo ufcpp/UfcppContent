@@ -188,7 +188,7 @@ static void Deconstruct1()
 以下のコードはコンパイル エラーになります。
 (同名の引数が2つある状態。)
 
-```csharp {title="引数の _ は破棄の意味にならない"}
+```csharp {title="引数の _ は破棄の意味にならない" error-ranges="sha256:7591e643764093d54c1e117dfeacd59ef0e56121994c131af579ec60e28357cb;1:26-1:27"}
 static void M(int _, int _)
 {
 }
@@ -201,7 +201,7 @@ static void M(int _, int _)
 既存の構文で破棄を使いたいものの代表例は、ラムダ式の引数でしょう。
 C# 8.0 までは破棄の意味で`_`を使えず、「`_1`」みたいな名前が必要でした。
 
-```csharp {title="C# 8.0時点では使えない _ 破棄"}
+```csharp {title="C# 8.0時点では使えない _ 破棄" error-ranges="sha256:9a4ee039d313df902a9a70b5af4ad5d5fb8db9f5dceccf91a4321ede5ba40476;4:35-4:36"}
 static void Subscribe(INotifyPropertyChanged source)
 {
     // C# 8.0 以前、2個目の _ が「同じ名前被ってる」エラーになる

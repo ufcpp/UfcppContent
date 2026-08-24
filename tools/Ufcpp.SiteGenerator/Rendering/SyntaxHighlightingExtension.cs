@@ -68,8 +68,45 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
         private const string HighlightLinesAttribute = "highlight-lines";
         private const string HighlightRangesAttribute = "highlight-ranges";
         private const string HighlightTextAttribute = "highlight-text";
+        private const string ErrorLinesAttribute = "error-lines";
+        private const string ErrorRangesAttribute = "error-ranges";
+        private const string ErrorTextAttribute = "error-text";
+        private const string ErrorDiagnosticsAttribute = "error-diagnostics";
+        private const string WarningLinesAttribute = "warning-lines";
+        private const string WarningRangesAttribute = "warning-ranges";
+        private const string WarningTextAttribute = "warning-text";
+        private const string WarningDiagnosticsAttribute = "warning-diagnostics";
         private const string TitleAttribute = "title";
-        private const string HighlightClassName = "code-highlight";
+        private static readonly AnnotationDefinition[] AnnotationDefinitions =
+        [
+            new(
+                AnnotationKind.Highlight,
+                HighlightLinesAttribute,
+                HighlightTextAttribute,
+                HighlightRangesAttribute,
+                "mark",
+                "code-highlight",
+                false,
+                null),
+            new(
+                AnnotationKind.Error,
+                ErrorLinesAttribute,
+                ErrorTextAttribute,
+                ErrorRangesAttribute,
+                "span",
+                "error",
+                true,
+                ErrorDiagnosticsAttribute),
+            new(
+                AnnotationKind.Warning,
+                WarningLinesAttribute,
+                WarningTextAttribute,
+                WarningRangesAttribute,
+                "span",
+                "warning",
+                true,
+                WarningDiagnosticsAttribute),
+        ];
         private readonly Lazy<RoslynCSharpHighlighter> _csharpHighlighter;
 
         public HighlightedCodeBlockRenderer(
@@ -99,10 +136,10 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                     "csharp",
                     metadata.Title);
                 renderer.Write(
-                    ApplyHighlights(
+                    ApplyAnnotations(
                         _csharpHighlighter.Value.Highlight(code),
                         code,
-                        metadata.HighlightSpans));
+                        metadata.AnnotationSpans));
                 renderer.WriteLine("</code></pre>");
                 return;
             }
@@ -115,7 +152,7 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                     preClassName,
                     languageName,
                     metadata.Title);
-                WritePlainCode(renderer, code, metadata.HighlightSpans);
+                WritePlainCode(renderer, code, metadata.AnnotationSpans);
                 renderer.WriteLine("</code></pre>");
                 return;
             }
@@ -138,16 +175,16 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                     or InvalidOperationException
                     or System.Text.RegularExpressions.RegexMatchTimeoutException)
             {
-                WritePlainCode(renderer, code, metadata.HighlightSpans);
+                WritePlainCode(renderer, code, metadata.AnnotationSpans);
                 renderer.WriteLine("</code></pre>");
                 return;
             }
 
             renderer.Write(
-                ApplyHighlights(
+                ApplyAnnotations(
                     highlightedCode.Html,
                     code,
-                    metadata.HighlightSpans));
+                    metadata.AnnotationSpans));
             renderer.Write(highlightedCode.TrailingWhitespace);
             renderer.WriteLine("</code></pre>");
         }
@@ -189,9 +226,8 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
             string code,
             string? languageName)
         {
-            string? highlightedLines = null;
-            string? highlightedRanges = null;
-            string? highlightedText = null;
+            var annotationValues = new Dictionary<string, string>(
+                StringComparer.Ordinal);
             string? title = null;
             if (!string.IsNullOrWhiteSpace(block.Arguments)
                 || ContainsAttachedMetadata(block.Info))
@@ -231,49 +267,21 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
 
             foreach (var attribute in attributes?.Properties ?? [])
             {
-                if (attribute.Key.Equals(
-                        HighlightLinesAttribute,
-                        StringComparison.Ordinal))
+                if (AnnotationDefinitions.Any(
+                        definition => definition.AttributeNames.Contains(
+                            attribute.Key,
+                            StringComparer.Ordinal)))
                 {
-                    if (highlightedLines is not null)
-                    {
-                        throw new InvalidDataException(
-                            $"The {HighlightLinesAttribute} attribute cannot be repeated.");
-                    }
-
-                    highlightedLines = attribute.Value
-                        ?? throw new InvalidDataException(
-                            $"The {HighlightLinesAttribute} attribute requires a value.");
-                }
-                else if (attribute.Key.Equals(
-                             HighlightRangesAttribute,
-                             StringComparison.Ordinal))
-                {
-                    if (highlightedRanges is not null)
-                    {
-                        throw new InvalidDataException(
-                            $"The {HighlightRangesAttribute} attribute cannot be repeated.");
-                    }
-
-                    highlightedRanges = attribute.Value
-                        ?? throw new InvalidDataException(
-                            $"The {HighlightRangesAttribute} attribute requires a value.");
-                }
-                else if (attribute.Key.Equals(
-                             HighlightTextAttribute,
-                             StringComparison.Ordinal))
-                {
-                    if (highlightedText is not null)
-                    {
-                        throw new InvalidDataException(
-                            $"The {HighlightTextAttribute} attribute cannot be repeated.");
-                    }
-
-                    highlightedText = attribute.Value
-                        is { } value
-                            ? WebUtility.HtmlDecode(value)
+                    var value = attribute.Value
+                        is { } encoded
+                            ? WebUtility.HtmlDecode(encoded)
                             : throw new InvalidDataException(
-                                $"The {HighlightTextAttribute} attribute requires a value.");
+                                $"The {attribute.Key} attribute requires a value.");
+                    if (!annotationValues.TryAdd(attribute.Key, value))
+                    {
+                        throw new InvalidDataException(
+                            $"The {attribute.Key} attribute cannot be repeated.");
+                    }
                 }
                 else if (attribute.Key.Equals(
                              TitleAttribute,
@@ -300,25 +308,77 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                 }
             }
 
-            var spans = new List<SourceSpan>();
-            if (highlightedLines is not null)
+            var annotationChannels =
+                new Dictionary<AnnotationKind, AnnotationChannel>();
+            foreach (var definition in AnnotationDefinitions)
             {
-                AddLineSpans(spans, code, highlightedLines);
+                var lines = annotationValues.GetValueOrDefault(
+                    definition.LinesAttribute);
+                var text = annotationValues.GetValueOrDefault(
+                    definition.TextAttribute);
+                var ranges = annotationValues.GetValueOrDefault(
+                    definition.RangesAttribute);
+                var diagnostics = definition.DiagnosticsAttribute is null
+                    ? null
+                    : annotationValues.GetValueOrDefault(
+                        definition.DiagnosticsAttribute);
+                if (text is not null
+                    && ranges is not null
+                    && definition.Kind != AnnotationKind.Highlight)
+                {
+                    throw new InvalidDataException(
+                        $"The {definition.TextAttribute} and "
+                        + $"{definition.RangesAttribute} attributes are mutually exclusive.");
+                }
+
+                var spans = new List<SourceSpan>();
+                if (lines is not null)
+                {
+                    AddLineSpans(spans, code, lines, definition.LinesAttribute);
+                }
+
+                if (text is not null)
+                {
+                    AddTextSpans(
+                        spans,
+                        code,
+                        text,
+                        definition.TextAttribute,
+                        definition.RequiresUniqueText);
+                }
+
+                if (ranges is not null)
+                {
+                    spans.AddRange(
+                        AnnotationRangeMetadata.Parse(
+                                code,
+                                ranges,
+                                definition.RangesAttribute)
+                            .Select(static span => new SourceSpan(span.Start, span.End)));
+                }
+
+                var identities = diagnostics is null
+                    ? []
+                    : DiagnosticIdentityMetadata.Parse(
+                        code,
+                        diagnostics,
+                        definition.DiagnosticsAttribute!);
+                var mergedSpans = MergeSpans(spans);
+                if (identities.Any(identity => !mergedSpans.Any(
+                        span => span.Start <= identity.Start
+                            && identity.End <= span.End)))
+                {
+                    throw new InvalidDataException(
+                        $"Every {definition.DiagnosticsAttribute} identity must be "
+                        + "covered by its visual annotation metadata.");
+                }
+
+                annotationChannels.Add(
+                    definition.Kind,
+                    new AnnotationChannel(mergedSpans, identities));
             }
 
-            if (highlightedText is not null)
-            {
-                AddTextSpans(spans, code, highlightedText);
-            }
-
-            if (highlightedRanges is not null)
-            {
-                spans.AddRange(
-                    HighlightRangeMetadata.Parse(code, highlightedRanges)
-                        .Select(static span => new SourceSpan(span.Start, span.End)));
-            }
-
-            return new CodeBlockMetadata(title, MergeSpans(spans));
+            return new CodeBlockMetadata(title, annotationChannels);
         }
 
         private static bool ContainsAttachedMetadata(string? info) =>
@@ -329,8 +389,9 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
             string? propertyName = null)
         {
             return new InvalidDataException(
-                "Fenced code metadata supports only title, highlight-lines, "
-                + "highlight-text, and highlight-ranges; found unsupported "
+                "Fenced code metadata supports only title and highlight/error/"
+                + "warning line, text, range, and diagnostic properties; "
+                + "found unsupported "
                 + $"'{propertyName}' metadata "
                 + $"for language '{languageName ?? string.Empty}'.");
         }
@@ -353,11 +414,12 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
         private static void AddLineSpans(
             ICollection<SourceSpan> spans,
             string code,
-            string value)
+            string value,
+            string attributeName)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
-                throw InvalidLineSyntax();
+                throw InvalidLineSyntax(attributeName);
             }
 
             var sourceLines = GetSourceLines(code);
@@ -367,22 +429,22 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                 if (range.Length is < 1 or > 2
                     || range.Any(string.IsNullOrWhiteSpace))
                 {
-                    throw InvalidLineSyntax();
+                    throw InvalidLineSyntax(attributeName);
                 }
 
-                var startLine = ParseLineNumber(range[0]);
+                var startLine = ParseLineNumber(range[0], attributeName);
                 var endLine = range.Length == 1
                     ? startLine
-                    : ParseLineNumber(range[1]);
+                    : ParseLineNumber(range[1], attributeName);
                 if (endLine < startLine)
                 {
-                    throw InvalidLineSyntax();
+                    throw InvalidLineSyntax(attributeName);
                 }
 
                 if (endLine > sourceLines.Count)
                 {
                     throw new InvalidDataException(
-                        $"The {HighlightLinesAttribute} attribute references line "
+                        $"The {attributeName} attribute references line "
                         + $"{endLine}, but the code block has {sourceLines.Count} lines.");
                 }
 
@@ -408,7 +470,7 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
             return end;
         }
 
-        private static int ParseLineNumber(string value)
+        private static int ParseLineNumber(string value, string attributeName)
         {
             if (!int.TryParse(
                     value.Trim(),
@@ -417,15 +479,15 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                     out var line)
                 || line <= 0)
             {
-                throw InvalidLineSyntax();
+                throw InvalidLineSyntax(attributeName);
             }
 
             return line;
         }
 
-        private static InvalidDataException InvalidLineSyntax() =>
+        private static InvalidDataException InvalidLineSyntax(string attributeName) =>
             new(
-                $"The {HighlightLinesAttribute} attribute must contain "
+                $"The {attributeName} attribute must contain "
                 + "comma-separated positive line numbers or inclusive ranges.");
 
         private static IReadOnlyList<SourceSpan> GetSourceLines(string code)
@@ -446,24 +508,43 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
         private static void AddTextSpans(
             ICollection<SourceSpan> spans,
             string code,
-            string value)
+            string value,
+            string attributeName,
+            bool requiresUniqueText)
         {
             if (value.Length == 0)
             {
                 throw new InvalidDataException(
-                    $"The {HighlightTextAttribute} attribute requires a non-empty value.");
+                    $"The {attributeName} attribute requires a non-empty value.");
             }
 
             var matchStart = code.IndexOf(value, 0, StringComparison.Ordinal);
             if (matchStart < 0)
             {
                 throw new InvalidDataException(
-                    $"The {HighlightTextAttribute} literal does not occur in the code block.");
+                    $"The {attributeName} literal does not occur in the code block.");
+            }
+
+            if (requiresUniqueText
+                && matchStart <= code.Length - value.Length - 1
+                && code.IndexOf(
+                    value,
+                    matchStart + 1,
+                    StringComparison.Ordinal) >= 0)
+            {
+                throw new InvalidDataException(
+                    $"The {attributeName} literal must occur exactly once "
+                    + "in the code block.");
             }
 
             while (matchStart >= 0)
             {
                 spans.Add(new SourceSpan(matchStart, matchStart + value.Length));
+                if (requiresUniqueText)
+                {
+                    break;
+                }
+
                 var nextStart = matchStart + 1;
                 matchStart = nextStart > code.Length - value.Length
                     ? -1
@@ -507,27 +588,33 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
         private static void WritePlainCode(
             HtmlRenderer renderer,
             string code,
-            IReadOnlyList<SourceSpan> highlightSpans)
+            IReadOnlyDictionary<AnnotationKind, AnnotationChannel>
+                annotationChannels)
         {
-            if (highlightSpans.Count == 0)
+            if (!annotationChannels.Values.Any(static channel =>
+                    channel.VisualSpans.Count != 0
+                    || channel.DiagnosticIdentities.Count != 0))
             {
                 renderer.WriteEscape(code);
                 return;
             }
 
             renderer.Write(
-                ApplyHighlights(
+                ApplyAnnotations(
                     WebUtility.HtmlEncode(code),
                     code,
-                    highlightSpans));
+                    annotationChannels));
         }
 
-        private static string ApplyHighlights(
+        private static string ApplyAnnotations(
             string highlightedCode,
             string code,
-            IReadOnlyList<SourceSpan> highlightSpans)
+            IReadOnlyDictionary<AnnotationKind, AnnotationChannel>
+                annotationChannels)
         {
-            if (highlightSpans.Count == 0)
+            if (!annotationChannels.Values.Any(static channel =>
+                    channel.VisualSpans.Count != 0
+                    || channel.DiagnosticIdentities.Count != 0))
             {
                 return highlightedCode;
             }
@@ -552,7 +639,7 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                     "The syntax highlighter fragment does not map exactly to the source code.");
             }
 
-            InsertMarks(root, code, highlightSpans);
+            InsertAnnotations(root, code, annotationChannels);
             if (!string.Equals(root.Value, code, StringComparison.Ordinal))
             {
                 throw new InvalidDataException(
@@ -608,10 +695,11 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
             }
         }
 
-        private static void InsertMarks(
+        private static void InsertAnnotations(
             XElement root,
             string code,
-            IReadOnlyList<SourceSpan> highlightSpans)
+            IReadOnlyDictionary<AnnotationKind, AnnotationChannel>
+                annotationChannels)
         {
             var segments = new List<RenderedSegment>();
             var sourcePosition = 0;
@@ -637,7 +725,8 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
 
                 var nodeEnd = sourcePosition + text.Length;
                 var boundaries = new SortedSet<int> { 0, text.Length };
-                foreach (var span in highlightSpans)
+                foreach (var span in annotationChannels.Values.SelectMany(
+                             static channel => channel.VisualSpans))
                 {
                     if (span.End <= sourcePosition || span.Start >= nodeEnd)
                     {
@@ -646,6 +735,19 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
 
                     boundaries.Add(Math.Max(span.Start, sourcePosition) - sourcePosition);
                     boundaries.Add(Math.Min(span.End, nodeEnd) - sourcePosition);
+                }
+                foreach (var identity in annotationChannels.Values.SelectMany(
+                             static channel => channel.DiagnosticIdentities))
+                {
+                    if (identity.End <= sourcePosition || identity.Start >= nodeEnd)
+                    {
+                        continue;
+                    }
+
+                    boundaries.Add(
+                        Math.Max(identity.Start, sourcePosition) - sourcePosition);
+                    boundaries.Add(
+                        Math.Min(identity.End, nodeEnd) - sourcePosition);
                 }
 
                 var positions = boundaries.ToArray();
@@ -660,9 +762,6 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
 
                     var absoluteStart = sourcePosition + start;
                     var absoluteEnd = sourcePosition + end;
-                    var isHighlighted = highlightSpans.Any(
-                        span => span.Start <= absoluteStart
-                            && absoluteEnd <= span.End);
                     var value = text[start..end];
                     XNode renderedNode = element is null
                         ? new XText(value)
@@ -671,7 +770,13 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                             element.Attributes().Select(
                                 static attribute => new XAttribute(attribute)),
                             value);
-                    segments.Add(new RenderedSegment(renderedNode, isHighlighted));
+                    segments.Add(
+                        new RenderedSegment(
+                            renderedNode,
+                            GetActiveWrappers(
+                                annotationChannels,
+                                absoluteStart,
+                                absoluteEnd)));
                 }
 
                 sourcePosition = nodeEnd;
@@ -684,43 +789,82 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
             }
 
             root.RemoveNodes();
-            var run = new List<XNode>();
-            bool? runIsHighlighted = null;
+            var activeWrappers = new List<AnnotationWrapper>();
+            var activeElements = new List<XElement>();
+            XElement parent = root;
             foreach (var segment in segments)
             {
-                if (runIsHighlighted != segment.IsHighlighted)
+                var common = 0;
+                while (common < activeWrappers.Count
+                       && common < segment.ActiveWrappers.Count
+                       && activeWrappers[common] == segment.ActiveWrappers[common])
                 {
-                    FlushRun();
-                    runIsHighlighted = segment.IsHighlighted;
+                    common++;
                 }
 
-                run.Add(segment.Node);
+                while (activeWrappers.Count > common)
+                {
+                    activeWrappers.RemoveAt(activeWrappers.Count - 1);
+                    activeElements.RemoveAt(activeElements.Count - 1);
+                }
+
+                parent = activeElements.Count == 0 ? root : activeElements[^1];
+                foreach (var wrapper in segment.ActiveWrappers.Skip(common))
+                {
+                    var element = new XElement(
+                        wrapper.ElementName,
+                        new XAttribute("class", wrapper.ClassName));
+                    if (wrapper.DiagnosticId is not null)
+                    {
+                        element.Add(new XAttribute("title", wrapper.DiagnosticId));
+                    }
+
+                    parent.Add(element);
+                    parent = element;
+                    activeWrappers.Add(wrapper);
+                    activeElements.Add(element);
+                }
+
+                parent.Add(segment.Node);
             }
+        }
 
-            FlushRun();
-
-            void FlushRun()
+        private static IReadOnlyList<AnnotationWrapper> GetActiveWrappers(
+            IReadOnlyDictionary<AnnotationKind, AnnotationChannel> channels,
+            int start,
+            int end)
+        {
+            var wrappers = new List<AnnotationWrapper>();
+            foreach (var definition in AnnotationDefinitions)
             {
-                if (run.Count == 0)
+                var channel = channels[definition.Kind];
+                var visual = channel.VisualSpans.Any(
+                    span => span.Start <= start && end <= span.End);
+                var identities = channel.DiagnosticIdentities
+                    .Where(identity => identity.Start <= start && end <= identity.End)
+                    .OrderBy(static identity => identity.Order)
+                    .ToArray();
+                if (identities.Length != 0)
                 {
-                    return;
+                    wrappers.AddRange(
+                        identities.Select(identity => new AnnotationWrapper(
+                            definition.ElementName,
+                            definition.ClassName,
+                            identity.Id,
+                            identity.Order)));
                 }
-
-                if (runIsHighlighted == true)
+                else if (visual)
                 {
-                    root.Add(
-                        new XElement(
-                            "mark",
-                            new XAttribute("class", HighlightClassName),
-                            run));
+                    wrappers.Add(
+                        new AnnotationWrapper(
+                            definition.ElementName,
+                            definition.ClassName,
+                            null,
+                            -1));
                 }
-                else
-                {
-                    root.Add(run);
-                }
-
-                run.Clear();
             }
+
+            return wrappers;
         }
 
         private static HighlightedFragment ExtractHighlightedCode(string html)
@@ -773,11 +917,52 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
 
         private readonly record struct CodeBlockMetadata(
             string? Title,
-            IReadOnlyList<SourceSpan> HighlightSpans);
+            IReadOnlyDictionary<AnnotationKind, AnnotationChannel>
+                AnnotationSpans);
 
         private readonly record struct RenderedSegment(
             XNode Node,
-            bool IsHighlighted);
+            IReadOnlyList<AnnotationWrapper> ActiveWrappers);
+
+        private readonly record struct AnnotationChannel(
+            IReadOnlyList<SourceSpan> VisualSpans,
+            IReadOnlyList<DiagnosticIdentity> DiagnosticIdentities);
+
+        private readonly record struct AnnotationWrapper(
+            string ElementName,
+            string ClassName,
+            string? DiagnosticId,
+            int Order);
+
+        [Flags]
+        private enum AnnotationKind
+        {
+            None = 0,
+            Highlight = 1,
+            Error = 2,
+            Warning = 4,
+        }
+
+        private sealed record AnnotationDefinition(
+            AnnotationKind Kind,
+            string LinesAttribute,
+            string TextAttribute,
+            string RangesAttribute,
+            string ElementName,
+            string ClassName,
+            bool RequiresUniqueText,
+            string? DiagnosticsAttribute)
+        {
+            public IReadOnlyList<string> AttributeNames { get; } =
+                DiagnosticsAttribute is null
+                    ? [LinesAttribute, TextAttribute, RangesAttribute]
+                    : [
+                        LinesAttribute,
+                        TextAttribute,
+                        RangesAttribute,
+                        DiagnosticsAttribute,
+                    ];
+        }
 
         private readonly record struct SourceSpan(int Start, int End);
     }

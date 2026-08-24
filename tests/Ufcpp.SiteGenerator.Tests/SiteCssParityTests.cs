@@ -330,6 +330,22 @@ public sealed class SiteCssParityTests
         Assert.DoesNotContain("--color-code-symbol", SiteCss.Value, StringComparison.Ordinal);
     }
 
+    [Theory]
+    [InlineData("error", "#f00")]
+    [InlineData("warning", "#008000")]
+    public void CodeDiagnosticAnnotation_MatchesLegacyDottedUnderline(
+        string className,
+        string color)
+    {
+        var declarations = RuleBody(
+            $@"\.content\s+pre\s+code\s+\.{className}");
+
+        Assert.NotNull(declarations);
+        Assert.Contains($"border-bottom: dotted medium {color};", declarations);
+        Assert.DoesNotContain("color:", declarations);
+        Assert.DoesNotContain("background:", declarations);
+    }
+
     /// <summary>
     /// The generator rewrites the legacy expand markup into a native
     /// <c>&lt;details&gt;</c>, so the body has to be hidden by the element's own

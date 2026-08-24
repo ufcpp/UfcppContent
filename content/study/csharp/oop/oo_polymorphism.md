@@ -645,7 +645,7 @@ C# 9.0 時点では共変戻り値を使えるのはクラスの仮想メソッ�
 
 例えば以下のようなコードはおそらく書きたい意図とは異なる挙動になると思います。
 
-```csharp {title="インターフェイスの共変戻り値は C# 9.0 時点ではないという例1"}
+```csharp {title="インターフェイスの共変戻り値は C# 9.0 時点ではないという例1" warning-ranges="sha256:7f17aae47ab1ba285f2c844bb04fa169d54f0bad165390dcaeb885b346f3c70c;10:8-10:9"}
 interface IA
 {
     IA M();
@@ -661,7 +661,7 @@ interface IB : IA
 
 以下のようなコードはコンパイル エラーになります。
 
-```csharp {title="インターフェイスの共変戻り値は C# 9.0 時点ではないという例2"}
+```csharp {title="インターフェイスの共変戻り値は C# 9.0 時点ではないという例2" error-ranges="sha256:2235d994b0ca3def2faed32a1b7068fcd3d5571a74d313b70c50392e30516398;9:11-9:12"}
 interface IA
 {
     public IA M() => null;
@@ -676,7 +676,7 @@ interface IB : IA
 
 以下のような実装クラスもコンパイル エラーになります。
 
-```csharp {title="インターフェイスの共変戻り値は C# 9.0 時点ではないという例3"}
+```csharp {title="インターフェイスの共変戻り値は C# 9.0 時点ではないという例3" error-ranges="sha256:cad49684ff30da2d00092a4851ec9f4f201243e02d767bebfa78dba3a8d53a44;6:16-6:18"}
 interface IA
 {
     IA M();

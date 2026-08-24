@@ -175,7 +175,7 @@ struct S
 
 以下のようなコードはダメだそうです。
 
-```csharp {title="アクセシビリティの問題"}
+```csharp {title="アクセシビリティの問題" error-text="public PublicContainsInternal()"}
 internal struct Internal { }
  
 public struct PublicContainsInternal
@@ -213,7 +213,7 @@ static T CreateStruct<T>() where T : struct => CreateNew<T>();
 C# のオプション引数で、構造体な引数は `default(T)` だけを既定値設定できます。
 例えば以下のようなコードは `new TimeSpan(0)` のところだけコンパイル エラーになります。
 
-```csharp {title="オプション引数に default(T) は渡せても new T(...) は渡せない"}
+```csharp {title="オプション引数に default(T) は渡せても new T(...) は渡せない" error-text="new TimeSpan(0)"}
 void M(
     int x = 1, // 組み込み型の場合は const にできるもの何でも OK
     CancellationToken c = default, // default だけは渡せる。この行も OK。

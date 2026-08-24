@@ -439,6 +439,14 @@ pre code {
   font-weight: 700;
 }
 
+.content pre code .error {
+  border-bottom: dotted medium #f00;
+}
+
+.content pre code .warning {
+  border-bottom: dotted medium #008000;
+}
+
 pre.console,
 pre.console code {
   background: var(--color-code-console);

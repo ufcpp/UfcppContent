@@ -27,7 +27,7 @@ aliases: []
 
 例えば以下のコードはプロパティ定義の行に警告。
 
-```csharp {title="非 null 参照型のプロパティが未初期化"}
+```csharp {title="非 null 参照型のプロパティが未初期化" warning-ranges="sha256:9ba4b7b5dc3d921f30b117ff1e906b641bd79ab7c6198f16b8deffd5de011822;3:19-3:20"}
 class C
 {
     public string S { get; } // CS8618 警告
@@ -36,7 +36,7 @@ class C
 
 以下のようにコンストラクターを足すと、今度はコンストラクターの行に警告。
 
-```csharp {title="コンストラクター内でも非 null 参照型のプロパティが未初期化"}
+```csharp {title="コンストラクター内でも非 null 参照型のプロパティが未初期化" warning-ranges="sha256:79fb816d10a0ba802a8989f52c31292350ba65441e54bf700b1a6dcba548cec5;4:12-4:13"}
 class C
 {
     public string S { get; }
@@ -59,7 +59,7 @@ class C
 
 これをメソッド抽出してしまうと再び警告が出ます。
 
-```csharp {title="初期化コードはコンストラクターに直にないとダメ"}
+```csharp {title="初期化コードはコンストラクターに直にないとダメ" warning-ranges="sha256:7f66fb886dcebf7fd23ed389b3cd0c556289b8f0fe7fdc7856cec0e5173088be;5:12-5:13"}
 class C
 {
     public string S { get; private set; }
@@ -107,7 +107,7 @@ class C
 実際には「値を代入したかどうか」を見ているようで、
 値型に対しても使えたりします。
 
-```csharp {title="MemberNotNull(値型プロパティ)"}
+```csharp {title="MemberNotNull(値型プロパティ)" warning-ranges="sha256:53cdc7edf787dd9d3467ce9012ec9db5f798f07c471393517a14a6927a7628bc;11:5-11:6"}
 using System.Diagnostics.CodeAnalysis;
 
 class C

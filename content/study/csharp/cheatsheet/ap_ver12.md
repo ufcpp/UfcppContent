@@ -112,7 +112,7 @@ var f3 = (int x = 1, params int[] y) => 0;
 ref 引数、in 引数の亜種として、
 「書き換えはしないけども、右辺値は受け付けたくない」ということを表す ref readonly 引数というものを導入しました。
 
-```csharp {title="ref readonly 引数"}
+```csharp {title="ref readonly 引数" warning-ranges="sha256:433efe44affde8b8f29e8515c895292f8386c8cb7d64e005c29ae60f8b1cb693;4:3-4:5,8:3-8:8,11:3-11:4" warning-diagnostics="sha256:433efe44affde8b8f29e8515c895292f8386c8cb7d64e005c29ae60f8b1cb693;CS9193@4:3-4:5,CS9193@8:3-8:8,CS9192@11:3-11:4"}
 // in 引数の代わりに ref readonly 引数。
 void m(ref readonly int x) { }
 
@@ -191,7 +191,7 @@ foreach (var x in buffer)
 C# 11 以前だと、以下の例の最後の行のように、
 静的メンバー内から「インスタンス メンバーのインスタンス メンバー」みたいな名前の参照ができなかったようです。
 
-```csharp {title="C# 11 まではエラーになっていたコードの例"}
+```csharp {title="C# 11 まではエラーになっていたコードの例" error-ranges="sha256:15785c8e6a478bc26b230251be71613ff8ccd4975b105f3324500ef2dc1dfa38;11:46-11:54" error-diagnostics="sha256:15785c8e6a478bc26b230251be71613ff8ccd4975b105f3324500ef2dc1dfa38;CS0120@11:46-11:54"}
 class A
 {
     public string? Instance { get; }

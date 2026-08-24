@@ -58,7 +58,7 @@ aliases: []
 
 例えば以下のようなコード。
 
-```csharp {title="MabyNull/NotNull 属性"}
+```csharp {title="MabyNull/NotNull 属性" warning-ranges="sha256:757fccad12b88d7df080404268f9c21ea83b9191d2075bc766c5004865c870a4;10:27-10:28,18:32-18:39,21:47-21:54"}
 using System;
 using System.Diagnostics.CodeAnalysis;
  

@@ -18,7 +18,7 @@ aliases: []
 これをインストールすると、ちょこっと C# 10.0 の構造体のフィールド初期化子の挙動が変わります。
 以下のようなコード、17.0/17.1 Preview 時代はコンパイルできていたんですが、17.1/17.2 Preview ではコンパイル エラーになります。
 
-```csharp {title="しれっと破壊的変更が掛かった文法"}
+```csharp {title="しれっと破壊的変更が掛かった文法" error-text="S"}
 struct S
 {
     public int X = 1; // ここが原因。
@@ -116,7 +116,7 @@ record struct S(string X)
 
 以下のコードがエラーになりました。
 
-```csharp {title="しれっと破壊的変更が掛かった文法"}
+```csharp {title="しれっと破壊的変更が掛かった文法" error-text="S"}
 struct S
 {
     public int X = 1;

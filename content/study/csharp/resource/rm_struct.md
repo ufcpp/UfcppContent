@@ -269,7 +269,7 @@ static T? Default<T>() => default;
 引数なしコンストラクターがない場合には `new()` も既定値扱いですが、
 ある場合には `new()` を渡せなくなります。
 
-```csharp {title="引数なしコンストラクターの有無で new() の意味が変わる例"}
+```csharp {title="引数なしコンストラクターの有無で new() の意味が変わる例" error-ranges="sha256:4745e94e5aef9c5830d88316092e886dd59da434b8b15644fda591073966c4c0;4:15-4:20"}
 void m(
     NoCtor n1 = new(),
     NoCtor n2 = default,
@@ -317,7 +317,7 @@ C# 10 リリース当初はその案に基づいた実装になっていまし�
 それとも引数なしコンストラクターの呼び出しになるのか紛らわしくなるので、
 構造体の引数なしコンストラクターは public 以外を認めていません。
 
-```csharp {title="private、internal な引数なしコンストラクターはエラーになる"}
+```csharp {title="private、internal な引数なしコンストラクターはエラーになる" error-ranges="sha256:cb370ea3a6c337eb01e7cca59fc4ceac5286995025a630a786a91824fcf0d82b;4:13-4:14,10:14-10:15"}
 struct A
 {
     public int X;
@@ -529,7 +529,7 @@ public class Program
 
 いくつか実例を挙げます。
 
-```csharp {title="ref の語順の例"}
+```csharp {title="ref の語順の例" error-ranges="sha256:79c7a395c6a4bac5e2bd5c64e4bce17724f56b315129eea7a0fc6c421edc810b;7:14-7:20,8:14-8:20,9:17-9:24,9:25-9:28,10:21-10:28,11:12-11:19,11:20-11:28"}
 // OK
 readonly public ref struct Ok1 { }
 readonly public ref partial struct Ok2 { }
@@ -545,7 +545,7 @@ public ref partial readonly struct Ng5 { }
 
 おそらく、以下のような型の入れ子とメソッド定義の区別を楽にするための制限(あくまでコンパイラー都合)と思われます。
 
-```csharp {title="ref の語順に制限がある理由"}
+```csharp {title="ref の語順に制限がある理由" error-text="struct"}
 class Sample
 {
     // 以下のエラー行、エラー内容は「readonly の後ろには型名が必要」になる

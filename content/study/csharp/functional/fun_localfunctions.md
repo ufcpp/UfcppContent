@@ -612,7 +612,7 @@ C# 8.0 から、外部の変数を捕獲しないことを明示するため、
 ローカル関数に `static` 修飾を付けれるようになりました。
 この機能を<strong id="key-static-local-function" class="keyword">静的ローカル関数</strong>(static local function)と呼びます。
 
-```csharp {title="静的ローカル関数の例"}
+```csharp {title="静的ローカル関数の例" error-ranges="sha256:408ca1f53cba8bf0943640a50b14a3766d01feb7e030c7fccd19b2782ff34e12;8:28-8:29"}
 void M(int a)
 {
     // 外部の変数(引数)を捕獲(クロージャ化)。
@@ -630,7 +630,7 @@ void M(int a)
 
 ちなみに、「静的」の名前が示す通り、インスタンス メンバーの参照もできません。
 
-```csharp {title="静的ローカル関数はインスタンス メンバーに触れない" highlight-ranges="sha256:230f1ec87abe00b1645c51a902f8d4e182da4ec4cf724c6824839fdbb57dc72f;9:9-9:15,12:9-12:15"}
+```csharp {title="静的ローカル関数はインスタンス メンバーに触れない" highlight-ranges="sha256:230f1ec87abe00b1645c51a902f8d4e182da4ec4cf724c6824839fdbb57dc72f;9:9-9:15,12:9-12:15" error-ranges="sha256:230f1ec87abe00b1645c51a902f8d4e182da4ec4cf724c6824839fdbb57dc72f;12:28-12:44"}
 class LocalFunction
 {
     public static int StaticProperty { get; set; }
@@ -670,7 +670,7 @@ Console.WriteLine(m());
 意味的には[静的ローカル関数](#static-local-function)と全く同じで、「外部の変数を捕獲しない」という宣言になります。
 ラムダ式、匿名メソッド式ともに、式の前に `static` を付けます。
 
-```csharp {title="静的匿名関数" highlight-ranges="sha256:42eef5c0699fe151a666f45b42c553970dd1b7c1451a5c27fa7b6789c8afdeb6;6:22-6:28,7:22-7:28,10:22-10:28,11:22-11:28"}
+```csharp {title="静的匿名関数" highlight-ranges="sha256:42eef5c0699fe151a666f45b42c553970dd1b7c1451a5c27fa7b6789c8afdeb6;6:22-6:28,7:22-7:28,10:22-10:28,11:22-11:28" error-ranges="sha256:42eef5c0699fe151a666f45b42c553970dd1b7c1451a5c27fa7b6789c8afdeb6;10:34-10:35,11:55-11:56"}
 using System;
  
 int a = 0;
@@ -781,7 +781,7 @@ app.Run();
 戻り値の型は、引数の `()` の前に書きます。
 例えば以下のような書き方ができます。
 
-```csharp {title="ラムダ式の戻り値の型を明示する例" highlight-ranges="sha256:fa52fc5713a71f6f1ef60b90433644b058c7f46be60607a9469fa5936eb80061;4:21-4:24,12:21-12:24"}
+```csharp {title="ラムダ式の戻り値の型を明示する例" highlight-ranges="sha256:fa52fc5713a71f6f1ef60b90433644b058c7f46be60607a9469fa5936eb80061;4:21-4:24,12:21-12:24" error-ranges="sha256:fa52fc5713a71f6f1ef60b90433644b058c7f46be60607a9469fa5936eb80061;16:21-16:26"}
 // 新文法。
 // ラムダ式に戻り値の型を明示。
 // (引数も明示。)
@@ -818,7 +818,7 @@ var f = (int x) => x;
 ラムダ式の中身自体がターゲット型推論に依存している場合などです。
 サンプル コードとして[条件演算子のターゲット型推論](../cheatsheet/ap_ver9.md#target-typed-conditional)を使いますが、以下のような式は後者のみ有効になります。
 
-```csharp {title="ラムダ式の中身にターゲット型推論を含む場合の例"}
+```csharp {title="ラムダ式の中身にターゲット型推論を含む場合の例" error-ranges="sha256:e376e6dec22ab3c491563249e798d92e297334e06443fa67a0711fddbb6f0d89;3:10-3:41"}
 // 条件演算子だけでは int と null の共通型が決定できなくて、戻り値の型が決まらない。
 // (条件演算子の後方互換性のために掛かってる制限。)
 var f1 = (bool x, int y) => x ? y : null;
@@ -838,7 +838,7 @@ var f = static int (int x) => x;
 
 また、明示した戻り値の型からラムダ式の引数の型を推論することはできません。
 
-```csharp {title="戻り値の型から引数の型の推論はできない"}
+```csharp {title="戻り値の型から引数の型の推論はできない" error-text="int (x) =&gt; x"}
 // 戻り値の型から引数の型の推論はできない。
 // 結果的に、Func<T, int> への代入はできても、自然な型決定(var などへの代入)はできない。
 var f6 = int (x) => x;
@@ -943,7 +943,7 @@ f2(1, 2, 3); // f2(new int[] { 1, 2, 3 }) と同じ。
 この場合、既定値などの情報は消えます。
 (ちょっと罠なので、一応、警告はしてくれます。)
 
-```csharp {title="既定値違い、params 違いのデリゲート型への代入"}
+```csharp {title="既定値違い、params 違いのデリゲート型への代入" error-ranges="sha256:a063af16d2f5ccdad78e593369991d2271666966233831dcda3a86ff46ece878;4:1-4:3,9:1-9:3" error-diagnostics="sha256:a063af16d2f5ccdad78e593369991d2271666966233831dcda3a86ff46ece878;CS7036@4:1-4:3,CS1593@9:1-9:3" warning-ranges="sha256:a063af16d2f5ccdad78e593369991d2271666966233831dcda3a86ff46ece878;2:23-2:24,7:34-7:35" warning-diagnostics="sha256:a063af16d2f5ccdad78e593369991d2271666966233831dcda3a86ff46ece878;CS9099@2:23-2:24,CS9100@7:34-7:35"}
 // 既定値の情報がないデリゲート型に代入。
 Action<int> f1 = (int x = 1) => { };
 
@@ -960,7 +960,7 @@ f2(1, 2, 3); // エラー。 f2(new int[] { 1, 2, 3 }) と書かないとダメ�
 リフレクションで値を取るときに変なことが起きたりもします。
 `Delegate.Method` で取る情報(ラムダ式側)と、`Type.GetMethod` で取る情報(デリゲート型型)が食い違います。
 
-```csharp {title="異なる既定値が取れちゃう例"}
+```csharp {title="異なる既定値が取れちゃう例" warning-ranges="sha256:22a0d9d6bbaa006a64f9799e5bd21cc8e800b62baa31abe98849aa6377e21b35;5:12-5:13" warning-diagnostics="sha256:22a0d9d6bbaa006a64f9799e5bd21cc8e800b62baa31abe98849aa6377e21b35;CS9099@5:12-5:13"}
 using System.Reflection;
 
 // ラムダ式としては既定値 2。
@@ -1008,7 +1008,7 @@ delegate bool TryParse<T>(string text, out T result);
 
 C# 13 までは以下のように書くことができませんでした。
 
-```csharp {title="C# 13 までは (out x) みたいな型名省略ができない"}
+```csharp {title="C# 13 までは (out x) みたいな型名省略ができない" error-text="out result" error-diagnostics="sha256:1b93b3da9c4c60b1a0ea5c3422075557c373e60d744582c9cf79a820f5c154b4;CS9260@2:26-2:36"}
 // C# 13 までは書けなかった。
 TryParse<int> m = (text, out result) => { result = 0; return true; };
 
@@ -1043,7 +1043,7 @@ delegate void M(in int a, ref int b, out int c, ref readonly int d, scoped Span<
 ラムダ式は、引数が1つだけの時は `x => { }` というように引数リストの `()` も省略できるわけですが、
 この場合は `ref x => { }` みたいな書き方はできません(というか元々、`int x => { }` みたいな型名指定も許されていません)。
 
-```csharp {title="修飾子をつけたい場合、() は必須"}
+```csharp {title="修飾子をつけたい場合、() は必須" error-ranges="sha256:cc64e7b6a47463fa514495dd48ce0caad56509782f5ba574ac9cedcd3db9102a;6:9-6:11,6:23-6:24,7:9-7:11,7:19-7:20,10:14-10:15,11:10-11:11,12:9-12:10" error-diagnostics="sha256:cc64e7b6a47463fa514495dd48ce0caad56509782f5ba574ac9cedcd3db9102a;CS1003@6:9-6:11,CS1525@6:9-6:11,CS1022@6:23-6:24,CS1002@6:23-6:24,CS1525@7:9-7:11,CS1003@7:9-7:11,CS1022@7:19-7:20,CS1002@7:19-7:20,CS1676@10:14-10:15,CS1676@11:10-11:11,CS1676@12:9-12:10"}
 // 修飾子をつけたい場合、() は必須。
 In m1 = (in int a) => { };
 In m2 = (in a) => { };

@@ -255,7 +255,7 @@ public readonly struct Range
 ちなみに、演算子の優先順位は結構高いです。
 2項演算(乗除算含む)や [`switch` 式](../datatype/typeswitch.md#switch-expression)よりも上になります。
 
-```csharp {title=".. の優先順位"}
+```csharp {title=".. の優先順位" error-text="2 * 3..4"}
 _ = 2 * 3..4; // 2 * (3..4) の意味。そんな掛け算はできないのでコンパイル エラーに。
 _ = 2..3 switch // 2..3 という Range が switch 式の引数になる
 {

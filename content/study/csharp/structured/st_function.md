@@ -803,7 +803,7 @@ C# のメソッドのオーバーロードにはいくつか制限がありま�
 
 引数の型違いのオーバーロードはできますが、引数名だけが違うオーバーロードは作れません。
 
-```csharp {title="引数名違いのオーバーロードは無理"}
+```csharp {title="引数名違いのオーバーロードは無理" error-ranges="sha256:8bd50222781a9bd9ebe694de629e1939f466ab2d7d2f3fcb5d2f87dfb0ed4373;7:13-7:14"}
 // F は、引数の型が違うので大丈夫
 static void F(int x) { }
 static void F(string x) { }
@@ -815,7 +815,7 @@ static void G(int y) { }
 
 また、戻り値だけ違うオーバーロードも作れません。
 
-```csharp {title="戻り値違いのオーバーロードも無理"}
+```csharp {title="戻り値違いのオーバーロードも無理" error-ranges="sha256:b82b9b28666688dbad2b227c74daa160210d097c6acc432fd97dea6fe5c413e5;3:15-3:16"}
 // H は、引数が一致していて、戻り値だけ違う。これもコンパイル エラー
 static int H() => 1;
 static string H() => "";
@@ -833,7 +833,7 @@ void D(object x) { }
 void D(dynamic x) { }
 ```
 
-```csharp {title="in, ref, out の扱い"}
+```csharp {title="in, ref, out の扱い" error-ranges="sha256:ef2885cbd7674d9662ad7316c431592fe6425d7097660eed75e44d0e32b3aa71;2:6-2:7,5:6-5:7,8:6-8:7"}
 void F(ref int x) { }
 void F(in int x) { }
 

@@ -50,6 +50,74 @@ public sealed class LegacyPreParserTests
     }
 
     [Fact]
+    public void Parse_PreservesDiagnosticIdsAndLegacyOpeningOrder()
+    {
+        const string Document =
+            "<pre><code>"
+            + "<span class=\"error\" title=\"CS1001\">"
+            + "<span class=\"error\" title=\"CS1002\">x</span>"
+            + "</span>"
+            + "<span class=\"warning\" title=\"CA1822\">y</span>"
+            + "</code></pre>";
+
+        var block = Assert.Single(LegacyPreParser.Parse(Document));
+
+        Assert.Collection(
+            block.Annotations,
+            outer =>
+            {
+                Assert.Equal(AnnotationKind.Error, outer.Kind);
+                Assert.Equal("CS1001", outer.DiagnosticId);
+                Assert.Equal(0, outer.Order);
+                Assert.Equal("x", outer.Text);
+            },
+            inner =>
+            {
+                Assert.Equal(AnnotationKind.Error, inner.Kind);
+                Assert.Equal("CS1002", inner.DiagnosticId);
+                Assert.Equal(1, inner.Order);
+                Assert.Equal("x", inner.Text);
+            },
+            warning =>
+            {
+                Assert.Equal(AnnotationKind.Warning, warning.Kind);
+                Assert.Equal("CA1822", warning.DiagnosticId);
+                Assert.Equal(2, warning.Order);
+                Assert.Equal("y", warning.Text);
+            });
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("cs0219")]
+    [InlineData("CS123")]
+    [InlineData("IDE0051")]
+    [InlineData("CS12A4")]
+    public void Parse_RejectsInvalidDiagnosticId(string id)
+    {
+        var document =
+            $"<pre><code><span class=\"error\" title=\"{id}\">x</span></code></pre>";
+
+        var exception = Assert.Throws<InvalidDataException>(
+            () => LegacyPreParser.Parse(document));
+
+        Assert.Contains("diagnostic", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void Parse_RejectsExtraDiagnosticSpanAttributes()
+    {
+        const string Document =
+            "<pre><code><span class=\"error\" title=\"CS1001\" data-extra=\"x\">"
+            + "value</span></code></pre>";
+
+        var exception = Assert.Throws<InvalidDataException>(
+            () => LegacyPreParser.Parse(Document));
+
+        Assert.Contains("attribute", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void Parse_EnumeratesOnlyPreElementsAndTracksTableContext()
     {
         var document = """
@@ -180,13 +248,24 @@ public sealed class LegacyPreParserTests
     public void Parse_DoesNotTreatSlashInUnquotedValueAsSelfClosingSyntax()
     {
         const string Document =
-            "<pre><code><span class=error data=x/>value</span></code></pre>";
+            "<pre><code><span class=reserved data=x/>value</span></code></pre>";
 
         var block = Assert.Single(LegacyPreParser.Parse(Document));
 
-        var error = Assert.Single(block.Annotations);
-        Assert.Equal(AnnotationKind.Error, error.Kind);
-        Assert.Equal("value", error.Text);
+        Assert.Equal("value", block.Code);
+        Assert.Empty(block.Annotations);
+    }
+
+    [Fact]
+    public void Parse_RejectsValuelessDiagnosticTitle()
+    {
+        const string Document =
+            "<pre><code><span class=\"error\" title>value</span></code></pre>";
+
+        var exception = Assert.Throws<InvalidDataException>(
+            () => LegacyPreParser.Parse(Document));
+
+        Assert.Contains("diagnostic", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

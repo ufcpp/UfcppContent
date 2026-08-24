@@ -44,22 +44,23 @@ public sealed class MigrationReportTests
             new CoverageCounts(1, 1, 0, 0, 0),
             outcome.Report.Coverage.Highlight);
         Assert.Equal(
-            new CoverageCounts(1, 0, 0, 0, 1),
+            new CoverageCounts(1, 1, 0, 0, 0),
             outcome.Report.Coverage.Error);
         Assert.Equal(
-            new CoverageCounts(3, 1, 0, 1, 1),
+            new CoverageCounts(3, 2, 0, 1, 0),
             outcome.Report.Coverage.FencedBlocks);
         Assert.Equal(
             new CoverageCounts(1, 1, 0, 0, 0),
             outcome.Report.Coverage.RawTableBlocks);
 
-        var plan = Assert.Single(outcome.Report.Plans);
-        Assert.Equal("a.md", plan.Path);
-        Assert.Equal("sample.cs", plan.Metadata.Title);
-        Assert.Equal("token", plan.Metadata.Highlight?.Text);
+        Assert.Equal(2, outcome.Report.Plans.Count);
+        var highlightPlan = outcome.Report.Plans.Single(plan => plan.Path == "a.md");
+        Assert.Equal("sample.cs", highlightPlan.Metadata.Title);
+        Assert.Equal("token", highlightPlan.Metadata.Highlight?.Text);
+        var errorPlan = outcome.Report.Plans.Single(plan => plan.Path == "b.md");
+        Assert.NotNull(errorPlan.Metadata.Error?.Ranges);
         Assert.Equal(
             [
-                "UNREPRESENTABLE_REPEATED_TEXT",
                 "UNMATCHED_BLOCK",
                 "CURRENT_ONLY_DOCUMENT",
             ],

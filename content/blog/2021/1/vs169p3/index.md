@@ -64,7 +64,7 @@ class Sample
 
 ちなみに、`{}` の中には、たとえ [const](../../../../study/csharp/start/sp_const.md#const) であっても数値とかは受け付けず、const string の入れ子だけを受け付けます。
 
-```csharp
+```csharp {error-text="$&quot;{123}&quot;"}
 public const string S = $"{123}";
 ```
 

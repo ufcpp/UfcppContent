@@ -67,7 +67,7 @@ class Euclidean
 となったときに問題になるのが、C# では、数値の四則演算を素直にジェネリックにできないこと。
 以下のコードはコンパイルできません。
 
-```csharp {title="ジェネリックな型には演算子が使えない"}
+```csharp {title="ジェネリックな型には演算子が使えない" error-ranges="sha256:d0ddf5ff40c0ea8cf5303c22c431cc42780b5d8226c80a29355ec333d433286d;7:15-7:16,10:28-10:29"}
 // int や double でも使いたいからと言って、以下のようには書けない。
 // ジェネリックな型 T には +, -, * が定義されていない。
 class Euclidean<T>
@@ -218,7 +218,7 @@ struct Array3<T>
 - 固定長の配列なんだから、長さを静的に取得したい
 - 構造体は、自身のフィールドを `ref` 戻り値で返せない
 
-```csharp
+```csharp {error-ranges="sha256:4d84c4cf373e92b84094a5e70cb1085b06c39bd03d0cf056f7745e7c1dc52f1f;11:59-11:64"}
 struct Array2<T>
 {
     public T Item1;

@@ -297,7 +297,7 @@ M3([1, 2]);
 ただ、実装都合でどうしても「全く同じ」にはできないこともあるそうで、ちょっとだけ差があります。
 例えば以下のようなコードの場合、`[]` の有無で呼ばれるオーバーロード解決ルールが変わるそうです。
 
-```csharp {title="コレクション式と params コレクション利用時で結果がちょっと変わる珍しい例"}
+```csharp {title="コレクション式と params コレクション利用時で結果がちょっと変わる珍しい例" error-ranges="sha256:0bc3d88090b2754578fcfdbf79b31222ecabbd6eb6d717f182580609e6595473;1:3-1:4" error-diagnostics="sha256:0bc3d88090b2754578fcfdbf79b31222ecabbd6eb6d717f182580609e6595473;CS0121@1:3-1:4"}
 A.M([1, 2, 3]); // こちらは解決できなくてエラーに。
 A.M(1, 2, 3); // こちらは int[] 側に解決。
 
@@ -313,7 +313,7 @@ class A
 ref 構造体 (`Span<T>` や `ReadOnlySpan<T>` など)に `params` を付けた場合、
 暗黙的に [`scoped`](../resource/refstruct.md#scoped-modifier) 扱い(`scoped` 修飾子を付けた場合と同じルールで解析)になるそうです。
 
-```csharp {title="params を付けた場合、暗黙的に scoped"}
+```csharp {title="params を付けた場合、暗黙的に scoped" error-ranges="sha256:ef8c071bd000e921daa10420157bc375117f7dc4b8a9d6dce33a2b333c7cafab;8:71-8:72,12:71-12:72" error-diagnostics="sha256:ef8c071bd000e921daa10420157bc375117f7dc4b8a9d6dce33a2b333c7cafab;CS8352@8:71-8:72,CS8352@12:71-12:72"}
 class A
 {
     // 普通の ReadOnlySpan 引数は、戻り値に素通し可能。

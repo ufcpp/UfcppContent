@@ -405,7 +405,7 @@ FormattableString を優先してほしいのに優先してもらえなくて�
 ちなみに、ハンドラーの条件を満たす型が複数あって、
 それでオーバーロードした場合、オーバーロード解決できません。
 
-```csharp
+```csharp {error-ranges="sha256:8917bebb30567b31b4a721b03c3386af40cab8e407c43bca50e31c46f2783791;4:5-4:6"}
 public static void Caller()
 {
     // 優先度は付かないので不明瞭エラーを起こす。

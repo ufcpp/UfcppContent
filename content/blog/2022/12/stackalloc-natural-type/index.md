@@ -65,7 +65,7 @@ var v = $"abc{x}";
 
 そして、安全な `stackalloc` の方が後入りなのもあって、`stackalloc` の自然な型はポインターのままです。
 
-```csharp {title="stackalloc は基本的にはポインター"}
+```csharp {title="stackalloc は基本的にはポインター" error-ranges="sha256:e5f080b94f6cde1b0a07fe76ec9b2151a52b3ac7b4221e2b9529572af5b3c49a;18:9-18:26" error-diagnostics="sha256:e5f080b94f6cde1b0a07fe76ec9b2151a52b3ac7b4221e2b9529572af5b3c49a;CS0214@18:9-18:26"}
 unsafe
 {
     // stackalloc の昔からの用法。
@@ -136,7 +136,7 @@ class C
 実は `()` の有無で自然な型を変えれます。
 `()` を付ければ safe。
 
-```csharp {title="() を付ければ safe"}
+```csharp {title="() を付ければ safe" error-ranges="sha256:156c5e2f6dc54bd9f5d67116df7028e8dc1c5c5906c72f1490db6de4c4ec7441;3:9-3:26" error-diagnostics="sha256:156c5e2f6dc54bd9f5d67116df7028e8dc1c5c5906c72f1490db6de4c4ec7441;CS0214@3:9-3:26"}
 // 前述のとおり、自然な型が int* で、unsafe 必須。
 // (今は unsafe を付けていないのでコンパイル エラー。)
 var p = stackalloc int[4];
@@ -210,7 +210,7 @@ static class C
 ちなみに、拡張メソッド解決の仕様的に、以下のようなコードだとダメ(コンパイル エラー)だったりします。
 `Span<T>` から `ReadOnlySpan<T>` への暗黙の型変換は、拡張メソッド解決の際には使われません。
 
-```csharp {title="ReadOnlySpan の拡張メソッドに対しては使えない"}
+```csharp {title="ReadOnlySpan の拡張メソッドに対しては使えない" error-text="stackalloc byte[4]" error-diagnostics="sha256:48efc73e9e7ec49e4f558d91d54f40d61739741c610d0be1c4925ef56131b124;CS1929@6:2-6:20"}
 using System.Text;
 
 // これは呼べない。

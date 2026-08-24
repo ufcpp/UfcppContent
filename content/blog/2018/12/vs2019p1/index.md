@@ -71,7 +71,7 @@ Visual Studio 2019も preview 1 がダウンロードできるようになりま
 
 #### Nullable reference type
 
-```csharp
+```csharp {warning-ranges="sha256:0be8f7d5213aef5fc89b0d90e5674882b204a5db7768d55810ca3d24d83def5b;17:31-17:32"}
 // 有効にするには #nullable ディレクティブが必要。
 #nullable enable
 

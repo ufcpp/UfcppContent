@@ -75,7 +75,7 @@ C# 8.0 の全ての機能を一切の小細工なしで満足に使えるのは 
 null 許容参照型と呼びます。
 ただ、これまでと型 `T` の意味を変えてしまうので、opt-in (オプションを明示しないと有効にならない)方式になっています。
 
-```csharp {title="null 許容参照型の例"}
+```csharp {title="null 許容参照型の例" warning-ranges="sha256:83690f01cc8e5c9f4a518fb2763bbdd59afde31c96a46e710c552d87cdc7ee36;16:39-16:41"}
 // 有効化のためのディレクティブ
 #nullable enable
  
@@ -134,7 +134,7 @@ class Program
 単に短く書けるというだけではなく、以下のように、
 コンパイラーによるチェックが掛かりやすく、人的ミスの回避にも貢献します。
 
-```csharp {title="再帰パターンはコンパイラーによるチェックがちょっと賢い"}
+```csharp {title="再帰パターンはコンパイラーによるチェックがちょっと賢い" error-ranges="sha256:65448b27aa326358105e7bf4e69d5c8a5daf04829e2f77887b8740dd0db0548f;17:14-17:34"}
 void M(object obj)
 {
     switch (obj)
@@ -419,7 +419,7 @@ C# 8.0 から、外部の変数を捕獲しないことを明示するため、
 ローカル関数に `static` 修飾を付けれるようになりました。
 この機能を<strong id="key-static-local-function" class="keyword">静的ローカル関数</strong>(static local function)と呼びます。
 
-```csharp {title="静的ローカル関数の例"}
+```csharp {title="静的ローカル関数の例" error-ranges="sha256:408ca1f53cba8bf0943640a50b14a3766d01feb7e030c7fccd19b2782ff34e12;8:28-8:29"}
 void M(int a)
 {
     // 外部の変数(引数)を捕獲(クロージャ化)。

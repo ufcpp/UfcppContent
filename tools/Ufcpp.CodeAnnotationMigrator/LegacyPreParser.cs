@@ -253,6 +253,7 @@ internal static class LegacyPreParser
         var openEmphasis = new List<OpenSelection>();
         var openSpans = new List<OpenSelection>();
         var openCodeCount = 0;
+        var annotationOrder = 0;
 
         for (var index = start; index < end;)
         {
@@ -319,13 +320,18 @@ internal static class LegacyPreParser
                 {
                     openEmphasis.Add(new OpenSelection(
                         AnnotationKind.Highlight,
-                        code.Length));
+                        code.Length,
+                        null,
+                        annotationOrder++));
                 }
                 else if (tag.Name.Equals("span", StringComparison.OrdinalIgnoreCase))
                 {
+                    var annotation = GetAnnotation(tag);
                     openSpans.Add(new OpenSelection(
-                        GetAnnotationKind(tag),
-                        code.Length));
+                        annotation.Kind,
+                        code.Length,
+                        annotation.DiagnosticId,
+                        annotation.Kind is null ? -1 : annotationOrder++));
                 }
                 else if (tag.Name.Equals("code", StringComparison.OrdinalIgnoreCase))
                 {
@@ -354,19 +360,7 @@ internal static class LegacyPreParser
                 "Unbalanced <code> markup in a <pre> block.");
         }
 
-        annotations.Sort(static (left, right) =>
-        {
-            var startComparison = left.Start.CompareTo(right.Start);
-            if (startComparison != 0)
-            {
-                return startComparison;
-            }
-
-            var lengthComparison = left.Length.CompareTo(right.Length);
-            return lengthComparison != 0
-                ? lengthComparison
-                : left.Kind.CompareTo(right.Kind);
-        });
+        annotations.Sort(static (left, right) => left.Order.CompareTo(right.Order));
         return (code.ToString(), annotations);
     }
 
@@ -400,23 +394,25 @@ internal static class LegacyPreParser
             kind,
             opening.Start,
             length,
-            code.ToString(opening.Start, length)));
+            code.ToString(opening.Start, length),
+            opening.DiagnosticId,
+            opening.Order));
     }
 
-    private static AnnotationKind? GetAnnotationKind(HtmlTag tag)
+    private static (AnnotationKind? Kind, string? DiagnosticId) GetAnnotation(HtmlTag tag)
     {
         if (tag.Name.Equals("em", StringComparison.OrdinalIgnoreCase))
         {
-            return AnnotationKind.Highlight;
+            return (AnnotationKind.Highlight, null);
         }
 
         if (!tag.Name.Equals("span", StringComparison.OrdinalIgnoreCase))
         {
-            return null;
+            return (null, null);
         }
 
-        var classes = ParseAttributes(tag.Attributes)
-            .GetValueOrDefault("class")?
+        var attributes = ParseAttributes(tag.Attributes);
+        var classes = attributes.GetValueOrDefault("class")?
             .Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)
             .ToHashSet(StringComparer.OrdinalIgnoreCase)
             ?? [];
@@ -428,11 +424,31 @@ internal static class LegacyPreParser
                 "A legacy span cannot be both error and warning metadata.");
         }
 
-        return isError
+        AnnotationKind? kind = isError
             ? AnnotationKind.Error
             : isWarning
                 ? AnnotationKind.Warning
                 : null;
+        if (kind is not null
+            && attributes.Keys.Any(static name =>
+                !name.Equals("class", StringComparison.OrdinalIgnoreCase)
+                && !name.Equals("title", StringComparison.OrdinalIgnoreCase)))
+        {
+            throw new InvalidDataException(
+                "Legacy diagnostic spans support only class and title attributes.");
+        }
+
+        string? diagnosticId = null;
+        var hasDiagnosticId = kind is not null
+            && attributes.TryGetValue("title", out diagnosticId);
+        if (hasDiagnosticId && !DiagnosticCode.IsValid(diagnosticId))
+        {
+            throw new InvalidDataException(
+                $"Legacy diagnostic title '{diagnosticId}' must match "
+                + "CS#### or CA####.");
+        }
+
+        return (kind, hasDiagnosticId ? diagnosticId : null);
     }
 
     private static HtmlTag FindClosingTag(
@@ -747,7 +763,9 @@ internal static class LegacyPreParser
 
     private sealed record OpenSelection(
         AnnotationKind? Kind,
-        int Start);
+        int Start,
+        string? DiagnosticId,
+        int Order);
 
     private sealed class NestedPreException(string message)
         : Exception(message);

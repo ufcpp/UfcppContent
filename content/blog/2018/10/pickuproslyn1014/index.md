@@ -21,7 +21,7 @@ aliases: []
 10/1 のは、nullable 参照型がジェネリクスに絡むときの話。
 例えば以下のような、型推論とかについての検討。
 
-```csharp
+```csharp {warning-ranges="sha256:ff3d79316cef40741c32943c6cea899fa1c7e6e8b08513ed90383f0b5126b556;18:30-18:38"}
 using System.Collections.Generic;
 
 class Program

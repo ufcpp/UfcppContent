@@ -81,7 +81,7 @@ class FieldBackedProperties : INotifyPropertyChanged
 代入演算の左側で `?.` や `?[]` を書くことで「null じゃないときだけ代入」ができるようになりました。
 これを null 条件代入(null conditional assignment)といいます。
 
-```csharp {title="null 条件代入の例"}
+```csharp {title="null 条件代入の例" warning-ranges="sha256:df1d037505d54059fd1bfd9dea4e857b3d01329245ab3918961ee543a4bd4e8d;23:26-23:31" warning-diagnostics="sha256:df1d037505d54059fd1bfd9dea4e857b3d01329245ab3918961ee543a4bd4e8d;CS0067@23:26-23:31"}
 static void M(A? a)
 {
     // if (a != null) a.X = 10; とほぼ同じ。

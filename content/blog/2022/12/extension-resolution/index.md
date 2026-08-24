@@ -90,7 +90,7 @@ static class Ex
 `Span<T>` → `ReadOnlySpan<T>` とか、
 `string` → `ReadOnlySpan<char>` とかがあります。
 
-```csharp {title="拡張メソッド呼びできない例: ユーザー定義の型変換"}
+```csharp {title="拡張メソッド呼びできない例: ユーザー定義の型変換" error-ranges="sha256:2746f06c91e9a43bbbd0f400893bc553ab0d37995c35704e674cff6e5fe42957;7:1-7:3,8:2-8:20,9:1-9:13" error-diagnostics="sha256:2746f06c91e9a43bbbd0f400893bc553ab0d37995c35704e674cff6e5fe42957;CS1929@7:1-7:3,CS1929@8:2-8:20,CS1929@9:1-9:13"}
 // 通常のメソッドとしてなら呼べる。
 Ex.M("");                 // string → ReadOnlySpan<char>
 Ex.M(stackalloc char[1]); // Span<char> → ReadOnlySpan<char>
@@ -118,7 +118,7 @@ static class Ex
 
 `new()`、`default` 辺りはダメです。
 
-```csharp
+```csharp {error-ranges="sha256:f79ffbc32870aec1695ad67740d54ff929d528f4276ee761a02d4ba8c3ba9356;7:1-7:6,8:1-8:8" error-diagnostics="sha256:f79ffbc32870aec1695ad67740d54ff929d528f4276ee761a02d4ba8c3ba9356;CS8754@7:1-7:6,CS8716@8:1-8:8"}
 // 通常のメソッドとしてなら呼べる。
 Ex.M(new());      // new object()
 Ex.M(default); // null
@@ -163,7 +163,7 @@ static class Ex
 文字列補間 `$""` は `IFormattable` や文字列補間ハンドラーに変換できます。
 ところが、こういう場合は拡張メソッド呼びできません。
 
-```csharp {title="ターゲットからの型判定がかかるような例では拡張メソッドは呼べない"}
+```csharp {title="ターゲットからの型判定がかかるような例では拡張メソッドは呼べない" error-ranges="sha256:10b89c58b4d8f2ad0087600b5a8a2a23ab07cc8747edb704ee7b3410ce1b8b51;8:1-8:2,9:1-9:7" error-diagnostics="sha256:10b89c58b4d8f2ad0087600b5a8a2a23ab07cc8747edb704ee7b3410ce1b8b51;CS1929@8:1-8:2,CS1929@9:1-9:7"}
 using System.Runtime.CompilerServices;
 
 // 通常のメソッドとしてなら呼べる。
@@ -188,7 +188,7 @@ static class Ex
 これは意図的で、`() => {}.M()` みたいな文法を認めたくなかったみたいです。
 `(() => {}).M()` でもダメ。 
 
-```csharp {title="ラムダ式のときは自然な型に対しても拡張メソッド呼び不可"}
+```csharp {title="ラムダ式のときは自然な型に対しても拡張メソッド呼び不可" error-text="(() =&gt; { }).M" error-diagnostics="sha256:d0443a290942db95cca7403713ecadec0e43005b5cfa78f78cabc041d26ea24e;CS0023@7:1-7:14"}
 // これは行ける。
 // 何なら Delegate とか object 引数相手でもこう書ける。
 Ex.M(() => { });

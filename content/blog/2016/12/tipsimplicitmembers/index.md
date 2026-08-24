@@ -139,7 +139,7 @@ E
 フィールドは、通常のC#では書けないような記号入りの名前なので特に問題を起こさないんですが、
 メソッドの方は被りがあり得ます。つまり、以下のコードはコンパイル エラーを起こします。
 
-```csharp {title="エラーを起こすコード"}
+```csharp {title="エラーを起こすコード" error-ranges="sha256:655cf0b028af9d0a0f888f6b7c66521ad89075e5762948643d5815cc21913a3c;3:20-3:23"}
 class C
 {
     public int X { get; }
@@ -200,7 +200,7 @@ C#のインデクサーは、ILのレベルでは`Item`という名前のプロ�
 
 `Item`に展開されるので、もちろん、以下のコードは`this`のところでコンパイル エラー。
 
-```csharp {title="エラーを起こすコード"}
+```csharp {title="エラーを起こすコード" error-text="this"}
 class C
 {
     public int this[int index] { get { return index; } }
@@ -210,7 +210,7 @@ class C
 
 `get_Item`メソッドもダメです。`get`のところでエラー。
 
-```csharp {title="エラーを起こすコード"}
+```csharp {title="エラーを起こすコード" error-ranges="sha256:7d0843b78d5b99a05dcd37a7875eed0fb7aaaed1388de55c0edd311b31ac315e;3:34-3:37"}
 class C
 {
     public int this[int index] { get { return index; } }

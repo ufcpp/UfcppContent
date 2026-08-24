@@ -60,7 +60,7 @@ aliases: []
 
 C# には元々、確実な代入ルールってのがあって、「未初期化変数から未定義な値を取り出す」みたいなことはできない仕様になっています。
 
-```csharp {title="未初期化変数を触らせない"}
+```csharp {title="未初期化変数を触らせない" error-ranges="sha256:288fbe6529da8699822e1e0d3c197f13ad924ebe20a2a3865905b2f47d7a9efe;3:19-3:20"}
 int x;
 
 Console.WriteLine(x); // コンパイルエラー
@@ -273,7 +273,7 @@ var f = int (int x) => x * x;
 
 デリゲートの仕様上、以下のような挙動をするのでその点には注意が必要です。
 
-```csharp {title="ラムダ式の自然な型の罠の例"}
+```csharp {title="ラムダ式の自然な型の罠の例" error-ranges="sha256:35feb3f33e3ba2b34b5cc7d1f1c867610705051d746ffc1d7a16eb62c0795e44;6:3-6:4"}
 // これは target-typed 型決定で、Predicate<int> になる(コンパイル可)。
 m(x => x == 0);
 

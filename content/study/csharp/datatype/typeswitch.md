@@ -895,7 +895,7 @@ int? x = null;
 例えば、以下のように、(例え同じクラスから派生していたとしても)異なる型 `A` と `B` の「共通の型」は判定できず、
 コンパイル エラーを起こします。
 
-```csharp {title="共通の型を見つけられなくてエラーになる例"}
+```csharp {title="共通の型を見つけられなくてエラーになる例" error-ranges="sha256:acfcaf1ef8f9ff5e015cfeaa225136a87138985c0bafdda14158bee6cedc1c1f;9:15-9:21"}
 class Base { }
 class A : Base { }
 class B : Base { }
@@ -958,7 +958,7 @@ Base x = i switch
 
 特に役立つのは「1 と null」(`int?` になってほしい)とかでしょう。
 
-```csharp {title="1 と null の共通型を判定できないので代わりにターゲット型で解決"}
+```csharp {title="1 と null の共通型を判定できないので代わりにターゲット型で解決" error-ranges="sha256:c5e8d6670de9eba7d1e74da20f29f9989cc85c57ce9645c1b458db0446681f86;4:15-4:21"}
 static void M(bool b)
 {
     // これはコンパイル エラー。1 と null の共通型は C# 8.0 時点では決定できない。

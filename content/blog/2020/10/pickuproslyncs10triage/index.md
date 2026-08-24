@@ -217,7 +217,7 @@ enum 型に対して、「メンバー定義してない値は取らない」と
 
 例えば以下のコードは現状では警告が出るんですが、「警告をなくせる enum が欲しい」というのが closed enum です(ここでいう close (閉じる)というのは、「これ以上のメンバー追加はない」という意味です)。
 
-```csharp {title="enum の網羅性"}
+```csharp {title="enum の網羅性" warning-text="switch"}
 int m(X x) => x switch
 {
     X.A => 1,

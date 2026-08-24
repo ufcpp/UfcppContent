@@ -78,7 +78,7 @@ public class C
 非推奨にしたいものには `Obsolete` 属性を付けるという手段はありますが、
 `Obsolete` 属性を付けたところでオーバーロード解決候補には残ってしまうのがかなり邪魔です。
 
-```csharp {title="Obsolete でもオーバーロード解決候補になっちゃう"}
+```csharp {title="Obsolete でもオーバーロード解決候補になっちゃう" warning-text="C.M(x)" warning-diagnostics="sha256:2954556f99a9e2bb248fac9983f0bdbb3ed638e32b2e3403976930bd860edffc;CS0618@6:1-6:7"}
 int[] x = [1, 2, 3];
 
 // C# コンパイラーは Obsolete 属性が付いたメソッドも普通にオーバーロード解決候補にしちゃう。

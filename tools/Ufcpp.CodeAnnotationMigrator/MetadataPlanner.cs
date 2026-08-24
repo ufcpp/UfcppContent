@@ -1,11 +1,14 @@
 using System.Net;
+using System.Text.Json.Serialization;
 
 namespace Ufcpp.CodeAnnotationMigrator;
 
 internal sealed record SelectionMetadataPlan(
     string? Lines,
     string? Text,
-    string? Ranges = null);
+    string? Ranges = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    string? Diagnostics = null);
 
 internal sealed record BlockMetadataPlan(
     string? Title,
@@ -83,74 +86,28 @@ internal static class MetadataPlanner
                 diagnostics);
         }
 
-        var overlappingKinds = FindOverlappingKinds(historical.Annotations);
-        foreach (var kind in overlappingKinds.Where(
-                     static kind => kind != AnnotationKind.Highlight))
-        {
-            diagnostics.Add(new MetadataPlanningDiagnostic(
-                "UNREPRESENTABLE_OVERLAPPING_KINDS",
-                kind,
-                $"The {kind.ToString().ToLowerInvariant()} selection overlaps "
-                + "a differently sized selection of another metadata kind."));
-        }
-
         var highlight = PlanSelections(
             AnnotationKind.Highlight,
             historical.Annotations,
             historicalLayout,
             currentLayout,
             diagnostics);
-        var error = overlappingKinds.Contains(AnnotationKind.Error)
-            ? null
-            : PlanSelections(
-                AnnotationKind.Error,
-                historical.Annotations,
-                historicalLayout,
-                currentLayout,
-                diagnostics);
-        var warning = overlappingKinds.Contains(AnnotationKind.Warning)
-            ? null
-            : PlanSelections(
-                AnnotationKind.Warning,
-                historical.Annotations,
-                historicalLayout,
-                currentLayout,
-                diagnostics);
+        var error = PlanSelections(
+            AnnotationKind.Error,
+            historical.Annotations,
+            historicalLayout,
+            currentLayout,
+            diagnostics);
+        var warning = PlanSelections(
+            AnnotationKind.Warning,
+            historical.Annotations,
+            historicalLayout,
+            currentLayout,
+            diagnostics);
 
         return new MetadataPlanningResult(
             new BlockMetadataPlan(title, highlight, error, warning),
             diagnostics);
-    }
-
-    private static IReadOnlySet<AnnotationKind> FindOverlappingKinds(
-        IReadOnlyList<AnnotationSelection> annotations)
-    {
-        var kinds = new SortedSet<AnnotationKind>();
-        for (var leftIndex = 0; leftIndex < annotations.Count; leftIndex++)
-        {
-            var left = annotations[leftIndex];
-            var leftEnd = left.Start + left.Length;
-            for (var rightIndex = leftIndex + 1;
-                 rightIndex < annotations.Count;
-                 rightIndex++)
-            {
-                var right = annotations[rightIndex];
-                if (left.Kind == right.Kind
-                    || left.Start == right.Start && left.Length == right.Length)
-                {
-                    continue;
-                }
-
-                var rightEnd = right.Start + right.Length;
-                if (Math.Max(left.Start, right.Start) < Math.Min(leftEnd, rightEnd))
-                {
-                    kinds.Add(left.Kind);
-                    kinds.Add(right.Kind);
-                }
-            }
-        }
-
-        return kinds;
     }
 
     private static SelectionMetadataPlan? PlanSelections(
@@ -160,7 +117,61 @@ internal static class MetadataPlanner
         CodeLayout current,
         ICollection<MetadataPlanningDiagnostic> diagnostics)
     {
-        var selections = annotations.Where(item => item.Kind == kind).ToArray();
+        var visual = PlanVisualSelections(
+            kind,
+            annotations,
+            historical,
+            current,
+            diagnostics);
+        var identity = DiagnosticIdentityPlanner.Plan(
+            annotations
+                .Where(annotation =>
+                    annotation.Kind == kind
+                    && annotation.DiagnosticId is not null
+                    && annotation.Length > 0)
+                .OrderBy(static annotation => annotation.Order)
+                .ToArray(),
+            historical.Original,
+            current.Original);
+        if (identity.Error is not null)
+        {
+            diagnostics.Add(new MetadataPlanningDiagnostic(
+                "UNREPRESENTABLE_DIAGNOSTIC_IDENTITY",
+                kind,
+                identity.Error));
+            return visual;
+        }
+
+        return identity.Value is null
+            ? visual
+            : (visual ?? new SelectionMetadataPlan(null, null)) with
+            {
+                Diagnostics = identity.Value,
+            };
+    }
+
+    private static SelectionMetadataPlan? PlanVisualSelections(
+        AnnotationKind kind,
+        IReadOnlyList<AnnotationSelection> annotations,
+        CodeLayout historical,
+        CodeLayout current,
+        ICollection<MetadataPlanningDiagnostic> diagnostics)
+    {
+        var selections = annotations
+            .Where(item => item.Kind == kind && item.Length > 0)
+            .ToArray();
+        var emptySelectionCount = annotations.Count(
+            item => item.Kind == kind && item.Length == 0);
+        if (emptySelectionCount != 0)
+        {
+            diagnostics.Add(new MetadataPlanningDiagnostic(
+                "EMPTY_ANNOTATION_SELECTION",
+                kind,
+                $"The {kind.ToString().ToLowerInvariant()} metadata contains "
+                + $"{emptySelectionCount} empty selection"
+                + (emptySelectionCount == 1 ? "." : "s.")));
+        }
+
         if (selections.Length == 0)
         {
             return null;
@@ -176,16 +187,6 @@ internal static class MetadataPlanner
             }
 
             partial.Add(selection);
-        }
-
-        if (partial.Count > 1 && kind != AnnotationKind.Highlight)
-        {
-            diagnostics.Add(new MetadataPlanningDiagnostic(
-                "UNREPRESENTABLE_MULTIPLE_TEXT",
-                kind,
-                $"The {kind.ToString().ToLowerInvariant()} metadata has "
-                + $"{partial.Count} partial selections; the contract supports one."));
-            return null;
         }
 
         string? text = null;
@@ -254,7 +255,7 @@ internal static class MetadataPlanner
             }
         }
 
-        if (kind == AnnotationKind.Highlight && partial.Count != 0 && text is null)
+        if (partial.Count != 0 && text is null)
         {
             var rangePlan = HighlightRangePlanner.Plan(
                 partial,
@@ -272,12 +273,6 @@ internal static class MetadataPlanner
                 "UNREPRESENTABLE_RANGE_PROJECTION",
                 kind,
                 rangePlan.Error ?? "The highlight cannot be projected exactly."));
-            return null;
-        }
-
-        if (textDiagnostic is not null)
-        {
-            diagnostics.Add(textDiagnostic);
             return null;
         }
 

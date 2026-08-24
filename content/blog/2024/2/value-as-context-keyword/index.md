@@ -60,7 +60,7 @@ C# 12 時点では「これを破壊的変更なしで実装するのは大変�
 
 1つ目、[`@` で「脱キーワード化」](../../../../study/csharp/start/st_variable.md#identifier)ができない。
 
-```csharp {title="キーワードじゃないので…"}
+```csharp {title="キーワードじゃないので…" error-ranges="sha256:393bbe7aa21b7adb9a0665b495245de071f19be4132814cae85d4c17d26530ce;9:17-9:23" error-diagnostics="sha256:393bbe7aa21b7adb9a0665b495245de071f19be4132814cae85d4c17d26530ce;CS0136@9:17-9:23" warning-ranges="sha256:393bbe7aa21b7adb9a0665b495245de071f19be4132814cae85d4c17d26530ce;9:17-9:23" warning-diagnostics="sha256:393bbe7aa21b7adb9a0665b495245de071f19be4132814cae85d4c17d26530ce;CS0219@9:17-9:23"}
 class A
 {
     public int X
@@ -80,7 +80,7 @@ class A
 
 2つ目、[`nameof`](../../../../study/csharp/start/st_string.md#nameof-operator)。
 
-```csharp {title="nameof が使える"}
+```csharp {title="nameof が使える" error-text="this" error-diagnostics="sha256:e493e1e9a3f2c7d7846927f6787aef7ab551dbac1b35cfc3a439cac14cecdd2c;CS8081@11:29-11:33"}
 class A
 {
     public int X

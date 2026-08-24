@@ -20,7 +20,7 @@ C# のジェネリック型引数の推論を賢くしたいという話は、is
 現状の C# の型推論は割と "All or Nothing" で、
 `new()` みたいに型全体の省略はできても、`new List<>()` みたいな「一部分だけ省略」ができません。
 
-```csharp {title="部分的な型の推論"}
+```csharp {title="部分的な型の推論" error-ranges="sha256:f5170d011db6da3491d6fde290780dcec4ddddf3037744b60ddf6a8eaa105202;6:20-6:26,7:25-7:26,10:26-10:27" error-diagnostics="sha256:f5170d011db6da3491d6fde290780dcec4ddddf3037744b60ddf6a8eaa105202;CS7003@6:20-6:26,CS0246@7:25-7:26,CS0246@10:26-10:27"}
 // 型全体の推論は可能。
 // 左辺から型が決定されて、new() は new List<int>() と解釈される。
 List<int> x1 = new();

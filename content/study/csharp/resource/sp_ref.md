@@ -265,7 +265,7 @@ C# 7.2 から、「参照渡しだけども読み取り専用」というよう�
 「入力用」ということを示すように、`in`キーワードを使います。
 (`in` を使うのは、C# 1.0の頃からある `out` 引数(次節で説明)との対比もあります。)
 
-```csharp {title="in 引数" highlight-ranges="sha256:dad40c06b3e06be351af2c521e66c02cb9907ce6f22b0341072c1fe09b71b19f;5:19-5:21"}
+```csharp {title="in 引数" highlight-ranges="sha256:dad40c06b3e06be351af2c521e66c02cb9907ce6f22b0341072c1fe09b71b19f;5:19-5:21" error-ranges="sha256:dad40c06b3e06be351af2c521e66c02cb9907ce6f22b0341072c1fe09b71b19f;11:9-11:10"}
 using System;
 
 public partial class Program
@@ -461,7 +461,7 @@ m(in temp);
 例えば `Nullable` 型には .NET 7 から [`GetValueRefOrDefaultRef`](https://learn.microsoft.com/ja-jp/dotnet/api/system.nullable.getvaluerefordefaultref) というメソッドが追加されたんですが、
 これが問題になりました。
 
-```csharp {title="GetValueRefOrDefaultRef に右辺値を渡せて困った"}
+```csharp {title="GetValueRefOrDefaultRef に右辺値を渡せて困った" warning-ranges="sha256:da93053c86658070428457b69f1a3ddd5344250cc90c84f8d7c1147ef6a6cd50;10:60-10:91,11:72-11:77" warning-diagnostics="sha256:da93053c86658070428457b69f1a3ddd5344250cc90c84f8d7c1147ef6a6cd50;CS9193@10:60-10:91,CS9193@11:72-11:77"}
 using System.Numerics;
 
 Quaternion? x = new(1, 2, 3, 0);
@@ -483,7 +483,7 @@ C# 11 時点/ .NET 7 時点では警告が出ません。)
 そこで C# 12 では改めて、「書き換えはしないけども、右辺値は受け付けたくない」ということを表す、
 ref readonly 引数というものを導入しました。
 
-```csharp {title="ref readonly 引数"}
+```csharp {title="ref readonly 引数" warning-ranges="sha256:671d5346c53107f1303255ddd7b42227765e4cfc3cc7b07d499c04a19b36c9ca;4:3-4:5,8:3-8:8,11:3-11:4" warning-diagnostics="sha256:671d5346c53107f1303255ddd7b42227765e4cfc3cc7b07d499c04a19b36c9ca;CS9193@4:3-4:5,CS9193@8:3-8:8,CS9192@11:3-11:4"}
 // 冒頭の例から in を ref readonly に変更。
 void m(ref readonly int x) { }
 
@@ -766,7 +766,7 @@ C# コンパイラーとしては`in`引数や`out`引数を`ref`引数と区別
 まず、`ref`、`in`、`out`だけの違いのオーバーロードは作れません。
 例えば以下のコードでは`F`、`G`、`H`のいずれもコンパイル エラーになります。
 
-```csharp {title="ref/in/out 違いのオーバーロードは不可"}
+```csharp {title="ref/in/out 違いのオーバーロードは不可" error-ranges="sha256:ef2885cbd7674d9662ad7316c431592fe6425d7097660eed75e44d0e32b3aa71;2:6-2:7,5:6-5:7,8:6-8:7"}
 void F(ref int x) { }
 void F(in int x) { }
 
@@ -786,7 +786,7 @@ void H(out int x) => x = 0;
 「入力/出力にしか使わない」という判定ができません。
 以下のようなコードはコンパイル エラーになります。
 
-```csharp {title="in/out引数を使うと、in/out型制約が付けられない"}
+```csharp {title="in/out引数を使うと、in/out型制約が付けられない" error-ranges="sha256:2b8c5b0be352d6631811a561e4d868c64d49903c69a250eacc057e756a96001c;7:15-7:16,16:16-16:17"}
 interface Contravariance<in T>
 {
     // 普通の引数は共変
@@ -821,7 +821,7 @@ interface Covariance<out T>
 
 例えば以下のコードはコンパイル エラーになります。
 
-```csharp {title="参照引数の制限"}
+```csharp {title="参照引数の制限" error-ranges="sha256:2ebc19149600295ca357aebf1bed8a1bfb0adbeabcd05f753e4217642126b5f4;10:30-10:31,11:26-11:27,15:34-15:35,21:30-21:31"}
 using System;
 using System.Collections;
 using System.Threading.Tasks;
@@ -980,7 +980,7 @@ C#は、コンパイラーが厳しめにチェックして、安全でない参
 
 例えば、以下のようなコードは、赤色の下線で強調表示しているところがコンパイル エラーになります。
 
-```csharp
+```csharp {error-ranges="sha256:d6e6c232721dd5171089b0d2572528fb47c244895907a3e603492fdc63da8cd4;5:45-5:46,11:16-11:17,33:16-33:18,44:16-44:18"}
 // 参照引数は参照戻り値で返せる
 private static ref int Success1(ref int x) => ref x;
 
@@ -1034,7 +1034,7 @@ C# 7では、コンパイラーが賢くなって、この「大元をたどっ�
 ただし、C# 7でも、あくまでメソッド内で完結できる範囲でしか「たどって調べる」ということができません。
 例えば、以下のようなコードはコンパイルできません。
 
-```csharp {title="メソッドをまたいだ解析まではできない"}
+```csharp {title="メソッドをまたいだ解析まではできない" error-text="X(ref x, ref local)"}
 // あまり意味のないメソッドなものの…
 // 第1引数しか参照しない
 static ref int X(ref int x, ref int y) => ref x;
@@ -1064,7 +1064,7 @@ C# コンパイラーが行う「参照戻り値に返して安全かどうか�
 
 例えば、以下のコードはコンパイル エラーになります。
 
-```csharp {title="構造体のフィールドは参照戻り値で返せない"}
+```csharp {title="構造体のフィールドは参照戻り値で返せない" error-ranges="sha256:7e39f0efea759416e6560cd9da4c60fffa88a87cb92f7d26ede39bfcd746ed5c;4:33-4:35"}
 struct Struct
 {
     int _v;
@@ -1129,7 +1129,7 @@ static class Extensions
 
 要するに、以下の例の、`Ok`メソッドのようなものを認めるためには前者の仕様が必要です。
 
-```csharp {title="「構造体はフィールドの参照を返せない」という仕様を必要とするコード"}
+```csharp {title="「構造体はフィールドの参照を返せない」という仕様を必要とするコード" error-text="Extensions.Get(ref a, 1)"}
 struct ArrayOffset<T>
 {
     // 拡張メソッドから参照するために internal
@@ -1173,7 +1173,7 @@ class Program
 
 あと、以下のように、[ジェネリクス](../oop/sp2_generics.md)絡みの問題を避けるためにもこの仕様を選ぶ必要があったそうです。
 
-```csharp {title="構造体がフィールドの参照を返せるとジェネリクス絡みで困る"}
+```csharp {title="構造体がフィールドの参照を返せるとジェネリクス絡みで困る" error-ranges="sha256:f7cdb9fab7db7392aa4dbd1d0e71067ec7880d0fe77bba2a9b759f61922c95ea;17:33-17:39"}
 using System;
 
 interface IReference

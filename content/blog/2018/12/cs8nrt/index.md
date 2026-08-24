@@ -22,7 +22,7 @@ null許容参照型の話です。
 要は、参照型に対しても、単に`T`と書くとnullを認めない型になり、
 null許容にしたければ`T?`と書くようにするという機能です。
 
-```csharp
+```csharp {warning-ranges="sha256:09d25d1868e5bee42f4bcb9680b21b96534f9ef5f30f2205ae6060f9fa6a7dc8;8:33-8:41"}
 #nullable enable
     // string には null が来ない
     // null が来ないなら s.Length で OK
@@ -43,7 +43,7 @@ null許容にしたければ`T?`と書くようにするという機能です。
 一例としては循環参照を作りたいときとかなんですが、
 例えば以下のような感じで一時的に有効な値を持てない場合があり得ます。
 
-```csharp
+```csharp {warning-ranges="sha256:98ea55107735c4d56ea0d1795695e63bc965ac49c1948c4cb84725503b54accc;9:26-9:30"}
 class Node
 {
     public Node Next { get; private set; }
@@ -113,7 +113,7 @@ null 許容参照型を有効にするには、以下の2通りのオプショ�
 前者は、`#if`や`#pragma`などと同じ[プリプロセス命令](../../../../study/csharp/misc/sp_preprocess.md)です。
 以下のように、`#nullable`を書いた行から先がオン/オフ切り替わります。
 
-```csharp
+```csharp {warning-ranges="sha256:ab6f0c48b213246d7939d9393d52cd000dd7a4b56626f10fb76dc66d660f3535;5:13-5:17"}
 #nullable enable
     static void M1(string s)
     {
@@ -211,7 +211,7 @@ Console.WriteLine(typeof(string) == typeof(string?)); // true
 
 この余波なんですが、例えば以下のような差が出ます。
 
-```csharp
+```csharp {error-ranges="sha256:a6f809e33ceacd904831aa828171fe74541318ae13eefbd83a732df22766267a;18:13-18:14"}
 static void M(string? x)
 {
     // 参照型の場合、フロー解析で保証をしている
@@ -233,7 +233,7 @@ static void M(int? x)
 }
 ```
 
-```csharp
+```csharp {error-ranges="sha256:348d8b39ec1be128fed9f04d526a6f698efe629c5905a1d3626ad804afe72f92;7:6-7:7"}
 // int と int? は別の型なので、オーバーロード可能
 void M(int x) { }
 void M(int? x) { }
@@ -248,7 +248,7 @@ void M(string? x) { }
 ある程度はジェネリックな型に対しても使えます。
 例えば、null 許容参照型を表す `class?` 制約というものも追加されます。
 
-```csharp
+```csharp {warning-ranges="sha256:3f2df521eb8d2c3977b7849f7b69785c453d8875b8cb74b2f76ef361d72ffdbe;15:42-15:46,16:24-16:31,17:42-17:46"}
 struct A<T> where T : class
 {
     public T Value;
@@ -273,7 +273,7 @@ class Program
 
 しかし、「null許容参照型でもnull許容値型でもいいので、とにかくnull許容 or 非 null」みたいな指定ができません。
 
-```csharp
+```csharp {error-ranges="sha256:510f8c1499b47cb8e5fe4200fc99fa48c15ca3119f5e8aee9b74782177cd6cca;16:12-16:14"}
 struct A<T> where T : class // 非 null 参照型
 {
     public T NonNull;

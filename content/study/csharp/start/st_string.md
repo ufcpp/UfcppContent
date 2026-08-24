@@ -622,7 +622,7 @@ var mutiLine = """
 一切エスケープ不要というなら、「この C# コードを出力する C# コード」みたいなものもエスケープなしで書けるようにしたいです。
 こういう場合に、以下のようなコードを書いてしまうと、最初の `"""` が出て来た時点で文字列リテラルを閉じようとしてしまって、コンパイル エラーになります。
 
-```csharp {title="じゃあ、生文字列の中で &quot;&quot;&quot; を書きたい場合は？"}
+```csharp {title="じゃあ、生文字列の中で &quot;&quot;&quot; を書きたい場合は？" error-ranges="sha256:b629e6fda253ec387758c04ce08b513db6d40cad3501e232f49fd19ab24af618;3:20-3:23"}
 // """ と """ の間に """ は書けない。
 Console.WriteLine("""
     var mutiLine = """
@@ -733,7 +733,7 @@ Console.WriteLine("""json
 
 また、複数行生文字列では、以下のように、「1行たりとも中身がないリテラル」は書けません。
 
-```csharp
+```csharp {error-ranges="sha256:e54a6a421cde0a0fbb7b867190575a020c6359e7f386f04e9d97651a4f6e1518;9:5-9:8"}
 // 先頭・末尾の改行は無視されるので、これが空文字列。
 Console.WriteLine("""
 
@@ -808,7 +808,7 @@ Console.WriteLine("""
 
 ちなみに、以下のように、閉じ `"""` の行よりもインデントが少ないコードを書くとコンパイル エラーになります。
 
-```csharp {title="インデントが足りなくてエラーになる例"}
+```csharp {title="インデントが足りなくてエラーになる例" error-lines="3"}
 // インデントが不正(足りない)なのでエラーに。
 Console.WriteLine("""
 a
@@ -827,7 +827,7 @@ C# は通常の(ASCII 文字の)スペース(文字コード U+0020)以外にも
 これらの空白文字を閉じ `"""` の行に使った場合、途中の行にも全く同じ順序で同じ文字を並べなければなりません。
 見えない文字なので少しわかりにくいですが、以下のコードでは1つ目の生文字列はOKで、2つ目(意図的に違う文字を混ぜたもの)はコンパイル エラーになります。
 
-```csharp
+```csharp {error-text="    " error-diagnostics="sha256:e82efbb690adce3b600a2260df129562ef0db38bf68f5e42d721953d7a007897;CS9003@6:1-6:5"}
 Console.WriteLine("""
     この行は OK
     """); // U+1680 Ogam Space (見える空白文字。古アイルランドで使ってたらしい)
@@ -916,7 +916,7 @@ ReadOnlySpan<byte> hex = "0123456789ABCDEF"u8;
 ちなみに、UTF-8 リテラルの型は `ReadOnlySpan<byte>` になります。
 (`var` による型推論も使えます。)
 
-```csharp {title="u8 リテラルの型は ReadOnlySpan&lt;byte&gt;"}
+```csharp {title="u8 リテラルの型は ReadOnlySpan&lt;byte&gt;" warning-text="hex is ReadOnlySpan&lt;byte&gt;"}
 var hex = "0123456789ABCDEF"u8;
 Console.WriteLine(hex is ReadOnlySpan<byte>); // 「常に true」警告が出る
 ```
@@ -1057,7 +1057,7 @@ ReadOnlySpan<byte> s = "abc"u8;
 ターゲット型を見て自動的に UTF-8 リテラルに変換する話も出ていましたが、
 オーバーロード解決がうまくいかず、没になりました。
 
-```csharp {title="没案"}
+```csharp {title="没案" error-ranges="sha256:5debbc0ce75b38dfeeb60054748eed85fb05fb5521b75d6c41bd3405806df309;2:13-2:18,3:25-3:30,6:13-6:20"}
 // 初期案では OK だった(今はエラー)。
 byte[] s1 = "abc";
 ReadOnlySpan<byte> s2 = "abc";
@@ -1103,7 +1103,7 @@ var concatenated =
 これは、UTF-8 リテラルに対する特殊対応で、
 一般の `ReadOnlySpan<byte>` に対しては `+` 結合はできません。
 
-```csharp {title="+ 結合ができるのは UTF-8 リテラル同士の場合だけ"}
+```csharp {title="+ 結合ができるのは UTF-8 リテラル同士の場合だけ" error-ranges="sha256:0e9594a1d1455606c4851222209db47c8ca328582e82dfbb62e9313d5f0f0def;4:10-4:19,5:10-5:23"}
 ReadOnlySpan<byte> abc = new byte[] { 97, 98, 99 };
 ReadOnlySpan<byte> def = new byte[] { 100, 101, 102 };
 
@@ -1117,7 +1117,7 @@ var s2 = abc + "def"u8; // 片方が u8 リテラルでもダメ。エラー。
 const しか書けない場所で使うとエラーになります。
 具体的には、例えば、[`switch` や `is`](../datatype/typeswitch.md) に使えません。
 
-```csharp {title="UTF-8 は const にはなれない"}
+```csharp {title="UTF-8 は const にはなれない" error-text="&quot;abc&quot;u8"}
 // これは OK。
 bool str(string x) => x is "abc";
 
@@ -1150,7 +1150,7 @@ var utf8Json = """
 
 一方で、(少なくとも C# 11 では) 文字列補間との併用はできません。
 
-```csharp {title="UTF-8 文字列補間は無理"}
+```csharp {title="UTF-8 文字列補間は無理" error-ranges="sha256:aef7e19dbd35688609d9e29501388fc46a9af4e7318a46f56af3c085d6965c2d;8:31-8:33"}
 var x = 123;
 var y = "abc";
 
@@ -1200,7 +1200,7 @@ foreach (var c in decoded)
 ですが、C# 11 の時代(2022年)に生まれた UTF-8 リテラルは、
 ちゃんと不正な文字列をはじきます。
 
-```csharp {title="不正な UTF-8 は受け付けない"}
+```csharp {title="不正な UTF-8 は受け付けない" error-text="&quot;\uD801&quot;u8"}
 // UTF-8 リテラルの場合は「サロゲート ペアの片割れ」を受け付けない。
 // コンパイル エラーを起こす。
 var highSurrogate = "\uD801"u8;
@@ -1214,7 +1214,7 @@ var surrogatePair = "\uD801\uDE00"u8;
 
 一方で、以下のように「`+` で結合すれば最終的には有効になるはずの2つの UTF-8 リテラル」みたいなものはコンパイル エラーになります。
 
-```csharp {title="+ で結合する場合、個別にチェック"}
+```csharp {title="+ で結合する場合、個別にチェック" error-ranges="sha256:d5c277ae276f598a6eb488a4ec4cb0360b98730ad7bccb7dd5ed0d1f5d6ff6ab;2:5-2:15,3:5-3:15"}
 var surrogatePair =
     "\uD801"u8 +
     "\uDE00"u8;
