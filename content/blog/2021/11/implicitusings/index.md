@@ -20,7 +20,7 @@ aliases: []
 
 何回か話してはいるんですが、 .NET 6 SDK から、C# プロジェクトのテンプレートの初期状態が以下のような(コメントを除けば)1行だけのソースコードになっています。
 
-```csharp
+```csharp {title="新コンソール アプリ テンプレート"}
 Console.WriteLine("Hello, World!");
 ```
 
@@ -59,7 +59,7 @@ Web アプリの場合は `Microsoft.AspNetCore.*`、`Microsoft.Extensions.*`、
 これを .NET 6 にアップデートしたら、「`Select` が `System.Linq` と `MyExtensions` の2か所にあって弁別できない」というエラーが起き得ます。
 (実際、Preview 7 の頃はエラーになりました。)
 
-```csharp
+```csharp {title="自前 LINQ で global using が競合する例"}
 using System;
 using MyExtensions;
 
@@ -88,14 +88,14 @@ namespace MyExtensions
 ということで、明示的に設定を追加したときだけ「global using の自動追加」が働くように変更されました。
 具体的には、csproj に以下の1行(`ImplicitUsings` オプションが true もしくは enable)があるときにだけ自動追加が働きます。
 
-```xml
+```xml {title="ImplicitUsings"}
     <ImplicitUsings>enable</ImplicitUsings>
 ```
 
 で、この行は、.NET 6 SDK を使って新規プロジェクトを作成すると、初期状態で入っています。
 .NET 6 SDK の、例えばコンソール アプリの csproj の初期状態は以下のような感じ。
 
-```xml
+```xml {title=".NET 6 で dotnet new console した直後の csproj の中身"}
 <Project Sdk="Microsoft.NET.Sdk">
  
   <PropertyGroup>
@@ -122,7 +122,7 @@ namespace MyExtensions
 例えば以下のように書くと、`System.Text.RegularExpressions` 名前空間が追加されて(`Regex` クラスなどが使える)、
 `System.Linq` 名前空間が削除されます(自前 LINQ との衝突がなくなる)。
 
-```xml
+```xml {title="Using タグの例"}
 <Project Sdk="Microsoft.NET.Sdk">
 
   他の設定は省略
@@ -146,7 +146,7 @@ namespace MyExtensions
 そのファイルがあるフォルダー配下にある全 csproj に対して設定が有効化されます。
 なので、リポジトリのルート フォルダーに以下の内容で `Directory.Build.props` ファイルを置いておけば、リポジトリ全域に対して `ImplicitUsings` と `Enullable` が有効化されます。
 
-```xml
+```xml {title="お薦め Directory.Build.props"}
 <Project>
  
   <PropertyGroup>

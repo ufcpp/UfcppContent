@@ -160,7 +160,7 @@ APM は、IAsyncResult を返す/受け取る、Begin/End メソッドのペア�
 
 例えば、WebRequest クラス（System.Net 名前空間）は、APM 型の非同期 API を持っています。
 
-```csharp
+```csharp {title="APM 型の API の利用例"}
 var req = WebRequest.Create("http://ufcpp.net/study/csharp/");
 req.BeginGetResponse(ar =>
 {
@@ -182,7 +182,7 @@ EAP は、結果をイベントで返してもらうものです。
 
 例えば、WebClient クラス（System.Net 名前空間）が、EAP 型の非同期 API を持っています。
 
-```csharp
+```csharp {title="EAP 型の API の利用例"}
 var c = new WebClient { Encoding = Encoding.UTF8 };
 
 c.DownloadStringCompleted += (sender, args) =>
@@ -207,7 +207,7 @@ APM や EAP では、複数の非同期処理をつないで、1つの非同期 
 
 例えば、WebRequest クラスのメソッドにも、TAP 版が用意されます。
 
-```csharp
+```csharp {title="TAP 型 API の利用例"}
 var req = WebRequest.Create("http://ufcpp.net/study/csharp/");
 req.GetResponseAsync()
     .ContinueWith(t =>
@@ -268,7 +268,7 @@ private static async Task AsyncSample()
 
 例えば、コンソールから数値を読み込んで、二乗の計算して、コンソールに出力するプログラムを、一気にかくと以下のようになります。
 
-```csharp
+```csharp {title="コンソールから数値を読み込んで、二乗の計算して、コンソールに出力"}
 using System;
 
 class Program
@@ -412,7 +412,7 @@ class Program
 データ列に対して、前から順に1要素ずつ読む操作だけしかしないことが多いです。
 そういう場合、List&lt;T&gt; クラスや配列ではなく、IEnumerable&lt;T&gt; インターフェイスを使うようにしましょう。
 
-```csharp
+```csharp {title="悪い例"}
 // 【×】これだと、中身を書き換えられる
 static readonly int[] SampleData = new[] { 1, 2, 3, 4, 5, };
 
@@ -427,7 +427,7 @@ static void Output(int[] data)
 ```
 
 
-```csharp
+```csharp {title="良い例"}
 // 【○】読み取りのみなら、IEnumerable に
 static readonly IEnumerable<int> SampleData = new[] { 1, 2, 3, 4, 5, };
 
@@ -486,7 +486,7 @@ foreach (var title in titles)
 
 後からの変更に備えて、ただフィールドを読み書きするだけのプロパティを作ることがあります。
 
-```csharp
+```csharp {title="フィールドを読み書きするだけのプロパティ"}
 private int _x;
 
 public int X
@@ -514,14 +514,14 @@ public int X
 この面倒を解消するために、C# 3.0 で、自動実装プロパティというものが導入されました。
 以下のように、get; set; とだけ書くと、上記のような、フィールドと、フィールド読み書きするだけのプロパティが自動生成されます。
 
-```csharp
+```csharp {title="自動実装プロパティ"}
 public int X { get; set; }
 ```
 
 
 また、外部からは読み取り専用なプロパティを作るのにも重宝します。
 
-```csharp
+```csharp {title="読み取り専用の自動実装プロパティ"}
 public int X { get; private set; }
 ```
 
@@ -564,7 +564,7 @@ var が使われないことも多いです。
 
 C# ではあまりないですが、例えば、具体的な型ではなく、インターフェイスの変数を作りたい場合があります。
 
-```csharp
+```csharp {title="明示的にインターフェイスを使う"}
 IEnumerable<int> data = new[] { 1, 2, 3, 4, 5 };
 ```
 
@@ -576,7 +576,7 @@ IEnumerable<int> data = new[] { 1, 2, 3, 4, 5 };
 
 C# 4.0 で、引数に既定値を設定できるようになりました。
 
-```csharp
+```csharp {title="引数の既定値"}
 static void Main()
 {
     X(); // X(0, 0) と同じ意味。
@@ -603,7 +603,7 @@ static void X(int x = 0, int y = 0)
 
 もし、値を変える可能性があるなら、既定値は与えず、メソッドのオーバーロードで対処します。
 
-```csharp
+```csharp {title="引数の既定値相当のことを、オーバーロードで実現"}
 static void X()
 {
     X(0, 0); // これなら、バージョニングの問題を起こさず、値を変えれる

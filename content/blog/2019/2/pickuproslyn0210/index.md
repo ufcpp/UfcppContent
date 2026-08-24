@@ -23,7 +23,7 @@ aliases: []
 
 外側の `x` を隠すので shadowing と呼ばれます。
 
-```csharp
+```csharp {title="shadowing"}
 static int M()
 {
     int x = 1;
@@ -66,7 +66,7 @@ C# 8.0 で導入される予定の[null 許容参照型](../../../2018/12/cs8nrt
 
 これまで、C# では結構以下のようなコードを書いたと思います。
 
-```csharp
+```csharp {title="引数の null チェック"}
 static int M(string x)
 {
     if (x == null)
@@ -80,7 +80,7 @@ static int M(string x)
 
 これを、以下のように書くだけで同様の実行時 null チェックを挿入するようにしたいというものです。
 
-```csharp
+```csharp {title="実行時 null チェック構文"}
 static int M(string x!)
 {
     return x.Length;
@@ -117,7 +117,7 @@ static int M(string x!)
 みたいな感じ。
 これに対して、以下のように `int` 引数なメソッドに属性を付けて、
 
-```csharp
+```csharp {title="属性ベースの Index/Range 受付"}
 interface ISomeCollection<T>
 {
     [IndexMethod]

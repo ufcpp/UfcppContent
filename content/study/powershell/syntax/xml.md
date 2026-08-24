@@ -36,7 +36,7 @@ XML 内のデータを普通のオブジェクトと同じような構文で読�
     後略
 
 で、PowerShell で
-```console
+```console {title="コマンド実行の例"}
 > $xml = [xml](Get-Content xml.xml)
 > $xml.document.title
 XML

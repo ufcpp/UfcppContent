@@ -242,7 +242,7 @@ x + y みたいな演算子適用が主。
 
 ※2 クエリ式、ラムダ式、代入は同列で、例えば、以下のような C# コードを書けます。
 
-```csharp
+```csharp {title="クエリ式、ラムダ式、代入を含む式"}
 int sum = 0;
 Func<IEnumerable<int>> q = () =>
   from x in new[] { 1, 2, 3, 4, 5 }

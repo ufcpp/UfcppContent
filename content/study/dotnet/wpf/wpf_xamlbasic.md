@@ -21,7 +21,7 @@ XAML の基本を説明するために、
 テキストボックスを2つ表示するコードをもう1度見てみましょう。
 
 
-```xml
+```xml {title="XAML でテキストボックス2つを表示"}
 <Page
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -107,7 +107,7 @@ class Page1 : Page
 XAML では、XML の属性として「[プロパティ](../../csharp/oop/oo_property.md#property)」の値を設定できます。
 
 
-```xml
+```xml {title="XML 属性としてプロパティの値を設定" highlight-ranges="sha256:0573d83ebec3c0417c2685fb2628b46335d24322fa4c401c9405bdec10a620ed;2:3-2:48,3:3-3:43"}
 <TextBox 
   Width = "100" FontSize = "30" Text = "text 1"
   Background = "White" Foreground = "Blue" />
@@ -120,7 +120,7 @@ XML 要素の子要素としてプロパティの値を設定する Property Ele
 例えば、上の例を <strong id="property" class="keyword">Property Element Syntax</strong> で書き直すと以下のようになります。
 
 
-```xml
+```xml {title="子要素としてプロパティの値を設定"}
 <TextBox>
   <TextBox.Width>100</TextBox.Width>
   <TextBox.FontSize>30</TextBox.FontSize>
@@ -135,7 +135,7 @@ XML 要素の子要素としてプロパティの値を設定する Property Ele
 これも省略せずに書くなら以下のようになります。
 
 
-```xml
+```xml {title="子要素としてプロパティの値を設定"}
 <TextBox>
   <TextBox.Width>100</TextBox.Width>
   <TextBox.FontSize>30</TextBox.FontSize>
@@ -158,7 +158,7 @@ XML 要素の子要素としてプロパティの値を設定する Property Ele
 その要素に対応するクラス（&lt;Button&gt; の場合、Button クラス）のプロパティになります。
 
 
-```html
+```html {title="子要素は全部 Property Element Syntax"}
 <Button>
   <Button.Background>Gray</Button.Background>
   <Button.Foreground>White</Button.Foreground>
@@ -171,7 +171,7 @@ Button クラスでは、Content がコンテントプロパティに指定さ�
 上の例の &lt;Button.Content&gt; タグは省略可能になり、以下のように書けます。
 
 
-```html
+```html {title="コンテントプロパティはタグを省略可能" highlight-text="ここを押して"}
 <Button>
   <Button.Background>Gray</Button.Background>
   <Button.Foreground>White</Button.Foreground>
@@ -196,7 +196,7 @@ TextBox の場合、Text がコンテントプロパティです。
 例えば、以下のような書き方はエラーになります。
 
 
-```html
+```html {title="コンテントプロパティを分断（エラーになる）" highlight-ranges="sha256:562e48af9808b83ffcfa7a49ac424bf5795927a31eacfdf24fc4db9c7cc331c0;2:3-2:16,5:3-5:14"}
 <Button>
   他の要素よりも前にテキスト
   <Button.Background>Gray</Button.Background>
@@ -211,7 +211,7 @@ TextBox の場合、Text がコンテントプロパティです。
 WrapPanel の直下に TextBox タグが書けるのも実はコンテントプロパティによる省略です。
 
 
-```xml
+```xml {title="XAML でテキストボックス2つを表示"}
 <WrapPanel>
   <TextBox Foreground = "Blue" Text = "text 1" />
   <TextBox Foreground = "Green" Text = "text 2" />
@@ -220,7 +220,7 @@ WrapPanel の直下に TextBox タグが書けるのも実はコンテントプ�
 これも、コンテントプロパティを省略せずに書くと以下のようになります。
 
 
-```xml
+```xml {title="コンテントプロパティを省略せずに表記"}
 <WrapPanel>
   <WrapPanel.Children>
     <TextBox Foreground = "Blue" Text = "text 1" />
@@ -235,7 +235,7 @@ WrapPanel の「[コンテントプロパティ](#content)」は Children なん
 上の例は以下のようになります。
 
 
-```xml
+```xml {title="コレクションを省略せずに表記" highlight-ranges="sha256:8fafe08c96d225d0415414163f2d4a956e788f089993ba22674fcd070e82f93f;3:5-3:26,6:5-6:27"}
 <WrapPanel>
   <WrapPanel.Children>
     <UIElementCollection>
@@ -264,7 +264,7 @@ XAML は、XML タグと .NET Framework クラスを結びつけるための機�
 最上位のタグに以下のような xmlns 属性が付いていました。
 
 
-```xml
+```xml {title="XAML でテキストボックス2つを表示"}
 <Page
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -281,7 +281,7 @@ My.Namespace 名前空間中のクラス名を XML タグとして利用可能�
 （コンパイル必須。「[Loose XAML](wpf_xaml.md#loose)」では無理。）
 
 
-```xml
+```xml {title="System 名前空間内のクラスを利用"}
 <Page
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -297,7 +297,7 @@ Silverlight の場合には、
 以下のような XML 名前空間を使います。
 
 
-```xml
+```xml {title="Silverlight の場合"}
 <Canvas
   xmlns="http://schemas.microsoft.com/client/2007"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

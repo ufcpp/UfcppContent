@@ -47,7 +47,7 @@ C# 7.0 以降の「小数点リリース」も3つ目となりました。
 タプル同士を `==`、`!=` 演算子で比較できるようになりました。
 以下のように、メンバーごとの`==`を[`&&`](../start/st_operator.md#short-circuit)で繋いだものに展開されます。
 
-```csharp
+```csharp {title="タプル =="}
 void M((int a, (int x, int y) b) t)
 {
     // このタプル == 比較は、
@@ -64,7 +64,7 @@ void M((int a, (int x, int y) b) t)
 参照引数、参照ローカル変数に対して、
 参照先の値の書き換えではなく、「どこを参照しているか」自体を書き換えることができるようになりました。
 
-```csharp
+```csharp {title="ref 再代入" highlight-ranges="sha256:f57bc9b72f6b24b073591f83a6fc6403065757b2c25232d3e88abd649d9da71b;12:5-12:8"}
 int x = 1;
 int y = 2;
 
@@ -102,7 +102,7 @@ C# 7.3で、これまではできなかった以下の個所でも変数宣言�
 - [クエリ式](../start/st_scope.md#query-expression)
 - [初期化子](../start/st_scope.md#initializer)
 
-```csharp
+```csharp {title="クエリ式中での変数宣言" highlight-ranges="sha256:b3b3f7fa45d7605f35ce8d3f00f41379fcc39c46e405e160751b6b3022291705;3:23-3:24,4:35-4:36"}
 var q =
     from s in new[] { "a", "abc", "112", "132", "451", null }
     where s is string x && x.Length > 1
@@ -110,7 +110,7 @@ var q =
     select s;
 ```
 
-```csharp
+```csharp {title="初期化子内での変数宣言" highlight-ranges="sha256:3558b7226640c3b0288a2ef7ad709b78f16418f3c37bbeaaa41718421023ea15;5:61-5:62,11:42-11:43,18:52-18:53,19:68-19:69"}
 using System;
 
 class Derived : base
@@ -178,7 +178,7 @@ class Derived : base
 
 例えば、型制約だと、以下のような拡張メソッドの呼び分けができるようになりました。
 
-```csharp
+```csharp {title="class 制約と struct 制約の呼び分け"}
 using System.Collections.Generic;
 using System.Linq;
 
@@ -234,7 +234,7 @@ Span<int> x3 = stackalloc[] { 0xEF, 0xBB, 0xBF };
 所定のパターンを満たす型に対して `fixed` ステートメントが使えるようになりました。
 以下のように、`GetPinnableReference`という名前のメソッドを用意すれば使えます。
 
-```csharp
+```csharp {title="ユーザー定義型に対する fixed ステートメント"}
 readonly struct Array<T>
 {
     private readonly T[] _array;
@@ -278,7 +278,7 @@ class Program
 
 前者は、[自動プロパティ](../oop/oo_property.md#auto)に対して `field` 指定の属性が付けられるようになりました。
 
-```csharp
+```csharp {title="自動プロパティが内部的に生成しているフィールドへの属性付け"}
 using System;
 
 class XAttribute : Attribute { }
@@ -296,7 +296,7 @@ class Sample
 [固定長バッファー](../interop/sp_unsafe.md#fixed-buffer)の読み書きをする際、
 [`fixed`ステートメント](../interop/sp_unsafe.md#fixed)が不要になる場面が増えたそうです。
 
-```csharp
+```csharp {title="fixed なしで固定長バッファーの読み書き"}
 unsafe struct Buffer
 {
     public fixed byte A[8];

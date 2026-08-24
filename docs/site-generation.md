@@ -277,7 +277,10 @@ attributes:
 `title` adds an escaped `title` attribute to the generated `<pre>` element, so
 desktop browsers expose the same native hover tooltip as the legacy site. It
 must be non-empty and cannot contain control characters. When it is omitted,
-the renderer does not emit a `title` attribute. `highlight-lines` accepts
+the renderer does not emit a `title` attribute. Metadata text is HTML-decoded
+exactly once; the migrator canonically encodes `&`, `"`, `<`, `>`, and backticks
+so quote-rich titles and literal entity spellings remain unambiguous.
+`highlight-lines` accepts
 comma-separated, one-based whole-line numbers and inclusive ranges. Blank lines
 count toward the numbering; the terminating line break after each selection stays
 outside the generated highlight. `highlight-text` uses case-sensitive ordinal
@@ -285,15 +288,39 @@ literal matching and highlights every occurrence, including overlapping occurren
 When both attributes select the same source, their source ranges are combined
 and overlapping or adjacent ranges are merged.
 
-The named-property allowlist contains only `title`, `highlight-lines`, and
-`highlight-text`; event handlers and other named generic attributes fail site
+Legacy highlights that cannot be expressed exactly by a whole line or a unique
+literal use a fingerprinted positional fallback:
+
+````markdown
+```text {highlight-ranges="sha256:8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4;1:1-1:3"}
+hi
+```
+````
+
+Each range is `startLine:startColumn-endLine:endColumn`, with one-based lines
+and Unicode-scalar columns and an exclusive end. Multiple ranges are
+comma-separated. CRLF and bare CR count as one logical line break; tabs count as
+one scalar and are not expanded. The lowercase SHA-256 prefix fingerprints the
+entire Markdig code value after newline normalization, so editing any part of a
+range-annotated block makes stale metadata fail the build rather than silently
+moving a highlight. Values must use the single canonical ordering and spelling:
+ranges are non-empty, in bounds, strictly increasing, disjoint, and non-adjacent.
+
+`highlight-ranges` composes with line and literal highlights. All selected source
+spans are combined before rendering, so one `<mark>` can cross syntax-token
+boundaries without losing their nested color spans. The named-property allowlist
+contains only `title`, `highlight-lines`, `highlight-text`, and
+`highlight-ranges`; event handlers and other named generic attributes fail site
 generation instead of reaching generated HTML. Author-supplied generic IDs and
 classes on fenced code blocks also fail generation. Markdig-generated attributes
 on its derived block extensions are ignored rather than copied.
 Highlight metadata is consumed by the renderer and is never copied into generated
 HTML. Malformed attributes, invalid line syntax, non-positive or out-of-range
-line numbers, an empty literal, and a literal with no match fail site generation
-explicitly. Before inserting fixed
+line numbers, an empty literal, a literal with no match, a stale range fingerprint,
+invalid Unicode, or non-canonical range coordinates fail site generation
+explicitly. Raw table code retained as HTML uses the same permanent
+`<mark class="code-highlight">` element; its migration verifies that decoded
+visible code remains unchanged. Before inserting fixed
 `<mark class="code-highlight">` elements, the renderer parses the trusted
 syntax-highlighter fragment structurally and verifies that its text maps exactly
 to the source code. This preserves syntax-token spans and escaped plain code

@@ -159,7 +159,7 @@ Eric Lippert (当時の中の人)のブログ:
 
 元々、2010年のPDCでの最初の発表の時点では yield でした。
 
-```csharp
+```csharp {title="初出の時の非同期メソッド"}
 Task M()
 {
     yield Task.Delay(1);
@@ -169,7 +169,7 @@ Task M()
 
 yield と言えば、C# だと[イテレーター構文](../../../../study/csharp/data/sp2_iterator.md)があります。
 
-```csharp
+```csharp {title="イテレーター構文"}
 IEnumerable<char> Producer()
 {
     yield return '"';
@@ -265,7 +265,7 @@ await 自体が「古めかしい印象」の単語なので、
 ということで、最終的には await になりました。
 前述の通り、await には「待望」(待ちつつも他の事やってる感じ)のニュアンスがちょっとあります。
 
-```csharp
+```csharp {title="wait と await"}
 async Task M()
 {
     // wait = 待機

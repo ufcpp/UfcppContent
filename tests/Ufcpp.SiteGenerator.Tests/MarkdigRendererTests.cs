@@ -2,6 +2,8 @@ using Ufcpp.SiteGenerator.Models;
 using Ufcpp.SiteGenerator.Loading;
 using Ufcpp.SiteGenerator.Rendering;
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Microsoft.CodeAnalysis.Classification;
@@ -323,6 +325,23 @@ public sealed class MarkdigRendererTests
     }
 
     [Fact]
+    public void Render_FencedCodeMetadata_DecodesCanonicalEntitiesOnce()
+    {
+        var html = Render(
+            """
+            ```text {title="A &quot;quoted&quot; &#96;tick&#96; &amp; &amp;lt;" highlight-text="&amp;lt;"}
+            A &lt;
+            ```
+            """);
+
+        var pre = Assert.Single(ExtractRenderedPreElements(html));
+        Assert.Equal("""A "quoted" `tick` & &lt;""", pre.Attribute("title")?.Value);
+        Assert.Equal(
+            "&lt;",
+            Assert.Single(pre.Descendants("mark")).Value);
+    }
+
+    [Fact]
     public void Render_FencedCodeWithoutTitle_OmitsTitleAttribute()
     {
         var html = Render(
@@ -536,6 +555,173 @@ public sealed class MarkdigRendererTests
         Assert.DoesNotContain("<tag attr=", html);
     }
 
+    [Fact]
+    public void Render_HighlightRanges_HighlightsMultilinePartialSelection()
+    {
+        const string Code = "alpha beta\nsecond line";
+        var html = Render(
+            $"```text {{highlight-ranges=\"{RangeMetadata(Code, "1:7-2:7")}\"}}\n"
+            + $"{Code}\n```");
+
+        var code = ExtractRenderedCodeElement(html);
+        Assert.Equal(Code, code.Value);
+        Assert.Equal(["beta\nsecond"], GetHighlightedRegions(code));
+        Assert.DoesNotContain("highlight-ranges", html);
+    }
+
+    [Fact]
+    public void Render_HighlightRanges_UsesUnicodeScalarColumns()
+    {
+        const string Code = "a😀b";
+        var html = Render(
+            $"```text {{highlight-ranges=\"{RangeMetadata(Code, "1:2-1:3")}\"}}\n"
+            + $"{Code}\n```");
+
+        Assert.Equal(
+            ["😀"],
+            GetHighlightedRegions(ExtractRenderedCodeElement(html)));
+    }
+
+    [Fact]
+    public void Render_HighlightRanges_SplitsAcrossCSharpSyntaxSpans()
+    {
+        const string Code = "if (value == \"x\") return;";
+        var html = Render(
+            $"```csharp {{highlight-ranges=\"{RangeMetadata(Code, "1:1-1:15")}\"}}\n"
+            + $"{Code}\n```");
+
+        var mark = Assert.Single(ExtractRenderedCodeElement(html).Descendants("mark"));
+        Assert.Equal("if (value == \"", mark.Value);
+        Assert.True(mark.Descendants("span").Count() > 1);
+    }
+
+    [Fact]
+    public void Render_HighlightRanges_NormalizesCrLfForFingerprintAndCoordinates()
+    {
+        const string Code = "one\ntwo";
+        var markdown =
+            $"```text {{highlight-ranges=\"{RangeMetadata(Code, "2:1-2:4")}\"}}\r\n"
+            + "one\r\ntwo\r\n```";
+
+        Assert.Equal(
+            ["two"],
+            GetHighlightedRegions(ExtractRenderedCodeElement(Render(markdown))));
+    }
+
+    [Fact]
+    public void Render_HighlightRanges_PreservesEncodedEntitySpelling()
+    {
+        const string Code = "value &lt; limit";
+        var html = Render(
+            $"```text {{highlight-ranges=\"{RangeMetadata(Code, "1:7-1:11")}\"}}\n"
+            + $"{Code}\n```");
+
+        var rendered = ExtractRenderedCodeElement(html);
+        Assert.Equal(Code, rendered.Value);
+        Assert.Equal(["&lt;"], GetHighlightedRegions(rendered));
+    }
+
+    [Fact]
+    public void Render_HighlightRanges_RendersIntentionalTrailingSpaces()
+    {
+        const string Code = "value    ";
+        var html = Render(
+            $"```text {{highlight-ranges=\"{RangeMetadata(Code, "1:6-1:10")}\"}}\n"
+            + $"{Code}\n```");
+
+        Assert.Equal(
+            ["    "],
+            GetHighlightedRegions(ExtractRenderedCodeElement(html)));
+    }
+
+    [Fact]
+    public void Render_HighlightRanges_PreservesColorCodeSpansAtIntersections()
+    {
+        const string Code = """<root attr="value" />""";
+        var html = Render(
+            $"```xml {{highlight-ranges=\"{RangeMetadata(Code, "1:7-1:19")}\"}}\n"
+            + $"{Code}\n```");
+
+        var mark = Assert.Single(ExtractRenderedCodeElement(html).Descendants("mark"));
+        Assert.Equal("attr=\"value\"", mark.Value);
+        Assert.True(mark.Descendants("span").Count() > 1);
+    }
+
+    [Fact]
+    public void Render_HighlightLines_PreservesEncodedQuotesInColorCodeTextNodes()
+    {
+        var html = Render(
+            """
+            ```html {highlight-lines="1"}
+            <%@ Register TagPrefix="local" Src="~/ShowXml.ascx" %>
+            ```
+            """);
+
+        Assert.Contains("Src=&quot;~/ShowXml.ascx&quot;", html);
+        Assert.DoesNotContain("Src=\"~/ShowXml.ascx\"", html);
+        Assert.Equal(
+            """<%@ Register TagPrefix="local" Src="~/ShowXml.ascx" %>""",
+            ExtractRenderedCodeElement(html).Value.TrimEnd('\r', '\n'));
+    }
+
+    [Fact]
+    public void Render_HighlightRanges_ComposesWithWholeLineSelection()
+    {
+        const string Code = "whole\npartial value";
+        var html = Render(
+            $"```text {{highlight-lines=\"1\" "
+            + $"highlight-ranges=\"{RangeMetadata(Code, "2:9-2:14")}\"}}\n"
+            + $"{Code}\n```");
+
+        Assert.Equal(
+            ["whole", "value"],
+            GetHighlightedRegions(ExtractRenderedCodeElement(html)));
+    }
+
+    [Fact]
+    public void Render_HighlightRanges_RejectsRepeatedAttribute()
+    {
+        const string Code = "value";
+        var value = RangeMetadata(Code, "1:1-1:6");
+
+        Assert.Throws<InvalidDataException>(
+            () => Render(
+                $"```text {{highlight-ranges=\"{value}\" "
+                + $"highlight-ranges=\"{value}\"}}\n{Code}\n```"));
+    }
+
+    [Theory]
+    [InlineData("1:1-1:1")]
+    [InlineData("1:1-1:3,1:2-1:4")]
+    [InlineData("1:1-1:2,1:2-1:3")]
+    [InlineData("01:1-1:2")]
+    [InlineData("1:1-3:1")]
+    [InlineData("2:4-2:5")]
+    public void Render_HighlightRanges_RejectsInvalidOrNonCanonicalRanges(
+        string ranges)
+    {
+        const string Code = "one\ntwo";
+        var markdown =
+            $"```text {{highlight-ranges=\"{RangeMetadata(Code, ranges)}\"}}\n"
+            + $"{Code}\n```";
+
+        Assert.Throws<InvalidDataException>(() => Render(markdown));
+    }
+
+    [Fact]
+    public void Render_HighlightRanges_RejectsStaleOrNonCanonicalFingerprint()
+    {
+        const string Code = "value";
+        var valid = RangeMetadata(Code, "1:1-1:6");
+        var stale = new string('0', 64) + valid[64..];
+        var uppercase = valid.ToUpperInvariant();
+
+        Assert.Throws<InvalidDataException>(
+            () => Render($"```text {{highlight-ranges=\"{stale}\"}}\n{Code}\n```"));
+        Assert.Throws<InvalidDataException>(
+            () => Render($"```text {{highlight-ranges=\"{uppercase}\"}}\n{Code}\n```"));
+    }
+
     [Theory]
     [InlineData("")]
     [InlineData("0")]
@@ -629,6 +815,25 @@ public sealed class MarkdigRendererTests
 
         Assert.Contains(rawHtml, html);
         Assert.DoesNotContain(escapedOpeningTag, html);
+    }
+
+    [Fact]
+    public void Render_RawTable_PreservesTitleAndPermanentHighlightMarkup()
+    {
+        const string RawTable =
+            "<table><tr><td><pre title=\"sample\"><code>"
+            + "alpha <mark class=\"code-highlight\">&lt;</mark> beta"
+            + "</code></pre></td></tr></table>";
+
+        var html = Render(RawTable);
+
+        var pre = Assert.Single(ExtractRenderedPreElements(html));
+        var code = Assert.Single(pre.Elements("code"));
+        var mark = Assert.Single(code.Elements("mark"));
+        Assert.Equal("sample", pre.Attribute("title")?.Value);
+        Assert.Equal("code-highlight", mark.Attribute("class")?.Value);
+        Assert.Equal("alpha < beta", code.Value);
+        Assert.Contains(RawTable, html);
     }
 
     [Fact]
@@ -1235,6 +1440,17 @@ public sealed class MarkdigRendererTests
 
     private static IReadOnlyList<string> GetHighlightedRegions(XElement code) =>
         code.Descendants("mark").Select(static mark => mark.Value).ToArray();
+
+    private static string RangeMetadata(string code, string ranges)
+    {
+        var normalized = code
+            .Replace("\r\n", "\n", StringComparison.Ordinal)
+            .Replace('\r', '\n');
+        var hash = Convert.ToHexString(
+                SHA256.HashData(Encoding.UTF8.GetBytes(normalized)))
+            .ToLowerInvariant();
+        return $"sha256:{hash};{ranges}";
+    }
 
     private static RenderedContent RenderWithMetadata(
         string markdown,

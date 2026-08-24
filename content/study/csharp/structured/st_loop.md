@@ -37,7 +37,7 @@ C#ではそういう反復処理のために<code>while</code>、<code>do</code>
 
 <strong id="while" class="keyword">while</strong> 文は以下のような書き方をします。
 
-```csharp
+```csharp {title="while 文の書式"}
 while(条件式)
   繰り返したい文 // 条件式が真の間繰り返される
 ```
@@ -56,7 +56,7 @@ while A, B （A の間、B）。
       </em> を使用します。
 以下に <code>break</code> と <code>continue</code> の書式を示します。
 
-```csharp
+```csharp {title="break" highlight-text="break;"}
 while(true) // 条件式が常に true なので、永久ループになる。
 {
   // 何らかの処理
@@ -69,7 +69,7 @@ while(true) // 条件式が常に true なので、永久ループになる。
 ```
 
 
-```csharp
+```csharp {title="continue" highlight-text="continue;"}
 while(true) // continue 文が実行されると条件式の判定から処理をやり直す。
 {
   // 何らかの処理
@@ -84,7 +84,7 @@ while(true) // continue 文が実行されると条件式の判定から処理�
 
 ##### <a id="sec-generated-title-4"></a>サンプル
 
-```csharp
+```csharp {title="while文の例"}
 using System;
 
 class WhileSample
@@ -129,7 +129,7 @@ class WhileSample
 
 <strong id="do" class="keyword">do-while</strong> 文は while 文と似たような書き方をします。
 
-```csharp
+```csharp {title="do-while文の書式"}
 do
   繰り返したい文 // 条件式が真の間繰り返される
 while(条件式);
@@ -145,7 +145,7 @@ do-while 文は while 文と異なり、最低1回は文が実行されます。
 
 ##### <a id="sec-generated-title-6"></a>サンプル
 
-```csharp
+```csharp {title="do-while文の例"}
 using System;
 
 class DoWhileSample
@@ -187,7 +187,7 @@ class DoWhileSample
 
 C# には、この3つの作業を行うために<strong id="for" class="keyword">for</strong> 文というものが用意されています。
 
-```csharp
+```csharp {title="for文の書式"}
 for(初期化式; 条件式; 更新式)
   反復を行いたい文
 ```
@@ -200,7 +200,7 @@ for 文では、反復処理に入る前に1度だけ初期化式が実行され
 そして、1回の反復が終わるたびに更新式が実行され、次の反復に移ります。
 これと同様のことを while 文を用いて行うと以下のようになります。
 
-```csharp
+```csharp {title="for 文と等価な while 文"}
 初期化式;
 while(条件式)
 {
@@ -215,7 +215,7 @@ FOR_END: // continue の代わりに goto FOR_END とする必要あり。
 
 ##### <a id="sec-generated-title-8"></a>サンプル
 
-```csharp
+```csharp {title="for文の例"}
 using System;
 
 class WhileSample
@@ -257,7 +257,7 @@ class WhileSample
 (配列と言うものについては「[配列](st_array.md)」で詳しく説明します。)
 例えば、配列に格納された値の平均値を求める場合、以下のようにします。
 
-```csharp
+```csharp {title="配列の全ての要素を読み出しする例"}
 double Average(double[] a)
 {
   double y = 0;
@@ -275,7 +275,7 @@ foreach とは、
 "for each element in an array" (配列中のそれぞれの要素に対して処理を行う)という意味です。
 foreach 文は以下のよな書き方をします。
 
-```csharp
+```csharp {title="foreach文の書式"}
 foreach(変数宣言 in 配列名)
   繰り返したい文 // 配列中の各要素に対して1回ずつ処理が行われる。
 ```
@@ -283,7 +283,7 @@ foreach(変数宣言 in 配列名)
 
 上述の例を foreach 文を使って書き直すと以下のようになります。
 
-```csharp
+```csharp {title="foreach 文の例"}
 double Average(double[] a)
 {
   double y = 0;
@@ -352,7 +352,7 @@ class Program
 #### 解答例 1
 
 
-```csharp
+```csharp {title="整数の和"}
 using System;
 
 class Exercise
@@ -389,7 +389,7 @@ class Exercise
 #### 解答例 1
 
 
-```csharp
+```csharp {title="平方数の判別"}
 using System;
 
 class Exercise
@@ -427,7 +427,7 @@ Sqrt は n の平方根を求める関数。
 #### 解答例 1
 
 
-```csharp
+```csharp {title="九九表"}
 using System;
 
 class Exercise

@@ -43,7 +43,7 @@ C# 9.0 で、レコード型(records)という新しい種類の型が追加さ�
 record (記録)という名前通り、データの読み書きに使うことを意図した型です。
 例えば以下のような書き方で、「`Name` という文字列と `Birthday` という日付」を読み書きできます。
 
-```csharp
+```csharp {title="record の例"}
 using System;
  
 record Person(string Name, DateTime birthday);
@@ -55,7 +55,7 @@ record Person(string Name, DateTime birthday);
 
 以下のように `init` という新しいアクセサーを使って、「オブジェクト初期化子までは書き換え可能で、それ以降は書き換えできないプロパティ」を作れるようになりました。
 
-```csharp
+```csharp {title="オブジェクト初期化子でだけ書き換え可能" highlight-ranges="sha256:16786cdd6f117b8e9bba8406daabae0a7c4ee1ad66ea4ff0406968d188743910;6:25-6:29,7:25-7:29"}
 var p = new Point { X = 1, Y = 2 };
 p.X = 3; // ダメ。
  
@@ -77,7 +77,7 @@ class Point
 
 例えばよくある「Hello World」であれば、単に以下のように書けるようになります。
 
-```csharp
+```csharp {title="トップ レベルに直接「Hello World」"}
 using System;
 Console.WriteLine("Hello World!");
 ```
@@ -89,7 +89,7 @@ Console.WriteLine("Hello World!");
 [C# 7.0](ap_ver7.md)から脈々と改善されてきた[パターン マッチング](../datatype/patterns.md)ですが、
 C# 9.0 でもいくつかのパターンが追加されています。
 
-```csharp
+```csharp {title="C# 9.0 でのパターン追加"}
 // not, and, or や、 <, <=, >, >= などのパターンが増えた。
 int M(uint x) => x switch
 {
@@ -122,7 +122,7 @@ C# 9.0 で追加されているのは以下の3つです。
 特に、[`var`](../start/sp3_inference.md#type-inference) が使えず、
 型名が長い特に便利です。
 
-```csharp
+```csharp {title="フィールド初期化子で特に便利"}
 using System.Collections.Generic;
  
 class Sample
@@ -165,7 +165,7 @@ class B : Base { }
 
 例えば以下のようなコードを書けるようになります。
 
-```csharp
+```csharp {title="仮想メソッド戻り値の共変性"}
 class Base
 {
     public virtual Base Clone() => new Base();
@@ -197,7 +197,7 @@ class Derived : Base
 
 `/unsafe` オプション指定時限定ですが、ローカル変数の0初期化を抑止できるようになりました。
 
-```csharp
+```csharp {title="SkipLocalsInit 属性で0初期化抑止"}
 using System;
 using System.Runtime.CompilerServices;
 using System.Text.Unicode;
@@ -231,7 +231,7 @@ C# で関数ポインターを書けるようになりました。
 
 .NET の内部的にはこれまでも関数ポインターがあったんですが、 それを C# から効率的に呼ぶ手段がありませんでした。 これに対して、C# 9 では delegate* という記法で関数ポインターを扱えるようになりました。
 
-```csharp
+```csharp {title="関数ポインター構文の例"}
 using System.Runtime.InteropServices;
 
 // 関数ポインターを nint で取得。
@@ -255,7 +255,7 @@ unsafe
 `nint` と `nuint` というキーワードで、「CPU 依存の一番高速に扱える整数」が使えるようになりました。
 `nint` が符号付、`nuint` が符号なしです。
 
-```csharp
+```csharp {title="CPU 依存幅整数"}
 nint x = 0x1_0000;
 x = x * x;
 
@@ -272,7 +272,7 @@ unsafe
 ちなみに、内部的には `IntPtr`、`UIntPtr` (いずれも `System` 名前空間)にコンパイルされています。
 そのため、以下のようなコードはコンパイル エラーになります(引数の型が同じ同名のメソッドが2つあるため)。
 
-```csharp
+```csharp {title="IntPtr と nint でのオーバーロードはできない"}
 class Sample
 {
     void M(IntPtr x) { }
@@ -307,7 +307,7 @@ C# 8.0 で入った [null 許容参照型](../resource/nullablereferencetype.md)
 
 ラムダ式の引数で、`_` を使った値の破棄ができるようになりました。
 
-```csharp
+```csharp {title="ラムダ式の引数で _ を破棄扱い"}
 static void Subscribe(INotifyPropertyChanged source)
 {
     // _ を破棄扱いして、2個以上並べられる
@@ -322,7 +322,7 @@ static void Subscribe(INotifyPropertyChanged source)
 匿名関数に対しても `static` 修飾子を付けれるようになりました。
 「外部の変数を捕獲しない」という意味になります。
 
-```csharp
+```csharp {title="静的匿名関数" highlight-ranges="sha256:b04aded3c3417ac1f26cf6166f2498c20c12d1b4f71170587adfa7ff9b32bd35;6:21-6:27,9:21-9:27"}
 using System;
  
 int a = 0;
@@ -340,7 +340,7 @@ Func<int, int> ng = static x => a * x;
 
 [ローカル関数](../functional/fun_localfunctions.md#local-function)に属性を付けられるようになりました。
 
-```csharp
+```csharp {title="ローカル関数に属性を付ける"}
 using System;
 using System.Diagnostics.CodeAnalysis;
  
@@ -384,7 +384,7 @@ C# 9.0 世代の C# コンパイラーにはソースコード生成(source gene
 それをソースコード生成で埋めてもらうという状況があり得ます。
 C# 9.0 ではそのための文法として、[`partial` キーワード](../oop/oo_class.md#partial_method)を再利用することにしました。
 
-```csharp
+```csharp {title="ソースコード生成で埋めてもらう前提の不完全なメソッドの例"}
 // (1) 手書き前提のコード
 partial class PartialClass
 {
@@ -418,7 +418,7 @@ C# 2.0 の頃からある部分メソッドとの差は[アクセシビリティ
 
 以下のように、`ModuleInitilizer` 属性(`System.Runtime.CompilerServices` 名前空間)を付けた[静的メソッド](../oop/oo_static.md#stmethod)を書くと、それが必ず1回呼び出されるようになります。
 
-```csharp
+```csharp {title="ModuleInitialize 属性"}
 using System;
 using System.Runtime.CompilerServices;
  

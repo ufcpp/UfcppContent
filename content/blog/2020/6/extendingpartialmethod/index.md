@@ -31,7 +31,7 @@ aliases: []
 一番の用途としては、自動生成されているコードに、一部分だけ手動で処理をカスタマイズしたいみたいなときに使います。
 例えば、以下のようなソースコードを T4 テンプレートなどを使って生成していると考えてください。
 
-```csharp
+```csharp {title="自動生成されている想定のコード"}
 // T4 テンプレートとか XAML とかから自動生成されている想定のコード
 partial class Sample
 {
@@ -60,7 +60,7 @@ partial class Sample
 
 もしも、手作業カスタマイズが必要なら、以下のように、別ファイルで partial メソッドに実装を与えます。
 
-```csharp
+```csharp {title="手書きする想定のコード"}
 // 手書きする想定のコード
 partial class Sample
 {
@@ -89,7 +89,7 @@ Entity Framework の Scaffolding とかで使われているはず…
 ただ、まあ、[dotnet/runtime](https://github.com/dotnet/runtime)とかで用例を探してみたものの、テストを除けば数十件くらいしか出てこないんですよね。確かにレア機能。
 しかも、自動生成のコードと手書きコードの橋渡しと言うよりも、プラットフォーム依存な処理の分離に使われてることの方が多そう。
 
-```csharp
+```csharp {title="プラットフォーム依存処理の分離"}
 partial class Sample
 {
     public void M()
@@ -119,7 +119,7 @@ partial class Sample
 
 例えば以下のような書き方をします。
 
-```csharp
+```csharp {title="手書きする想定のコード"}
 // 手書きコード側
 using System;
  
@@ -143,7 +143,7 @@ partial class Sample
 
 例えば上記の例は、Source Generator を使って以下のようなコードを生成する想定で書いています。
 
-```csharp
+```csharp {title="Source Generator で生成する想定のコード"}
 // Source Generator で生成する想定のコード
 partial class Sample
 {

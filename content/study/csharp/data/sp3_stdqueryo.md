@@ -75,7 +75,7 @@ Count、LongCount、Sum、Min、Max、Average、Aggregate
 これらの説明は次節以降で行っていきます。
 その際、例として以下のようなデータを使います。
 
-```csharp
+```csharp {title="サンプルデータ"}
 var a = new[] { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4 };
 var b = new[] { 0, 2, 4, 6, 8, 10, 12 };
 ```
@@ -83,7 +83,7 @@ var b = new[] { 0, 2, 4, 6, 8, 10, 12 };
 
 また、結果の出力用に、以下のような補助関数を使います。
 
-```csharp
+```csharp {title="出力用の補助関数"}
 static void Show<T>(IEnumerable<T> a)
 {
   foreach (var x in a)
@@ -123,7 +123,7 @@ Take、Skip、TakeWhile、SkipWhile
 
 使用例を以下に示します。
 
-```csharp
+```csharp {title="パーティション分割演算子の例"}
 Show(a.Take(5));
 Show(a.Skip(5));
 Show(a.TakeWhile(x => x != 2));
@@ -131,7 +131,7 @@ Show(a.SkipWhile(x => x != 2));
 ```
 
 
-```console
+```console {title="実行結果"}
 0 0 1 1 2
 2 3 3 4 4
 0 0 1 1
@@ -144,12 +144,12 @@ Show(a.SkipWhile(x => x != 2));
 
 Concat で、2つのシーケンスを連結できます。
 
-```csharp
+```csharp {title="連結演算子の例"}
 Show(a.Concat(b));
 ```
 
 
-```console
+```console {title="実行結果"}
 0 0 1 1 2 2 3 3 4 4 0 2 4 6 8 10 12
 ```
 
@@ -165,12 +165,12 @@ Show(a.Concat(b));
 
 Reverse で、シーケンスの中身の順序を真逆にできます。
 
-```csharp
+```csharp {title="順序付け演算子の例"}
 Show(a.Reverse());
 ```
 
 
-```console
+```console {title="実行結果"}
 4 4 3 3 2 2 1 1 0 0
 ```
 
@@ -202,7 +202,7 @@ Distinct、Union、Intersect、Except の4つの
 </table>
 
 
-```csharp
+```csharp {title="セット演算子の例"}
 Show(a.Distinct());
 Show(a.Union(b));
 Show(a.Intersect(b));
@@ -210,7 +210,7 @@ Show(a.Except(b));
 ```
 
 
-```console
+```console {title="実行結果"}
 0 1 2 3 4
 0 1 2 3 4 6 8 10 12
 0 2 4
@@ -233,7 +233,7 @@ Show(a.Except(b));
 シーケンスをそれぞれ、
 IEnumeragle&lt;T&gt;、配列、List&lt;T&gt; に変換します。
 
-```csharp
+```csharp {title="型変換"}
 var a = new[] { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4 };
 IEnumerable<int> a1 = a.Distinct().AsEnumerable();
 int[] a2            = a.Distinct().ToArray();
@@ -248,7 +248,7 @@ AsEnumerable が as なのに、ToArray や ToList が to を使っているの�
 as の方は遅延評価、to の方はその場での評価になります。
 例えば、以下のようなコードを実行したとします。
 
-```csharp
+```csharp {title="As 系と To 系の違い"}
 Func<int, int> hook = x =>
 {
   Console.Write("{0}", x);
@@ -276,7 +276,7 @@ Console.Write(" after\n\n");
 前者は foreach の行で初めて hook が実行され、
 後者は ToList の時点で実行されます。
 
-```console
+```console {title="実行結果" highlight-ranges="sha256:7338ac1c33fda3607b9a96c21683fb37fdfee1b185c493fcb9ef865bbb4abf34;2:16-2:26,5:8-5:18"}
 AsEnumerable
 before  middle 0011223344 after
 
@@ -292,7 +292,7 @@ ToDictionary と ToLookup は、シーケンスを辞書（キーと値のペア
 ToDictionary は Dictionary（1つのキーに対して1つの値を持つ）を、
 ToLookup は Lookup型（1つのキーに対して複数の値（1つの IEnumerable）を持つ辞書）の値を返します。
 
-```csharp
+```csharp {title="辞書化の例"}
 var list = new[] {
   new { Name = "糸色望", CV = "神谷浩史" },
   new { Name = "風浦可符香", CV = "野中藍" },
@@ -330,7 +330,7 @@ Show(lookupByCV["神谷浩史"].Select(x => x.Name));
 ```
 
 
-```console
+```console {title="実行結果"}
 新谷良子
 後藤邑子
 新井智恵 糸色倫 糸色交
@@ -340,14 +340,14 @@ Show(lookupByCV["神谷浩史"].Select(x => x.Name));
 
 ToLookup を使えば、例えば、名前の1文字目を使ったインデックスを作ったりといったことも出来ます。
 
-```csharp
+```csharp {title="ToLookup の例2"}
 var lookupByFirstChar = list.Select(x => x.Name).ToLookup(x => x[0]);
 Show(lookupByFirstChar['糸']);
 Show(lookupByFirstChar['小']);
 ```
 
 
-```console
+```console {title="実行結果"}
 糸色望 糸色景 糸色命 糸色倫 糸色交
 小節あびる 小森霧
 ```
@@ -361,7 +361,7 @@ Cast はすべての要素のキャストを試みます。
 キャストに失敗した場合は例外が発生します。
 一方、OfType は、変換可能な要素だけを抽出します。
 
-```csharp
+```csharp {title="Cast, OfType の例"}
 var numList = new object[] {
   1, 1.1, 2, 2.2, 3, 3.3
 };
@@ -381,7 +381,7 @@ Show(miscList.OfType<IEnumerable<int>>().Select(x => x.GetType().Name));
 ```
 
 
-```console
+```console {title="実行結果"}
 1 1 2 2 3 3
 1 2 3
 List`1 Stack`1 Queue`1
@@ -396,7 +396,7 @@ List`1 Stack`1 Queue`1
 
 SequenceEqual で、2つのシーケンスの中身が（順序も含めて）一致するかどうかを調べられます。
 
-```csharp
+```csharp {title="SequenceEqualの例"}
 var x = new[] { 0, 3, 1, 2 };
 var y = new[] { 0, 3, 1, 2 };
 var z = new[] { 1, 2, 3 };
@@ -407,7 +407,7 @@ Console.Write("{0}\n", z.SequenceEqual(x));
 ```
 
 
-```console
+```console {title="実行結果"}
 True
 False
 False
@@ -451,7 +451,7 @@ OrDefault が付かないもの、
 もし条件を満たす要素が1つもなければ規定値
 （例えば、数値型なら 0、参照型なら null）を返します。
 
-```csharp
+```csharp {title="要素演算子の例"}
 var list = new[] {
   new { X = 0, Y = 0 },
   new { X = 0, Y = 1 },
@@ -470,7 +470,7 @@ Console.Write("{0}\n", list.Single(p => p.X == 2));
 ```
 
 
-```console
+```console {title="実行結果"}
 { X = 0, Y = 0 }
 { X = 1, Y = 2 }
 { X = 2, Y = 0 }
@@ -482,7 +482,7 @@ First、Last、Single には引数を持たないバージョンもあって、
 引数なしの Single は、シーケンスがただ1つの要素からなるときにはその要素の値を返し、
 そうでなければ例外を発生させます。
 
-```csharp
+```csharp {title="引数なしの Single"}
 var x = new[] { 0 }.Single();    // x == 0
 var y = new[] { 0, 1 }.Single(); // 例外発生
 ```
@@ -511,14 +511,14 @@ var y = new[] { 0, 1 }.Single(); // 例外発生
 </table>
 
 
-```csharp
+```csharp {title="生成演算子の例"}
 Show(Enumerable.Range(5, 3));
 Show(Enumerable.Repeat("abc", 3));
 Show(Enumerable.Empty<int>());
 ```
 
 
-```console
+```console {title="実行結果"}
 5 6 7
 abc abc abc
 ```
@@ -526,7 +526,7 @@ abc abc abc
 
 例えば、Range を使って任意個数の乱数列を生成したりできます。
 
-```csharp
+```csharp {title="乱数列生成の例"}
 Random rnd = new Random();
 var randomSeq = Enumerable.Range(0, 100).Select(x => rnd.NextDouble());
 ```
@@ -555,7 +555,7 @@ Any、All、Contains は、
 </table>
 
 
-```csharp
+```csharp {title="限定子の例"}
 Func<int, bool> isEven = x => (x & 1) == 0;
 
 Console.Write("{0}\n", a.Any(isEven)); // a は偶数も含むので true
@@ -608,7 +608,7 @@ Console.Write("{0}\n", a.Contains(0)); // a は 0 を含むので true
 
 list.Aggregate(func); は、以下のコードと同じ結果を得ます。
 
-```csharp
+```csharp {title="Aggregate の処理内容"}
 static T Aggregate<T>(IEnumerable<T> list, Func<T, T, T> func)
 {
   var acc = list.First();
@@ -631,7 +631,7 @@ static T Aggregate<T>(IEnumerable<T> list, Func<T, T, T> func)
 なので、
 例えば、以下のようなコードを書くと、<em>foreach ループを5回まわすことになります</em>。
 
-```csharp
+```csharp {title="集計演算子の例"}
 var num = a.Count();
 var min = a.Min();
 var max = a.Max();
@@ -644,7 +644,7 @@ var sum = a.Sum();
 以下のようなコードと比べると、圧倒的に動作速度が遅くなります。
 （筆者の環境では約10倍の差。）
 
-```csharp
+```csharp {title="自力で集計。ループを1つに。"}
 var num = 0;
 var min = int.MaxValue;
 var max = int.MinValue;

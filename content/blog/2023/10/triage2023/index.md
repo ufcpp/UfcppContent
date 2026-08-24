@@ -32,7 +32,7 @@ C# Design Meeting でも、13向けのトリアージがちらほら始まりま
 
 C# 7.2 辺りから、以下のような「配列のアロケーションを消す」最適化が掛かります。
 
-```csharp
+```csharp {title="配列が消える"}
 // 定数だけで構成された byte 配列は最適化で消える。
 // new ReadOnlySpan<byte>(静的データのポインター, 4) みたいなコードに展開される。
 ReadOnlySpan<byte> data1 = new byte[] { 1, 2, 3, 4 };
@@ -45,7 +45,7 @@ ReadOnlySpan<int> data2 = new int[] { 1, 2, 3, 4 };
 
 そこで、以下のような「ReadOnlySpan の初期化構文が欲しい」という話がありました。
 
-```csharp
+```csharp {title="Span 初期化構文(案)"}
 ReadOnlySpan<byte> data1 = { 1, 2, 3, 4 };
 
 ReadOnlySpan<int> data2 = { 1, 2, 3, 4 };
@@ -57,7 +57,7 @@ ReadOnlySpan<int> data2 = { 1, 2, 3, 4 };
 
 [#6247](https://github.com/dotnet/csharplang/issues/6247)
 
-```csharp
+```csharp {title="インジケーター案"}
 // こんな風に、raw string の先頭行に「文字列リテラルの中身が何か」を示すインジケーターを書きたいという案。
 var y = """regex
     \s+
@@ -125,7 +125,7 @@ Working set (作業中)。
 
 [#6926](https://github.com/dotnet/csharplang/issues/6926)
 
-```csharp
+```csharp {title="const is expression"}
 const int x = 123;
 const bool y = x == 0; // これは OK。const 同士に対する式の結果は const。
 const bool z = x is 0; // 今ダメ。 == が行けるんなら is も行けていいんじゃない？
@@ -163,7 +163,7 @@ Working set。
 
 .NET 8 の並々ならぬ努力の結果、JIT 最適化がだいぶ賢くなった。
 
-```csharp
+```csharp {title=".NET 8 の Utf8.TryWrite は UTF-16 → UTF-8 変換がほぼノーコスト"}
 using System.Text.Unicode;
 
 int x = 123;

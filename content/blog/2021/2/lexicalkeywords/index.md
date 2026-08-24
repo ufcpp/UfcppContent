@@ -28,7 +28,7 @@ C# は極力互換性を保つ(破壊的変更になるものを避ける)よう
 
 ということで、以下のようなコードを書いた場合、C# 9.0 現在、1単語目の `var` はクラスの `var` になります。
 
-```csharp
+```csharp {title="1単語目の var はクラスの var"}
 var var = new var();
 class var { }
 ```
@@ -36,7 +36,7 @@ class var { }
 一方で、以下のコードの場合、1単語目はキーワードの `var` です。
 (先ほどのコードとの差はクラス名が大文字始まりの `Var` な点だけ。)
 
-```csharp
+```csharp {title="1単語目はキーワードの var"}
 var var = new Var();
 class Var { }
 ```
@@ -53,7 +53,7 @@ IDE 上は型名とキーワードで色が違うのでギリギリ判別は付�
 例えば単に Markdown 記法で以下のようなコードを書いたとき、
 大体の環境で、`var` は無条件にキーワード扱いされると思います。
 
-````csharp
+````csharp {title="1単語目はキーワードの var"}
 ```cs
 var var = new var();
 ```
@@ -68,7 +68,7 @@ var var = new var();
 ところで、C# 9.0 で導入された[レコード型](../../../2020/6/record0609/index.md)についてはちょっと条件が違ったりします。
 以下のコードはコンパイル エラー。
 
-```csharp
+```csharp {title="record は型名よりもキーワードの優先度が高い"}
 record record = new record();
 record record { }
 ```
@@ -82,7 +82,7 @@ record record { }
 ここで、2行目を `class` に書き換えて、あと、C# 8.0 の文法として成立するように1行目をクラスで覆ってみます。
 C# 8.0 ではこれは有効な C# コードでした。
 
-```csharp
+```csharp {title="C# 8.0 で普通にコンパイルできるコード"}
 class A
 {
     record record = new record();
@@ -94,7 +94,7 @@ class record { }
 これを C# 9.0 でコンパイルすると以下のようになります。
 色付けが変わって、コンパイル エラーが出ます。
 
-```csharp
+```csharp {title="さっきと同じコード。C# 9.0 では無効"}
 class A
 {
     record record = new record();
@@ -110,7 +110,7 @@ class record { }
 1単語目だけ `@` を付けて「キーワードではない」ことを明示しています。
 `new` の後ろなら`@` なしでも型名。
 
-```csharp
+```csharp {title="@ を付ければキーワードじゃなくなる"}
 @record record = new record();
 class record { }
 ```
@@ -118,7 +118,7 @@ class record { }
 あと、以下の書き方でも大丈夫です。
 `global::` (`global` はキーワード)の後ろなので型名であることが明白。
 
-```csharp
+```csharp {title="global:: の後ろは常に型名"}
 global::record record = new record();
 class record { }
 ```

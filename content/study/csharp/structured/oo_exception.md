@@ -46,7 +46,7 @@ C# では、例外処理を行うための専用の構文が用意されてい�
 簡単化のため、とりあえず正の整数のみを扱うことにします。
 想定外の文字列が来ないものと仮定するとプログラムは以下のようになります。
 
-```csharp
+```csharp {title="文字列→整数変換 関数定義 (例外を想定せず)"}
 // 文字→整数
 static int CharToInt(char c)
 {
@@ -69,7 +69,7 @@ static int StringToInt(string str)
 
 当然、この関数に対して想定外の文字列を入力すると、おかしな結果が得られます。
 
-```csharp
+```csharp {title="文字列→整数変換 利用側 (例外を想定せず)"}
 static void Main()
 {
   Console.Write("{0}\n", StringToInt("12345"));
@@ -99,7 +99,7 @@ static void Main()
 想定外の文字列が来たときには負の数を返すことにしておけば、
 例外が起きたかどうか調べることが出来ます。
 
-```csharp
+```csharp {title="文字列→整数変換 関数定義 (例外処理構文未使用)"}
 // 文字→整数
 static int CharToInt(char c)
 {
@@ -126,7 +126,7 @@ static int StringToInt(string str)
 
 関数の利用側のコードは以下のようになります。
 
-```csharp
+```csharp {title="文字列→整数変換 利用側 (例外処理構文未使用)"}
 static void Main()
 {
   int i;
@@ -179,7 +179,7 @@ static void Main()
 <strong id="throw" class="keyword">throw 文</strong>を使って例外が起こったことを利用側に知らせます。
 throw 文は以下のようにして使用します。
 
-```csharp
+```csharp {title="throw 文"}
 throw 例外クラスのインスタンス
 ```
 
@@ -195,7 +195,7 @@ throw 文によって投げられる例外は、
 
 例として先ほどの文字列→整数変換関数を throw 文を使って書き直してみましょう。
 
-```csharp
+```csharp {title="文字列→整数変換 関数定義 (throw 使用)"}
 // 文字→整数
 static int CharToInt(char c)
 {
@@ -226,7 +226,7 @@ static int StringToInt(string str)
 <strong id="try" class="keyword">try-catch-finally 文</strong>を使って例外を処理します。
 try-catch-finally 文は以下のようにして使用します。
 
-```csharp
+```csharp {title="try-catch-finally 文"}
 try
 {
   例外が投げられる可能性のあるコード
@@ -246,7 +246,7 @@ finally
 というか、`catch`を使いたい範囲と`finally`を使いたい範囲は違っていることが多く、
 片方だけ使うことは多いです。
 
-```csharp
+```csharp {title="catch のみの try、finally のみの try"}
 try
 {
     (リソースの寿命の方が広い)
@@ -277,7 +277,7 @@ finally
 
 こちらも例として、先ほどの文字列→整数変換関数利用側コードを try-catch 文を使って書き直してみましょう。
 
-```csharp
+```csharp {title="文字列→整数変換 関数利用側 (try-catch使用)" highlight-text="try"}
 static void Main()
 {
     try
@@ -299,7 +299,7 @@ static void Main()
 
 ちなみに、同じ型の`catch`を複数並べるとエラーになります。
 
-```csharp
+```csharp {title="同じ型のcatchを並べるとエラー"}
 try
 {
 }
@@ -347,7 +347,7 @@ C# 6ではバージョン アップとともに、式として書けるものや
 - [null合体演算子](../resource/sp2_nullable.md#nullableType)(`??`)の後ろ
 - [条件演算子]()の第2、第3引数(条件式以外の部分。 `:` の前後)
 
-```csharp
+```csharp {title="throw 式"}
 // 式形式メンバーの中( => の直後)
 static void A() => throw new NotImplementedException();
 
@@ -366,7 +366,7 @@ static string B(object obj)
 これ以外の文脈で`throw`式を書くことはできません。
 例えば、以下のコードはコンパイル エラーになります。
 
-```csharp
+```csharp {title="=&gt;、??、?: 以外の場所に throw 式は書けない"}
 static void C()
 {
     // コンパイル エラー。この文脈に throw 式は書けない
@@ -378,7 +378,7 @@ static void C()
 `throw`式の戻り値の型は「任意の型に変換可能」とみなされます。
 `throw` 式単体で具体的な型を持っているわけではないので、以下のように、型を決めれない書き方をするとコンパイル エラーになります。
 
-```csharp
+```csharp {title="型が決まらなくてコンパイル エラーになる例"}
 // コンパイル エラー。null(型を持っていない)と並べると型が決まらない。
 var x = true ? null : throw new Exception();
 
@@ -495,7 +495,7 @@ var y = true ? throw new InvalidOperationException() : throw new NotSupportedExc
 
 例外は、`catch`句でキャッチされるまで、どんどん上位の呼び出し元に伝搬していきます。
 
-```csharp
+```csharp {title="例外は上位に伝搬する"}
 using System;
 
 class Program
@@ -524,7 +524,7 @@ class Program
 
 例外が最後までキャッチされなかった場合<sup>※</sup>、アプリ自体が停止します。
 
-```csharp
+```csharp {title="未処理例外"}
 using System;
 
 class Program
@@ -545,7 +545,7 @@ class Program
 
 このとき、以下のような、例外で停止した旨を示すメッセージが表示されます。
 
-```console
+```console {title="未処理例外"}
 Unhandled Exception: System.NotImplementedException: The method or operation is not implemented.
    at Program.A() in C:\Projects\ConsoleApp1\Program.cs:line 5
    at Program.B() in C:\Projects\ConsoleApp1\Program.cs:line 6
@@ -577,7 +577,7 @@ try ブロックで囲んだだけでは（例外が発生しなければ）ほ�
 C# 6で、例外のcatch句に続けてwhenと書くことで、catchしたい例外の条件を書けるようになりました。
 この機能を<strong id="key-exception-filter" class="keyword">例外フィルター</strong>(exception filter)といいます。
 
-```csharp
+```csharp {title="例外フィルター" highlight-text="when (条件)"}
 try
 {
   例外が投げられる可能性のあるコード

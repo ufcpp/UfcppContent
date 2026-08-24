@@ -29,7 +29,7 @@ aliases: []
 
 汎用性が要らないなら簡単な話で、以下のようなコードで書けます。
 
-```csharp
+```csharp {title="float の配列に対するユークリッド距離"}
 class Euclidean
 {
     // a と b の長さが同じとか、いくつか前提を置いちゃってるけども、最低限のコード
@@ -67,7 +67,7 @@ class Euclidean
 となったときに問題になるのが、C# では、数値の四則演算を素直にジェネリックにできないこと。
 以下のコードはコンパイルできません。
 
-```csharp
+```csharp {title="ジェネリックな型には演算子が使えない"}
 // int や double でも使いたいからと言って、以下のようには書けない。
 // ジェネリックな型 T には +, -, * が定義されていない。
 class Euclidean<T>
@@ -130,7 +130,7 @@ class Euclidean<T>
 で、ちょっとしたトリックなんですが、[値型ジェネリックを使うとインライン化が効く](../../../../study/csharp/oop/sp2_generics.md#pseudo-static)という黒魔術がありまして。
 以下のように書けば倍は速くなります。
 
-```csharp
+```csharp {title="値型ジェネリックで四則演算"}
 class Euclidean<T, TArithmetic>
     // 構造体にして、型引数で受け取る
     where TArithmetic : struct, IArithmetic<T>
@@ -235,7 +235,7 @@ struct Array2<T>
 
 その結果、行きつく先は以下のようなコードになります。
 
-```csharp
+```csharp {title="値型ジェネリックを使った固定長配列"}
 // 配列自体用。これは大して意味は持ってない。誤用防止程度
 public interface IFixedArray<T> { }
 
@@ -268,7 +268,7 @@ public struct Fixed2<T> : IFixedArrayAccessor<T, Fixed2<T>.Array>
 
 この時点で結構悩ましいコードですが、されにこれを距離計算に組み込むと以下のようになります。
 
-```csharp
+```csharp {title="固定長配列を距離計算に組み込み"}
 class Euclidean<T, TArithmetic, TArray, TArrayAccessor>
     where TArithmetic : struct, I/OArithmetic<T>
     where TArray : struct, IFixedArray<T>
@@ -325,7 +325,7 @@ class Program
 パフォーマンスを考えると値型ジェネリックを使うことになります。
 行きつく先が以下のようなコード。
 
-```csharp
+```csharp {title="距離もジェネリック化"}
 interface IMetric<T, TArray>
     where TArray : struct, IFixedArray<T>
 {
@@ -396,7 +396,7 @@ class Program
 やっぱりすぐにつらくなって断念。
 代わりに、以下のようなごまかしコードを書くことになりました。
 
-```csharp
+```csharp {title="派生でごまかす"}
 // ジェネリックな型を1個用意しておいて、派生で型引数を与えておく
 // 数値の型
 class FloatPoint : Point<float, FloatArithmetic> { }

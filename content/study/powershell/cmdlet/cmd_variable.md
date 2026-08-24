@@ -19,7 +19,7 @@ aliases:
 $ を使って変数の読み書きをする以外に、
 <strong id="set_variable" class="keyword">Set-Variable</strong> と <strong id="get_variable" class="keyword">Get-Variable</strong> という Cmdlet を使うことでも変数の読み書きができます。
 
-```console
+```console {title="Set-Variable, Get-Variable"}
 >  Set-Variable a 1
 >  Get-Variable a
 
@@ -40,7 +40,7 @@ a                              2
 Set-Variable を使うと、
 ReadOnly / Constant 属性を付与することができます。
 
-```console
+```console {title="Set-Variable -option"}
 >  Set-Variable a 1 -option ReadOnly
 >  $a = 0
 変数 a は読み取り専用または定数であるため、上書きできません。
@@ -50,7 +50,7 @@ ReadOnly / Constant 属性を付与することができます。
 また、
 Get-Variable では任意のレベルのスコープの変数にアクセスしたりできます。
 
-```console
+```console {title="Get-Variable -scope"}
 >  Get-Variable a –scope 1  # 親スコープから値を取得
 >  $Get-Variable a –scope 2  # 祖父
 ```
@@ -58,7 +58,7 @@ Get-Variable では任意のレベルのスコープの変数にアクセスし�
 
 その他、<strong id="remove_variable" class="keyword">Remove-Variable</strong> で変数を削除したりもできます。
 
-```console
+```console {title="Remove-Variable"}
 >  $a = 0
 >  Remove-Variable a
 >  Get-Variable a

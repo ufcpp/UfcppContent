@@ -97,4 +97,42 @@ public sealed class CurrentBlockDiscovererTests
         Assert.Equal(CurrentCodeBlockKind.Fenced, block.Kind);
         Assert.Equal("value", block.Code);
     }
+
+    [Fact]
+    public void Discover_TreatsWhitespaceOnlyLineAsLegacyHtmlBlockTerminator()
+    {
+        var document = """
+            <div class="expand-panel" markdown="1">
+            __SPACES__
+            ```csharp
+            first
+            ```
+            </div>
+
+            ```text
+            second
+            ```
+            """
+            .Replace("__SPACES__", "   ", StringComparison.Ordinal)
+            .ReplaceLineEndings("\n");
+
+        var blocks = CurrentBlockDiscoverer.Discover(document);
+
+        Assert.Collection(
+            blocks,
+            block =>
+            {
+                Assert.Equal(1, block.Ordinal);
+                Assert.Equal(3, block.SourceLine);
+                Assert.Equal(CurrentCodeBlockKind.Fenced, block.Kind);
+                Assert.Equal("first", block.Code);
+            },
+            block =>
+            {
+                Assert.Equal(2, block.Ordinal);
+                Assert.Equal(8, block.SourceLine);
+                Assert.Equal(CurrentCodeBlockKind.Fenced, block.Kind);
+                Assert.Equal("second", block.Code);
+            });
+    }
 }

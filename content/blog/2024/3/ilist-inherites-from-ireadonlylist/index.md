@@ -35,7 +35,7 @@ aliases: []
 
 そこで当時の設計としては「read-only / writeable なインターフェイスを1個用意して、`IsReadOnly` プロパティで書き込み出来るかどうかを調べる」という作りでした。
 
-```csharp
+```csharp {title="read-only かどうかはプロパティで調べる"}
 namespace System.Collections;
 
 public interface IList : ICollection, IEnumerable
@@ -50,7 +50,7 @@ public interface IList : ICollection, IEnumerable
 .NET Framework 2.0 (2005年)に[ジェネリクス](../../../../study/csharp/oop/sp2_generics.md)が導入されてもまだこの思想は引き継がれます。
 まあ、旧来インターフェイスとジェネリック インターフェイスで思想が違うのも混乱しそうですし。
 
-```csharp
+```csharp {title="ジェネリック ICollection でも IsReadOnly プロパティ"}
 namespace System.Collections.Generic;
 
 public interface ICollection<T> : IEnumerable<T>, IEnumerable
@@ -65,7 +65,7 @@ public interface ICollection<T> : IEnumerable<T>, IEnumerable
 問題になり始めたのは C# 4.0 (2010年)で共変性を得てからでして。
 読み書き両方できてしまう `IList<T>` や `ICollection<T>` では、以下のような共変な代入ができません。
 
-```csharp
+```csharp {title="書き込みがあると共変にできない"}
 IList<string> str = new List<string>();
 IList<object> obj = str; // ダメ。
 
@@ -75,7 +75,7 @@ obj.Add(1);
 
 そこで .NET Framework 4.5 (2012年)では read-only 系のインターフェイスが導入されます。
 
-```csharp
+```csharp {title="read-only 系インターフェイスは共変"}
 IReadOnlyList<string> str = new List<string> { "abc" };
 IReadOnlyList<object> obj = str; // read-only なら共変。
 
@@ -89,7 +89,7 @@ Console.WriteLine(obj[0]);
 2012年に追加された read-only 系インターフェイスですが、元々あったインターフェイスとは独立しています。
 残念ながら「`IList<T>` は `IReadOnlyList<T>` ではない」という状態。
 
-```csharp
+```csharp {title="残念ながら完全に別インターフェイス"}
 namespace System.Collections.Generic;
 
 public interface IReadOnlyCollection<out T> : IEnumerable<T>
@@ -119,7 +119,7 @@ public interface IList<T> : ICollection<T>
 
 普通に考えて、1から作るのであれば以下のようにします。
 
-```csharp
+```csharp {title="1からやり直せるならどう考えても ICollection : IReadOnlyCollection"}
 namespace System.Collections.Generic;
 
 public interface IReadOnlyCollection<out T> : IEnumerable<T>
@@ -137,7 +137,7 @@ public interface ICollection<T> : IReadOnlyCollection<T>
 
 例えば以下のようなコードがあったとします。
 
-```csharp
+```csharp {title="バージョン1"}
 // バージョン1
 
 // corelib.dll
@@ -156,7 +156,7 @@ class C : ICollection
 
 ここに `IReadOnlyCollection` を「理想的な状態」で導入したくて `Count` を移動させると mylib を壊します。
 
-```csharp
+```csharp {title="Count を IReadOnlyCollection"}
 // バージョン2
 
 // corelib.dll
@@ -185,7 +185,7 @@ class C : ICollection
 これなら「再コンパイルするまでは `C` は `IReadOnlyCollection` にはならない」というだけなので、
 DLL のロードに失敗したりはしません。
 
-```csharp
+```csharp {title="機能がダブるけどもこれで妥協"}
 // corelib.dll
 interface IReadOnlyCollection
 {
@@ -214,7 +214,7 @@ class C : ICollection, IReadOnlyCollection // 2個とも実装
 この機能を使えば先ほどの「既存クラスが `IReadOnlyCollection.Count` を実装していない」問題は解消できます。
 (親インターフェイスの追加は、「メンバー追加」の一種なのでデフォルト実装で対処できます。)
 
-```csharp
+```csharp {title="デフォルト実装で解決"}
 // corelib.dll
 interface IReadOnlyCollection
 {
@@ -255,7 +255,7 @@ class C : ICollection
 というのも、デフォルト実装には「ダイアモンド継承」問題というものがあります。
 以下のような感じで、「分かれ道からの合流がある継承」をやると問題を起こすことがあります。
 
-```csharp
+```csharp {title="ダイアモンド継承問題"}
 interface IA
 {
     int M();
@@ -282,7 +282,7 @@ class C : IB, IC
 1段自作のインターフェイスとかを挟んでいると問題を踏む可能性が出てきます。
 例えば以下のような感じ。
 
-```csharp
+```csharp {title="IReadOnlyCollection.Count でダイアモンド継承問題を踏む例"}
 // corelib とは別のプロジェクトで、別の開発者が保守
 // anotherlib.dll
 interface ICustomReadonlyList : IReadOnlyCollection

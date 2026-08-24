@@ -170,7 +170,7 @@ public Node End
 例えば、
 ノードの先頭から順に全ての要素にアクセスするには、以下のようなコードを書きます。
 
-```csharp
+```csharp {highlight-text="n != this.End"}
 for (Node n = this.First; n != this.End; n = n.Next)
   Console.Write(n.Value);
 ```

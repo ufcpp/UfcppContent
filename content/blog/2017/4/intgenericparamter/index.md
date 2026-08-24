@@ -22,7 +22,7 @@ aliases: []
 
 ってことで、書きたいのはこんなコード:
 
-```csharp
+```csharp {title="[M, N)ビット目を読み書きする構造体"}
 // C# では書けない書き方。C++だとこんな感じのことができたりする。
 // [M, N) (N は含まない)の範囲のビットを読み書きする構造体。
 struct Bit<T, M, N>
@@ -96,7 +96,7 @@ struct Bit<T, M, N>
 
 必要な個所だけ抜き出すと、以下のような感じ。
 
-```csharp
+```csharp {title="C# でintジェネリック引数"}
 public interface IConstant<T>
 {
     T Value { get; }
@@ -122,7 +122,7 @@ public struct GaloisField<N>
 
 ただし、定数代わりに、以下のような構造体を作っておく必要あり。
 
-```csharp
+```csharp {title="定数もどきの構造体"}
 public static class ConstantInt
 {
     public struct _0 : IConstant<int> { public int Value => 0; }

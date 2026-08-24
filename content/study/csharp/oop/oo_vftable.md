@@ -53,7 +53,7 @@ aliases:
 
 まず、元となる C++ のソースを示すと以下のような感じ。
 
-```cpp
+```cpp {title="ShapeCpp.h"}
 #pragma once
 
 class Shape
@@ -88,7 +88,7 @@ private:
 ```
 
 
-```cpp
+```cpp {title="ShapeCpp.cpp"}
 #include "ShapeCpp.h"
 
 Rectangle::Rectangle(double w, double h)
@@ -132,7 +132,7 @@ Rectangle、Circle はそれぞれ、矩形・円を表すクラスです。
 
 まず、Shape クラスの宣言に相当する C 言語コードを作ってみます。
 
-```csharp
+```csharp {title="Shape クラスの宣言に相当する C 言語コード"}
 //----------------------------------------------------------------
 // class Shape に相当
 
@@ -156,7 +156,7 @@ void ShapeDtor(Shape* this);
 まず、非 OOP 言語にはメンバー関数（メソッド）なんてものはありません。
 C++ で、
 
-```csharp
+```csharp {title="メンバー関数"}
 class Person
 {
 public:
@@ -171,7 +171,7 @@ p.GetAge();
 と言うように書いていたものは、
 C 言語では、
 
-```csharp
+```csharp {title="メンバー関数"}
 typedef struct TagPerson
 {
 } Person;
@@ -190,7 +190,7 @@ PersonGetAge(&p);
 で、ShapeVftable というのが、仮想関数を実現するためのキモである仮想関数テーブルというやつです。
 実体は以下のようになっています。
 
-```csharp
+```csharp {title="Shape クラスの仮想関数テーブル"}
 void* ShapeVftable[] = 
 {
   "class Shape",
@@ -216,7 +216,7 @@ C++ とは違って、これらを自動的に読んでくれる仕組みは持�
 自分で呼び出してやる必要があります。
 例えば、C++ の、
 
-```csharp
+```csharp {title="Shape を new"}
 // 実際には、Shape は抽象クラスなので new できないけども。
 
 s = new Shape();
@@ -227,7 +227,7 @@ delete s;
 
 と同じ事をしようと思うと、以下のような書き方が必要になります。
 
-```csharp
+```csharp {title="C 言語で new, delete 相当のコード"}
 s = (Shape*)malloc(sizeof(Shape));
 ShapeCtor(s);
 
@@ -242,7 +242,7 @@ ShapeCtor, ShapeDtor の中身もほぼ空っぽになります。
 前節で説明した仮想関数テーブルの実体 ShapeVftable を、
 Shape の vftable メンバー変数に代入します。
 
-```csharp
+```csharp {title="ShapeCtor, ShapeDtor の実体"}
 void ShapeCtor(Shape* this)
 {
   this->vftable = ShapeVftable;
@@ -261,7 +261,7 @@ void ShapeDtor(Shape* this)
 
 続いて、Rectangle クラスの宣言に相当する C 言語コードを示します。
 
-```csharp
+```csharp {title="Rectangle クラスの宣言に相当する C 言語コード"}
 //----------------------------------------------------------------
 // class Rectangle に相当
 
@@ -296,7 +296,7 @@ RectangleGetArea, RectangleGetPerimeter があります。
 これは、単に、親クラスを1つ目のメンバー変数として持つことによって実現します。
 例えば、
 
-```csharp
+```csharp {title="基底クラスのポインター変数に代入"}
 Rectangle* r = (Rectangle*)malloc(sizeof(Rectangle));
 Shape* s = (Shape*)r;
 
@@ -314,7 +314,7 @@ if (s->vftable == r->base.vftable)
 
 Rectangle クラスの仮想関数テーブルの実体 RectangleVftable は以下のようになります。
 
-```csharp
+```csharp {title="Rectangle クラスの仮想関数テーブル"}
 void* RectangleVftable[] =
 {
   "class Rectangle",
@@ -337,7 +337,7 @@ C++ と違って基底クラスのコンストラクタを自動的に呼んで�
 プログラマが明示的に ShapeCtor を呼び出す必要があります。
 （デストラクタも同様。）
 
-```csharp
+```csharp {title="Rectangle のコンストラクタ・デストラクタ"}
 void RectangleCtor(Rectangle* this, double w, double h)
 {
   ShapeCtor(&this->base);
@@ -359,7 +359,7 @@ void RectangleDtor(Rectangle* this)
 元の C++ の Rectangle クラスの GetArea, GetPerimeter とほぼ同じです。
 （関数の引数に Rectangle* this が増えているだけ。）
 
-```csharp
+```csharp {title="RectangleGetArea, RectangleGetPerimeter"}
 double RectangleGetArea(Rectangle* this)
 {
   return this->width * this->height;
@@ -380,7 +380,7 @@ Circle クラスの実装は Rectangle とほぼ同様なので説明は省略�
 
 C++ で、以下のようなコードを考えます。
 
-```csharp
+```csharp {title="仮想関数呼び出し"}
 void print(Shape* s)
 {
   printf("%s\n%f\n%f\n\n",
@@ -409,7 +409,7 @@ Rectangle, Circle のインスタンスそれぞれについて、
 
 これに相当する C 言語コードは以下のようになります。
 
-```csharp
+```csharp {title="仮想関数呼び出しに相当する C 言語コード"}
 void print(Shape* s)
 {
   printf("%s\n%f\n%f\n\n",
@@ -443,7 +443,7 @@ void TestC(void)
 仮想関数呼び出しと、型情報の取得の部分だけを取り出してみましょう。
 まずは C++。
 
-```csharp
+```csharp {title="仮想関数呼び出し"}
 typeid(*s).name(),
 s->GetArea(),
 s->GetPerimeter());
@@ -452,7 +452,7 @@ s->GetPerimeter());
 
 続いて C 言語版。
 
-```csharp
+```csharp {title="仮想関数呼び出しに相当する C 言語コード"}
 (char*)s->vftable[0],
 ((TypeGetArea*)s->vftable[VF_GetArea])(s),
 ((TypeGetPerimeter*)s->vftable[VF_GetPerimeter])(s));
@@ -477,7 +477,7 @@ ShapeCtor, RectangleCtor, CircleCtor の中で、
 それぞれ ShapeVftable, RectangleVftable, CircleVftable に初期化されています。
 なので、
 
-```csharp
+```csharp {title="仮想関数呼び出しに相当する C 言語コード"}
 Shape* s = (Shape*)malloc(sizeof(Rectangle));
 RectangleCtor((Rectangle*)s, 2, 3);
 
@@ -499,7 +499,7 @@ s は Shape のポインター型の変数ですが、
 もし、GetArea が仮想関数ではなかった場合、
 （C 言語版の）RectangleGetArea の呼び出しは以下のようになります。
 
-```csharp
+```csharp {title="通常のメンバー関数の C 言語化"}
 Shape* s = (Shape*)malloc(sizeof(Rectangle));
 RectangleCtor((Rectangle*)s, 2, 3);
 
@@ -509,7 +509,7 @@ RectangleGetArea((Rectangle*)s);
 
 一方、仮想関数呼び出しは以下のようになります。
 
-```csharp
+```csharp {title="仮想関数呼び出しの C 言語化"}
 Shape* s = (Shape*)malloc(sizeof(Rectangle));
 RectangleCtor((Rectangle*)s, 2, 3);
 
@@ -533,7 +533,7 @@ RectangleCtor((Rectangle*)s, 2, 3);
 コンパイル時にどのメンバー関数を呼び出せばいいのかが確定するので、
 通常のメンバー関数呼び出しになります。
 
-```csharp
+```csharp {title="仮想関数呼び出し"}
 Rectangle r(2, 3);
 r.GetArea();
 ```

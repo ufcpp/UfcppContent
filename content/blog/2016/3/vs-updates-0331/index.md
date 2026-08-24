@@ -121,7 +121,7 @@ C# 的には、まあ、[GitHubのRoslynリポジトリ](https://github.com/dotn
 
 ↓こんなやつ。
 
-```csharp
+```csharp {title="ローカル関数"}
 private static void LocalFunctions()
 {
     int F(int n) => n >= 1 ? n * F(n - 1) : 1;

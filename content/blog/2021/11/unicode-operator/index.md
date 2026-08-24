@@ -22,7 +22,7 @@ C# ライブ配信をしていて、「[括弧用の記号の種類が少なす�
 例えば以下のコードはコンパイルして実行できます。
 (1から5の和で、15が出力されます。)
 
-```swift
+```swift {title="Swift の Unicode 演算子"}
 prefix operator ∑
 
 prefix func ∑ (x: [Int]) -> Int {

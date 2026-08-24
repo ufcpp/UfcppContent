@@ -31,7 +31,7 @@ C# 13でのコレクション式関連、量が多いのでちょっとずつ取
 
 C# 12 でコレクション式が入りましたが、`Dictionary<TKey, TValue>` などのディクショナリ系の型に対しては使えませんでした。
 
-```csharp
+```csharp {title="ディクショナリに対するコレクション式"}
 // C# 12 でも空っぽのディクショナリは作れるのに…
 Dictionary<string, int> d = [];
 
@@ -73,7 +73,7 @@ C# 12 時点では後回しになりましたが、13候補としては有力で
 
 まだ構文をどうするかも決定ではないんですが、現状の最有力候補は `[key: value]` みたいな書き方です。
 
-```csharp
+```csharp {title="ディクショナリ式の候補文法"}
 // 「ディクショナリ式」の最有力候補の文法:
 Dictionary<string, int> d = [
     "one": 1,
@@ -87,7 +87,7 @@ Dictionary<string, int> d = [
 ちなみに、最初期には「`[]` の外でも `key: value` で `KeyValuePair` を作れるようにするべきか？」みたいな見当もありましたが、
 現状それには否定的で、 `[]` の中限定の構文になりそうです。
 
-```csharp
+```csharp {title="没案"}
 // 没案「KeyValuePair 式」。
 KeyValuePair<string, int> kvp = "one": 1;
 ```
@@ -96,7 +96,7 @@ KeyValuePair<string, int> kvp = "one": 1;
 
 ディクショナリ式中では、`key: value` みたいな形式のみを受け付けるか、それとも、`KeyValuePair` であれば直接書けるようにするかという話があります。
 
-```csharp
+```csharp {title="KeyValuePair を直接書けるようにする案"}
 // key: value のみ。これは問題ない。
 Dictionary<string, int> d = ["one": 1];
 
@@ -115,7 +115,7 @@ Dictionary<string, int> d2 = ["one": 1, kvp];
 
 検討事項1と似たような話ですが、`IEnumerable<KeyValuePair<TKey, TValue>>` とかをディクショナリ式中に含められるかという話もあります。
 
-```csharp
+```csharp {title="ディクショナリ式中で KeyValuePair のリストを Spread"}
 var kvps = new[] { KeyValuePair.Create("two", 2) };
 
 // .. で展開すると KeyValuePair になるわけで、
@@ -137,7 +137,7 @@ Dictionary<string, int> d3 = [..kvps, ..kvps1];
 `[]` 中の `key: value` は「`KeyValuePair` を作るための簡易記法」みたいなものになっているわけですが、
 だったら以下のような「ディクショナリじゃないただのコレクションに対して使えるか」という話が出てきます。
 
-```csharp
+```csharp {title="KeyValuePair のリストに対してディクショナリ式"}
 // 「ディクショナリ式」の最有力候補の文法:
 List<KeyValuePair<string, int>> d = [
     "one": 1,
@@ -184,7 +184,7 @@ Dictionary<string, int> d =
 まず、ディクショナリ式ではキーの重複を認めるかどうかという話があります。
 例えば、`ToDictionary` なんかでは、キーが重複していると例外を出します。
 
-```csharp
+```csharp {title="ToDictionary はキーの重複ダメ"}
 var d = new[] { (1, 10), (1, 20) }
     .ToDictionary(x => x.Item1); // ArgumentException
 ```
@@ -201,7 +201,7 @@ var d = new[] { (1, 10), (1, 20) }
 
 なので結局は「どういう動作にするか」は決めれなくて、「`Add` とインデクサーのどちらを使うか」という話になります。
 
-```csharp
+```csharp {title="ディクショナリ式の初期化はどちらにすべきか"}
 // Add で初期化。
 Dictionary<string, int> d1 = new();
 d1.Add("a", 1);
@@ -215,7 +215,7 @@ d2["b"] = 2;
 
 ちなみにこれらは、現状のコレクション初期化子・オブジェクト初期化子を使うと以下のように書けるやつです。
 
-```csharp
+```csharp {title="Dictionary に対するコレクション初期化子・オブジェクト初期化子"}
 // Add での初期化になるコレクション初期化子。
 Dictionary<string, int> d1 = new()
 {

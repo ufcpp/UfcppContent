@@ -38,14 +38,14 @@ C#関係ない… こころなし程度にC#に関係している点というと
 以降のサンプル コードでは、[Math.NET Numerics](https://www.nuget.org/packages/MathNet.Numerics/)を使って、
 以下の`using`ディレクティブがあるものとして説明します。
 
-```csharp
+```csharp {title="MathNet.Numerics.Distributions"}
 using MathNet.Numerics.Distributions;
 using static System.Math;
 ```
 
 例えば、x, yそれぞれに対して、一様乱数(一定の範囲内で、全ての値が均等な確率で出現する乱数)を使って点を作ると、完全に真四角になります。
 
-```csharp
+```csharp {title="一様乱数を2個使って2次元座標を作る"}
 var rand = new ContinuousUniform(-1, 1);
 var p = (rand.Sample(), rand.Sample());
 ```
@@ -61,14 +61,14 @@ var p = (rand.Sample(), rand.Sample());
 乱数を足すために、以下のようなメソッドを用意してみます。
 `n`個足して平均を取るだけの関数です。
 
-```csharp
+```csharp {title="一様乱数を n 回重ねて平均を取る"}
 static double Mean(IContinuousDistribution d, int n)
     => Enumerable.Range(0, n).Select(_ => d.Sample()).Sum() / n;
 ```
 
 これを使って、`n` = 2～5に対して、以下のコードで点を生成してみます。
 
-```csharp
+```csharp {title="一様乱数を重ねたもので2次元座標を作る"}
 var rand = new ContinuousUniform(-1, 1);
 var p = (Mean(rand, n), Mean(rand, n));
 ```
@@ -85,7 +85,7 @@ var p = (Mean(rand, n), Mean(rand, n));
 
 ちなみに、正規分布乱数を使うと、真円になります。
 
-```csharp
+```csharp {title="正規分布乱数で2次元座標を作る"}
 var rand = new Normal(-1, 1);
 var p = (rand.Sample(), rand.Sample());
 ```
@@ -162,7 +162,7 @@ var p = (rand.Sample(), rand.Sample());
 例えばの話、以下のような乱数で2次元の点を作ってみましょう。
 角度を一様分布にしたものです。
 
-```csharp
+```csharp {title="確度を一様分布にして作った2次元座標"}
 var chi = new ChiSquared(2);
 var uni = new ContinuousUniform(0, 2 * PI));
 var r = Sqrt(chi.Sample());

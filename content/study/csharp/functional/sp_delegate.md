@@ -48,7 +48,7 @@ delegate（委譲）という言葉のニュアンスとしては、
 デリゲートを使用するためにはまず、デリゲート型を定義します。
 デリゲート型の定義は以下のように、<code>delegate</code> キーワードを用いて行います。
 
-```csharp
+```csharp {title="デリゲート型の作成"}
 delegate 戻り値の型 デリゲート型名(引数リスト);
 ```
 
@@ -63,7 +63,7 @@ delegate 戻り値の型 デリゲート型名(引数リスト);
 そして、デリゲートに格納されたメソッドは、デリゲートを介して呼び出すことが出来ます。
 以下にデリゲートの使用例を示します。
 
-```csharp
+```csharp {title="デリゲートの例" highlight-lines="4" highlight-ranges="sha256:830da63e70fb07e88c3cd3d256ca84015f08c03e1792d3fe35f2fe40a77810c4;11:5-11:42,13:5-13:12"}
 using System;
 
 // SomeDelegate という名前のデリゲート型を定義
@@ -104,7 +104,7 @@ C# 2.0 からは、
 <code>SomeDelegate a = A;</code>
 と言うように、メソッドからデリゲートへの暗黙の変換が出来るようになりました。
 
-```csharp
+```csharp {title="デリゲートの例" highlight-text="SomeDelegate a = A;"}
 using System;
 
 // SomeDelegate という名前のデリゲート型を定義
@@ -139,7 +139,7 @@ C# のデリゲートにはさらに高度な機能があります。
 
 デリゲートにはクラス(static)メソッドとインスタンス(非static)メソッドのどちらでも代入する事が出来ます。
 
-```csharp
+```csharp {title="インスタンスメソッドの代入"}
 using System;
 
 /// <summary>
@@ -181,7 +181,7 @@ class DelegateTest
 複数のメソッドを代入した状態で、デリゲート呼び出しを行うと、代入した全てのメソッドが呼び出されます。
 このように、複数のメソッドを格納した状態のデリゲートのことを<strong id="malticast" class="keyword">マルチキャストデリゲート</strong>と呼びます。
 
-```csharp
+```csharp {title="複数のメソッドの代入" highlight-ranges="sha256:366bb5dd79398343ed08e4b297b551bacd2112db6a30206caf1ded8862895ca8;13:7-13:9,14:7-14:9"}
 using System;
 
 /// <summary>
@@ -216,7 +216,7 @@ C が呼ばれました。
 
 もちろん、クラスメソッドとインスタンスメソッドを混ぜて、複数のメソッドを代入することも出来ます。
 
-```csharp
+```csharp {title="インスタンスメソッド、クラスメソッド混在"}
 using System;
 
 /// <summary>
@@ -292,7 +292,7 @@ C# コンパイラによって自動的に <code>BeginInvoke</code> と <code>En
 <code>EndInvoke</code> はデリゲート型の定義時に <code>ref</code> または <code>out</code> キーワードを付けた引数および <code>System.IAsyncResult </code> インターフェース型の引数を持ち、デリゲートの戻り値と同じ型の戻り値を持ちます。
 例えば、<code>delegate int ShowMessage(int n, ref int p, out int q);</code> というデリゲート型を定義した場合、以下のようなメソッド定義になります。
 
-```csharp
+```csharp {title="BeginInvoke, EndInvoke"}
 IAsyncResult BeginInvoke(
   int n, ref int p, out int q, AsyncCallback callback, object state);
 int EndInvoke(ref int p, out int q, IAsyncResult ar);
@@ -301,7 +301,7 @@ int EndInvoke(ref int p, out int q, IAsyncResult ar);
 
 以下に非同期デリゲート呼び出しの例を挙げます。
 
-```csharp
+```csharp {title="非同期デリゲート呼び出し" highlight-ranges="sha256:193d8f98f8645dc31091d7c4a5d325e7a2d7bca871431c998979a4dec35cab3e;19:35-19:46,29:17-29:26"}
 using System;
 using System.Threading;
 
@@ -398,7 +398,7 @@ AsynchronousMethod (5)
 例えば、整数の配列の中から値が10より大きいものだけを取り出す場合、
 以下のようなコードで実現できます。
 
-```csharp
+```csharp {title="x&gt;0 を満たすものだけを取り出す"}
 static int[] Select(int[] x)
 {
   int n=0;
@@ -422,7 +422,7 @@ static int[] Select(int[] x)
 述語を使って拡張してみましょう。
 まず、述語用のデリゲート型を定義します。
 
-```csharp
+```csharp {title="述語用のデリゲート"}
 /// <summary>
 /// 整数 n がある条件を満たすときだけ true を返すデリゲート。
 /// </summary>
@@ -432,7 +432,7 @@ delegate bool Predicate(int n);
 
 そして、先ほどのコードを以下のように書き換えます。
 
-```csharp
+```csharp {title="ある条件を満たすものだけを取り出す" highlight-ranges="sha256:d6d8c18071f927fe1142570e126e0900156c81e976dbd21b400d0550921e0250;1:30-1:44,5:8-5:15,11:8-11:15"}
 static int[] Select(int[] x, Predicate pred)
 {
   int n=0;
@@ -581,7 +581,7 @@ Select メソッドに渡すための述語メソッドとして、
 IsOver10, Is5To15 という２つのメソッドを定義して使っていました。
 この2つのメソッドを、匿名メソッド機能を用いて書き直すと、以下のようになります。
 
-```csharp
+```csharp {title="匿名メソッドの例" highlight-ranges="sha256:a07b7c3832516dbc3fe6705ed51ddcf4c07661ac655e801d04ea9e9c519e3032;13:7-13:40,21:7-21:53"}
 using System;
 
 delegate bool Predicate(int n);
@@ -625,7 +625,7 @@ class DelegateTest
 と、IsOver10 の中身そのものが書かれています。
 匿名メソッドとは、このような、delegate キーワードから始めて、メソッドの中身を任意の箇所に埋め込んだ部分のことを指します。
 
-```csharp
+```csharp {title="匿名メソッドの書式"}
 delegate (引数リスト){ メソッド定義 }
 ```
 
@@ -639,21 +639,21 @@ C# 3.0 では、匿名関数をさらに簡便な記法で書けるようにな�
 
 C# 2.0 の記法では、以下のように書いていたものを、
 
-```csharp
+```csharp {title="匿名メソッド式の例"}
 delegate(int n){ return n > 10; }
 ```
 
 
 3.0 では以下のように書けるようになりました。
 
-```csharp
+```csharp {title="ラムダ式の例"}
 (int n) => { return n > 10; }
 ```
 
 
 変数の型が左辺値や関数の引数から推論できる場合にはさらに簡素化できて、以下のように書けます。
 
-```csharp
+```csharp {title="ラムダ式（型推論あり）"}
 Func<int, bool> f = n => { return n > 10; };
 ```
 
@@ -661,7 +661,7 @@ Func<int, bool> f = n => { return n > 10; };
 また、ラムダ式の中身が return 文1つだけの場合には、{} や return も省略できて、
 以下のように書けます。
 
-```csharp
+```csharp {title="ラムダ式（型推論あり）"}
 Func<int, bool> f = n => n > 10;
 ```
 
@@ -714,7 +714,7 @@ Derived 型の変数を Base 型に代入することは常に合法に行うこ
 Base 型の引数に対して Derived 型の変数を渡したり、
 Derived 型を帰すメソッドの戻り値を Base 型の変数で受けることが合法ということになります。
 
-```csharp
+```csharp {title="ダウンキャストは合法" highlight-ranges="sha256:bc9371c82cae96cbc692c811629ac5a4230e150fbe3ab50e601d46b8f6b24892;10:5-10:47,14:5-14:47"}
 class Base {}
 class Derived : Base {}
 
@@ -757,7 +757,7 @@ covariance と contravariance です。
 プログラミング用語としてはそのままコーバリアンスと呼ぶことが多いみたい。
 → 徐々に「共変性」という訳で定着してきたようです。）
 
-```csharp
+```csharp {title="covariance" highlight-text="db += DerivedReturn;    // 戻り値の型が違うけど、これも OK。"}
 class Base {}
 class Derived : Base {}
 
@@ -793,7 +793,7 @@ class DelegateTest
 プログラミング用語としてはそのままコントラバリアンスと呼ぶことが多いみたい。
 → 徐々に「反変性」という訳で定着してきたようです。）
 
-```csharp
+```csharp {title="contravariance" highlight-text="dd += BaseParameter;    // 引数の型が違うけど、これも OK。"}
 using System;
 
 class Base {}
@@ -829,7 +829,7 @@ class DelegateTest
 例えば以下のように、左辺の変数の型を見て `C.M` の型を決定していました。
 (同時に[オーバーロード解決](../structured/miscoverloadresolution.md)もしています。)
 
-```csharp
+```csharp {title="デリゲートのターゲットからの型決定"}
 // Func<int, int> 相手なので int M(int x)
 Func<int, int> f1 = C.M;
 
@@ -853,7 +853,7 @@ class C
 また `var` (要するに型推論)だけではなく、`Delegate` 型(`System` 名前空間)など(要は親クラス)にラムダ式を渡したい場面があります。
 例えば、Web リクエストを受け付けるプログラムを以下のように書きたいという要望がありました。
 
-```csharp
+```csharp {title="Web アプリの .NET 6 新テンプレート"}
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
@@ -877,7 +877,7 @@ app.Run();
 
 つまり、C# 10.0 では以下のコードがコンパイルできるようになりました。
 
-```csharp
+```csharp {title="デリゲートの自然な型決定"}
 // C# 9.0 までは
 // Func<string, int> f = m;
 // みたいに書かないとダメだった(ターゲット型推論)。
@@ -910,7 +910,7 @@ int m(string s) => s.Length;
 
 ということで、以下のような感じで型が決まります。
 
-```csharp
+```csharp {title="Action 等になるか、匿名型が作られるか"}
 // System.Action とかになるやつ:
 var a1 = (int a) => { };
 var a4 = (int a, int b, int c, int d) => { };
@@ -929,7 +929,7 @@ var a17 = (int a, int b, int c, int d, int e, int f, int g, int h, int i, int j,
 
 ちなみに、`var` 変数宣言している時点で型が確定しているので、後から別のデリゲート型に代入することはできません。
 
-```csharp
+```csharp {title="var に代入した時点で Action/Func に型が確定してる例"}
 // Func<int, bool> になる。
 var a = (int x) => true;
 

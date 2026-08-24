@@ -21,7 +21,7 @@ aliases: []
 
 元々、配列引数で作っていたとして、
 
-```csharp
+```csharp {title="元コード"}
 int[] x = [1, 2, 3];
 
 C.M(x);
@@ -36,7 +36,7 @@ public class C
 
 暗黙的型変換があるものであれば、多少型を変えても「再コンパイルすれば大丈夫」という状態になることはあります。
 
-```csharp
+```csharp {title="再コンパイルすれば大丈夫なこともある"}
 int[] x = [1, 2, 3];
 
 // int[] → ReadOnlySpan<int> の変更は、再コンパイルするならエラーにならず移行可能。
@@ -58,7 +58,7 @@ public class C
 なので、現実的には「メソッドは追加する一方」になりがちなんですが、
 非推奨にしたい古いメソッドによって利便性が損なわれることが多々あります。
 
-```csharp
+```csharp {title="メソッドは追加する一方になりがち"}
 int[] x = [1, 2, 3];
 
 // 普通に書くと int[] の方に行っちゃう。
@@ -78,7 +78,7 @@ public class C
 非推奨にしたいものには `Obsolete` 属性を付けるという手段はありますが、
 `Obsolete` 属性を付けたところでオーバーロード解決候補には残ってしまうのがかなり邪魔です。
 
-```csharp
+```csharp {title="Obsolete でもオーバーロード解決候補になっちゃう"}
 int[] x = [1, 2, 3];
 
 // C# コンパイラーは Obsolete 属性が付いたメソッドも普通にオーバーロード解決候補にしちゃう。
@@ -104,7 +104,7 @@ public class C
 
 最初に思いつく案としては、`Obsolete` 属性に手を入れる方法。
 
-```csharp
+```csharp {title="Obsolete 属性修正案"}
 public class C
 {
     // 最初に思いつく案として、Obsolete 属性を修正。
@@ -123,7 +123,7 @@ public class C
 
 * [Add proposal for BinaryCompatOnlyAttribute](https://github.com/dotnet/csharplang/pull/7707)
 
-```csharp
+```csharp {title="BinaryCompatOnly 案"}
 int[] x = [1, 2, 3];
 
 // ReadOnlySpan<int> の方が選ばれるようになる予定。
@@ -144,7 +144,7 @@ public class BinaryCompatOnlyAttribute : Attribute;
 ところが、じゃあ、「完全に候補から外す」だけでいいのかというと、そうでもなくて困ったみたいです。
 例えば、インターフェイスの実装とかはどうするの？ということになりました。
 
-```csharp
+```csharp {title="「完全に候補から外す」だけでいいのかどうか問題"}
 public interface I
 {
     // 新属性で「オーバーロード解決候補から外す」指定。
@@ -180,7 +180,7 @@ public class BinaryCompatOnlyAttribute : Attribute;
 
 * [Add proposal for overload resolution priority](https://github.com/dotnet/csharplang/pull/7906)
 
-```csharp
+```csharp {title="オーバーロード解決の優先度指定"}
 int[] x = [1, 2, 3];
 
 // ReadOnlySpan<int> の方が選ばれるようになる予定。

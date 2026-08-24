@@ -99,7 +99,7 @@ Parallel.ForEach(data, x =&gt;
 例えば、以下のような処理は、単に foreach 文を Parallel.ForEach メソッドに置き換えるだけでなく、
 ロックが必要です。
 
-```csharp
+```csharp {title="和を求める"}
 var data = Enumerable.Range(0, N);
  
 var sum = 0;
@@ -113,7 +113,7 @@ Console.WriteLine(sum);
 
 以下のように、sum += x の部分にロックを掛けます。
 
-```csharp
+```csharp {title="Parallel.ForEach で和を求める"}
 var data = Enumerable.Range(0, N);
  
 var sum = 0;
@@ -136,7 +136,7 @@ System.Linq 名前空間に ParallelEnumerable というクラスが追加され
 このクラスで定義されている AsParallel 拡張メソッドを使えば、LINQ クエリを並列化できます。
 （データ ソースに対して .AsParallel() を付けるだけです。）
 
-```csharp
+```csharp {title="AsParallel を使ってデータ処理の並列化" highlight-text="AsParallel()"}
 var data = Enumerable.Range(0, N);
 var sqSum = data.AsParallel().Sum(x => x * x);
 Console.WriteLine(sqSum);
@@ -152,7 +152,7 @@ Parallel クラスを使うよりも、こちらを使う方がおすすめで�
 例えば、1つ前の要素を参照したいというような場合、
 以下のように書いてしまいがちです。
 
-```csharp
+```csharp {title="階差の最大値を求める処理"}
 // 1つ前の値を保存しておく
 var prev = data.First();
 var max = int.MinValue;

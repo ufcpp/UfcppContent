@@ -136,7 +136,7 @@ BAML をローディングするためのコードが含まれています。
 作成した xap ファイルを HTML ページ中に埋め込むには object タグを使います。
 
 
-```html
+```html {title="xap ファイルを HTML ファイル中に埋め込み"}
 <object data="data:application/x-silverlight-2," type="application/x-silverlight-2">
     <param name="source" value="SilverlightApplication1.xap"/>
     <param name="onError" value="onSilverlightError" />
@@ -152,7 +152,7 @@ Silverlight でビューの作成に使える視覚要素（ボタンなどの�
 例えば、以下のような XAML を書くと、
 
 
-```xml
+```xml {title="階層的な XAML の例"}
 <Canvas Width="400" Height="300">
     <Rectangle Canvas.Left="30" Canvas.Top="30" Width="50" Height="50" Fill="Black"/>
 

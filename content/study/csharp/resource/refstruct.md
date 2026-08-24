@@ -36,7 +36,7 @@ aliases: []
 `Span<T>` 構造体自身にも `ref` 修飾子がついています。
 そして、`ref`構造体をフィールドとして持てるのは`ref`構造体だけです。
 
-```csharp
+```csharp {title="ref構造体を持てるのはref構造体だけ"}
 // Span<T> は ref 構造体になっている
 public readonly ref struct Span<T> { ... }
 
@@ -72,7 +72,7 @@ struct NonRefStruct
 - ローカルで確保したものは返せません
 - 引数などを介して多段に参照している場合、コードをたどって大元が安全かまで調べます
 
-```csharp
+```csharp {title="戻り値に返せるかどうか"}
 // 引数で受け取ったものは戻り値で返せる
 private static Span<int> Success(Span<int> x) => x;
 
@@ -109,7 +109,7 @@ private static Span<int> Error(Span<int> x, int n)
 ちなみに、上記の`Error`と似たようなコードでも、以下のコードはコンパイルできます。
 ちゃんと「メモリ確保があったかどうか」を見ていて、「`default`であれば何も確保していない」という判定もしています。
 
-```csharp
+```csharp {title="default は何も確保しない"}
 // ちゃんと「メモリ確保」があったかどうかを見てる
 // 同じようなコードでもこれは OK (default だと何も確保しない)
 private static Span<int> Success1()
@@ -122,7 +122,7 @@ private static Span<int> Success1()
 このルールは、`ref`構造体と、`ref`引数・`ref`戻り値の間でも働きます。
 例えば、引数由来の `Span<T>`から得た`ref T`な参照は戻り値にできますが、ローカル由来のものはできません。
 
-```csharp
+```csharp {title="Span&gt;T&lt;とref T"}
 // 引数で受け取った Span 由来の ref 戻り値は返せる
 private static ref int Success(Span<int> x) => ref x[0];
 
@@ -141,7 +141,7 @@ C# 7.2 で追加された構造体がらみの修飾子には[`readonly`](readon
 
 例えば以下のコードを見てください。
 
-```csharp
+```csharp {title="readonly修飾とref構造体"}
 using System;
 
 // ref だけ
@@ -193,7 +193,7 @@ class Program
 例えば、以下のコードは不正で、実行時エラーであったり、予期しない動作を招く可能性があります。
 しかし、コンパイラーが不正を判定できず、コンパイル時にエラーにすることができません。
 
-```csharp
+```csharp {title="unsafe な手段までは追えない"}
 unsafe static Span<int> X()
 {
     // ローカル
@@ -241,7 +241,7 @@ unsafe static Span<int> X()
   - `ToString` など、`object` 型のメソッドを呼べない
 - ジェネリック型引数として使えない
 
-```csharp
+```csharp {title="ref構造体は stack-only"}
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -313,7 +313,7 @@ C# 11 で、[ref 構造体](#key-refstruct)のフィールドを [`ref` (参照�
 
 ref フィールドの書き方は参照引数や参照戻り値と同じく、型の前に `ref` 修飾を付けます。
 
-```csharp
+```csharp {title="ref フィールド"}
 ref struct ByReference<T>
 {
     public ref T Value;
@@ -324,7 +324,7 @@ C# 7.2 に頃に [`Span<T>` 構造体の内部的な話](span.md#fast-span)で�
 ref フィールドが入ったことで、通常の C# コードで同様のことができるようになりました。
 実際、.NET 7 からはそういう実装に置き換わっていて、`Span<T>` の内部は晴れて以下のようなコードに変更されています。
 
-```csharp
+```csharp {title=".NET 7 での Span の中身"}
 ref struct Span<T>
 {
     internal readonly ref T _reference;
@@ -356,7 +356,7 @@ C# 7.2 の頃に [`ref readonly`](sp_ref.md#ref-readonly) というものがあ�
 比較のためにまず、どちらの readonly もついていない状態ですが、
 当然、「どこを参照するか変更」と「参照先の値の変更」のどちらもできます。
 
-```csharp
+```csharp {title="✔「どこを参照するか変更」と✔「参照先の値の変更」" highlight-ranges="sha256:488405be4ed0d9ef67529c31ae732689273f536f96f8f0ce8c6dcbe6ce77cb4c;10:12-10:15"}
 scoped var a = new A();
 
 int x1 = 0;
@@ -372,7 +372,7 @@ ref struct A
 
 で、`ref readonly` の方は C# 7.2 の頃からある意味と同じで、「参照先の値の変更不可」です。
 
-```csharp
+```csharp {title="✔「どこを参照するか変更」と✖「参照先の値の変更」" highlight-text="ref readonly"}
 scoped var a = new A();
 
 int x1 = 0;
@@ -388,7 +388,7 @@ ref struct A
 
 一方、C# 11 から書ける `readonly ref` は、要は、ref フィールド `ref T X` を readonly にするという意味なので、「どこを参照するか変更」の方ができなくなります。
 
-```csharp
+```csharp {title="✖「どこを参照するか変更」と✔「参照先の値の変更」" highlight-text="readonly ref"}
 int x0 = 0;
 
 // readonly フィールドはコンストラクターでしか初期化できないので引数で渡す。
@@ -408,7 +408,7 @@ ref struct A
 
 当然、両方の `readonly` を付けると両方不可です。
 
-```csharp
+```csharp {title="✖「どこを参照するか変更」と✖「参照先の値の変更」"}
 int x0 = 0;
 
 // readonly フィールドはコンストラクターでしか初期化できないので引数で渡す。
@@ -432,7 +432,7 @@ ref struct A
 簡単に言うと、メソッド内のローカル変数はメソッドを抜けると消えるので、
 その参照は外に漏らしてはいけません。
 
-```csharp
+```csharp {title="ローカル変数への参照は外に漏らせない"}
 static ref int M()
 {
     int x = 123; // メソッド内の変数はメソッド抜けると消える。
@@ -445,7 +445,7 @@ static ref int M()
 上記の例の場合は単純ですが、
 参照変数などがあるため、間接的に何段も追いかける必要があります。
 
-```csharp
+```csharp {title="エスケープ阻止のため、多段に追う必要あり"}
 static ref int M()
 {
     int x = 123; // メソッド内の変数はメソッド抜けると消える。
@@ -463,7 +463,7 @@ C# 11 で ref フィールドが入ったわけですが、
 
 例えばわざとちょっと複雑なことをすると、以下のように、いろいろなところに参照が伝搬するコードが書けます。
 
-```csharp
+```csharp {title="参照がいろんなところに伝搬する例"}
 static void M(out Span<int> result)
 {
     int x = 123;
@@ -495,7 +495,7 @@ ref struct R
 (C# では採用しなかったため)仮定的なコードにはなりますが、
 先ほどのコードを以下のように書けるようにするという案はなくはないです。
 
-```csharp
+```csharp {title="(仮定的なコードで) 参照の伝搬をすべて明示" highlight-ranges="sha256:939ca15f191bf8a9793bfe3a18d6e661142296486b487edbe642187936068d9e;18:21-18:23,20:21-20:23,20:35-20:37,20:54-20:56"}
 static void M(out Span<int> result)
 {
     int x = 123;
@@ -546,7 +546,7 @@ ref 構造体(`Span<T>` など)に関しては実際にこの2択で、
 実際のコードを見てみましょう。
 まず、何もつけない場合(`ref T` は return-only、ref 構造体は unscoped):
 
-```csharp
+```csharp {title="何もつけない: ref T は return-only、ref 構造体は unscoped"}
 ref struct Default
 {
     private ref int _x;
@@ -573,7 +573,7 @@ ref struct Default
 
 続いて、`scoped` 修飾子を付けた場合(いずれも scoped 扱い)、たいていのものがダメになります:
 
-```csharp
+```csharp {title="scoped 修飾子を付けた場合"}
 ref struct Scoped
 {
     private ref int _x;
@@ -631,7 +631,7 @@ ref struct Unscoped
 例えば、unscoped (何も修飾子を付けていない ref 構造体)の場合、以下のように、
 `Builder.Replace` の中で制限がない代わり、それを呼んでいる場所でのエラーが増えます。
 
-```csharp
+```csharp {title="unscoped な挙動"}
 var builder = new Builder();
 
 Replace(ref builder);
@@ -692,7 +692,7 @@ ref struct Builder(Span<char> initialBuffer)
 構造体の `this` は参照になっています。
 この参照はデフォルトで scoped 扱いになっていて、外に漏らすことができません。
 
-```csharp
+```csharp {title="this は scoped 扱い"}
 using System.Diagnostics.CodeAnalysis;
 
 struct S
@@ -708,7 +708,7 @@ struct S
 この挙動を変えるのにも `UnscopedRef` 属性が使えます。
 メソッド自身に `UnscopedRef` 属性を付けることで、`this` が unscoped 扱いになります。
 
-```csharp
+```csharp {title="this を unscoped 扱いに変更"}
 using System.Diagnostics.CodeAnalysis;
 
 struct S
@@ -730,7 +730,7 @@ struct S
 C# 13 で、ref 構造体にインターフェイスを実装できるようになりました。
 例えば以下のようなコードを書いてもエラーを起こしません。
 
-```csharp
+```csharp {title="ref 構造体にインターフェイスを実装する例"}
 ref struct S : IFormattable
 {
     public string ToString(string? format, IFormatProvider? formatProvider) => "";
@@ -740,7 +740,7 @@ ref struct S : IFormattable
 ただ、前述の[「スタックのみ」制約](#stack-only)のせいで直接インターフェイス型の変数に代入することは C# 13 でもできません。
 以下のコードは引き続きエラーになります。
 
-```csharp
+```csharp {title="インターフェイスを実装できるようになったのに、インターフェイスに代入できない"}
 IFormattable f = new S();
 
 ref struct S : IFormattable
@@ -751,7 +751,7 @@ ref struct S : IFormattable
 
 [ボックス化](rmboxing.md#boxing)を起こさないようにインターフェイス活用しようと思うと[ジェネリクス](../oop/sp2_generics.md)が必要になります。
 
-```csharp
+```csharp {title="ジェネリクスでボックス化回避"}
 int x = 123; // int は IFormattable を実装してる。
 
 // これはボックス化を起こす。
@@ -794,7 +794,7 @@ M(123);
 そこで C# 13 で、`allows ref struct` というものが追加されました。
 型制約の `where` 句にこの条件を書くと、型引数に ref 構造体を渡せるようになります。
 
-```csharp
+```csharp {highlight-text="allows ref struct"}
 static void M<T>() where T : allows ref struct
 {
 }
@@ -810,7 +810,7 @@ M<ReadOnlySpan<char>>();
 
 その代わり、`allows ref struct` を付けると、メソッド内でボックス化を起こすようなコードを書けなくなります。
 
-```csharp
+```csharp {title="allows ref struct な型の変数はボックス化できない"}
 static void M<T>() where T : allows ref struct
 {
     // 先ほどのボックス化を起こすコードはすべてエラーに。
@@ -827,7 +827,7 @@ static void M<T>() where T : allows ref struct
 これで、ボックス化を起こさないようにインターフェイスのメンバーを呼べるようになったので、
 ref 構造体のインターフェイス実装を活用できるようになります。
 
-```csharp
+```csharp {title="allows ref struct なジェネリック メソッドを介して、ref 構造体のインターフェイス実装を呼ぶ"}
 S x = new(); // S は IFormattable を実装してる。
 
 // これはボックス化を起こすから C# 13 でもエラーになる。
@@ -853,7 +853,7 @@ C# 13 で `allows ref struct` が追加されると同時に、
 .NET 9 では、標準ライブラリ中のジェネリックなデリゲート型の大部分と、一部のインターフェイスの型引数に `allows ref struct` が付きました。
 以下のようなコードが書けるようになっています。
 
-```csharp
+```csharp {title="多くのデリゲート、一部のインターフェイスに allows ref struct"}
 using System.Diagnostics.CodeAnalysis;
 
 // 多くのデリゲートの型引数に allows ref struct が付いた。
@@ -885,7 +885,7 @@ C# 10 の頃にデリゲートに[自然な型](../functional/sp_delegate.md#nat
 これに対して、.NET 9 でこれらのデリゲートに `allows ref strcut` が付いたことで、「可能であれば」の範囲が広がっています。
 これまでだと匿名のデリゲート型になっていたものが、`Action` や `Func` に変わることがあります。
 
-```csharp
+```csharp {title=".NET 8 から 9 で型が変わる例"}
 var a = (Span<char> s) => { };
 
 // .NET 8 以前だと: <>f__AnonymousDelegate0
@@ -899,7 +899,7 @@ ref 構造体がらみで非常に多い要望の1つに、`Span<T>`、`ReadOnly
 しかし、ref 構造体にインターフェイスを実装できるようになっても、`Span<T>` に `IEnumerable<T>` は実装できなくて、この要望はかないません。
 問題は、以下のように、`IEnumerator<T>` インターフェイスを戻り値に返す部分が ref 構造体と合いません。
 
-```csharp
+```csharp {title="ref 構造体は IEnumerable と相性がよくない"}
 using System.Collections;
 
 ref struct Span<T> : IEnumerable<T>

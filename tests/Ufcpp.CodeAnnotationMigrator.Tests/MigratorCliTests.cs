@@ -15,6 +15,8 @@ public sealed class MigratorCliTests
         Assert.Equal("content", defaults.SourcePath);
         Assert.Equal("content", defaults.CurrentPath);
         Assert.Equal("-", defaults.ReportPath);
+        Assert.Null(defaults.Issue);
+        Assert.Equal(MigratorOutputFormat.Report, defaults.Format);
 
         var explicitOptions = MigratorCliOptionsParser.Parse(
             [
@@ -29,6 +31,10 @@ public sealed class MigratorCliTests
                 "docs",
                 "--report",
                 "report.json",
+                "--issue",
+                "4",
+                "--format",
+                "patch",
             ],
             @"C:\repository");
         Assert.Equal(@"C:\other", explicitOptions.RepositoryRoot);
@@ -36,6 +42,8 @@ public sealed class MigratorCliTests
         Assert.Equal("archive", explicitOptions.SourcePath);
         Assert.Equal("docs", explicitOptions.CurrentPath);
         Assert.Equal("report.json", explicitOptions.ReportPath);
+        Assert.Equal(4, explicitOptions.Issue);
+        Assert.Equal(MigratorOutputFormat.Patch, explicitOptions.Format);
     }
 
     [Theory]
@@ -78,7 +86,7 @@ public sealed class MigratorCliTests
         Assert.Equal(0, exitCode);
         Assert.Equal(string.Empty, error.ToString());
         Assert.Contains(
-            "\"schemaVersion\": 1",
+            "\"schemaVersion\": 2",
             Encoding.UTF8.GetString(output.ToArray()),
             StringComparison.Ordinal);
         Assert.Equal(
@@ -110,6 +118,53 @@ public sealed class MigratorCliTests
         Assert.Equal(2, exitCode);
         Assert.Empty(output.ToArray());
         Assert.Contains("commit", error.ToString(), StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task RunAsync_Issue4PatchIsDeterministicAndDoesNotMutateContent()
+    {
+        using var repository = new TemporaryGitRepository();
+        repository.Write(
+            "content/a.md",
+            "<pre title=\"sample\"><code><em>token</em> + token</code></pre>");
+        var historicalCommit = repository.Commit("historical");
+        repository.Write("content/a.md", "```text\ntoken + token\n```\n");
+        repository.Commit("current");
+        var before = File.ReadAllBytes(Path.Combine(repository.Root, "content", "a.md"));
+
+        var first = await RunIssue4PatchAsync(repository, historicalCommit);
+        var second = await RunIssue4PatchAsync(repository, historicalCommit);
+
+        Assert.Equal(0, first.ExitCode);
+        Assert.Equal(string.Empty, first.Error);
+        Assert.Equal(first.Output, second.Output);
+        var patch = Encoding.UTF8.GetString(first.Output);
+        Assert.Contains("highlight-ranges=", patch);
+        Assert.Contains("title=\"sample\"", patch);
+        Assert.Equal(before, File.ReadAllBytes(Path.Combine(
+            repository.Root,
+            "content",
+            "a.md")));
+        Assert.Equal(string.Empty, repository.Status());
+    }
+
+    [Fact]
+    public async Task RunAsync_Issue4PatchFailsClosedWithoutPartialOutput()
+    {
+        using var repository = new TemporaryGitRepository();
+        repository.Write(
+            "content/a.md",
+            "<pre title=\"lost\"><code>historical</code></pre>");
+        var historicalCommit = repository.Commit("historical");
+        repository.Write("content/a.md", "```text\ncurrent\n```\n");
+        repository.Commit("current");
+
+        var result = await RunIssue4PatchAsync(repository, historicalCommit);
+
+        Assert.Equal(3, result.ExitCode);
+        Assert.Empty(result.Output);
+        Assert.Contains("blocked", result.Error, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(string.Empty, repository.Status());
     }
 
     [Fact]
@@ -522,5 +577,29 @@ public sealed class MigratorCliTests
         Assert.Equal(2, exitCode);
         Assert.False(File.Exists(reportPath));
         Assert.Contains("standard output", error.ToString(), StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static async Task<(int ExitCode, byte[] Output, string Error)>
+        RunIssue4PatchAsync(
+            TemporaryGitRepository repository,
+            string historicalCommit)
+    {
+        await using var output = new MemoryStream();
+        using var error = new StringWriter();
+        var exitCode = await MigratorCli.RunAsync(
+            [
+                "--repo-root",
+                repository.Root,
+                "--source-commit",
+                historicalCommit,
+                "--issue",
+                "4",
+                "--format",
+                "patch",
+            ],
+            output,
+            error,
+            repository.Root);
+        return (exitCode, output.ToArray(), error.ToString());
     }
 }

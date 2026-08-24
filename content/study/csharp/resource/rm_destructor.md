@@ -42,7 +42,7 @@ aliases: []
 [コンストラクター](../oop/oo_construct.md)とは逆に、インスタンスが破棄されるときに呼び出されるのがファイナライザーです。
 ファイナライザーは以下のように、クラス名の前に <code>~</code> を付けた名前のメソッドを書くことで定義できます。
 
-```csharp
+```csharp {title="ファイナライザー例"}
 class SampleClass
 {
   // ↓これがファイナライザー
@@ -63,7 +63,7 @@ class SampleClass
 いつインスタンスの破棄が行われるのかは分かりません。
 （C++ 言語に慣れている人は注意が必要。）
 
-```csharp
+```csharp {title="ファイナライザーが呼び出されるタイミングは分からない"}
 using System;
 
 class Test

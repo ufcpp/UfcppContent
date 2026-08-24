@@ -26,7 +26,7 @@ aliases: []
 [C# 7.0](../../../../study/csharp/cheatsheet/ap_ver7.md#ref-returns) で、参照ローカル変数が使えるようになっていましたが、
 参照ローカル変数の再代入はできませんでした。
 
-```csharp
+```csharp {title="参照ローカル変数の再代入"}
 static ref int Max(int[] array)
 {
     if (array.Length == 0) throw new ArgumentException();
@@ -63,7 +63,7 @@ static ref int Max(int[] array)
 こちらは C# 6.0 の頃から提案に上がっていたもの。
 以下のように、式の途中で変数宣言ができるという機能。
 
-```csharp
+```csharp {title="宣言式"}
 var square = (var x = int.Parse(Console.ReadLine()) * x;
 ```
 
@@ -77,7 +77,7 @@ var square = (var x = int.Parse(Console.ReadLine()) * x;
 
 今の仕様だと、[イテレーター](../../../../study/csharp/data/sp2_iterator.md)を以下のように書きます。
 
-```csharp
+```csharp {title="現在のイテレーター構文"}
 static IEnumerable<int> X()
 {
     yield return 1;

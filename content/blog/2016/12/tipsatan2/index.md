@@ -41,7 +41,7 @@ aliases: []
 
 ということで、角度θを360度ちゃんと求めるためには、x, y、すなわち、cos, sinの両方の値が必要です。実際、`Atan2`は大体以下のような感じの分岐をしています。
 
-```csharp
+```csharp {title="Atan2 の中身(抜粋)"}
 static double Atan2(double y, double x)
 {
     var z = Math.Atan(Math.Abs(y / x));

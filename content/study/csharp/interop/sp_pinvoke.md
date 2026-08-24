@@ -51,7 +51,7 @@ C-Style 関数は、C言語で書いた関数や、C++ で「`extern "C"`」内�
 C# から C-Stlye 関数を呼び出すには、`DllImport`属性(`System.Runtime.InteropServices`名前空間)を使います。
 例えば、以下のように書きます。
 
-```csharp
+```csharp {title="DllImport を使って C-Style の Windows API を呼び出す"}
 using System;
 using System.Runtime.InteropServices;
 
@@ -158,7 +158,7 @@ Visual Studio 上で、下図のように、「参照の追加」→「COM」→
 この図の例の場合、MSXML2 という COM ライブラリを参照します。
 これで、例えば以下のように、MSXML2 中のクラス(この例では`DOMDocument60`クラス)を使えます。
 
-```csharp
+```csharp {title="COMの参照"}
 using MSXML2;
 using System;
 
@@ -192,7 +192,7 @@ namespace NativeInterop
 
 ここで、このコードに対して与えるデータ(`Sample.xml`)として以下のようなものを用意したとすると、
 
-```xml
+```xml {title="Sample.xml"}
 <?xml version="1.0" encoding="utf-8" ?>
 <Sample>
     <Item Name="a" Value="1"/>
@@ -215,7 +215,7 @@ d = 4
 
 前節の「COM参照」をすると、コンパイラーが以下のようなクラスを生成します。
 
-```csharp
+```csharp {title="「COM参照」でで生成されるクラス"}
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -286,7 +286,7 @@ C# 4.0の `dynamic` (参考: 「[動的型付け変数](../dynamic/sp4_dynamic.m
 
 例えば、先ほどのコードは以下のように書き換えることもできます。
 
-```csharp
+```csharp {title="dynamic を使ったCOM呼び出し" highlight-text="dynamic doc = Activator.CreateInstance(t);"}
 using System;
 
 namespace NativeInterop
@@ -358,7 +358,7 @@ Windows 8から Windows 10にかけて紆余曲折ありましたが、要は、
 
 csproj を手書きで書き換える必要があります。以下のように、`TargetPlatformVersion`というタグを1行追加します。
 
-```xml
+```xml {highlight-lines="13"}
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -382,7 +382,7 @@ csproj を手書きで書き換える必要があります。以下のように�
 
 これで、例えば、以下のようなコンソール アプリで、WinRT コンポーネントを使えます。
 
-```csharp
+```csharp {title="WinRT コンポーネントをコンソール アプリから利用"}
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;

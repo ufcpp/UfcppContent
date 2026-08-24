@@ -26,7 +26,7 @@ aliases:
 これで、目次も索引もキーワードリストも出なくなります。
 
 
-```xml
+```xml {title="パラメータ"}
 <xsl:param name="DocumentMenu">no</xsl:param>
 <xsl:param name="DocumentIndex">no</xsl:param>
 <xsl:param name="DocumentKeyword">no</xsl:param>

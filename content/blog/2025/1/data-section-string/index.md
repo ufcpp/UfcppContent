@@ -30,13 +30,13 @@ aliases: []
 
 おおむね、例えば以下のコードを、
 
-```csharp
+```csharp {title="なんか長い文字列リテラルを持ってるコード例"}
 string s = "Some very very long looo...ooong string!!!!!";
 ```
 
 特定条件下では以下のようなコード扱いでコンパイルするというもの。
 
-```csharp
+```csharp {title="なんか u8 リテラルみたいな状態で記録して、デコードして使いたい"}
 string s = System.Text.Encoding.UTF8.GetString(
     "Some very very long looo...ooong string!!!!!"u8
     );

@@ -20,7 +20,7 @@ aliases:
 LINQ クエリ式はメソッド（あるいは拡張メソッド）呼び出しに変換されます。
 例えば、以下のような式は、
 
-```csharp
+```csharp {title="クエリ式の例"}
 var q =
   from x in list
   where x > 0
@@ -30,7 +30,7 @@ var q =
 
 以下のようなメソッド呼び出しに変換されます。
 
-```csharp
+```csharp {title="その変換結果"}
 var q = list.Where(x => x > 0);
 ```
 
@@ -72,7 +72,7 @@ list.Where(...) から from x in list where ... というクエリ式を再構�
 まず、多少なりとも結果の式の見栄えを良くするために、
 以下のような補助関数を用意。
 
-```csharp
+```csharp {title="補助関数"}
 // 1～5
 static IEnumerable<int> five = Enumerable.Range(1, 5);
 
@@ -92,7 +92,7 @@ static bool Discrete(int x, int y)
 
 これを使って先ほどの問題を解くクエリ式を書くと、以下のような感じ。
 
-```csharp
+```csharp {title="クエリ式で総当たり探索"}
 var answers1 =
   from baker in five
   from cooper in five
@@ -116,7 +116,7 @@ var answers1 =
 ここでちょっと話がそれますが、
 前節で書いたクエリ式は、以下のようなメソッド呼び出しに展開されます。
 
-```csharp
+```csharp {title="answers1 のクエリ式と等価なクエリ演算"}
 var answers0 = five
   .SelectMany(x => five, (baker, cooper) => new { baker, cooper })
   .SelectMany(x => five, (x, fletcher) => new { x, fletcher })
@@ -142,7 +142,7 @@ var answers0 = five
 
 多少なりとも透過識別子を整理すると以下のような感じ。
 
-```csharp
+```csharp {title="answers0 の透過識別子をちょっと整理"}
 var answers01 = five
   .SelectMany(x => five, (baker, cooper) => new { baker, cooper })
   .SelectMany(x => five, (x, fletcher) => new { x.baker, x.cooper, fletcher })
@@ -173,7 +173,7 @@ foreach, if, yield return ですべて置き換え可能なんですよね。
 
 例えば、以下のような単純なクエリ式を考えてみます。
 
-```csharp
+```csharp {title="IEnumerable に対するクエリ式"}
 var points =
   from x in Enumerable.Range(0, 100)
   from y in Enumerable.Range(0, 100)
@@ -186,7 +186,7 @@ var points =
 このクエリ式は、「[イテレーター](../data/sp2_iterator.md#iterator)」構文を使って、
 以下のように書き換えることができます。
 
-```csharp
+```csharp {title="イテレータで置き換え"}
 static IEnumerable<Point> Points()
 {
   foreach (var x in Enumerable.Range(0, 100)
@@ -215,7 +215,7 @@ IEnumerable に対する単純なクエリ式が、foreach, if, yield return を
 </blockquote>
 要するに、
 
-```csharp
+```csharp {title="if が foreach の内側"}
 static IEnumerable<Point> Points()
 {
   foreach (var x in Enumerable.Range(0, 100)
@@ -229,7 +229,7 @@ static IEnumerable<Point> Points()
 
 というコードよりも、
 
-```csharp
+```csharp {title="if (x % 2 != 0) を foreach の外側に移動"}
 static IEnumerable<Point> Points()
 {
   foreach (var x in Enumerable.Range(0, 100)
@@ -249,7 +249,7 @@ static IEnumerable<Point> Points()
 from と where の順序を入れ替えるだけでパフォーマンスがよくなります。
 例えば、
 
-```csharp
+```csharp {title="where が from の後ろ"}
 var answers1 =
   from baker in five
   from cooper in five
@@ -269,7 +269,7 @@ var answers1 =
 
 と書くよりも、
 
-```csharp
+```csharp {title="where を from の前に移動"}
 var answers2 =
   from baker in five
   where baker != 5
@@ -315,7 +315,7 @@ from が前に固まってないだけで思った以上に式が見づらい。
 C# の仕様上、メソッド呼び出しに変換されてしまうわけです。
 要するに、以下のようなクエリ式は、
 
-```csharp
+```csharp {title="クエリ式の例"}
 var q =
   from x in list
   where x > 0
@@ -325,7 +325,7 @@ var q =
 
 以下のようなメソッド呼び出しに変換されます。
 
-```csharp
+```csharp {title="その変換結果"}
 var q = list.Where(x => x > 0);
 ```
 
@@ -342,7 +342,7 @@ var q = list.Where(x => x > 0);
 
 以下のようなコードで、
 
-```csharp
+```csharp {title="式木からクエリ式の再構築"}
 var q0 = Make.Expression((IEnumerable<int> five) =>
   from baker in five
   from cooper in five
@@ -370,7 +370,7 @@ foreach (var l in q.Queries)
 
 以下のような出力を得ます。
 
-```console
+```console {title="出力結果"}
 from baker in five
 from cooper in five
 from fletcher in five

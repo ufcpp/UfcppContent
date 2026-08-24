@@ -35,7 +35,7 @@ iOS とかの AOT (事前ネイティブ コンパイル)シナリオだと使�
 以下のような感じの `bool` フラグでソースコード中で切り替え処理をしてほしそうです。
 ([Hardware Intrinsics](../../../2018/12/hdintrinsic/index.md)とかでやっているのと同じ方式です。)
 
-```csharp
+```csharp {title="FeatureSwitch"}
 internal static class FeatureDefiningType
 {
     [FeatureSwitch("System.Runtime.OptionalFeatureBehavior")]

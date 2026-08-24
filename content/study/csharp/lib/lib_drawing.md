@@ -32,7 +32,7 @@ png, jpg, gif 等、さまざまな画像形式ファイルを読み書きでき
 ここでは、例として、画像を読み出して、jpeg 形式で保存しなおしてみましょう。
 といっても、非常に簡単で、以下のような数行ほどのプログラムでできます。
 
-```csharp
+```csharp {title="画像を読み出して、jpeg 形式で保存。"}
 class Program
 {
   static void Main(string[] args)

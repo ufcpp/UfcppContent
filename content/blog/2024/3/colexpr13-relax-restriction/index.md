@@ -35,7 +35,7 @@ C# 12 リリース(2023/11)直後から再検討が始まっていて、先月�
 
 今、コレクション式の要素の型は `IEnumerable<T>` の `T` で判定しています。
 
-```csharp
+```csharp {title="iteration type を元に型判定してる"}
 using System.Collections;
 
 foreach (var x in new A()) ; // この x は int
@@ -53,7 +53,7 @@ class A : IEnumerable<int>
 }
 ```
 
-```csharp
+```csharp {title="インターフェイス実装を消したらエラー"}
 // foreach はインターフェイスがなくても GetEnumerator っていう名前のメソッドさえ持っていれば OK なのに。
 foreach (var x in new A()) { }
 
@@ -68,7 +68,7 @@ class A
 }
 ```
 
-```csharp
+```csharp {title="コレクション初期化子は使えるのに…"}
 using System.Collections;
 
 // foreach なんとか OK。
@@ -92,7 +92,7 @@ class A : IEnumerable
 ちなみに、この「`IEnumerable<T>` の `T`」以外は受け付けなかったりします。
 これも、コレクション初期化子時代はできたこと。
 
-```csharp
+```csharp {title="コレクション初期化子は使えるのに… (再)"}
 using System.Collections;
 
 // 旧来のコレクション初期化子は string を受け付けるのに…

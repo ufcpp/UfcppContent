@@ -56,7 +56,7 @@ static void Calc(decimal dividends, decimal price)
 
 極端な話、キーワードの`yield` (`yield return`や`yield break`)と並べて、型名や変数名でも`yield`という識別子を使えます。
 
-```csharp
+```csharp {title="yield returnの2単語でキーワード"}
 using System.Collections.Generic;
 
 class Program
@@ -84,7 +84,7 @@ class Program
 もう1つ、C# 3.0で導入された「[型推論](../start/sp3_inference.md#type-inference)」に関する <code>var</code> キーワードは、変数宣言出来る文脈でだけキーワード扱いされます。
 以下のようなコードも C# 3.0 でコンパイルできます。
 
-```csharp
+```csharp {title="var 変数" highlight-ranges="sha256:2d741fb0d241d554558f555947c89c818e40f5f7cb128a57e2d4553f74185c15;15:12-15:15"}
 static double Calc(IEnumerable<double> data)
 {
     int count = 0;
@@ -106,7 +106,7 @@ static double Calc(IEnumerable<double> data)
 
 また、`var`という名前の型が存在していた場合は、型推論よりも優先的にその`var`型が使われます。
 
-```csharp
+```csharp {title="型推論よりも、var型優先"}
 class Inferred
 {
     static void F()
@@ -178,7 +178,7 @@ static async Task<int> XAsync()
 
 非同期メソッドの場合、前述の`yield`や`var`とは違い、もしも`await`という名前の型が存在していても、非同期メソッド内では`await`はキーワードです。むしろ、`await`型の方を使うのにエスケープが必要です。
 
-```csharp
+```csharp {title="非同期メソッド内ではawait型を使えない"}
 using System.Threading.Tasks;
 
 class Program
@@ -200,7 +200,7 @@ class Program
 
 また、`async`に関してもメソッド戻り値の手前でだけキーワード扱いされるので、例えば以下のようなコードでもちゃんとコンパイルできます。
 
-```csharp
+```csharp {title="async 型"}
 using async = System.Threading.Tasks.Task;
 
 class Program
@@ -225,7 +225,7 @@ class Program
 
 C# 6で導入された`nameof`演算子は、同名のメソッドがない場合に限ってキーワード扱いされます。
 
-```csharp
+```csharp {title="nameofメソッド"}
 using System;
 
 class NoMethod
@@ -271,7 +271,7 @@ class Erroneous
 互換性的な問題ではないですが、[`using static`](../oop/oo_static.md#using-static)との組み合わせで、
 知らず知らずのうちに`nameof`メソッドが呼ばれる可能性があります。
 
-```csharp
+```csharp {title="using staticとnameofの組み合わせ"}
 using System;
 using static MyExtensions;
 
@@ -309,7 +309,7 @@ static class MyExtensions
 例えば前述の通り、イテレーター用の <code>yield</code> は、2単語の複合キーワードにすることで文脈キーワードになっています。
 一方で、`await`は`async`修飾子が付いたメソッド内では単独でキーワードになります。
 
-```csharp
+```csharp {title="yieldとawaitの方針の差"}
 static IEnumerable<int> Yield()
 {
     var yield = 1; // OK
@@ -337,7 +337,7 @@ static async Task<int> Await()
 
 いまさら変更はできないんですが（もちろん互換性維持のため）、もしかすると、イテレーターも以下のように、別のキーワードで修飾するような文法の方がよかったかもしれません。
 
-```csharp
+```csharp {title="イテレーターの、ありえたかもしれない別構文" highlight-text="iterator"}
 static iterator IEnumerable<int> Range(int from, int to)
 {
     for (var i = from; i < to; i++)
@@ -375,7 +375,7 @@ C# の文法の話をする前に、ライブラリの互換性維持につい�
 そして、「他社ライブラリ」中の親クラス（Base）を継承して、「自社ライブラリ」で子クラス（Derived）を作り、その子クラスを「アプリ」が使うというようなことも考えられます。
 例えば以下のような状況です（わかりやすくするために1つにまとめていますが、Base、Derived、Program はそれぞれ別ファイル・別プロジェクトにあって、別の人が保守しているものと考えてください）。
 
-```csharp
+```csharp {title="保守担当"}
 using System;
  
 // X さんが保守

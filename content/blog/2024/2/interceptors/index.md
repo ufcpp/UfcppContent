@@ -30,7 +30,7 @@ aliases: []
 .NET が標準で提供しているやつだと `GeneratedRegex` とか。
 partial メソッドに属性を付けて、メソッドの中身をコード生成しています。
 
-```csharp
+```csharp {title="GeneratedRegex"}
 partial class Reg
 {
     // この属性を付けた partial メソッドに対して、
@@ -45,7 +45,7 @@ partial class Reg
 一例として以下のようなコードを考えます。
 要は「const string を `Parse` するならコンパイル時に全部やっちゃえるのでは」という話。
 
-```csharp
+```csharp {title="呼び出し箇所ごとに別コード生成したいものの例"}
 using static System.Console;
 
 // const string の Parse はコンパイル時にできるのでは。
@@ -68,7 +68,7 @@ C# 12 時点でプレビュー機能として実装されていて、後述す�
 先ほどのコードが F:/src/ConsoleApp1/ConsoleApp1/Program.cs というパスのファイルに書かれているものとして、
 以下のようなコードを作ります(Source Generator で作ること前提)。
 
-```csharp
+```csharp {title="インターセプターの例"}
 using System.Runtime.CompilerServices;
 
 namespace ConsoleApp1
@@ -103,7 +103,7 @@ namespace System.Runtime.CompilerServices
 という挙動。
 その結果、Program.cs の内容は以下のものに置き換わったものとしてコンパイルされます。
 
-```csharp
+```csharp {title="インターセプターの適用結果"}
 using static System.Console;
 
 // const string の Parse はコンパイル時にできるのでは。
@@ -173,7 +173,7 @@ Git とかで他人と共有すると、他の人のパスは F:/users/UserName/
 もしくは、ファイル パスに依存すること自体をやめて、何らかの抽象的な「location specifier (場所指定子)」を受け付ける仕組みを用意するという案も出ています。
 まずは `InterceptsLocation` 属性に以下のコンストラクター追加。
 
-```csharp
+```csharp {title="locationSpecifier 引数のコンストラクター" highlight-text="public InterceptsLocationAttribute(string locationSpecifier) { }"}
 namespace System.Runtime.CompilerServices;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
@@ -186,7 +186,7 @@ sealed class InterceptsLocationAttribute : Attribute
 
 一例として以下のように、何らかの書式で「ソースコードの場所」がわかる文字列を指定。
 
-```csharp
+```csharp {title="locationSpecifier 指定のインターセプター"}
 class Interceptors
 {
     [InterceptsLocation("v1:../../src/MyFile.cs(12,34)")]
@@ -199,7 +199,7 @@ class Interceptors
 Source Generator 作者向けに location specifier を取得できる API を同時に提供するつもりだそうです
 (なので独特な書式を覚える必要はないはず)。
 
-```csharp
+```csharp {title="location specifier を取得できる API の追加" highlight-text="public string GetInterceptsLocationSpecifier(InvocationExpressionSyntax intercepted, string interceptorFileHintName);"}
 namespace Microsoft.CodeAnalysis;
 
 public readonly struct SourceProductionContext

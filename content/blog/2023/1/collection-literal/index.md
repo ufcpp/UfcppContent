@@ -30,7 +30,7 @@ aliases: []
 
 文法的には `[]` を使う案が有力です。
 
-```csharp
+```csharp {title="[] リテラル案"}
 using System.Collections.Immutable;
 
 // いろんなコレクション型に対して共通して使える。
@@ -42,7 +42,7 @@ ImmutableArray<int> immutable = [1, 2, 3];
 
 また、同時に、いわゆる "spread" と呼ばれる操作も導入されます。
 
-```csharp
+```csharp {title="コレクションの spread"}
 // いろんなコレクション型に対して共通して使える。
 int[] a = [1, 2];
 int[] b = [3, 4];
@@ -104,7 +104,7 @@ object[] spread = [a, ..b];
 候補となる文法は以下のようなもの。
 (このうち、`[key: value]` が有力。`[ [key] = value ]` もありかも。)
 
-```csharp
+```csharp {title="Dictionary リテラルの文法候補"}
 var dict1 = { "key1": "value1", "key2": "value2" };
 var dict2 = ["key1": "value1", "key2": "value2" ];
 var dict3 = [ ["key1"] = "value1", ["key2"] = "value2" ];
@@ -113,7 +113,7 @@ var dict4 = ["key1" => "value1", "key2" => "value2"];
 
 Dictionary リテラルをやるのであれば、一緒に「Dictionary パターン」もやりたいそうです。
 
-```csharp
+```csharp {title="Dictionary パターンの文法候補"}
 var dict = [ "key1": "value1", "key2": "value2" ];
 
 if (dict is [ "key1": var value ])
@@ -125,7 +125,7 @@ if (dict is [ "key1": var value ])
 `[ [key] = value ]` の場合には `x[key] = value` 扱いという区別で両方認める可能性もあります。
 この場合、「パターン」の方も、以下のような別パターンを考えます。
 
-```csharp
+```csharp {title="Dictionary パターンの文法候補"}
 var dict = [ ["key1"] = "value1", ["key2"] = "value2" ];
 
 if (dict is [ ["key1"]: var value ])

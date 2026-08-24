@@ -33,7 +33,7 @@ aliases: []
 
 要は、以下のような「いつものおまじない」なしでいきなり(トップレベル、あるいは、名前空間直下のレベルに)ステートメントとかメソッドを書きたいという話になります。
 
-```csharp
+```csharp {title="いつものおまじない"}
 class Program
 {
     static void Main()
@@ -91,7 +91,7 @@ class Program
 
 例えば以下のような `Point` クラスがあったとして
 
-```csharp
+```csharp {title="value 修飾が付いたプロパティを元に Equals を生成"}
 public class Point
 {
     public value int X { get; set; }
@@ -101,7 +101,7 @@ public class Point
 
 以下のようなコード扱いしたいそうです。
 
-```csharp
+```csharp {title="value 修飾からの生成結果"}
 public class Point
 {
     public int X { get; set; }
@@ -124,7 +124,7 @@ public class Point
 単に `GetType()` メソッドで型判定しないのは、
 以下のような、追加のメンバーを持っていない派生クラスは互いに一致判定できるようにです。
 
-```csharp
+```csharp {title="派生クラスの一致"}
 class Base
 {
     public value int Id { get; }
@@ -147,7 +147,7 @@ class Derived2 : Base { }
 
 長らく、以下のようなコードの冗長性が嫌だという話がずっと言われ続けています。
 
-```csharp
+```csharp {title="冗長なコード"}
 // プロパティ、コンストラクター引数、代入の左右の4か所で同じ名前を書くのが冗長
 public abstract class Person
 {
@@ -166,7 +166,7 @@ public abstract class Person
 まず、direct constructor parameters という案。
 以下のように、コンストラクター引数に対応するプロパティだけを書くという方式。
 
-```csharp
+```csharp {title="direct constructor parameters"}
 public abstract class Person
 {
     public string Name { get; }
@@ -185,7 +185,7 @@ public abstract class Person
 次が primary constructors で、以下のように、クラス宣言の行に直接引数を書けるようにするもの。
 検証コードの類は「`()` なしのコンストラクター」みたいな構文が提案されています。
 
-```csharp
+```csharp {title="primary constructors"}
 public abstract class Person(string name)
 {
     public string Name { get; } = name;
@@ -200,7 +200,7 @@ public abstract class Person(string name)
 
 primary constructors は先ほどの direct constructor parameters と相乗効果あり。
 
-```csharp
+```csharp {title="primary constructors + direct constructor parameters"}
 public abstract class Person(Name) // primary constructors + direct constructor parameters
 {
     public string Name { get; }
@@ -217,7 +217,7 @@ public abstract class Person(Name) // primary constructors + direct constructor 
 プロパティと direct constructor parameters の重複も避けたいということで、さらに踏み込んだ文法として primary constructor member declarations があります。
 primary constructor の引数の部分に直接メンバー宣言を書いてしまうもの。
 
-```csharp
+```csharp {title="direct constructor parameters"}
 public abstract class Person(public string Name { get; });
 ```
 
@@ -232,7 +232,7 @@ immutable が重宝されるこのご時世にはつらいと言われていま�
 
 オブジェクト初期化子では書き換えられるけど、それ以外の場所では書き換え不能という意味で、set の代わりに init アクセサーを持つプロパティ(init-only properties)を認めようというもの。
 
-```csharp
+```csharp {title="init アクセサー"}
 public class Point
 {
     public int X { get; init; }
@@ -247,7 +247,7 @@ p.Y = 7; // エラー。初期化子以外での Y の書き換えは認めな�
 
 「get だけ[自動実装](../../../../study/csharp/oop/oo_property.md#auto)して、set 内の検証コードは普通に書きたい」ということがあるので、それを認めようかという話。
 
-```csharp
+```csharp {title="validation accessors"}
 public string Name
 {
     // get の実装を省略
@@ -272,7 +272,7 @@ public string Name
 immutable な型のインスタンスに対して、非破壊な書き換え(non-destructive mutation)、すなわち、「コピーを作って一部のメンバーだけ書き換えたインスタンスを作りたい」ということが結構あります。
 これに対して、以下のような with 構文を導入したいという話は前々からありました。
 
-```csharp
+```csharp {title="with 構文"}
 var p2 = p1 with { X = 4 };
 ```
 
@@ -283,7 +283,7 @@ var p2 = p1 with { X = 4 };
 with は、以下のような `With` メソッドとそれの呼び出しに展開しようという案になっています。
 `With` メソッドの生成トリガーにするために、クラスには data 修飾を求めようという話も。
 
-```csharp
+```csharp {title="With メソッドの生成元には data 修飾を付ける"}
 public data class Point(X, Y)
 {
     public int X { get; }
@@ -294,7 +294,7 @@ var p2 = p1 with { Y = 2 };
 
 以下のように展開されます。
 
-```csharp
+```csharp {title="data class, with 構文の展開結果"}
 public class Point(X, Y)
 {
     public int X { get; }
@@ -309,7 +309,7 @@ var p2 = p1.With(p1.X, 2);
 
 virtual なファクトリ メソッドを必要とするのは、以下のように、派生型のメンバーのコピーがちゃんと働くようにするためです。
 
-```csharp
+```csharp {title="data class の派生"}
 public data class Person(Name)
 {
     public string Name { get; }
@@ -322,7 +322,7 @@ public data class Student(ID) : Person
 
 以下のように展開されます。
 
-```csharp
+```csharp {title="data class の派生の展開結果"}
 public abstract class Person(Name)
 {
     public string Name { get; }
@@ -351,7 +351,7 @@ data class はもう常に前述の「primary constructor member declarations」
 
 要するに、以下のような書き方で、
 
-```csharp
+```csharp {title="data class + primary constructor member declarations"}
 public data class Point(int X, int Y);
 ```
 

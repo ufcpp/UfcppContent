@@ -21,7 +21,7 @@ C# 9.0 で、レコード型(records)という新しい種類の型が追加さ�
 record (記録)という名前通り、データの読み書きに使うことを意図した型です。
 例えば以下のような書き方で、「`Name` という文字列と `Birthday` という日付」を読み書きできます。
 
-```csharp
+```csharp {title="record の例"}
 using System;
  
 record Person(string Name, DateTime Birthday);
@@ -32,7 +32,7 @@ record Person(string Name, DateTime Birthday);
 プログラミングをしていると、データが主役・データが中心になる場面がちらほらあります。
 「データが主役」(data centric)というのは、例えば以下のように、「`Name` という文字列と、`Birthday` という日付を持っている」というような「何の型がどういうデータを記録しているか」という情報が強い意味を持つような場面です。
 
-```csharp
+```csharp {title="「Name, Birthday フィールドを持っている」と言うこと自体が強い意味を持つ例"}
 using System;
  
 class Person
@@ -51,7 +51,7 @@ class Person
 ところが、データを保存・復元したり、ネットワーク越しに送受信したり、GUI で表示・編集する場合、結局「どういうデータをどういう形式で持っているか」という内部的な情報がそのまま必要になったりします。
 例えば上記の `Person` 型であれば、以下のような JSON 形式で保存して、これを読み書きしたりすることが結構あると思います。
 
-```json
+```json {title="Person 型を JSON で保存"}
 {
   "name": "天馬飛雄",
   "birthday": "2003/04/07"
@@ -64,7 +64,7 @@ class Person
 これを「C# のお作法的に好ましい書き方」で書こうとすると実は結構なコード量を書く必要があります。
 例えば以下のようなコードになります。
 
-```csharp
+```csharp {title="Person をお作法通りに書く場合"}
 class Person : IEquatable<Person>
 {
     public string Name { get; init; }
@@ -116,7 +116,7 @@ class Person : IEquatable<Person>
 このボイラープレート問題を解決するために、データ中心の型向けの新しい構文として導入されたのが<strong id="key-record" class="keyword">レコード型</strong>です。
 最も短い書き方をすると、例えば以下のようになります。
 
-```csharp
+```csharp {title="record の例"}
 record Person(string Name, DateTime Birthday);
 ```
 
@@ -128,7 +128,7 @@ record Person(string Name, DateTime Birthday);
 
 ちなみに、「プライマリ コンストラクター」(後述)は使わずに、以下のように書くこともできます。
 
-```csharp
+```csharp {title="プライマリ コンストラクターは使わず、単に class を record に変えた書き方の例"}
 record Person
 {
     public string Name { get; init; }
@@ -158,7 +158,7 @@ record Person
 C# コンパイラーのバージョンによって微妙に異なるコードになったりはしますが、
 意味的にはほぼこのままのコードになります。)
 
-```csharp
+```csharp {title="レコード型からコンパイラー生成されるクラスの例"}
 class Person : IEquatable<Person>
 {
     protected virtual Type EqualityContract => typeof(Person);
@@ -239,7 +239,7 @@ class Person : IEquatable<Person>
 悪名高いものとして、[`NaN`](https://docs.microsoft.com/ja-jp/dotnet/api/system.double.nan) ([Not a Number](https://ja.wikipedia.org/wiki/NaN))は `==` と `Equals` の結果が違ったりするので、
 「`double` で直接比較」と「レコード型で1段包んで比較」の結果が変わったりします。
 
-```csharp
+```csharp {title="== も内部的には Equals を呼ぶ仕様"}
 using System;
  
 double nan = double.NaN;
@@ -265,7 +265,7 @@ C# 9.0 (レコード型の最初のバージョン)では、レコード型は�
 これに対して C# 10.0 では[値型](../resource/oo_reference.md#valtype)も選べるようにしました。
 そのため、以下のように、`record class` と `record struct` というキーワードで書き分けができるようになりました。
 
-```csharp
+```csharp {title="C# 10.0 の record class と record struct"}
 record class Reference(int X, int Y); // record だけ書いた場合こちらと同じ意味
 record struct Value(int X, int Y);
 ```
@@ -286,7 +286,7 @@ record struct Value(int X, int Y);
 また、構造体の場合、mutable (最初に作ったタイミング以外でも好きなタイミングでメンバーを書き換え可能)であっても `record class` ほど問題は起こしません。
 なので、`record struct` (だけ書く)だと、mutable なプロパティが生成されます。
 
-```csharp
+```csharp {title="record class と record struct からの生成物" highlight-ranges="sha256:265d48ba081e83d96b6348cbc22b4c61ec2c49ddc123f98e56519e5c69538df7;2:24-2:29,3:24-3:29,7:24-7:28,8:24-8:28"}
 // class の場合、X, Y から生成されるプロパティは
 // public int X { get; init; }
 // public int Y { get; init; }
@@ -301,7 +301,7 @@ record struct RecordStruct(int X, int Y);
 構造体には [`readonly` 修飾](../resource/readonlyness.md#readonly-struct)を付けることができるので、immutable (書き換え不能)な `record struct` を作りたければ `readonly record struct` と書きます。
 この場合は `record class` と同じようなプロパティが生成されます。
 
-```csharp
+```csharp {title="readonly record struct からの生成物" highlight-ranges="sha256:a4e9753d42580f7e6ac723ff59c7e631f9ebd1ff0ce2b61fcad1c9fc74bd6930;2:24-2:29,3:24-3:29"}
 // readonly struct の場合は、
 // public int X { get; init; }
 // public int Y { get; init; }
@@ -319,7 +319,7 @@ C# は既存機能と新機能の整合性を極力取るように頑張って�
 例えば以下のようなコードがあったとします。
 これは「とりあえず型名は付けずに匿名(タプル)でコードを書いてみた」みたいな状態です。
 
-```csharp
+```csharp {title="まずタプルでコードを書いてみた状態"}
 using System;
  
 var p = (X: 1, Y: 2); // これはタプル
@@ -335,7 +335,7 @@ record Point(int X, int Y);
 
 先ほどのコードには、`new Point` を足すだけで「匿名の型から名前付きの型に移行」ができます。
 
-```csharp
+```csharp {title="new Point を足すだけで名前付きの型に移行"}
 using System;
  
 var p = new Point(X: 1, Y: 2); // これで名前付きになった
@@ -372,7 +372,7 @@ Console.WriteLine($"{x} * {y} = {x * y}");
 
 先ほど、レコード型の最も短い書き方として以下のような例を挙げました。
 
-```csharp
+```csharp {title="record の例"}
 record Person(string Name, DateTime Birthday);
 ```
 
@@ -383,7 +383,7 @@ record Person(string Name, DateTime Birthday);
 [前述](#record-to-class)の「レコード型から生成されるクラスの例」で挙げたコードのうち、
 以下のものは「プライマリ コンストラクターからの生成物」になります。
 
-```csharp
+```csharp {title="レコード型からコンパイラー生成されるクラスの例"}
 class Person
 {
     public string Name { get; init; }
@@ -410,7 +410,7 @@ class Person
 ちなみに、プライマリ コンストラクターの引数は、以下のように、
 他のメンバーの初期化子や、メソッドの中身で参照することもできます。
 
-```csharp
+```csharp {title="プライマリ コンストラクターの引数を初期化子などから参照する例"}
 record X(int Value)
 {
     public int Squared { get; } = Value * Value;
@@ -423,7 +423,7 @@ record X(int Value)
 このコンストラクターは特別というか、「手書きで他のコンストラクターを書き足す場合、必ずプライマリ コンストラクターが呼ばれるようにしなければならない」という強い制約が掛かります。
 例えば以下のコードはコンパイル エラーを起こします。
 
-```csharp
+```csharp {title="プライマリ コンストラクターを呼んでいなくてエラーになる例"}
 record Person(string Name, DateTime Birthday)
 {
     // プライマリ コンストラクターを呼んでいないのでコンパイル エラーになる。
@@ -433,7 +433,7 @@ record Person(string Name, DateTime Birthday)
 
 以下のように `this` 初期化子を足せばコンパイルできるようになります。
 
-```csharp
+```csharp {title="this 初期化子でプライマリ コンストラクターを呼ぶ例"}
 record Person(string Name, DateTime Birthday)
 {
     // これならエラーにはならない。
@@ -444,7 +444,7 @@ record Person(string Name, DateTime Birthday)
 
 ちなみに、プライマリ コンストラクターの引数に [`in`](../resource/sp_ref.md#in) と [`params`](../structured/sp_params.md) を付けることはできます(その引数からプロパティの生成もされます)が、[`ref`](../resource/sp_ref.md#sec-byref) と [`out`](../resource/sp_ref.md#out) は付けれません。
 
-```csharp
+```csharp {title="プライマリ コンストラクター引数に対する in/params"}
 // in と params は受け付ける。
 public record Record(in int X, params int[] Y);
 
@@ -462,7 +462,7 @@ public record Record2(ref int X, out int Y);
 コンパイラー生成されるプロパティやフィールドに対しても、
 以下のような書き方で属性を付けることができます。
 
-```csharp
+```csharp {title="プライマリ コンストラクターから生成されるプロパティ、フィールドに属性を付ける例" highlight-ranges="sha256:7a7047429fb7fcb0597d3e998b879545d7717430c6d99962a0020aeb874dcc72;17:6-17:14,18:6-18:11"}
 using System;
 using System.Reflection;
  
@@ -501,7 +501,7 @@ class A : Attribute
 例えば、文字列の比較で大文字・小文字を無視したい場合、`Equals` メソッドなどを以下のように書き加えることでできます。
 (例と言うことで `Equals` のみを書きますが、実際は `GetHashCode` などの書き足しも必要です。)
 
-```csharp
+```csharp {title="Equals をカスタマイズする例" highlight-text="StringComparison.OrdinalIgnoreCase"}
 record Person(string Name, DateTime Birthday)
 {
     bool IEquatable<Person>.Equals(Person? other)
@@ -514,7 +514,7 @@ record Person(string Name, DateTime Birthday)
 他の例として、本来あまり好ましくはないんですが、プロパティを書き換え可能にしてしまいたい場合、
 以下のようにプロパティを手書きで足してしまうことでできます。
 
-```csharp
+```csharp {title="生成されるプロパティのカスタマイズする例" highlight-ranges="sha256:f57a2b0f47fc7cb12a6c724e17a91e1c9056ed41e8f4ad2eac3850ecf0005666;3:31-3:34,4:37-4:40"}
 record Person(string Name, DateTime Birthday)
 {
     public string Name { get; set; } = Name;
@@ -535,7 +535,7 @@ C# 9.0 時点では、プライマリ コンストラクター引数からの生
 例えば以下のコードは C# 10.0 から有効なコードになります。
 (C# 9.0 時代は「(生成物の)プロパティ `X` と(手書きの)フィールド `X` が名前衝突してる」というエラーになっていました。)
 
-```csharp
+```csharp {title="フィールドでプライマリ コンストラクター引数から生成されるはずだったプロパティを上書きする例"}
 record R(int X)
 {
     public int X = X;
@@ -554,7 +554,7 @@ record R(int X)
 レコード型はクラスと同じく[継承](../oop/oo_inherit.md)ができます。
 例えば以下のように書けます。
 
-```csharp
+```csharp {title="レコード型の継承"}
 record Base;
 record A(int N) : Base;
 record B(string S) : Base;
@@ -564,7 +564,7 @@ record B(string S) : Base;
 派生クラスからそのプライマリ コンストラクターの呼び出しが必要です。
 以下のように、基底クラス名の後ろに `()` を付けることで呼び出せます。
 
-```csharp
+```csharp {title="基底クラスのプライマリ コンストラクター呼び出しの例"}
 record Base(int X);
  
 // Base(int X) を呼んでいないのでエラーになる。
@@ -597,7 +597,7 @@ record Error2 : Base(1);
 
 例えば以下のコードの出力結果は false です。
 
-```csharp
+```csharp {title="(既定動作では)レコード型の == は型判定を含んでいる"}
 using System;
  
 // 同じ値を持っていても型が違うと「不一致」扱い。
@@ -613,7 +613,7 @@ record Derived(int X) : Base(X);
 
 逆に、型は無視してプロパティの一致だけで等価判定してほしい場合、以下のように `EqualityContract` を手書き追加すればできます。
 
-```csharp
+```csharp {title="EqualityContract の手書きで挙動をカスタマイズする例"}
 using System;
  
 // EqualityContract で typeof(Base) を返すことで「一致」扱いに変わる。
@@ -636,7 +636,7 @@ immutable なデータに対しても、「データの一部分だけを書き�
 C# 8.0 以前の書き方でいうと、以下のようなコードを書くことになります。
 (が、1つ問題があって、実際には C# 8.0 で完全にこれと同じことは実現できません。)
 
-```csharp
+```csharp {title="クローンしてから部分書き換え"}
 using System;
  
 var p1 = new Person("天馬飛雄", new(2003, 4, 7));
@@ -654,7 +654,7 @@ record Person(string Name, DateTime Birthday);
 C# 9.0 ではどうしたかと言うと、`with` 式という構文を追加しました。
 これが内部的に上記の「まずクローンして、クローン直後のインスタンスの一部分を書き換える」という処理に展開されます。
 
-```csharp
+```csharp {title="with 式で immutable データの一部分を書き換え"}
 var p1 = new Person("天馬飛雄", new(2003, 4, 7));
 var p2 = p1 with { Name = "鉄腕アトム" };
 ```
@@ -666,7 +666,7 @@ var p2 = p1 with { Name = "鉄腕アトム" };
 
 ちなみに、`with { } ` だけ書く(「一部書き換え」はしない)のでもクローンになります。
 
-```csharp
+```csharp {title="with { } でクローン"}
 using System;
  
 var p1 = new Point(1, 2);
@@ -702,14 +702,14 @@ C# 9.0 時点では、`with` 式はレコード型に対してしか使えませ
 
 [匿名型](../start/sp3_inference.md#anonymous):
 
-```csharp
+```csharp {title="匿名型に対する with 式"}
 var p1 = new { X = 1, Y = 2 };
 var p2 = p1 with { X = 3 };
 ```
 
 任意の[構造体](../resource/rm_struct.md):
 
-```csharp
+```csharp {title="構造体に対する with 式"}
 var p1 = new Point { X = 1, Y = 2 };
 var p2 = p1 with { X = 3 };
  

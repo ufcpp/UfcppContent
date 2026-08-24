@@ -49,7 +49,7 @@ SOV とか SVO とかを補足しておくと、
 
 例えば、C 言語なんかでは以下のような書き方になります。
 
-```csharp
+```csharp {title="C 言語における語順"}
 Verb(subject);
 Verb(subject, object);
 ```
@@ -59,7 +59,7 @@ Verb(subject, object);
 
 これに対して、オブジェクト指向言語では以下のように書きます。
 
-```csharp
+```csharp {title="OOP 言語における語順"}
 subject.Verb();
 subject.Verb(object);
 ```
@@ -73,7 +73,7 @@ C# とかの OOP 言語は英語の文法に近いんですよね。
 さて、「SOV の方が自然」説を信じるなら、
 以下のような構文がいいということになります。
 
-```csharp
+```csharp {title="SOV 型"}
 subject.Verb();
 (subject, object).Verb();
 ```
@@ -115,7 +115,7 @@ C# で SOV 構文でプログラミングできるようにしてみました。
 
 ということで、以下のような構文でメソッド呼び出しできるようなライブラリを書いてみました。
 
-```csharp
+```csharp {title="SOV 英語構文"}
 Sentence
     .With("Hello World!\n")
     .To(Console.Out)
@@ -132,7 +132,7 @@ string result =
 
 ちなみに、Write と Replace の実体は以下のような感じ。
 
-```csharp
+```csharp {title="Write, Replace"}
 public static void Write(this Nominals n)
 {
     var writer = n.To.Cast<System.IO.TextWriter>();
@@ -159,7 +159,7 @@ public static string Replace(this Nominals n)
 
 VB の名前付き引数みたいになってきた。VSO 型になるけども。
 
-```csharp
+```csharp {title="VB の名前付き引数"}
 Write( \
   With := "Hello World!" \
   To   := Console.Write )
@@ -177,7 +177,7 @@ Replace( \
 SOV 型言語と言えば日本語ですね、と。
 日本語プログラミングしてみましょうか。
 
-```csharp
+```csharp {title="SOV と言えば日本語"}
 Nominals.Make(
     "Hello World!\n".を(),
     Console.Out.に()
@@ -201,7 +201,7 @@ Nominals.Make(
 
 出力、置換の定義は以下のような感じ。
 
-```csharp
+```csharp {title="出力、置換"}
 public static void 出力(this Nominals n)
 {
     var writer = n.に.Cast<System.IO.TextWriter>();
@@ -280,6 +280,6 @@ SOVO？
 「話の主題が前、そして、付帯情報を後ろに付ける」っていうと、
 実のところ、PowerShell のパイプライン構文がそうなってるかも。
 
-```powershell
+```powershell {title="PowerShell で SOVO"}
 subject, object | Verb -Option complement
 ```

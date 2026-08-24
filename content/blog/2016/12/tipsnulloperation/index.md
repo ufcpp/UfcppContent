@@ -31,7 +31,7 @@ x ?.M()
 
 例えば、以下のように、本当はnullじゃないのにnullを自称する(`x == null`がtrueになる)クラスを作ると、ちょっと変な挙動になります。
 
-```csharp
+```csharp {title="null でないのに == nullなクラスを作る"}
 using static System.Console;
 
 class NonDefault<T>
@@ -114,14 +114,14 @@ nullの判定方法(2行目～4行目)だけが違って、残りは全く同じ
 
 以下のように書いた場合、
 
-```csharp
+```csharp {title="throw null"}
 static void X() { throw null; }
 static void Y() { throw new NullReferenceException(); }
 ```
 
 コンパイル結果は以下の通り。
 
-```cil
+```cil {title="throw null"}
 .method private hidebysig static void  X() cil managed
 {
   // コード サイズ       2 (0x2)

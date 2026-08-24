@@ -60,7 +60,7 @@ Dec. 11 は Records がらみの検討があったみたいです。
 
 以下のように、`key` 修飾子を付けることで、そのメンバーの比較によってクラス自体の等価性を判定(する `Equals` メソッドなどを生成)しようという話。
 
-```csharp
+```csharp {title="key 修飾子" highlight-text="key"}
 class C
 {
     public key string Item1 { get; }

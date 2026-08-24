@@ -49,7 +49,7 @@ C# の場合、複合型には
 
 まず、クラスの定義は以下の通り。
 
-```csharp
+```csharp {title="クラスの定義"}
 class クラス名
 {
   クラスのメンバー
@@ -58,7 +58,7 @@ class クラス名
 
 一方、構造体の定義は以下のようなります。`class`キーワードの代わりに`struct`キーワードを使う以外はクラスとほぼ同じです。
 
-```csharp
+```csharp {title="構造体の定義"}
 struct 構造体名
 {
   構造体のメンバー
@@ -77,7 +77,7 @@ struct 構造体名
 
 フィールドは、以下のように、クラスや構造体の中に変数宣言を書くような書式で定義します。
 
-```csharp
+```csharp {title="フィールドの定義"}
 class クラス名
 {
     フィールドの型 フィールド名;
@@ -87,7 +87,7 @@ class クラス名
 例えば、先ほどの例の名前と年齢と住所を一まとめにした構造体を定義したければ、以下のように書きます。
 構造体の名前は Person にでもしておきましょう。
 
-```csharp
+```csharp {title="個人情報クラス"}
 class Person
 {
   public string name;    // 名前
@@ -100,7 +100,7 @@ class Person
 
 このクラスを利用するときには以下のようにします。
 
-```csharp
+```csharp {title="個人情報構造体の利用"}
 Person p = new Person(); // string とか配列と同じような感じで宣言＆初期化
 
 // 「 . 」 を使って各メンバーにアクセスする
@@ -114,7 +114,7 @@ p.address = "http://www.tiyu.to";
 
 ##### <a id="sec-generated-title-4"></a>サンプル
 
-```csharp
+```csharp {title="構造体のサンプル"}
 using System;
 
 /// <summary>
@@ -173,13 +173,13 @@ C# 3.0 からは[匿名型](../start/sp3_inference.md#anonymous)、
 C# 7.0 からは[タプル](../datatype/tuples.md)という機能が追加されて、
 `struct`や`class`などを定義しなくても複合型を書けるようになりました。
 
-```csharp
+```csharp {title="匿名型"}
 // 匿名型
 // new { } 内に値を並べる
 var x = new { p.name, p.age };
 ```
 
-```csharp
+```csharp {title="タプル"}
 var p = new Point();
 
 // タプル
@@ -198,7 +198,7 @@ var q = (Math.Sqrt(p.X * p.X + p.Y * p.Y), Math.Atan2(p.Y, p.X));
 
 また、作成した構造体に、三角形の面積を求めるメンバー関数 <code>GetArea</code>を追加せよ。
 
-```csharp
+```csharp {title="GetArea 仕様"}
 /// <summary>
 /// 三角形の面積を求める。
 /// </summary>
@@ -211,7 +211,7 @@ public double GetArea()
 #### 解答例 1
 
 
-```csharp
+```csharp {title="Triangle 構造体"}
 using System;
 
 /// <summary>

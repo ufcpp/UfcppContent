@@ -78,7 +78,7 @@ var x2 = 0x_0001_F408;
 前の方の引数を名前付きにできるようになりました。
 例えば、以下のような書き方が許されるようになりました。
 
-```csharp
+```csharp {title="1つ目の引数だけを名前付きにする"}
 // C# 7.2
 // 末尾以外でも名前を書けるように
 Sum(x: 1, 2, 3);
@@ -105,7 +105,7 @@ Sum(x: 1, 2, 3);
 [条件演算子](../start/st_operator.md#condition)の2項目、3項目を参照にできるようになりました。
 以下のような書き方ができます。
 
-```csharp
+```csharp {title="条件演算子の中で ref を利用"}
 x > y ? ref x : ref y
 ```
 
@@ -118,7 +118,7 @@ x > y ? ref x : ref y
 
 引数の場合には`in`修飾子を使って以下のように書きます。
 
-```csharp
+```csharp {title="in 引数でコピーを避ける" highlight-ranges="sha256:4dae60902d739b1b95068ce16bd61304953faaf8ed501c2118cd915245e085ed;9:41-9:43,9:58-9:60"}
 public struct Quaternion
 {
     public double W;
@@ -144,7 +144,7 @@ public struct Quaternion
 
 また、ローカル変数と戻り値の場合は`ref readonly`修飾子を使います。
 
-```csharp
+```csharp {title="ref readonly な戻り値、ローカル変数"}
 static ref readonly int Max(in int x, in int y)
 {
     ref readonly var t = ref x;
@@ -162,7 +162,7 @@ static ref readonly int Max(in int x, in int y)
 これまで、[演算子オーバーロード](../oop/oo_operator.md)の引数は値渡しである必要がありました。
 C# 7.2では、`in`引数も演算子の引数にできるようになりました。
 
-```csharp
+```csharp {title="演算子の in 引数" highlight-ranges="sha256:b73f9a2a7bd21eed3ad73392e58bb225f838b0120cd6723965321adee23fdbc6;16:38-16:40,16:52-16:54"}
 struct Complex
 {
     public double X;
@@ -187,7 +187,7 @@ struct Complex
 
 拡張メソッドの第1引数(`this`が付いている引数)を参照渡し([`ref`](../resource/sp_ref.md#sec-byref)もしくは[`in`](../resource/sp_ref.md#in))で渡せるようになりました。
 
-```csharp
+```csharp {title="参照渡しの拡張メソッドの例" highlight-ranges="sha256:dd10b8979f2495beabbf37738a5783cec18383130f84bc5d9e55215fffadf486;4:34-4:42,14:37-14:44"}
 public static class QuaternionExtensions
 {
     // 構造体の書き換えを拡張メソッドでやりたい場合に ref 引数が使える
@@ -219,7 +219,7 @@ public static class QuaternionExtensions
 - すべてのフィールドに`readonly`を付けることが必須
 - `this`参照も`readonly`扱いされて、構造体の書き換えが完全にできなくなる
 
-```csharp
+```csharp {title="readonly struct の例" highlight-ranges="sha256:8f1f7745881bc6cfa077176420f98037659ca5129c89f30d64f3731234153ae7;2:1-2:9"}
 // 構造体自体に readonly を付ける
 readonly struct Point
 {
@@ -242,7 +242,7 @@ readonly struct Point
 
 `Span<T>`構造体と併用することで、unsafe なしで [`stackalloc`](../interop/sp_unsafe.md#stackalloc) を使えるようになりました。
 
-```csharp
+```csharp {title="ファイル読み込みの一時バッファーに stackalloc を使う例" highlight-text="Span&lt;byte&gt; buffer = stackalloc byte[BufferSize];"}
 const int BufferSize = 128;
 
 using (var f = File.OpenRead("test.data"))
@@ -274,7 +274,7 @@ C# 7.2 と深く関連する型に[`Span<T>`](../resource/span.md)という構�
 
 この型を安全に使うためにはいくつが制限が必要で、そのために`ref`構造体という構文と、それに対するフロー解析が実装されました。
 
-```csharp
+```csharp {title="ref構造体を持てるのはref構造体だけ"}
 // Span<T> は ref 構造体になっている
 public readonly ref struct Span<T> { ... }
 
@@ -290,7 +290,7 @@ ref struct RefStruct
 `ref`構造体には参照ローカル変数・参照戻りと同じ制限がかかります。
 
 
-```csharp
+```csharp {title="戻り値に返せるかどうか"}
 // 引数で受け取ったものは戻り値で返せる
 private static Span<int> Success(Span<int> x) => x;
 
@@ -305,7 +305,7 @@ private static Span<int> Error()
 その他、`ref`構造体には「スタック上になければならない(stack-only)」という制限があり、
 その結果、例えば以下のような制限がかかります(一部抜粋)。
 
-```csharp
+```csharp {title="ref構造体は stack-only"}
 using System;
 using System.Threading.Tasks;
 

@@ -54,7 +54,7 @@ LINQ to SQL を例に説明します。
 
 例えば、C# で以下のようなクエリ式を書いたとします。
 
-```csharp
+```csharp {title="LINQ to SQL クエリ"}
 var context = new CharacterContext("characters.sdf");
 
 System.Linq.IQueryable q =
@@ -73,13 +73,13 @@ System.Linq.IQueryable q =
 IQueryable には Expression プロパティがあって、
 これを使って、クエリ式 → 式木の構築結果を取得することができます。
 
-```csharp
+```csharp {title="IQueryable.Expression の例"}
 System.Linq.Expressions.Expression e = q.Expression;
 Console.Write(e);
 ```
 
 
-```console
+```console {title="出力"}
 Table(Character).Join(Table(CharacterVoice), c => c.CharacterVoiceId, cv => cv.I
 D, (c, cv) => new <>f__AnonymousType0`4(Name = (c.姓 + c.名), Info = c.Infomatio
 n, Supplement = c.Supplement, CharacterVoice = (cv.姓 + cv.名)))
@@ -103,7 +103,7 @@ IQueryable を実装する LINQ プロバイダでほぼ共通の処理です。
 で、LINQ to SQL では、この式木を解析して、
 以下のような SQL 文に変換します。
 
-```sql
+```sql {title="変換結果の SQL 文"}
 SELECT
     [t0].[姓] + [t0].[名] AS [Name],
     [t0].[学籍番号等] AS [Info],
@@ -119,7 +119,7 @@ WHERE [t0].[cv] = [t1].[ID]
 
 IQueryable および IQueryProvider は以下のようなインターフェースです。
 
-```csharp
+```csharp {title="IQueryable インターフェース"}
 public interface IQueryable : IEnumerable
 {
   Type ElementType { get; }
@@ -133,7 +133,7 @@ public interface IQueryable<T> : IEnumerable<T>, IQueryable, IEnumerable
 ```
 
 
-```csharp
+```csharp {title="IQueryProvider インターフェース"}
 public interface IQueryProvider
 {
   IQueryable CreateQuery(Expression expression);
@@ -190,7 +190,7 @@ QueryProvider クラスの時点で「クエリ式 → 式木の構築」の部�
 
 （foreach したりには使えないけども、Expression を作るのには使える。）
 
-```csharp
+```csharp {title="QueryProvider を継承。独自処理一切なし。"}
 public class TestProvider : QueryProvider
 {
     public override string GetQueryText(Expression expression)
@@ -214,7 +214,7 @@ public class TestProvider : QueryProvider
 とりあえず、これを使って QueryProvider クラスの挙動を確認してみましょう。
 以下のようなコードを実行してみます。
 
-```csharp
+```csharp {title="QueryProvider クラスの挙動の確認"}
 var q1 = TestProvider.CreateQueryable<int>();
 Console.Write("{0}\n", q1.Expression);
 
@@ -231,7 +231,7 @@ Console.Write("{0}\n", q4.Expression);
 
 実行結果は以下の通り。
 
-```console
+```console {title="実行結果"}
 .Where(x => (x > 10))
 .Where(x => (x > 10)).OrderBy(x => x)
 .Where(x => (x > 10)).OrderBy(x => x).Select(x => (x * x))        
@@ -247,7 +247,7 @@ IQueryable.Expression の中身が追記されています。
 実のところ、QueryProvider クラスの CreateQuery メソッドは、
 引数で与えられた式木をそのまま Query クラスに流しているだけだったりします。
 
-```csharp
+```csharp {title="QueryProvider.CreateQuery の実装"}
 IQueryable<S> IQueryProvider.CreateQuery<S>(Expression expression)
 {
     return new Query<S>(this, expression);
@@ -260,7 +260,7 @@ System.Linq.Queryable 中で定義された Select や Where 拡張メソッド�
 
 例えば、System.Linq.Queryable.Where の中身は概ね以下のようになっているようです。
 
-```csharp
+```csharp {title="Where メソッドの中身"}
 public static IQueryable<T> Where<T>(
   this IQueryable<T> q,
   Expression<Func<T, bool>> pred)

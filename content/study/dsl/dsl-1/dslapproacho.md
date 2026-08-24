@@ -221,7 +221,7 @@ PowerShell には以下のような機能があります。
 まず、XML の読み出しですが、文字列を [xml] 型にキャストするだけで読み出せます。
 Get-Content（ファイルからの文字列の読み出し）と併せて、以下のような感じ。
 
-```powershell
+```powershell {title="PowerShell で XML 読み出し"}
 $xml = [xml](Get-Content $filename)
 ```
 
@@ -231,7 +231,7 @@ $xml = [xml](Get-Content $filename)
 例えば、以下のような XML があったとして、
 
 
-```xml
+```xml {title="SimpleClass.xml"}
 <?xml version="1.0" encoding="UTF-8"?>
 <class name="Sample">
   <var name="x" type="double"/>
@@ -240,7 +240,7 @@ $xml = [xml](Get-Content $filename)
 ```
 これらの XML 要素を以下のようにして読み出せます。
 
-```csharp
+```csharp {title="PowerShell で XML 要素の読み出し"}
 $xml.class.name
 
 foreach($var in $xml.class.var)
@@ -256,7 +256,7 @@ foreach($var in $xml.class.var)
 以下のような感じで C# などの汎用言語に変換します。
 （参考： 「[文字列](../../powershell/syntax/string.md)」。）
 
-```powershell
+```powershell {title="PowerShell で汎用言語に変換"}
 @"
 class $($xml.class.name)
 {
@@ -324,7 +324,7 @@ class $($xml.class.name)
 ステートマシンだけで1つのクラスにしてみます。
 クラス名はまんま StateMachine で。
 
-```csharp
+```csharp {title="StateMachine クラス"}
 namespace StateMachine
 {
   /// <summary>
@@ -347,7 +347,7 @@ namespace StateMachine
 辞書クラス（SortedDictionary）を使って表現します。
 あと、現在の状態を表すメンバーも必要ですね。
 
-```csharp
+```csharp {title="StateMachine クラスのメンバー"}
     State current;
     SortedDictionary<Pair<State, Event>, Transition> table;
 ```
@@ -355,7 +355,7 @@ namespace StateMachine
 
 で、（現状態，イベント）→（次状態，アクション）の登録用のメソッドを用意。
 
-```csharp
+```csharp {title="（現状態, イベント）→（次状態、アクション）の登録"}
     /// <summary>
     /// 状態遷移を遷移テーブルに登録。
     /// </summary>
@@ -375,7 +375,7 @@ namespace StateMachine
 
 実際のイベント処理は以下のような感じ。
 
-```csharp
+```csharp {title="イベント処理"}
     /// <summary>
     /// イベントを発生させる。
     /// </summary>
@@ -410,7 +410,7 @@ namespace StateMachine
 あとは電卓の状態遷移をステートマシンに登録すれば OK です。
 以下のようなコードがひたすら10数組続きます。
 
-```csharp
+```csharp {title="状態遷移の登録"}
       this.fsm.RegisterTransition(
         StateType.Initial, EventType.Digit,
         StateType.InputDigit,

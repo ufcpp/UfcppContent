@@ -41,7 +41,7 @@ aliases: []
 
 サンプル コード: [https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Scripting/src/Scripting](https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Scripting/src/Scripting)
 
-```csharp
+```csharp {title="C#スクリプト ライブラリの利用例"}
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using System;
 using System.Threading.Tasks;
@@ -72,7 +72,7 @@ x + y
 
 例えば、以下のようなクラスを用意します。
 
-```csharp
+```csharp {title="globalsに渡す用のコマンド発行クラス"}
 /// <summary>
 /// コマンド発行クラス。
 /// C# スクリプトのglobalsとして渡して、スクリプトからコマンドを発行するのに使う。
@@ -91,7 +91,7 @@ public class Commander
 これを、`EvaluateAsync`や`RunAsync`などのスクリプトAPIの`globals`引数に渡すことで、
 C#スクリプト側から、`walk`, `turn`, `speed`, `clear`などのメソッドを呼び出せるようになります。
 
-```csharp
+```csharp {title="globalsへのオブジェクトの受け渡し"}
 _state = await CSharpScript.RunAsync(s, globals: ViewModel.Commander);
 ```
 
@@ -149,7 +149,7 @@ REPLで1行1行実行する他に、スクリプト ファイルを与えて実�
 
 この例では、以下のようなC#スクリプトを与えています。
 
-```csharp
+```csharp {title="C#スクリプトの例"}
 using System;
 
 Console.WriteLine(DateTime.Now);
@@ -163,7 +163,7 @@ Console.WriteLine(DateTime.Now);
 通常の(コンパイルして使う)C#の機能はほぼ全て使えます。
 例えば以下のように、通常のC#コードをそのままC#インタラクティブ ウィンドウに張り付けて実行できます。
 
-```csharp
+```csharp {title="通常のC#コードをC#インタラクティブに貼り付け"}
 > using System;
 . 
 . public class Program
@@ -185,7 +185,7 @@ Hello World!
 式を1つだけ書いて、`;`も入力せずに改行すると、その式の結果を出力します。
 例えば、以下のようなコードでは、1行目は普通のC#と同じく代入ステートメント、2行目は`x * x`という式の計算結果の出力になります。
 
-```csharp
+```csharp {title="式の計算結果の出力"}
 > var x = 10;
 > x * x
 100
@@ -194,7 +194,7 @@ Hello World!
 一方で、例えば以下のような書き方はできません。
 `;` を付けたことで通常のC#構文として解釈されますが、式 + `;` という構文はC#にはないのでエラーになります。
 
-```csharp
+```csharp {title="式の後ろには ; は付けちゃダメ" highlight-text=";"}
 > x * x;
 (1,1): error CS0201: Only assignment, call, increment, decrement, and new object expressions can be used as a statement
 ```
@@ -211,7 +211,7 @@ Hello World!
 
 このうち、名前空間とアセンブリに対する属性は、スクリプト実行では使えません。
 
-```csharp
+```csharp {title="スクリプト実行で使えない構文"}
 > namespace Sample { }
 (1,1): error CS7021: スクリプト コードで名前空間を宣言することはできません
 > [assembly:System.Reflection.AssemblyTitle("test")]
@@ -226,7 +226,7 @@ Hello World!
 
 例えば以下のようなコードが書けます。
 
-```csharp
+```csharp {title="トップ レベルのステートメントやメンバーの例"}
 > var x = 10;
 > var y = 20;
 > int Product => x * y;
@@ -251,7 +251,7 @@ Hello World!
 
 ちなみに、トップ レベルに拡張メソッドも書けます。
 
-```csharp
+```csharp {title="トップ レベルの拡張メソッド"}
 > static int Square(this int x) => x * x;
 > 10.Square()
 100
@@ -259,7 +259,7 @@ Hello World!
 
 また、トップ レベルは、通常のC#でいうところの[非同期メソッド](../async/sp5_async.md)と同じ状態になっていて、常に`await`演算子が使えます。
 
-```csharp
+```csharp {title="トップ レベルはawaitを使える"}
 > #r "System.Net.Http"
 > using System.Net.Http;
 > var c = new HttpClient();
@@ -285,13 +285,13 @@ Hello World!
 
 例えば、`a.csx`という名前で以下のようなファイルがあったとします。
 
-```csharp
+```csharp {title="a.csx スクリプト ファイル"}
 var x = 10;
 ```
 
 この状況下で、以下のようなスクリプトを実行できます。
 
-```csharp
+```csharp {title="a.csxをloadするスクリプト"}
 > #load "a.csx"
 > x
 10

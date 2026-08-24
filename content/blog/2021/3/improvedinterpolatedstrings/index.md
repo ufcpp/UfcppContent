@@ -19,13 +19,13 @@ aliases: []
 
 C# 6.0 から以下のようなコードで `string.Format` 相当のことができるようになったわけですが。
 
-```csharp
+```csharp {title="string interpolation の例"}
 var s = $"({a}, {b})";
 ```
 
 これは、以下のように展開されます。
 
-```csharp
+```csharp {title="上記コードの展開結果"}
 var s = string.Format("({0}, {1})", a, b);
 ```
 
@@ -34,7 +34,7 @@ var s = string.Format("({0}, {1})", a, b);
 特に、[冒頭の提案ドキュメント](../../../../study/csharp/start/st_string.md#string-interpolation)にもある通り、ロギング用途との相性が最悪で、
 [`ILogger`](https://docs.microsoft.com/ja-jp/dotnet/api/microsoft.extensions.logging.ilogger.log?WT.mc_id=DT-MVP-4028921&view=dotnet-plat-ext-5.0)のメソッドがなかなか使いにくそうな感じの引数になっています。
 
-```csharp
+```csharp {title="ILogger.Log メソッドの引数が意味不明な件"}
 void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter);
 ```
 
@@ -52,7 +52,7 @@ void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exc
 
 例えば以下のようなコード(一部仮想コードですが)があった場合、
 
-```csharp
+```csharp {title="呼ばれ方としてまずいロギング処理"}
 using System;
  
 Log($"{DiagnosticMetric()}, {DiagnosticMetric()}, {DiagnosticMetric()}, {DiagnosticMetric()}");
@@ -76,7 +76,7 @@ void Log(string message)
 
 以下のように展開されて処理されます。
 
-```csharp
+```csharp {title="string interpolation の展開結果"}
 // ただでさえ「必要な時にだけ呼びたい」というつもりのメソッドが無条件に呼ばれる。
 object tmp1 = DiagnosticMetric(); // int → object に代入しててボックス化。
 object tmp2 = DiagnosticMetric();
@@ -103,7 +103,7 @@ Log(message);
 
 ということで、以下のように「特定パターンを満たす builder を作って、それの `TryFormat` メソッドを1個1個呼ぶ」みたいな形に展開できるようにしたいそうです。
 
-```csharp
+```csharp {title="builder.TryFormat に展開"}
 Builder.GetInterpolatedStringBuilder(baseLength: 6, formatHoleCount: 4, out var builder);
 _ = builder.TryFormat(DiagnosticMetric())
     && builder.TryFormat(", ")
@@ -123,7 +123,7 @@ _ = builder.TryFormat(DiagnosticMetric())
 まず、`Logger` 自体の定義。
 `LogTrace` メソッドの引数を「特定パターンを満たす builder」にします(この例の場合 `TraceLoggerParamsBuilder` 型)。
 
-```csharp
+```csharp {title="想定している Logger の作り方"}
 public class Logger
 {
     // どこかで設定
@@ -139,14 +139,14 @@ public class Logger
 
 これで、以下のようなコードを書いたとして、
 
-```csharp
+```csharp {title="logger.LogTrace 利用例"}
 Logger logger = GetLogger(LogLevel.Info);
 logger.LogTrace($"{"this"} will never be printed because info is < trace!");
 ```
 
 `logger.LogTrace` の行は以下のように展開するそうです。
 
-```csharp
+```csharp {title="logger.LogTrace の展開結果"}
 var receiverTemp = logger;
 TraceLoggerParamsBuilder.GetInterpolatedStringBuilder(baseLength: 47, formatHoleCount: 1, receiverTemp, out var builder);
 _ = builder.TryFormat("this") && builder.TryFormat(" will never be printed because info is < trace!");
@@ -157,7 +157,7 @@ receiverTemp.LogTrace(builder);
 
 `TraceLoggerParamsBuilder` 型は最低ライン以下のように作ります。
 
-```csharp
+```csharp {title="ログレベルに応じて必要な時だけ文字列書き込みする builder の例"}
 public struct TraceLoggerParamsBuilder
 {
     bool _logLevelEnabled;
@@ -186,7 +186,7 @@ public struct TraceLoggerParamsBuilder
 しかも、`$""` がリテラルに展開されい場合だけ。
 以下のような挙動になります。
 
-```csharp
+```csharp {title="オーバーロード解決"}
 void Log(string s) { ... }
 void Log(TraceLoggerParamsBuilder p) { ... }
  
@@ -203,7 +203,7 @@ Log($"{1}"); // コンパイル時の展開が利かない文字列補間 → Lo
 
 で、`string.Format` にも以下のオーバーロードを追加。
 
-```csharp
+```csharp {title="string.Format(InterpolatedStringBuilder)"}
 public class String
 {
     public static string Format(InterpolatedStringBuilder builder) => builder.ToString();

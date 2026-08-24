@@ -47,7 +47,7 @@ aliases:
 まずファイルを開いて、読み書きを行った後、ファイルを閉じる必要があります。
 以下に簡単な例を示します。
 
-```csharp
+```csharp {title="リソースの破棄の例"}
 using System;
 using System.IO;
 
@@ -79,7 +79,7 @@ class DisposeTest
 例外が発生した場合にも <code>Close</code> メソッドが呼ばれるようにするためには、
 以下のように <em>try-catch-finally ステートメントを用います</em>。
 
-```csharp
+```csharp {title="finally を用いたリソースの破棄"}
 using System;
 using System.IO;
 
@@ -124,7 +124,7 @@ class DisposeTest
 (ただし、<code>Resource</code> はリソース管理用クラスで、
 <code>Dispose</code> メソッドによりリソースの破棄を行うものとする。)
 
-```csharp
+```csharp {title="リソース破棄の手順"}
 Resource r = new Resource();
 try
 {
@@ -144,7 +144,7 @@ finally
 そこで、C#ではこの手順を自動的に行ってくれる構文が用意されています。
 この構文は <strong id="using" class="keyword">using ステートメント</strong>と呼ばれ、以下のようにして用います。
 
-```csharp
+```csharp {title="using ステートメント"}
 using(Resource r = new Resource())
 {
   リソースに対する操作
@@ -161,7 +161,7 @@ using ステートメントを用いると、
 
 using ステートメントを用いて上述の例を書き直したものを以下に示します。
 
-```csharp
+```csharp {title="using を用いたリソースの破棄"}
 using System;
 using System.IO;
 
@@ -192,7 +192,7 @@ class DisposeTest
 
 ちなみに、using() の中身は変数宣言だけではなく、式にすることもできます。
 
-```csharp
+```csharp {title="using(式)"}
 using(式)
 {
   リソースに対する操作
@@ -202,7 +202,7 @@ using(式)
 
 これで、以下のようなコードと同等な処理になります。
 
-```csharp
+```csharp {title="using(式)"}
 using(IDisposable r = 式)
 {
   リソースに対する操作
@@ -212,7 +212,7 @@ using(IDisposable r = 式)
 
 さらに展開すると、以下のような意味です。
 
-```csharp
+```csharp {title="using(式) の解釈"}
 Resource r = 式;
 try
 {
@@ -229,7 +229,7 @@ finally
 用途としては例えば、以下の「[ジェネリック](../oop/sp2_generics.md#generics)」を使ったメソッドのように、
 T が IDispose を実装している時だけ Dispose を呼び出したい場合などに便利です。
 
-```csharp
+```csharp {title="IDispose を実装している時だけ Dispose を呼び出し"}
 static void GenericMethod<T>(T obj)
 {
     using (obj as IDisposable)
@@ -254,7 +254,7 @@ C# 8.0 で、変数宣言に対して `using` 修飾を付けることで、
 
 例えば以下のように書きます。
 
-```csharp
+```csharp {title="using 変数宣言"}
 using System;
  
 readonly struct DeferredMessage : IDisposable
@@ -284,7 +284,7 @@ class Program
 
 `Main` メソッド内は以下のコードと同じ意味になります。
 
-```csharp
+```csharp {title="using 変数宣言の展開"}
 // using var で、変数のスコープに紐づいた using になる。
 // スコープを抜けるときに Dispose が呼ばれる。
 using (var a = new DeferredMessage("a"))
@@ -307,7 +307,7 @@ using (var a = new DeferredMessage("a"))
 `Dispose` が呼ばれるタイミングを伸ばしてしまって、パフォーマンスに悪影響を及ぼす可能性があります。
 例えば以下のコードを考えます。
 
-```csharp
+```csharp {title="using 変数宣言に単純置き換えしない方がいい例"}
 using System;
 using System.IO;
 using System.Threading;
@@ -363,7 +363,7 @@ class Program
 この例でも、実際には以下のように書くべきでしょう。
 これならまさに `using` 変数宣言がふさわしい書き方です。
 
-```csharp
+```csharp {title="using が必要な範囲だけメソッド抽出"}
 using System;
 using System.IO;
 using System.Threading;
@@ -404,7 +404,7 @@ C# の構文の多くは、C# コンパイラーによる簡単な置き換え
 [次節で説明する](#pattern-based-using)ように、C# 8.0 で少しだけ条件緩和されましたが、
 既存のコードを壊さないようにするためにはかなり限定的にせざるを得なかったらしく、基本的にはインターフェイス実装が必須です。
 
-```csharp
+```csharp {title="using ステートメントの利用には IDisposable インターフェイスの実装が(ほぼ)必須"}
 using System;
  
 // using で使える型。
@@ -436,7 +436,7 @@ class Program
 既存コードのことを心配する必要がないため、元からパターン ベースにしてあります。
 すなわち、別に `IAsyncDisposable` インターフェイスの実装は必要ありません。
 
-```csharp
+```csharp {title="非同期 using はパターン ベース"}
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -468,7 +468,7 @@ class Program
 }
 ```
 
-```console
+```console {title="非同期 using はパターン ベース"}
 iside using
 disposed async
 ```
@@ -490,7 +490,7 @@ ref 構造体を使いたいような場面では `Dispose` したいリソー�
 その結果、C# 8.0 では、ref 構造体に対してだけパターン ベースでの `using` ステートメントを認めることにしました。
 以下のようになります。
 
-```csharp
+```csharp {title="ref 構造体に対するパターン ベース using"}
 using System;
  
 // これまで通り、using で使える型。
@@ -531,7 +531,7 @@ class Program
 この変更は、`foreach` ステートメントに対しても適用されます。
 `foreach` ステートメントは、列挙対象が `IDisposable` だった場合に `Dispose` メソッドを呼び出す仕様になっています。
 
-```csharp
+```csharp {title="foreach 最後の Dispose 呼び出しがパターン ベースに"}
 using System;
  
 // GetEnumerator/MoveNext/Current は元々パターン ベース。
@@ -571,7 +571,7 @@ class Program
 }
 ```
 
-```console
+```console {title="非同期 using はパターン ベース"}
 ref disposed
 ```
 
@@ -583,7 +583,7 @@ C# 8.0で非同期版の`using`が追加されました。
 `await using`という構文で、`IAsyncDisposable`インターフェイス(`System`名前空間)か、
 それと同じ[パターン](../async/asyncstream.md#await-foreach)を満たす型の列挙ができます。
 
-```csharp
+```csharp {title="非同期using"}
 static async Task AsyncUsing<T>(T x)
     where T : IAsyncDisposable
 {

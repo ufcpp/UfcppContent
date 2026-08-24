@@ -327,7 +327,7 @@ C# は以下のようなエスケープ シーケンスを持っています。
 この、後ろに書かれた16進数の数値を文字コードに持つ文字に置き換わります。
 例えば16進数で61というのはアルファベットの a を表すコードで、要するに `\u0061` は `a` と同じ意味になります。
 
-```csharp
+```csharp {title="Unicode エスケープ シーケンス"}
 Console.WriteLine('\u0061'); // 文字 a
 Console.WriteLine("\U0001F60A"); // 絵文字の 😊
 Console.WriteLine('\x61'); // 文字 a。4桁固定じゃないということ以外は \u と同じ
@@ -356,7 +356,7 @@ Console.WriteLine('\x61'); // 文字 a。4桁固定じゃないということ�
 
 ちなみに、`\u` と `\U` は文字・文字列リテラルの外で、[識別子](misc_identifier.md)にも使えます。
 
-```csharp
+```csharp {title="\u, \U 識別子"}
 var \u0061 = 1; // var a = 1; と同じ意味
 Console.WriteLine(a); // 1
 Console.WriteLine(\U00000061); // 記法が違ってもやっぱり a の意味で解釈されるので 1 が表示される
@@ -617,7 +617,7 @@ string path = @"C:\windows\system"; // 逐語的リテラル（@-quoted string�
 ちなみに、逐語的文字列リテラルの場合、<em>複数行に渡る文章を書くことも出来ます</em>。
 改行の位置にはちゃんと改行文字が入ります。
 
-```csharp
+```csharp {title="複数行にわたる文字列"}
 string multiLineString =
 @"@-quoted string では、
 文章を複数行に渡って書くことができます。
@@ -631,7 +631,7 @@ Console.Write(multiLineString);
 
 また、逐語的文字列リテラル中で " （ダブルクォーテーション）を使いたい場合は、"" というように、2つ並べて書きます。
 
-```csharp
+```csharp {title="here 文字列中の引用符"}
 var s = @"
 var s = ""here 文字列中の引用符"";
 ";
@@ -665,7 +665,7 @@ C# では、組込み型・ユーザー定義型を問わずすべての型は <
 
 string 型や object 型は、有効な値の他に、無効な（まだ初期化されていない）状態を表す null という値を持つことができます。
 
-```csharp
+```csharp {title="複数行にわたる文字列"}
 object notInitializedVariable = null;
 ```
 
@@ -773,6 +773,6 @@ C# では、変数を明示的に初期化しなかった場合に与えられ�
 
 既定値を得るための default 式というものもあります。例えば、以下のように書くと、int の規定値（0）が得られます。
 
-```csharp
+```csharp {title="既定値"}
 int n = default(int);
 ```

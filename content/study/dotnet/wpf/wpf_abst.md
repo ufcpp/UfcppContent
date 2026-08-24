@@ -199,7 +199,7 @@ Windows サーバの場合、サーバに .NET Framework 3.0 が入っていれ�
 特に手動で設定する必要はなさげ。
 Apache の場合、.htaccess に、例えば以下のような記述を追加すれば OK。
 
-```apache
+```apache {title=".htaccess 設定"}
 AddType application/xaml+xml xaml
 AddType application/x-ms-xbap xbap
 ```

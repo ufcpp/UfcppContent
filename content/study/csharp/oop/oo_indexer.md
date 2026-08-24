@@ -70,7 +70,7 @@ C# で利用できる基本型の1つに配列があります。
 
 例えば、以下のように添字の下限と上限の両方を指定できる配列を作ることが出来ます。
 
-```csharp
+```csharp {title="インデクサーの例1"}
 using System;
 
 /// <summary>
@@ -126,7 +126,7 @@ a[9] = 9
 インデクサーの添字は1つである必要はなく、
 複数の添字を利用することが出来ます。
 
-```csharp
+```csharp {title="インデクサーの例2 複数の添字" highlight-text="public int this[int i, int j]"}
 using System;
 
 /// <summary>
@@ -183,7 +183,7 @@ class IndexerSample
 また、添字の型は整数型である必要はありません。
 例えば、以下のように添字が <code>string</code> 型のインデクサーを持つ辞書クラスを作ることも出来ます。
 
-```csharp
+```csharp {title="インデクサーの例2 string 型の添字"}
 using System;
 
 /// <summary>
@@ -268,7 +268,7 @@ C# 2.0 では、
 「[プロパティ](oo_property.md#property)」と同様に、
 インデクサーの set/get アクセサそれぞれ異なるアクセスレベルを設定できるようになりました。
 
-```csharp
+```csharp {title="set/get で異なるアクセスレベル" highlight-text="private"}
 int[] x;
 public int this[int i]
 {
@@ -292,7 +292,7 @@ C# にこの機能がない理由についてちょっと考えてみます。
 VB.NET のプロパティの構文は以下のような感じです。
 （例として整数型のプロパティを作るなら）
 
-```vbnet
+```vbnet {title="VB.NET のプロパティ（定義側）"}
 Public Property X() As Integer
   Get
     Return x_
@@ -304,14 +304,14 @@ End Property
 ```
 
 
-```vbnet
+```vbnet {title="VB.NET のプロパティ（利用側）"}
 obj.X = 0
 ```
 
 
 で、VB の場合はプロパティが引数を取れます。
 
-```vbnet
+```vbnet {title="VB.NET のインデックス付きプロパティ（定義側）"}
 Public Property X(i As Integer) As Integer
   Get
     Return x_(i)
@@ -323,7 +323,7 @@ End Property
 ```
 
 
-```vbnet
+```vbnet {title="VB.NET のインデックス付きプロパティ（利用側）"}
 obj.X(0) = 0
 ```
 
@@ -332,7 +332,7 @@ obj.X(0) = 0
 C# のインデクサーの構文は、なんか意味の分からない所に this が入って、
 以下のような書き方をするわけですが、
 
-```csharp
+```csharp {title="C# のインデクサー"}
 int[] x;
 
 public int this[int i]
@@ -359,7 +359,7 @@ C# の言語設計者的には、
 コレクションクラス（配列とかのこと）を返すプロパティを使って欲しいんだと思います。
 要するに、以下のような。
 
-```csharp
+```csharp {title="C# でインデックス付きプロパティ相当のことをしたい場合"}
 int[] x;
 
 public int[] X
@@ -381,7 +381,7 @@ C# 設計者がそうして欲しかった理由は、
 インデックス付きプロパティではできない。
 （参考： 「[foreach](../data/sp_foreach.md)」。）
 
-```csharp
+```csharp {title="インデックス付きプロパティでは foreach が使えない"}
 foreach(int val in obj.X)
 {
   Console.Write("{0}\n", val);

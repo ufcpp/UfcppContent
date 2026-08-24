@@ -139,7 +139,7 @@ null 許容参照型を有効にするには、以下の2通りのオプショ�
 (最終的にはVisual Studio上の設定画面からもオン/オフができると思いますが、
 現状ではcsprojを手書きする必要があります。)
 
-```xml
+```xml {highlight-lines="7"}
 <Project Sdk="Microsoft.NET.Sdk">
  
   <PropertyGroup>
@@ -166,7 +166,7 @@ null 許容参照型がらみの違反は、全て警告になっていて、エ
 まあ、C# には「警告をエラーとして扱う」というオプションもあるので、
 「null は絶対に許さない。慈悲はない」という方はcsprojに`TreatWarningsAsErrors`を加えるといいと思います。
 
-```xml
+```xml {highlight-lines="7-8"}
 <Project Sdk="Microsoft.NET.Sdk">
  
   <PropertyGroup>

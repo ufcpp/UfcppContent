@@ -88,7 +88,7 @@ XML なんかは、理念的にはこの折中案。
 例えば、何らかの数値を設定ファイルに記録してあったとします。
 テキスト形式の場合、読み出しは以下のような感じになります。
 
-```csharp
+```csharp {title="テキスト形式のファイルから数値を読み出し"}
 int x = int.Parse(reader.ReadLine());
 ```
 
@@ -100,7 +100,7 @@ Parse では「文字列を解析して数値に変換」というような処�
 
 一方、バイナリ形式で保存するなら、以下のような感じ。
 
-```csharp
+```csharp {title="バイナリ形式のファイルから数値を読み出し"}
 int x = reader.ReadInt32();
 ```
 
@@ -244,7 +244,7 @@ intentional programming。
 
 ハッシュテーブルによる表現
 
-```csharp
+```csharp {title="ハッシュテーブルによるステートマシンの表現"}
 fsm[new Pair(State.A, Event.a)] = new Pair(State.A, x);
 fsm[new Pair(State.A, Event.b)] = new Pair(State.B, y);
 fsm[new Pair(State.A, Event.d)] = new Pair(State.C, u);
@@ -261,7 +261,7 @@ fsm[new Pair(State.C, Event.d)] = new Pair(State.B, u);
 
 switch 文による表現
 
-```csharp
+```csharp {title="switch 文によるステートマシンの表現"}
 switch(currentState)
 {
 case State.A:

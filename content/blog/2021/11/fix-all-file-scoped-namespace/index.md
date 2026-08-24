@@ -37,7 +37,7 @@ TargetFramework や LangVersion を書き換えるだけならそこまで大き
 C# 10.0 のテーマの1つは「[シンプル プログラム](../../../../study/csharp/cheatsheet/ap_ver10.md#simple-program)」になっています。
 その一環で、
 
-```csharp
+```csharp {title="従来のコード"}
 namespace Namespace
 {
     class A { }
@@ -46,7 +46,7 @@ namespace Namespace
 
 という従来コードを、
 
-```csharp
+```csharp {title="C# 10 からできる名前空間の書き方"}
 namespace Namespace;
 
 class A { }

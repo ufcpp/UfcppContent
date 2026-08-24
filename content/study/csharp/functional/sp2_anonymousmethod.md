@@ -27,7 +27,7 @@ aliases:
 
 例えば、以下のようなコードは、
 
-```csharp
+```csharp {title="匿名関数の例1"}
 class Program
 {
   static void Main(string[] args)
@@ -41,7 +41,7 @@ class Program
 以下のコードと同じ意味になります。
 (※ 古いC#コンパイラーの実装の場合だけです。現在は、静的メソッドの場合もう少し複雑なコード生成にした方がパフォーマンスがいいらしく、変換結果が変わっています。現在の実装については[後述](#static))
 
-```csharp
+```csharp {title="例1のコンパイル結果"}
 class Program
 {
     static int AnonymousMethod1()
@@ -72,7 +72,7 @@ C# では通常記述できないような特殊な名前になっていて、
 
 例えば、以下のようなコードは、
 
-```csharp
+```csharp {title="匿名関数の例2"}
 class Program
 {
   int member = 0;
@@ -88,7 +88,7 @@ class Program
 
 以下のように展開されます。
 
-```csharp
+```csharp {title="例2のコンパイル結果"}
 class Program
 {
   int AnonymousMethod2()
@@ -113,7 +113,7 @@ class Program
 
 例えば、以下のようなコードは、
 
-```csharp
+```csharp {title="匿名関数の例3"}
 class Program
 {
   static void Main(string[] args)
@@ -130,7 +130,7 @@ class Program
 
 コンパイル時に以下のようなクラスを生成したうえで、実行時にそのインスタンスが作られます。
 
-```csharp
+```csharp {title="例3のコンパイル結果"}
 class Program
 {
   class AnonymousClass
@@ -160,7 +160,7 @@ class Program
 呼び出し元とクロージャ側とで、ローカル変数`x`の書き換え結果が共有される(実行結果で 1 が表示される)のは、このコード生成のおかげです。
 例えば以下のように、ローカル変数を書き換えるコードを書いたとします。
 
-```csharp
+```csharp {title="例4： 匿名関数で参照している変数の書き換え"}
 class Program
 {
   static void Main(string[] args)
@@ -176,7 +176,7 @@ class Program
 
 このコードは以下のように展開されます。
 
-```csharp
+```csharp {title="例4のコンパイル結果"}
 class Program
 {
   class AnonymousClass
@@ -214,7 +214,7 @@ class Program
 - ローカル関数でクロージャを作っている(匿名関数ではない)
 - デリゲートに代入したりせず、直接関数呼び出ししている
 
-```csharp
+```csharp {title="クロージャが最適かできるかどうかの例" highlight-text="最適化できる状況: ローカル関数を直接呼出し"}
 static void M1(int m, int n)
 {
     // 最適化できる状況: ローカル関数を直接呼出し
@@ -240,7 +240,7 @@ static void M3(int m, int n)
 
 最適化できる状況、例えばこの例の`M1`の場合、以下のようなコードに展開されます。
 
-```csharp
+```csharp {title="クロージャに伴うインスタンス生成を避ける最適化"}
 struct State
 {
     public int m;
@@ -274,7 +274,7 @@ static void M1(int m, int n)
 しかし、C# 6.0の頃から、静的メソッドは使わなくなりました。
 例えば、冒頭の例を改めて使いますが、以下の例の場合、
 
-```csharp
+```csharp {title="匿名関数の例1"}
 class Program
 {
   static void Main(string[] args)
@@ -288,7 +288,7 @@ class Program
 C# 5.0までは静的メソッドが生成されていましたが、
 現在は以下のように展開されます。
 
-```csharp
+```csharp {title="例1の現在の展開結果"}
 class Program
 {
     class AnonymousClass
@@ -346,7 +346,7 @@ class Program
 同じスコープに複数の匿名関数がある場合、1つのクラスにまとめてメソッドが生成されます。
 例えば以下のコードの場合、
 
-```csharp
+```csharp {title="同じスコープに複数の匿名関数がある例"}
 using System;
 
 class Program
@@ -411,7 +411,7 @@ class Program
 例えば以下のようなコードを書いてしまうと、
 短寿命でガベージ コレクションされて欲しい大きなデータがいつまでたっても回収されないという問題が起こります。
 
-```csharp
+```csharp {title="寿命が一蓮托生になって困る例"}
 using System;
 using System.Threading.Tasks;
 

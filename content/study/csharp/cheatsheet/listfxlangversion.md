@@ -303,7 +303,7 @@ C# 7 = Visual Studio 2017と同時期リリース。
 
 属性の実装は簡単。例えば以下のようなコードで終わり。
 
-```csharp
+```csharp {title="ExtensionAttribute の実装"}
 namespace System.Runtime.CompilerServices
 {
     [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Method)]

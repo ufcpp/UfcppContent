@@ -28,7 +28,7 @@ aliases: []
 
 ちなみに、その、予定されている全機能で言うと、以下のような書き方とかもできます。
 
-```csharp
+```csharp {title="全機能版パターン マッチング"}
 static int Calculate(Node n, int x)
 {
     switch (n)
@@ -60,7 +60,7 @@ static int Calculate(Node n, int x)
 
 まあ、それぞれを見ると、細かく「先送り」になっているものもあるんですが。例えば以下のコードは、計画上はできることになっているんですが、現状ではコンパイルエラーになります。
 
-```csharp
+```csharp {title="VS 2017 RCの12月更新ではまだ使えない機能"}
 // 計画上は、クエリ式の let での分解も予定あり
 var q = from x in new [] { 1, 2, 3, 4, 5 }.Select((x, i) => (x, i))
         let (y, z) = x

@@ -60,7 +60,7 @@ C#では、数値などから文字列への型変換は、そのままではで
 </ul>
 <div>
 
-```csharp
+```csharp {title="ToString をオーバーライド"}
 class Point
 {
     public int X { get; set; }
@@ -181,7 +181,7 @@ Console.WriteLine(x.ToString("e")); // 1.200000e-001
 
 stringクラスのFormat静的メソッドで、複数の値をまとめて書式設定することができます。
 
-```csharp
+```csharp {title="string.Format 静的メソッド"}
 var x = 7;
 var y = 13;
 var line = string.Format("{0} × {1} = {2}", x, y, x * y);
@@ -194,21 +194,21 @@ Console.WriteLine(line); // 7 × 13 = 91
 
 Console.Writeや、StreamWriter.Writeなど、内部的にstring.Formatを呼び出してくれる（＝文字列整形の挙動は string.Format と同じ）ものもあります。
 
-```csharp
+```csharp {title="Console.WriteLine は string.Format と同じ書式設定ができる"}
 Console.WriteLine("({0}, {1})", 1, 2); // (1, 2)
 ```
 
 
 インデックスに続けて、<code>,</code>（コンマ）で区切って幅を指定することもできます。この時、正の数を指定すると右詰め、負の数を指定すると左詰めになります。
 
-```csharp
+```csharp {title="複合書式中での幅指定"}
 Console.WriteLine("({0,-5}) ({1,5})", 1, 1); // (1    ) (    1)
 ```
 
 
 また、インデックスに続けて、<code>:</code> （コロン）で区切って、個別の書式（＝ ToString メソッドに渡す書式）を指定できます。
 
-```csharp
+```csharp {title="個別書式指定"}
 Console.WriteLine("{0:x}, {1:c}", 123, 123); // 7b, \123
 //↑ "{0}, {1}", 123.ToString("x"), 123.ToString("c") と同じ扱い
 ```
@@ -223,7 +223,7 @@ Console.WriteLine("{0:x}, {1:c}", 123, 123); // 7b, \123
 
 dは10進数、xは16進数を表します。xを大文字にするか小文字にするかで、16進数のa～fの大小を選べます。
 
-```csharp
+```csharp {title="標準の整数書式"}
 // d：10進数、0詰め桁数指定
 Console.WriteLine("{0:d}, {0:d4}", 5); // 5, 0005
 // x: 16進数、0詰め桁数指定
@@ -236,7 +236,7 @@ Console.WriteLine("{0:x}, {0:X}, {0:x4}, {0:X4}", 140); // 8c, 8C, 008c, 008C
 
 fで固定小数点表示、eで指数表記を表します。また、gで、fとeのどちらか、簡潔な方を自動選択してくれます。
 
-```csharp
+```csharp {title="標準の浮動小数点数書式"}
 // f: 小数点、小数点以下の桁数指定
 Console.WriteLine("{0:f}, {0:f5}", 0.1234); // 0.12, 0.12340
 // e: 指数表記、精度指定
@@ -251,7 +251,7 @@ Console.WriteLine("{0:g}, {1:g}", 1200000000000000.0, 0.12); // 1.2e+15, 0.12
 
 適宜桁区切り、通貨記号などをはさんでくれるn、cや、精度を自動判定してくれるr、パーセント化してくれるpなども利用できます。
 
-```csharp
+```csharp {title="その他の数値書式"}
 // n: 適宜、桁区切りなどを挿入、小数点以下の桁数指定
 Console.WriteLine("{0:n}, {0:n0}", 1234567); // 1,234,567.00, 1,234,567
 // c: 通貨
@@ -271,7 +271,7 @@ Console.WriteLine("{0:p1}", 0.1234); // 12.30%
 
 数値は、0や#（ナンバー記号）などを使って、かなり自由な書式を作れます。
 
-```csharp
+```csharp {title="カスタム数値書式"}
 // 桁数を明示。0. の 0 は省略
 Console.WriteLine("{0:#.##}", 0.2345); // .23
 // 0詰め4ケタ.4ケタ
@@ -289,7 +289,7 @@ Console.WriteLine("{0:#,#.00}", 1234567); // 1,234,567.00
 
 DateTime 型、DateTimeOffset 型に対しても、標準書式（<code>"d"</code>など）や、カスタム書式（<code>"y/M/d"</code> など）を設定できます。
 
-```csharp
+```csharp {title="標準の日付書式"}
 var d = new DateTime(2008, 5, 4, 8, 30, 0);
 Console.WriteLine(d.ToString("d")); // 2008/05/04
 Console.WriteLine(d.ToString("D")); // 2008年5月4日
@@ -397,7 +397,7 @@ Console.WriteLine(d.ToString("ddd dddd"));    // 日 日曜日
 
 <code>"c"</code> 書式を使うと、金額に対して、カルチャーごとに最適な整形を掛けてくれます。
 
-```csharp
+```csharp {title="カルチャーごとの通貨書式"}
 using System;
 using System.Globalization;
 
@@ -420,7 +420,7 @@ class Program
 ```
 
 
-```console
+```console {title="実行結果"}
 ¥9,800      / -¥9,800      (日本語 (日本))
 ￥9,800.00   / ￥-9,800.00   (中国語 (中華人民共和国))
 $9,800.00   / ($9,800.00)  (英語 (米国))

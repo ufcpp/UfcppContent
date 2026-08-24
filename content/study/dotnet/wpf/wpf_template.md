@@ -36,7 +36,7 @@ Contorl クラス（Button などの親クラス）は Template という名前�
 例えば、以下のように書くことで、ボタンの見た目を四角と丸に変化させることができます。
 
 
-```xml
+```xml {title="ControlTemplate"}
 <WrapPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -70,7 +70,7 @@ Button や Label など、
 これを表示させるためには、ControlTemplate 中に、ContentPresenter というものを書き加えます。
 
 
-```xml
+```xml {title="ContentPresenter" highlight-lines="12-13"}
 <WrapPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -102,7 +102,7 @@ Button や Label など、
 ControlTemplate は、リソース中に 書くこともできます。
 
 
-```xml
+```xml {title="リソース中に ControlTemplate"}
 <WrapPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -126,7 +126,7 @@ ControlTemplate は、リソース中に 書くこともできます。
 全てのボタンに対して一律テンプレートを適用したければ、スタイルと併用します。
 
 
-```xml
+```xml {title="全てのボタンにテンプレートを適用"}
 <WrapPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -165,7 +165,7 @@ ControlTemplate は、リソース中に 書くこともできます。
 TemplateBinding マークアップ拡張を用います。
 
 
-```xml
+```xml {title="TemplateBinding マークアップ拡張" highlight-ranges="sha256:f45c2da9decdd65a5422993514f9260799b93e19d8987c0ef8c7742b11d15784;9:18-9:53,19:22-19:42,21:22-21:42,23:22-23:42"}
 <WrapPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -225,7 +225,7 @@ ItemsPresenter を記述します。
 例えば、角を丸めた ListBox を作りたければ以下のようにします。
 
 
-```xml
+```xml {title="ItemsPresenter" highlight-text="&lt;ItemsPresenter Margin=&quot;5&quot;/&gt;"}
 <WrapPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -257,7 +257,7 @@ ItemsPanel プロパティ（ItemsPanelTemplate 型）を設定します。
 例えば、ListBox の項目を、水平に並べたければ以下のようにします。
 
 
-```xml
+```xml {title="ItemsPanel" highlight-lines="13-17"}
 <WrapPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -307,7 +307,7 @@ ItemsSource プロパティに XmlDataProvider を指定することで、
 XML からデータを読み込んで一覧表示することができます。
 
 
-```xml
+```xml {title="XML データを ListBox 中に一覧表示"}
 <WrapPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -345,7 +345,7 @@ XML の各項目に対してテンプレートを適用したければ、
 以下のように、ItemTemplate プロパティに DataTemplate を設定します。
 
 
-```xml
+```xml {title="DataTemplate" highlight-lines="22-29"}
 <WrapPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

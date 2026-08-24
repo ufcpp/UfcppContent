@@ -34,7 +34,7 @@ aliases: []
 
 こういう機能。
 
-```csharp
+```csharp {title="digit separators"}
 var million = 1_000_000;
 var abcd = 0b1010_1011_1100_1101; // 特に2進数リテラルで有用
 var abcd2 = 0xab_cd;              // 16進数リテラルにも使える

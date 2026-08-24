@@ -62,7 +62,7 @@ C# で識別子に使える文字は、まあかなり端折って言うと、�
 
 これを、こうじゃ:
 
-```csharp
+```csharp {title="Unicode 8.0 以降に追加された letter"}
 // Unicode 8.0
 int ᏸ = 8; // U+13F8, Cherokee Small Letter Ye
 
@@ -108,7 +108,7 @@ Console.WriteLine(ᏸ + Ɪ + ৼ + ՠ + Ꞻ + ഄ + ౝ);
 
 <em>Ɪ と ՠ の2文字、ASCII 文字と似てて[ホモグラフ攻撃](https://ja.wikipedia.org/wiki/%E3%83%9B%E3%83%A2%E3%82%B0%E3%83%A9%E3%83%95%E6%94%BB%E6%92%83)できそうじゃない…</em>
 
-```csharp
+```csharp {title="おもむろに謎のクラスを1つ定義"}
 class Ɪՠage { }
 ```
 

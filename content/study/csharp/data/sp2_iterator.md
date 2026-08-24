@@ -37,7 +37,7 @@ C# の foreach 構文は、コレクションクラスの利用者側から見�
 
 イテレーター ブロックを使うことで、「[foreach 文](sp_foreach.md#foreach)」で利用可能なコレクションを返すメソッドやプロパティを簡単に実装することができます。
 
-```csharp
+```csharp {title="イテレーター ブロック" highlight-lines="6-10" highlight-text="foreach(int i in FromTo(10, 20))"}
 using System.Collections.Generic;
 
 class TestEnumerable
@@ -88,7 +88,7 @@ class TestEnumerable
 foreach 文中で使われる値を1つ得ます。
 for 文や while 文を使わず、ベタに yield return を並べても OK です。
 
-```csharp
+```csharp {title="イテレーター ブロック"}
 static public IEnumerable GetEnumerable(int from, int to)
 {
   yield return 1;
@@ -107,7 +107,7 @@ static public IEnumerable GetEnumerable(int from, int to)
 また、プロパティ風の記述も可能です。
 上述の例は static なメソッドですが、以下のような非 static なプロパティ風の定義も可能です。
 
-```csharp
+```csharp {title="非 static プロパティ風イテレーター ブロック" highlight-lines="6-13" highlight-text="foreach(int i in new FromTo(10, 20).Enumerable)"}
 class FromTo
 {
   int from, to;
@@ -172,7 +172,7 @@ GetEnumerator と言う名前のイテレーター ブロックを定義する�
 コレクションクラスを作成できます。
 ここでは、「[ジェネリック](../oop/sp2_generics.md)」で例に挙げた Stack クラスにイテレーターを追加してみましょう。
 
-```csharp
+```csharp {title="GetEnumerator イテレーター ブロック" highlight-lines="9-13"}
 class Stack<Type>
 {
   Type[] buf;
@@ -196,7 +196,7 @@ class Stack<Type>
 「[foreach](sp_foreach.md)」で挙げた例を、
 ジェネリックスとイテレーターを用いて書き直してみます。
 
-```csharp
+```csharp {title="イテレーターの例"}
 using System;
 using System.Collections.Generic;
 
@@ -293,7 +293,7 @@ class ForeachSample
 一種の状態機械（state machine）を自動生成していて、
 例えば、先ほど例に挙げた Stack なら以下のようなコードと等価になるそうです。
 
-```csharp
+```csharp {title="イテレーターのコンパイル結果（と等価なコード）"}
 using System;
 using System.Collections.Generic;
 using System.Collections;
@@ -373,7 +373,7 @@ C# 2.0 コンパイラは、
 この MoveNext メソッド内のようなコードに展開してくれるそうです。
 やっていることを簡単に言うと、<code>yield return x;</code> の部分を以下のように置き換えています。
 
-```csharp
+```csharp {title="yield return の置き換え"}
 state = State1; // 次に復帰するときのための状態の記録
 Current = x;    // 戻り値を Current に保持
 return true;    // いったん処理終了
@@ -401,7 +401,7 @@ Reset を呼ぼうとすると NotSupportedException がスローされます。
 以下のように、イテレーター ブロック中で Dispose() を呼び出しても、
 正しく呼び出されない場合があります。
 
-```csharp
+```csharp {title="不適切なリソース破棄" highlight-text="sr.Dispose(); // この行は呼ばれないことがある"}
 static IEnumerable<string> Lines(string path)
 {
   System.IO.StreamReader sr = new System.IO.StreamReader(path);
@@ -450,7 +450,7 @@ static void Foreach()
 正しく sr.Dispose(); が呼ばれるようにしたければ、
 イテレーター ブロック内で「[try-catch-finally 文](../structured/oo_exception.md#try)」や「[using ステートメント](../resource/oo_dispose.md#using)」を使います。
 
-```csharp
+```csharp {title="using を使ったリソース破棄"}
 static IEnumerable<string> Lines(string path)
 {
   using (System.IO.StreamReader sr = new System.IO.StreamReader(path))

@@ -38,7 +38,7 @@ runtime intrinsics (JIT コンパイラーの特別扱い)で実装したりし�
 ということで、皆様ご存じの通り<sup>[※](#as-you-all-known)</sup>、
 `Unsafe` クラスを使えば C# でも C++ 的な遊びがいろいろと楽しめます。
 
-```csharp
+```csharp {title="Unsafe.As"}
 using System.Runtime.CompilerServices;
 
 var a = new A(123);
@@ -75,7 +75,7 @@ readonly record struct A(int Value);
 
 なので、先ほどと同じノリで ref struct に対して `Unsafe.As` (とか、それ相当の unsafe コード)を書こうとしてもうまくいきません。
 
-```csharp
+```csharp {title="Span には Unsafe.As が使えない"}
 using System.Runtime.CompilerServices;
 
 var span = (stackalloc int[] { 0xDE, 0xAD, 0xBE, 0xEF });
@@ -107,7 +107,7 @@ C# 9 で入った関数ポインター、
 
 これを使えば、以下のように、ref struct に対しても `Unsafe.As` 的なことができるようになったりします。
 
-```csharp
+```csharp {title="関数ポインターは制限がゆるくて、現状これでしかできないことができちゃう"}
 var span = (stackalloc int[] { 0xDE, 0xAD, 0xBE, 0xEF });
 var a = new A(span);
 

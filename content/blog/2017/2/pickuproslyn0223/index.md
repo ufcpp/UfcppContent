@@ -40,7 +40,7 @@ aliases: []
 数学で「[群](../../../../study/math/group/group.md)」(group)って呼んでるやつです。
 (正確にはこれだと[モノイド](../../../../study/math/group/group.md#monoid)なんですけど)
 
-```csharp
+```csharp {title="群を表すShape"}
 public shape SGroup<T>
 {
     static T Zero { get; }
@@ -64,7 +64,7 @@ public shape SGroup<T>
 
 これらに対して、共通ロジックで「総和」を取ったりできるわけです。
 
-```csharp
+```csharp {title="Shapeに対する共通ロジック"}
 public static T AddAll<T>(T[] ts) where T : SGroup<T> // shape 制約
 {
     var result = T.Zero;                   // 静的プロパティから零元を取得
@@ -89,7 +89,7 @@ public static T AddAll<T>(T[] ts) where T : SGroup<T> // shape 制約
 
 例えば上記1の意味のShape (整数の加法群)であれば、以下のように書けます(構文は「仮」なもの。特に `of` の辺りが今後どうなるか怪しい)。
 
-```csharp
+```csharp {title="「群」Shapeに対する「整数の加法群」実装"}
 public extension IntGroup of int : SGroup<int>
 {
     public static int Zero => 0;
@@ -99,7 +99,7 @@ public extension IntGroup of int : SGroup<int>
 
 2のやつ(乗法群)であれば以下の通り。
 
-```csharp
+```csharp {title="「群」Shapeに対する「整数の乗法群」実装"}
 public extension IntMulGroup of int : SGroup<int>
 {
     public static int Zero => 1;
@@ -109,7 +109,7 @@ public extension IntMulGroup of int : SGroup<int>
 
 呼び出し側は以下のように書けます。
 
-```csharp
+```csharp {title="共通ロジック呼び出し"}
 // 全部を足し算。sum == 10
 var sum = AddAll<IntGroup>(new[] { 1, 2, 3, 4 });
 
@@ -133,7 +133,7 @@ var prod = AddAll<IntMulGroup>(new[] { 1, 2, 3, 4 });
 
 元:
 
-```csharp
+```csharp {title="群を表すShape"}
 public shape SGroup<T>
 {
     static T Zero { get; }
@@ -143,7 +143,7 @@ public shape SGroup<T>
 
 展開結果:
 
-```csharp
+```csharp {title="SGroup shape の展開結果"}
 // shape はべたにインターフェイス化
 // 静的なものもインスタンス メンバーに変更
 public interface SGroup<T>
@@ -157,7 +157,7 @@ public interface SGroup<T>
 
 元:
 
-```csharp
+```csharp {title="「群」Shapeに対する「整数の加法群」・「整数の乗法群」実装"}
 public extension IntGroup of int : SGroup<int>
 {
     public static int Zero => 0;
@@ -173,7 +173,7 @@ public extension IntMulGroup of int : SGroup<int>
 
 展開結果:
 
-```csharp
+```csharp {title="IntGroup/IntMulGroup extensionsの展開結果"}
 // extension による shape 実装は、構造体でのインターフェイス実装に
 public struct IntGroup : SGroup<int>
 {
@@ -192,7 +192,7 @@ public struct IntMulGroup : SGroup<int>
 
 元:
 
-```csharp
+```csharp {title="Shapeに対する共通ロジック"}
 public static T AddAll<T>(T[] ts) where T : SGroup<T> // shape 制約
 {
     var result = T.Zero;                   // 静的プロパティから零元を取得
@@ -203,7 +203,7 @@ public static T AddAll<T>(T[] ts) where T : SGroup<T> // shape 制約
 
 展開結果:
 
-```csharp
+```csharp {title="AddAll メソッドの展開結果"}
 // 型引数を1個追加。そこに Shape を渡す想定
 public static T AddAll<T, TShape>(T[] ts)
     where TShape : SGroup<T> // shape 
@@ -219,7 +219,7 @@ public static T AddAll<T, TShape>(T[] ts)
 
 元:
 
-```csharp
+```csharp {title="Shape呼び出し"}
 // 全部を足し算。sum == 10
 var sum = AddAll<IntGroup>(new[] { 1, 2, 3, 4 });
 
@@ -229,7 +229,7 @@ var prod = AddAll<IntMulGroup>(new[] { 1, 2, 3, 4 });
 
 展開結果:
 
-```csharp
+```csharp {title="AddAll メソッド呼び出しの展開結果"}
 // 型引数を1個追加
 var sum = AddAll<int, IntGroup>(new[] { 1, 2, 3, 4 });
 var prod = AddAll<int, IntMulGroup>(new[] { 1, 2, 3, 4 });
@@ -270,7 +270,7 @@ var prod = AddAll<int, IntMulGroup>(new[] { 1, 2, 3, 4 });
 
 結果的に、以下のようなコードとほとんど変わらない状態に最適化されます。
 
-```csharp
+```csharp {title="値型ジェネリックの展開 ＋ インライン展開の結果"}
 public static int AddAll_IntGroup(int[] ts)
 {
     var result = 0;

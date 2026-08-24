@@ -53,7 +53,7 @@ Nビットまでの整数を受け付ける`BitN`(`N`は1～64)型と、それ�
 
 で、それを、こう書く。
 
-```csharp
+```csharp {title="Rgb555構造体定義"}
 struct Rgb555
 {
     enum BitFields
@@ -74,7 +74,7 @@ struct Rgb555
 
 以下のようなコードが生成されます。
 
-```csharp
+```csharp {title="Rgb555の生成結果"}
 using BitFields;
 
 partial struct Rgb555

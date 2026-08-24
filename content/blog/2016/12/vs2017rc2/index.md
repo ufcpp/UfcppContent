@@ -42,7 +42,7 @@ Wildcards(ワイルドカード、万能札)と言われてたものが、Discar
 要するに、[分解](../../../../study/csharp/datatype/deconstruction.md)や[out var](../../../../study/csharp/resource/sp_ref.md#out-var)で、要らない値のところに `_` を書けば無視できるという機能。
 以下のようなコードが書けます。
 
-```csharp
+```csharp {title="discards"}
 using System;
 using System.Collections.Generic;
 

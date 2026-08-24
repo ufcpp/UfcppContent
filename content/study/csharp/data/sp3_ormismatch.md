@@ -136,7 +136,7 @@ LINQ でどう解決されるのかを説明したいと思います。
 C# の場合、以下のようなクラスを定義して、
 List や Dictionary を使ってデータを格納します。
 
-```csharp
+```csharp {title="データを表現するクラス"}
 class Author
 {
   public string Name;
@@ -152,7 +152,7 @@ class Series
 ```
 
 
-```csharp
+```csharp {title="List でデータを格納"}
 List<Author> authors = new List<Author> {
   new Author {
     Name = "赤松健",
@@ -298,7 +298,7 @@ List<Series> series = new List<Series> {
 OOP では、通常、階層的なデータ構造を持っています。
 作家が複数のシリーズを持っているなら、作家クラスは以下のように書かれます。
 
-```csharp
+```csharp {title="Author クラスには Series リストがある" highlight-text="public List&lt;Series&gt; Series;"}
 class Author
 {
   public string Name;
@@ -314,7 +314,7 @@ class Author
 （もちろん、本当は1つの本に複数の作者（原作、作画、コンテ構成など）があったりしますが、
 ここでは単純化のために、作家は1人だけとします。）
 
-```csharp
+```csharp {title="Series クラスには Author フィールドがある" highlight-text="public Author Author;"}
 class Series
 {
   public string Name;
@@ -328,7 +328,7 @@ class Series
 で、例えば、各作家の著作一覧を取得したければ以下のように書きます。
 階層的にデータを取得するために、2重ループなどを書きます。
 
-```csharp
+```csharp {title="各作家の著作一覧を取得"}
 foreach (Author a in authors)
 {
   Console.Write("{0}\n", a.Name);
@@ -342,7 +342,7 @@ foreach (Author a in authors)
 
 また、各シリーズの著者を取得するには以下のようにします。
 
-```csharp
+```csharp {title="各シリーズの著者を取得" highlight-text="s.Author.Name"}
 foreach (Series s in series)
 {
   Console.Write("{0}, {1}\n", s.Name, s.Author.Name);
@@ -456,7 +456,7 @@ ID を元に2つのテーブルを結合してから所望のデータを取り�
 例えば、OOP の例と同じく、
 各作家のシリーズ一覧を取得したければ、以下のような SQL 文を書きます。
 
-```sql
+```sql {title="INNER JOIN で結合"}
 SELECT [a].[Name] AS [AuthorName], [s].[Name]
   FROM [Authors] AS [a]
   INNER JOIN [Series] AS [s] ON [a].[Id] = [s].[Author_Id]
@@ -471,7 +471,7 @@ SELECT [a].[Name] AS [AuthorName], [s].[Name]
 前節のおさらいになりますが、
 OOP では階層的データ構造を、
 
-```csharp
+```csharp {title="OOP の階層的データ構造" highlight-text="public List&lt;Series&gt; Series;"}
 class Author
 {
   public string Name;
@@ -485,7 +485,7 @@ class Author
 
 RDB ではテーブル結合という方法を用いて関連性のあるデータにアクセスします。
 
-```sql
+```sql {title="RDB のテーブル結合"}
 SELECT [a].[Name] AS [AuthorName], [s].[Name]
   FROM [Authors] AS [a]
   INNER JOIN [Series] AS [s] ON [a].[Id] = [s].[Author_Id]
@@ -537,7 +537,7 @@ Entity Framework では、何の変哲もないただのクラスを使ってデ
 前節から引き続き、作家・シリーズ テーブルを例に取って説明しましょう。
 まず、テーブル間の関係を抜きにすると、以下のような感じになります。
 
-```csharp
+```csharp {title="エンティティ クラスの定義"}
 using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
 
@@ -573,7 +573,7 @@ namespace CodeFirst.Models
 定義したエンティティ クラスを使ってデータベースを生成/テーブル参照するためのクラスを作ります。
 Entity Framework では、以下のように、DbContext クラスを継承したクラスを作ります。
 
-```csharp
+```csharp {title="エンティティ クラスの定義"}
 using System.Data.Entity;
 
 namespace CodeFirst.Models
@@ -598,7 +598,7 @@ namespace CodeFirst.Models
 以下のような感じになります。
 
                 
-```csharp
+```csharp {title="エンティティ定義"}
 using System.Data.Linq.Mapping;
 
 [Table(Name = "Authors")]
@@ -648,7 +648,7 @@ LINQ to SQL では、これらの属性をみて、
 以下のようなクラスを作ります。
 
                 
-```csharp
+```csharp {title="ComicDataContext"}
 using System.Data.Linq;
 
 public class ComicDataContext : DataContext
@@ -678,7 +678,7 @@ DataContext を継承するクラスに、Table 型のメンバーを書くだ�
 
 例えば、Author テーブルに対するクエリは以下のように書けます。
 
-```csharp
+```csharp {title="クエリの例"}
 using (var db = new ComicDatabase())
 {
     var q =
@@ -694,7 +694,7 @@ using (var db = new ComicDatabase())
 ```
 
 
-```console
+```console {title="実行結果"}
 赤松健, 1968/7/5, http://www.ailove.net/main.html
 島本和彦, 1961/4/26, http://simamoto.zenryokutei.com/
 ```
@@ -727,7 +727,7 @@ C# 3.0 のクエリ式は、実際には Select や Where などといった名�
 
 
                 
-```csharp
+```csharp {title="クエリ式の解釈結果"}
 IQueryable<Author> q = db.Author.Where(
   a => a.Name == "島本和彦" || a.Name == "赤松健");
 ```
@@ -741,7 +741,7 @@ IQueryable<Author> q = db.Author.Where(
 IQueryable は、このようなクエリ式から SQL 文を生成し、データベースサーバに問い合わせを行います。
 ちなみに、IQueryable を ToString すると、生成された SQL 文を確認することができます。
 
-```csharp
+```csharp {title="クエリ式の解釈結果の確認"}
 var q =
   from a in db.Author
   where a.Name == "島本和彦" || a.Name == "赤松健"
@@ -751,7 +751,7 @@ Console.WriteLine(q.ToString());
 ```
 
 
-```console
+```console {title="実行結果"}
 SELECT
 [Extent1].[Id] AS [Id],
 [Extent1].[Name] AS [Name],
@@ -773,7 +773,7 @@ Entity Framework を使うと、ただ単に他のエンティティを参照す
 データベース テーブルの関係性を表現できます。
 例えば、先ほどの Author / Series クラスに以下のような修正を加えます。
 
-```csharp
+```csharp {title="テーブル間の関係性を、エンティティ クラスの階層構造で表現" highlight-ranges="sha256:fab63ba58ccd87920b0e6fd0a2a2c0454ccbd3acf27b48e2ca05989f10b5c1b9;14:9-14:58,25:9-25:43"}
     public class Author
     {
         public int Id { get; set; }
@@ -810,7 +810,7 @@ Entity Framework を使うと、ただ単に他のエンティティを参照す
 <span class="expand-button" title="展開/折畳">（LINQ to SQL 版）</span>
 <div class="expand-panel" markdown="1" title="（LINQ to SQL 版）">
                 
-```csharp
+```csharp {title="エンティティ間の関連性"}
 using System.Data.Linq.Mapping;
 
 [Table(Name = "Authors")]
@@ -875,7 +875,7 @@ Series 側には ThisKey = "AuthorId" を指定します。
 これで、Author.Series や Series.Author の値が必要になった際に、
 自動的にテーブル結合を行うような SQL 文が生成されます。
 
-```csharp
+```csharp {title="自動的にテーブル結合を行うクエリが作られる"}
 using (var db = new ComicDatabase())
 {
     var q =
@@ -893,7 +893,7 @@ using (var db = new ComicDatabase())
 ```
 
 
-```console
+```console {title="実行結果" highlight-lines="9"}
 魔法先生ネギま！, 赤松健
 さよなら絶望先生, 久米田康治
 

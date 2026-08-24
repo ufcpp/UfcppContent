@@ -39,7 +39,7 @@ System.Management.Automation.dll を参照する必要があります。
 
 .NET 言語から PowerShell スクリプトを実行するには System.Management.Automation.RunspaceInvoke クラスを使います。
 
-```csharp
+```csharp {title="RunspaceInvoke"}
 using (var invoker = new RunspaceInvoke())
 {
     var results = invoker.Invoke(source, new object[] { });
@@ -63,7 +63,7 @@ PowerShell 側では $input 「[自動変数](../syntax/variable.md#auto_var)」
 
 例えば、以下のコードでは、パイプラインで与えられた入力を二乗して出力します。
 
-```csharp
+```csharp {title="$input を使って入力を受け取る"}
 using System;
 using System.Management.Automation;
 
@@ -84,7 +84,7 @@ static void Main()
 ```
 
 
-```console
+```console {title="出力結果"}
 1
 4
 9
@@ -94,7 +94,7 @@ static void Main()
 
 要するに、これで以下のような PowerShell コマンドと同じような実行結果になります。
 
-```console
+```console {title="上記と同様のことをする PowerShell コマンド"}
 > $source = { foreach($x in $input) { $x * $x } }
 > $results = 1, 2, 3, 4 | & $source
 > $results
@@ -108,20 +108,20 @@ static void Main()
 ちなみに、$input は列挙子(IEnumerator) であって、リストや配列ではないので、
 以下のような値の受け取り方はできません。
 
-```powershell
+```powershell {title="$input "}
 $arg1 = $input[0]   # エラー。[] が使えない。
 $arg2 = $input[1]   # 同上。
 ```
 
 
-```powershell
+```powershell {title="$input "}
 $arg1, $arg2 = $input   # エラー。この構文も、右辺がリストでないと使えない。
 ```
 
 
 ちょっとうざったいですが、以下のいずれかのような受け取り方をするのがてっとり早いと思います。
 
-```powershell
+```powershell {title="$input "}
 $count = 0
 foreach($x in $input)
 {
@@ -134,7 +134,7 @@ foreach($x in $input)
 }
 ```
 
-```csharp
+```csharp {title="$input "}
 if ($input.MoveNext()) { $arg1 = $input.Current }
 if ($input.MoveNext()) { $arg2 = $input.Current }
 ```
@@ -146,7 +146,7 @@ LINQ の ToList を PowerShell からも使いたい・・・
 
 2つの配列の要素ごとの積を求めます。
 
-```powershell
+```powershell {title="要素ごとの積"}
 using System;
 using System.Management.Automation;
 
@@ -188,7 +188,7 @@ for($i = 0; $i -lt $len; $i++)
 ```
 
 
-```console
+```console {title="出力結果"}
 2
 6
 12

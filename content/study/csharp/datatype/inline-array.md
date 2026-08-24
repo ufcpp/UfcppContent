@@ -33,7 +33,7 @@ aliases: []
 .NET 8 から、
 以下のように、構造体に属性を付けると構造体のサイズが変わります。
 
-```csharp
+```csharp {title="InlineArray 属性"}
 using System.Runtime.CompilerServices;
 
 // この属性を付けると、 .NET ランタイムが特別扱いして、構造体のサイズを拡大する。
@@ -54,7 +54,7 @@ C# の配列はヒープに割り当てられるのに対して、この inline 
 
 要は、以下のような「N 個のフィールドを並べる」みたいな構造体を、ランタイム側で自動的に作ってくれる機能です。
 
-```csharp
+```csharp {title="N 個のフィールドを手書きで並べた例"}
 using System.Runtime.InteropServices;
 
 struct FixedBuffer3<T>
@@ -82,7 +82,7 @@ struct FixedBuffer3<T>
 (これを認めようとすると[ガベコレ](../../computer/essential-software/memorymanagement.md#garbage-collection)の負担が上がって、パフォーマンス的にかえって不利になるそうです)。
 例えば以下のコードでは、`string` 以下の型に対してコンパイル エラーになります。
 
-```csharp
+```csharp {title="参照を含むときには stackalloc は使えない"}
 // 構造体に対しては使える。
 Span<int> i = stackalloc int[100];
 Span<DateTimeOffset> d = stackalloc DateTimeOffset[100];
@@ -129,7 +129,7 @@ for (int i = 0; i < 1000; i++)
 すでに前述の例でも書いていますが、
 `InlineArray` 属性を付けた型にフィールドが2つ以上あるとコンパイル エラーになります。
 
-```csharp
+```csharp {title="InlineArray 属性を付けた型に対するチェック"}
 using System.Runtime.CompilerServices;
 
 [InlineArray(3)]
@@ -146,7 +146,7 @@ struct FixedBuffer<T>
 * `Span<T>`/`ReadOnlySpan<T>` に暗黙的に変換できる
 * `foreach` で列挙できる
 
-```csharp
+```csharp {title="InlineArray 型利用側の特殊対応"}
 FixedBuffer<string> buffer = new();
 
 // InlineArray に対して直接インデクサーを書ける。
@@ -175,7 +175,7 @@ foreach (var x in buffer)
 `InlineArray` に展開されます。
 例えば以下のようなコードの場合、
 
-```csharp
+```csharp {title="Span/ReadOnlySpan に対するコレクション式の例"}
 Span<int> i = [1, 2, 3, 4, 5];
 
 ReadOnlySpan<string> s = ["a", "abc", ""];
@@ -183,7 +183,7 @@ ReadOnlySpan<string> s = ["a", "abc", ""];
 
 以下のようなコードとほぼ同じ挙動になります。
 
-```csharp
+```csharp {title="上記のコレクション式は InlineArray に展開される"}
 using System.Runtime.CompilerServices;
 
 var i0 = new FixedArray5<int>();
@@ -223,7 +223,7 @@ struct FixedArray5<T>
 根本的に大工事して型システムを改善するなら、
 例えば、以下のように「整数型引数」を導入して、これを使って `InlineArray` を作りたいという話もなくはないです。
 
-```csharp
+```csharp {title="「整数型引数」で InlineArray"}
 // ※仮定の文法
 namespace System;
 
@@ -234,7 +234,7 @@ public struct InlineArray<T, int N>;
 C# 側でももう少し踏み込んだ文法を導入したかったみたいです。
 候補として挙がっていたのは、`int[N]` という書き方で「長さ N の `InlineArray`」を書けるようにするというものです。
 
-```csharp
+```csharp {title="T[N]"}
 // ※仮定の文法
 var c = new C();
 

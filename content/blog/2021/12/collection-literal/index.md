@@ -27,7 +27,7 @@ aliases: []
 
 そして現在の C# には `new[] { 1, 2, 3 }` みたいな書き方はあるにはあるものの、いろんなコレクション型があって、それぞれ書き方に統一感がない状態。
 
-```csharp
+```csharp {title="C# のコレクションあれこれ"}
 // 型を明示、かつ、配列の時に限り {} だけで OK。
 int[] array1 = { 1, 2, 3 };
 
@@ -55,7 +55,7 @@ var immutable = System.Collections.Immutable.ImmutableArray.Create(1, 2, 3);
 C# でももう少し統一感あるコレクション リテラルがあった方がいいし、
 だったら他の言語に倣って `[]` を使った新文法を導入でいいのではないかという話になります。
 
-```csharp
+```csharp {title="[] をもっていろんなコレクションを初期化したい"}
 // ぜんぶ [] にしたい。
 int[] array1 = [ 1, 2, 3 ];
 List<int> list1 = [ 1, 2, 3 ];
@@ -71,7 +71,7 @@ System.Collections.Immutable.ImmutableArray<int> immutable = [ 1, 2, 3 ];
 
 [パターンの方](../list-pattern/index.md)で「`[1, ..[2, 3, 4], 5]` と `[1, 2, 3, 4, 5]` が同じ意味になる」と書きましたが、コレクション リテラル中でも同じく「入れ子のコレクションを展開」みたいな仕様があります。
 
-```csharp
+```csharp {title=".. で入れ子のコレクションを展開"}
 int[] array = [ 1, 2, 3 ];
 List<int> list = [ 0, ..array, 4 ]; // 0, 1, 2, 3, 4
 ```
@@ -80,7 +80,7 @@ List<int> list = [ 0, ..array, 4 ]; // 0, 1, 2, 3, 4
 
 C# ではまあ、LINQ の `Concat`, `Append`, `Prepend` とかを使って同様のものは書けていましたが、煩雑、かつ、パフォーマンスはいまいちでした。
 
-```csharp
+```csharp {title="Concat, Append, Prepend"}
 int[] array1 = { 1, 2, 3 };
 int[] array2 = { 4, 5, 6 };
 
@@ -110,7 +110,7 @@ var spread = [ 0, .. array1, .. array2, 7 ];
 展開結果、基本的には「前から順に詰める」です。
 配列の場合だと割かしシンプルで、例えば以下のような感じ。
 
-```csharp
+```csharp {title="配列に対するコレクション リテラルの展開結果"}
 int[] array1 = { 1, 2, 3 };
 int[] array2 = { 4, 5, 6 };
 
@@ -136,7 +136,7 @@ spread[i] = 7;
 
 例えば `Init(int[])` だけ持っている型だと以下のような感じ。
 
-```csharp
+```csharp {title="一時 new int[] が作られるパターン"}
 // A a = [ 1, 2, 3 ];
 int[] tempA = { 1, 2, 3 };
 A a = new();
@@ -150,7 +150,7 @@ class A
 
 `capacity` コンストラクターと `Init(ReadOnlySpan<int>)` を持つ型だと以下のような感じ。
 
-```csharp
+```csharp {title="一時 stackalloc int[] が作られるパターン"}
 // A a = [ 1, 2, 3 ];
 ReadOnlySpan<int> tempA = stackalloc[] { 1, 2, 3 };
 A a = new(3);
@@ -170,7 +170,7 @@ class A
 
 とりあえず、`ImmutableArray` についても前節と同じルールで初期化を掛けることを考えます。
 
-```csharp
+```csharp {title="ImmutableArray.Init"}
 using System.Collections.Immutable;
 
 // ImmutableArray<int> a = [ 1, 2, 3 ];
@@ -186,7 +186,7 @@ immutable を名乗る以上、`new()` とは別に呼ばれるとまずいと�
 
 任意のメソッドに対して、`new()` 中、もしくは、直後にしか呼ばない・呼ばれない保証をコンパイラーがするような仕様(メソッドに対する `init` 修飾)があればいいわけで、そういう仕様も模索中とのこと。
 
-```csharp
+```csharp {title="init 修飾子"}
 struct ImmutableArray<T>
 {
     readonly T[] _items;

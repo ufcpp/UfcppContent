@@ -89,7 +89,7 @@ aliases: []
 この話は前述の[gist に上げた例](https://gist.github.com/ufcpp/ae78b9e06d77a573cd5f2fcdbefb92cd)にも書いてあるんですけども。
 以下のような非同期イテレーターを書いた場合、
 
-```csharp
+```csharp {title="非同期イテレーター"}
 async IAsyncEnumerable<int> X([EnumeratorCancellation]CancellationToken ct = default)
 ```
 

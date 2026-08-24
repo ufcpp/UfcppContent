@@ -28,7 +28,7 @@ aliases: []
 
 例として、以下のような C# コードを考えてみます。
 
-```csharp
+```csharp {title="C# の例1"}
 static int X(int x, int y)
 {
     return 2 * (x + y);
@@ -38,7 +38,7 @@ static int X(int x, int y)
 
 これをコンパイルすると、以下のような IL が得られます。
 
-```cil
+```cil {title="例1のコンパイル結果の IL"}
 .method private hidebysig static int32  X(int32 x,
                                           int32 y) cil managed
 {
@@ -152,7 +152,7 @@ static int X(int x, int y)
 もう1つ、ローカル変数やメソッド呼び出しも行う例を示しましょう。
 以下のような C# コードを考えてみます。
 
-```csharp
+```csharp {title="C# の例2"}
 static void Main()
 {
     var x = int.Parse(Console.ReadLine());
@@ -164,7 +164,7 @@ static void Main()
 
 これをコンパイルすると、以下のような IL が得られます。
 
-```cil
+```cil {title="例2のコンパイル結果の IL"}
 .method private hidebysig static void  Main() cil managed
 {
   .entrypoint

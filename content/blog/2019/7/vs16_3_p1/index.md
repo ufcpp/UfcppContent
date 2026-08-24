@@ -58,7 +58,7 @@ aliases: []
 
 例えば以下のようなコード。
 
-```csharp
+```csharp {title="MabyNull/NotNull 属性"}
 using System;
 using System.Diagnostics.CodeAnalysis;
  

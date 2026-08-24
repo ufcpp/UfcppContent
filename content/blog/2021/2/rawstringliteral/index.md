@@ -23,7 +23,7 @@ aliases: []
 
 以下のような書き方で、複数行、かつ、一切のエスケープなしの文字列リテラルを導入したいという話が出ています。
 
-```csharp
+```csharp {title="raw string literal"}
 string xml = """
     <a>
         <b c="abc" />
@@ -45,7 +45,7 @@ C# の文字列中に XML、Json/JavaScript とか、さらに言うと C# 自�
 
 近い機能として、C# には 1.0 の頃から [`@""`](../../../../study/csharp/start/st_embeddedtype.md#verbatim-string) という書き方があったりしますし、Visual Studio などの IDE が自動補完で補ってくれたりはしていました。
 
-```csharp
+```csharp {title="逐語的文字列リテラル(C# 1.0 からある)"}
 string s = @"
 {
     ""a"" : ""abc""
@@ -98,7 +98,7 @@ C# 1.0 の頃からある `@""` の一番の問題点も `"` 自体を含みに�
 
 ということで、今提案されている raw string literal では「3個以上、任意個の `"` から開始して、同数の `"` で終わる」という仕様にしてあります。`"""` (3個)をエスケープなしで含みたければ `""""` (4個)から開始すればいいじゃない。
 
-```csharp
+```csharp {title="C# raw string in C# raw string"}
 var cs = """"
     var s = """
         C# in C#
@@ -112,7 +112,7 @@ var cs = """"
 
 以下のような文字列リテラルを書くと、1行目の位置と2行目以降の位置がだいぶ離れるのが結構見づらくなります。
 
-```csharp
+```csharp {title="逐語的文字列リテラルでの改行。2行目以降の位置がだいぶずれる"}
 class Program
 {
     static void M()
@@ -127,7 +127,7 @@ class Program
 
 本当は以下のように書けるとだいぶ見やすくなると思います。
 
-```csharp
+```csharp {title="整形… した結果余計のスペースが含まれる"}
 const string s = @"
     1行目
         2行目
@@ -144,7 +144,7 @@ const string s = @"
 
 例えば先ほどの `@""` で書いた文字列リテラルと同じものを新しい raw string literal で書くと以下のようになります。
 
-```csharp
+```csharp {title="raw string は開始行の改行必須 ＆ 1行目でインデント量を決定"}
 const string s = """
     1行目
         2行目
@@ -158,7 +158,7 @@ const string s = """
 
 文字列補間には、`$@""` もしくは `@$""` という書き方で、「複数行、かつ、文字列補間が掛かるリテラル」が書けます。
 
-```csharp
+```csharp {title="$@"}
     static void M(string @namespace, string className)
     {
         string s = $@"
@@ -175,7 +175,7 @@ namespace {@namespace}
 はい、もうこの時点で何が嫌かわかるかと思います。`{{` が嫌。
 実際、「C# 内 C#」みたいなことをやると、上記のコードは以下のように書き直した方がまだマシなんじゃないかと思ったりすることが結構あります。
 
-```csharp
+```csharp {title="もう、 + でつなげばいいんじゃ…"}
     static void M(string @namespace, string className)
     {
         string s = @"

@@ -64,7 +64,7 @@ Response.Redirect か Context.RewritePath メソッドを呼び出します。
 
 URL の書き換えは、例えば、正規表現を使って以下のように行います。
 
-```html
+```html {title="リダイレクト（Global.aspx のコードビハインド中に追加）"}
 protected void Application_BeginRequest(object sender, EventArgs e)
 {
   string url = Request.Url.AbsolutePath;
@@ -81,7 +81,7 @@ protected void Application_BeginRequest(object sender, EventArgs e)
 ```
 
 
-```html
+```html {title="リライト（Global.aspx のコードビハインド中に追加）"}
 protected void Application_BeginRequest(object sender, EventArgs e)
 {
   string url = Request.Url.AbsolutePath;
@@ -109,7 +109,7 @@ protected void Application_BeginRequest(object sender, EventArgs e)
 2007/06/30.aspx を 20070630.aspx にリダイレクト、
 20070630.aspx を BlogDate.aspx&amp;y=2007&amp;m=06&amp;d=30 にリライトします。
 
-```html
+```html {title="Global.aspx のコードビハインド中に追加"}
 public struct RewriteRule
 {
   public Regex LookFor;
@@ -238,7 +238,7 @@ false の時には、どちらの場合でも logo.jpg だと思う。
 具体例を挙げてみましょう。
 まず、先ほど作った Global.aspx のリライトルールに以下の物を追加します。
 
-```html
+```html {title="Test/RewriteText.aspx を RewriteText.aspx にリライト" highlight-lines="3-4"}
 static RewriteRule[] rewriteRules = new RewriteRule[]
   {
     new RewriteRule(@"Test/(RewriteTest.aspx)",
@@ -252,7 +252,7 @@ static RewriteRule[] rewriteRules = new RewriteRule[]
 で、RewriteText.aspx という名前で、以下のような Web フォームページを作ります。
 
 
-```html
+```html {title="RewriteText.aspx"}
 <%@ Page Language="C#" %>
 
 <html>
@@ -279,7 +279,7 @@ static RewriteRule[] rewriteRules = new RewriteRule[]
 &lt;body&gt; の中身には以下のような HTML が生成されます。
 
 
-```html
+```html {title="RewriteText.aspx の要求結果"}
   <p>
     <a href="Default.aspx">html &lt;a&gt; tag</a>
   </p>
@@ -291,7 +291,7 @@ static RewriteRule[] rewriteRules = new RewriteRule[]
 リライトした場合には、以下のような HTML になります。
 
 
-```html
+```html {title="RewriteText.aspx の要求結果" highlight-text="&lt;a href=&quot;../Default.aspx&quot;&gt;asp:HyperLink&lt;/a&gt;"}
   <p>
     <a href="Default.aspx">html &lt;a&gt; tag</a>
   </p>
@@ -309,7 +309,7 @@ href 内のパスの修正が掛かっていない状態になります。
 以下のように書き換える必要があります。
 
 
-```xml
+```xml {title="Site.Master"}
 <%@ Master Language="C#" AutoEventWireup="true"
   CodeBehind="Site.master.cs" Inherits="WebsiteSample.Site" %>
 
@@ -382,7 +382,7 @@ href 内のパスの修正が掛かっていない状態になります。
 
 この RssWriter クラスは、以下のように使います。
 
-```csharp
+```csharp {title="RssWriter クラス"}
 RssWriter writer = new RssWriter();
 this.writer.SiteName = "My Site";
 this.writer.AdministratorName = "admin name";
@@ -403,7 +403,7 @@ this.writer.Write(Request.Url.AbsoluteUri, Response.OutputStream);
 
 そして、コードビハインドファイル（Rss.aspx.cs）の内容は以下のような感じ。
 
-```html
+```html {title="Rss.aspx.cs"}
 using System;
 using System.Web;
 using System.IO;

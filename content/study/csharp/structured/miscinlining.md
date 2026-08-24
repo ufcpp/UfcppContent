@@ -65,7 +65,7 @@ C# の場合、C# コンパイラー自身はインライン化を全くしま�
 .NET は、ある程度インライン化の有無を制御する手段も提供しています。
 以下のように、`MethodImpl`[属性](../dynamic/sp_attribute.md)(`System.Runtime.CompilerServices`[名前空間](sp_namespace.md))を付けます。
 
-```csharp
+```csharp {title="インライン化に関する属性"}
 // 積極的にインライン化してもらいたい
 [MethodImpl(MethodImplOptions.AggressiveInlining)]
 static int SumAgressive(int[] a)
@@ -125,7 +125,7 @@ static int SumNo(int[] a)
 
 - [サンプル](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/StructuredProgramming/Inlining/CommonExecutionPath.cs)
 
-```csharp
+```csharp {title="長さ1の時と2の時だけ特別扱いする総和"}
 static int Sum(int[] a)
 {
     // ほとんどの場合、Length == 1 または 2 のところを通るという想定
@@ -155,7 +155,7 @@ static int Sum(int[] a)
 しかし、この反復処理と例外処理は、先ほどの前提から言うと、めったに通らない個所にあります。
 そこで、以下のように書き換えます。
 
-```csharp
+```csharp {title="めったに通らないくせにインライン化を阻害している部分を外に追い出す"}
 static int OptimizedSum(int[] a)
 {
     // ほとんどの場合、Length == 1 または 2 のところを通るという想定

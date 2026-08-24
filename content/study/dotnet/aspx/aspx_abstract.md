@@ -37,7 +37,7 @@ ASP.NET のウェブフォームでは、HTML （ただし、拡張子は .html 
 以下のような内容を、拡張子 .aspx を付けて保存するだけで OK です。
 
 
-```html
+```html {title="now.aspx"}
 <%@ Page Language="C#" %>
 
 <html lang="ja">
@@ -70,7 +70,7 @@ ASP.NET のウェブフォームでは、HTML （ただし、拡張子は .html 
 代わりに、以下のように、&lt;script&gt; タグを使ってロジックを分離します。
 
 
-```html
+```html {title="now.aspx その2"}
 <%@ Page Language="C#" %>
 
 <script runat="server" type="text/C#">
@@ -102,7 +102,7 @@ Page_Load というのは、このページが表示される際に呼び出さ�
 .aspx ファイルとプログラムコードを完全に分離して書くことができます。
 例えば、以下の通り。
 
-```html
+```html {title="now.aspx.cs"}
 using System;
 
 namespace WebApplication1
@@ -119,7 +119,7 @@ namespace WebApplication1
 
 
 
-```html
+```html {title="now.aspx コードビハインド版"}
 <%@ Page Language="C#"
   CodeBehind="Default.aspx.cs" Inherits="WebApplication1._Default" %>
 

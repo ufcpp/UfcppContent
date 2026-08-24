@@ -237,7 +237,7 @@ Orcas で作ったので、Visual Studio 2005 だとコンパイルが通らな�
 以下のような感じで使える Lambda 計算的なライブラリを作りました。
 （MyMath.Lambda 名前空間内。）
 
-```powershell
+```powershell {title="Lambda"}
 Variable u = new Variable("u");
 Variable v = new Variable("v");
 Function x = 1.5 * v Function.Cos(u);

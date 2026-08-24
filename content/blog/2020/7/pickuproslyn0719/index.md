@@ -31,7 +31,7 @@ Visual Studio 16.7 Preview 4 が出てるのと、Design Meeting 議事録を1�
 
 以下のような、`class Program` も `static void Main` も要らないコードが書けます。
 
-```csharp
+```csharp {title="Top-level statements"}
 using System;
 
 foreach (var r in "🥺😍🙄".EnumerateRunes())
@@ -44,7 +44,7 @@ foreach (var r in "🥺😍🙄".EnumerateRunes())
 
 これまで、C# 9.0 候補の機能は Preview としてだけ提供されていて、`LangVersion` に `preview` を指定しないと使えませんでした。
 
-```xml
+```xml {title="LangVersion preview" highlight-text="preview"}
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
@@ -58,7 +58,7 @@ foreach (var r in "🥺😍🙄".EnumerateRunes())
 
 これに対して、VS 16.7 Preview 4 で、「`9.0`」が追加され、以下のように言語バージョンを明示できるようになりました。
 
-```xml
+```xml {title="LangVersion 9.0" highlight-text="9.0"}
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>

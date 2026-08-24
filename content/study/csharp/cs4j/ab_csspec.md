@@ -144,14 +144,14 @@ C# では <code>class</code> と <code>struct</code> という2つのキーワ�
 もう1つ、昔からある些細なミスに、if 文の条件式で代入を行ってしまうというものもあります。
 例えば、
 
-```csharp
+```csharp {highlight-text="=="}
 if(a == 0)
 ```
 
 
 と書くつもりで、
 
-```csharp
+```csharp {highlight-text="="}
 if(a = 0)
 ```
 
@@ -348,7 +348,7 @@ jagged array の方が <code>int*</code> （32bit CPU ならたいてい4バイ�
 プロパティとは上で述べたようなアクセッサを簡潔に定義するための機能です。
 C++で、
 
-```csharp
+```csharp {highlight-lines="5-7"}
 class A
 {
   double x; //実装は外部から隠す
@@ -363,7 +363,7 @@ public:
 と言った感じでアクセッサ関数を用意してデータの参照を行っていましたが、
 C#では、
 
-```csharp
+```csharp {highlight-lines="5-10"}
 class A
 {
   double x; //やはり実装は外部から隠す
@@ -392,7 +392,7 @@ Java では、イベント処理(ボタンが押されたときや、メニュ�
 
 一方、C# では、イベント処理はデリゲートを用いて行います。
 
-```csharp
+```csharp {highlight-lines="18-20"}
 using System.Windows.Forms;
 using System.Drawing;
 using System;
@@ -436,7 +436,7 @@ class EventSample : Form
 C++ や Java ではクラスやメソッドに対して public や private などといった<strong id="attribute" class="keyword">属性</strong>(attribute)を付加することができます。
 Java の例をあげると、
 
-```csharp
+```csharp {highlight-ranges="sha256:dcac7d2796b67f1aac0bcc595af4097391942644a5df4fb0b462d752fb217ed9;1:1-1:6,3:4-3:10"}
 final class MyClass
 {
    public int myMethod();
@@ -452,7 +452,7 @@ C# ではこのようなクラスやメソッドに対する属性を自分で�
 例えば、作成中のクラスがまだテスト段階であるということを明示的に示したいときに、
 <code>IsTest</code> という属性を作成して、そのクラスに付けておくことができます。
 
-```csharp
+```csharp {highlight-text="[IsTest]"}
 // IsTest 属性を作成
 public class IsTestedAttribute : Attribute
 {

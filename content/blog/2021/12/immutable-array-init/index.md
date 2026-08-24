@@ -20,7 +20,7 @@ Immutable コレクションは現状いろんな使いにくさがあって悪�
 
 以下のようなコード。
 
-```csharp
+```csharp {title="ImmutableArray にコレクション初期化子"}
 using System.Collections.Immutable;
 
 ImmutableArray<int> a = new() { 1, 2 };
@@ -58,7 +58,7 @@ Unhandled exception. System.NullReferenceException: Object reference not set to 
 とりあえず、`foreach` のところは無罪というか、その行までたどり着かないのでいったん削除。
 (ちなみに、もしたどり着けた場合、`foreach` でも例外が出ます。)
 
-```csharp
+```csharp {title="問題のコード"}
 using System.Collections.Immutable;
 
 ImmutableArray<int> a = new() { 1, 2 };
@@ -66,7 +66,7 @@ ImmutableArray<int> a = new() { 1, 2 };
 
 コレクション初期化子は、以下のように、`new()` の後に `Add` メソッドを呼ぶという展開のされ方になります。
 
-```csharp
+```csharp {title="コレクション初期化子を展開"}
 using System.Collections.Immutable;
 
 ImmutableArray<int> a = new();
@@ -77,7 +77,7 @@ a.Add(2);
 まあ、この時点ですでに問題の原因が分かってくる頃かと思いますが、一応もう1段。
 `ImmutableArray` は構造体で、C# 10.0 より前には構造体に引数なしコンストラクターがなかったので、これは以下のコードと同じ意味になります。
 
-```csharp
+```csharp {title="new() の顛末" highlight-text="default"}
 using System.Collections.Immutable;
 
 ImmutableArray<int> a = default;
@@ -90,7 +90,7 @@ a.Add(2);
 
 要するに、実質以下のコードと同じような挙動になります。
 
-```csharp
+```csharp {title="説明用: 実質同じ挙動のコード"}
 // 実質これと同じ結果
 using System.Collections.Immutable;
 
@@ -103,7 +103,7 @@ a.Add(2);
 
 また、以下のようにぬるぽ回避コードを入れても、おそらくほとんどの人にとって所望の結果にはならないと思います。
 
-```csharp
+```csharp {title="ぬるぽ回避"}
 using System.Collections.Immutable;
 
 // ぬるぽ回避

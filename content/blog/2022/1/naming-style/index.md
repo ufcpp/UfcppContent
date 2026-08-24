@@ -26,7 +26,7 @@ aliases: []
 最近では、 [dotnet/runtime](https://github.com/dotnet/runtime) が `_` 開始の `camelCase` を採用したということで、このルールを支持する人が増えたというか、
 `this.x` 派だった人も「dotnet/runtime がそういうのなら」という感じでちらほら改宗していたりはします。
 
-```csharp
+```csharp {title="_ 始まり推奨" highlight-text="_date"}
 class C
 {
     private DateTime _date;
@@ -48,7 +48,7 @@ Visual Studio を触っている人なら1度は思ったことがあると思�
 
 .editorconfig に以下のような行を入れておくと `_` 始まりになります。
 
-```csharp
+```csharp {title="begin_with__"}
 [*.{cs,vb}]
 
 dotnet_naming_rule.private_or_internal_field_should_be_begin_with__.severity = suggestion

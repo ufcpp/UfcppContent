@@ -33,7 +33,7 @@ Visual Studio 2019 Preview 1 が出て、
 C# のキーワードには、並び順を自由に変えられるものがいくつかあります。
 代表的なのはクラスやメソッドに対する修飾子ですが、例えば以下の3行は全く同じ意味になります。
 
-```csharp
+```csharp {title="キーワードの並び順"}
 static public readonly int x;
 public readonly static int x;
 readonly static public int x;

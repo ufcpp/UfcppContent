@@ -30,7 +30,7 @@ aliases: []
 
 素直に実装すると以下のようになります。
 
-```csharp
+```csharp {title="object に対して is で型判定"}
 using System;
  
 public readonly struct StringOrCharArray
@@ -51,7 +51,7 @@ public readonly struct StringOrCharArray
 この中で使っている[`is`演算](../../../../study/csharp/datatype/typeswitch.md#is)は、
 実際のところ、以下のような `as` + null チェックと等価です。
 
-```csharp
+```csharp {title="is は as + null チェック"}
 var s = _value as string;
 if (s != null) ...
 ```
@@ -70,7 +70,7 @@ isinst 命令は要は実行時型情報を調べる命令です。
 `object` 型のフィールドに加えて、型弁別用の enum 値を別途持ってみることにします。
 ただ、素直な実装をしてしまうと「コスト避け」の試みは失敗します。
 
-```csharp
+```csharp {title="型弁別用の enum を追加"}
 using System;
  
 public readonly struct StringOrCharArray
@@ -112,7 +112,7 @@ enum 値を見て switch していますが、分岐の先で結局キャスト�
 ということで、`Unsafe`。
 先ほどの `Span` プロパティを以下のように書き換えます。
 
-```csharp
+```csharp {title="Unsafe.As はチェックをすっ飛ばすので高速"}
 using System;
 using System.Runtime.CompilerServices;
  
@@ -157,7 +157,7 @@ public readonly struct StringOrCharArray
 ただ、実装によってはこのコストは避けれます。
 例えば、標準ライブラリ中の`Memory<T>`構造体(`System`名前空間)は以下のような構造になっています。
 
-```csharp
+```csharp {title="Memory&lt;T&gt; 構造体の中身"}
 public readonly struct Memory<T>
 {
     private readonly object _object;

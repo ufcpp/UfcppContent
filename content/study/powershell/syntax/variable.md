@@ -25,7 +25,7 @@ aliases:
 「[基礎知識](basic.md)」でも説明したように、
 $ から始まる単語は変数になります。
 
-```console
+```console {title="変数"}
 >  $a = 1
 >  $a
 1
@@ -73,7 +73,7 @@ object a = "test";
 みたいなキャストは必要ありません。
 ）
 
-```console
+```console {title=".NET Framework オブジェクト"}
 >  $a = 1
 >  $a.GetType().Name
 Int32
@@ -97,7 +97,7 @@ String
 値や変数の前に [型名] を付けると、型変換ができます。
 例えば、実数を整数に変換するには以下のようにします。
 
-```console
+```console {title="型変換"}
 >  $a = [int]1.2
 >  $a
 1
@@ -106,7 +106,7 @@ String
 
 無理な変換をしようとするとエラーになります。
 
-```console
+```console {title="型変換"}
 >  $a = [int]"test"
 値 "test" を型 "System.Int32" に変換できません。
 ```
@@ -117,7 +117,7 @@ String
 C# なんかだと int.Parse メソッドを使って整数に変換する必要がありますが、
 PowerShell では [int] で変換できます。
 
-```console
+```console {title="文字列 → 整数"}
 >  $a = [int]"128"
 >  $a
 128
@@ -133,14 +133,14 @@ Int32
 指定方法は、例えば以下のような感じで、
 代入時に [型名] を変数の前に付けます。
 
-```console
+```console {title="変数の型を指定"}
 >  [int]$a = 1
 ```
 
 
 型を指定すると、指定した型以外は代入できなくなります。
 
-```console
+```console {title="指定した型のみ代入可能"}
 >  [int]$a = 0
 >  $a = "test" 
 # ↓ エラー
@@ -180,7 +180,7 @@ UInt32 や Int16 と書く必要あり。）
 （void は C 言語や C# などで、関数の戻り値がないことを示すキーワード。）
 [void] を使うと、値を消してしまうことができるみたい。
 
-```console
+```console {title="void"}
 >  [void]1
 >  [void]$a
 >  [void]$a.GetType()
@@ -240,7 +240,7 @@ $global:a という書き方でアクセスする。）
 スコープと同じような「$env:変数名」という書式で環境変数を取得することもできます。
 例えば、path 環境変数を取得したければ以下のように書きます。
 
-```console
+```console {title="環境変数"}
 >  $env:path
 C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Wind....
 ```
@@ -250,7 +250,7 @@ C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Wind....
 C ドライブを C: とか書くのと同じ。
 で、「${C:\...\ファイル名}」みたいな記法で、ファイルの読み書きもできる模様。
 
-```console
+```console {title="変数"}
 >  ${C:\Users\Public\test.txt} = "test"
 >  ${C:\Users\Public\test.txt}
 "test"
@@ -283,7 +283,7 @@ C# と同じ
 
 ちなみに、代入演算子は複数並べて書くこともできます。
 
-```console
+```console {title="代入演算子の連結"}
 >  $a = $b = $c = 1
 >  $a,$b,$c
 1
@@ -315,7 +315,7 @@ C# と同じ
 null というのは変数が空っぽの状態のことで、
 PowerShell では、$null という名前の特殊な変数で表します。
 
-```console
+```console {title="null 比較"}
 >  Remove-Variable a
 >  $a
 >  $a -eq $null
@@ -331,7 +331,7 @@ False
 それから、-is と -isnot 演算子を使って、変数に格納されている値の型を確かめることができます。
 （左辺に変数、右辺に [型名] を書きます。）
 
-```console
+```console {title="-is 演算子"}
 >  $a = 1
 >  $a -is [int]
 True
@@ -348,7 +348,7 @@ True
 [型名] による型変換とちがって、
 変換できない場合にはエラーを起こすのではなく null 値を返します。
 
-```console
+```console {title="-as 演算子"}
 >  $a = "test" -as [int]
 >  $a -eq $null
 True

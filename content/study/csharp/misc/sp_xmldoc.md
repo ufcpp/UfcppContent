@@ -43,7 +43,7 @@ javadocとの違いは、コンパイラと別のツールとして提供され�
 XML Documentを理解するために、まずは実際にXML Documentを作成してみましょう。
 以下のようなソースファイルをdoctest.csという名前で作成して見てください。
 
-```csharp
+```csharp {title="doctest.cs"}
 using System;
 using System.Collections;
 
@@ -142,7 +142,7 @@ namespace DocumentTest
 そして、以下のようなオプションを付けてコンパイルしてください。
 Visual C#を使って作成する場合には、プロジェクトのプロパティを開いて、「構成プロパティ」→「ビルド」→「XML ドキュメント ファイル」という項目に、出力したいXMLファイルの名前を入れてビルドを行ってください。
 
-```console
+```console {title="XML Documentを生成する場合、/doc オプションをつける。"}
 csc /out:DocumentTest.dll /target:library doctest.cs /doc:doctest.xml
 ```
 
@@ -150,7 +150,7 @@ csc /out:DocumentTest.dll /target:library doctest.cs /doc:doctest.xml
 すると、以下のような内容のXMLファイルが生成されているはずです。
 
 
-```xml
+```xml {title="doctest.xml"}
 <?xml version="1.0"?>
 <doc>
     <assembly>

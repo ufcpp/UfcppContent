@@ -37,7 +37,7 @@ $a と $A は同じコマンド・変数になります。
 ということで、
 とりえあず、コマンド名を打てばそれだけでコマンドが実行されます。
 
-```console
+```console {title="コマンド実行の例"}
 >  Get-Location
 
 Path
@@ -65,7 +65,7 @@ C:\Users\john\Desktop\temp
 
 もちろん、コマンドには引数を与えることができます。
 
-```console
+```console {title="コマンド実行の例"}
 >  Get-Command p* -CommandType Cmdlet
 
 CommandType     Name             Definition
@@ -83,7 +83,7 @@ Unix でいうとろこの ls にあたるコマンドですが、
 dir と ls の両方の名前でエイリアスが設定されていて、
 これらの名前で実行可能です。
 
-```console
+```console {title="エイリアスの例"}
 >  dir
 
 Mode                LastWriteTime     Length Name
@@ -109,7 +109,7 @@ d----        2007/05/19      0:40            sample
 あと、セミコロン ; で区切ることで、
 1行に複数のコマンドを書くこともできます。
 
-```console
+```console {title="1行に複数のコマンド"}
 >  pushd C:\Users\Public; ls; popd
 
 Mode                LastWriteTime     Length Name
@@ -128,7 +128,7 @@ d-r--        2006/11/02     21:50            Videos
 コマンドとコマンドの間を | で繋ぐと、
 前のコマンドの出力を次のコマンドの入力として与えることができます。
 
-```console
+```console {title="パイプラインの例"}
 Get-Command | more
 ```
 
@@ -153,14 +153,14 @@ input.txt の中身を command に食わせて、
 &lt; に相当する機能を使いたければ、
 Get-Content コマンドとパイプラインを使います。
 
-```console
+```console {title="ファイルの中身をパイプラインに渡す"}
 Get-Content input.txt | command
 ```
 
 
 出力の方も、Set-Content コマンドを使って同じことができます。
 
-```console
+```console {title="出力もパイプラインで"}
 Get-Content input.txt | command | Set-Content output.txt
 ```
 
@@ -168,7 +168,7 @@ Get-Content input.txt | command | Set-Content output.txt
 出力リダイレクトに関しては、ファイル上書きの &gt; に加えて、
 追記の &gt;&gt; も使えます。
 
-```console
+```console {title="追記リダイレクト"}
 >  echo "test 1" > test.txt
 >  echo "test 2" >> test.txt
 >  echo "test 3" >> test.txt
@@ -229,7 +229,7 @@ test 1
 1 + 1 などといった計算や、
 "this is " + "a test" などといった文字列操作（この場合は連結）ができます。
 
-```console
+```console {title="式"}
 >  1+1
 2
 >  "this is " + "a test"
@@ -244,7 +244,7 @@ $a とか $x というように、
 変数名に続けて = を書けば、代入式になります。
 また、変数だけ書くと、変数の中身が表示されます。
 
-```console
+```console {title="代入式と値の表示"}
 >  $a = 1 + 1
 >  $a
 2
@@ -255,7 +255,7 @@ $a とか $x というように、
 = 直後の単語はコマンドとみなされて、
 コマンドの実行結果が変数に代入されます。
 
-```console
+```console {title="コマンド実行結果の代入"}
 >  $a = Get-Location
 >  $a
 
@@ -274,12 +274,12 @@ C:\Users\john\Desktop\temp
 コメントは # で始めて、行末までがコメントになります。
 当然のことながら、"" や '' （要するに文字列）中の # はコメントにはなりません。
 
-```console
+```console {title="コメント"}
 >  ls C:\Users\Public # comment
 ```
 
 
-```console
+```console {title="非コメント"}
 >  echo "# not comment"
 # not comment
 ```
@@ -301,7 +301,7 @@ PowerShell の構文解析には、
 
 まあ、例を挙げてみましょう。
 
-```console
+```console {title="式モードとコマンドモード（１）"}
 >  $a = 1 + 1
 >  echo $a
 2
@@ -327,7 +327,7 @@ $a への代入式の方では、1 + 1 がちゃんと式とみなされて、
 
 もう1つ、例として、1+1 の間のスペースをつめてみましょう。
 
-```console
+```console {title="式モードとコマンドモード（２）"}
 >  $a = 1+1
 >  echo $a
 2
@@ -346,7 +346,7 @@ $a への代入式の方では、1 + 1 がちゃんと式とみなされて、
 「"test"」というような文字列を作りたい場合は、
 '"test"' とか "'test'" と書きます。
 
-```console
+```console {title="クオート記号の表示"}
 >  echo 'test'
 test
 >  echo "test"
@@ -362,7 +362,7 @@ test
 代入式の = の後ではコマンドとして実行されて、
 コマンドの後ろは単なる文字列とみなされます。
 
-```console
+```console {title="式モードとコマンドモード（３）"}
 >  $a = Get-Location
 >  echo $a
 Path
@@ -376,7 +376,7 @@ Get-Location
 
 ちなみに、コマンドモードでも、() でくくられた部分は式あるいはコマンドとして評価されます。
 
-```console
+```console {title="（）でくくった部分は式"}
 >  echo (1 + 1)
 2
 >  echo (Get-Location)
@@ -542,7 +542,7 @@ PowerShell をインストールすると、スタートメニューに
 というポリシーに設定しなおしてから使います。
 実行ポリシーの変更は Set-ExecutionPolicy コマンドを使って、以下のようにします。
 
-```console
+```console {title="実行ポリシーを変更"}
 > Set-ExecutionPolicy RemoteSigned
 ```
 
@@ -571,7 +571,7 @@ PowerShell スクリプトファイルには、
 ps1 ファイルの中に実行したいコマンドを書いておいて、
 実行はただ単にファイル名を打つだけです。
 
-```console
+```console {title="スクリプトファイルの実行"}
 >  'echo "test"' | Set-Content a.ps1
 >  Get-Content .\a.ps1
 echo "test"

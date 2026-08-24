@@ -28,7 +28,7 @@ aliases: []
 
 例えば、以下のようなコード([.NET 10 以降でだけ実行できます](file-based-app.md))を書いたとします。
 
-```csharp
+```csharp {title="C# 言語バージョン 11 を明示した C# コード"}
 #:property LangVersion=11.0
 
 // C# 12 からの機能なので、C# 11 ではエラーになる。
@@ -39,7 +39,7 @@ int[] array = [1, 2, 3];
 `LangVersion` というものを明示しているので、このコードは C# 11 扱いでコンパイルされます。
 このコードはあえて C# 12 の機能を使っているので、当然、エラーになります。
 
-```console
+```console {title="C# 言語バージョン 11 を明示した C# コード"}
 D:\src\app1> dotnet .\app1.cs
 D:\src\app1\app1.cs(4,15): error CS9058: 機能 'コレクション式' は C# 11.0 では使用できません。12.0 以上の言語バージョンをお使いください。
 
@@ -113,7 +113,7 @@ C# コンパイラーのオプションで、言語バージョンを明示的�
 
 プロジェクト ファイル(拡張子が `csproj` のファイル)を直接書き換える場合、`PropertyGroup`の下に`LangVersion`タグを書きます(タグ内に書けるオプションの種類は後述します)。
 
-```xml
+```xml {title="LangVersion タグ"}
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
@@ -127,7 +127,7 @@ C# コンパイラーのオプションで、言語バージョンを明示的�
 
 .NET 10 以降であれば[ファイル ベース実行](file-based-app.md)という機能を使って C# ファイル中で直接 `LangVersion` 指定することもできます。
 
-```csharp
+```csharp {title="ファイル ベース実行での LangVersion 指定の例"}
 #:property LangVersion=11.0
 
 Console.WriteLine("C# 11");
@@ -137,7 +137,7 @@ Console.WriteLine("C# 11");
 この `csc` を直接使う場合には、`-langversion`オプションを指定します
 (書けるオプションは上記の `LangVersion` タグと同じ)。
 
-```shell
+```shell {title="csc 直呼びの例"}
 csc -langversion:11 app1.cs
 ```
 
@@ -181,7 +181,7 @@ csc -langversion:11 app1.cs
 
 例えば以下のようなコードをライブラリ配布することを考えます。
 
-```csharp
+```csharp {title="複数 TargetFramework にしたいコードの例"}
 public class Class1
 {
     private static string _rawData = "example data some words with space separation";
@@ -211,7 +211,7 @@ public class Class1
 
 この意図通りのプロジェクトを書くと以下のようになります。
 
-```xml
+```xml {title="LangVersion タグ"}
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>

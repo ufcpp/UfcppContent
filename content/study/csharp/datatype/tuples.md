@@ -58,7 +58,7 @@ n倍、n重、n連結というような意味しかなく、まさに「名前�
 これは、型を書ける場所であれば概ねどこにでもこの「型」を書けます。
 まず、以下のように、フィールドや戻り値などの型にできます。
 
-```csharp
+```csharp {title="フィールドや戻り値の型にタプルを使う"}
 class Sample
 {
     private (int x, int y) value;
@@ -68,7 +68,7 @@ class Sample
 
 以下のように、ローカル変数の型としても明示できます。
 
-```csharp
+```csharp {title="明示的にローカル変数の型をタプル型にする"}
 var s = new Sample();
 (int x, int y) t = s.GetValue();
 ```
@@ -79,7 +79,7 @@ var s = new Sample();
 
 また、ジェネリックな型の型引数にも使えます。
 
-```csharp
+```csharp {title="型引数にタプルを使う"}
 var dic = new Dictionary<(string s, string t), (int x, int y)>
 {
     { ("a", "b"), (1, 2) },
@@ -100,7 +100,7 @@ Console.WriteLine(dic[("a", "b")]); // (1, 2)
 
 例えば以下のコードはコンパイル エラーを起こします。
 
-```csharp
+```csharp {title="タプル型を掛けない場所"}
 // using でエイリアスを付けることはできない(C# 11 以前)
 using T = (int x, int y);
 
@@ -133,7 +133,7 @@ var n = new(int x, int y)?();  // OK
 `new (int x, int y)`という書き方は、将来的な言語拡張の予定と被る(被ってしまったら将来の拡張ができない)ため禁止しているようです。
 `is`演算子は、C# 8.0で入った[位置パターン](patterns.md#positional)との競合を懸念して、C# 8.0までは認めていませんでした。
 
-```csharp
+```csharp {title="将来的な拡張予定"}
 using System;
 
 class Program
@@ -159,7 +159,7 @@ class Program
 
 また、タプルのメンバーは2つ以上である必要があります。`()`や`(int x)`というようなタプルは現在の仕様では作れません。
 
-```csharp
+```csharp {title="0-tuple, 1-tuple は書けない"}
 () noneple;     // ダメ
 (int x) oneple; // ダメ
 
@@ -176,7 +176,7 @@ ValueTuple<int> one; // OK
 タプルは`(1, 2)`というような書き方で[リテラル](../start/st_variable.md#literal)を書くことができます。
 タプル リテラルは実引数リスト(引数を渡す側の書き方)に似ています。
 
-```csharp
+```csharp {title="タプル リテラル"}
 // メソッド呼び出し時の F(1, 2); みたいなノリ
 (int x, int y) t1 = (1, 2);
 
@@ -200,7 +200,7 @@ var t2 = (null, 1); // コンパイル エラー
 メンバーの参照の仕方は普通の型と変わりません。`(int x, int y)`であれば、`x`、`y`という名前でアクセスできます。
 ちなみに、タプルのメンバーは書き換え可能です。
 
-```csharp
+```csharp {title="タプルのメンバー参照"}
 var t = (x: 1, y: 2);
 Console.WriteLine(t.x); // 1
 Console.WriteLine(t.y); // 2
@@ -224,7 +224,7 @@ Console.WriteLine(t.y); // 200
 
 例えば以下のようなメソッドがあったとします。
 
-```csharp
+```csharp {title="Swapメソッド"}
 static void Swap<T>(ref T x, ref T y)
 {
     var t = x;
@@ -235,7 +235,7 @@ static void Swap<T>(ref T x, ref T y)
 
 このとき、以下のようにタプルのメンバーを渡せます。
 
-```csharp
+```csharp {title="タプルのメンバーを参照引数に渡す"}
 var t = (x: 1, y: 2);
 Swap(ref t.x, ref t.y);
 Console.WriteLine(t.x); // 2
@@ -246,7 +246,7 @@ Console.WriteLine(t.y); // 1
 
 タプルは、各メンバーを分解して、それぞれ別の変数に受けて使うことができます。
 
-```csharp
+```csharp {title="タプルの分解"}
 var t = (x: 1, y: 2);
 
 // 分解宣言1
@@ -294,7 +294,7 @@ Console.WriteLine(t2.y); // 1
 
 例えば以下の場合、`x`も`y`も`z`も、それぞれが型変換できるので、タプルの暗黙的型変換が掛かります。
 
-```csharp
+```csharp {title="タプル間の暗黙の型変換"}
 object x = "abc"; // string → object は OK
 long y = 1; // int → long は OK
 int? z = 2; // int → int? は OK
@@ -352,7 +352,7 @@ static class TupelExtensions
 
 タプルは入れ子にできます。
 
-```csharp
+```csharp {title="タプルの入れ子"}
 // タプルの入れ子
 (string a, (int x, int y) b) t1 = ("abc", (1, 2));
 Console.WriteLine(t1.a);   // abc
@@ -369,7 +369,7 @@ var t2 = (a: "abc", b: (x: 1, y: 2));
 タプルは、メンバー名もなくして、完全に匿名(名無し)にすることもできます。
 この場合、メンバーを使う際には`Item1`、`Item2`、…というような名前で参照します。
 
-```csharp
+```csharp {title="メンバー名も匿名なタプル"}
 var t1 = (1, 2);
 Console.WriteLine(t1.Item1); // 1
 Console.WriteLine(t1.Item2); // 2
@@ -388,7 +388,7 @@ Console.WriteLine(t1.Item2); // 2
 型違いのタプルを使うのであれば、オーバーロードに使えます。
 例えば、以下のメソッド`F`は、`y`の型が違うのでオーバーロード可能です。
 
-```csharp
+```csharp {title="型違いのタプルでのオーバーロードは可能"}
 // 型違いのタプルでのオーバーロードは可能
 void F((int x, int y) t) { }
 void F((int x, string y) t) { }
@@ -415,7 +415,7 @@ C# 7.1から、タプル構築時に渡した変数からタプルの要素名�
 例えば以下のように、`(x, y)` と書くだけで、1要素目に`x`、2要素目に `y` という名前が付きます。
 (これまでだと、`(x: x, y: y)` と書く必要がありました。)
 
-```csharp
+```csharp {title="タプル要素名の推論の例"}
 var x = 1;
 var y = 2;
 var t = (x, y);
@@ -432,7 +432,7 @@ Console.WriteLine(t.y);
 
 以下のように、部分的な適用もされます。
 
-```csharp
+```csharp {title="タプル要素名の部分的な推論"}
 var y = 2;
 var t = (1, y);
 Console.WriteLine(t.Item1); // 1
@@ -441,7 +441,7 @@ Console.WriteLine(t.y);     // 2
 
 ただし、名前に被りがあるときには推論が働きません。
 
-```csharp
+```csharp {title="名前被りでタプル要素名の推論ができない例"}
 var x = 1;
 var t = (x, x);
 Console.WriteLine(t.Item1); // t.x とは書けない
@@ -454,7 +454,7 @@ Console.WriteLine(u.Item2); // Item2 の方は x とは書けない
 
 名前がないので当然ですが、リテラルからは要素名の推論はできません
 
-```csharp
+```csharp {title="リテラルからは推論不可"}
 var t = (1, 2);
 Console.WriteLine(t.Item1); // さすがに t.1 とかは書けない
 ```
@@ -464,7 +464,7 @@ Console.WriteLine(t.Item1); // さすがに t.1 とかは書けない
 プロパティやフィールドの場合、インスタンス メンバーへのアクセスでも推論されます
 (`t.x`とかなら、タプル要素名は`x`になります。`t?.x`でも可)。
 
-```csharp
+```csharp {title="メソッド不可、プロパティ可。インスタンス メンバー アクセス可。null 条件演算子可"}
 int F() => 1;
 var s = "abc";
 
@@ -484,7 +484,7 @@ C# 7.3で、タプル同士を `==`、`!=` 演算子で比較できるように�
 
 タプルに対する`==`比較は、以下のように、メンバーごとの`==`を[`&&`](../start/st_operator.md#short-circuit)で繋いだものに展開されます。
 
-```csharp
+```csharp {title="タプル =="}
 void M((int a, (int x, int y) b) t)
 {
     // このタプル == 比較は、
@@ -496,7 +496,7 @@ void M((int a, (int x, int y) b) t)
 
 同様に、`!=`は以下のように、メンバーごとの`!=`を[`||`](../start/st_operator.md#short-circuit)で繋いだものになります。
 
-```csharp
+```csharp {title="タプル !="}
 void N((int a, (int x, int y) b) t)
 {
     // 同じく != 比較は、
@@ -524,7 +524,7 @@ Console.WriteLine(t == ((byte)1, ((float)2, (short)3)));
 また、ユーザー定義であれば`==`が`bool`以外の型を返すこともありますが、
 その場合も、[`true`、`false`演算子](../oop/oo_operator.md#true-false)があれば比較できます。
 
-```csharp
+```csharp {title="ユーザー定義の ==, !=, true, false が呼ばれる例"}
 using System;
 
 struct MyBool
@@ -582,7 +582,7 @@ public class Program
 
 例えば、以下のようなコードを考えます。
 
-```csharp
+```csharp {title="ローカルでのタプル利用"}
 var t = (x: 3, y: 5);
 var p = t.x * t.y;
 var (x, y) = t;
@@ -591,7 +591,7 @@ Console.WriteLine($"{x} × {y} = {p}");
 
 以下のようなコードに展開されます。
 
-```csharp
+```csharp {title="ローカルでのタプルの展開結果"}
 var t = new ValueTuple<int, int>(3, 5); // (x: 3, y: 5)
 var p = t.Item1 * t.Item2; // t.x * t.y
 var x = t.Item1;
@@ -604,7 +604,7 @@ Console.WriteLine($"{x} × {y} = {p}");
 特に、一度`object`や`dynamic`を経由すると、名前を完全に紛失します。
 以下のコードでは、`x`や`y`が見つからず、実行時エラーを起こします。
 
-```csharp
+```csharp {title="タプル型は名前を紛失する"}
 private static void Dynamic()
 {
     // 匿名型は名前が残る
@@ -629,7 +629,7 @@ C#コンパイラーには名前がわかるようにしています。
 
 例えば、以下のような引数も戻り値もタプルなメソッドを書いたとします。
 
-```csharp
+```csharp {title="引数も戻り値もタプルなメソッド"}
 public (int x, int y) F((int a, int b) t) => (t.a + t.b, t.a - t.b);
 ```
 
@@ -648,7 +648,7 @@ C#コンパイラーは、この情報を元に、タプルの名前を復元し
 タプルの展開結果にあたる`ValueTuple`は、型引数が0～8個の合計9個の構造体があります。
 例えば、型引数2個のものは以下のような定義になっています。
 
-```csharp
+```csharp {title="ValueTuple構造体"}
 [StructLayout(LayoutKind.Auto)]
 public struct ValueTuple<T1, T2>
     : IEquatable<ValueTuple<T1, T2>>, IStructuralEquatable, IStructuralComparable, IComparable, IComparable<ValueTuple<T1, T2>>
@@ -678,14 +678,14 @@ public struct ValueTuple<T1, T2>
 メンバー名も匿名で作ったので `ItemN`(`N`は正の整数)といったような名前でメンバーを読み書きすることになります。
 C#上は、8番目以降のメンバーに対しても、`Item8`、`Item9`というような名前で参照できます。
 
-```csharp
+```csharp {title="メンバーが9個のタプル"}
 var t = (1, 2, 3, 4, 5, 6, 7, 8, 9);
 Console.WriteLine(t.Item9);
 ```
 
 このコードは、以下のように展開されます。
 
-```csharp
+```csharp {title="メンバーが9個のタプルの展開結果"}
 var t = new ValueTuple<int, int, int, int, int, int, int, ValueTuple<int, int>>(
     1, 2, 3, 4, 5, 6, 7, new ValueTuple<int, int>(8, 9));
 Console.WriteLine(t.Rest.Item2);
@@ -718,7 +718,7 @@ C# 7のリリースに合わせて、`ValueTuple`構造体は標準ライブラ�
 前述の通り、タプルのメンバーは2つ以上な必要があって、`()`や`(int x)`というようなタプルは作れません。
 一方で、`ValueTuple`構造体には、型引数0個と1個のものが存在します。
 
-```csharp
+```csharp {title="型引数0個と1個のValueTuple"}
 // メンバー0個、1個のものは、構造体はあるけど、タプル構文は使えない
 var noneple = new ValueTuple();
 var oneple = new ValueTuple<int>(1);
@@ -735,7 +735,7 @@ var threeple = (1, 2, 3); // new ValueTuple<int, int, int>(1, 2, 3);
 
 例えば、以下の2つのコードはどちらの方が統一性があっていいかという話になります。
 
-```csharp
+```csharp {title="タプルでは0、1は書けない"}
 // タプルでは0、1は書けない
 async Task F0() { }
 async Task<int> F1() => 1;
@@ -743,7 +743,7 @@ async Task<(int x1, int x2)> F2() => (1, 2);
 async Task<(int x1, int x2, int x3)> F3() => (1, 2, 3);
 ```
 
-```csharp
+```csharp {title="こう書けると統一性があってきれい"}
 // こう書けると統一性があってきれい(C# 7では書けない)
 async Task<()> F0() { }
 async Task<(int x1)> F1() => (1);
@@ -810,7 +810,7 @@ async Task<(int x1, int x2, int x3)> F3() => (1, 2, 3);
 
 比較のために簡単な例を挙げてみましょう。まず、C# 6以前の出力引数を使ったものです。
 
-```csharp
+```csharp {title="出力引数(C# 6)版"}
 static void F(Point p)
 {
     // 事前に変数を用意しないといけない/var 不可
@@ -838,7 +838,7 @@ static void Deconstruct(Point p, out int x, out int y)
 
 ちなみに、煩雑さはC# 7で多少マシになりました。[出力変数宣言](../resource/sp_ref.md#out-var)という構文が追加されて、以下のように書けます。
 
-```csharp
+```csharp {title="出力引数(C# 7)版" highlight-text="out var x, out var y"}
 static void F(Point p)
 {
     // 変数の事前準備は不要に
@@ -858,7 +858,7 @@ static void Deconstruct(Point p, out int x, out int y) => (x, y) = (p.X, p.Y);
 
 タプルを使えばこの問題は解決です。
 
-```csharp
+```csharp {title="タプル版"}
 static async Task F(Point p)
 {
     // 1個の var で受け取れる
@@ -885,7 +885,7 @@ static async Task<(int x, int y)> DeconstructAsync(Point p) => (p.X, p.Y);
 
 `if`内で使いたい場合は、例えば以下のようなコードになります。
 
-```csharp
+```csharp {title="if 内で使うなら bool 1個の戻り値の方が使いやすい"}
 static void TryPattern()
 {
     var s = Console.ReadLine();
@@ -895,7 +895,7 @@ static void TryPattern()
 
 これはさすがにタプルを使う方が煩雑です。
 
-```csharp
+```csharp {title="if 内で使うならタプルの方が煩雑"}
 static void TuplePattern()
 {
     var s = Console.ReadLine();
@@ -909,7 +909,7 @@ static (bool success, int value) Parse(string s) => int.TryParse(s, out var x) ?
 もっとも、C# 7では、以下のような `is` 演算子を使った`null`チェックで同様のことをすると言う手もあります。
 この書き方を型スイッチと呼びます(説明ページ準備中。でき次第リンク)。
 
-```csharp
+```csharp {title="C# 7の is を使って、int? の null チェック" highlight-text="is int x"}
 static void NullCheckPattern()
 {
     var s = Console.ReadLine();
@@ -922,7 +922,7 @@ static int? ParseOrDefault(string s) => int.TryParse(s, out var x) ? x : default
 もう1つ、[オーバーロード](../structured/st_function.md#overload)ですが、C#では(というか.NETでは)、引数でのオーバーロードはできますが、戻り値でのオーバーロードはできません。
 そこで、以下のように、オーバーロードに関しては出力引数の方が有利になります。
 
-```csharp
+```csharp {title="オーバーロードの可否"}
 // これはオーバーロード可能
 static void F(out int x, out int y) => (x, y) = (1, 2);
 static void F(out int id, out string name) => (id, name) = (1, "abc");

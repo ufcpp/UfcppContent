@@ -18,7 +18,7 @@ aliases: []
 `IAsyncEnumerator<T>`インターフェイスの話。
 最終的な決定としては以下のような API を持っています。
 
-```csharp
+```csharp {title="最終決定時の IAsyncEnumerator"}
 public interface IAsyncEnumerator<out T>
 {
     T Current { get; }
@@ -28,7 +28,7 @@ public interface IAsyncEnumerator<out T>
 
 一方で、検討段階では以下のような API も考えられていました。
 
-```csharp
+```csharp {title="検討段階の IAsyncEnumerator"}
 public interface IAsyncEnumerator<out T>
 {
     ValueTask<bool> WaitForNextAsync();
@@ -49,7 +49,7 @@ public interface IAsyncEnumerator<out T>
 歴史的経緯から非ジェネリックな `IEnumerator` インターフェイス(`System.Collections`名前空間)からの派生になっていますが、
 そういう歴史的経緯を抜いて考えれば以下のような API を持つインターフェイスです。
 
-```csharp
+```csharp {title="IEnumerator インターフェイスの本質"}
 public interface IEnumerator<out T>
 {
     bool MoveNext();
@@ -61,7 +61,7 @@ public interface IEnumerator<out T>
 以下のような API での実装が考えられます。
 (区別のために名前をちょっと変えて、`IFastEnumerator` にしています。)
 
-```csharp
+```csharp {title="IEnumerator の構造はこっちの方がよかったかもしれない"}
 interface IFastEnumerator<out T>
 {
     T TryMoveNext(out bool success);
@@ -90,7 +90,7 @@ interface IFastEnumerator<out T>
 配列の中身を列挙するだけのクラスを2つ用意します。
 片方は `IEnumerator<T>` 実装(本題に関係するところだけ抜き出し)。
 
-```csharp
+```csharp {title="IEnumerator 実装"}
 class NormalEnumerator : IEnumerator<int>
 {
     private readonly int[] _data;
@@ -103,7 +103,7 @@ class NormalEnumerator : IEnumerator<int>
 
 もう一方は `IFastEnumerator<T>` 実装。
 
-```csharp
+```csharp {title="IFastEnumerator 実装"}
 class FastEnumerator : IFastEnumerator<int>
 {
     private readonly int[] _data;
@@ -130,7 +130,7 @@ class FastEnumerator : IFastEnumerator<int>
 これに対して以下のようなループを回します。
 (`IEnumerator` 版の方は、まんま、`foreach` の展開結果です。)
 
-```csharp
+```csharp {title="インターフェイスを介して呼ぶと MoveNext/Current のコストが気になる"}
 static int VirtualSum(IEnumerator<int> e)
 {
     var sum = 0;
@@ -166,7 +166,7 @@ static int VirtualSum(IFastEnumerator<int> e)
 以下のように、インターフェイスを介さず具象クラスで呼ぶと、
 むしろ `MoveNext`/`Current` 型の方が速くなります。
 
-```csharp
+```csharp {title="具象型で呼ぶと別に MoveNext/Current のコストは気にならない"}
 // さっきとの違いは引数の型だけ。
 // IEnumerator インターフェイスだったのを、NormalEnumerator クラスに変えただけ。
 // この場合は普通にこっちの方が速い。
@@ -198,7 +198,7 @@ static int NonVirtualSum(FastEnumerator e)
 とはいえ、汎用性がなくなるので具象クラスで受け渡しするのはちょっとつらいです。
 ジェネリクスを使えば多少緩和はされるんですが…
 
-```csharp
+```csharp {title="ジェネリック版"}
 // ジェネリクスを使えば、構造体の時には仮想呼び出しが消える。
 // (構造体限定。クラスの時は別に仮想呼び出しは消えない。)
 static int GenericSum<T>(T e)
@@ -218,7 +218,7 @@ static int GenericSum<T>(T e)
 しかもなお悪いことに、`foreach` は、`GetEnumerator` を介する構造なので、
 普通にやるとどうやっても仮想呼び出しが消えません。
 
-```csharp
+```csharp {title="foreach はどうやっても仮想呼び出しが残る"}
 static int Sum<T>(T items)
     where T : IEnumerable<int>
 {

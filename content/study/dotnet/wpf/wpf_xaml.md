@@ -26,7 +26,7 @@ GUI アプリケーションを記述するための XML フォーマットで�
 例えば、以下のように記述します。
 
 
-```xml
+```xml {title="XAML の例"}
 <Page
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -82,7 +82,7 @@ XAML の利点は大きく分けて2つあります。
 C# 中に直接 GUI 部品構築のコードを記述する場合、
 以下のようになります。
 
-```csharp
+```csharp {title="C# でテキストボックス2つを表示"}
 WrapPanel panel = new WrapPanel();
 
 TextBox textbox1 = new TextBox();
@@ -118,7 +118,7 @@ panel.Children.Add(textbox2);
 以下のように変わります。
 
 
-```xml
+```xml {title="XAML でテキストボックス2つを表示"}
 <Page
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -187,7 +187,7 @@ XAML 単体で完結している場合、
 ブラウザ中に GUI が表示されるはずです。
 
 
-```xml
+```xml {title="XAML でテキストボックス2つを表示"}
 <Page
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

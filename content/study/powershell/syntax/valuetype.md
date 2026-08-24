@@ -27,7 +27,7 @@ aliases:
 整数は System.Int32
 実数は System.Double になるっぽいです。
 
-```console
+```console {title="数値の型"}
 >  (1).GetType().FullName
 System.Int32
 >  (1.1).GetType().FullName
@@ -38,7 +38,7 @@ System.Double
 整数は、通常はもちろん10進数で書きますが、
 0x を頭に付けると16進数になります。
 
-```console
+```console {title="16進数リテラル"}
 >  0xff
 255
 ```
@@ -49,7 +49,7 @@ System.Double
 1. とすれば OK。
 小数点の後ろの 0 は省略可能。
 
-```console
+```console {title="double 型リテラル"}
 >  (1.).GetType().FullName
 System.Double
 ```
@@ -63,7 +63,7 @@ double は科学表記も可能です。
           <sup><span class="normal">6</span></sup>
         </span> の意味になる。）
 
-```console
+```console {title="double の科学表記"}
 >  1.234e6
 1234000
 ```
@@ -71,7 +71,7 @@ double は科学表記も可能です。
 
 それから、1l とか 1L（語尾に l, L）で long になります。
 
-```console
+```console {title="long 型リテラル"}
 >  (1L).GetType().FullName
 System.Int64
 ```
@@ -98,7 +98,7 @@ System.Int64
         </span> = 1073741824）
 を表す 1kb, 1mb, 1gb という特殊な定数もあります。
 
-```console
+```console {title="バイト定数"}
 >  1kb
 1024
 >  1mb
@@ -117,7 +117,7 @@ System.Int64
 この辺りは C 言語や C# と同じです。
 ++ と -- に後置きと前置きがある辺りも同じです。
 
-```console
+```console {title="+ - * / %"}
 >  5 + 2
 7
 >  5 - 2
@@ -131,7 +131,7 @@ System.Int64
 ```
 
 
-```console
+```console {title="++ --"}
 >  $a = 1
 >  $b = ++$a
 >  $a,$b
@@ -150,7 +150,7 @@ System.Int64
 割り切れないときは勝手に double になるようです。
 まあ、流石に 2.5 * 2 が整数にはなったりはしません。
 
-```console
+```console {title="割り算結果の型"}
 >  (5 / 2).GetType().Name
 Double
 >  (4 / 2).GetType().Name
@@ -164,7 +164,7 @@ Double
 勝手に double に変換されるようです。
 （long なら表現できる桁であっても、double になる。）
 
-```console
+```console {title="桁あふれ"}
 >  1gb * 1gb
 1.15292150460685E+18
 >  [long]1gb * 1gb
@@ -181,7 +181,7 @@ double → int への変換時には、四捨五入されます。
 （挙動は System.Math.Round() メソッドと同じで、
 いわゆる偶数丸め（round to even）。）
 
-```console
+```console {title="double → int"}
 >  [int]1.49
 1
 >  [int]1.5
@@ -215,7 +215,7 @@ C 系統の言語でいうところの、
 PowerShell では &lt; とかが他に特別な意味を持つので、
 このような形になっています。
 
-```console
+```console {title="比較演算子"}
 >  $a = 1
 >  if($a -eq 1) {echo '$a equals 1'}
 $a equals 1
@@ -230,7 +230,7 @@ $a equals 1
 がそれぞれ、
 ビット反転、ビットごとの AND、ビットごとの OR、ビットごとの XOR です。
 
-```console
+```console {title="ビットごとの論理演算"}
 >  1 -bor 2 -bor 3 -bor 4
 7
 >  0x1234 -band 0xff
@@ -275,7 +275,7 @@ $true, $false があります。
 このうち、! と -not は同じ意味です。
 -not -and -or は、まあ、名前どおり、論理否定、論理 AND、論理 OR です。
 
-```console
+```console {title="論理演算"}
 >  $true -and $true
 True
 >  $true -and $false

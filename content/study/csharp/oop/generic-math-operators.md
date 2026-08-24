@@ -31,7 +31,7 @@ C# 11 / .NET 7 でインターフェイスの静的メンバーを仮想・抽�
 この機能の一番の用途は、数値型(`int` や `float` など)に対するアルゴリズムを[ジェネリクス](sp2_generics.md)を使って書けるようにすることです。
 例えば、以下のようなコードが書けるようになりました。
 
-```csharp
+```csharp {title="ジェネリックに「和を取る」コードを書けるように"}
 using System.Numerics;
 
 // よくある「和を取るコード」なものの、
@@ -84,7 +84,7 @@ C# の場合、基本的に、
 
 という方式で右シフトの方式を切り替えます。
 
-```csharp
+```csharp {title="右シフトの符号のありなし"}
 // 符号なし (unsigned) の 0xFF = 255
 byte u = 0xFF;
 
@@ -110,7 +110,7 @@ for (int i = 0; i < 8; i++)
 
 右シフトの符号あり/なしを切り替えたい場合、キャストが必要でした。
 
-```csharp
+```csharp {title="byte にキャストしてから右シフトすることで論理シフトに"}
 sbyte s = -1;
 
 // LogicalRightShift を呼んでいるので、符号なし右シフトになる。
@@ -129,7 +129,7 @@ static sbyte LogicalRightShift(sbyte s, int bits)
 この方式は、Generic Math の導入に伴って1つ問題がありました。
 「型引数 `T` に対応する符号なしな型」を取得する手段がありません。
 
-```csharp
+```csharp {title="unsinged generic T を取る手段がない"}
 // 符号なしシフトにしたかったらどうすれば？？？
 static T LogicalRightShift<T>(T s, int bits)
     where T : IShiftOperators<T,T>
@@ -139,7 +139,7 @@ static T LogicalRightShift<T>(T s, int bits)
 そこで、C# 11 では普通に「符号なし右シフト演算子」の `>>>` (`>` 3つ)を導入することにしました。
 (Java にあるやつです。Java の場合は `uint` などの符号なし整数型がなくて、`>>` か `>>>` で右シフトを切り替えます。)
 
-```csharp
+```csharp {title="C# にも符号なし右シフト演算子を導入" highlight-ranges="sha256:6292cfbfd01ca537fe9b8029d5dd6dc3ffa82531dca0d931cdbb2d2886d575f4;16:10-16:13"}
 using System.Numerics;
 
 sbyte s = -1;
@@ -160,7 +160,7 @@ static T LogicalRightShift<T>(T s, int bits)
 
 ちなみに、演算子オーバーロードもできます。
 
-```csharp
+```csharp {title="&gt;&gt;&gt; 演算子オーバーロードの例" highlight-ranges="sha256:f44dd9205a1bc2be49384b18ddef4048898d3be6a6ef24c20a418a7fc23de8ce;20:36-20:39"}
 for (int i = 0; i < 4; i++)
 {
     var x = new Int2Bit(i);
@@ -203,7 +203,7 @@ C# では、[整数演算のオーバーフロー時に何もしないか、そ�
 
 ちなみに、投げられる例外は `OverflowException` 型です。
 
-```csharp
+```csharp {title="checked 演算の例"}
 byte x = 128;
 byte y = 128;
 
@@ -227,7 +227,7 @@ C# 10 以前では、`checked` な演算ができるのは組み込み整数だ�
 
 また、generic math でも `checked` を使えるようにしたいしたいです。
 
-```csharp
+```csharp {title="generic に checked 演算をやりたい例"}
 // 例外が出るべき。
 CheckedAdd<byte>(128, 128);
 
@@ -259,7 +259,7 @@ static T CheckedAdd<T>(T x, T y)
 
 例えば、前節の符号なし右シフトでも使った「2ビット整数」を例に、とりあえず加算演算を書くなら以下のようになります。
 
-```csharp
+```csharp {title="checked 演算子オーバーロードの例" highlight-text="checked"}
 readonly struct Int2Bit
 {
     public readonly byte Value;
@@ -283,7 +283,7 @@ readonly struct Int2Bit
 
 ちなみに、通常演算子なしで `checked` 演算子だけを定義することはできません。
 
-```csharp
+```csharp {title="checked のみの定義はコンパイル エラーになる"}
 struct A
 {
     // OK: 通常演算子のみ
@@ -321,7 +321,7 @@ struct A
 
 あくまでユーザー定義なので、悪意を持って実装すれば「通常演算子で例外を投げて、checked 演算子で投げない」みたいなこともできてしまいます。
 
-```csharp
+```csharp {title="逆に実装"}
 struct A
 {
     // なぜかこっちが例外を出して
@@ -352,7 +352,7 @@ C# ではこれまで、シフト演算子の右オペランド(何ビットシ�
 例えば、以下のコードはコンパイル エラーになります。
 「1.1 ビットのシフト」とか言われても意味が解らないので、まあこれは妥当な制限でしょう。
 
-```csharp
+```csharp {title="右オペランドが整数じゃないのでエラー"}
 var x = 1 << 1.1;
 ```
 
@@ -360,7 +360,7 @@ var x = 1 << 1.1;
 右オペランドが `uint` や `long` の場合ですら制限されていて、
 ちょっと厳しい感じがします。
 
-```csharp
+```csharp {title="U や L がついてもダメ"}
 var x = 1 << 1U;
 var y = 1 << 1L;
 ```
@@ -372,7 +372,7 @@ generic math で使えるメソッドの中にはシフト演算の右オペラ�
 例えば、`LeadingZeroCount` や `TrailingZeroCount` などが代表例でが、
 これらの戻り値は `int` ではなく、`TSelf` (型引数になっている型)です。
 
-```csharp
+```csharp {title="シフト演算の右オペランドに使えそうな値を返す generic math メソッド"}
 using System.Numerics;
 
 M<byte>(0x8);
@@ -404,7 +404,7 @@ static void M<T>(T x)
 まあ、元が厳しすぎたという話なので、C# 11 で制限を撤廃することになりました。
 以下のようなコードが認められるようになっています。
 
-```csharp
+```csharp {title="C# 11 で operator &lt;&lt;(A x, A y) とかが書けるように" highlight-text="A y"}
 struct A
 {
     // C# 10 以前でも書けるオーバーロード。
@@ -424,7 +424,7 @@ struct A
 思想に反するコードも書けるようになっています。
 例えば以下のように、悪名高い「`<<` を "write" とか "append" 的な意味で使う」みたいなこともできます。
 
-```csharp
+```csharp {title="某言語的な &lt;&lt;" highlight-text="cout &lt;&lt; &quot;Hellow World!&quot; &lt;&lt; endl"}
 using static Iostream;
 
 // C# の思想的には書かせたくないコードの例。

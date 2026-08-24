@@ -90,7 +90,7 @@ C# でマルチスレッドプログラムを作成する場合、
 以下にスレッド作成の例を示します。
 
       
-```csharp
+```csharp {title="スレッド作成の例" highlight-ranges="sha256:1dd4e323f8e0ef374134fdd83049c8b8993736e6a72eb85a208ef889cd9423ca;11:6-11:8,39:10-39:12,43:10-43:12,51:10-51:12"}
 using System;
 using System.Collections;
 using System.Threading;
@@ -189,7 +189,7 @@ C# でマルチ スレッド プログラムを作成する際、
 スレッド プールを簡単に利用するための Task クラスというものが追加されています。
 （Task 以外にも、Parallel クラスや ParallelEnumerable クラスなども便利です。）
 
-```csharp
+```csharp {title="Parallel クラスを使った並列処理の例"}
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -429,7 +429,7 @@ q
 <span class="expand-button" title="展開/折畳">（古いコード（Thread クラスを直接利用））</span>
 <div class="expand-panel" markdown="1" title="（古いコード（Thread クラスを直接利用））">
       
-```csharp
+```csharp {title="複数のスレッドが同時に同じデータにアクセス" highlight-ranges="sha256:3e6e2730234597462c2892c8b7cdf72762aa6468ed3c1df8a3acd69488ebe37d;7:22-7:42,32:8-32:51"}
 using System;
 using System.Collections;
 using System.Threading;
@@ -482,7 +482,7 @@ class TestThread
     
 </div>
 
-```csharp
+```csharp {title="複数のスレッドが同時に同じデータにアクセス"}
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -610,7 +610,7 @@ Monitor クラスでは、参照型の任意の変数を同期オブジェクト
 <span class="expand-button" title="展開/折畳">（古いコード）</span>
 <div class="expand-panel" markdown="1" title="（古いコード）">
     
-```csharp
+```csharp {title="Monitor を用いた排他制御の例" highlight-ranges="sha256:63a39cfaeb2bba8fb05ed2c6e16eed113ea77666c7b3ddce43954a46d94a328b;1:3-1:52,7:7-7:33,18:9-18:34"}
   static readonly object syncObject = new object(); // 同期オブジェクト
 
   static void CountUp()
@@ -638,7 +638,7 @@ Monitor クラスでは、参照型の任意の変数を同期オブジェクト
     
 </div>
 
-```csharp
+```csharp {title="Monitor を用いた排他制御の例"}
 var syncObject = new object();
 
 Parallel.For(0, ThreadNum, i =>
@@ -687,7 +687,7 @@ Parallel.For(0, ThreadNum, i =>
 
 排他制御の手順をまとめると以下のようになります。
 
-```csharp
+```csharp {title="排他制御の手順"}
 object syncObject = new object();
 
 bool taken = false;
@@ -708,7 +708,7 @@ finally
 C# には lock 文と言う排他制御のための専用の構文があります。
 lock 文は以下のようにして用います。
 
-```csharp
+```csharp {title="lock 文"}
 lock(同期オブジェクト)
 {
   クリティカルセクション
@@ -723,7 +723,7 @@ lock 文を用いると、コンパイラが自動的に <code>Monitor</code> �
 <span class="expand-button" title="展開/折畳">（古いコード）</span>
 <div class="expand-panel" markdown="1" title="（古いコード）">
     
-```csharp
+```csharp {title="lock 文を用いた排他制御の例" highlight-text="lock(syncObject)"}
   static readonly object syncObject = new object();
 
   static void CountUp()
@@ -744,7 +744,7 @@ lock 文を用いると、コンパイラが自動的に <code>Monitor</code> �
     
 </div>
 
-```csharp
+```csharp {title="lock 文を用いた排他制御の例"}
 var syncObject = new object();
 
 Parallel.For(0, ThreadNum, i =>
@@ -778,7 +778,7 @@ Parallel.For(0, ThreadNum, i =>
 
 それ以前は、以下のようなパターンに展開されていました。
 
-```csharp
+```csharp {title="排他制御の手順"}
 object syncObject = new object();
 
 Monitor.Enter(syncObject);
@@ -797,7 +797,7 @@ finally
 
 そこで、.NET Framework 4で以下のように実装が変更されたそうです。
 
-```csharp
+```csharp {title="排他制御の手順"}
 object syncObject = new object();
 
 bool taken = false;
@@ -856,7 +856,7 @@ C# の `lock` ステートメントは任意の `object` (参照型のインス�
 
 例えば前述のコードを `Lock` クラスを使ったものに書き換えたとします。
 
-```csharp
+```csharp {title="Lock クラスの利用例"}
 const int ThreadNum = 20;
 const int LoopNum = 20;
 
@@ -881,7 +881,7 @@ Console.WriteLine($"{num} ({ThreadNum *  LoopNum})");
 
 この時、 `lock (syncObject) { }` の部分は以下のように展開されます。
 
-```csharp
+```csharp {title="Lock クラスに対する lock ステートメント の展開結果"}
 Lock.Scope scope = syncObject.EnterScope();
 
 try
@@ -898,7 +898,7 @@ finally
 
 ちなみに、これは以下のコードと全く同じ展開結果です。
 
-```csharp
+```csharp {title="要するに、lock (x) は using (x.EnterSceop()) になる"}
 using (syncObject.EnterScope())
 {
     int tmp = num;

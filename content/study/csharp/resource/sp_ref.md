@@ -40,12 +40,12 @@ C# では、値の受け渡しは基本的に値渡しになります。
 - 変数から引数
 - 戻り値から変数
 
-```csharp
+```csharp {title="変数から変数への受け渡し"}
 var x = 1;
 var y = x; // x から y に値を渡す
 ```
 
-```csharp
+```csharp {title="変数から引数への値の受け渡し"}
 static void VariableToParameter()
 {
     var x = 1;
@@ -84,7 +84,7 @@ C#では、通常(特に何もつけないと)、値渡しになります。
 C# では普通にメソッドを定義すると、その引数は値渡しになります。
 例えば、以下のようなプログラムがあったとします。
 
-```csharp
+```csharp {title="値渡しの例"}
 using System;
 class ByValueTest
 {
@@ -152,7 +152,7 @@ C# で単に「参照引数」という場合、`ref`引数を指します。
 
 以下の例のように、メソッドの引数に <code>ref</code> キーワードを付けることでその引数は参照渡しになります。
 
-```csharp
+```csharp {title="参照渡しの例" highlight-ranges="sha256:571dd0bb9bee0efc989a772ab79c387d32f42a1c8efaf2e22a79554e362e91f0;8:10-8:13,12:20-12:23"}
 using System;
 class ByReferenceTest
 {
@@ -214,7 +214,7 @@ class ByReferenceTest
 
 ##### <a id="sec-generated-title-7"></a>サンプル
 
-```csharp
+```csharp {title="ref キーワードのサンプル"}
 using System;
 
 class ByRefferanceTest
@@ -265,7 +265,7 @@ C# 7.2 から、「参照渡しだけども読み取り専用」というよう�
 「入力用」ということを示すように、`in`キーワードを使います。
 (`in` を使うのは、C# 1.0の頃からある `out` 引数(次節で説明)との対比もあります。)
 
-```csharp
+```csharp {title="in 引数" highlight-ranges="sha256:dad40c06b3e06be351af2c521e66c02cb9907ce6f22b0341072c1fe09b71b19f;5:19-5:21"}
 using System;
 
 public partial class Program
@@ -321,7 +321,7 @@ public partial class Program
 `F(in x)` というように、呼び出し側で `in` 修飾を明示することもできます。
 以下のような呼び分けをできるようにするために使います。
 
-```csharp
+```csharp {title="値渡しと in 引数の呼び分け"}
 // 値渡しと in 引数でオーバーロードできる
 static void F(int x) { }
 static void F(in int x) { }
@@ -347,7 +347,7 @@ static void Main()
 大きめの構造体を値渡し(コピーが発生)すると、結構大きな負担が発生します。
 そういう場合に `in` 引数が有用です。
 
-```csharp
+```csharp {title="in 引数でコピーを避ける" highlight-ranges="sha256:22f783dac611c8e27191d032e27cc01b38c975d3ccad25eac947580e7dcaa403;18:41-18:43,18:58-18:60"}
 public struct Quaternion
 {
     public double W;
@@ -386,7 +386,7 @@ public struct Quaternion
 
 この問題は、以下のように、`in`引数でも起こります。[`readonly struct`](readonlyness.md#readonly-struct)を使えば回避できる点も`readonly`フィールドと同様です。
 
-```csharp
+```csharp {title="in 引数に対してメソッドを呼ぶとコピーが発せ以することがある"}
 // 作りとしては readonly を意図しているので、何も書き換えしない
 // でも、struct 自体には readonly が付いていない
 struct NoReadOnly
@@ -423,7 +423,7 @@ class Program
 
 [in 引数](#in)では、利便性のため、右辺値を渡せる仕様になっています。
 
-```csharp
+```csharp {title="in 引数に右辺値を渡す"}
 // in = 参照渡しだけども書き換えはしない。
 void m(in int x) { }
 
@@ -439,7 +439,7 @@ in 引数も参照渡しの一種ですが、本来、参照渡しには「参�
 in 引数の場合は「書き換えしないのであれば、コンパイラーが作る一時変数を参照しても大丈夫」という前提です。
 つまり、さきほどような右辺値を参照する in 引数は、実際には以下のような一時変数が挿入されています。
 
-```csharp
+```csharp {title="実際には一時変数が挿入される"}
 // in = 参照渡しだけども書き換えはしない。
 void m(in int x) { }
 
@@ -461,7 +461,7 @@ m(in temp);
 例えば `Nullable` 型には .NET 7 から [`GetValueRefOrDefaultRef`](https://learn.microsoft.com/ja-jp/dotnet/api/system.nullable.getvaluerefordefaultref) というメソッドが追加されたんですが、
 これが問題になりました。
 
-```csharp
+```csharp {title="GetValueRefOrDefaultRef に右辺値を渡せて困った"}
 using System.Numerics;
 
 Quaternion? x = new(1, 2, 3, 0);
@@ -483,7 +483,7 @@ C# 11 時点/ .NET 7 時点では警告が出ません。)
 そこで C# 12 では改めて、「書き換えはしないけども、右辺値は受け付けたくない」ということを表す、
 ref readonly 引数というものを導入しました。
 
-```csharp
+```csharp {title="ref readonly 引数"}
 // 冒頭の例から in を ref readonly に変更。
 void m(ref readonly int x) { }
 
@@ -532,7 +532,7 @@ m(ref a);
 特に、複数の戻り値を返す場合に有効な手段です<sup>※</sup>。
 ただ、`ref`修飾子を使った参照引数では、戻り値として使うには以下のようないくつかの問題があります。
 
-```csharp
+```csharp {title="参照引数で複数の戻り値を返す(つもり)"}
 using System;
 
 class Program
@@ -564,7 +564,7 @@ class Program
 そこで、戻り値として使いたい場合(メソッド内で変数を初期化する予定である場合)、
 以下のように <code>out</code> 修飾子を用いて、出力用の参照引数であることを明示してやります。
 
-```csharp
+```csharp {title="出力変数の例" highlight-ranges="sha256:19d7371a364a6094180122494cc5719de23659d3086902373533f1574b360fef;7:10-7:13,11:20-11:23"}
 using System;
 class ByValueTest
 {
@@ -600,7 +600,7 @@ class ByValueTest
 メソッドで複数の値を返したい場合、
 戻り値では1つしか値を返せないので出力変数を使います。
 
-```csharp
+```csharp {title="out キーワードのサンプル"}
 using System;
 
 class OutTest
@@ -677,7 +677,7 @@ C# 7で、出力引数を受け取るのと同時に式中で変数を宣言で�
 以前は、出力引数で値を受け取るためには、メソッドなどの呼び出しよりも前に変数を宣言しておく必要がありました。
 例えば以下のようになります。
 
-```csharp
+```csharp {title="C# 6以前: 出力の受け取りには事前に変数宣言が必要"}
 static int? ParseOrDefault(string s)
 {
     int x;
@@ -688,7 +688,7 @@ static int? ParseOrDefault(string s)
 これに対して、C# 7では、以下のような書き方ができるようになります。
 式の中で変数 `x` を宣言しつつ、出力引数の値を受け取っています。
 
-```csharp
+```csharp {title="C# 7移行: 出力変数宣言" highlight-text="out int x"}
 static int? ParseOrDefault(string s)
 {
     return int.TryParse(s, out int x) ? x : default(int?);
@@ -697,7 +697,7 @@ static int? ParseOrDefault(string s)
 
 ちなみに、[`var`](../start/sp3_inference.md#implicit)を使った型推論もできます。
 
-```csharp
+```csharp {title="出力変数宣言でもvarによる型推論が使える" highlight-text="var"}
 static int? ParseOrDefault(string s)
 {
     return int.TryParse(s, out var x) ? x : default(int?);
@@ -708,14 +708,14 @@ static int? ParseOrDefault(string s)
 一方、C# 7以降の書き方ならば1つの式で済んでいます。
 C# 6で導入された `=>` を使った形式でメソッドを書くことができます。
 
-```csharp
+```csharp {title="=&gt; を使う"}
 static int? ParseOrDefault(string s) => int.TryParse(s, out var x) ? x : default(int?);
 ```
 
 出力変数宣言で作った変数のスコープは、概ね、その式を囲っているブロック内になります。
 つまり、式の直前に変数を宣言したのと同じスコープになります。
 
-```csharp
+```csharp {title="出力変数宣言で作った変数を使える範囲"}
 using System;
 
 struct Point
@@ -766,7 +766,7 @@ C# コンパイラーとしては`in`引数や`out`引数を`ref`引数と区別
 まず、`ref`、`in`、`out`だけの違いのオーバーロードは作れません。
 例えば以下のコードでは`F`、`G`、`H`のいずれもコンパイル エラーになります。
 
-```csharp
+```csharp {title="ref/in/out 違いのオーバーロードは不可"}
 void F(ref int x) { }
 void F(in int x) { }
 
@@ -786,7 +786,7 @@ void H(out int x) => x = 0;
 「入力/出力にしか使わない」という判定ができません。
 以下のようなコードはコンパイル エラーになります。
 
-```csharp
+```csharp {title="in/out引数を使うと、in/out型制約が付けられない"}
 interface Contravariance<in T>
 {
     // 普通の引数は共変
@@ -821,7 +821,7 @@ interface Covariance<out T>
 
 例えば以下のコードはコンパイル エラーになります。
 
-```csharp
+```csharp {title="参照引数の制限"}
 using System;
 using System.Collections;
 using System.Threading.Tasks;
@@ -863,7 +863,7 @@ C# 7から、戻り値とローカル変数でも参照渡しを使えるよう�
 
 例として、配列のi番目の要素を参照で返してみましょう。以下のようになります。
 
-```csharp
+```csharp {title="参照戻り値" highlight-ranges="sha256:d5cc76fac1d9114d9d6e3533d0ee6a19bd292e0f4e6123ffe56ccd24a01cff53;21:12-21:19,21:47-21:50"}
 using System;
 
 class Program
@@ -888,13 +888,13 @@ class Program
 }
 ```
 
-```console
+```console {title="参照戻り値の結果"}
 0, 1, 2, 3, 4
 ```
 
 また、ローカル変数に対しても、`ref`修飾子を付けることで参照渡しができます。
 
-```csharp
+```csharp {title="参照ローカル変数" highlight-ranges="sha256:729cd13544e5415318b5b941425281a3d24397173179bb33ff7289403c640e73;9:10-9:17,9:22-9:25,12:9-12:16,12:21-12:24,16:9-16:16,16:21-16:24"}
 using System;
 
 class Program
@@ -928,7 +928,7 @@ class Program
 }
 ```
 
-```console
+```console {title="参照ローカル変数の結果"}
 1, 1, 11, 1, 11, 0
 ```
 
@@ -938,7 +938,7 @@ class Program
 上記の例でも、参照引数を参照戻り値で返して、それをさらに参照ローカル変数で受け取るものもあります。
 ここだけ抜き出すと以下のような感じです。
 
-```csharp
+```csharp {title="参照引数を参照戻り値で返して、参照ローカル変数で受ける"}
 static void Main()
 {
     var x = 10;
@@ -1034,7 +1034,7 @@ C# 7では、コンパイラーが賢くなって、この「大元をたどっ�
 ただし、C# 7でも、あくまでメソッド内で完結できる範囲でしか「たどって調べる」ということができません。
 例えば、以下のようなコードはコンパイルできません。
 
-```csharp
+```csharp {title="メソッドをまたいだ解析まではできない"}
 // あまり意味のないメソッドなものの…
 // 第1引数しか参照しない
 static ref int X(ref int x, ref int y) => ref x;
@@ -1064,7 +1064,7 @@ C# コンパイラーが行う「参照戻り値に返して安全かどうか�
 
 例えば、以下のコードはコンパイル エラーになります。
 
-```csharp
+```csharp {title="構造体のフィールドは参照戻り値で返せない"}
 struct Struct
 {
     int _v;
@@ -1081,7 +1081,7 @@ class Class
 ちなみに、エラーになるのは構造体のフィールドの参照を直接返している場合だけです。
 以下のように、フィールドを介していても、参照型の中の参照を返すことはできます。
 
-```csharp
+```csharp {title="構造体でも、参照型の中の参照は返せる"}
 struct ArrayOffset<T>
 {
     T[] _array;
@@ -1101,7 +1101,7 @@ struct ArrayOffset<T>
 この仕様は、少し詳しい人であれば何か釈然としないものがあるかもしれません。
 例えば以下のように、[拡張メソッド](../functional/sp3_extension.md)的に([静的メソッド](../oop/oo_static.md)で)書けば似たようなことが実現できます。
 
-```csharp
+```csharp {title="静的メソッドで同じようなことを書けば可能"}
 struct Struct
 {
     internal int _v;
@@ -1129,7 +1129,7 @@ static class Extensions
 
 要するに、以下の例の、`Ok`メソッドのようなものを認めるためには前者の仕様が必要です。
 
-```csharp
+```csharp {title="「構造体はフィールドの参照を返せない」という仕様を必要とするコード"}
 struct ArrayOffset<T>
 {
     // 拡張メソッドから参照するために internal
@@ -1173,7 +1173,7 @@ class Program
 
 あと、以下のように、[ジェネリクス](../oop/sp2_generics.md)絡みの問題を避けるためにもこの仕様を選ぶ必要があったそうです。
 
-```csharp
+```csharp {title="構造体がフィールドの参照を返せるとジェネリクス絡みで困る"}
 using System;
 
 interface IReference
@@ -1218,13 +1218,13 @@ class Program
 C# 7.2から、[条件演算子](../start/st_operator.md#condition)の2項目、3項目を参照にできるようになりました。
 以下のような書き方ができます。
 
-```csharp
+```csharp {title="条件演算子の中で ref を利用"}
 x > y ? ref x : ref y
 ```
 
 これを、さらに参照ローカル変数や参照戻り値で受けたい場合には、条件演算子の前にも `ref` が必要です。
 
-```csharp
+```csharp {title="条件演算子の前にも ref"}
 var x = 1;
 var y = 2;
 
@@ -1246,7 +1246,7 @@ Console.WriteLine((x, y)); // (1, 10)
 この「条件 ref」は、左辺にも使えます。
 例えば以下のように、「条件付きで `x` と `y` のどちらかを書き換える」みたいなことができます。
 
-```csharp
+```csharp {title="左辺に条件 ref を書く"}
 var x = 1;
 var y = 2;
 
@@ -1268,7 +1268,7 @@ Console.WriteLine((x, y)); // (1, 10)
 参照戻り値と参照ローカル変数でも「参照渡しだけども読み取り専用」という渡し方ができるようになりました。
 以下のように、`ref readonly`で修飾します。
 
-```csharp
+```csharp {title="ref readonly な戻り値、ローカル変数"}
 static ref readonly int Max(in int x, in int y)
 {
     ref readonly var t = ref x;
@@ -1293,7 +1293,7 @@ C# 7.3で、参照引数、参照ローカル変数のref再代入(ref reassignm
 
 以下のように、参照ローカル変数への代入時に、右辺に`ref`を付けることでref再代入になります。
 
-```csharp
+```csharp {title="ref 再代入" highlight-ranges="sha256:f57bc9b72f6b24b073591f83a6fc6403065757b2c25232d3e88abd649d9da71b;12:5-12:8"}
 int x = 1;
 int y = 2;
 
@@ -1315,7 +1315,7 @@ Console.WriteLine((x, y)); // (10, 20)
 
 ちなみに、参照引数に対しても使えます。
 
-```csharp
+```csharp {title="参照引数のref再代入"}
 static void M1(ref int x, ref int y)
 {
     x = ref y;
@@ -1340,7 +1340,7 @@ static void M3(ref int x, out int y)
 以下の例は、`int`の配列中の最大値になっているところを参照戻り値で返す処理ですが、
 都度インデックス アクセスするよりも、ref再代入を使ったコードの方が少しだけ有利です。
 
-```csharp
+```csharp {title="ref再代入の利用例" highlight-text="ref array[i]"}
 static ref int RefMaxOld(int[] array)
 {
     if (array.Length == 0) throw new InvalidOperationException();
@@ -1388,7 +1388,7 @@ C# 7.3から、`for`ステートメントや`foreach`ステートメントのル
 
 `for`の方は分かりやすいでしょう。単に、`for (初期化式; 条件式; 更新式)`の初期化式内で参照ローカル変数を定義できるようになっただけです。
 
-```csharp
+```csharp {title="ref for"}
 var array = new[] { 1, 3, 5, 2, 4 };
 
 var x = 0;
@@ -1406,7 +1406,7 @@ Console.WriteLine(x); // break した時点の i の値 = 2
 `foreach`の方も、[通常の`foreach`と同じパターン](../data/sp_foreach.md#foreach)で、`MoveNext`や`Current`の呼び出しに展開されるだけです。
 `Current`が参照戻り値を返すとき、それをrefループ変数で受け取ることができます。
 
-```csharp
+```csharp {title="ref foreach" highlight-ranges="sha256:f4a0b91674cf8a92c5b5380932d371a78e6928b0f1d1609b80a6176cd9233fe8;8:18-8:21,36:12-36:15"}
 using System;
 
 class Program
@@ -1459,7 +1459,7 @@ static class RefExtensions
 
 ただ、.NET Core 2.1 から導入された[`Span<T>`](span.md)であれば、 `Enumerator` が `ref` 戻り値な `Current` を持っています。`AsSpan`拡張メソッドで配列を`Span<T>`にできるので、以下のようなコードが書けます。
 
-```csharp
+```csharp {title="AsSpan で参照ループ変数利用"}
 using System;
  
 class Program
@@ -1490,7 +1490,7 @@ class Program
 その際、`readonly var`の省略形として`let`など1単語を使った書き方ができるようになる予定です。
 (`let`はもう少し高度な機能として提供される予定ですが、“`readonly var`としても”使えます。)
 
-```csharp
+```csharp {title="readonly 引数・ローカル変数"}
 // (将来の予定)
 static void F(readonly int x)
 {
@@ -1542,7 +1542,7 @@ C#には、値渡し・参照渡しと、値型・参照型という区別があ
 例えば、以下のようなコードを書いたとしましょう。
 2つの変数`p`と`q`がありますが、それぞれ別コピーになっていて、片方の書き換えは他方に影響しません。
 
-```csharp
+```csharp {title="値渡しの場合、書き換えは変数ごとに独立"}
 using System;
 
 struct Point
@@ -1588,7 +1588,7 @@ class Program
 
 例えば、フィールドや配列を直接読み書きするのであれば、以下のような書き方ができます。
 
-```csharp
+```csharp {title="フィールドや配列を直接書き換え"}
 class RawData
 {
     // フィールドを直接公開
@@ -1611,7 +1611,7 @@ class Program
 
 これが、プロパティやインデクサーを介すると、以下のように書き換えが面倒になります。
 
-```csharp
+```csharp {title="値型のプロパティやインデクサーには注意が必要"}
 class CapsuledData
 {
     // プロパティで公開
@@ -1657,7 +1657,7 @@ class Program
 構造体は最初から部分書き換え不能に作る方がいいというガイドラインもあるくらいです。
 このガイドライン通りに`Point`構造体を作るなら、以下のようになります。
 
-```csharp
+```csharp {title="書き換えできないように構造体を作る例"}
 struct Point
 {
     public readonly int X;
@@ -1686,7 +1686,7 @@ struct Point
 例えば先ほどの例を以下のような書き換えてみましょう。
 値渡しの時と違って、構造体の部分書き換えができるようになります。
 
-```csharp
+```csharp {title="参照戻り値を使って構造体を部分書き換え"}
 class RefData
 {
     // 参照戻り値のプロパティで公開
@@ -1713,7 +1713,7 @@ class Program
 しかし、フィールドや配列を直接公開するよりは自由な処理が書けます(少なくともget時の処理は挟める)。
 例えば以下のような利用例が考えられるでしょう。getアクセサーに少しだけ処理が挟まっています。
 
-```csharp
+```csharp {title="getアクセサーに少し処理を挟む例"}
 /// <summary>
 /// 循環バッファー。
 /// </summary>
@@ -1768,7 +1768,7 @@ C# 6までは参照戻り値のための構文がなく、ユーザー定義の�
 しかし、配列は特別扱いを受けていて、インデクサーが参照になっています。
 例えば、以下のようなコードを書くと、配列の方だけ正常にコンパイルできます。
 
-```csharp
+```csharp {title="配列のインデクサーは最初から参照を返してる"}
 var array = new[]
 {
     new Point(),
@@ -1806,7 +1806,7 @@ list[0].X = 1; // コンパイル エラー
 しかし、読み書きに使われる命令的には参照渡しとポインターは全く同じだったりします。
 例えば、以下の2つのメソッドを見てみましょう。
 
-```csharp
+```csharp {title="参照渡しとポインターの比較の例"}
 public static ref int Max(ref int x, ref int y)
 {
     if (x >= y) return ref x;
@@ -1842,7 +1842,7 @@ C#を使って書けるコードではありませんが、[IL](../../il/index.m
 
 このパッケージ中にある`Unsafe`クラスを使うと、以下のようなコードが書けます。
 
-```csharp
+```csharp {title="Unsafeクラスを使って参照渡しとポインターを変換する例"}
 unsafe
 {
     int x = 1;
@@ -1861,7 +1861,7 @@ unsafe
 これで何がうれしいかというと、以下のように、タイプが異なるいろんなメモリ領域を統一的に扱えたりすることです。
 また、ポインターを使う部分にはunsafeコンテキストが必要ですが、作られたクラスを使うだけなら、使う側にはunsafeを求めません。
 
-```csharp
+```csharp {title="いろんなメモリ領域を統一的に扱う例"}
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -1911,7 +1911,7 @@ class Program
 この制約を破ることができます。
 例えば、以下のようなコードで、「参照渡しのnull」を作れます。
 
-```csharp
+```csharp {title="参照渡しのnull"}
 using System;
 using System.Runtime.CompilerServices;
 

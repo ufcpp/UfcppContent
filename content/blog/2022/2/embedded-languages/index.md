@@ -61,7 +61,7 @@ C# 中に JSON を埋め込む需要ってそんなにあったっけ？とい�
 
 ちなみに、この2個目の仕様があるので、以下のようなコードにも構文ハイライトが掛かります。
 
-```csharp
+```csharp {title="lang= 隠し仕様"}
 //lang=regex
 var regex = @"(?<name>\w+?\d{3}).txt";
 
@@ -76,7 +76,7 @@ var json = @"{ 'value': 123 }";
 それが `StringSyntax` 属性。
 `Regex` クラスのコンストラクターや `Match` メソッドにもこの属性が追加されています。
 
-```csharp
+```csharp {title="Regex クラスに StringSyntax 属性追加"}
 public class Regex
 {
     public Regex([StringSyntax(StringSyntaxAttribute.Regex, "options")] string pattern) { }
@@ -94,7 +94,7 @@ C# の文字列リテラル中にコードを埋め込みやすくなったの�
 Visual Studio 17.2 Preview 1 で、以下のようなコードが書けるようになりました。
 (C# 11 候補。現状は LangVersion preview が必要。)
 
-```csharp
+```csharp {title="raw string literal の例"}
 const string regex = @"(?<name>\w+?\d{3}).txt";
 var json = @"{ 'value': 123 }";
 

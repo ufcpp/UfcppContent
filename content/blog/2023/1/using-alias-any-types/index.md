@@ -26,7 +26,7 @@ using alias は、using ディレクティブを書くときに `using T = Syste
 
 まず、以下のコードであれば現状でもコンパイルできるんですが…
 
-```csharp
+```csharp {title="現状の C# でも書ける using alias"}
 using List = System.Collections.Generic.List<int>;
 using ListA = System.Collections.Generic.List<int[]>;
 using ListN = System.Collections.Generic.List<int?>;
@@ -35,7 +35,7 @@ using ListT = System.Collections.Generic.List<(int, int)>;
 
 そのくせ以下のコードはコンパイルできません。
 
-```csharp
+```csharp {title="現状ではコンパイルできない using alias"}
 using Primitive =  int;
 using Array = int[];
 using Nullable = int?;
@@ -77,7 +77,7 @@ using_alias_directive
 まあ、今でも、`typeof(string)` は書けても `typeof(string?)` とは書けないので、
 それと同じです。
 
-```csharp
+```csharp {title="トップレベルの NRT"}
 using List = System.Collections.Generic.List<string?>; // これは OK。
 using S = string?; // これはダメ。
 ```
@@ -90,7 +90,7 @@ using S = string?; // これはダメ。
 
 これに対しては結局、`using unsafe` という構文を導入するみたいです。
 
-```csharp
+```csharp {title="using unsafe"}
 using unsafe T = int*;
 using unsafe F = delegate*<int, int, void>;
 ```
@@ -100,7 +100,7 @@ using unsafe F = delegate*<int, int, void>;
 [エイリアスをジェネリックにして型引数を持たせたい](https://github.com/dotnet/csharplang/issues/1239)という話もあります。
 以下のような、エイリアスの右辺にも `<T>` を付けたいというやつ。
 
-```csharp
+```csharp {title="エイリアスに &lt;T&gt; を付けたい"}
 using List<T> = System.Collections.Generic.List<T>;
 ```
 

@@ -32,7 +32,7 @@ aliases: []
 C# では、というか、IEEE 754 (浮動小数点数の標準規格)では、
 NaN (Not a Number)との比較は常に false ということになっています。
 
-```csharp
+```csharp {title="NaN との比較"}
 bool m(double x) => x == double.NaN;
  
 Console.WriteLine(m(1.0)); // 当然 false
@@ -56,7 +56,7 @@ C# 8.0 で [null 許容参照型](../../../../study/csharp/resource/nullablerefe
 
 - `MemberNotNull` 属性
 
-```csharp
+```csharp {title="MemberNotNull 属性"}
 class X
 {
     public string NotNull;
@@ -70,7 +70,7 @@ class X
 
 - 制約なしジェネリック型に対する `T?`
 
-```csharp
+```csharp {title="制約なしジェネリック型に対する T?"}
 #nullable enable
  
 class X
@@ -103,7 +103,7 @@ class X
 C# 9.0 時点では nominal に(プロパティで)定義したメンバーは初期化を必須にできません。
 常に省略可能で、省略した場合は 0/null に自動的に初期化されます。
 
-```csharp
+```csharp {title="nominal record のプロパティは現状、明示的な初期化が不要"}
 var p = new Point
 {
     // X, Y ともに何も書かなくても別に構わない
@@ -120,7 +120,7 @@ record Point
 1案としては以下のような書き方が提案されています。
 これを required プロパティといいます。
 
-```csharp
+```csharp {title="required プロパティ(の1案)"}
 var p = new Point
 {
     X = 1, // X は書かないとコンパイル エラー
@@ -144,7 +144,7 @@ record Point
 となると逆に、「匿名型は名前なしのレコード型」という扱いになっている方が自然で、
 この一貫性を取るために、匿名型にも `with` 式を認めたいという話が出ています。
 
-```csharp
+```csharp {title="匿名型に対する with 式"}
 var a = new { X = 1, Y = 2 };
 var b = a with { X = 3 }; // 9.0 時点ではできないものの、10.0 で検討
 ```
@@ -158,7 +158,7 @@ C# チーム的には前向き(たぶん、変更コストがそんなに高く�
 
 C# でも shebang (Unix シェルでよくある、1行目に `#!` を書いてスクリプトを何で実行するか指定するやつ)を認めよう(C# コンパイラー的には単にコメント扱いで無視)という話があります。
 
-```csharp
+```csharp {title="shebang"}
 #! dotnet run
  
 System.Console.WriteLine("Hello");
@@ -171,7 +171,7 @@ System.Console.WriteLine("Hello");
 
 配列とか `List<T>` とか(あるいはもしかしたら汎用に `IEnumerable<T>` も)を `[]` を使った[パターン](../../../../study/csharp/datatype/patterns.md)でマッチングできるようにしたいという話があります。
 
-```csharp
+```csharp {title="リスト パターン"}
 var x = new[] { 1, 2, 3 };
  
 if (x is [1, 2, var i])
@@ -193,7 +193,7 @@ if (x is [1, 2, var i])
 
 ここでは C# のスクリプト文法を使えるので、例えば、以下のような1行のコードが「実行」ボタン1つで実行できます。
 
-```csharp
+```csharp {title="チュートリアル上ではこの1ライナーが有効"}
 Console.WriteLine("Hellow World!");
 ```
 
@@ -217,7 +217,7 @@ enum 型に対して、「メンバー定義してない値は取らない」と
 
 例えば以下のコードは現状では警告が出るんですが、「警告をなくせる enum が欲しい」というのが closed enum です(ここでいう close (閉じる)というのは、「これ以上のメンバー追加はない」という意味です)。
 
-```csharp
+```csharp {title="enum の網羅性"}
 int m(X x) => x switch
 {
     X.A => 1,
@@ -240,7 +240,7 @@ enum X
 C# 9.0 で入った[トップ レベル ステートメント](../../../../study/csharp/misc/miscentrypoint.md#top-level-statements)で、トップ レベルにメソッドを書いた場合、
 それはトップ レベルからのみアクセスできます。
 
-```csharp
+```csharp {title="トップ レベルにメソッドを書いた場合の挙動"}
 using System;
  
 // トップ レベルでメソッドを書く。
@@ -281,7 +281,7 @@ unsafe とか[抑止演算子の `!`](../../../../study/csharp/resource/nullable
 
 そこで、必要であればやっぱり実行時の検証、要するに以下のようなコードも必要だろうという空気感。
 
-```csharp
+```csharp {title="実行時 null 検証"}
 void M(string s)
 {
     if (s is null)
@@ -298,7 +298,7 @@ void M(string s)
 
 `using` エイリアスで以下のような書き方をしたいという話はずっと昔からたびたび出ています。
 
-```csharp
+```csharp {title="using エイリアスでジェネリック型引数を書きたい"}
 using List<T> = System.Collections.Generic.List<T>;
 ```
 
@@ -310,7 +310,7 @@ using List<T> = System.Collections.Generic.List<T>;
 null 許容参照型の [`NutNullIfNotNull`](../../../../study/csharp/resource/nullablereferencetype.md#sec-generated-title-6) とかの登場で急に需要が高まったんですが、
 属性内で、メソッドの引数を `nameof` 参照したいという要求があります。
 
-```csharp
+```csharp {title="パラメーターを nameof 参照したい例"}
 using System.Diagnostics.CodeAnalysis;
  
 class Path
@@ -330,7 +330,7 @@ class Path
 今や普通に `string` と `Span<char>`、`ReadOnlySpan<char>` を比較することがあるわけで、
 だったら、`Span<chat>` を `switch` 式に掛けたいという要求が当然あります。
 
-```csharp
+```csharp {title="Span に対して文字列リテラルで switch"}
 // string に対してこんな感じの switch していたものを…
 int M(string s) => s switch
 {

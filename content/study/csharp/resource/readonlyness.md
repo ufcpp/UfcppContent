@@ -29,7 +29,7 @@ aliases: []
 例えば以下のコードを見てください。`Program`クラスのフィールド`c`には`readonly`が付いていますが、
 `c`が普通に書き換え可能なクラスのフィールドなので、クラスの中身は自由に書き換えられます。
 
-```csharp
+```csharp {title="参照型のフィールドに対してreadonlyを付ける例"}
 // 書き換え可能なクラス
 class MutableClass
 {
@@ -74,7 +74,7 @@ class Program
 
 例えば以下のように、`readonly`が付いたフィールド`c`自体に加えて、`c`のフィールドも書き換えできません。
 
-```csharp
+```csharp {title="値型のフィールドに対してreadonlyを付ける例"}
 using System;
 
 // 書き換え可能な構造体
@@ -143,7 +143,7 @@ C# の`readonly`フィールドには少し片手落ちなところがあって�
 構造体のメソッドの中では`this`が「自分自身の参照」の意味なんですが、この`this`参照は書き換えできてしまいます。
 そのため、以下のように、`readonly`で一見書き換えができなさそうなフィールドを書き換えてしまうことができます。
 
-```csharp
+```csharp {title="構造体の this 書き換えの例"}
 using System;
 
 struct Point
@@ -196,7 +196,7 @@ C# 7.2で、構造体自体に`readonly`修飾を付けられるようになり�
 
 `this`が`readonly`扱いになるので、前節のような`this`書き換えの問題は起きません。
 
-```csharp
+```csharp {title="readonly struct の例" highlight-ranges="sha256:21da70407e540f167b51cc7429f2cbf4ef167b38c2a5c845e47127250bba82ef;4:1-4:9"}
 using System;
 
 // 構造体自体に readonly を付ける
@@ -295,7 +295,7 @@ C# 7.2 以降では、書き換えを意図していない構造体に対して�
 
 例えば以下の例を見てください。
 
-```csharp
+```csharp {title="in/ref readonly で保証できる範囲"}
 using System;
 
 class Program
@@ -346,7 +346,7 @@ C# 8.0 で、[関数メンバー](../structured/st_function.md#sec-function-memb
 
 以下のように、関数メンバーに `readonly` 修飾を付けます。
 
-```csharp
+```csharp {title="readonly 関数メンバーの例" highlight-ranges="sha256:7ea4e8f60840f607314fa5e8f3fa2bd6a9bd2ac3b09db53ba2482a3064d9c257;19:12-19:20"}
 // 構造体自体は readonly にしない。
 // フィールドは書き換えたい
 struct NonReadOnly
@@ -391,7 +391,7 @@ class Program
 例えば以下のコードでは、`A`のフィールドを書き換える`Increment`メソッドを、
 `readonly` なメソッドとそうでないメソッドから呼び出してみています。
 
-```csharp
+```csharp {title="readonly 関数メンバーから、非 readonly な構造体フィールドに触る"}
 using System;
  
 struct A
@@ -432,7 +432,7 @@ class Program
 
 この `readonly` 関数メンバーは、構文上、[`ref readonly`](sp_ref.md#ref-readonly)と似ているのでちょっと注意が必要かもしれません。
 
-```csharp
+```csharp {title="readonly ref との兼ね合い"}
 struct S
 {
     public int[] _value;
@@ -454,7 +454,7 @@ struct S
 ちなみに、プロパティの場合は `get`/`set` それぞれ別に `readonly` 指定ができます。
 当然ですが、ほとんどの場合は「`get` だけが `readonly`」になると思われます。
 
-```csharp
+```csharp {title="プロパティの get にだけ readonly 修飾"}
 struct X
 {
     int _value;

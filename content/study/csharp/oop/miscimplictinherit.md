@@ -45,7 +45,7 @@ C# では「すべての[値型](../resource/oo_reference.md#valtype)は`ValueTy
 これらの型は「共通基底」として働きます。
 基底クラスになっているので、派生しているどんな型でも受け取れる変数が作れます。
 
-```csharp
+```csharp {title="いろいろな型を受け付ける基底クラスの変数"}
 // 整数でも DateTime 構造体でも UriKind 列挙型でも入る変数
 ValueType x;
 x = 1;
@@ -101,7 +101,7 @@ class Program
 例えば以下のようなコードは、似たようなことに対して2つの書き方をしているだけですが、
 パフォーマンス的にはだいぶ差があります。
 
-```csharp
+```csharp {title="ValueType への代入でボックス化"}
 // 値型だけを受け付けたいとき、ValueType で引数を受け取るとボックス化が起きる
 static void A(ValueType value) { }
 
@@ -167,7 +167,7 @@ int Count(X x)
 
 本項で紹介しているような「特殊な基底クラス」は、これまでジェネリクスの型制約には指定できませんでした。
 
-```csharp
+```csharp {title="Array は型制約には使えない"}
 static void M<T>()
     where T : System.Array // エラーになる
 { }
@@ -177,7 +177,7 @@ C# 7.3 からはこの制限が少しだけ緩和されて、`Enum`と`Delegate`
 
 `Enum`制約を付けると[列挙型](../structured/st_enum.md)だけを受け取れるジェネリック型・ジェネリック メソッドを作れます。
 
-```csharp
+```csharp {title="Enum制約"}
         static void EnumConstraint<T>(T x, T y)
             where T : struct, Enum
         {
@@ -193,7 +193,7 @@ C# 7.3 からはこの制限が少しだけ緩和されて、`Enum`と`Delegate`
 一方、`Delegate`制約の方は[デリゲート](../functional/sp_delegate.md)だけを受け取れます。
 ちなみに、`Delegate`クラスにはさらに`MulticastDelegate`クラス(これも`System`名前空間)という派生クラスがいますが、この型も型制約として使えます。
 
-```csharp
+```csharp {title="Delegate/MulticastDelegate制約"}
 static bool M<A>(A a, A b)
     where A : MulticastDelegate
 {

@@ -5,6 +5,7 @@ using Markdig.Renderers.Html;
 using Markdig.Syntax;
 using System.Globalization;
 using System.Net;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -65,6 +66,7 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
         : HtmlObjectRenderer<FencedCodeBlock>
     {
         private const string HighlightLinesAttribute = "highlight-lines";
+        private const string HighlightRangesAttribute = "highlight-ranges";
         private const string HighlightTextAttribute = "highlight-text";
         private const string TitleAttribute = "title";
         private const string HighlightClassName = "code-highlight";
@@ -188,6 +190,7 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
             string? languageName)
         {
             string? highlightedLines = null;
+            string? highlightedRanges = null;
             string? highlightedText = null;
             string? title = null;
             if (!string.IsNullOrWhiteSpace(block.Arguments)
@@ -243,6 +246,20 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                             $"The {HighlightLinesAttribute} attribute requires a value.");
                 }
                 else if (attribute.Key.Equals(
+                             HighlightRangesAttribute,
+                             StringComparison.Ordinal))
+                {
+                    if (highlightedRanges is not null)
+                    {
+                        throw new InvalidDataException(
+                            $"The {HighlightRangesAttribute} attribute cannot be repeated.");
+                    }
+
+                    highlightedRanges = attribute.Value
+                        ?? throw new InvalidDataException(
+                            $"The {HighlightRangesAttribute} attribute requires a value.");
+                }
+                else if (attribute.Key.Equals(
                              HighlightTextAttribute,
                              StringComparison.Ordinal))
                 {
@@ -253,8 +270,10 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                     }
 
                     highlightedText = attribute.Value
-                        ?? throw new InvalidDataException(
-                            $"The {HighlightTextAttribute} attribute requires a value.");
+                        is { } value
+                            ? WebUtility.HtmlDecode(value)
+                            : throw new InvalidDataException(
+                                $"The {HighlightTextAttribute} attribute requires a value.");
                 }
                 else if (attribute.Key.Equals(
                              TitleAttribute,
@@ -267,8 +286,10 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                     }
 
                     title = attribute.Value
-                        ?? throw new InvalidDataException(
-                            $"The {TitleAttribute} attribute requires a value.");
+                        is { } value
+                            ? WebUtility.HtmlDecode(value)
+                            : throw new InvalidDataException(
+                                $"The {TitleAttribute} attribute requires a value.");
                     ValidateTitle(title);
                 }
                 else
@@ -290,6 +311,13 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                 AddTextSpans(spans, code, highlightedText);
             }
 
+            if (highlightedRanges is not null)
+            {
+                spans.AddRange(
+                    HighlightRangeMetadata.Parse(code, highlightedRanges)
+                        .Select(static span => new SourceSpan(span.Start, span.End)));
+            }
+
             return new CodeBlockMetadata(title, MergeSpans(spans));
         }
 
@@ -302,7 +330,8 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
         {
             return new InvalidDataException(
                 "Fenced code metadata supports only title, highlight-lines, "
-                + $"and highlight-text; found unsupported '{propertyName}' metadata "
+                + "highlight-text, and highlight-ranges; found unsupported "
+                + $"'{propertyName}' metadata "
                 + $"for language '{languageName ?? string.Empty}'.");
         }
 
@@ -530,9 +559,53 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                     "Applying code highlights changed the source code text.");
             }
 
-            return string.Concat(
-                root.Nodes().Select(
-                    static node => node.ToString(SaveOptions.DisableFormatting)));
+            return SerializeNodes(root.Nodes());
+        }
+
+        private static string SerializeNodes(IEnumerable<XNode> nodes)
+        {
+            var output = new StringBuilder();
+            foreach (var node in nodes)
+            {
+                WriteNode(node);
+            }
+
+            return output.ToString();
+
+            void WriteNode(XNode node)
+            {
+                if (node is XText text)
+                {
+                    output.Append(WebUtility.HtmlEncode(text.Value));
+                    return;
+                }
+
+                if (node is not XElement element)
+                {
+                    throw new InvalidDataException(
+                        "The highlighted fragment contains an unsupported node.");
+                }
+
+                output.Append('<').Append(element.Name.LocalName);
+                foreach (var attribute in element.Attributes())
+                {
+                    output.Append(' ')
+                        .Append(attribute.Name.LocalName)
+                        .Append("=\"")
+                        .Append(WebUtility.HtmlEncode(attribute.Value))
+                        .Append('"');
+                }
+
+                output.Append('>');
+                foreach (var child in element.Nodes())
+                {
+                    WriteNode(child);
+                }
+
+                output.Append("</")
+                    .Append(element.Name.LocalName)
+                    .Append('>');
+            }
         }
 
         private static void InsertMarks(

@@ -60,7 +60,7 @@ aliases: []
 
 C# には元々、確実な代入ルールってのがあって、「未初期化変数から未定義な値を取り出す」みたいなことはできない仕様になっています。
 
-```csharp
+```csharp {title="未初期化変数を触らせない"}
 int x;
 
 Console.WriteLine(x); // コンパイルエラー
@@ -77,7 +77,7 @@ if (int.TryParse(Console.ReadLine(), out x))
 これまで [`?.`](../../../../study/csharp/resource/rm_nullusage.md#null-conditional) とか [`??`](../../../../study/csharp/resource/rm_nullusage.md#null-coalesce) とか [`? : `](../../../../study/csharp/start/st_operator.md#condition) が絡むときの解析が甘くて、過剰にエラーになっていました。
 それが緩和されて、例えば、以下のようなコードがコンパイルできるようになっています。
 
-```csharp
+```csharp {title="?. が絡むときの確実な代入判定の改善例"}
 using System.Diagnostics.CodeAnalysis;
 
 m(null);
@@ -119,7 +119,7 @@ record class R<T>(T? Value)
 [プロパティ パターン](../../../../study/csharp/datatype/patterns.md#property)で、
 多段のメンバーを `.` でつないでマッチングできるようになりました。
 
-```csharp
+```csharp {title="多段プロパティ パターン" highlight-text="X.Value.Length"}
 var x = new A(new B("a"));
 
 if (x is A { X.Value.Length: 1 })
@@ -137,7 +137,7 @@ record B(string Value);
 
 以下のようなコードがあったとして、
 
-```csharp
+```csharp {title="文字列補間の例"}
 Console.WriteLine(m(1, 2, 3, 4));
 
 string m(int a, int b, int c, int d) => $"{a}.{b}.{c}.{d}";
@@ -146,7 +146,7 @@ string m(int a, int b, int c, int d) => $"{a}.{b}.{c}.{d}";
 これまでは `string.Format("{0}.{1}.{2}.{3}", new object[] { a, b, c, d })` に展開されていました。
 それが、所定の条件を満たせば(普通にやってれば .NET 6 をターゲットにして C# 10.0 でコンパイルすると)、以下のようなコードに変化します。
 
-```csharp
+```csharp {title="パフォーマンス改善結果"}
 var h = new System.Runtime.CompilerServices.DefaultInterpolatedStringHandler(3, 4);
 h.AppendFormatted(a);
 h.AppendLiteral(".");
@@ -165,7 +165,7 @@ return h.ToStringAndClear();
 
 いままで:
 
-```csharp
+```csharp {title="{} 名前空間"}
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -182,7 +182,7 @@ namespace ConsoleApp1
 
 これから:
 
-```csharp
+```csharp {title="1行名前空間"}
 namespace ConsoleApp1;
 
 class A
@@ -199,7 +199,7 @@ class A
 
 構造体のフィールドでも非 null 保証とかがやりやすくなります。
 
-```csharp
+```csharp {title="構造体の引数なしコンストラクターの例"}
 struct A
 {
     public string S { get; } = "abc"; // 前まで初期化子を書けなかった
@@ -214,7 +214,7 @@ struct B
 
 まあ、`default` からは逃げられないんですが…
 
-```csharp
+```csharp {title="参照型の null 問題と同程度にやっかいな default 問題"}
 // これは大丈夫。引数なしコンストラクターで new int[] されてる。
 Array4 a = new();
 Console.WriteLine(a[0]);
@@ -237,7 +237,7 @@ struct Array4
 
 `CallerArgumentExpression` 属性で、「引数に渡した式」を取れるようになります。
 
-```csharp
+```csharp {title="CallerArgumentExpression の例"}
 using System.Runtime.CompilerServices;
 
 m(2 * 3 * 4); // 2 * 3 * 4 = 24
@@ -257,13 +257,13 @@ static void m(int result, [CallerArgumentExpression("result")] string? expressio
 
 .NET 6 Preview 6 時点で以下のようなコードは書けていたんですが。
 
-```csharp
+```csharp {title="Delegate にラムダ式を代入"}
 Delegate f = int (int x) => x * x;
 ```
 
 Prevew 7 から以下のようなコードも書けるようになりました。
 
-```csharp
+```csharp {title="ラムダ式の自然な型を自動決定"}
 var f = int (int x) => x * x;
 ```
 
@@ -273,7 +273,7 @@ var f = int (int x) => x * x;
 
 デリゲートの仕様上、以下のような挙動をするのでその点には注意が必要です。
 
-```csharp
+```csharp {title="ラムダ式の自然な型の罠の例"}
 // これは target-typed 型決定で、Predicate<int> になる(コンパイル可)。
 m(x => x == 0);
 

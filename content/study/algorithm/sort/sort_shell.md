@@ -38,7 +38,7 @@ aliases:
 
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/ShellSort.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/ShellSort.cs)
 
-```csharp
+```csharp {title="シェルソート"}
 /// <summary>
 /// シェルソート。
 /// </summary>

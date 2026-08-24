@@ -146,7 +146,7 @@ Alternative Identifier (現在の Immutable Identifier)を採用しようとし�
 
 と言うことで現在、たいていの C++ コンパイラーで以下のコードがコンパイルできます。
 
-```cpp
+```cpp {title="Emoji C++"}
 #include <iostream>
  
 int main()
@@ -186,7 +186,7 @@ int main()
 
 まんま抜粋。
 
-```cpp
+```cpp {title="Throwing Pile of Poo"}
 class 💩 : public std::exception { };
 ```
 
@@ -209,7 +209,7 @@ Immutable Identifier は
 みたいなことをしているので…
 以下のように、使える絵文字と使えない絵文字があります(not valid コメントの行のものだけダメ)。
 
-```csharp
+```csharp {title="Immutable Identifier での絵文字"}
 int ⏰ = 0; //not valid
 int 🕐 = 0;
  
@@ -242,7 +242,7 @@ int 😀 = 0;
 
 この辺りはまあ、「なんか変だな」で済む話なんですが、1個、ポリコレ的な地雷を踏みそうな事案も発見されています。
 
-```csharp
+```csharp {title="ポリコレ地雷を踏みそうな絵文字"}
 bool 👷 = true; //  Construction Worker
 bool 👷‍♀ = false; // Woman Construction Worker ({Construction Worker}{ZWJ}{Female Sign})
 ```

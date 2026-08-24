@@ -21,7 +21,7 @@ C# コンパイラーによって、ILのレベルでは結構身に覚えのな
 
 例えば以下のようなコードを書くだけで、自動的に追加されたメンバーがたくさん出てきます。
 
-```csharp
+```csharp {title="全メンバーの列挙"}
 using System;
 using static System.Console;
 using static System.Reflection.BindingFlags;
@@ -47,7 +47,7 @@ class Program
 
 実行結果は以下の通り。
 
-```console
+```console {title="全メンバーの列挙"}
 get_X
 set_X
 add_E
@@ -71,7 +71,7 @@ E
 リフレクション的には、コンストラクターは`.ctor`という名前で見えます。
 ちなみに、生成されるILを覗いてみると以下のような感じ。
 
-```cil
+```cil {title="コンストラクターの中身"}
 .class private auto ansi beforefieldinit C
        extends [mscorlib]System.Object
 {
@@ -97,7 +97,7 @@ E
 自動実装プロパティであればフィールドが1つ作られます。
 今回の例では、`X`は自動実装プロパティで、`get`、`set`共に持っているので以下のようなILが生成されます。
 
-```cil
+```cil {title="プロパティの中身"}
   .field private int32 '<X>k__BackingField'
   .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 ) 
 
@@ -139,7 +139,7 @@ E
 フィールドは、通常のC#では書けないような記号入りの名前なので特に問題を起こさないんですが、
 メソッドの方は被りがあり得ます。つまり、以下のコードはコンパイル エラーを起こします。
 
-```csharp
+```csharp {title="エラーを起こすコード"}
 class C
 {
     public int X { get; }
@@ -155,7 +155,7 @@ class C
 
 C#のインデクサーは、ILのレベルでは`Item`という名前のプロパティになっています。
 
-```cil
+```cil {title="インデクサーの中身"}
   .custom instance void [mscorlib]System.Reflection.DefaultMemberAttribute::.ctor(string) = ( 01 00 04 49 74 65 6D 00 00 ) // ...Item..
 
     .property instance int32 Item(int32)
@@ -200,7 +200,7 @@ C#のインデクサーは、ILのレベルでは`Item`という名前のプロ�
 
 `Item`に展開されるので、もちろん、以下のコードは`this`のところでコンパイル エラー。
 
-```csharp
+```csharp {title="エラーを起こすコード"}
 class C
 {
     public int this[int index] { get { return index; } }
@@ -210,7 +210,7 @@ class C
 
 `get_Item`メソッドもダメです。`get`のところでエラー。
 
-```csharp
+```csharp {title="エラーを起こすコード"}
 class C
 {
     public int this[int index] { get { return index; } }
@@ -222,7 +222,7 @@ class C
 
 ちなみに、回避方法も、まあ、あって、インデクサーから生成されるプロパティの名前は変更できます。
 
-```csharp
+```csharp {title="インデクサーから生成されるプロパティの名前を明示的に指定"}
 class C
 {
     [System.Runtime.CompilerServices.IndexerName("Indexer")]
@@ -247,7 +247,7 @@ class C
 プロパティに近いんですが、`get`、`set`の代わりに`add`、`remove`です。
 自動実装でフィールドが作れる部分は同じです。
 
-```cil
+```cil {title="イベントの中身"}
   .event [mscorlib]System.Action E
   {
     .addon instance void C::add_E(class [mscorlib]System.Action)
@@ -288,7 +288,7 @@ C#では許されていませんが、ILレベルだと、メンバーの種類�
 
 そして、実は、イベントを触っているように見えて、実は裏で作られたフィールドを触っているという事態に。
 
-```csharp
+```csharp {title="Eの参照の仕方"}
 class C
 {
     public event Action E;
@@ -304,7 +304,7 @@ class C
 
 この`Invoke`メソッドの中を見てみると以下のような感じ。`ldfld`命令はフィールド読み込みのための命令です。
 
-```cil
+```cil {title="Invokeメソッドの中身"}
 .method public hidebysig instance void  Call() cil managed
 {
   .maxstack  8
@@ -318,7 +318,7 @@ class C
 
 つまり、イベントを明示的に実装すると、`E()`みたいな呼び出しはできなくなります。
 
-```csharp
+```csharp {title="イベントを明示的実装に変えると、フィールドのEが消える"}
 class C
 {
     private Action _e;

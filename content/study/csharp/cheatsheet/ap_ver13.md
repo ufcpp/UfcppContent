@@ -36,7 +36,7 @@ aliases: []
 
 [コレクション式](../datatype/collection-expression.md)で使える型であれば何でも `params` にできるようになりました。
 
-```csharp
+```csharp {title="任意のコレクションに対して params を付ける例"}
 static void M1(params List<int> x) { }
 static void M2(params IEnumerable<int> x) { }
 static void M3(params Span<int> x) { }
@@ -54,7 +54,7 @@ M4(1, 2);
 実際、 .NET 9 では、`string.Join` や `Task.WhenAll` などのメソッドに
 `params ReadOnlySpan<T>` なオーバーロードが増えています。
 
-```csharp
+```csharp {title="params ReadOnlySpan オーバーロードが増えている例"}
 // .NET 8 以前なら Join(string, string[])
 // .NET 9 以降なら Join(string, ReadOnlySpan<string>)
 var joiend = string.Join(",", "a", "b", "c");
@@ -71,7 +71,7 @@ var joiend = string.Join(",", "a", "b", "c");
 
 例えば、C# 13 と同世代の .NET 9 では、[`GeneratedRegex`](https://learn.microsoft.com/ja-jp/dotnet/api/system.text.regularexpressions.generatedregexattribute) をプロパティにできるようになりました。
 
-```csharp
+```csharp {title="GeneratedRegex をプロパティに付けれるようになった"}
 using System.Text.RegularExpressions;
 
 partial class MyPatterns
@@ -89,7 +89,7 @@ ref 構造体にインターフェイスを実装できるようになりまし�
 また、このインターフェイスのメンバーを呼び出すために、
 ジェネリック型引数に ref 構造体を渡せるようにする仕組みとして `allows ref struct` アンチ制約が追加されました。
 
-```csharp
+```csharp {title="allows ref struct なジェネリック メソッドを介して、ref 構造体のインターフェイス実装を呼ぶ"}
 S x = new(); // S は IFormattable を実装してる。
 
 // これはボックス化を起こすから C# 13 でもエラーになる。
@@ -116,7 +116,7 @@ ref struct S : IFormattable
 
 C# 13 で、オーバーロードの解決優先度を属性を付けて明示できる機能が入りました。
 
-```csharp
+```csharp {title="オーバーロード解決の優先度を変更する例"}
 using System.Runtime.CompilerServices;
 
 // IEnumerable<char> の方が選ばれる。
@@ -150,7 +150,7 @@ class C
 `lock` ステートメントでこの `Lock` クラスを特別扱いするようになりました。
 既存の `lock` (`Monitor.Enter` に展開される)と異なり、以下のようなコードに展開されます。
 
-```csharp
+```csharp {title="lock (x) は using (x.EnterSceop()) になる"}
 var syncObject = new Lock();
 
 // lock (syncObject)
@@ -174,7 +174,7 @@ using (syncObject.EnterScope())
 
 以下のコードで、行末コメントで ⭕ を付けている部分が C# 13 で新たにコンパイルできるようになったコードです。
 
-```csharp
+```csharp {title="ref/unsafe をイテレーター/非同期メソッド中に書けるように"}
 IEnumerable<object?> Enumerate()
 {
     unsafe { } // ⭕
@@ -226,7 +226,7 @@ C# 13 で書けるようになったのは、前述の[`Lock` クラスに対す
 ただし、これは `yield` や `await` をまたがない場合に限って許されます。
 例えば以下のコードは C# 13 でもコンパイル エラーを起こします。
 
-```csharp
+```csharp {title="C# 13 でもエラーになる書き方の例"}
 IEnumerable<object?> Enumerate()
 {
     int x = 123;
@@ -250,7 +250,7 @@ async Task GetAsync()
 
 例えば、コンソール アプリで以下のように書くことで、文字列の色を変えたり装飾したりできます。
 
-```csharp
+```csharp {title="\e の利用例"}
 Console.WriteLine("\e[31mred text");
 Console.WriteLine("\e[4munderlined text");
 Console.WriteLine("\e[0mreset style");
@@ -300,7 +300,7 @@ class C
 
 例えば以下のようなクラスがあったとします。
 
-```csharp
+```csharp {title="同名のインスタンス メソッドと拡張メソッド"}
 public class C
 {
     public void M() { } // インスタンス メソッド M と、
@@ -316,7 +316,7 @@ public static class E
 C# 12 までは自然な型を決定できなかったのに対して、
 C# 13 ではインスタンスメソッドを優先的に見ます。
 
-```csharp
+```csharp {title="C# 13 の新ルール"}
 var x = new C();
 
 // オーバーロード解決ではインスタンスメソッド優先。
@@ -340,7 +340,7 @@ var z = x.M;
 1つは、`Add` メソッドが拡張メソッドでも大丈夫になりました。
 (こちらは最新のコンパイラーにすると `LangVersion` 12 にしても元の挙動(= コンパイル エラー)にはなりません。)
 
-```csharp
+```csharp {title="コレクション式も拡張メソッドの Add を見てくれるように"}
 using System.Collections;
 
 C c = ['a'];
@@ -362,7 +362,7 @@ static class Extensions
 (この変更は言語バージョンを見て分岐しているようで、
 最新のコンパイラーでも [`LangVersion`](langversionoption.md#langversion) を12以前に戻すと古い挙動になります。)
 
-```csharp
+```csharp {title="要素の自然な型優先"}
 // C# 12 では以下の2つとも解決不能(コンパイル エラー)になってた。
 
 // C# 13 では int の方になる。
@@ -384,7 +384,7 @@ class C
 ただ、この結果、ちょっとした破壊的変更も起きています。
 C# 12 から C# 13 にアップデートすると、以下のような場合にオーバーロード解決先が変わります。
 
-```csharp
+```csharp {title="コレクション式のオーバーロード解決の破壊的変更"}
 C.M([1, 2]);
 
 class C

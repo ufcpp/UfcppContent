@@ -36,7 +36,7 @@ dynamic キーワードを使うことで、動的型付け変数を定義でき
 使い方としては var （C# 3.0 で追加された型推論）と似ています。
 しかしながら、あくまで型推論である var と違って、dynamic で宣言した変数の型は「動的型」になります。
 
-```csharp
+```csharp {title="dynamic 型"}
 var sx = 1;     // sx の型は int 型
 dynamic dx = 1; // dx の型は dynamic 型
 ```
@@ -48,7 +48,7 @@ dynamic dx = 1; // dx の型は dynamic 型
 例えば、以下のようなコードを書くと、
 「'object' に 'X' の定義が含まれていません」というようなエラーが生じます。
 
-```csharp
+```csharp {title="object 型には X というプロパティはありません"}
 static object GetX(object obj)
 {
   return obj.X;
@@ -61,7 +61,7 @@ obj は object 型のメンバーにしかアクセスできません。
 
 一方、C# 4.0 では、dynamic 型を使うことで、以下のようなコードが書けるようになりました。
 
-```csharp
+```csharp {title="dynamic 型なら、"}
 static dynamic GetX(dynamic obj)
 {
   return obj.X;
@@ -125,7 +125,7 @@ DLL や COM 内のクラス・関数を（必要になったときに、必要�
 
 例えば、以下のようなライブラリコード（lib.cs）を書いたとします。
 
-```csharp
+```csharp {title="lib.cs"}
 public class Calculator
 {
     public int Add(int x, int y) { return x + y; }
@@ -136,14 +136,14 @@ public class Calculator
 ```
 
 
-```console
+```console {title="lib.cs のコンパイル"}
 > csc /t:library lib.cs
 ```
 
 
 このライブラリを使って、以下のようなプログラム（sample.cs）を作ったとします。
 
-```csharp
+```csharp {title="sample.cs"}
 using System;
 
 class Program
@@ -159,7 +159,7 @@ class Program
 
 このコードをコンパイルするためには、以下のように、/r オプションで DLL の参照を行う必要があります。
 
-```console
+```console {title="lib.cs のコンパイル"}
 > csc /t:exe /r:lib.dll sample.cs
 ```
 
@@ -168,7 +168,7 @@ class Program
 3.0 以前の C# では、遅延バインドをしようと思うと、「[リフレクション](sp_reflection.md#reflection)」を使って、
 以下のようなまどろっこしい書き方が必要でした。
 
-```csharp
+```csharp {title="late.cs" highlight-text="add.Invoke(calc, new object[] { 1, 2 })"}
 using System;
 using System.Reflection;
 
@@ -190,7 +190,7 @@ class Program
 こうすると、コンパイル時に lib.dll を参照する必要がなく、
 以下のようにしてコンパイル可能です。
 
-```console
+```console {title="lib.cs のコンパイル"}
 > csc /t:exe sample.cs
 ```
 
@@ -200,7 +200,7 @@ class Program
 3.0 までのリフレクションを使った書き方に対して、
 C# 4.0 の dynamic を使うと、add.Invoke の部分を簡素化できて、以下のように書けます。
 
-```csharp
+```csharp {title="late.cs" highlight-text="calc.Add(1, 2)"}
 using System;
 using System.Reflection;
 
@@ -230,7 +230,7 @@ dynamic 型を使うことで、IronPython などの、DLR 上に実装された
 例えば、以下のような Python コードを書いて、
 helloworld.py という名前で保存したとします。
 
-```python
+```python {title="helloworld.py （Python で Hello World）"}
 def welcome(name):
 	return "Hello '" + name + "' from IronPython"      
 ```
@@ -238,7 +238,7 @@ def welcome(name):
 
 この Python コードを呼び出すための C# コードは以下のようになります。
 
-```csharp
+```csharp {title="C# から Python コードを呼び出す"}
 ScriptRuntime py = Python.CreateRuntime();
 dynamic helloworld = py.UseFile("helloworld.py");
 
@@ -248,7 +248,7 @@ Console.WriteLine(ret);
 ```
 
 
-```console
+```console {title="実行結果"}
 Hello 'ufcpp' from IronPython
 ```
 
@@ -282,7 +282,7 @@ C# 3.0 以前なら、
 
 例えば、以下のような構造体を用意します。
 
-```csharp
+```csharp {title="X と Y を持つ構造体"}
 struct Point2D
 {
     public int X, Y;
@@ -312,7 +312,7 @@ X と Y なら両方のクラスが持っています。
 
 ということで、これらの型を使って以下のようなことができます。
 
-```csharp
+```csharp {title="X, Y という名前のメンバーさえ持っていれば型を問わない"}
 using System;
 
 class Program
@@ -332,14 +332,14 @@ class Program
 ```
 
 
-```console
+```console {title="実行結果"}
 3
 3
 3
 ```
 
 
-```csharp
+```csharp {title="同じ名前のメンバーを持つ型から値をコピー"}
 using System;
 
 class Program
@@ -363,7 +363,7 @@ class Program
 ```
 
 
-```console
+```console {title="実行結果"}
 2D: (1, 2)
 2D: (1, 2)
 2D: (1, 2)
@@ -379,7 +379,7 @@ class Program
 例えば、スキーマが特に決まっていない XML や JSON など読み書きが少々面倒だったりします。
 XML にアクセスするのにも、以下のようなコードが必要になります。
 
-```csharp
+```csharp {title="LINQ to XML"}
 var doc = XDocument.Parse(@"
 <Point>
     <X>1</X>
@@ -412,7 +412,7 @@ dynamic を使うと、
 
 例えば、上述のコードは以下のような書き直すことができます。
 
-```csharp
+```csharp {title="dynamic を使った XML の読み出し" highlight-ranges="sha256:db684f10741cf7a8bda611b432a4b394f86eef72bc088c003373edbffe2de81e;8:19-8:24,9:19-9:24"}
 dynamic doc = new DynamicXml(XDocument.Parse(@"
 <Point>
     <X>1</X>
@@ -440,7 +440,7 @@ C# の「[ジェネリック](../oop/sp2_generics.md#generics)」は、メソッ
 それで何が問題になるかというと、静的メソッド（特に演算子）が呼べないこと。
 例えば、以下のようなコードはどうあがいても実現できません。
 
-```csharp
+```csharp {title="ジェネリクスでは普通にやってたら operator を使えない"}
 T Sum T (IEnumerable<T> list)
 {
     T sum = default(T);
@@ -454,7 +454,7 @@ T Sum T (IEnumerable<T> list)
 で、少しキャストとかが必要になりますが、
 dynamic を使うと一応、静的メソッド呼び出しが可能になります。
 
-```csharp
+```csharp {title="ジェネリクスで operator を使いたい"}
 T Sum T (IEnumerable<T> list)
 {
     dynamic sum = default(T);

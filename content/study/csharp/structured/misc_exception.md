@@ -128,7 +128,7 @@ aliases:
 例えば、File.Open を考えてみましょう。
 以下のようなコードは、一応、ファイルの存在の有無を事前チェックしています。
 
-```csharp
+```csharp {title="ファイルの存在を確認してから中身を読み込み"}
 if (!File.Exists(filename))
 {
     text = "デフォルトのテキスト";
@@ -147,7 +147,7 @@ Exists で確認してから ReadAllText で読み込みを行うわずかな間
 ですが、このコードの場合、ファイルが消えてたら消えてたでデフォルトの値を返すことでプログラムは続行可能なので、
 以下のように対処します。
 
-```csharp
+```csharp {title="対処可能な例外"}
 try
 {
     if (!File.Exists(filename))
@@ -256,7 +256,7 @@ int.Parse に対して Tester を作ろうと思うと、結局のところ int.
 * TryParse: 文字列を解析して、変換できるかどうかを調べると同時に、できるならば値を返す。bool の戻り値で変換の可否を、out 引数（「[出力引数](../resource/sp_ref.md#out)」参照）で値を返す。
 
 
-```csharp
+```csharp {title="Parse と TryParse"}
 // 通常の Parse。変換できない場合は FormatException が発生。
 int x = int.Parse(text);
 

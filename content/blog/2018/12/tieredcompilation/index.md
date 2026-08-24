@@ -78,7 +78,7 @@ Java とか C# みたいな Just-In-Time コンパイル方式の言語では、
 
 例えば、ジェネリックなメソッド `M<T>` で、以下のように、`T` が値型かどうかを判別するハックがあったりします。
 
-```csharp
+```csharp {title="型引数が値型かどうかを判別する方法"}
 void M<T>()
 {
     if (default(T) == null) Console.WriteLine("T は参照型");

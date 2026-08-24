@@ -77,7 +77,7 @@ dynamic 型を使うことで、
 使い方としては var （C# 3.0 で追加された型推論）と似ています。
 しかしながら、あくまで型推論である var と違って、dynamic で宣言した変数の型は「動的型」になります。
 
-```csharp
+```csharp {title="object 型には X というプロパティはありません"}
 var sx = 1;     // sx の型は int 型
 dynamic dx = 1; // dx の型は dynamic 型
 ```
@@ -89,7 +89,7 @@ dynamic dx = 1; // dx の型は dynamic 型
 例えば、以下のようなコードを書くと、
 「'object' に 'X' の定義が含まれていません」というようなエラーが生じます。
 
-```csharp
+```csharp {title="object 型には X というプロパティはありません"}
 static object GetX(object obj)
 {
   return obj.X;
@@ -101,7 +101,7 @@ object 型が X という名前のプロパティを持っていないので、�
 
 一方、C# 4.0 では、dynamic 型を使うことで、以下のようなコードが書けるようになりました。
 
-```csharp
+```csharp {title="dynamic 型なら、"}
 static dynamic GetX(dynamic obj)
 {
   return obj.X;
@@ -121,7 +121,7 @@ C# 4.0 で、C++ や VB にあるような、オプション引数と名前付�
 
 まず、以下のように規定値(default value)を持ったメソッドを定義します。
 
-```csharp
+```csharp {title="規定値付きのメソッド定義"}
 static int Sum(int x = 0, int y = 0, int z = 0)
 {
   return x + y + z;
@@ -132,7 +132,7 @@ static int Sum(int x = 0, int y = 0, int z = 0)
 すると、以下のように、引数の一部もしくは全てを省略可能になります。
 省略可能ということで、オプション引数（optional parameter）と呼びます。
 
-```csharp
+```csharp {title="オプション引数"}
 int s1 = Sum();     // Sum(0, 0, 0); と同じ意味。
 int s2 = Sum(1);    // Sum(1, 0, 0); と同じ意味。
 int s3 = Sum(1, 2); // Sum(1, 2, 0); と同じ意味。
@@ -147,7 +147,7 @@ int s3 = Sum(1, 2); // Sum(1, 2, 0); と同じ意味。
 
 先ほど定義した規定値を持つメソッドを、以下のような構文で呼び出せます。
 
-```csharp
+```csharp {title="名前付きオプション引数"}
 int s1 = Sum(x: 1, y: 2, z: 3); // Sum(1, 2, 3); と同じ意味。
 int s2 = Sum(y: 1, z: 2, x: 3); // Sum(3, 1, 2); と同じ意味。
 int s3 = Sum(y: 1);             // Sum(0, 1, 0); と同じ意味。
@@ -169,12 +169,12 @@ C# 4.0 で、ジェネリクスの型引数に共変性・反変性を持たせ�
 
 出力（戻り値、get）でしか使わない型には out という修飾子を付けることで、共変性が認められます。
 
-```csharp
+```csharp {title="IEnumerable に out が付きました"}
 public interface IEnumerable<out T> { ... }
 ```
 
 
-```csharp
+```csharp {title="string の列挙子を object の列挙子に代入"}
 IEnumerable<string> strings = new[] {"aa", "bb", "cc"};
 IEnumerable<object> objs = strings;
 // foreach (object x in strings) ってやっても問題ないんだから、
@@ -184,12 +184,12 @@ IEnumerable<object> objs = strings;
 
 一方、入力（引数、set）でしか使わない型には in という修飾子を付けることで、反変性が認められます。
 
-```csharp
+```csharp {title="Action に in が付きました"}
 public delegate void Action<in T> (T arg);
 ```
 
 
-```csharp
+```csharp {title="object 引数の Action を string 引数の Action に代入。"}
 Action<object> objAction = x => { Console.Write(x); };
 Action<string> strAction = objAction;
 // objAction("string"); ってやっても問題ないんだから、

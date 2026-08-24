@@ -297,7 +297,7 @@ DSL 間の連携に関しては、2つの方法が考えられます。
 
 
 
-```text
+```text {title="データ定義用の DSL の例"}
 module TypeDefinition.Models
 {
     // 特性データ

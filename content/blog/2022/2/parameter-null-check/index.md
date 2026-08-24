@@ -15,7 +15,7 @@ aliases: []
 
 先日出た Visual Studio 17.1 Preview 3 で、引数 null チェックの簡素化構文が入りました。
 
-```csharp
+```csharp {title="引数 null チェックの !!" highlight-text="!!"}
 m(null); // ArgumentNull 例外が出る。
 
 void m(string x!!) { }
@@ -26,7 +26,7 @@ void m(string x!!) { }
 上記の `void m(string x!!)` は以下のように展開されます。
 (クラス名は実際には通常の C# では書けない変な名前で生成されます。)
 
-```csharp
+```csharp {title="!! の展開結果"}
 void m(string x)
 {
     Internal.ThrowIfNull(x, "x");

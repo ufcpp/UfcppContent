@@ -24,7 +24,7 @@ C#に馴れちゃってる人だと、LINQとかasync/awaitとかの機能が最
 
 `Dictionary<TKey, TValue>`の列挙を、キーも値も両方使うのに、`Keys`を使ってやろうとする人が結構いるらしいという話を聞きます。要するに以下のような書き方。
 
-```csharp
+```csharp {title="C#っぽくない書き方" highlight-ranges="sha256:a86a747abcba52a20e8e19a587a220c903dba33fb43dae17f8bf40dffbd83e68;15:29-15:37,17:13-17:34"}
 using System;
 using System.Collections.Generic;
 
@@ -50,7 +50,7 @@ class Program
 
 C#の`Dictionary`はキーと値をまとめて列挙できる(`IDictionary<TKey, TValue>`インターフェイスが`IEnumerable<KeyValuePair<TKey, TValue>>`インターフェイスから派生している)ので、以下のように書けます。
 
-```csharp
+```csharp {title="C#の書き方"}
         foreach (var x in dic)
         {
             Console.WriteLine($"{x.Key} => {x.Value}");
@@ -64,7 +64,7 @@ C#の`Dictionary`はキーと値をまとめて列挙できる(`IDictionary<TKey
 
 `string`が`IEnumerable<char>`なのも案外気付いていない人がいるとか。
 
-```csharp
+```csharp {title="C#っぽくない書き方"}
 var s = "aáαあ亜😀";
 
 for (int i = 0; i < s.Length; i++)
@@ -76,7 +76,7 @@ for (int i = 0; i < s.Length; i++)
 
 C#だと大体は`foreach`で列挙します。
 
-```csharp
+```csharp {title="C#の書き方"}
 foreach (var c in s)
 {
     Console.WriteLine(c);
@@ -89,7 +89,7 @@ foreach (var c in s)
 C#で正しくサロゲートペアを正しく扱うのはいまだにちょっと面倒なんですが…
 いずれ、以下のように書けるようになるはずです。
 
-```csharp
+```csharp {title="Utf8String"}
 using System;
 using System.Text.Utf8;
 
@@ -115,14 +115,14 @@ C# 6で[interpolation](../../../../study/csharp/start/st_string.md#string-interp
 
 interpolation でも書けない書き方なんですけども、以下のように、同じインデックスを複数回使う書き方ができたりします。
 
-```csharp
+```csharp {title="C#の書き方"}
 Console.WriteLine("({0} + {1}) × ({0} - {1}) = {0}^2 - {1}^2", "x", "y");
 // (x + y) × (x - y) = x^2 - y^2
 ```
 
 わざわざ、以下のような書き方をしてしまう人をちらほら見かけるとか
 
-```csharp
+```csharp {title="C#っぽくない書き方"}
 Console.WriteLine("({0} + {1}) × ({2} - {3}) = {4}^2 - {5}^2", "x", "y", "x", "y", "x", "y");
 ```
 
@@ -132,7 +132,7 @@ Console.WriteLine("({0} + {1}) × ({2} - {3}) = {4}^2 - {5}^2", "x", "y", "x", "
 
 以下のようなコードをC#で書くと、結果はどうなるでしょう。
 
-```csharp
+```csharp {title="問題"}
 string s1 = "abc";
 object s2 = null;
 Console.WriteLine(s1 + s2);
@@ -170,7 +170,7 @@ C#文化では、ガイドラインとして「演算子は、組み込み型の
 
 以下のようなコード。
 
-```csharp
+```csharp {title="C#っぽくない書き方"}
 class MyObject : IDisposable
 {
     bool _isDisposed;
@@ -189,7 +189,7 @@ class MyObject : IDisposable
 
 使う側は以下のような感じ。
 
-```csharp
+```csharp {title="C#っぽくない書き方"}
 static void M(MyObject obj)
 {
     Console.WriteLine("----");

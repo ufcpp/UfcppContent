@@ -21,7 +21,7 @@ C# 12 で、`[]` 記号を使って配列などの初期化ができるように
 配列だけではなく、コレクション(`List<T>` 型など)、`Span<T>` なども全く同じ書き方で初期化できます。
 これをコレクション式(collection expression)と言います。
 
-```csharp
+```csharp {title="コレクション式" highlight-ranges="sha256:f910249d2a264e3d542e6b64cb3d32585edd0d2a69bea57c15c964163f3ebd18;3:15-3:24,4:18-4:27,5:18-5:27,6:25-6:34,7:33-7:42"}
 using System.Collections.Immutable;
 
 int[] array = [1, 2, 3];
@@ -34,7 +34,7 @@ ImmutableArray<int> immutable = [1, 2, 3];
 また、コレクション式中では、`..` を使うことで「別のコレクションの中身の展開」ができます。
 これを スプレッド (spread)演算子と言います。
 
-```csharp
+```csharp {highlight-ranges="sha256:69f2146a3dd2229ba74d69539a785a324542af8ee84d16dd1e8f9e876feb4108;5:22-5:24,5:32-5:34"}
 int[] array1 = [1, 2, 3];
 int[] array2 = [4, 5, 6];
 
@@ -46,7 +46,7 @@ int[] combined = [0, ..array1, ..array2, 7];
 
 これまでだと、以下のように型に応じて書き方を変える必要がありました。
 
-```csharp
+```csharp {title="これまでの書き方いろいろ"}
 using System.Collections.Immutable;
 
 int[] array1 = new[] { 1, 2, 3 };
@@ -63,7 +63,7 @@ ImmutableArray<int> immutable = ImmutableArray.Create(1, 2, 3);
 
 `new[] { }` という書き方で配列を作れます。
 
-```csharp
+```csharp {title="配列の new"}
 int[] array1 = new[] { 1, 2, 3 };
 ```
 
@@ -73,7 +73,7 @@ int[] array1 = new[] { 1, 2, 3 };
 
 `new[] { ... }`の型推論は「要素の中身から型決定」なので、例えば以下のようなコードはエラーになります。
 
-```csharp
+```csharp {title="要素の型からの型推論"}
 byte[] array // byte[] 型
     = new[] { 1, 2, 3 }; // 数値リテラルはデフォルトでは int 型。int からの型推論で int[] 型に。
 ```
@@ -84,7 +84,7 @@ byte[] array // byte[] 型
 
 配列の変数宣言時に限り、以下のように `{}` だけで初期化できます。
 
-```csharp
+```csharp {title="配列初期化子"}
 int[] array2 = { 1, 2, 3 };
 ```
 
@@ -110,7 +110,7 @@ List<int> list = new() { 1, 2, 3 };
 配列の場合は `new[] { }` なのに対して、その他のコレクションは `new() { }` になります。
 このせいで、「配列とその他のコレクションを切り替えて使う」みたいなことがちょっと面倒になっています。
 
-```csharp
+```csharp {title="配列とコレクションの切り替えが難しい"}
 #if WPF
 using System.Collections.ObjectModel;
 
@@ -131,7 +131,7 @@ int[]
 元々は unsafe な機能でめったに使うものではなかったんですが、
 C# 7.2 で、[`Span<T>` 構造体](../resource/span.md)の導入とともに safe な構文になりました。
 
-```csharp
+```csharp {title="stackalloc"}
 Span<int> span = stackalloc[] { 1, 2, 3 };
 ```
 
@@ -140,7 +140,7 @@ Span<int> span = stackalloc[] { 1, 2, 3 };
 ちなみに、`stackalloc` は参照型を含められないという問題があって、
 例えば以下のようなコードはコンパイル エラーになります。
 
-```csharp
+```csharp {title="参照型に対する stackalloc はエラーに"}
 Span<string> span = stackalloc[] { "abc" };
 ```
 
@@ -150,7 +150,7 @@ Span<string> span = stackalloc[] { "abc" };
 `ReadOnlySpan<T>` 型に対して配列を渡すと、
 最適化で配列が消えてくれて、stackalloc を使うよりもパフォーマンスがよくなることがあります。
 
-```csharp
+```csharp {title="静的データ最適化"}
 ReadOnlySpan<int> ros = new[] { 1, 2, 3 };
 ```
 
@@ -167,14 +167,14 @@ ReadOnlySpan<int> ros = new[] { 1, 2, 3 };
 [`ImmutableArray<T>`](https://learn.microsoft.com/ja-jp/dotnet/api/system.collections.immutable.immutablearray-1) という型に対しては初期化子の類が使えません。
 以下のように地道に `Create` メソッドを呼ぶ必要があります。
 
-```csharp
+```csharp {title="ImmutableArray.Create"}
 ImmutableArray<int> immutable = ImmutableArray.Create(1, 2, 3);
 ```
 
 ところが質が悪いことに、`ImmutableArray<T>` 型はコレクション初期化子を使える要件を満たしてしまっています。
 以下のようなコードは「コンパイルはできてしまうけど、実行すると必ず例外が起こる」という、かなりつらい状態になります。
 
-```csharp
+```csharp {title="ImmutableArray に対してコレクション初期化子"}
 using System.Collections.Immutable;
 
 // コンパイルはできてしまう。
@@ -189,7 +189,7 @@ C# 12 で<strong id="key-collection-expr" class="keyword">コレクション式<
 
 概要でも書いたように、`[]` 記号を使って配列などを初期化します。
 
-```csharp
+```csharp {title="コレクション式"}
 using System.Collections.Immutable;
 
 int[] array = [1, 2, 3];
@@ -209,7 +209,7 @@ ImmutableArray<int> immutable = [1, 2, 3];
 
 配列初期化子と違って、`[]` はどこにでも書けます。
 
-```csharp
+```csharp {title="宣言以外でも書ける"}
 int[] array;
 
 // OK
@@ -220,7 +220,7 @@ stackalloc と違って、参照型の `Span<T>` に対しても使えます。
 ちゃんと、(配列を作るよりも)パフォーマンスのいいコードになります。
 (内部的には[InlineArray](inline-array.md)を使っています。)
 
-```csharp
+```csharp {title="参照型の Span"}
 // OK
 Span<string> span = ["abc"];
 ```
@@ -228,7 +228,7 @@ Span<string> span = ["abc"];
 `ReadOnlySpan<T>` に対しては前述の[静的データ最適化](#static-data)がかかるわけですが、
 「配列を new してそうに見えるコード」がないだけ混乱が少ないです。
 
-```csharp
+```csharp {title="ReadOnlySpan の静的データ最適化"}
 // 以下のコードはちゃんと静的データ最適化がかかる。
 ReadOnlySpan<int> span = [1, 2, 3];
 ```
@@ -236,7 +236,7 @@ ReadOnlySpan<int> span = [1, 2, 3];
 コレクション初期化子の条件よりも、`CollectionBuilder` 属性の方が優先されます。
 [`ImmutableArray<T>`](https://learn.microsoft.com/ja-jp/dotnet/api/system.collections.immutable.immutablearray-1) には `CollectionBuilder` 属性が付いていることによってコレクション式を使えます。
 
-```csharp
+```csharp {title="ImmutableArray に対するコレクション式"}
 using System.Collections.Immutable;
 
 ImmutableArray<int> immutable = [1, 2, 3];
@@ -250,7 +250,7 @@ ImmutableArray<int> immutable = [1, 2, 3];
 ちなみに、`CollectionBuilder` 属性はインターフェイスにも付けることができます。
 [`IImmutableList<T>`](https://learn.microsoft.com/ja-jp/dotnet/api/system.collections.immutable.iimmutablelist-1)が一例で、以下のようなコードを書けます。
 
-```csharp
+```csharp {title="CollectionBuilder 属性はインターフェイス可"}
 using System.Collections.Immutable;
 
 IImmutableList<int> immutable = [1, 2, 3];
@@ -344,7 +344,7 @@ var x = { var i = 123; i * i };
 
 特に、オブジェクト初期化子とコレクション初期化子が同じ記号を使っていて、混在不可なので以下のようなことが起こります。
 
-```csharp
+```csharp {title="2つの {} 初期化子"}
 // オブジェクト初期化子(プロパティの値指定)とコレクション初期化子(Add)の混在不可。
 var list1 = new List<int> { Capacity = 1014, 1, 2, 3 };
 
@@ -367,7 +367,7 @@ var dictionary = new Dictionary<int, int>
 C# 8 の頃からある[プロパティ パターン](patterns.md#property)との区別のためには `{}` を使えませんでした。
 例えば以下のようなコードで、「空っぽのリスト」の意味で `list is {}` とは書けないという問題があったりします。
 
-```csharp
+```csharp {title="{} の「兼用」は難しい"}
 var obj = new { X = 1, Y = 2 };
 var list = new[] { 1, 2, 3 };
 
@@ -388,7 +388,7 @@ var isEmpty = list is { };
 そこで C# 11 では最終的にリスト パターンに `[]` を採用したわけですが、
 だったら「リスト構築の方でも `[]` を使った方がきれい」という話になりました。
 
-```csharp
+```csharp {title="コレクション式とリスト パターンが対"}
 // () コンストラクター/タプル構築と位置パターンが対。
 var obj = new DateOnly(2021, 1, 1);
 _ = obj is (2021, _, _);
@@ -414,7 +414,7 @@ _ = list is [1, ..];
 「null 条件 foreach」があったりします。
 これは要するに、以下のようなコードを、
 
-```csharp
+```csharp {title="null があり得る foreach"}
 Print([1, 2, 3]);
 Print(null);
 
@@ -428,7 +428,7 @@ static void Print(IEnumerable<int>? list)
 
 以下のように直すのが嫌で、
 
-```csharp
+```csharp {title="null チェックで1段インデントが下がる"}
 static void Print(IEnumerable<int>? list)
 {
     // null チェックを1行足せばいいだけの話なものの、1段インデントが下がるのが嫌。
@@ -440,7 +440,7 @@ static void Print(IEnumerable<int>? list)
 
 以下のように `foreach?` という構文を追加してもらえないかという提案です。
 
-```csharp
+```csharp {title="foreach?"}
 static void Print(IEnumerable<int>? list)
 {
     // foreach? 構文を足すのはどうだろう？
@@ -456,7 +456,7 @@ static void Print(IEnumerable<int>? list)
 そしてこの度コレクション式が入ったことで、
 これと同等のことが以下のコードで実現できるようになりました。
 
-```csharp
+```csharp {title="??[]"}
 static void Print(IEnumerable<int>? list)
 {
     // ?? [] の4文字を追加すれば null チェック代わりになる。
@@ -467,7 +467,7 @@ static void Print(IEnumerable<int>? list)
 
 これはまあ、以下のようなコードとほぼ同等です。
 
-```csharp
+```csharp {title="??[] と同等のコード"}
 static void Print(IEnumerable<int>? list)
 {
     if (list is null) list = Array.Empty<int>();
@@ -488,7 +488,7 @@ static void Print(IEnumerable<int>? list)
 コレクション式の中では、`..` を使って「他のコレクションの中身を展開」みたいなことができます。
 これを<strong id="key-spread" class="keyword">スプレッド</strong>(spread: 広げる、伸ばす、まき散らす)演算子と言います。
 
-```csharp
+```csharp {title=".."}
 int[] a = [1, 2];
 int[] b = [3, 4];
 
@@ -499,7 +499,7 @@ int[] c = [0, ..a, ..b, 5];
 これは、`List<T>` でいう [`AddRange` メソッド](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1.addrange)であったり、
 [LINQ でいう `Concat` メソッド](../data/sp3_stdqueryo.md#concat)みたいな物です。
 
-```csharp
+```csharp {title="AddRange と Concat"}
 int[] a = [1, 2];
 int[] b = [3, 4];
 
@@ -522,7 +522,7 @@ var linq = new[] { 0 }
 
 ちなみに[先ほど](#square-bracket)、コレクション式とリスト パターンが対という話をしましたが、
 
-```csharp
+```csharp {title="コレクション式とリスト パターンが対"}
 // [] コレクション式とリスト パターンが対。
 int[] list = [1, 2, 3];
 _ = list is [1, ..];
@@ -530,7 +530,7 @@ _ = list is [1, ..];
 
 スプレッドも[スライス パターン](patterns.md#slice-pattern)と対になっています。
 
-```csharp
+```csharp {title="スプレッドとスライス パターンが対"}
 int[] list = [1, 2, 3, 4, 5];
 
 // スライス: コレクションの一部分を切り出して新しい変数に代入。
@@ -550,7 +550,7 @@ if (list is [var first, ..var middle, var last])
 ちなみに、[後述](#after12)しますが、C# 12 時点では以下のような「`var` との組み合わせ」はできません。
 C# 13 以降で検討中です。
 
-```csharp
+```csharp {title="C# 12 時点では型決定できない var"}
 var list = [1, 2, 3];
 ```
 
@@ -562,7 +562,7 @@ var list = [1, 2, 3];
 `new[] {}` は「中身の型からの推論優先」で、コレクション式 `[]` は「ターゲットからの推論優先」です。
 例えば、以下のようなコードでは、`x` と `y` に代入されるインスタンスの型が異なります。
 
-```csharp
+```csharp {title="new[]{} は要素からの推論なので時々困る"}
 // new[]{} は要素からの型推論。
 // x には string[] が入る。
 object[] x = new[] { "a" };
@@ -583,7 +583,7 @@ x[0] = 1; // 例外が出る(C# 1.0 からある嫌な仕様)。
 コレクション式の「ターゲットからの型推論」は、型や式が入れ子になっていてもちゃんと働きます。
 以下のように、[タプル](tuples.md)中にコレクションがあって、条件演算子や [switch 式](typeswitch.md#switch-expression)を経由していても正しく型推論されます。
 
-```csharp
+```csharp {title="入れ子でもちゃんと型推論される例"}
 bool b = true;
 int i = 1;
 
@@ -603,7 +603,7 @@ int i = 1;
 一方で、メソッドのオーバーロード解決などが絡む場合、
 コレクション式の中身からの型解決も働きます。
 
-```csharp
+```csharp {title="要素の型からオーバーロード解決"}
 Print([1, 2]);     // Print<int>
 Print([1.1, 2.2]); // Print<double>
 Print(["a", "b"]); // Print<string>
@@ -614,7 +614,7 @@ static void Print<T>(T[] args) { /* 省略 */ }
 ただ、スプレッドが絡むとき、スプレッドの中身の優先度は低いそうです。
 (実装が大変なわりに需要が少ないという判断。)
 
-```csharp
+```csharp {title="スプレッドが絡むとき"}
 byte[] x = [1, 2];
 
 // ..x しかない場合には x の型から byte[] に決定。
@@ -662,7 +662,7 @@ static void Print<T>(T[] args) { }
 
 以下に例を挙げます。
 
-```csharp
+```csharp {title="具象型優先"}
 A.M([]); // int[]
 
 class A
@@ -673,7 +673,7 @@ class A
 }
 ```
 
-```csharp
+```csharp {title="具象型優先"}
 A.M([]); // List<int>
 
 class A
@@ -684,7 +684,7 @@ class A
 }
 ```
 
-```csharp
+```csharp {title="具象型に近い方優先 (派生側優先)"}
 A.M([]); // IList<int>
 
 class A
@@ -695,7 +695,7 @@ class A
 }
 ```
 
-```csharp
+```csharp {title="Span 優先"}
 A.M([]); // Span<int>
 
 class A
@@ -706,7 +706,7 @@ class A
 }
 ```
 
-```csharp
+```csharp {title="Span 優先"}
 A.M([]); // Span<int>
 
 class A
@@ -717,7 +717,7 @@ class A
 }
 ```
 
-```csharp
+```csharp {title="ReadOnlySpan 優先"}
 A.M([]); // ReadOnlySpan<int>
 
 class A
@@ -728,7 +728,7 @@ class A
 }
 ```
 
-```csharp
+```csharp {title="ReadOnlySpan 優先"}
 A.M([]); // ReadOnlySpan<int>
 
 class A
@@ -741,7 +741,7 @@ class A
 
 ちなみに、以下のような場合には(普通のオーバーロード解決でも、コレクション式でも)不明瞭(オーバーロード解決不能)でコンパイル エラーになります。
 
-```csharp
+```csharp {title="具象型同士は同列"}
 A.M([]); // コンパイル エラー
 
 class A
@@ -752,7 +752,7 @@ class A
 }
 ```
 
-```csharp
+```csharp {title="派生関係のないインターフェイスは同列"}
 A.M([]); // コンパイル エラー
 
 class A
@@ -788,7 +788,7 @@ C# 12 時点でも、`var x = (int[])[1, 2];` みたいにキャストを挟め�
 という問題があって、
 以下のように、拡張メソッドからの型推論が効くようにしてほしいという話があります。
 
-```csharp
+```csharp {title="拡張メソッドからの型推論"}
 // (List<int>)[1, 2] よりも、拡張メソッド形式の方が書き心地がいい。
 var x = [1, 2].AsList();
 
@@ -819,7 +819,7 @@ Dictionary<string, int> map =
 
 C# 12 では以下のようなコードに対応しなかったんですが、これも C# 13 で検討中です。
 
-```csharp
+```csharp {title="非ジェネリック コレクション"}
 using System.Collections;
 
 ICollection c = ["a", 2, null];

@@ -37,7 +37,7 @@ Set変数名 / Get変数名 という名前のメンバー関数を用意する�
 
 age なら、SetAge と GetAge というのを Person クラス内に作る。
 
-```cpp
+```cpp {title="SetAge, GetAge"}
 #include<iostream>
 
 class Person
@@ -93,7 +93,7 @@ Visual Studio のインテリセンスなどの入力支援（変数名を途中
 C++ は、引数が異なる同名の関数を定義（オーバーロード）できるので、
 void SetAge(int a) と int GetAge() の両方を Age という名前にしてしまっても問題ありません。
 
-```cpp
+```cpp {title="void Age(int a), int Age()"}
 #include<iostream>
 
 class Person
@@ -139,7 +139,7 @@ C# の「[プロパティ](../../csharp/oop/oo_property.md#property)」のよう
 実は、C++ でも、かなり無理やりですが、（見た目だけは）プロパティのようなことができたりします。
 とりあえず、百聞は一見にしかずということで、以下の例を見てください。
 
-```cpp
+```cpp {title="proxy"}
 #include<iostream>
 
 class Person

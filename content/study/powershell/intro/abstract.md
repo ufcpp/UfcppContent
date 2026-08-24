@@ -54,7 +54,7 @@ PowerShell のコマンドは
 
 例えば、以下のようになります。
 
-```console
+```console {title="Cmdlet の例"}
 >  Get-Command more
 
 CommandType     Name         Definition
@@ -82,7 +82,7 @@ Alias           pwd          Get-Location
 PowerShell でも、（他の多くのシェルがそうであるように）
 | 記号を使って2つのコマンドをパイプラインでつなぐことができます。
 
-```console
+```console {title="Cmdlet の例"}
 >  Get-ChildItem | Select-Object {$_.Name}
 
 $_.Name

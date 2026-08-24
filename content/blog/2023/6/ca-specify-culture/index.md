@@ -25,7 +25,7 @@ aliases: []
 
 [例えば以下のようなやつ](https://gist.github.com/ufcpp/071785157dfb8402af27b443427f8b90)。
 
-```csharp
+```csharp {title="正気とは思えない ContaisKey"}
 using static System.Console;
 
 // 正規化すると同じ文字になる、文字コード的には別の文字。

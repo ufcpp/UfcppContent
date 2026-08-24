@@ -287,7 +287,7 @@ C#の型推論はローカル変数に対してしか使えず、型が見えに
 C#以外の言語だと、こういう、より多くの場面で型推論を認めているプログラミング言語もあります。
 要するに、以下のような書き方を許してほしいという話です。
 
-```csharp
+```csharp {title="フィールドやメソッド戻り値の型推論(案)"}
 class Program
 {
     static void Main()
@@ -305,7 +305,7 @@ class Program
 推論が多段になることが原因です。
 ローカル変数の`var`と違って、以下のように、書いた人も書かれた場所も違うコードを多段に追いかける必要があります。
 
-```csharp
+```csharp {title="戻り値型推論では、多段にコードを追う必要がある"}
 // 開発者 X がソースコード A.cs に書いたコード
 class A
 {
@@ -339,7 +339,7 @@ class C
 さらに問題になるのは、書いた行数に対して指数的な時間がかかる場合すらあることです。
 以下のようなコードでも、4行に対して、下手な実装だと2の4乗で16倍の時間がかかりかねません。
 
-```csharp
+```csharp {title="組み合わせによって、指数的に推論時間が伸びる例"}
 using System;
 
 class A
@@ -381,7 +381,7 @@ class C
 <td>
 <pre class="source" title="c は double"><code class="language-csharp">class A
 {
-    public static var a = 1.0;
+    public static var a = <mark class="code-highlight">1.0</mark>;
 }
 class B
 {
@@ -443,7 +443,7 @@ class Program
 class A
 {
     public static var F(int x, int y)
-        =&gt; new { X = x + y, Y = x - y };
+        =&gt; new { <mark class="code-highlight">X</mark> = x + y, <mark class="code-highlight">Y</mark> = x - y };
     // ↑ new { x, y } だったのが new { X, Y } に変わった
 }
 class B
@@ -456,7 +456,7 @@ class Program
     static void Main()
     {
         var p = B.G(1);
-        Console.WriteLine(p.x); // ここでエラー
+        Console.WriteLine(<mark class="code-highlight">p.x</mark>); // ここでエラー
     }
 }</code></pre>
 </td>
@@ -477,7 +477,7 @@ C#のように、大規模プロジェクトでも使われるプログラミン
 代わりと言ってはなんですが、「逆向きの型推論」が入る可能性はあります。
 すなわち、以下のような書き方です。
 
-```csharp
+```csharp {title="newの際の型推論"}
 class A
 {
     public A() { }

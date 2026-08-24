@@ -56,7 +56,7 @@ event source, observable, event sender, ... など、呼び方はいろいろあ
 
 C# の場合、イベント発生側に「登録口」を作るための専用構文(以下、event 構文)を持っているわけですが。(参考: 「[イベント](sp_event.md)」)
 
-```csharp
+```csharp {highlight-text="event"}
 using System;
 using System.Threading.Tasks;
 

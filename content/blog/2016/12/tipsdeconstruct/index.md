@@ -19,7 +19,7 @@ C# 7で、[分解](../../../../study/csharp/datatype/deconstruction.md)という
 
 分解という機能のおさらいですが、以下のような書き方でタプルなどの型のメンバーを抽出できる機能です。
 
-```csharp
+```csharp {title="分解構文"}
 var (x, y) = tuple;
 ```
 

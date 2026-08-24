@@ -21,7 +21,7 @@ aliases: []
 
 例えば、以下のようなコードを考えます。
 
-```csharp
+```csharp {title="静的な byte データ"}
 using System;
  
 public class Program
@@ -72,7 +72,7 @@ IL_000c: call void 中略::InitializeArray(略)
 これに対して、割と最近(Visual Studio 15.7、C# 7.3 世代で)実装された最適化があります。
 先ほどのコードを、以下のように書き換えてみましょう。
 
-```csharp
+```csharp {title="ReadOnlySpanに変える"}
 using System;
  
 public class Program

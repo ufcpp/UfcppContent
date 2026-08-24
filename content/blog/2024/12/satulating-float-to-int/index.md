@@ -23,7 +23,7 @@ aliases: []
 
 最小再現コードは以下の通り。
 
-```csharp
+```csharp {title=".NET 8 と 9 で挙動が違うコードの例"}
 var x = int.MaxValue;
 var y = (float)x;
 var z = (int)y;
@@ -68,7 +68,7 @@ AVX512 が使えないとき向けのソフトウェア実装の挙動も改め�
 自社のコードに .NET 8 から 9 に変更したら永久ループを起こすコードがありました。
 すごく簡素化して書くと以下のようなコードがあったせい。
 
-```csharp
+```csharp {title="飽和変換の仕様変更が永久ループになる例"}
 // .NET 9 でだけ永久ループ…
 M((int)Math.Floor(float.MaxValue), (int)Math.Floor(float.MaxValue));
 
@@ -86,13 +86,13 @@ static void M(int x, int y)
 
 で、以下のコードは「`for` の中を1回だけ実行」になりますが、
 
-```csharp
+```csharp {title="&lt;= MinVavlue"}
 for (int i = int.MinValue; i <= int.MinValue; i++) ;
 ```
 
 以下のコードは永久ループです。
 
-```csharp
+```csharp {title="&lt;= MaxVavlue"}
 // i++ がオーバーフローするので i <= int.MaxValue が false になることはない。
 for (int i = int.MaxValue; i <= int.MaxValue; i++) ;
 ```

@@ -25,7 +25,7 @@ aliases: []
 C# で、構造体の中にその構造体自身のフィールドを持つことはできません。
 レイアウトの決定が無限再帰を起こすので、これはダメで当然。
 
-```csharp
+```csharp {title="構造体の入れ子はダメ"}
 struct S { S _nested; }
 ```
 
@@ -38,7 +38,7 @@ struct S { S _nested; }
 現在の C# (というか .NET の型システム)では、以下のような型はコンパイルはできるものの、実行してみようとすると実行時例外を起こします。
 (構造体 `S` のメンバーに初めて触れた瞬間に `TypeLoadException` が飛ぶ。)
 
-```csharp
+```csharp {title="疑惑の判定"}
 struct S { Empty<S> _empty; }
 struct Empty<T> { }
 ```
@@ -63,7 +63,7 @@ struct Empty<T> { }
 
 まず、以下のように、構造体の配列で木構造を表現する例を考えます。
 
-```csharp
+```csharp {title="配列に Parent と Next を持たせた型を入れて木構造を表現"}
 // 配列に Parent と Next を持たせた型を入れて木構造を表現。
 // A も B もツリー。
 // A からは B も参照。
@@ -89,7 +89,7 @@ struct B
 
 実際にはさらに、「インデックスとは関係ない別の `int` も持ちたくなったりするはずで、なおのこと「この `int` は何？」みたいになると思います。
 
-```csharp
+```csharp {title="この int は何？"}
 struct A
 {
     // 木とは別に持ちたいデータ。
@@ -109,7 +109,7 @@ struct A
 ということで、`Parent` や `Next` が「配列 `A[]` のインデックス」であることが一目でわかるようにしたくなったりします。
 よくやるのが、以下のように「`int` をラップした構造体を用意」みたいな手段。
 
-```csharp
+```csharp {title="「配列 T[] のインデックス」用の int のラッパー構造体"}
 struct Index<T>
 {
     public int Value { get; }
@@ -120,7 +120,7 @@ struct Index<T>
 
 この型を使って先ほどの `Tree`, `A`, `B` を書き換えると以下のような感じになります。
 
-```csharp
+```csharp {title="Index 構造体の導入"}
 // 配列に Parent と Next を持たせた型を入れて木構造を表現。
 // A も B もツリー。
 // A からは B も参照。
@@ -156,7 +156,7 @@ struct B
 ちょっと不格好でもよければ解決方法は簡単で、
 1段ダミーのクラスを挟むだけだったり。
 
-```csharp
+```csharp {title="ダミーのクラスを1個用意"}
 struct Index<T>
 {
     public int Value { get; }
@@ -168,7 +168,7 @@ struct Index<T>
 class Of<T> { }
 ```
 
-```csharp
+```csharp {title="やむなく Index&lt;Of&lt;T&gt;&gt;"}
 class Tree
 {
     A[] A；

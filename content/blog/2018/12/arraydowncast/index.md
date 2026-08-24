@@ -30,7 +30,7 @@ C# のデリゲートは、複数のメソッドを `+=` で繋いで、一斉�
 これを[マルチキャスト デリゲート](../../../../study/csharp/functional/sp_delegate.md#malticast)と言います。
 例えば以下のコードは、
 
-```csharp
+```csharp {title="マルチキャスト デリゲート"}
 Action f = null;
  
 foreach (var i in new[] { 1, 2, 3, 4, 5 })
@@ -43,7 +43,7 @@ f();
 
 以下のような結果を出力します。
 
-```csharp
+```csharp {title="実行結果"}
 lambda 1 invoked
 lambda 2 invoked
 lambda 3 invoked
@@ -55,7 +55,7 @@ lambda 5 invoked
 戻り値は想定していません。`void`戻り値以外のメソッドに使おうとするとトラブります。
 以下のようなコードを書いたとすると、
 
-```csharp
+```csharp {title="マルチキャスト デリゲートの戻り値"}
 Func<int> f = null;
  
 foreach (var i in new[] { 1, 2, 3, 4, 5 })
@@ -72,7 +72,7 @@ Console.WriteLine($"f returns {f()}");
 
 最後の行の出力は
 
-```csharp
+```csharp {title="実行結果"}
 f returns 5
 ```
 
@@ -80,7 +80,7 @@ f returns 5
 全ての戻り値を取りたければ以下のように、
 個々のデリゲートを配列で受け取って、1つ1つ呼び出すようなコードを書きます。
 
-```csharp
+```csharp {title="マルチキャスト デリゲートから、個別のデリゲートを取り出す"}
 Delegate[] list = f.GetInvocationList();
 foreach (Func<int> item in list)
     Console.WriteLine($"f returns {item()}");
@@ -104,7 +104,7 @@ foreach (Func<int> item in list)
 
 比較用データ: 同じ `string` 配列を、`string[]` のフィールドと `object[]` にフィールドに格納して使います。
 
-```csharp
+```csharp {title="ベンチマークに使うデータ"}
 string[] _stringData = new string[] { "a", "ab", "abc", "abcd", "abcde", "abcdef", "abcdefg" };
 object[] _objectData = new string[] { "a", "ab", "abc", "abcd", "abcde", "abcdef", "abcdefg" };
 ```
@@ -113,14 +113,14 @@ object[] _objectData = new string[] { "a", "ab", "abc", "abcd", "abcde", "abcdef
 
 (1) MemberwiseCast: 要素ごとにダウンキャスト
 
-```csharp
+```csharp {title="MemberwiseCast"}
 foreach (string s in _objectData)
     sum += s.Length;
 ```
 
 (2) ArrayCast: 最初に配列自体をダウンキャスト
 
-```csharp
+```csharp {title="ArrayCast"}
 var data = (string[])_objectData;
 foreach (var s in data)
     sum += s.Length;
@@ -128,10 +128,10 @@ foreach (var s in data)
 
 (3) UnsafeStructCast: 謎の最適化
 
-```csharp
+```csharp {title="謎の最適化に使う謎の構造体"}
 public struct Wrap<T> { public T Value; }
 ```
-```csharp
+```csharp {title="UnsafeStructCast"}
 var data = Unsafe.As<object[], Wrap<string>[]>(ref _objectData);
 foreach (var s in data)
     sum += s.Value.Length;
@@ -139,7 +139,7 @@ foreach (var s in data)
 
 (参考) Static: 最初から `string[]` の方を列挙
 
-```csharp
+```csharp {title="Static"}
 foreach (var s in _stringData)
     sum += s.Length;
 ```
@@ -164,7 +164,7 @@ foreach (var s in _stringData)
 
 [.NET の配列には共変性](../../../../study/csharp/oop/sp4_variance.md#covariant-array)があります。
 
-```csharp
+```csharp {title="配列の共変性"}
 string[] derivedItems = { "Aleph", "Beth", "Gimel" };
 object[] baseItems = derivedItems; // この代入は明示的なキャストなしでできる
 ```
@@ -178,7 +178,7 @@ object[] baseItems = derivedItems; // この代入は明示的なキャストな
 
 ちなみに、共変性は参照型にしか働かないので、例えば以下のようなコードはコンパイル エラーになります。`int` は値型なので、共変ではなくなります。
 
-```csharp
+```csharp {title="値型の配列には共変性が働かない"}
 int[] derivedItems = { 1, 2, 3 };
 object[] baseItems = derivedItems; // この代入は(キャストの有無によらず)認められない
 ```

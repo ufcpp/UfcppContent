@@ -33,7 +33,7 @@ aliases: []
 ただ、関数ポインターを使ったメソッド呼び出しの側は、C# には関連機能が一切なく、
 一度デリゲート化するひと手間が必要でした。
 
-```csharp
+```csharp {title="GetFunctionPointer で関数ポインター取得"}
 using System.Runtime.InteropServices;
 
 var m = typeof(A).GetMethod("M")!;
@@ -60,7 +60,7 @@ C# で書いたメソッドを C# のデリゲートで受け取るんなら、
 直接代入するだけでデリゲート化できます。
 前節の例も、単に以下のように書けます。
 
-```csharp
+```csharp {title="C# で完結している分には関数ポインターの出番なし"}
 // C# で書いたメソッドを C# のデリゲートで受け取るんなら、単に代入でできるわけで、
 // 関数ポインターを介する意味は全くなく。
 Action a = A.M;
@@ -79,7 +79,7 @@ class A
 ネイティブ コード呼び出しも、`DllImport` 属性(.NET 7 以降であれば `LibraryImport` 属性)を使えば普通の、安全な C# コードだけで呼び出し可能ではあります。
 例えば、`LibraryImport` 属性を使って kernel32.dll 中の `Beep` メソッドを呼ぶコードは以下のように書けます。
 
-```csharp
+```csharp {title="LibraryImport 属性を使ったネイティブ コード呼び出しの例(ビープ音を鳴らす)"}
 using System.Runtime.InteropServices;
 
 // 呼び出し側。
@@ -107,7 +107,7 @@ C# に関数ポインターは必要ありませんでした。
 ところが、 .NET Core 3.0 (C# 8.0 と同世代)で、[`NativeLibary`](https://learn.microsoft.com/ja-jp/dotnet/api/system.runtime.interopservices.nativelibrary) (`System.Runtime.InteropServices` 名前空間)というクラスが入って、
 ネイティブ コードの関数ポインターを取得する手段が提供されるようになりました。
 
-```csharp
+```csharp {title="NativeLibrary を使ったネイティブ コード呼び出しの例(ビープ音を鳴らす)"}
 using System.Runtime.InteropServices;
 
 // DLL のロード。
@@ -148,7 +148,7 @@ delegate int BeepDelegate(uint frequencey, uint duration);
 記法としては `delegate*` を使います。
 先ほどの `NativeLibrary` を使った `Beep` 呼び出しの例を関数ポインターで書き換えると以下のようになります。
 
-```csharp
+```csharp {title="関数ポインター構文の例"}
 using System.Runtime.InteropServices;
 
 // 関数ポインターを nint で取得。
@@ -171,7 +171,7 @@ unsafe
 `Func<>` と `Action<>` のように、戻り値の有無で型を分ける必要はなく、
 「戻り値がない場合は最後の1個を `void` にする」という仕様です。
 
-```csharp
+```csharp {title="戻り値がないときは void を書く"}
 unsafe
 {
     // 引数 int, 戻り値 int
@@ -200,7 +200,7 @@ static void a(int x) { }
 C# で書いたメソッドに対して `&` 演算子を使えます。
 `&` 演算子で、`GetFunctionPointer` などのリフレクション介さずにメソッドから直接関数ポインターを得ることができます。
 
-```csharp
+```csharp {title="&amp; 演算子"}
 unsafe
 {
     // & で A.M の関数ポインターを取得。
@@ -218,7 +218,7 @@ class A
 
 ただし、`&` 演算子で関数ポインターを取れるのは静的メソッドだけです。
 
-```csharp
+```csharp {title="&amp; で関数ポインターを取れるのは静的メソッドのみ"}
 unsafe
 {
     // 静的メソッドは OK。
@@ -244,7 +244,7 @@ class A
 ちなみに、取れる値(関数ポインターが指すアドレス)自体は、`GetFunctionPointer` と同じになります。
 ただし、`Type` 型や `MethodInfo` 型を介さなくていい分、`&` 演算子を使う方がパフォーマンスはいいそうです。
 
-```csharp
+```csharp {title="GetFunctionPointer と同じ値"}
 var p1 = typeof(A).GetMethod("M")!.MethodHandle.GetFunctionPointer();
 Console.WriteLine(p1);
 
@@ -272,7 +272,7 @@ class A
 * `ref struct` な型
 * `void`
 
-```csharp
+```csharp {title="ジェネリック型引数よりもだいぶ緩い制約"}
 unsafe
 {
     // in, out, ref が書ける
@@ -314,7 +314,7 @@ unsafe
 `DllImport` では `CallingConvention` プロパティで、
 `LibraryImport` では `UnmanagedCallConv` 属性で指定します。
 
-```csharp
+```csharp {title="DllImport, LibraryImport での呼び出し規約の指定"}
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 

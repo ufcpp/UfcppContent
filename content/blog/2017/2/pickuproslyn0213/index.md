@@ -28,7 +28,7 @@ aliases: []
 ただ、大き目の構造体の受け渡しは、値渡し(コピーが発生)の負担が大きいです。
 なので、例えば以下のように、参照引数を使ったりします。
 
-```csharp
+```csharp {title="大き目の構造体を参照渡し"}
 static void AddTo(ref Matrix4x4 x, ref Matrix4x4 y)
 {
     x.M11 += x.M12;
@@ -49,7 +49,7 @@ C++ならよくやるやつです。`const T&`。
 C#に対するこれまでの提案では`readonly ref`なんかが上がっていたんですが、
 今回`in`キーワードを使うのはどうだろうという話になりました。
 
-```csharp
+```csharp {title="in参照渡し" highlight-text="in"}
 static void AddTo(ref Matrix4x4 x, in Matrix4x4 y)
 {
     x.M11 += x.M12;

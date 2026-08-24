@@ -33,7 +33,7 @@ aliases:
 
 RealProxy クラスを継承して、Invoke メソッドをオーバーライドするだけ。
 
-```csharp
+```csharp {title="RealProxy を継承"}
 public class MulticastProxy<Interface> : RealProxy
 {
     public MulticastProxy(params Interface[] interfaces)
@@ -65,7 +65,7 @@ public class MulticastProxy<Interface> : RealProxy
 
 使う側では、GetTransparentProxy を呼んでプロキシ生成。
 
-```csharp
+```csharp {title="GetTransparentProxy"}
 interface IAnimal
 {
     void Bark();
@@ -107,7 +107,7 @@ class Program
 
 要するに、以下のようなインスタンスメソッド呼び出しに相当する処理を自動で行ってくれるものです。
 
-```csharp
+```csharp {title="foreach でインスタンスごとに Bark 呼び出し"}
 IAnimal[] animals = new IAnimal[] { new Cat(), new Dog(), new Mouse() };
 
 foreach (var i in animals)
@@ -134,7 +134,7 @@ MethodInfo から事前にデリゲートを作っておくことが可能で、
 前節で示した MulticastProxy では、
 以下のように、登録したインターフェースのインスタンスごとに MethodInfo.Invoke を呼んでいました。
 
-```csharp
+```csharp {title="インスタンスごとに MethodInfo.Invoke を呼び出す"}
 IMethodMessage mm = msg as IMethodMessage;
 
 MethodInfo method = (MethodInfo)mm.MethodBase;

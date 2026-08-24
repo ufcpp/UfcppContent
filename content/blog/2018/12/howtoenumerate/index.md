@@ -33,7 +33,7 @@ aliases: []
 
 とりあえず以下のような型を用意。参考にするために、配列を生列挙するコードも書いておきます。
 
-```csharp
+```csharp {title="配列の生列挙"}
 using BenchmarkDotNet.Attributes;
  
 public partial struct ArrayWrapper<T>
@@ -71,7 +71,7 @@ public partial class ArrayEnumerationBenchmark
 とはいえ、インターフェイスを介した `GetEnumerator`/`MoveNext`/`Current` はちょっとオーバーヘッドが掛かるので、以下のような作りにします。
 (`List<T>` なんかはまさにこの作りになっています。)
 
-```csharp
+```csharp {title="IEnumerable 化"}
 public partial struct ArrayWrapper<T> : IEnumerable<T>
 {
     // 専用の型を作って、それを具象型のまま公開する
@@ -89,7 +89,7 @@ public partial struct ArrayWrapper<T> : IEnumerable<T>
 配列の全要素を列挙するような `IEnumerator<T>` 実装は以下のようになります。
 無駄なアロケーションが発生しないように構造体製。
 
-```csharp
+```csharp {title="構造体で専用実装"}
 public partial struct ArrayWrapper<T>
 {
     // 「仮想呼び出しは遅い」ということがわかっているわけで、
@@ -144,7 +144,7 @@ public partial class ArrayEnumerationBenchmark
 ただ、構造体をインターフェイス化して使うとかえって遅くて、
 少しでもパフォーマンスを上げたりならクラスで作り直す方がよかったりします。
 
-```csharp
+```csharp {title="インターフェイス実装"}
 public partial struct ArrayWrapper<T> : IEnumerable<T>
 {
     IEnumerator<T> IEnumerable<T>.GetEnumerator() => new EnumeratorObject(Array);
@@ -207,7 +207,7 @@ public partial class ArrayEnumerationBenchmark
 .NET Framework 2.0 時代からあってパフォーマンスへの考慮はあんまりない型です。
 要するに、遅い…
 
-```csharp
+```csharp {title="ReadOnlyCollection 越しの列挙"}
 public partial struct ArrayWrapper<T>
 {
     public ReadOnlyCollection<T> AsReadOnlyCollection() => new ReadOnlyCollection<T>(Array);
@@ -242,7 +242,7 @@ public partial class ArrayEnumerationBenchmark
 `Span<T>` と同様最適化が掛かるので、
 書き換えを防止しつつ、配列の生列挙とそん色ない速度が出ます。
 
-```csharp
+```csharp {title="ReadOnlySpan 越しの列挙"}
 public partial struct ArrayWrapper<T>
 {
     // インデクサーも使いたいとき用、その2。
@@ -291,7 +291,7 @@ public partial class ArrayEnumerationBenchmark
 過渡的な手段とはいえ、結構邪悪です。
 以下のようなコード。
 
-```csharp
+```csharp {title="ImmurableArray を無理やり配列に変換"}
 [StructLayout(LayoutKind.Sequential)]
 private struct ImmutableArrayProxy<T>
 {
@@ -306,7 +306,7 @@ internal static T[] DangerousGetUnderlyingArray<T>(this ImmutableArray<T> array)
 ちょっと変な挙動をすることがあります。
 以下のようなコードには注意を。
 
-```csharp
+```csharp {title="Span で中身を返す場合の注意点"}
 using System;
  
 // System.Collections.Generic.List<T> と同じような実装 + AsSpan

@@ -57,7 +57,7 @@ Slices (切れ端、断片)という名前は歴史的経緯のようです。
 
 `Span<T>`構造体の持つ機能を単純化して書くと、以下のようなコードと同類の機能を提供するものです。
 
-```csharp
+```csharp {title="単純化したSpan"}
 struct Span
 {
     public byte[] _data;
@@ -114,7 +114,7 @@ struct Span
 
 まあ、とにかく、以下の例のようなことが、そこそこ高パフォーマンスで実行できます。
 
-```csharp
+```csharp {title="Spanの利用例"}
 using System;
 
 struct Data

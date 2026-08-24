@@ -34,7 +34,7 @@ C# でコマンドライン引数を受け取る方法について説明しま�
 コマンドプロンプト(Win9x の場合は「DOS プロンプト」と呼ばれる)上でファイルのコピーを行う場合、
 copy というコマンドを利用します。copy は以下のようにして、コピー元のファイルとコピー先のディレクトリ(フォルダ)を指定することによってファイルのコピーを行います。
 
-```console
+```console {title="copy コマンド"}
 copy コピーするファイル コピー先のディレクトリ
 ```
 
@@ -46,7 +46,7 @@ copy コピーするファイル コピー先のディレクトリ
 例えば、スタートメニューから [プログラム名を指定して実行] を選んで、
 以下のように入力してみてください。
 
-```csharp
+```csharp {title="エクスプローラ起動"}
 explorer.exe
 ```
 
@@ -64,7 +64,7 @@ explorer.exe
 
 同様にスタートメニューから[プログラム名を指定して実行]を選んで、今度は以下のように入力してみてください。
 
-```csharp
+```csharp {title="オプション付きでエクスプローラ起動"}
 explorer.exe /e,/root,"C:\Program Files\Internet Explorer"
 ```
 
@@ -98,7 +98,7 @@ static void Main(string[] args)
 この際、コマンドライン引数は先に入力されたものから順に <code>args</code> に格納されていきます。
 例えば、以下のようなプログラムを作成し、
 
-```csharp
+```csharp {title="コマンドライン引数を受け取るプログラム"}
 using System;
 
 public class CommandLineSample
@@ -141,7 +141,7 @@ C# でプログラムを作る際、自分で終了コードを指定したい�
 <code>Main</code> 関数の戻り値がそのままプログラムの終了コードになります。
 例えば、以下のようなプログラムを書いた場合、終了コードは0になります。
 
-```csharp
+```csharp {title="終了コードを返す例"}
 public class CommandLineSample
 {
   public static int Main()
@@ -157,7 +157,7 @@ public class CommandLineSample
 
 ##### <a id="sec-generated-title-6"></a>サンプル
 
-```csharp
+```csharp {title="コマンドライン引数のサンプル"}
 using System;
 using System.IO;
 
@@ -214,7 +214,7 @@ public class CommandLineSample
 同じディレクトリ中に<code>test.txt</code>というファイルがあって、
 その中身が
 
-```csharp
+```csharp {title="test.txt の中身"}
  test test test test
 テスト テスト テスト
 ```

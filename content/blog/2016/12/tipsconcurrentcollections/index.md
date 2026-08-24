@@ -34,7 +34,7 @@ Concurrent、英単語の意味としては「同時に起こる」という意�
 
 話を簡単にするために、まずちょっと、同時実行が必要ない状況で例を出しますが、以下のような挙動になります。
 
-```csharp
+```csharp {title="GetOrAdd: 同時実行がない場合"}
 using System;
 using System.Collections.Concurrent;
 
@@ -64,7 +64,7 @@ class Program
 }
 ```
 
-```csharp
+```csharp {title="実行結果"}
 Add: 0
 Get: 0
 Get: 0
@@ -87,7 +87,7 @@ Get: 0
 Concurrentを名乗らない普通の`Dictionary`を使って、
 自前で`lock`を掛けるのであれば、例えば以下のように書けばいいでしょう。
 
-```csharp
+```csharp {title="Dictionaryに対して自前でlockを掛ける GetOrAdd 実装"}
 static class DictionaryExtensions
 {
     public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> d, TKey key, Func<TKey, TValue> valueFactory)
@@ -128,7 +128,7 @@ static class DictionaryExtensions
 
 その結果、最初にあげた例で、`for`ループを`Parallel.For`に変えて並列化すると、以下のような挙動をします。
 
-```csharp
+```csharp {title="GetOrAdd: 同時実行する場合"}
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
@@ -160,7 +160,7 @@ class Program
 
 実行する環境によって/実行するたびに結果は異なりますが、一例としては以下のような実行結果になります。
 
-```csharp
+```csharp {title="実行結果"}
 Add: 0
 Add: 3
 Get: 0
@@ -181,7 +181,7 @@ Get: 0
 
 以下のような書き方をします。
 
-```csharp
+```csharp {title="ConcurrentDictionary と Lazy の併用"}
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
@@ -219,7 +219,7 @@ class Program
 
 結果は以下のようになります。
 
-```csharp
+```csharp {title="実行結果"}
 Add: 0
 Get: 0
 Get: 0

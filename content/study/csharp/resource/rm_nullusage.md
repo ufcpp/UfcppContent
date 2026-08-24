@@ -81,7 +81,7 @@ null 自体はなくせないものの、少なくとも「意図して null を
 
 これを、以下のように表現してみましょう。
 
-```csharp
+```csharp {title="この後の例で使うクラス"}
 // 武器装備欄
 class WeaponSlots
 {
@@ -132,7 +132,7 @@ class Weapon
 
 この処理は、以下のように書くこともできます。
 
-```csharp
+```csharp {title="null が来たら null を返す例(if-else)"}
 static string? M(Weapon? w)
 {
     if (w == null) return null;
@@ -142,7 +142,7 @@ static string? M(Weapon? w)
 
 あるいはこれと全く同じコードを条件演算子を使って以下のように書いたりします。
 
-```csharp
+```csharp {title="null が来たら null を返す例(条件演算子)"}
 static string? M(Weapon? w)
 {
     return w == null ? null : w.ImagePath;
@@ -154,7 +154,7 @@ static string? M(Weapon? w)
 null条件演算子は、メンバー アクセスのための `.` の代わりに `?.` を使うことで「null が来たら null を返す」という挙動をします。
 すなわち、以下のコードで、先ほどと同じ挙動をします。
 
-```csharp
+```csharp {title="null 条件演算子の例" highlight-text="w?.ImagePath"}
 static string M(Weapon? w) => w?.ImagePath;
 ```
 
@@ -162,13 +162,13 @@ static string M(Weapon? w) => w?.ImagePath;
 
 インデクサーの前にも、`?`を付けることでnull条件付きにできます。
 
-```csharp
+```csharp {title="null 条件インデクサーの例"}
 static int? M(WeaponSlots w) => w.Weapon1?[0];
 ```
 
 これは以下のようなコードとほぼ同じ意味になります。
 
-```csharp
+```csharp {title="null 条件インデクサーの例と同じ意味のコード"}
 static int? M(WeaponSlots w)
 {
     var w1 = w.Weapon1;
@@ -182,7 +182,7 @@ static int? M(WeaponSlots w)
 null 条件演算子 `?.` を使えば、[null許容型](sp2_nullable.md)のメンバー アクセスが少し楽になります。
 例えば以下のコードでは、`x` の行はコンパイル エラーになりますが、`y` の行は OK です。
 
-```csharp
+```csharp {highlight-text="w?.ImagePath"}
 // さっきと違って Weapon が構造体
 struct Weapon
 {
@@ -216,7 +216,7 @@ null 条件演算子 `?.` は戻り値がない(戻り値が `void` の)メソ�
 例えば、`WeaponSlots` にも `Weapon` にも `Dispose` メソッドを用意したとして、
 `WeaponSlots` は `Weapon1` などが null じゃないときだけその `Dispose` を呼ぶとしたい場合、以下のように書けます。
 
-```csharp
+```csharp {title="null じゃないときだけメソッド呼び出しする例"}
 public void Dispose()
 {
     Weapon1?.Dispose();
@@ -228,7 +228,7 @@ public void Dispose()
 
 これは以下のようなコードとほぼ同じ意味です。
 
-```csharp
+```csharp {title="null じゃないときだけメソッド呼び出しする例とほぼ同じ意味のコード"}
 public void Dispose()
 {
     if (Weapon1 != null) Weapon1.Dispose();
@@ -240,7 +240,7 @@ public void Dispose()
 
 戻り値はないので、以下のようなコードは書けません。
 
-```csharp
+```csharp {title="void の ?. 結果は void"}
 // void の ?. 結果は void。
 // 何の値も返って来ず、変数に受けたりはできない。
 var x = Weapon1?.Dispose();
@@ -255,7 +255,7 @@ var x = Weapon1?.Dispose();
 ただ、デリゲートは `d()` のような呼び方の他に、`d.Invoke()` と言う呼び方もできるので、
 こちらなら null 条件演算子 `?.` が使えます。
 
-```csharp
+```csharp {title="デリゲートに対するnull条件演算子の例" highlight-text="PropertyChanged?.Invoke(this, args)"}
 using System.ComponentModel;
 
 class Bindable : INotifyPropertyChanged
@@ -279,7 +279,7 @@ C# 14 では、[代入](../start/st_operator.md#substitute)
 「`Weapon1` が null じゃないときだけ `Attack` の値を10に更新」と、
 「`Weapon2` が null じゃないときだけ `Weapon1.Attack` の値を加える」という処理になります。
 
-```csharp
+```csharp {title="null 条件代入の例"}
 static void UpdateWaepon(WeaponSlots slots)
 {
     slots.Weapon1?.Attack = 10;
@@ -295,7 +295,7 @@ static void UpdateWaepon(WeaponSlots slots)
 
 いくつか例を挙げるために以下のようなクラスを考えてみます。
 
-```csharp
+```csharp {title="null 条件代入の例に使うためのクラス"}
 class A
 {
     public A? X { get; set; }
@@ -305,7 +305,7 @@ class A
 まずはシンプルな1段だけの例で、`a?.X = new();` を考えてみます。
 以下のコードは、
 
-```csharp
+```csharp {title="a?.X = ..."}
 static void M(A? a)
 {
     a?.X = new();
@@ -314,7 +314,7 @@ static void M(A? a)
 
 以下のコードとほぼ同じ意味になります。
 
-```csharp
+```csharp {title="a?.X = ... とほぼ同じ意味のコード"}
 M(null);
 
 static void M(A? a)
@@ -329,7 +329,7 @@ static void M(A? a)
 `?.` の段数を増やすと単純に `if` の段数が増えます。
 例えば以下のコードは、
 
-```csharp
+```csharp {title="a?.X?.X?.X = ..."}
 static void M(A? a)
 {
     a?.X?.X?.X = new();
@@ -338,7 +338,7 @@ static void M(A? a)
 
 以下のような意味になります。
 
-```csharp
+```csharp {title="a?.X?.X?.X = ... とほぼ同じ意味のコード"}
 M(null);
 
 static void M(A? a)
@@ -361,7 +361,7 @@ static void M(A? a)
 代入が複数並んでいる場合も考えてみます。
 対比として先に通常の代入の例を書きますが、例えば以下のようなコードを書いた場合、
 
-```csharp
+```csharp {title="通常の代入 a.X = b.X = ..."}
 static void M(A a, A b)
 {
     a.X = b.X = new();
@@ -370,7 +370,7 @@ static void M(A a, A b)
 
 おおむね以下のようなコードと同じように、`=` の左側の代入(この例の場合、`b.X` の方への代入)が先に実行されます。
 
-```csharp
+```csharp {title="a.X = b.X = ... とほぼ同じ意味のコード"}
 static void M(A a, A b)
 {
     var a1 = new A();
@@ -381,7 +381,7 @@ static void M(A a, A b)
 
 これに対して、null 条件代入の例として以下のようなコードを書いた場合、
 
-```csharp
+```csharp {title="null 条件代入 a?.X = b?.X = ..."}
 static void M(A? a, A? b)
 {
     a?.X = b?.X = new();
@@ -391,7 +391,7 @@ static void M(A? a, A? b)
 おおむね以下のような意味になります
 (「`a` を null チェック → `b` を null チェック → `b.X` への代入 → `a.X` への代入」みたいな順)。
 
-```csharp
+```csharp {title="a?.X = b?.X = ... とほぼ同じ意味のコード"}
 static void M(A? a, A? b)
 {
     if (a != null) // a の null チェック
@@ -415,7 +415,7 @@ static void M(A? a, A? b)
 
 ちなみに、null 条件代入は[インデクサー](../oop/oo_indexer.md)や[イベント](../functional/sp_event.md)に対しても使えます。
 
-```csharp
+```csharp {title="インデクサー、イベントに対する null 条件演算子の例"}
 static void M(A? a)
 {
     // if (a != null) a[0] = 10; とほぼ同じ。
@@ -448,7 +448,7 @@ class A
 例えば以下のように書けるでしょう。
 (ここでは`LoadImage(string path)`という名前で画像を読み込むメソッドがあるものして説明します。)
 
-```csharp
+```csharp {title="null の時に所定の値に差し替える例"}
 const string EmptyWeaponSlotImagePath = "EmptyWeaponSlot.png";
 
 static Image LoadWeaponImage(string? imagePath)
@@ -471,7 +471,7 @@ static Image LoadImage(string path)
 こちらは C# 2.0で、<strong id="key-null-coalesce" class="keyword">null合体演算子</strong>(null coalescing operator)と言うものが導入されました。
 以下のように、`??`で、左側に元の値、右側に差し替えたい値を書きます。
 
-```csharp
+```csharp {title="null合体演算子の例"}
 static Image LoadWeaponImage(string? imagePath)
 {
     return LoadImage(imagePath ?? EmptyWeaponSlotImagePath);
@@ -491,7 +491,7 @@ null合体演算子の場合は左側がnullでなかったら、右側を評価
 
 例えば、プロパティやメソッドがどこまで呼ばれたのかを確認するためのログ表示を仕込んだ以下のようなクラスを用意します。
 
-```csharp
+```csharp {title="短絡評価の確認用の型"}
 static class Extension
 {
     // null な変数に対しても a.M(i) で例外を起こさず呼べる拡張メソッド。
@@ -544,7 +544,7 @@ A.M(int)
 `X?.` の後ろが呼ばれなくなります。
 この時、引数の評価(この例の場合、`1.M()` の部分)も消えます。
 
-```csharp
+```csharp {title="X が null の場合"}
 // 変数は非 null、その X は null の場合
 var a2 = new A { X = null };
 
@@ -591,7 +591,7 @@ null を使う場面の例としてよく挙げられるものの1つに、キ�
 例えば以下のように書いたりします。
 [リフレクション](../dynamic/sp_reflection.md)を使った例ですが、リフレクションは重たいので取得した値はキャッシュしておきたいです。
 
-```csharp
+```csharp {title="リフレクションは重たいのでキャッシュしたい"}
 using System;
 using System.ComponentModel;
 using System.Reflection;
@@ -623,13 +623,13 @@ class TypeInfo
 こういう場合、以下のように、 `??` を使ってもっと短縮して書くこともできます。
 1行だけにできるので、[`=>`](../cheatsheet/ap_ver7.md#throw-expression) を使えたりもします。
 
-```csharp
+```csharp {title="?? でキャッシュを簡単化"}
 public string Description => _description = _description ?? _type.GetCustomAttribute<DescriptionAttribute>()?.Description ?? "";
 ```
 
 ただ、この例はちょっと1行に詰め込みすぎではあるので、`??`から後ろは別途メソッド化する方が読みやすくていいでしょう。
 
-```csharp
+```csharp {title="?? の後ろがあまりに長いのはちょっと読みづらいので修正"}
 public string Description => _description = _description ?? GetDescription();
 private string GetDescription() => _type.GetCustomAttribute<DescriptionAttribute>()?.Description ?? "";
 ```
@@ -639,7 +639,7 @@ private string GetDescription() => _type.GetCustomAttribute<DescriptionAttribute
 C# 8.0 で入った[`??=` 演算子](sp2_nullable.md#null-coalescing-assignment)は、こういうキャッシュ用途で使うのに特に便利です。
 上記の例は以下のように書くことができます。
 
-```csharp
+```csharp {title="??= を使ったバージョン"}
 public string Description => _description ??= GetDescription();
 ```
 
@@ -648,7 +648,7 @@ public string Description => _description ??= GetDescription();
 ちなみに、この手のコードに対しては C# 14 で導入された [field キーワード](../oop/oo_property.md#field-keyword)が有効で、
 C# 14 以降では以下のような書き方ができます。
 
-```csharp
+```csharp {title="??= と field キーワードを使ったバージョン"}
 // (_description フィールドを用意する必要なし。)
 public string Description => field ??= GetDescription();
 ```
@@ -660,7 +660,7 @@ public string Description => field ??= GetDescription();
 
 単純に null が来たら飛ばすだけでいいので、要は、以下のような `if` を書きます。
 
-```csharp
+```csharp {title="null が来たら何もしない例"}
 void ShowImage(Weapon? w)
 {
     var imageUrl = w?.ImagePath;
@@ -677,7 +677,7 @@ void ShowImage(Weapon? w)
 また、C# 7.0で導入された[パターン マッチング](../datatype/typeswitch.md#null-check)は、この手の null 判定のためにも使えます。
 例えば先ほどのコードは以下のように書くこともできます。
 
-```csharp
+```csharp {title="パターン マッチングを使ったnull判定の例" highlight-text="is string imageUrl"}
 void ShowImage(Weapon? w)
 {
     if (w?.ImagePath is string imageUrl)
@@ -695,7 +695,7 @@ void ShowImage(Weapon? w)
 C# 8.0 では、[再帰パターン](../datatype/patterns.md#recursive) の `{}` が暗黙的に null チェックも含んでいることを使って、手短に null チェックができます
 (参考: [非 null マッチング](../datatype/patterns.md#non-null))。
 
-```csharp
+```csharp {title="is 演算子での非 null チェック"}
 string? s = null;
  
 if (s is var _) Console.WriteLine("ここは通る");
@@ -718,7 +718,7 @@ C# 8.0 でこの仕様が入る予定ですが、現時点(C# 7.3)では残念�
 
 C# 7.3 以前の場合、せめて、引数に対してnull判定をして、nullだったら例外を出すということをよくやります。
 
-```csharp
+```csharp {title="引数に対してnull判定を行う例"}
 class Canvas
 {
     public void Draw(Image image)
@@ -737,7 +737,7 @@ class Canvas
 
 ちなみに、C# 7.0では[`throw`式](../structured/oo_exception.md#throwexpr)といって、`??`の右側に`throw`を書けるようになったので、以下のような書き方でnull判定を行うこともできます。
 
-```csharp
+```csharp {title="throw 式で null 判定する例"}
 class Canvas
 {
     public void Draw(Image image)
@@ -754,7 +754,7 @@ class Canvas
 混乱の元なのでおすすめはしませんが、[演算子を自作](../oop/oo_operator.md)して、「null を自称できる型」を作ることができます。
 例えば以下のようなものです。
 
-```csharp
+```csharp {title="null を自称できる型の例"}
 // null じゃないのに this == null が成り立ってしまうかなりタチが悪いクラス
 class FalseNullable
 {
@@ -786,7 +786,7 @@ class FalseNullable
 真のnullと自称nullで、`is`演算子や`??`演算子の挙動が変わります。
 例えば、上記のクラスに対して以下のような処理を書いたとします。
 
-```csharp
+```csharp {title="自称 null に対する挙動の差を示す例"}
 static void Write(FalseNullable? x)
 {
     Console.WriteLine(x);
@@ -813,7 +813,7 @@ static void Write(FalseNullable? x)
 `x.Name`がnull参照例外になるのも真のnullの時だけになります。
 例えば以下のような呼び出しをすると、
 
-```csharp
+```csharp {title="上記のメソッドの呼び出し例"}
 Console.WriteLine("=== 真の null ===");
 Write(null);
 
@@ -825,7 +825,7 @@ Write(new FalseNullable("non-null"));
 ```
 
 以下のような結果になります。
-```console
+```console {title="上記のメソッドの呼び出し例"}
 === 真の null ===
 
 True

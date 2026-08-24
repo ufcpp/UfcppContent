@@ -51,7 +51,7 @@ var formatted = string.Format("({0}, {1})", x, y);
 
 そこで、以下のような、Format用の専用構文が追加されました。
 
-```csharp
+```csharp {title="文字列補間の例"}
 var formatted = $"({x}, {y})";
 ```
 
@@ -59,7 +59,7 @@ var formatted = $"({x}, {y})";
 文字列補間の結果は、単純に `string.Format` メソッドの呼び出しに置き替えられます。
 例えば、最初の例は以下のコードと同じ意味なります。
 
-```csharp
+```csharp {title="文字列補間の展開結果"}
 var formatted = string.Format("({0}, {1})", x, y);
 ```
 
@@ -71,13 +71,13 @@ var formatted = string.Format("({0}, {1})", x, y);
 C# 10.0 では別の型を使って結構複雑なコードに変換する最適化が入りました。
 条件を満たす場合、
 
-```csharp
+```csharp {title="文字列補間の例"}
 var formatted = $"({x}, {y})";
 ```
 
 このコードは `string.Format` ではなく、以下のようなコードに展開されます。
 
-```csharp
+```csharp {title="C# 10.0 での文字列補間の展開結果の例"}
 DefaultInterpolatedStringHandler handler = new DefaultInterpolatedStringHandler(4, 2);
 handler.AppendLiteral("(");
 handler.AppendFormatted(x);
@@ -100,12 +100,12 @@ string s = handler.ToStringAndClear();
 
 少しだけ違うのは、`$""` の中では `{` や `}` も特別な意味を持っているので、これらに対するエスケープが別途必要になります。`{` や `}` は2つ重ねて`{{` や `}}` 書くことで、補間の意味ではなく、その場所に波括弧を表示する意味になります。
 
-```csharp
+```csharp {title="エスケープ"}
 var p = new { X = 10, Y = 20 };
 Console.WriteLine($"\"{{{p.X}, {p.Y}}}\"");
 ```
 
-```console
+```console {title="エスケープ"}
 "{10, 20}"
 ```
 
@@ -113,7 +113,7 @@ Console.WriteLine($"\"{{{p.X}, {p.Y}}}\"");
 
 書式指定もできます。
 
-```csharp
+```csharp {title="文字列補間での書式指定"}
 var formatted = $"({12300:c}, {12300:n}, {12300,4:x})";
 ```
 
@@ -140,7 +140,7 @@ Console.WriteLine($"{x,x}");
 `{}`の中には割と任意の式を書けます。
 たとえば、以下のように、メソッドを呼び出したり、`{}`の中にさらに文字列リテラル`""`を含めることもできます。
 
-```csharp
+```csharp {title="{} 内には割と任意の式を書ける"}
 var data = new[] { 1, 2, 3 };
 var s = $"{string.Join(", ", data)} => {string.Join(", ", data.Select(i => i * i))}";
 ```
@@ -161,7 +161,7 @@ var s2 = $"p = {(p == null ? "null" : p.ToString())}"; // 1段 () でくくれ�
 
 また、`$@` から始めることで、複数行の文字列補間もできます。
 
-```csharp
+```csharp {title="複数行の文字列補間"}
 var verbatim = $@"
 verbatim (here) string
 {x}, {y}, {x:c}, {x:n}
@@ -170,7 +170,7 @@ verbatim (here) string
 
 ちなみに、逆順、つまり、`@$`は、C# 8.0 以降でだけ使えます(C# 7.3 以前だとコンパイル エラーになります)。
 
-```csharp
+```csharp {title="コンパイル エラー"}
 // これは C# 7.3 以前ではコンパイル エラーになる
 var verbatim = @$"
 verbatim (here) string
@@ -181,7 +181,7 @@ verbatim (here) string
 また、`$@`を使った場合、エスケープのルールは[逐語的文字列リテラル](st_embeddedtype.md#verbatim-string)と同じになります。
 すなわち、`"` と書きたければ `""`と、ダブルクォーテーションを2つ重ねます。また、`\`から始めるエスケープはできません(`\`記号がそのまま表示される)。
 
-```csharp
+```csharp {title="複数行文字列補間でのエスケープ"}
 Console.WriteLine($@"
 ""
 {{
@@ -191,7 +191,7 @@ Console.WriteLine($@"
 ");
 ```
 
-```console
+```console {title="複数行文字列補間でのエスケープ"}
 "
 {
 10\20
@@ -218,7 +218,7 @@ System.IFormattable formatable = $"({x}, {y})";
 
 `IFormattable` の `ToString` メソッドには、`IFormatProvider` を与えることで、整形の仕方を調整できます。
 
-```csharp
+```csharp {title="FormattableString に対する書式プロバイダー指定"}
 IFormattable f = $"{x :c}, {x :n}";
 Console.WriteLine(f.ToString(null, new System.Globalization.CultureInfo("en-us")));
 ```
@@ -237,7 +237,7 @@ System.IFormattable formatable = System.Runtime.CompilerServices.FormattableStri
 
 例えば以下のようなメソッドを考えます。
 
-```csharp
+```csharp {title="string と FormattableString のオーバーロード"}
 // string が優先されるので、M1($"") という書き方では呼び分けできない。
 static void M1(string s) => Console.WriteLine("string: " + s);
 static void M1(FormattableString s) => Console.WriteLine($"format: {s.Format}, args: {string.Join(", ", s.GetArguments())}");
@@ -245,7 +245,7 @@ static void M1(FormattableString s) => Console.WriteLine($"format: {s.Format}, a
 
 このとき、`M1($"")` という書き方では `M1(string)` の方が呼ばれてしまいます。
 
-```csharp
+```csharp {title="string 優先"}
 // string の方が呼ばれる
 M1("");
  
@@ -259,7 +259,7 @@ M1((FormattableString)$"");
 `FormattableString` の方を優先的に呼んでほしい場合は、
 以下のようなちょっとしたトリックが必要になります。
 
-```csharp
+```csharp {title="FormattableString を優先してもらうためのトリック"}
 // M2("") と M2($"") で呼び分けできる。
 static void M2(RawString s) => M1(s.Value);
 static void M2(FormattableString s) => M1(s);
@@ -280,7 +280,7 @@ public readonly struct RawString
 この `M2` であれば、ちゃんと `M2("")` で `string` の方が、
 `M2($"")` で `FormattableString` の方が呼ばれます。
 
-```csharp
+```csharp {title="暗黙的型変換よりは FormattableString の方が優先"}
 // RawString (string) の方が呼ばれる
 M2("");
  
@@ -296,7 +296,7 @@ M2($"" + $"");
 C# 6 で、<strong id="key-nameof" class="keyword">nameof 演算子</strong>(nameof operator: "name of X" (Xの名前)を1キーワード化したもの)というものが追加されました。
 変数や、クラス、メソッド、プロパティなどの名前(識別子)を文字列リテラルとして取得できます。
 
-```csharp
+```csharp {title="nameof 演算子の例" highlight-text="nameof(MyClass)"}
 using System;
 
 class MyClass
@@ -317,7 +317,7 @@ class MyClass
 ```
 
 
-```console
+```console {title="nameof 演算子の例"}
 MyClass
 MyProperty = 10
 myField = 10
@@ -332,7 +332,7 @@ myLocal = 10
 
 例えば、C# 5.0までであれば、`ArgumentoException`は以下のようにメッセージを書くことになりました。
 
-```csharp
+```csharp {title="ArgumentoExceptionのメッセージ"}
 static double Sqrt(double x)
 {
     if (x < 0)
@@ -345,7 +345,7 @@ static double Sqrt(double x)
 
 そこで、C# 6で追加されたnameof 演算子を使います。
 
-```csharp
+```csharp {title="ArgumentoExceptionのメッセージをnameofを使って書き替え"}
 static double Sqrt(double x)
 {
     if (x < 0)
@@ -372,7 +372,7 @@ nameof 演算子の目的はここにあります。識別子名を文字列化�
 
 INotifyPropertyChanged の実装でもnameof 演算子を使う例を以下に挙げておきましょう。
 
-```csharp
+```csharp {highlight-ranges="sha256:140c60b8024c1bea323e7f04fa1adc084a62ef55ada7fcc4f86e63e810703af3;13:31-13:43,25:31-25:43"}
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -431,7 +431,7 @@ public class BindableBase : INotifyPropertyChanged
 C# 11 で、`nameof` にちょっとだけ変更が掛かりました。
 以下のように、メソッドに対する属性の中で、そのメソッドの引数の名前が参照できるようになりました。
 
-```csharp
+```csharp {title="nameof(引数名)"}
 using System.Diagnostics.CodeAnalysis;
 
 // C# 10 までこの属性、 NotNullIfNotNull("x") と書かないといけなくて割かしつらかった。
@@ -449,7 +449,7 @@ static string? m(string? x) => x;
 
 C# 14 から、`T<>` みたいに型引数を埋めていないジェネリック型(これを unbound (未束縛)とか open (開きっぱなし) な型といいます)に対して `nameof` 演算子を使えるようになりました。
 
-```csharp
+```csharp {title="unbound なジェネリック型に対する nameof 演算子"}
 Console.WriteLine(nameof(List<>)); // "List"
 Console.WriteLine(nameof(Dictionary<,>.Keys)); // "Keys"
 Console.WriteLine(nameof(List<>.Enumerator.MoveNext)); // "MoveNext"
@@ -465,7 +465,7 @@ C# 14 でようやく着手という流れです。
 
 C# 13 以前だと同じことをしたければ、意味もなく何か適当な型引数を埋めて書いていました。
 
-```csharp
+```csharp {title="C# 13 以前は何か適当な型引数を埋めて問題回避していた"}
 // int の部分には特に意味はないけども、埋めないとコンパイルが通らなかったので適当に int を採用。
 Console.WriteLine(nameof(List<int>)); // "List"
 Console.WriteLine(nameof(Dictionary<int, int>.Keys)); // "Keys"
@@ -476,7 +476,7 @@ Console.WriteLine(nameof(List<int>.Enumerator.MoveNext)); // "MoveNext"
 場合によっては、以下のように「絶対に書けない」という状況も発生します。
 (この場合、メソッド `M` が public なのがおかしいというのはありますが、原理的にはこういうことがありえます。)
 
-```csharp
+```csharp {title="nameof が使えない状況を作ったもの"}
 public interface I
 {
     // static abstract があると M<I> と書けなくなる。
@@ -518,7 +518,7 @@ public static class C
 
 C# 11 で、3つ以上の連続した `"` を使うことで、「一切エスケープが必要ない文字列リテラル」を書けるようになりました。
 
-```csharp
+```csharp {title="raw string literal"}
 // """ から始まる文字列リテラル(raw string, 生文字列)。
 var quote = """
     " はそのまま " として使われて、
@@ -540,7 +540,7 @@ var quote = """
 この「通常の文字列リテラル」で困るのは、その文字列中に `"` や `'` 自身を含む場合で、
 C# ではそういう場合のために、`\` を使った[エスケープ](st_embeddedtype.md#escape-sequence)を行います。
 
-```csharp
+```csharp {title="通常の文字列リテラル"}
 // " を含む文字列リテラル。
 var quote = "\"";
 ```
@@ -552,7 +552,7 @@ var quote = "\"";
 * `\` は `\` としてそのまま使われる
 * リテラル中に改行を含められる
 
-```csharp
+```csharp {title="逐語的文字列リテラル"}
 // @"" と書くと、\ と改行のエスケープが不要に。
 var quote = @"これで3行の文字列になる。
 \ は \ のまま使われる。\\ も \ 2つ。
@@ -564,7 +564,7 @@ var quote = @"これで3行の文字列になる。
 その他、[文字列補間](#conditional-in-string-interpolation)との組み合わせでは `{}` のエスケープも必要です。
 また、もう1つの要望として、「複数行の文字列を書くとき、インデントを揃えたいけどできない」という問題もあります。
 
-```csharp
+```csharp {title="逐語的文字列補間とその欠点"}
 var value = 123;
 
 // $@"" で逐語的 + 文字列補間。
@@ -585,7 +585,7 @@ C# 11 で、`"""` というように、「3つ以上の `"` を並べる」と�
 
 以下のように、単一行か複数行かと、文字列補間の有無によって4パターンあります。
 
-```csharp
+```csharp {title="4種の生文字列の例"}
 var value = 123;
 
 var singleLine = """{ "abc": 123 }""";
@@ -611,7 +611,7 @@ var mutiLineInterpolation = $"""
 例えばの話、「自分自身を文字列リテラル化したい」みたいなことを考えてみましょう。
 まず、以下のような C# 11 コードがあったとします。
 
-```csharp
+```csharp {title="生文字列を使った C# コードの例"}
 var mutiLine = """
     {
       "abc": 123
@@ -622,7 +622,7 @@ var mutiLine = """
 一切エスケープ不要というなら、「この C# コードを出力する C# コード」みたいなものもエスケープなしで書けるようにしたいです。
 こういう場合に、以下のようなコードを書いてしまうと、最初の `"""` が出て来た時点で文字列リテラルを閉じようとしてしまって、コンパイル エラーになります。
 
-```csharp
+```csharp {title="じゃあ、生文字列の中で &quot;&quot;&quot; を書きたい場合は？"}
 // """ と """ の間に """ は書けない。
 Console.WriteLine("""
     var mutiLine = """
@@ -636,7 +636,7 @@ Console.WriteLine("""
 そこでどうするかというと、生文字列リテラルの開始文字を `""""` と4つに増やします。
 (同じ個数の `"` が出てくるまで文字列リテラルが終わりません。)
 
-```csharp
+```csharp {title="&quot; を4つにすれば問題解決" highlight-ranges="sha256:eee93fd4bd9434350fc214cd8ea89f4ef51b461e1772c72678eb82ade0c96a94;2:19-2:23,8:5-8:9"}
 // " 4つで開始すれば、リテラルの中で """ (" 3つ)を書いても問題ない。
 Console.WriteLine(""""
     var mutiLine = """
@@ -650,7 +650,7 @@ Console.WriteLine(""""
 これが、C# の生文字列リテラルの仕様が「3つ<em>以上</em>の `"` を並べる」になっている理由です。
 もちろんさらに入れ子を増やして、`"""""` (5つ)の内側に `""""` を書くこともできます。
 
-```csharp
+```csharp {title="入れ子を2重にして、&quot; を5つに"}
 Console.WriteLine("""""
     Console.WriteLine(""""
         var mutiLine = """
@@ -665,7 +665,7 @@ Console.WriteLine("""""
 逆に `"` 2つがダメなのは、`""` が既存の文法で有効なもの(空文字列になる)なので、
 意味を変えるわけにはいかないからです。
 
-```csharp
+```csharp {title="&quot; 2つはただの空文字列"}
 // 生文字列の "+" ではなく、空文字列2つの結合(= 結局は空文字列)。
 Console.WriteLine(""
     +
@@ -705,7 +705,7 @@ Console.WriteLine("""
 
 ちょっと変わっているのは、複数行リテラルの場合、`"""` と改行の間にスペースが挟まっていても複数行生文字列リテラルと認識されます。
 
-```csharp
+```csharp {title="&quot;&quot;&quot; の後ろのスペースは無視される" highlight-ranges="sha256:da9196f21653b1bf796819aa3392551e2c3cb1cfde3339fb1d974990bd9efd47;4:22-4:26"}
 // """ の後ろに実はスペースが4つあるけど、それは無視される。
 // (ファイルの改行コード次第で 7 か 8。
 // abcdef の6文字 + \r\n (改行)。
@@ -719,7 +719,7 @@ Console.WriteLine("""
 生文字列の仕様のインスパイア元が Markdown の ```` ``` ```` なので、
 もしかしたら以下のような「文字列の中身が何かの注釈を付ける」みたいな仕様は将来認められる可能性はあります。
 
-```csharp
+```csharp {title="Markdown みたいに、生文字列に注釈を付けれるようにするかも？"}
 // C# 11 としては不正。
 // 「将来もしかしたら」程度の構文案。
 Console.WriteLine("""json
@@ -751,7 +751,7 @@ Console.WriteLine("""
 元々インデントが深い場所で逐語的文字列リテラルを書いた場合、
 以下のように、普段の C# コードと同じようなインデントを付けれないという問題があります。
 
-```csharp
+```csharp {title="逐語的文字列リテラルの中にインデントを入れるわけにはいかない"}
 class A
 {
     public static void M(bool flag, int count)
@@ -773,7 +773,7 @@ class A
 一方、生文字列では自由にインデントを入れられます。
 以下のように、閉じ `"""` の行のインデントを基準にして、それよりも左側のスペースはコンパイル結果には残りません。
 
-```csharp
+```csharp {title="生文字列のインデント"}
 class A
 {
     public static void M(bool flag, int count)
@@ -794,7 +794,7 @@ class A
 
 ただ、これはこれで逆に、以下のようなコードには注意が必要です。
 
-```csharp
+```csharp {title="閉じ &quot;&quot;&quot; のインデントには注意"}
 // 1
 Console.WriteLine("""
     a
@@ -808,7 +808,7 @@ Console.WriteLine("""
 
 ちなみに、以下のように、閉じ `"""` の行よりもインデントが少ないコードを書くとコンパイル エラーになります。
 
-```csharp
+```csharp {title="インデントが足りなくてエラーになる例"}
 // インデントが不正(足りない)なのでエラーに。
 Console.WriteLine("""
 a
@@ -847,7 +847,7 @@ Console.WriteLine("""
 1つ非常に紛らわしい書き方がありまして…
 以下のコード、出力はどうなるでしょう？
 
-```csharp
+```csharp {title="@&quot;&quot;&quot;"}
 Console.WriteLine(@"""abc""");
 ```
 
@@ -864,7 +864,7 @@ Console.WriteLine(@"""abc""");
 「生文字列で文字列補間をしたい」という要望もそれなりにあります。
 例えば以下のような感じのコードは、そのものはないにしても似たようなコードは書きたいことがあると思います。
 
-```csharp
+```csharp {title="生文字列で文字列補間"}
 Console.WriteLine(format(123, "abc"));
 
 static string format(int id, string name) => $"""
@@ -881,7 +881,7 @@ static string format(int id, string name) => $"""
 例えば、「文字列補間で JSON を作る」みたいなことをしたい場合、`{` を多用することになるわけですが、
 この場合は `$` を2個にすることで、`{` と `}` 1個はただの文字になって、`{{}}` が文字列補間になります。
 
-```csharp
+```csharp {title="$ を2個にすれば、{ 1個はエスケープなしで書ける"}
 Console.WriteLine(format(123, "abc"));
 
 static string format(int id, string name) => $$"""
@@ -892,7 +892,7 @@ static string format(int id, string name) => $$"""
     """;
 ```
 
-```console
+```console {title="$ を2個にすれば、{ 1個はエスケープなしで書ける"}
 {
   "id": 123,
   "name": "abc"
@@ -908,7 +908,7 @@ static string format(int id, string name) => $$"""
 
 C# 11 で、`"abc"u8` みたいに、文字列リテラルの後ろに `u8` 接尾辞を付けることで、UTF-8 な byte 列を文字列リテラルの形で書けるようになりました。
 
-```csharp
+```csharp {title="u8 リテラルの例" highlight-text="&quot;0123456789ABCDEF&quot;u8"}
 ReadOnlySpan<byte> hex = "0123456789ABCDEF"u8;
 ```
 
@@ -916,7 +916,7 @@ ReadOnlySpan<byte> hex = "0123456789ABCDEF"u8;
 ちなみに、UTF-8 リテラルの型は `ReadOnlySpan<byte>` になります。
 (`var` による型推論も使えます。)
 
-```csharp
+```csharp {title="u8 リテラルの型は ReadOnlySpan&lt;byte&gt;"}
 var hex = "0123456789ABCDEF"u8;
 Console.WriteLine(hex is ReadOnlySpan<byte>); // 「常に true」警告が出る
 ```
@@ -944,7 +944,7 @@ UTF-16 が主流になると思われていた時代の名残りが大きいで�
 そのため、C# の文字(`char`)や文字列(`string`)は UTF-16 前提で、16ビット整数になっています。
 (同じような方針になってしまっているプログラミング言語に Java や JavaScript があります。)
 
-```csharp
+```csharp {title="char は16ビット"}
 Console.WriteLine(sizeof(char)); // 16
 ```
 
@@ -964,7 +964,7 @@ Console.WriteLine(sizeof(char)); // 16
 そうこうしているうちに、「生 `byte` 列で UTF-8 を扱う」と言うのが .NET エコシステム内でデファクトスタンダード化してしまいました(今ここ)。
 例えば `System.Text.Unicode` 名前空間中のメソッドは以下のような感じになっています。
 
-```csharp
+```csharp {title="System.Text.Unicode.Utf8 クラスのメソッドの一部" highlight-ranges="sha256:5a8403c487ec24ca3b1722140aa8d97f6874a05e74ff404260fbcf922e454267;8:36-8:58,12:9-12:34"}
 using System.Buffers;
 
 namespace System.Text.Unicode;
@@ -991,7 +991,7 @@ public static class Utf8
 
 今だと以下のように `byte` 定数を並べた配列を `new byte[]` するしか方法がありません。
 
-```csharp
+```csharp {title="UTF-8 代わりの byte 定数"}
 ReadOnlySpan<byte> _true = new byte[] { (byte)'t', (byte)'r', (byte)'u', (byte)'e' };
 ReadOnlySpan<byte> _false = new byte[] { (byte)'f', (byte)'a', (byte)'l', (byte)'s', (byte)'e' };
 ReadOnlySpan<byte> _null = new byte[] { (byte)'n', (byte)'u', (byte)'l', (byte)'l' };
@@ -1018,7 +1018,7 @@ C# 11 化に伴い、大量のコードが UTF-8 リテラル化されていま�
 
 これらの中には、例えば以下のような文字列が含まれています。
 
-```csharp
+```csharp {title="UTF-8 リテラル化された文字列の例"}
 // HTTP のステータス コード
 var ok = "200"u8;
 var notFound = "404"u8;
@@ -1049,7 +1049,7 @@ var cultureNames = // 一部抜粋
 
 [本節冒頭](#utf8-literal)で書いた通り、文字列リテラルの後ろに `u8` 接尾辞を付けることで UTF-8 リテラルになり、`ReadOnlySpan<byte>` を得ることができます。
 
-```csharp
+```csharp {title="u8 リテラルの例" highlight-text="&quot;abc&quot;u8"}
 ReadOnlySpan<byte> s = "abc"u8;
 ```
 
@@ -1057,7 +1057,7 @@ ReadOnlySpan<byte> s = "abc"u8;
 ターゲット型を見て自動的に UTF-8 リテラルに変換する話も出ていましたが、
 オーバーロード解決がうまくいかず、没になりました。
 
-```csharp
+```csharp {title="没案"}
 // 初期案では OK だった(今はエラー)。
 byte[] s1 = "abc";
 ReadOnlySpan<byte> s2 = "abc";
@@ -1071,13 +1071,13 @@ byte[] s3 = "abc"u8;
 UTF-8 リテラルは、その文字列を UTF-8 として符号化した byte 列に展開されます。
 例えば、前述の `"abc"u8` は、以下のようなコードとほぼ同じ意味になります。
 
-```csharp
+```csharp {title="u8 リテラルの展開結果の例"}
 ReadOnlySpan<byte> s = new byte[] { 97, 98, 99 };
 ```
 
 この手のコードは、C# コンパイラーによって、以下のようなコードに最適化されます。
 
-```csharp
+```csharp {title="u8 リテラルの展開結果の最適化結果の例"}
 byte* p = DLL中のデータが格納されている領域へのポインター;
 ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(p, 3);
 ```
@@ -1090,7 +1090,7 @@ ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(p, 3);
 UTF-8 リテラル同士は `+` 演算子で結合できます。
 例えば、以下の2変数には同じ結果が代入されます。
 
-```csharp
+```csharp {title="UTF-8 リテラルの結合の例"}
 var singleLine = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"u8;
 
 var concatenated = 
@@ -1103,7 +1103,7 @@ var concatenated =
 これは、UTF-8 リテラルに対する特殊対応で、
 一般の `ReadOnlySpan<byte>` に対しては `+` 結合はできません。
 
-```csharp
+```csharp {title="+ 結合ができるのは UTF-8 リテラル同士の場合だけ"}
 ReadOnlySpan<byte> abc = new byte[] { 97, 98, 99 };
 ReadOnlySpan<byte> def = new byte[] { 100, 101, 102 };
 
@@ -1117,7 +1117,7 @@ var s2 = abc + "def"u8; // 片方が u8 リテラルでもダメ。エラー。
 const しか書けない場所で使うとエラーになります。
 具体的には、例えば、[`switch` や `is`](../datatype/typeswitch.md) に使えません。
 
-```csharp
+```csharp {title="UTF-8 は const にはなれない"}
 // これは OK。
 bool str(string x) => x is "abc";
 
@@ -1136,7 +1136,7 @@ bool listPattern(ReadOnlySpan<byte> x) => x is [ 97, 98, 99 ];
 [生文字列リテラル](#raw-string)との組み合わせもできます。
 この場合も、`"""` の後ろに `u8` 接尾辞を付けます。
 
-```csharp
+```csharp {title="UTF-8 生文字列の例"}
 var utf8Json = """
     {
       "id": 123,
@@ -1150,7 +1150,7 @@ var utf8Json = """
 
 一方で、(少なくとも C# 11 では) 文字列補間との併用はできません。
 
-```csharp
+```csharp {title="UTF-8 文字列補間は無理"}
 var x = 123;
 var y = "abc";
 
@@ -1174,7 +1174,7 @@ C# の `string` は UTF-16 として不正なものを受け付けてしまう�
 現代的にはこういう「片割れ」を残すのはよくないと言われていますが、
 C# の `char` や `string` は受け付けます。
 
-```csharp
+```csharp {title="古き良きガバガバ Unicode の例"}
 // サロゲート ペアの片割れだけの文字列。
 // 現代的にはエラーにしたい。C# ができた頃にはそんなにうるさく言われなかった。
 var highSurrogate = "\uD801";
@@ -1200,7 +1200,7 @@ foreach (var c in decoded)
 ですが、C# 11 の時代(2022年)に生まれた UTF-8 リテラルは、
 ちゃんと不正な文字列をはじきます。
 
-```csharp
+```csharp {title="不正な UTF-8 は受け付けない"}
 // UTF-8 リテラルの場合は「サロゲート ペアの片割れ」を受け付けない。
 // コンパイル エラーを起こす。
 var highSurrogate = "\uD801"u8;
@@ -1208,13 +1208,13 @@ var highSurrogate = "\uD801"u8;
 
 ちなみに、以下のように、最終的に有効な Unicode 文字列になるものであればちゃんとコンパイルできます。
 
-```csharp
+```csharp {title="有効な並びでサロゲート ペアが並んでいればちゃんとコンパイル できる"}
 var surrogatePair = "\uD801\uDE00"u8;
 ```
 
 一方で、以下のように「`+` で結合すれば最終的には有効になるはずの2つの UTF-8 リテラル」みたいなものはコンパイル エラーになります。
 
-```csharp
+```csharp {title="+ で結合する場合、個別にチェック"}
 var surrogatePair =
     "\uD801"u8 +
     "\uDE00"u8;

@@ -229,7 +229,7 @@ DLR 上で動く言語としては、[IronPython](http://ironpython.codeplex.com
 
 しかし、C# 4.0でdynamicキーワードが導入されて、ゆるい型（実行時にいろいろ追加可能）が使えるようになりました。
 
-```csharp
+```csharp {title="dynamic キーワード"}
 dynamic d = new ExpandoObject();
 d.X = 10; // この瞬間、d に X というメンバーが追加される
 d.Y = 20; // 同上、Y 追加

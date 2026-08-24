@@ -58,7 +58,7 @@ C#でユーザーからの入力を受け取りたい場合、<em>
 </ul>
 <div>
 
-```csharp
+```csharp {title="文字列の入力"}
 var str = Console.ReadLine(); // ユーザーの入力した文字列を1行読み込む
 ```
 
@@ -103,7 +103,7 @@ auto str = Console::ReadLine();
 </ul>
 <div>
 
-```csharp
+```csharp {title="数値の入力"}
 var n    = int.Parse(Console.ReadLine());  // ユーザーの入力した整数を読み込む
 var x = double.Parse(Console.ReadLine()); // ユーザーの入力した実数を読み込む
 ```
@@ -161,7 +161,7 @@ auto x = double::Parse(Console::ReadLine());
 </ul>
 <div>
 
-```csharp
+```csharp {title="出力"}
 int m = 1, n = 3;
 Console.Write("m = {0}, n = {1}", m, n); // 文字や数値の出力
 ```
@@ -220,7 +220,7 @@ m = 1, n = 3
 </ul>
 <div>
 
-```csharp
+```csharp {title="入出力のサンプル"}
 using System;
 
 class Program
@@ -393,7 +393,7 @@ Console.Write を用いて読んだ文字列をそのまま鸚鵡返しするプ
 #### 解答例 1
 
 
-```csharp
+```csharp {title="鸚鵡返し"}
 using System;
 
 class Sample
@@ -411,7 +411,7 @@ class Sample
 #### 解答例 2
 
 
-```csharp
+```csharp {title="鸚鵡返し×2"}
 using System;
 
 class Sample

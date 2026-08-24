@@ -2,7 +2,10 @@ using System.Net;
 
 namespace Ufcpp.CodeAnnotationMigrator;
 
-internal sealed record SelectionMetadataPlan(string? Lines, string? Text);
+internal sealed record SelectionMetadataPlan(
+    string? Lines,
+    string? Text,
+    string? Ranges = null);
 
 internal sealed record BlockMetadataPlan(
     string? Title,
@@ -81,7 +84,8 @@ internal static class MetadataPlanner
         }
 
         var overlappingKinds = FindOverlappingKinds(historical.Annotations);
-        foreach (var kind in overlappingKinds)
+        foreach (var kind in overlappingKinds.Where(
+                     static kind => kind != AnnotationKind.Highlight))
         {
             diagnostics.Add(new MetadataPlanningDiagnostic(
                 "UNREPRESENTABLE_OVERLAPPING_KINDS",
@@ -90,14 +94,12 @@ internal static class MetadataPlanner
                 + "a differently sized selection of another metadata kind."));
         }
 
-        var highlight = overlappingKinds.Contains(AnnotationKind.Highlight)
-            ? null
-            : PlanSelections(
-                AnnotationKind.Highlight,
-                historical.Annotations,
-                historicalLayout,
-                currentLayout,
-                diagnostics);
+        var highlight = PlanSelections(
+            AnnotationKind.Highlight,
+            historical.Annotations,
+            historicalLayout,
+            currentLayout,
+            diagnostics);
         var error = overlappingKinds.Contains(AnnotationKind.Error)
             ? null
             : PlanSelections(
@@ -176,7 +178,7 @@ internal static class MetadataPlanner
             partial.Add(selection);
         }
 
-        if (partial.Count > 1)
+        if (partial.Count > 1 && kind != AnnotationKind.Highlight)
         {
             diagnostics.Add(new MetadataPlanningDiagnostic(
                 "UNREPRESENTABLE_MULTIPLE_TEXT",
@@ -187,66 +189,96 @@ internal static class MetadataPlanner
         }
 
         string? text = null;
+        MetadataPlanningDiagnostic? textDiagnostic = null;
         if (partial.Count == 1)
         {
             text = NormalizeNewlines(partial[0].Text);
             if (text.Length == 0)
             {
-                diagnostics.Add(new MetadataPlanningDiagnostic(
+                textDiagnostic = new MetadataPlanningDiagnostic(
                     "UNREPRESENTABLE_EMPTY_TEXT",
                     kind,
-                    $"The {kind.ToString().ToLowerInvariant()} selection is empty."));
-                return null;
+                    $"The {kind.ToString().ToLowerInvariant()} selection is empty.");
             }
-
-            if (text.Contains('\n', StringComparison.Ordinal))
+            else if (text.Contains('\n', StringComparison.Ordinal))
             {
-                diagnostics.Add(new MetadataPlanningDiagnostic(
+                textDiagnostic = new MetadataPlanningDiagnostic(
                     "UNREPRESENTABLE_MULTILINE_TEXT",
                     kind,
                     $"The {kind.ToString().ToLowerInvariant()} partial selection "
-                    + "crosses a line boundary."));
-                return null;
+                    + "crosses a line boundary.");
+            }
+            else
+            {
+                var occurrenceCount = CountOccurrences(current.Canonical, text);
+                if (occurrenceCount == 0)
+                {
+                    textDiagnostic = new MetadataPlanningDiagnostic(
+                        "UNREPRESENTABLE_MISSING_TEXT",
+                        kind,
+                        $"The {kind.ToString().ToLowerInvariant()} selected text "
+                        + "does not occur in the current block.");
+                }
+                else if (occurrenceCount > 1)
+                {
+                    textDiagnostic = new MetadataPlanningDiagnostic(
+                        "UNREPRESENTABLE_REPEATED_TEXT",
+                        kind,
+                        $"The {kind.ToString().ToLowerInvariant()} selected text "
+                        + $"occurs {occurrenceCount} times in the current block.");
+                }
+                else
+                {
+                    var currentOffset = current.Canonical.IndexOf(
+                        text,
+                        StringComparison.Ordinal);
+                    if (!MapsToSameSemanticOccurrence(
+                            partial[0],
+                            historical,
+                            current,
+                            text,
+                            currentOffset))
+                    {
+                        textDiagnostic = new MetadataPlanningDiagnostic(
+                            "UNREPRESENTABLE_POSITIONAL_TEXT",
+                            kind,
+                            $"The {kind.ToString().ToLowerInvariant()} selected text "
+                            + "maps to a different occurrence after entity normalization.");
+                    }
+                }
             }
 
-            var occurrenceCount = CountOccurrences(current.Canonical, text);
-            if (occurrenceCount == 0)
+            if (textDiagnostic is not null)
             {
-                diagnostics.Add(new MetadataPlanningDiagnostic(
-                    "UNREPRESENTABLE_MISSING_TEXT",
-                    kind,
-                    $"The {kind.ToString().ToLowerInvariant()} selected text "
-                    + "does not occur in the current block."));
-                return null;
+                text = null;
+            }
+        }
+
+        if (kind == AnnotationKind.Highlight && partial.Count != 0 && text is null)
+        {
+            var rangePlan = HighlightRangePlanner.Plan(
+                partial,
+                historical.Original,
+                current.Original);
+            if (rangePlan.Value is not null)
+            {
+                return new SelectionMetadataPlan(
+                    lines.Count == 0 ? null : FormatLineRanges(lines),
+                    null,
+                    rangePlan.Value);
             }
 
-            if (occurrenceCount > 1)
-            {
-                diagnostics.Add(new MetadataPlanningDiagnostic(
-                    "UNREPRESENTABLE_REPEATED_TEXT",
-                    kind,
-                    $"The {kind.ToString().ToLowerInvariant()} selected text "
-                    + $"occurs {occurrenceCount} times in the current block."));
-                return null;
-            }
+            diagnostics.Add(new MetadataPlanningDiagnostic(
+                "UNREPRESENTABLE_RANGE_PROJECTION",
+                kind,
+                rangePlan.Error ?? "The highlight cannot be projected exactly."));
+            return null;
+        }
 
-            var currentOffset = current.Canonical.IndexOf(
-                text,
-                StringComparison.Ordinal);
-            if (!MapsToSameSemanticOccurrence(
-                    partial[0],
-                    historical,
-                    current,
-                    text,
-                    currentOffset))
-            {
-                diagnostics.Add(new MetadataPlanningDiagnostic(
-                    "UNREPRESENTABLE_POSITIONAL_TEXT",
-                    kind,
-                    $"The {kind.ToString().ToLowerInvariant()} selected text "
-                    + "maps to a different occurrence after entity normalization."));
-                return null;
-            }
+        if (textDiagnostic is not null)
+        {
+            diagnostics.Add(textDiagnostic);
+            return null;
         }
 
         return new SelectionMetadataPlan(

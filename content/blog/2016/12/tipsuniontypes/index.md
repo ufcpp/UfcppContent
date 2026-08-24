@@ -98,14 +98,14 @@ aliases: []
 
 まず、エラーを表現するために、例外型を定義。
 
-```java
+```java {title="(Java)例外型を定義"}
 class InvalidArgumentException extends Exception { }
 class InvalidResultException extends Exception { }
 ```
 
 平方根を求める関数は、以下のような静的メソッドになります。
 
-```java
+```java {title="(Java)正常値か、InvalidArgument, InvalidResultを返すメソッド"}
 private static double sqrt(double value) throws InvalidResultException, InvalidArgumentException
 {
     if (Double.isNaN(value)) throw new InvalidArgumentException();
@@ -116,7 +116,7 @@ private static double sqrt(double value) throws InvalidResultException, InvalidA
 
 このメソッドを呼び出す側は例えば以下のようになるでしょう。
 
-```java
+```java {title="(Java)メソッドを呼び出す側"}
 try
 {
     double y = sqrt(x);
@@ -153,7 +153,7 @@ Union型(直和型)とパターン マッチです。
 例えばF#で先ほどと同様のsqrt関数を書こうと思うと、
 まず、正常な値か、`InvalidArgument`エラー、`InvalidResult`エラーを表すUnionを作ります(F#の場合は[判別共用体](https://msdn.microsoft.com/ja-jp/library/dd233226(v=vs.110).aspx)(discriminated union types)と言います)。
 
-```fsharp
+```fsharp {title="(F#)値、InvalidArgument、InvalidResultのいずれかの値を取る型"}
 type SqrtResult =
     | Value of Double
     | InvalidArgument
@@ -162,7 +162,7 @@ type SqrtResult =
 
 これを使って、平方根を求める関数は以下のように書けます。
 
-```fsharp
+```fsharp {title="(F#)値、InvalidArgument, InvalidResultを返すメソッド"}
 let sqrt x =
     if Double.IsNaN(x) then InvalidArgument
     elif x < 0.0 then InvalidResult
@@ -171,7 +171,7 @@ let sqrt x =
 
 呼び出す側は以下のとおり。
 
-```fsharp
+```fsharp {title="(F#)メソッドを呼び出す側"}
 match sqrt(x) with
 | Value y        -> Console.WriteLine(y)
 | InvalidArgument -> Console.WriteLine("引数の時点でおかしな値")
@@ -191,7 +191,7 @@ match sqrt(x) with
 
 エラーのパターンを増やしたとしましょう。例えば、この例で言うと、NaNだけじゃなくて∞もエラーにしたくなって、`InvalidArgument`とは別に`Infinite`エラーというのを返したくなったとします。
 
-```java
+```java {title="(Java) throws句に例外を1つ追加"}
 private static double sqrt(double value) throws InvalidResultException, InvalidArgumentException, InfiniteException
 {
     if (Double.isInfinite(value)) throw new InfiniteException();
@@ -201,7 +201,7 @@ private static double sqrt(double value) throws InvalidResultException, InvalidA
 }
 ```
 
-```fsharp
+```fsharp {title="(F#)判別共用体に1つcase追加"}
 let sqrt x =
     if Double.IsInfinity(x) then Infinite
     elif Double.IsNaN(x) then InvalidArgument
@@ -235,7 +235,7 @@ let sqrt x =
 
 まず、エラーを示すための列挙型を作ります。
 
-```csharp
+```csharp {title="現状のC#で同様のsqrt"}
 using System;
 
 enum ErrorType
@@ -287,7 +287,7 @@ class Program
 将来的に、これがどうなってほしいかというと、以下のような感じでしょうか。
 
 
-```csharp
+```csharp {title="(まだ見ぬ未来のC#)同様のsqrt"}
 using System;
 
 enum ErrorType
@@ -338,7 +338,7 @@ class Program
 Union型は、要するに、`A | B` と書いた場合、`A`か`B`かのどちらかの値を持つ型です。
 一応、これをC#で似たようなことしようと思うと、以下のように書くことになります。要するに、ただ単にクラスの継承階層を作るだけ。
 
-```csharp
+```csharp {title="AかBかを表す型"}
 abstract class AorB { }
 class A : AorB { }
 class B : AorB { }
@@ -351,7 +351,7 @@ class B : AorB { }
 
 一応、第3者による継承を防止する手段はあって、以下のように書きます。
 
-```csharp
+```csharp {title="AかBかを表し、かつ、それ以外はあり得ない型"}
 // AorB 自体のインスタンスを作れないように abstract
 abstract class AorB
 {
@@ -366,7 +366,7 @@ abstract class AorB
 ですが、この書き方はネストするのがうざい。
 ということで、以下のような書き方で、上記のネスト状態のコードに展開したいという案が出ています。
 
-```csharp
+```csharp {title="(まだ見ぬ未来のC#)AかBかを表し、かつ、それ以外はあり得ない型"}
 // 継承前提(abstract)なんだけど、意図しない継承はさせたくない(sealed)という意図で
 // abstract sealed と付ける
 abstract sealed class AorB { }

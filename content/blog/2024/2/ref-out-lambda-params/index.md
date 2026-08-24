@@ -20,7 +20,7 @@ aliases: []
 ラムダ式は、状況が許すなら、`x => { }` などといったように非常に簡素に書けます。
 ところが、[`ref`](../../../../study/csharp/resource/sp_ref.md#sec-byref) や [`out`](../../../../study/csharp/resource/sp_ref.md#out) が絡むとそうもいかなくて、型推論が効く状況でも型名を省略できません。
 
-```csharp
+```csharp {title="ref, out などが絡むと型名の省略ができない"}
 // 通常、ラムダ式は型推論が効く限り、引数の型を省略できる。
 Action<int> a = x => { };
 
@@ -40,7 +40,7 @@ delegate void OutFunc<T>(out T arg);
 
 特に、「他にも引数が多かったり、他の引数のどれかに型名が長くて書きたくない引数がある」みたいな状況では相当に不便です。
 
-```csharp
+```csharp {title="引数が多くて型の省略したい…"}
 // 全部の引数に型の明示が必要。
 ManyParams a = (int x, int y, int z, ref int r) => { };
 
@@ -53,7 +53,7 @@ ManyParams a2 = (x, y, z, ref int r) => { };
 delegate void ManyParams(int x, int y, int z, ref int r);
 ```
 
-```csharp
+```csharp {title="型名が長くて省略したい…"}
 // 全部の引数に型の明示が必要。
 LongTypeName a = (IReadOnlyDictionary<(int x, int y), List<string[,]>> x, ref int r) => { };
 
@@ -68,7 +68,7 @@ delegate void LongTypeName(IReadOnlyDictionary<(int x, int y), List<string[,]>> 
 
 これに対して、`ref x => { }` みたいな書き方は認めてもいいんじゃない？という話があります。
 
-```csharp
+```csharp {title="ref x, out x なら型名省略できてもいいのでは？"}
 // 現状ダメ。でも、これくらいはできてもいいのでは？
 RefAction<int> r = (ref x) => { };
 OutFunc<int> o = (out x) => x = 1;
@@ -108,7 +108,7 @@ Desing Meeting では対案も2点ほど検討されたんですがそちらは�
 対案その1は、`x => { }` だけで `ref`/`out` も「推論」してもいいのでは？という案。
 ただ、C# の `ref` 引数、`out` 引数は、呼び出し元にも `ref`/`out` の明示を求めるくらいなので、さすがに `x => { }` というような書き方はちょっと C# 的には違和感があります(なのでリジェクト)。
 
-```csharp
+```csharp {title="呼び出し元にも ref/out の明示が必須"}
 RefAction<int> r = (ref int x) => { };
 OutFunc<int> o = (out int x) => x = 1;
 
@@ -132,7 +132,7 @@ delegate void OutFunc<T>(out T arg);
 それをやると[部分型推論](../partial-inference/index.md)の話と同様、
 推論を頑張ろうとすると指数的なコンパイル時間になってしまう可能性があってちょっと怖いそうです(なのでリジェクト、やるとしても部分型推論と一緒に)。
 
-```csharp
+```csharp {title="ラムダ式引数の部分型指定は型推論が複雑になりそう"}
 // ラムダ式引数の部分型指定 + 型引数の推論。
 // 結構推論機構が複雑になるはず。
 static ManyParams<T> Create<T>(ManyParams<T> a) => a;
@@ -143,7 +143,7 @@ delegate void ManyParams<T>(T x, T y, T z, ref T r);
 
 あと、元の提案に残っていた「属性や、引数のデフォルト値はどうしよう？」という未解決の議題についても「大変そうなわりに需要がない」ということで、やらないことになりそうです。
 
-```csharp
+```csharp {title="属性やデフォルト値が付いているときの型省略"}
 using System.Diagnostics.CodeAnalysis;
 
 // C# 10 と 12 で、こんな感じで属性を付けたりデフォルト値を指定できるようになった。

@@ -11,9 +11,10 @@ must recover.
 
 The source of truth is the repository tree at commit
 `eacf0d470a684771524fb04f710951d38a60cc74`, where the legacy `<pre>` blocks
-still contain their editorial annotations. PR 1 is analysis-only. It must not
-modify `content/`, and it has no `--apply` mode. Later stacked PRs may consume
-the report to implement Issues #4 and #5; PR 4 removes this tool.
+still contain their editorial annotations. PR 1 is analysis-only. PR 2 adds the
+Issue #4 title/highlight migration described below while retaining the same
+stdout-only trust boundary. The tool never has an `--apply` mode. PR 3 handles
+Issue #5 error/warning annotations, and PR 4 removes this tool.
 
 ## Inputs
 
@@ -31,6 +32,10 @@ The command accepts:
 - `--report -`: deterministic JSON on standard output. `-` is the default and
   only accepted destination.
 - `--dry-run`: optional and accepted for clarity. Dry run is the only mode.
+- `--issue 4`: select the Issue #4 title/highlight contract. Omitting it retains
+  the PR 1 all-annotation analysis.
+- `--format <report|patch>`: select deterministic JSON or a deterministic
+  unified patch. The default is `report`. `patch` requires `--issue 4`.
 
 Unknown options, positional arguments, `--apply`, missing option values, rooted
 source/current paths, `..` traversal, and every `--report` value other than `-`
@@ -211,11 +216,268 @@ text are unrepresentable. They produce explicit diagnostics rather than a
 guess. A matched block with any unrepresentable metadata remains a block match
 but is unsafe for automatic application.
 
+## Issue #4 migration contract
+
+Issue #4 scope contains only legacy non-empty `title` attributes and `<em>`
+selections. Error and warning annotations remain deliberately out of scope for
+PR 2. Their unresolved PR 1 diagnostics cannot be presented as Issue #4
+failures or silently migrated by the Issue #4 patch.
+
+For fenced blocks, PR 2 preserves and prefers the existing representations in
+this order:
+
+1. `title` for a historical title;
+2. `highlight-lines` for every selection that maps to one or more complete
+   current lines;
+3. `highlight-text` when the remaining partial selection is a non-empty,
+   single-line, case-sensitive ordinal literal that occurs exactly once at the
+   proven semantic position; and
+4. `highlight-ranges` only when the remaining selections cannot be represented
+   exactly by the preceding forms.
+
+`highlight-text` and `highlight-ranges` are mutually exclusive in canonical
+migrator output. `highlight-lines` may accompany either one. All metadata
+properties are emitted in the order above, separated by one ASCII space.
+Values always use double quotes. Before serialization, `&`, `"`, `<`, `>`, and
+the backtick are replaced, in that order, by `&amp;`, `&quot;`, `&lt;`,
+`&gt;`, and `&#96;`. The renderer HTML-decodes the attribute value exactly
+once before title validation or literal matching. Encoding ampersand first
+therefore preserves a literal entity spelling such as `&lt;` as
+`&amp;lt;`, while `&#96;` keeps title text containing a backtick valid on a
+backtick fence. Apostrophes, backslashes, and braces are literal. Existing
+metadata is decoded once, verified, and rewritten to this canonical form. A
+duplicate or conflicting existing property is an error; the migrator never
+appends a second copy.
+
+### Highlight range syntax
+
+The exact grammar is:
+
+```text
+highlight-ranges = "sha256:" 64-lowercase-hex ";" range *("," range)
+range            = position "-" position
+position         = positive-decimal ":" positive-decimal
+```
+
+The first number in a position is a one-based logical line. The second is a
+one-based Unicode scalar-value column. Column 1 is before the first scalar and
+`scalar-count + 1` is immediately after the last scalar. UTF-16 code-unit
+indexes, grapheme clusters, display cells, tab expansion, and culture never
+affect columns. Unpaired UTF-16 surrogates are invalid.
+
+The end position is exclusive. A range may cross logical lines and then
+includes the intervening line break. Newline-only ranges are invalid. CRLF,
+bare CR, and LF are logical line separators for coordinate mapping. The
+physical source offsets used to insert `<mark>` elements retain the original
+separator bytes. The line table is shared with `highlight-lines`; a terminal
+line separator does not invent an additional addressable empty line.
+
+The SHA-256 prefix is the lowercase hexadecimal digest of the UTF-8 encoding of
+the exact `FencedCodeBlock.Lines.ToString()` value after only CRLF and bare-CR
+are converted to LF. It includes every other character, space, tab, blank line,
+entity spelling, and any terminal newline present in that Markdig value. The
+migrator and renderer use the same Markdig version and shared implementation.
+The digest guards the entire code block, so a coordinate cannot silently become
+stale after an unrelated edit.
+
+Ranges must be non-empty, in bounds, strictly increasing, disjoint, and
+non-adjacent in logical source order. Decimal numbers have no sign, whitespace,
+or leading zero. The digest and hexadecimal spelling are exact. The planner
+sorts selections and merges overlapping or adjacent same-kind spans before
+serialization. A hand-written duplicate, overlap, adjacency, alternate order,
+uppercase digest, stale digest, or otherwise non-canonical value fails site
+generation.
+
+Range spans are unioned with spans from `highlight-lines` or `highlight-text`
+before rendering. The existing structural renderer splits syntax-color spans
+at source boundaries, wraps the selected runs in
+`<mark class="code-highlight">`, and verifies before and after insertion that
+the visible code text is unchanged. A range endpoint inside a Unicode scalar
+or an HTML entity projection is unrepresentable and is never rounded.
+
+### Exact historical-to-current projection
+
+A normalized-code hash is a block identity check, not a positional mapping.
+Before emitting a range, the migrator builds an explicit boundary projection
+through the PR 1 normalization operations:
+
+1. historical parser output and current Markdig code are split into physical
+   lines while retaining source offsets;
+2. HTML entity decoding records which source interval produced every decoded
+   scalar boundary;
+3. newline canonicalization, trailing-space removal, framing blank-line
+   removal, and common-indent removal retain boundary maps into the normalized
+   text;
+4. equal normalized text aligns equal scalar boundaries; and
+5. each historical selection boundary is projected back to an exact current
+   source boundary and then converted to a range position.
+
+The projection must prove that decoding the exact current source slice produces
+the same newline-normalized scalar sequence as the historical selection. A
+boundary removed by normalization, inside an entity, inside a surrogate pair,
+or mapping to a different occurrence is an error. No fuzzy search, nearest
+boundary, occurrence proximity, or visual guess is allowed.
+
+### Raw table blocks
+
+Raw `<pre>` blocks inside tables cannot carry Markdig fenced attributes.
+Existing exact `title` attributes are retained; a missing title is added to the
+`<pre>` opening tag with HTML attribute escaping. The audited Issue #4 raw
+highlights are unique literal selections, so migration inserts
+`<mark class="code-highlight">` at the exact guarded text-node boundaries
+inside the existing `<code>` wrapper. It does not split an entity or element.
+The generated HTML therefore uses the same permanent highlight element as
+fenced blocks without enabling or broadening raw HTML.
+
+After each raw edit, the migrator reparses the block and proves that its decoded
+visible code text, wrapper kind, table context, and all non-annotation markup
+are unchanged. An already-identical `title` or `mark` is verified and skipped.
+Any other existing mark, non-unique source mapping, malformed HTML, or missing
+`<code>` wrapper blocks patch emission.
+
+### Exception catalog
+
+Issue #4 has a checked-in deterministic exception catalog. Every entry is
+guarded by exact relative path, pinned historical ordinal and normalized hash
+(or an exact historical document/blob guard for malformed markup), expected
+current ordinal and hash when it maps to live content, and a documented reason.
+Allowed dispositions are:
+
+- `mapped`: an exact live current target whose identity is proven by the
+  catalog guards;
+- `obsolete`: a historical annotation whose block was genuinely deleted or
+  replaced, with nearby-content evidence recorded in the reason; and
+- `malformed-resolved`: malformed legacy markup whose Issue #4 meaning is
+  established explicitly from the pinned source.
+
+A stale guard, missing candidate, reused target, unlisted ambiguous/unmatched
+annotation, or `blocked` disposition is an Issue #4 error. Overrides never use
+approximate text.
+
+The baseline that the catalog must reconcile is:
+
+| Metadata | Total | Exact match | Ambiguous | Unmatched | Range fallback |
+|---|---:|---:|---:|---:|---:|
+| title | 4,211 | 4,197 | 2 | 12 | n/a |
+| highlight | 413 | 247 line/text | 0 | 4 | 162 |
+
+The final audited disposition totals and the six malformed legacy cases are
+part of the deterministic Issue #4 report. Patch mode is unavailable until
+every title and highlight is either mapped or explicitly obsolete and no
+Issue #4 diagnostic remains.
+
+### Rewrite and patch safety
+
+The tool still reads only immutable Git objects and writes only to the supplied
+standard-output stream. In Issue #4 report mode it includes the exact target
+commit, exception resolutions, representation counts, per-block plans, and
+rewrite summary. In patch mode it first computes every postimage in memory,
+validates all postimages, and emits nothing unless the complete Issue #4 result
+is safe.
+
+The unified patch is UTF-8 without a byte-order mark and uses LF patch
+newlines. Files remain LF with their existing final newline. Each file header
+contains the exact preimage and postimage Git blob IDs. Hunks contain context
+and can change only a fence opening metadata line, a raw `<pre>` opening tag,
+or one of the audited raw highlight text nodes. The patch contains the resolved
+target commit in a leading comment.
+
+The explicit application procedure is:
+
+1. capture stdout as UTF-8 without a byte-order mark;
+2. verify `git rev-parse HEAD` equals the target commit recorded by the report
+   and patch;
+3. require both index and worktree to be clean;
+4. run `git apply --check --index <patch>`; and
+5. run `git apply --index --whitespace=nowarn <patch>`.
+
+The `index` preimage guards and `--index` prevent a context-offset match against
+a different file version. Git applies the complete checked patch or reports a
+failure; the migrator itself never opens a worktree file for writing.
+
+After application and commit, a second Issue #4 report must verify all existing
+metadata, and patch mode must emit zero content bytes with exit code 0. A
+different existing value is an error, not a second annotation. This is the
+idempotency contract.
+
+### Audited repository result
+
+The PR 2 audit found no obsolete or blocked Issue #4 annotation.
+
+The twelve baseline unmatched titles and two ambiguous titles were caused by a
+Markdig HTML-block enumeration edge: a whitespace-only line after a legacy
+`<div markdown="1">` did not terminate the HTML block, so a real opening fence
+was hidden and a later closing fence was misread as an opening. Discovery now
+normalizes whitespace-only Markdown separators outside fences while retaining
+an exact source-offset map. This restores the original ordinal/hash matches
+without an override.
+
+The remaining catalog has seven entries:
+
+- two exact changed-code mappings:
+  `study/csharp/cheatsheet/ap_ver7_2.md` (legacy unescaped `<T>`) and
+  `study/sp/dsp/frequency.md` (one literal legacy `<em>` pair); and
+- five malformed historical blocks with exact document-blob, ordinal, line,
+  and current-block hash guards. They recover five titles and one genuine
+  highlight. The orphan `</pre>` in
+  `blog/2026/3/sourcegeneratordemo/index.md` contains no annotation and is
+  classified as benign.
+
+The checked plan reconciles these totals:
+
+| Result | Count |
+|---|---:|
+| Baseline parsed title blocks | 4,211 |
+| Supplemental malformed titles | 5 |
+| Restored title blocks | 4,216 |
+| Baseline parsed highlight blocks | 413 |
+| Supplemental malformed highlights | 1 |
+| Restored highlight blocks | 414 |
+| `highlight-lines` blocks | 52 |
+| `highlight-text` blocks | 206 |
+| `highlight-ranges` blocks | 164 (368 ranges) |
+| Raw-table highlight blocks | 8 |
+| Changed Markdown documents | 461 |
+| Obsolete / blocked annotations | 0 / 0 |
+
+The 164 range blocks include all 162 baseline line/text representation
+failures plus two recovered multi-selection blocks hidden by the enumeration
+bug. One baseline case intentionally selects four trailing spaces. Because
+normalization removes that region, it uses a separate line-end anchor only
+after proving the historical and current trailing runs are ordinally equal.
+No fuzzy or occurrence-based fallback is used.
+
+### Issue #4 acceptance
+
+PR 2 is complete only when:
+
+- all 4,211 historical title blocks and all 413 historical highlight blocks
+  have an exact mapped or evidenced-obsolete disposition;
+- the 162 baseline line/text failures have exact guarded range plans or an
+  explicitly evidenced different disposition;
+- all two ambiguous titles, twelve unmatched titles, four unmatched
+  highlights, and relevant malformed/current-only cases are cataloged without
+  fuzzy matching;
+- the deterministic report has no unexplained Issue #4 diagnostic and patch
+  generation is all-or-nothing;
+- the applied content diff changes annotation metadata only and reparsing proves
+  every code block's visible text is unchanged;
+- a second committed-tree run emits an empty patch;
+- focused renderer and migrator tests cover canonical serialization, line/text
+  preference, repeated and multiple partial selections, multiline ranges,
+  Unicode scalar columns, CRLF/LF mapping, stale/bounds/canonical failures,
+  syntax-span intersections, duplicates and explicit overrides, raw tables,
+  deterministic patching, failure non-mutation, and idempotency; and
+- the full solution build/tests, content validation, site generation, and
+  representative generated-HTML inspection pass.
+
 ## Report
 
 The report is UTF-8 without a byte-order mark, uses LF newlines, is
-pretty-printed JSON with one final LF, and has schema version 1. It contains no
-timestamp, absolute path, machine name, elapsed time, or report destination.
+pretty-printed JSON with one final LF, and has schema version 2 after the
+addition of `ranges` to selection plans. The PR 1 baseline was schema version
+1. It contains no timestamp, absolute path, machine name, elapsed time, or
+report destination.
 
 Top-level sections are emitted in this order:
 

@@ -42,7 +42,7 @@ aliases: []
 
 以下のコードで `b` は `false`
 
-```csharp
+```csharp {title="b は false"}
 enum Enum0 { First }
 enum Enum1 { First }
 var source = new Enum0[3];
@@ -52,7 +52,7 @@ bool b = source is IEnumerable<Enum1>;
 
 これが、いったん `object` で受けるように変更するだけで `b` が `true` になる。
 
-```csharp
+```csharp {title="b が true に"}
 object source = new Enum0[3];
 bool b = source is IEnumerable<Enum1>;
 ```

@@ -19,7 +19,7 @@ aliases: []
 
 配列や`List<T>`であれば以下のようにも書けます。
 
-```csharp
+```csharp {title="やむなく for ステートメント"}
 for (int i = 0; i < length; i++)
 {
     var item = array[i];
@@ -30,7 +30,7 @@ for (int i = 0; i < length; i++)
 `IEnumerable<T>`の場合にはこうは書けず、
 現状だと、以下のようにループの外側に1個変数を作る必要があったりします。
 
-```csharp
+```csharp {title="やむなく foreach ループの外に変数を置く"}
 var i = 0;
 foreach (var item in items)
 {
@@ -44,7 +44,7 @@ foreach (var item in items)
 
 `Select`のオーバーロードの1つを使って、以下のような書き方も一応できます。
 
-```csharp
+```csharp {title="Select のオーバーロードの1つに、インデックスを拾えるものがある"}
 foreach (var x in items.Select((item, index) => new { item, index }))
 {
     Console.WriteLine($"index: {x.index}, value: {x.item}");
@@ -56,7 +56,7 @@ foreach (var x in items.Select((item, index) => new { item, index }))
 
 [C# 7](../../../../study/csharp/cheatsheet/ap_ver7.md)であれば、[タプル](../../../../study/csharp/datatype/tuples.md)を使うのがいいかもしれません。ついでに、[分解構文](../../../../study/csharp/datatype/deconstruction.md)も使えば多少すっきりします。
 
-```csharp
+```csharp {title="[C# 7] タプルがあれば"}
 foreach (var (item, index) in items.Select((item, index) => (item, index)))
 {
     Console.WriteLine($"index: {index}, value: {item}");
@@ -70,7 +70,7 @@ foreach (var (item, index) in items.Select((item, index) => (item, index)))
 `(item, index) => (item, index)`とか毎度書きたくないです。
 拡張メソッドを用意しておきたいところ。
 
-```csharp
+```csharp {title="Indexed 拡張メソッド"}
 public static partial class TupleEnumerable
 {
     public static IEnumerable<(T item, int index)> Indexed<T>(this IEnumerable<T> source)
@@ -94,7 +94,7 @@ public static partial class TupleEnumerable
 
 これで、以下のように書けます。
 
-```csharp
+```csharp {title="Indexed拡張メソッドの使い方"}
 foreach (var (item, index) in items.Indexed())
 {
     Console.WriteLine($"index: {index}, value: {item}");

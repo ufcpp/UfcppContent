@@ -34,7 +34,7 @@ C# をはじめ、C 言語の影響を受けて作られた言語の多くは `\
 
 例えば C# で以下のようなコードを書いて実行すると、たいていの環境で赤い文字が表示されるはずです。
 
-```csharp
+```csharp {title="ANSI X3.64 を使って文字色を変える例"}
 Console.WriteLine("\u001b[31mred text");
 ```
 
@@ -48,7 +48,7 @@ C# 12 以前でも `\x` + 16進数2桁とか、`\u` + 16進数4桁とか、 `\U`
 任意の文字コードを直接打ち込むエスケープ手段があったので、別にそれほどなくて困るものでもなかったりはします。
 以下のコードの `\x1b`, `\u001b`, `\U0000001b` はいずれもエスケープ文字です。
 
-```csharp
+```csharp {title="\x, \u, \U"}
 Console.WriteLine("\x1b[31mred text");
 Console.WriteLine("\u001b[4munderlined text");
 Console.WriteLine("\U0000001b[0mreset style");
@@ -86,7 +86,7 @@ C# でも、ANSI X3.64 出力用のライブラリを提供してくれている
 コストに関しては、エスケープ シーケンスの解析用の `switch` ステートメントに1個 `case` を追加するだけです。
 以下のたった3行の追加。
 
-```csharp
+```csharp {title="\e 対応のためのコード"}
     case 'e':
         ch = '\u001b';
         break;
@@ -111,7 +111,7 @@ C# でも、ANSI X3.64 出力用のライブラリを提供してくれている
 「Any Time」のわりにもうすでに実装されたものがあるわけですが。
 以下のコード、Visual Studio 17.9 Preview 1 (11月15日にリリース) で動きます。
 
-```csharp
+```csharp {title="\e エスケープ、もう動いてる"}
 Console.WriteLine("\e[31mred text");
 Console.WriteLine("\e[4munderlined text");
 Console.WriteLine("\e[0mreset style");

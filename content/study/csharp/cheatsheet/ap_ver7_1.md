@@ -54,7 +54,7 @@ C# 7.1 は、Visual Studio 2017のリリース時期に間に合わなかった 
 `Main`メソッドの戻り値に`Task`クラス(`System.Threading.Tasks`名前空間)を使えるようになりました。
 以下のいずれかのオーバーロードであればエントリーポイントとして認識されます。
 
-```csharp
+```csharp {title="非同期Main(C# 7.1 から)"}
 static Task<int> Main()
 static Task<int> Main(string[] args)
 static Task Main()
@@ -72,7 +72,7 @@ static Task Main(string[] args)
 既定値を結構使って、かつ、名前が長い型というと、例えば`CancellationToken`構造体(`System.Threading`名前空間)とかです。
 以下のようなコードを書いたりします。
 
-```csharp
+```csharp {title="CancellationTokenの規定値をdefault(T)で作る例"}
 static async Task DefaultExpression(CancellationToken c = default(CancellationToken))
 {
     while (c != default(CancellationToken) && !c.IsCancellationRequested)
@@ -86,7 +86,7 @@ static async Task DefaultExpression(CancellationToken c = default(CancellationTo
 これに対して、C# 7.1では、左辺(代入先)から推論できる場合に、`(T)`を省略して`default`だけで既定値を作れるようになりました。
 例えば先ほどのコードは以下のように書き直せます。
 
-```csharp
+```csharp {highlight-ranges="sha256:a8ae71972af92dac2edd4c271d4afa794e94de2479d8c330edf324c8916bb470;1:59-1:66,3:17-3:24"}
 static async Task DefaultExpression(CancellationToken c = default)
 {
     while (c != default && !c.IsCancellationRequested)
@@ -105,7 +105,7 @@ static async Task DefaultExpression(CancellationToken c = default)
 例えば以下のように、`(x, y)` と書くだけで、1要素目に`x`、2要素目に `y` という名前が付きます。
 (これまでだと、`(x: x, y: y)` と書く必要があった。)
 
-```csharp
+```csharp {title="タプル要素名の推論の例"}
 var x = 1;
 var y = 2;
 var t = (x, y);
@@ -128,7 +128,7 @@ C# 7.0で[`is`や`switch`で型を見ての分岐](../datatype/typeswitch.md)が
 しかし、[ジェネリクス](../oop/sp2_generics.md)が絡む場合、
 例えば以下のようなコードはC# 7.0ではコンパイル エラーになっていました。
 
-```csharp
+```csharp {title="C# 7.0ではコンパイルできないswitchの例"}
 static void M<T>(T x)
 {
     switch (x)
@@ -145,7 +145,7 @@ static void M<T>(T x)
 
 さらにいうと、以下のような需要が結構ありそうな場面でも、C# 7.0ではコンパイル エラーになりました。
 
-```csharp
+```csharp {title="C# 7.0ではコンパイルできないswitchの例(型制約付き)"}
 class Base { }
 class Derived1 : Base { }
 class Derived2 : Base { }
@@ -170,7 +170,7 @@ static void N<T>(T x)
 C# 7.0でも、以下のように、`as`演算子を使った場合にはちゃんとコンパイルできます。
 型スイッチは、内部的には`as`演算子に展開される機能で、`as`演算子にできて型スイッチにできないことがあるのは不自然です。
 
-```csharp
+```csharp {title="as 演算子での置き換え"}
 static void N<T>(T x)
     where T : Base
 {

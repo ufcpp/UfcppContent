@@ -30,14 +30,14 @@ aliases: []
 
 例えば、以下のようなデリゲートがあったとします。
 
-```csharp
+```csharp {title="例として使うデリゲート"}
 delegate int F(int x);
 ```
 
 これは内部的には以下のような扱いになっています。
 概ね、インスタンスと関数ポインターのペアです。
 
-```csharp
+```csharp {title="デリゲートの内部的な扱い"}
 class F : System.Delegate
 {
     object Target;
@@ -62,7 +62,7 @@ class F : System.Delegate
 
 C# では(C# 2.0 以降)、以下のように、デリゲート型の変数に対してメソッドを直接渡すような形でデリゲートを作ります。
 
-```csharp
+```csharp {title="デリゲートの作り方(C# 2.0 以降)"}
 // インスタンス メソッドから生成
 var x = new Sample();
 F i = x.Instance;
@@ -107,14 +107,14 @@ F s = new F(Sample.Static);
 
 デリゲートの呼び出しは以下のように書きます。
 
-```csharp
+```csharp {title="デリゲートの呼び出し"}
 i(10);
 s(20);
 ```
 
 これも省略形みたいもので、省略せずに書くと`Invoke`メソッドの呼び出しになっています。
 
-```csharp
+```csharp {title="デリゲートの呼び出し(Invoke を明示的に呼ぶ)"}
 i.Invoke(10);
 s.Invoke(20);
 ```
@@ -131,7 +131,7 @@ s.Invoke(20);
 インスタンス メソッドと静的メソッドは、内部的には実のところだいぶ異なる引数の受け取り方をしています。
 インスタンス メソッドは、以下のように、静的メソッドよりも暗黙的に1引数多く受け取っています。
 
-```csharp
+```csharp {title="インスタンス メソッドと静的メソッドの引数の受け取り方"}
 class Sample
 {
     static void StaticMethod(int x)
@@ -190,7 +190,7 @@ C# ではインスタンス メソッドの方が圧倒的に利用頻度が高�
 拡張メソッドは、実体としては以下のように、第1引数でインスタンスを受け取る構造になっていて、
 これがインスタンス メソッドの暗黙的な `this` 引数と同じ受け取り方になります。
 
-```csharp
+```csharp {title="インスタンス メソッドと拡張メソッドの引数の受け取り方"}
 class Sample
 {
     public void InstanceMethod(int x)
@@ -216,7 +216,7 @@ static class SampleExtensions
 そこで、C# では、以下のように拡張メソッドに対して、インスタンス メソッドと同じようなデリゲートの作り方を認めています
 (`x.E` のような書き方を、カリー化デリゲートと呼びます)。
 
-```csharp
+```csharp {title="拡張メソッドからデリゲートを作る"}
 var x = new Sample();
 
 Action<int> i = x.InstanceMethod;
@@ -241,7 +241,7 @@ Action<int> e = x.ExtensionMethod;
 ちなみに、こういう内部挙動の結果、
 以下のように、静的メソッドに対してダミー引数を1つ増やしてわざわざ拡張メソッド化する高速化手法が使えたりします。
 
-```csharp
+```csharp {title="カリー化デリゲートにすることで静的メソッドのデリゲートを高速化する例"}
 using System;
 
 static class Program
@@ -275,7 +275,7 @@ static class Program
 拡張メソッドに置き換えることで高速化してみましょう。
 以下のように書けます。
 
-```csharp
+```csharp {title="拡張メソッドを介することでちょっと高速化する例"}
 using System;
 
 class Program

@@ -50,7 +50,7 @@ C# だと普段あまり意識しなくていいはずのメモリ管理を強�
 
 [`Span<T>`構造体](../../../../study/csharp/resource/span.md)は、<em>論理的には</em>以下のような構造体だと説明されます。
 
-```csharp
+```csharp {title="Span の中身"}
 struct Span<T>
 {
     ref T _pointer;
@@ -64,7 +64,7 @@ struct Span<T>
 
 ただ、「論理的には」と書いたのは、これまでの .NET (.NET 5.0/ C# 9.0 時点でも)にはこの ref フィールド機能がなくて、 .NET Core 2.1 の `Span<T>` 実装当時には、以下のような特殊処理をすることにしました。
 
-```csharp
+```csharp {title="ref フィールド代わりに ByReference という特殊な型で特殊対応"}
 struct ByReference<T>
 {
     // .NET ランタイムが特別扱いする前提なので、C# では書けない
@@ -94,7 +94,7 @@ C# コンパイラー的にも escape analysis の改善が必要で、
 当然、ref フィールドが入れば、`ByReference<T>` という特殊な構造体は必要なくなるので、
 `Span<T>` も素直に ref フィールドで実装したいという話にもなります。
 
-```csharp
+```csharp {title="Span の本来やりたかった実装方法"}
 readonly ref struct Span<T>
 {
     ref readonly T _field;
@@ -115,7 +115,7 @@ readonly ref struct Span<T>
 [ref 戻り値](../../../../study/csharp/resource/sp_ref.md#ref-returns)では、構造体のフィールドの参照を返せなかったりします。
 例えば、以下のコードはコンパイル エラーになります。
 
-```csharp
+```csharp {title="C# 9.0 時点ではフィールドの参照を ref 戻り値で返せない"}
 struct S
 {
     int _field;
@@ -126,7 +126,7 @@ struct S
 以下のような、インターフェイス実装とジェネリックなメソッド呼び出しをしたときに、
 外に漏れてはいけない参照を漏らしてしまうことがあるので禁止されています。
 
-```csharp
+```csharp {title="外に漏れてはいけない参照が漏れる状況"}
 interface I1
 {
     ref int Prop { get; }

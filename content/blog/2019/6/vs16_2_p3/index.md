@@ -22,7 +22,7 @@ C# 的には、[16.2.P3 マイルストーン](https://github.com/dotnet/roslyn/
 
 唯一、動作確認が取れたのが以下の機能。notnull 制約。
 
-```csharp
+```csharp {title="notnull 制約" highlight-text="notnull"}
 using System;
  
 class C<T>
@@ -64,7 +64,7 @@ null 許容<em>値型</em>とnull 許容<em>参照型</em>を統一的に扱い�
 ただ、以下のようなコードは今のところ受け付けません。
 notnull とは… (仕組み上しょうがなさそう。これを受け付けるためには .NET ランタイム側での対応が必要そうで結構な手間。)
 
-```csharp
+```csharp {title="T? とは書けない問題"}
 class C<T>
     where T : notnull
 {

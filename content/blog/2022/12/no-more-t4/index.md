@@ -88,7 +88,7 @@ foreach (var t in types)
 generator 内では `ToStringWithCulture(t)` みたいに展開されるんですが、
 この `ToStringWithCulture` の中身は以下のようになっています。
 
-```csharp
+```csharp {title="T4 が生成する ToStringWithCulture メソッド"}
 public string ToStringWithCulture(object objectToConvert)
 {
     if ((objectToConvert == null))
@@ -155,7 +155,7 @@ TextTemplatingFilePreprocessor な T4 はもう本当に存在意義がないで
 C# 11 で入った[生文字列リテラル](../../../../study/csharp/start/st_string.md#raw-string)によってテンプレートも書きやすくなっています。
 本校冒頭で書いたテンプレートなら、普通に以下のように書けます。
 
-```csharp
+```csharp {title="文字列補間でテンプレート"}
 using System.Text;
 
 var s = new StringBuilder();

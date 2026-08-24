@@ -75,7 +75,7 @@ C# 5.0 で導入された非同期メソッド（「[非同期処理](sp5_async.
 非同期処理のこれらの利点は非常にありがたいものですが、問題はコードの書きにくくなることです。
 たとえば、同期処理で書くなら以下のようなコードがあったとします。
 
-```csharp
+```csharp {title="同期処理の例"}
 前処理();
 var result = obj.GetValue(x);
 後処理(result);
@@ -84,7 +84,7 @@ var result = obj.GetValue(x);
 
 これを非同期化しようとしたとき、以前（.NET Framework 4/C# 4.0まで）なら、以下のような書き方になっていました。
 
-```csharp
+```csharp {title="C# 4.0 までの非同期処理の例"}
 var sync = System.Threading.SynchronizationContext.Current;
 
 obj.BeginGetValue(x, a =>
@@ -111,7 +111,7 @@ obj.BeginGetValue(x, a =>
 それを叶えるのが、C# 5.0 で導入される非同期メソッドです。
 非同期メソッドの中では、以下のように、await 演算子を使うことで、同期処理っぽい書き方で非同期処理が書けます。
 
-```csharp
+```csharp {title="同期処理の例"}
 前処理();
 var result = await obj.GetValueAsync(x);
 後処理(result);
@@ -171,7 +171,7 @@ await 演算子の引数として渡せます。
 それぞれfor、foreachステートメントの並列版に相当する <code>For</code>、<code>ForEach</code> メソッドが定義されています。
 たとえば、for ステートメントと <code>For</code> メソッドを比較すると以下のようになります。
 
-```csharp
+```csharp {title="for ステートメントと Parallel.For メソッド"}
 // 単一スレッド実行
 for (var i = 0; i < source.Length; i++)
 {
@@ -189,7 +189,7 @@ Parallel.For(0, source.Length, i =>
 一方、並列LINQは、LINQ（Language Integrated Query）によるデータ処理を並列化するものです。
 以下のように、<code>AsParallel</code> 拡張メソッドを1つ追加するだけで、データ処理が並列に行われるようになります。
 
-```csharp
+```csharp {title="LINQ とその並列版"}
 // 単一スレッド実行
 var result = source.Select(selector);
 

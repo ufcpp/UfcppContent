@@ -40,7 +40,7 @@ C# では、if, switch（条件分岐）や while, for, foreach（反復）と�
 
 C# で書くと以下のようになります。
 
-```csharp
+```csharp {title="n 個の整数の中から、正の数だけの和を求める処理"}
 int sum = 0;
 int i = 0;
 while (i < N)
@@ -70,7 +70,7 @@ if は条件分岐、while は反復処理、 a[i] は配列というもので�
 </figure>
 
 
-```csharp
+```csharp {title="n 個の整数の中から、正の数だけの和を求める処理（for 文を利用）"}
 int sum = 0;
 for (int i = 0; i < N; ++i)
 {
@@ -94,7 +94,7 @@ for (int i = 0; i < N; ++i)
 </figure>
 
 
-```csharp
+```csharp {title="n 個の整数の中から、正の数だけの和を求める処理（foreach 文を利用）"}
 int sum = 0;
 foreach (int x in a)
 {

@@ -142,7 +142,7 @@ printf(&quot;%08x\n&quot;, px[0]);</code></pre>
 
 以下に、既定値の例を示します(この例ではクラスのフィールドを明示的に初期化せず使うことで既定値を得ています)。
 
-```csharp
+```csharp {title="既定値の例"}
 // 初期化せずにフィールドを読んでみる(既定値が入っている)
 var a = new DefaultValues();
 
@@ -166,7 +166,7 @@ class DefaultValues
 (未定義動作よりはマシなので)何か決まった値で初期化するとするなら 0 が一番低コストです。
 配列などで大きめのメモリ領域を確保した際でも、0 埋めならそこまで大きなコストをかけずに初期化できます。
 
-```csharp
+```csharp {title="巨大配列の 0 埋めの例"}
 using System.Runtime.InteropServices;
 
 // 16 MB の巨大領域。
@@ -256,7 +256,7 @@ void X<T>()
 この現状を鑑みて、
 C# 10 から構造体に引数なしのコンストラクターを定義できるようになりました。
 
-```csharp
+```csharp {title="C# 10 で引数なしコンストラクターが書けるようになって、new T() と default(T) が別の意味に"}
 // new T() は S(1, 2) に、
 // default(T) は S(0, 0) になる。
 WriteNewAndDefault<S>();
@@ -296,7 +296,7 @@ struct S
 例えば、既定値をよく使う割に型名が長くてうっとおしいものの代表格に、`CancellationToken`構造体(`System.Threading`名前空間)があります。
 以下のような感じのコードを書くことが結構あったりします。
 
-```csharp
+```csharp {title="CancellationTokenの規定値をdefault(T)で作る例"}
 static async Task DefaultExpression(CancellationToken c = default(CancellationToken))
 {
     while (c != default(CancellationToken) && !c.IsCancellationRequested)
@@ -309,7 +309,7 @@ static async Task DefaultExpression(CancellationToken c = default(CancellationTo
 
 これに対して、C# 7.1では、以下のように書き直せます。
 
-```csharp
+```csharp {highlight-ranges="sha256:a8ae71972af92dac2edd4c271d4afa794e94de2479d8c330edf324c8916bb470;1:59-1:66,3:17-3:24"}
 static async Task DefaultExpression(CancellationToken c = default)
 {
     while (c != default && !c.IsCancellationRequested)
@@ -347,7 +347,7 @@ C# には定数(`readonly` の意味じゃなく、`const`)しか受け付けな
 C# 11 では、構造体でもフィールドの明示的な初期化が不要になりました。
 クラスと同じく、明示的に代入しなかったフィールド・自動プロパティには既定値が入ります。
 
-```csharp
+```csharp {title="構造体のフィールドが自動的に 0 初期化されるように"}
 struct Sample
 {
     public int X { get; } = 1;

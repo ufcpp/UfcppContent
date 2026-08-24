@@ -55,7 +55,7 @@ aliases:
 
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/QuickSort.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/QuickSort.cs)
 
-```csharp
+```csharp {title="クイックソート"}
 /// <summary>
 /// クイックソート。
 /// </summary>

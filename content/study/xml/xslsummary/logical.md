@@ -30,7 +30,7 @@ HTML を直接書くのではなく、
 勉強ページの更新履歴の元データは以下のような XML になっています。
 
 
-```xml
+```xml {title="whatsnew.xml"}
 <whatsnew>
 <new year="2000" month="12" day="24"
   url="../csharp/index.html">
@@ -64,7 +64,7 @@ HTML を直接書くのではなく、
 HTMLのソースはこんな感じです↓
 
 
-```html
+```html {title="更新履歴をテーブルで表示"}
 <table>
 <tr>
  <td>2000年12月24日</td>
@@ -108,7 +108,7 @@ HTML の方では視覚的なタグの中に情報が埋まっています。
 例えば、テーブルを使うのをやめて、
 
 
-```xml
+```xml {title="whatsnew.xml を単なる p タグで表示"}
 <p>
 2000年12月24日 <a target="_top"
   href="../csharp/index.html">
@@ -131,7 +131,7 @@ XSL によって視覚的な情報を持たせます。
 更新履歴の XML からテーブルを生成するには以下のような XSL を書きます。
 
 
-```xml
+```xml {title="whatsnew.xml をテーブル化する XSL"}
 <?xml version="1.0" encoding="Shift_JIS"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0">
   <xsl:output method="html" encoding="Shift_JIS"/>
@@ -178,7 +178,7 @@ XSL によって視覚的な情報を持たせます。
 XSL の table の部分を以下のように修正するだけでデザインの変更が出来ます。
 
 
-```xml
+```xml {title="whatsnew.xml を p タグに展開"}
 <p>
   <xsl:for-each select="whatsnew/new"
     order-by="-number(@year);-number(@month);-number(@day)">

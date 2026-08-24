@@ -53,7 +53,7 @@ System.Collections.Generic.List<int> list =
 var キーワードを用いて、<strong id="type-inference" class="keyword">型推論</strong>（type inference）して、
 暗黙的に型付けされたローカル変数（Implicitly typed local variables）を定義できるようになりました。
 
-```csharp
+```csharp {title="var"}
 var n = 1;
 var x = 1.0;
 var s = "test";
@@ -72,7 +72,7 @@ var を用いる際には、必ず初期値を伴う必要があります。
 <em>任意の型の値を代入できる万能な変数を作れるわけではない</em>ということです。
 したがって、以下のように、初期値を伴わない宣言は（型の推論ができないので）エラーになります。
 
-```csharp
+```csharp {title="var（間違い）"}
 var n; // エラー。初期値が必要。
 ```
 
@@ -90,14 +90,14 @@ var は、この冗長さを省くため、左辺側の型名を省略できる�
 C# 3.0 では<strong id="anonytype" class="keyword">匿名型</strong>（anonymous type）を作成できるようになりました。
 匿名型の作り方は以下の通りです。
 
-```csharp
+```csharp {title="匿名型"}
 var x = new { FamilyName = "糸色", FirstName="望"};
 ```
 
 
 このようなコードから、自動的に、以下のような型が生成されます。
 
-```csharp
+```csharp {title="匿名型によって自動生成されるクラス"}
 // ↓この __Anonymous という名前はプログラマが参照できるわけではない。
 class __Anonymous1
 {
@@ -127,7 +127,7 @@ class __Anonymous1
 そして、変数 x に対して、
 2つのプロパティ FamilyName と FirstName が使えます。
 
-```csharp
+```csharp {title="匿名型の変数" highlight-text="x.FamilyName, x.FirstName"}
 var x = new { FamilyName = "糸色", FirstName="望"};
 
 Console.Write("{0}\n", x.FamilyName, x.FirstName);
@@ -163,7 +163,7 @@ var anonymous = new { X = 1, Y = 2 };
 「プロパティ名 =」の部分を省略することもできます。
 （初期化子で渡したプロパティの名前がそのまま匿名クラスでも使われます。）
 
-```csharp
+```csharp {title="プロパティ名の省略" highlight-text="var b = new { a.X, a.Y };"}
 struct A
 {
   public int X { set; get; }
@@ -192,7 +192,7 @@ class Program
 基本的には、「[LINQ](../data/sp3_linq.md#linq)」 のための機能だと思っていいでしょう。
 例えば、後述するクエリ式中で、以下のように利用します。
 
-```csharp
+```csharp {title="匿名型の利用" highlight-text="select new { p.FamilyName, p.FirstName }"}
 var list1 =
   from p in list
   where p.id <= 15
@@ -207,7 +207,7 @@ var list1 =
 new で配列を作成する際、
 型を省略できるようになりました。
 
-```csharp
+```csharp {title="配列の暗黙的型付け" highlight-text="new[] {1, 2, 3, 4}"}
 int[] array = new[] {1, 2, 3, 4};
 ```
 
@@ -223,7 +223,7 @@ new の後ろの型を省略しています。
 var および「[匿名型](#anonytype)」と組み合わせることによって、
 真価が発揮されます。
 
-```csharp
+```csharp {title="var と匿名型との組み合わせ"}
 var array = new[]
   {
     new {X =  0, Y =  1},

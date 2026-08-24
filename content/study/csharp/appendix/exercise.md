@@ -59,7 +59,7 @@ Console.Write を用いて読んだ文字列をそのまま鸚鵡返しするプ
 #### 解答例 1
 
 
-```csharp
+```csharp {title="鸚鵡返し"}
 using System;
 
 class Sample
@@ -77,7 +77,7 @@ class Sample
 #### 解答例 2
 
 
-```csharp
+```csharp {title="鸚鵡返し×2"}
 using System;
 
 class Sample
@@ -105,7 +105,7 @@ class Sample
 #### 解答例 1
 
 
-```csharp
+```csharp {title="整数の四則演算"}
 using System;
 
 class Exercise
@@ -138,7 +138,7 @@ class Exercise
 
 例として double 版を掲載。
 
-```csharp
+```csharp {title="実数の四則演算"}
 using System;
 
 class Exercise
@@ -201,7 +201,7 @@ class Exercise
 #### 解答例 1
 
 
-```csharp
+```csharp {title="円の面積を求める"}
 using System;
 
 class Exercise
@@ -266,7 +266,7 @@ BMIの値が22のときに病気になる可能性が最も低く、BMIが26を�
 </blockquote>
 以下にプログラムの実行結果の例を示す。
 
-```console
+```console {title="結果の例"}
 身長[cm] = 175.5
 体重[kg] = 52.4
 BMI = 17.0128489216808
@@ -277,7 +277,7 @@ BMI = 17.0128489216808
 #### 解答例 1
 
 
-```csharp
+```csharp {title="BMI 値の計算"}
 using System;
 
 class Exercise
@@ -314,7 +314,7 @@ class Exercise
 #### 解答例 1
 
 
-```csharp
+```csharp {title="文字コードの表示"}
 using System;
 
 class Exercise
@@ -348,7 +348,7 @@ class Exercise
 #### 解答例 1
 
 
-```csharp
+```csharp {title="整数と浮動小数点数の割り算"}
 using System;
 
 class Exercise
@@ -379,7 +379,7 @@ double → int にキャストすると、値が整数に切り詰められま�
 #### 解答例 1
 
 
-```csharp
+```csharp {title="double → int"}
 using System;
 
 class Exercise
@@ -405,7 +405,7 @@ class Exercise
 ```
 
 
-```console
+```console {title="double → int"}
 3.8 → 3
 3.1 → 3
 2.7 → 2
@@ -439,7 +439,7 @@ class Exercise
 #### 解答例 1
 
 
-```csharp
+```csharp {title="奇数・偶数の判定"}
 using System;
 
 class Exercise
@@ -468,7 +468,7 @@ BMI 値から体型(やせ型、普通、やや肥満、肥満、高度肥満)�
 #### 解答例 1
 
 
-```csharp
+```csharp {title="BMI 値の計算と体型の判定"}
 using System;
 
 class Exercise
@@ -509,7 +509,7 @@ switch 文を使って150以下の平方数(4＝2×2、9＝3×3、16＝4×4と�
 #### 解答例 1
 
 
-```csharp
+```csharp {title="平方数の判別"}
 using System;
 
 class Exercise
@@ -557,7 +557,7 @@ class Exercise
 
 単純な条件分岐による方法。
 
-```csharp
+```csharp {title="最大値、最小値"}
 using System;
 
 class Exercise
@@ -644,7 +644,7 @@ class Exercise
 #### 解答例 1
 
 
-```csharp
+```csharp {title="整数の和"}
 using System;
 
 class Exercise
@@ -681,7 +681,7 @@ class Exercise
 #### 解答例 1
 
 
-```csharp
+```csharp {title="平方数の判別"}
 using System;
 
 class Exercise
@@ -719,7 +719,7 @@ Sqrt は n の平方根を求める関数。
 #### 解答例 1
 
 
-```csharp
+```csharp {title="九九表"}
 using System;
 
 class Exercise
@@ -761,7 +761,7 @@ for 文を使って以下の漸化式の一般項 <span class="math">
 #### 解答例 1
 
 
-```csharp
+```csharp {title="数列計算"}
 using System;
 
 class Exercise
@@ -800,7 +800,7 @@ int 型の配列に格納されている値の最大値、最小値および平�
 #### 解答例 1
 
 
-```csharp
+```csharp {title="配列の最大値、最小値、平均値"}
 using System;
 
 class Exercise
@@ -856,7 +856,7 @@ double 型の2次元配列を行列に見立てて、行列の掛け算を行う
 
 行列の次元は任意だけども、例として2×2行列の場合を示す。
 
-```csharp
+```csharp {title="行列の積"}
 using System;
 
 class Exercise
@@ -1038,7 +1038,7 @@ class Exercise
 
 double 型の値 x の整数冪を求める関数 Power を作成せよ。
 
-```csharp
+```csharp {title="Power の仕様"}
 /// <summary>
 /// x の整数冪を求める。
 /// </summary>
@@ -1055,7 +1055,7 @@ static double Power(
 #### 解答例 1
 
 
-```csharp
+```csharp {title="Power の実装とテスト"}
 using System;
 
 class Exercise
@@ -1173,7 +1173,7 @@ class Exercise
 
 また、作成した構造体に、三角形の面積を求めるメンバー関数 <code>GetArea</code>を追加せよ。
 
-```csharp
+```csharp {title="GetArea 仕様"}
 /// <summary>
 /// 三角形の面積を求める。
 /// </summary>
@@ -1186,7 +1186,7 @@ public double GetArea()
 #### 解答例 1
 
 
-```csharp
+```csharp {title="Triangle 構造体"}
 using System;
 
 /// <summary>
@@ -1273,7 +1273,7 @@ class Test
 前節[クラス](../oop/oo_class.md)の[問題 1](../oop/oo_class.md#exercise-str1)の <code>Point</code> 構造体および <code>Triangle</code> クラスに、
 以下のようなコンストラクターを追加せよ。
 
-```csharp
+```csharp {title="Point クラスコンストラクター"}
 /// <summary>
 /// 座標値 (x, y) を与えて初期化。
 /// </summary>
@@ -1283,7 +1283,7 @@ public Point(double x, double y)
 ```
 
 
-```csharp
+```csharp {title="Triangle クラスコンストラクター"}
 /// <summary>
 /// 3つの頂点の座標を与えて初期化。
 /// </summary>
@@ -1298,7 +1298,7 @@ public Triangle(Point a, Point b, Point c)
 #### 解答例 1
 
 
-```csharp
+```csharp {title="Point/Triangle クラス"}
 using System;
 
 /// <summary>
@@ -1394,7 +1394,7 @@ class Class1
 #### 解答例 1
 
 
-```csharp
+```csharp {title="Point/Triangle"}
 using System;
 
 /// <summary>
@@ -1545,7 +1545,7 @@ class Class1
 [クラス](../oop/oo_class.md)の[問題 1](../oop/oo_class.md#exercise-str1)の <code>Point</code> 構造体に、
 2点間の距離を求める static メソッド <code>GetDistance</code> を追加せよ。
 
-```csharp
+```csharp {title="GetDistance"}
 /// <summary>
 /// A-B 間の距離を求める。
 /// </summary>
@@ -1560,7 +1560,7 @@ public static double GetDistance(Point a, Point b)
 <code>Triangle</code> クラスに三角形の周を求めるメソッド
 <code>GetPerimeter</code> を追加せよ。
 
-```csharp
+```csharp {title="GetPerimeter"}
 /// <summary>
 /// 三角形の周の長さを求める。
 /// </summary>
@@ -1573,7 +1573,7 @@ public double GetPerimeter()
 #### 解答例 1
 
 
-```csharp
+```csharp {title="Point/Triangle"}
 using System;
 
 /// <summary>
@@ -1773,7 +1773,7 @@ public static Point operator -(Point a, Point b)
 #### 解答例 1
 
 
-```csharp
+```csharp {title="Point/Triangle"}
 using System;
 
 /// <summary>
@@ -1974,7 +1974,7 @@ class Class1
 
 まず、三角形や円等の共通の基底クラスとなる <code>Shape</code> クラスを以下のように作成。
 
-```csharp
+```csharp {title="Shape"}
 /// <summary>
 /// 2次元空間上の図形を表すクラス。
 /// 三角形や円等の共通の基底クラス。
@@ -1991,7 +1991,7 @@ class Shape
 三角形 <code>Triangle</code> クラスと
 円 <code>Circle</code> クラスを作成。
 
-```csharp
+```csharp {title="Triangle"}
 /// <summary>
 /// 2次元空間上の三角形をあらわすクラス
 /// </summary>
@@ -1999,7 +1999,7 @@ class Triangle : Shape
 ```
 
 
-```csharp
+```csharp {title="Circle"}
 /// <summary>
 /// 2次元空間上の円をあらわすクラス
 /// </summary>
@@ -2011,7 +2011,7 @@ class Circle : Shape
 #### 解答例 1
 
 
-```csharp
+```csharp {title="Shape、Triangle、Circle"}
 using System;
 
 /// <summary>
@@ -2317,7 +2317,7 @@ class Class1
 
 必要な箇所（Shape クラスの部分）だけ抜粋。
 
-```csharp
+```csharp {title="Shape"}
 /// <summary>
 /// 2次元空間上の図形を表すクラス。
 /// 三角形や円等の共通の抽象基底クラス。
@@ -2349,7 +2349,7 @@ abstract class Shape
 
 三角形、円に加え、多角形を実装した物を示します。
 
-```csharp
+```csharp {title="さまざまな図形"}
 using System;
 
 /// <summary>

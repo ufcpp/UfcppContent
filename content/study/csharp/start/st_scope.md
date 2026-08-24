@@ -46,7 +46,7 @@ C#の識別子のスコープは、原則として、<em>その識別子の定�
 スコープの範囲は、ブロックが入れ子になっている個所も含めます。
 すなわち、以下のようなコードはコンパイル エラーになります。
 
-```csharp
+```csharp {title="入れ子のブロックにもスコープは及ぶ"}
 public static void M()
 {
     int x = 10;
@@ -66,7 +66,7 @@ C#は、原則として<em>スコープ内で識別子の意味を変えない�
 
 逆に、以下のようなコードであれば、2つの`x`がそれぞれ直近のブロック内だけをスコープにしているので、エラーにはなりません。
 
-```csharp
+```csharp {title="2つの独立したブロックは別スコープ"}
 public static void M()
 {
     {
@@ -85,7 +85,7 @@ public static void M()
 もう1つ注意が必要なのは、変数の定義位置がどこであろうと、スコープは直近のブロック全体になるということです。
 例えば以下のコードを見てください。
 
-```csharp
+```csharp {title="スコープはあくまで直近のブロック全体"}
 public static void M3()
 {
     {
@@ -109,7 +109,7 @@ public static void M3()
 「入れ子のもの含めて、スコープ内では同名不可」の原則には例外もあります。
 1つは、以下のように、メンバーとローカル変数には同じ名前をつけれるということです。
 
-```csharp
+```csharp {title="メンバー名とローカル変数名は同じものを付けれる"}
 public class Sample
 {
     int x = 20;
@@ -130,7 +130,7 @@ public class Sample
 
 もう1つの例外は、型と名前空間です。外で定義された型の名前と同名のメンバーやローカル変数が作れます。
 
-```csharp
+```csharp {title="型や名前空間と同じ名前のフィールド・ローカル変数"}
 namespace Color
 {
     public enum Color
@@ -154,7 +154,7 @@ namespace Color
 
 この場合、どの識別子かを明確化するには、完全修飾名を使うことになります。
 
-```csharp
+```csharp {title="完全修飾名で識別子を参照"}
 using System;
 
 namespace Color
@@ -184,7 +184,7 @@ namespace Color
 ちなみに、これは、あくまで型が外側のスコープで定義されている場合だけです。
 以下のように、まったく同じスコープ内で定義する場合は、型名とメンバー名を同じにすることはできなくなります。
 
-```csharp
+```csharp {title="同スコープ内での同名の型とメンバー定義"}
 public class Sample
 {
     public enum Color
@@ -205,7 +205,7 @@ public class Sample
 メソッドの引数のスコープは、そのメソッド本体内全域です。ほぼ、ローカル変数と扱いは一緒です。
 メソッド内で、引数と同名のローカル変数は作れません。
 
-```csharp
+```csharp {title="引数の扱いはローカル変数と同じ"}
 public static void M(int x)
 {
     int x = 10; // コンパイル エラー
@@ -216,7 +216,7 @@ public static void M(int x)
 ローカル変数と同じくスコープの例外として、メンバーと同じ名前を付けることができます。
 極端な話、以下のように、メソッドと同名の引数を使うこともできます。
 
-```csharp
+```csharp {title="メソッド名と同名の引数が利用可能"}
 public class Sample
 {
     public static int X(int X)
@@ -231,7 +231,7 @@ public class Sample
 
 `for`ステートメントや、`foreach`ステートメントの場合、ループ変数があります。ループ変数のスコープはステートメントの内側になります。
 
-```csharp
+```csharp {title="ループ変数のスコープ"}
 for (int i = 0; i < 5; i++)
 {
     // for の i のスコープはこのブロック内
@@ -254,7 +254,7 @@ foreach (var i in Enumerable.Range(0, 5))
 
 まず、変数は、変数宣言よりも前では使えません。
 
-```csharp
+```csharp {title="変数は、宣言より前では使えない"}
 // 宣言より後なのでコンパイル エラー
 x = 10;
 
@@ -266,7 +266,7 @@ x = 20;
 
 また、変数に格納された値を読み出すためには、それよりも前に確実に初期化を行っている必要があります。
 
-```csharp
+```csharp {title="読み出す前に初期化が必要"}
 {
     int x; // 未初期化変数
 
@@ -288,7 +288,7 @@ C#では、変数が確実に初期化されているかどうかを結構真面
 例えば、以下のように、if ステートメントでは真偽両方で初期化されているかまで見ています。
 (これを、「確実な代入ルール」(definite assignment rule)と呼んで、結構事細かにルールが決まっています。)
 
-```csharp
+```csharp {title="if ステートメントの中まで追って、変数の初期化を確認"}
 {
     int x; // 未初期化変数
 
@@ -333,7 +333,7 @@ C#では、変数が確実に初期化されているかどうかを結構真面
 1つ目の制限 があるので、基本的に、識別子のスコープが、オブジェクトの寿命の最大範囲です。
 例えば以下のようなコードから、変数のスコープ = オブジェクトの寿命になっていることが分かります。
 
-```csharp
+```csharp {title="変数のスコープとオブジェクトの寿命"}
 using System;
 
 class Sample
@@ -369,7 +369,7 @@ public class Program
 }
 ```
 
-```console
+```console {title="実行結果"}
 Scope開始
 Sampleが作られました
 Scope終了
@@ -383,7 +383,7 @@ SampleがGCされました
 
 その1つが[匿名関数](../functional/sp_delegate.md#anonymous)です。匿名関数は、外側のローカル変数を取り込んでしまえる(補足(capture)できる)機能を持っています。この場合、取り込んだローカル変数に入っているインスタンスの寿命が延びます。
 
-```csharp
+```csharp {title="ローカル変数の補足とオブジェクトの寿命"}
 using System;
 
 class Sample
@@ -451,7 +451,7 @@ public static void M(int n)
 
 `while`に書き換えたものを見てのとおり、ループの外側に1つの変数があり、それがずっと使いまわされます。
 
-```csharp
+```csharp {title="forのループ変数はループ全体で共有"}
 Action a = null;
 
 for (int i = 0; i < 10; i++)
@@ -466,7 +466,7 @@ a();
 
 この結果(10が10回表示される)は意図通りでしょうか。0～9までの数字が1回ずつ表示される方を期待したいところですが、残念ながらそうはなりません。「0～9まで1回ずつ」という挙動を得るためには以下のように書く必要があります。
 
-```csharp
+```csharp {title="ループ1回1回で分けたい場合は別の変数が必要"}
 Action a = null;
 
 for (int i = 0; i < 10; i++)
@@ -489,7 +489,7 @@ C# 4.0以前では、`for`ステートメントと同じで、ループ変数が
 一方、C# 5.0以降では、ループ1回1回別扱いされるように変更されています。
 すなわち、`while`を使って書き直すなら以下のようになります。
 
-```csharp
+```csharp {title="foreachのループ変数は4.0以前と5.0以降で挙動が異なる"}
 public static void M(IEnumerable<int> list)
 {
     foreach (var i in list)
@@ -528,7 +528,7 @@ public static void M(IEnumerable<int> list)
 
 当然、以下のように、匿名関数で変数を取り込んだ際の挙動が変わります。
 
-```csharp
+```csharp {title="ラムダ式で変数補足した場合の挙動"}
 Action a = null;
 
 foreach (var i in Enumerable.Range(0, 10))
@@ -553,7 +553,7 @@ a();
 これらは、結構大々的なクラスの自動生成を行っていて、ローカル変数がフィールドに格上げされます。
 例えば、以下のようなコードを実行すると、`Sample`のインスタンスはプログラム終了直前まで回収されません。
 
-```csharp
+```csharp {title="イテレーターと非同期メソッドでのローカル変数の昇格"}
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -615,7 +615,7 @@ public class Program
 ```
 
 
-```console
+```console {title="実行結果"}
 1
 2
 3
@@ -638,7 +638,7 @@ C# 5.0以前の場合、すべてのローカル変数が問答無用で軒並�
 昇格が起きない分、オブジェクトの寿命が短くなります。
 例えば、先ほどのコードですが、まったく同じものを、C# 6以降のコンパイラーを使って、リリース設定でコンパイルすると、結果は以下のように変わります。
 
-```console
+```console {title="実行結果(C# 6以降、リリース設定)"}
 1
 2
 SampleがGCされました
@@ -677,7 +677,7 @@ C# 6以前であれば、変数の宣言は宣言ステートメントでしか�
 「ブロックを持たない」というのは、例えば、if ステートメントや foreach ステートメント直下です。
 以下のようなコードはコンパイル エラーになります。
 
-```csharp
+```csharp {title="ifやforeach直下には変数宣言を書けない"}
 if (true)
     int x = 10; // コンパイル エラー
 
@@ -703,7 +703,7 @@ foreach (var n in new[] { 1 })
 ところが、C# 7で導入された[is 演算子の拡張](../datatype/typeswitch.md#is)と[出力変数宣言]では、式の中で変数宣言ができます。
 式は割かしどこにでも書けるものなので、実質的に、ほぼどこででも変数宣言できるようになりました。
 
-```csharp
+```csharp {title="宣言をどこにでも書けるようになった例"}
 static void M(object obj)
 {
     if (obj is int x1) // 条件式内
@@ -757,7 +757,7 @@ x = 10;
 特に、forステートメントの更新式の部分で宣言された変数のスコープは、更新式内だけになります。
 (ループ本体の中からすら参照できない。)
 
-```csharp
+```csharp {title="for ステートメントの更新式のスコープ"}
 for (int i = 0; i < 100; i += obj is int x ? x : 1) // この x はこの式内でだけ使える
 {
     var x = "別の値"; // OK。更新式内の x とは別物
@@ -766,7 +766,7 @@ for (int i = 0; i < 100; i += obj is int x ? x : 1) // この x はこの式内�
 
 また、switch-case では以下のような書き方もできます。
 
-```csharp
+```csharp {title="caseごとにスコープが分かれる"}
 switch (obj)
 {
     case int x: return x;
@@ -777,7 +777,7 @@ switch (obj)
 
 一方で、if ステートメントの条件式ではスコープが区切られません。そのifを囲うブロックがスコープになります。
 
-```csharp
+```csharp {title="if, while はスコープを区切らない"}
 if (obj is int x1) // 条件式内
 {
 }
@@ -791,7 +791,7 @@ Console.WriteLine(x1); // ここも x1 のスコープ
 
 これは、いわゆる「early return」(`if (条件) { 長い処理 }` の代わりに、`if (!条件) return;` で処理を打ち切ってしまうパターン)で変数宣言をしたいという要件が多いからだそうです。
 
-```csharp
+```csharp {title="early return と if の条件式中での変数宣言"}
 void M(string s)
 {
     if (!int.TryParse(s, out var x)) return;
@@ -807,7 +807,7 @@ void M(string s)
 後者であっても、この中で宣言した変数のスコープはラムダ式内に限られます。
 (要するに、`() => x` みたいなのの`x`の部分は、前述の「埋め込みステートメント」と同じ扱いになっています。)
 
-```csharp
+```csharp {title="ラムダ式中の変数宣言"}
 Func<string, int> f = s => int.TryParse(s, out var x) ? x : -1;
 f("123");
 Console.WriteLine(x); // ここで x は使えない
@@ -817,7 +817,7 @@ Console.WriteLine(x); // ここで x は使えない
 
 Swift など、他のプログラミング言語の一部では、(C#風に書くと)以下のような構文を持っているものがあります。
 
-```csharp
+```csharp {title="is 演算子"}
 using System;
 
 class Base { }
@@ -848,7 +848,7 @@ is演算子の拡張は、C# 7でもこういう「型による分岐」機能�
 
 結局、is演算子の拡張は以下のように、式の中で新しい変数を導入する構文になっています。
 
-```csharp
+```csharp {title="C# 7のis演算子"}
 public static void M(Base x)
 {
     if (x is Derived1 d1)
@@ -870,7 +870,7 @@ public static void M(Base x)
 ローカル変数のようなものだと考えると、宣言より前では使えないはずです。
 一方で、メソッドのようなものだと考えると、通常、メソッドは宣言よりも前で使えます。
 
-```csharp
+```csharp {title="ローカル関数はローカル変数的であるべきか、メソッド的であるべきか"}
 using System;
 
 class Program
@@ -895,7 +895,7 @@ class Program
 
 これは結局、後者が選ばれました。すなわち、メソッド的に、宣言よりも前で使えます。
 
-```csharp
+```csharp {title="ローカル関数は宣言より前で使える"}
 static void Main()
 {
     // ローカル関数は宣言より前で使える
@@ -909,7 +909,7 @@ static void Main()
 ローカル関数が周りのローカル変数をキャプチャする際、
 その変数は、初めてローカル関数を呼び出すまでに初期化すればよいということになっています。
 
-```csharp
+```csharp {title="ローカル関数を呼ぶまでに初期化すればOK"}
 static void SuccessfulSample()
 {
     int a; // 未初期化
@@ -935,7 +935,7 @@ C# 7.3までは、クエリ式中では式中での変数宣言ができませ�
 (変数のスコープをどうするかがちょっと悩ましく、7.0時点では「先送り」していました。)
 C# 7.3で、これが許されるようになりました。
 
-```csharp
+```csharp {title="クエリ式中での変数宣言" highlight-ranges="sha256:b3b3f7fa45d7605f35ce8d3f00f41379fcc39c46e405e160751b6b3022291705;3:23-3:24,4:35-4:36"}
 var q =
     from s in new[] { "a", "abc", "112", "132", "451", null }
     where s is string x && x.Length > 1
@@ -949,7 +949,7 @@ var q =
 
 これは、クエリ式が実際には以下のようなメソッド チェーンに展開されるためです。
 
-```csharp
+```csharp {title="クエリ式のメソッド チェーンへの展開" highlight-ranges="sha256:386e2fbc713ece3552135074bc64b1136e99aeaf593b7f3cb06ba8619747ea1c;3:29-3:30,4:41-4:42"}
 var q =
     new[] { "a", "abc", "112", "132", "451", null }
     .Where(s => s is string x && x.Length > 1)
@@ -967,7 +967,7 @@ var q =
 ラムダ式同様、スコープをどうするか悩ましくて保留になっていたものに初期化子があります。
 C# 7.3で、以下のように、初期化子内でも変数宣言できるようになりました。
 
-```csharp
+```csharp {title="初期化子内での変数宣言" highlight-ranges="sha256:87c77dca538723ddd55e16d3fd3cdf0fc345d6494407a2fbc34720e0d7207a5a;5:61-5:62,11:42-11:43,18:52-18:53,19:68-19:69"}
 using System;
 
 class Derived : Base

@@ -5,7 +5,15 @@ internal sealed record MigratorCliOptions(
     string SourceCommit,
     string SourcePath,
     string CurrentPath,
-    string ReportPath);
+    string ReportPath,
+    int? Issue,
+    MigratorOutputFormat Format);
+
+internal enum MigratorOutputFormat
+{
+    Report,
+    Patch,
+}
 
 internal static class MigratorCliOptionsParser
 {
@@ -27,6 +35,8 @@ internal static class MigratorCliOptionsParser
         var sourcePath = "content";
         var currentPath = "content";
         var reportPath = "-";
+        int? issue = null;
+        var format = MigratorOutputFormat.Report;
         var seen = new HashSet<string>(StringComparer.Ordinal);
 
         for (var index = 0; index < arguments.Count; index++)
@@ -57,6 +67,22 @@ internal static class MigratorCliOptionsParser
                 case "--report":
                     reportPath = ReadValue(arguments, ref index, argument);
                     break;
+                case "--issue":
+                    var issueValue = ReadValue(arguments, ref index, argument);
+                    issue = issueValue == "4"
+                        ? 4
+                        : throw new MigrationInputException(
+                            "Only Issue #4 is supported by this migration mode.");
+                    break;
+                case "--format":
+                    format = ReadValue(arguments, ref index, argument) switch
+                    {
+                        "report" => MigratorOutputFormat.Report,
+                        "patch" => MigratorOutputFormat.Patch,
+                        var value => throw new MigrationInputException(
+                            $"Unknown output format '{value}'."),
+                    };
+                    break;
                 case "--apply":
                     throw new MigrationInputException(
                         "--apply is unavailable; PR 1 supports dry run only.");
@@ -66,12 +92,20 @@ internal static class MigratorCliOptionsParser
             }
         }
 
+        if (format == MigratorOutputFormat.Patch && issue != 4)
+        {
+            throw new MigrationInputException(
+                "Patch format requires --issue 4.");
+        }
+
         return new MigratorCliOptions(
             repositoryRoot,
             sourceCommit,
             sourcePath,
             currentPath,
-            reportPath);
+            reportPath,
+            issue,
+            format);
     }
 
     private static string ReadValue(
@@ -114,22 +148,56 @@ internal static class MigratorCli
             var reportPath = ResolveReportPath(
                 options.ReportPath,
                 workingDirectory);
-            var outcome = MigrationAnalyzer.Analyze(
-                new MigrationAnalysisInput(
-                    repository.ResolvedSourceCommit,
-                    repository.SourcePath,
-                    repository.ResolvedCurrentCommit,
-                    repository.CurrentPath,
-                    repository.HistoricalDocuments,
-                    repository.CurrentDocuments));
-            var bytes = MigrationReportWriter.Serialize(outcome.Report);
+            var input = new MigrationAnalysisInput(
+                repository.ResolvedSourceCommit,
+                repository.SourcePath,
+                repository.ResolvedCurrentCommit,
+                repository.CurrentPath,
+                repository.HistoricalDocuments,
+                repository.CurrentDocuments);
+            var outcome = MigrationAnalyzer.Analyze(input);
+            byte[] bytes;
+            var exitCode = outcome.ExitCode;
+            if (options.Issue == 4)
+            {
+                Issue4MigrationResult migration;
+                try
+                {
+                    migration = Issue4MigrationPlanner.Plan(input, outcome.Report);
+                }
+                catch (InvalidDataException exception)
+                {
+                    await standardError.WriteLineAsync(
+                        $"Issue #4 migration blocked: {exception.Message}");
+                    return 3;
+                }
+
+                bytes = options.Format == MigratorOutputFormat.Patch
+                    ? UnifiedPatchWriter.Write(
+                        repository.ResolvedCurrentCommit,
+                        migration.ChangedDocuments.ToDictionary(
+                            item => JoinGitPath(repository.CurrentPath, item.Key),
+                            item => new DocumentChange(
+                                repository.CurrentDocuments[item.Key],
+                                item.Value),
+                            StringComparer.Ordinal))
+                    : Issue4MigrationReportWriter.Serialize(
+                        outcome.Report,
+                        migration);
+                exitCode = 0;
+            }
+            else
+            {
+                bytes = MigrationReportWriter.Serialize(outcome.Report);
+            }
+
             if (reportPath is null)
             {
                 await standardOutput.WriteAsync(bytes, cancellationToken);
                 await standardOutput.FlushAsync(cancellationToken);
             }
 
-            return outcome.ExitCode;
+            return exitCode;
         }
         catch (MigrationInputException exception)
         {
@@ -168,4 +236,9 @@ internal static class MigratorCli
             + "concurrent topology changes cannot be proven safe without writes "
             + "or locks; use --report - and capture standard output.");
     }
+
+    private static string JoinGitPath(string root, string path) =>
+        string.IsNullOrEmpty(root) || root == "."
+            ? path
+            : root.TrimEnd('/') + "/" + path;
 }

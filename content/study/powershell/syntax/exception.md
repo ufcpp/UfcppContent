@@ -31,7 +31,7 @@ PowerShell では、（タイプミスしたりして）未定義のコマンド
 
 例外は、特に何もしなければ、例外の内容を赤字で表示します。
 
-```console
+```console {title="例外"}
 >  UndefinedName
 用語 'UndefinedName' は、コマンドレット、関数、操作可能なプ
 ログラム、またはスクリプト ファイルとして認識されません。用
@@ -52,7 +52,7 @@ PowerShell では、（タイプミスしたりして）未定義のコマンド
 
 .NET Framework オブジェクトのメソッドが投げる例外も同様の扱いになります。
 
-```console
+```console {title="例: int.Parse から生じた例外"}
 >  [int]::Parse('test')
 "1" 個の引数を指定して "Parse" を呼び出し中に例外が発生しました: 
 "入力文字列の形式が正しくありません。"
@@ -74,7 +74,7 @@ PowerShell 内のエラーは RuntimeException に、
 
 RuntimeException の場合、InnerException プロパティに例外の内容が格納されています。
 
-```console
+```console {title="$Error、RuntimeException.InnerException"}
 >  1/0
 0 で除算しようとしました。
 発生場所 行:1 文字:3
@@ -86,7 +86,7 @@ DivideByZeroException
 
 ErrorRecord 型の CategoryInfo プロパティに例外に関する情報が格納されています。
 
-```console
+```console {title="$Error、ErrorRecord.Exception"}
 >  [int]::Parse('test')
 "1" 個の引数を指定して "Parse" を呼び出し中に例外が発生しました: 
 "入力文字列の形式が正しくありません。"
@@ -118,7 +118,7 @@ $Error の中身は RuntimeException になるみたい。）
 $Error の中身は、
 渡した文字列を Message プロパティに格納した RuntimeException になります。
 
-```console
+```console {title="throw Exception クラス"}
 >  throw 'error message'
 error message
 発生場所 行:1 文字:6
@@ -146,7 +146,7 @@ System.ArgumentException
 ErrorRecord を throw するのはちょっと複雑なんですが、
 例としては以下のような感じ。
 
-```console
+```console {title="throw ErrorRecord"}
 >  throw New-Object Management.Automation.ErrorRecord
   (New-Object ArgumentException), 'test',
   ([Management.Automation.ErrorCategory]::InvalidArgument), ($null)
@@ -187,7 +187,7 @@ PowerShell の trap は、C# や Java でいうところの catch の方に相�
 trap はスクリプト内で生じた例外を拾います。
 （trap はスクリプト内のどこに書いても同じ）
 
-```powershell
+```powershell {title="test.ps1"}
 1
 [int]'test'
 2
@@ -196,7 +196,7 @@ trap { 'trap exception' }
 ```
 
 
-```console
+```console {title="trap" highlight-lines="2"}
 1
 trap exception
 値 "test" を型 "System.Int32" に変換できません。エラー: "入力
@@ -217,7 +217,7 @@ trap exception
 エラーメッセージは表示せず、trap 内に書かれた処理だけして、
 あとは何事もなかったかのように処理を続行します。
 
-```powershell
+```powershell {title="test.ps1" highlight-text="continue"}
 1
 [int]'test'
 2
@@ -226,7 +226,7 @@ trap { 'trap exception'; continue }
 ```
 
 
-```console
+```console {title="trap 内に break"}
 1
 trap exception
 2
@@ -236,7 +236,7 @@ trap exception
 一方、break を書くと、
 エラーメッセージを表示して、残った処理はせずにブロック（あるいはスクリプト）を抜けます。
 
-```powershell
+```powershell {title="test.ps1" highlight-text="break"}
 1
 [int]'test'
 2
@@ -245,7 +245,7 @@ trap { 'trap exception'; break }
 ```
 
 
-```console
+```console {title="trap 内に break"}
 1
 trap exception
 値 "test" を型 "System.Int32" に変換できません。エラー: "入力
@@ -259,7 +259,7 @@ trap exception
 function f 内の trap では break しているので、エラー発生後の 2 は表示されません。
 一方、function 外の trap では continue しているので、エラーの発生源である f より後ろの 'b' が表示されます。）
 
-```powershell
+```powershell {title="test.ps1"}
 function f
 {
   trap { 'trap in function'; break }
@@ -276,7 +276,7 @@ trap { 'trap in script'; continue }
 ```
 
 
-```console
+```console {title="例外の再 throw と、上位ブロックでの trap"}
 >  .\test.ps1
 a
 1
@@ -292,7 +292,7 @@ b
 trap {ブロック} と書くことで任意の例外を拾っていましたが、
 trap [型] {ブロック} と書くことで特定の型の例外だけを拾えます
 
-```powershell
+```powershell {title="test.ps1"}
 1
 [int]'test'
 2
@@ -304,7 +304,7 @@ trap [SystemException] { 'trap for system'; continue }
 ```
 
 
-```console
+```console {title="特定の型だけ trap"}
 >  .\test.ps1
 1
 trap for invalid cast

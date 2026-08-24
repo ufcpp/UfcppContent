@@ -33,20 +33,20 @@ C# 10.0 から補間文字列がどのように展開されるかについて説
 
 例えば以下のようなコードがあったとします。
 
-```csharp
+```csharp {title="補間文字列の例"}
 static string m(int a, int b, int c, int d) => $"{a}.{b}.{c}.{d}";
 ```
 
 C# 9.0 までは、このコードは以下のように展開されていました。
 
-```csharp
+```csharp {title="string.Format への展開"}
 static string m(int a, int b, int c, int d) => string.Format("{0}.{1}.{2}.{3}", a, b, c, d);
 ```
 
 要は `string.Format` メソッド呼び出しへの展開でした。
 ちなみに、ここで呼ばれている `Format` メソッドは以下のようなオーバーロードです。
 
-```csharp
+```csharp {title="Format(format, args)"}
 public static string Format(string format, params object?[] args)
 ```
 
@@ -59,7 +59,7 @@ public static string Format(string format, params object?[] args)
 
 そこで、C# 10.0 では以下のように、`AppendLiteral`, `AppendFormatted` メソッドを何度も呼び出す方針に変更されました。
 
-```csharp
+```csharp {title="C# 10.0 での文字列補間の展開結果の例"}
 DefaultInterpolatedStringHandler handler = new DefaultInterpolatedStringHandler(3, 4);
 handler.AppendFormatted(a);
 handler.AppendLiteral(".");
@@ -96,7 +96,7 @@ string s = handler.ToStringAndClear();
 最低ライン必要なメンバーをそろえた型を作ると以下のようになります。
 (本当に「コンパイルが通る」レベルで、中身が何もないので `Dummy` という名前にしてあります。)
 
-```csharp
+```csharp {title="補間文字列ハンドラーに必要な最低限だけ持った型の例"}
 [System.Runtime.CompilerServices.InterpolatedStringHandler]
 public struct DummyHandler
 {
@@ -113,7 +113,7 @@ public struct DummyHandler
 
 例えば以下のようなコードがあるとき、
 
-```csharp
+```csharp {title="補間文字列をハンドラー型に直接渡す例"}
 void m(int a, int b)
 {
     DummyHandler h = $"{a} / {b}";
@@ -122,7 +122,7 @@ void m(int a, int b)
 
 以下のように展開されます。
 
-```csharp
+```csharp {title="補間文字列をハンドラー型に直接渡す例の展開結果"}
 void m(int a, int b)
 {
     DummyHandler temp = new(3, 2);
@@ -147,14 +147,14 @@ void m(int a, int b)
 そして、この型は .NET 6.0 からは標準ライブラリに入っています。
 例えば以下のようなコードを書いて .NET 6.0 向けにコンパイルした場合、
 
-```csharp
+```csharp {title="補間文字列を string 型に渡す例"}
 string m(int a, int b) => $"{a} / {b}";
 ```
 
 以下のように展開されます。
 (`DefaultInterpolatedStringHandler` 型への代入の展開結果 + `ToStringAndClear` 呼び出しみたいなコードになります。)
 
-```csharp
+```csharp {title="補間文字列を string 型に渡す例の展開結果" highlight-text="h.ToStringAndClear()"}
 string m(int a, int b)
 {
     DefaultInterpolatedStringHandler h = new(3, 2);
@@ -170,7 +170,7 @@ string m(int a, int b)
 `DefaultInterpolatedStringHandler` 型は [ref 構造体](../resource/refstruct.md)なので、`await` と共存できません。
 例えば以下のようなコードを書くと `string.Format` に展開されます。
 
-```csharp
+```csharp {title="DefaultInterpolatedStringHandler に展開できない補間文字列の例" highlight-text="await a"}
 async Task<string> m(Task<int> a) => $"result: {await a}";
 ```
 
@@ -185,7 +185,7 @@ async Task<string> m(Task<int> a) => $"result: {await a}";
 よく使いそうなのは、ジェネリック型引数として使えない `ReadOnlySpan<char>` や、
 その他最適化のために具象型を直接受け取りたい場合(`string` など)用のオーバーロードなどです。
 
-```csharp
+```csharp {title="AppendFormatted のオーバーロードを増やす例"}
 DummyHandler h = $"{123}, {"abc"}, {stackalloc char[1]}";
 
 [System.Runtime.CompilerServices.InterpolatedStringHandler]
@@ -199,7 +199,7 @@ public struct DummyHandler
 }
 ```
 
-```console
+```console {title="AppendFormatted のオーバーロードを増やす例"}
 ジェネリック版
 (literal)
 string 版
@@ -213,13 +213,13 @@ ReadOnlySpan 版
 (ハンドラー型が使える状況下で)書式指定した場合、`AppendFormatted` メソッドの第2、第3引数に書式が渡ります。
 例えば以下のようなコードを書いた場合、
 
-```csharp
+```csharp {title="書式指定付きの補間文字列の例" highlight-ranges="sha256:40484bcb4803d6c82b692374431e1dfdb686e2742995beca8cfcfbe883e39946;1:39-1:44,1:50-1:52,1:58-1:60"}
 string m(int a, int b, int c) => $"({a, 8:X}) ({b:X}) ({c,4})";
 ```
 
 以下のように展開されます。
 
-```csharp
+```csharp {title="書式指定付きの補間文字列の例の展開結果" highlight-ranges="sha256:688c31e248371bce8c9a236762046a2fc640db82b0740e5a67ff314199a592e2;5:26-5:32,7:26-7:29,9:26-9:27"}
 string m(int a, int b, int c)
 {
     DefaultInterpolatedStringHandler h = new(8, 3);
@@ -237,7 +237,7 @@ string m(int a, int b, int c)
 ハンドラー型を自作する場合、`AppendFormatted` メソッドの引数は、
 以下のようにオーバーロードをいくつか用意しても構いませんし、
 
-```csharp
+```csharp {title="AppendFormatted メソッドの引数の例(オーバーロードをいくつか用意)"}
     public void AppendFormatted<T>(T x) { }
     public void AppendFormatted<T>(T x, int alignment) { }
     public void AppendFormatted<T>(T x, string format) { }
@@ -246,7 +246,7 @@ string m(int a, int b, int c)
 
 以下のようにオプション引数で1つのメソッドにまとめても構いません。
 
-```csharp
+```csharp {title="AppendFormatted メソッドの引数の例(オプション引数)"}
     public void AppendFormatted<T>(T x, int? alignment = null, string? format = null) { }
 ```
 
@@ -257,7 +257,7 @@ string m(int a, int b, int c)
 この場合、false が返ってきたら処理を途中で打ち切るようなコードに展開されます。
 例えば以下のようなハンドラー型があったとします。
 
-```csharp
+```csharp {title="bool 戻り値を持つ補間文字列ハンドラー型の例"}
 [InterpolatedStringHandler]
 public struct DummyHandler
 {
@@ -269,13 +269,13 @@ public struct DummyHandler
 
 このハンドラー型に対して、例えば以下のように補間文字列を渡した場合、
 
-```csharp
+```csharp {title="bool 戻り値を持つ補間文字列ハンドラー型の利用例"}
 DummyHandler m(int a, int b, int c, int d) => $"{a}.{b}.{c}.{d}";
 ```
 
 以下のような展開結果になります。
 
-```csharp
+```csharp {title="bool 戻り値を持つ補間文字列ハンドラー型の利用例の展開結果"}
 DummyHandler m(int a, int b, int c, int d)
 {
     DummyHandler h = new(3, 4, out var result);
@@ -306,7 +306,7 @@ DummyHandler m(int a, int b, int c, int d)
 
 これを使うためにはまず、以下のようにコンストラクターに追加の引数を持ったハンドラー型を作ります。
 
-```csharp
+```csharp {title="コンストラクターに追加の引数を持ったハンドラー型"}
 using System.Runtime.CompilerServices;
 
 [InterpolatedStringHandler]
@@ -325,7 +325,7 @@ public ref struct DummyHandler
 
 次に、以下のように、`InterpolatedStringHandlerArgument` 属性を使って、メソッドの引数とハンドラー型のコンストラクター引数の結び付けるメソッドを書きます。
 
-```csharp
+```csharp {title="InterpolatedStringHandlerArgument 属性を使った引数の結び付け"}
 public class Formatter
 {
     // 追加の引数なし。
@@ -348,7 +348,7 @@ public class Formatter
 
 そしてこれらのメソッドを呼ぶと、ハンドラー型に追加の引数が渡るようになります。
 
-```csharp
+```csharp {title="ハンドラー型に引数を渡す例"}
 using System.Globalization;
 
 // Format(DummyHandler) を呼んでて、
@@ -370,7 +370,7 @@ C# 10.0 でハンドラー型の仕様が追加され、
 C# 9.0 まででも [FormattableString](st_string.md#FormattableString) の仕様があるので、
 補間文字列を受け取る候補となるメソッドを3つ同時に定義できます。
 
-```csharp
+```csharp {title="補間文字列を受け取る候補となる3つのメソッド"}
 public static void M(DefaultInterpolatedStringHandler _) => Console.WriteLine("handler");
 public static void M(string _) => Console.WriteLine("string");
 public static void M(IFormattable _) => Console.WriteLine("formattable");
@@ -379,7 +379,7 @@ public static void M(IFormattable _) => Console.WriteLine("formattable");
 こういう状況では、ハンドラー型 > `string` 型 > FormattableString 
 (ハンドラー型が一番呼ばれやすい) という優先順位になります。
 
-```csharp
+```csharp {title="ハンドラー型 &gt; string &gt; FormattableString"}
 // ハンドラー型最優先。
 M($"{1}"); // handler
 
@@ -445,7 +445,7 @@ C# の補間文字列はカルチャー依存で、何も指定しないと [`Cu
 その結果、手元の環境で実行すると日本式のフォーマットになるけど、
 サーバー上で実行すると米国式のフォーマットになったりすることがあります。
 
-```csharp
+```csharp {title="カルチャー依存で文字列補間の結果が変わる例"}
 using System.Globalization;
 
 // サンプルなので明示的に指定。
@@ -465,14 +465,14 @@ Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 Console.WriteLine($"{DateTime.Now}");
 ```
 
-```console
+```console {title="カルチャー依存で文字列補間の結果が変わる例"}
 2021/09/23 22:39:39
 09/23/2021 22:39:39
 ```
 
 `CurrentCulture` 依存が怖いなら、`string.Create` メソッドを使ってカルチャーを明示します。
 
-```csharp
+```csharp {title="string.Create でカルチャーを明示する例"}
 using System.Globalization;
 
 // どこか日本でも Invariant でもない適当なカルチャー。
@@ -485,7 +485,7 @@ Console.WriteLine($"{DateTime.Now}");
 Console.WriteLine(string.Create(CultureInfo.InvariantCulture, $"{DateTime.Now}"));
 ```
 
-```console
+```console {title="string.Create でカルチャーを明示する例"}
 23/09/2021 22:39:39
 09/23/2021 22:39:39
 ```
@@ -526,7 +526,7 @@ Console.WriteLine(string.Create(CultureInfo.InvariantCulture, $"{DateTime.Now}")
 このオーバーロードを呼ぶと、
 `builder.Append($"{1} {2} {3}");` を、以下のようなコードとそん色ないパフォーマンスで呼ぶことができます。
 
-```csharp
+```csharp {title="$&quot;{1} {2} {3}&quot; 相当コード"}
 builder.Append(1);
 builder.Append(" ");
 builder.Append(2);
@@ -542,7 +542,7 @@ builder.Append(3);
 `MemoryExtensions.TryWrite` なら完全にアロケーションなしで文字列補間ができます。
 バッファー管理がちょっと大変ですが、一応、最速を目指すならこのメソッドを使うことになります。
 
-```csharp
+```csharp {title="TryWrite"}
 void m(int a,int b,int c,int d)
 {
     Span<char> buffer = stackalloc char[128];
@@ -560,7 +560,7 @@ void m(int a,int b,int c,int d)
 
 このオーバーロードを使うと、`condition` 引数が `false` の時だけ `AppendLiteral`/`AppendFormatted` を呼び出します。
 
-```csharp
+```csharp {title="Debug.Assert"}
 using System.Diagnostics;
 
 Debug.Assert(true, $@"condition が true な限り、Append は全く呼ばれない。

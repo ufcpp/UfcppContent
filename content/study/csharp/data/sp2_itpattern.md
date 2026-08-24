@@ -35,7 +35,7 @@ C# の Enumerator が順方向アクセスしかできないので、
 
 例ということで、余計な機能は一切省いた以下のような低機能リストを考えます。
 
-```csharp
+```csharp {title="低機能リスト"}
 public class List
 {
   int[] items;
@@ -58,7 +58,7 @@ public class List
 1つ目が内部イテレータ。
 まず、List クラス内に以下のようなメソッドを用意。
 
-```csharp
+```csharp {title="内部イテレータ的アプローチ"}
 public delegate void ForEachAction(int x);
 
 public class List
@@ -83,7 +83,7 @@ public class List
 
 で、以下のようにして使います。
 
-```csharp
+```csharp {title="内部イテレータで反復処理"}
 List l = new List(1, 2, 3, 4, 5);
 
 int sum = 0;
@@ -112,7 +112,7 @@ ForEach の実装は簡単なんですけども、
 こちらは、実装がちょっと面倒になります。
 （C# 2.0 からの新機能である「[イテレーター](sp2_iterator.md#iterator)」を使えば簡単に書けるようになりますが、ここでは説明ということで IEnumerator を自前で実装します。）
 
-```csharp
+```csharp {title="外部イテレータ的アプローチ"}
 public class List
 {
   前略
@@ -169,7 +169,7 @@ public class List
 
 で、利用側は以下のような感じ。
 
-```csharp
+```csharp {title="外部イテレータで反復処理"}
 List l = new List(1, 2, 3, 4, 5);
 
 int sum = 0;
@@ -209,7 +209,7 @@ while を使っていて、この方が反復処理らしくはあります。
 実は、前節の時点ですでに、List クラスに foreach 文を使うために必要なコードの大半を書いているので、
 あとは、以下のように、IEnumerable インターフェースを実装するだけです。
 
-```csharp
+```csharp {title="IEnumerable を実装"}
 public class List : IEnumerable<int>
 {
   前略
@@ -230,7 +230,7 @@ public class List : IEnumerable<int>
 
 これで、C# の List クラスの要素を foreach 文で列挙できるようになります。
 
-```csharp
+```csharp {title="foreach 文"}
 List l = new List(1, 2, 3, 4, 5);
 
 int sum = 0;
@@ -258,7 +258,7 @@ C# 2.0 の「[イテレーター](sp2_iterator.md#iterator)」構文です。
 以下のように書き換えることで、
 Enumerator クラスに相当するものを自動的に生成してくれます。
 
-```csharp
+```csharp {title="イテレータ構文を使った GetEnumerator"}
   /// <summary>
   /// イテレータ構文を使って外部イテレータを自動生成。
   /// </summary>

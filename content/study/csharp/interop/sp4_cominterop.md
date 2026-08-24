@@ -46,7 +46,7 @@ COM への特別処理は以下の2点。
 例えば、悪名高い Word の Document.SaveAs メソッドを見てみましょう。
 C# 3.0 までは以下のような書き方をする必要がありました。
 
-```csharp
+```csharp {title="悪名高い ref 地獄"}
 var word = new Microsoft.Office.Interop.Word.Application();
 
 object missing = Type.Missing;
@@ -61,7 +61,7 @@ word.ActiveDocument.SaveAs2(ref filename,
 
 これが、C# 4.0 なら以下のように書けたりもします。
 
-```csharp
+```csharp {title="ref 省略"}
 object missing = Type.Missing;
 string filename = "sample.docx";
 word.ActiveDocument.SaveAs2(filename,
@@ -74,7 +74,7 @@ word.ActiveDocument.SaveAs2(filename,
 
 まあ、この場合、ref 省略よりも、オプション引数（「[オプション引数・名前付き引数](../structured/sp4_optional.md)」参照）が追加されたことの方がインパクトが大きいですが↓。
 
-```csharp
+```csharp {title="オプション引数が入ったおかげで"}
 string filename = "sample.docx";
 word.ActiveDocument.SaveAs2(filename);
 ```
@@ -94,7 +94,7 @@ C# は「インデックス付きプロパティじゃなくて、インデク�
 例えば、Excel の Application.Range がインデックス付きプロパティになっています。
 C# 3.0 までは、以下のようにアクセスする必要がありました。
 
-```csharp
+```csharp {title="get_Range"}
 var excel = new Microsoft.Office.Interop.Excel.Application();
 var range = excel.get_Range("A1", "A2");
 ```
@@ -102,7 +102,7 @@ var range = excel.get_Range("A1", "A2");
 
 これが、C# 4.0 では以下のように書けます。
 
-```csharp
+```csharp {title="インデックス付きプロパティ"}
 var excel = new Microsoft.Office.Interop.Excel.Application();
 var range = excel.Range["A1", "A2"];
 ```
@@ -111,7 +111,7 @@ var range = excel.Range["A1", "A2"];
 また、対 COM 限定で、インデクサーやインデックス付きプロパティに対する引数の省略（「[オプション引数](../structured/sp4_optional.md#optional)」参照）が可能です。
 すなわち、以下のような記述が許されます。
 
-```csharp
+```csharp {title="インデクサーに対する引数の省略"}
 obj[];
 ```
 
@@ -124,7 +124,7 @@ C# からはインデックス付きプロパティ構文でアクセスでき�
 （今まで通り get_X という書き方をする必要があります。）
 例えば、VB で以下のように書いたとしても、
 
-```vbnet
+```vbnet {title="VB のインデックス付きプロパティ"}
 Public Class Class1
 
     Dim x_ As Dictionary(Of String, Integer)

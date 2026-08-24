@@ -51,7 +51,7 @@ aliases:
 
 例として、以下のようなクラスに、新メンバー、Norm() （x, y の二乗和を計算）を足してみましょう。
 
-```csharp
+```csharp {title="例として使う、拡張したい対象"}
 class P
 {
     public int X { get; set; }
@@ -62,7 +62,7 @@ class P
 
 単純に、このクラス自身を書き換えます。
 
-```csharp
+```csharp {title="Norm を追加"}
 class P
 {
     public int X { get; set; }
@@ -95,7 +95,7 @@ class P
 そういうときに使うのが「[パーシャルクラス](../oop/oo_class.md#partial_class)」です。
 まず、自動生成側にも、class キーワードの前に partial 修飾子を付けます。
 
-```csharp
+```csharp {title="例として使う、拡張したい対象"}
 partial class P
 {
     public int X { get; set; }
@@ -106,7 +106,7 @@ partial class P
 
 そして、別ファイルにて、以下のように、同じクラスに新メンバーを追加します。
 
-```csharp
+```csharp {title="Norm を追加"}
 partial class P
 {
     public int Norm() { return X * X + Y * Y; }

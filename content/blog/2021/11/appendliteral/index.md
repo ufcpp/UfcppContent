@@ -16,14 +16,14 @@ aliases: []
 C# 10.0 で、[文字列補間に対するパフォーマンス改善](../../../../study/csharp/cheatsheet/ap_ver10.md#improved-string-interpolation)が入りました。
 例えば、以下のようなコードがあったとして、
 
-```csharp
+```csharp {title="文字列補間の例"}
 static string A(int x, int y) => $"({x}, {y})";
 static string B(int a, int b, int c) => $"{a}.{b}.{c}";
 ```
 
 C# 10.0 では `$""` の部分がそれぞれ以下のように展開されます。
 
-```csharp
+```csharp {title="文字列補間の C# 10.0 での展開結果"}
 using System.Runtime.CompilerServices;
 
 static string A(int x, int y)
@@ -84,7 +84,7 @@ C# 的に、文字 (`'.'`) は単なる数値(2バイトの値型)なのに対�
 `AggressiveInlining` を付けています。
 要点だけを抜き出すと以下のようなコード。
 
-```csharp
+```csharp {title="AppendLiteral 中の特殊分岐"}
 using System.Runtime.CompilerServices;
 
 [MethodImpl(MethodImplOptions.AggressiveInlining)]

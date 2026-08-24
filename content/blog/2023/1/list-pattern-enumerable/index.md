@@ -37,7 +37,7 @@ C# vNext (12 候補)紹介シリーズ。
 以下の例ではリスト パターンとその展開結果をコメントに書いていますが、
 見ての通り、 `Length` や `[]` を使ったコードと等価です。
 
-```csharp
+```csharp {title="リスト パターンの展開例"}
 using static System.Console;
 
 static void m(int[] x)
@@ -60,7 +60,7 @@ static void m(int[] x)
 元々の提案では、何らかのヘルパー クラスを間に挟んで、
 `x is [0, 1, ..]` みたいなコードを以下のような感じで展開することを考えています。
 
-```csharp
+```csharp {title="IEnumerable に対するリスト パターンの展開例"}
 var helper = new ListPatternHelper(x, 2, 0);
 
 helper.TryGetStartElement(index: 0, out var element0) && element0 is 0 &&

@@ -22,7 +22,7 @@ aliases: []
 C# 11 で [UTF-8 リテラル](../../../../study/csharp/start/st_string.md#utf8-literal)が入って、
 C# プログラム中に UTF-8 なバイト列を `ReadOnlySpan<byte>` で直接埋め込めるようになりました。
 
-```csharp
+```csharp {title="UTF-8 リテラル"}
 ReadOnlySpan<byte> hex = "0123456789ABCDEF"u8;
 ```
 
@@ -36,7 +36,7 @@ ReadOnlySpan<byte> hex = "0123456789ABCDEF"u8;
 そうなると欲しくなるのが UTF-8 に直接書き込める[文字列補間](../../../../study/csharp/start/st_string.md#string-interpolation)。
 以下のようなことをできるといいなぁという要望があります。
 
-```csharp
+```csharp {title="(提案) UTF-8 リテラルの延長で、UTF-8 文字列補間が欲しい"}
 static byte[] Format(int x, int y) => $"(X: {x:X2}, Y: {y:X2})"u8;
 ```
 
@@ -52,7 +52,7 @@ static byte[] Format(int x, int y) => $"(X: {x:X2}, Y: {y:X2})"u8;
 
 前節の UTF-8 文字列補間(案)に類することをやるために、 .NET 8 移行、以下のような書き方ができます。
 
-```csharp
+```csharp {title="Utf8.TryWrite で UTF-8 文字列補間"}
 using System.Text.Unicode;
 
 static byte[] Format(int x, int y)
@@ -70,7 +70,7 @@ static byte[] Format(int x, int y)
 ただ、文字列補間の部分は普通の `$""` で書きます。
 そして、この文字列補間の展開結果は以下の通り。
 
-```csharp
+```csharp {title="Utf8.TryWrite 中の文字列補間の展開結果"}
 using System.Text.Unicode;
 
 static byte[] Format(int x, int y)

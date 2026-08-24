@@ -30,7 +30,7 @@ PowerShell では、
 
 呼び出しは、単に関数名を記述するだけです。
 
-```console
+```console {title="関数の定義"}
 >  function f { pwd }
 >  f
 
@@ -57,7 +57,7 @@ PowerShell の関数は引数を持てるんですが、
 「f param1 param2 param3」というように引数を与えると、
 param1, param2, param3 が自動的に配列 $args に格納されます。
 
-```console
+```console {title="$args 自動変数"}
 >  function f { $args.Length }
 >  f a b c
 3
@@ -75,7 +75,7 @@ param1, param2, param3 が自動的に配列 $args に格納されます。
 明示的に引数を宣言する構文もあります。
 関数名の後ろに、「function f($x, $y)」というように引数リストを書きます。
 
-```console
+```console {title="引数リスト"}
 >  function f($x, $y) { $x * $y }
 >  f 2 3
 6
@@ -86,7 +86,7 @@ param1, param2, param3 が自動的に配列 $args に格納されます。
 関数名の後とかではなくて、
 関数本体内部に param($x, $y) というような書き方をします。
 
-```console
+```console {title="param キーワード"}
 >  function f { param($x, $y); $x * $y }
 >  f 2 3
 6
@@ -104,7 +104,7 @@ param1, param2, param3 が自動的に配列 $args に格納されます。
 引数リストによる方法と、param キーワードを使う方法では、
 引数の型を明示することもできます。
 
-```console
+```console {title="引数の型の明示"}
 >  function f([int]$x, [int]$y) { $x * $y }
 >  f 2 3
 6
@@ -118,7 +118,7 @@ param1, param2, param3 が自動的に配列 $args に格納されます。
 型変換によって挙動が代わる場合もあるので注意してください。
 （できるだけ型は明示すべき。）
 
-```console
+```console {title="型変換による挙動の変化"}
 >  function f($x, $y) { $x * $y }
 >  f "2" 3
 222
@@ -135,7 +135,7 @@ param1, param2, param3 が自動的に配列 $args に格納されます。
 （参照渡しに関しては、「[引数の参照渡し](../../csharp/resource/sp_ref.md)」参照。）
 参照渡しをするには、引数の前に [ref] をつけます。
 
-```console
+```console {title="[ref]"}
 > function swap([ref]$a, [ref]$b) {
   $t = $a.Value; $a.Value = $b.Value; $b.Value = $t
 }
@@ -169,7 +169,7 @@ param1, param2, param3 が自動的に配列 $args に格納されます。
 「f -x 2 -y 3」と言うような書式でも関数の呼び出しが可能です。
 （オプション的な渡し方と、並べる順番による渡し方の併用も可能。）
 
-```console
+```console {title="名前付きパラメータ"}
 >  function f($x, $y) { $x * $y }
 >  f -x 2 -y 3
 6
@@ -189,7 +189,7 @@ param1, param2, param3 が自動的に配列 $args に格納されます。
 デフォルト値の設定の書式は、
 引数リスト（もしくは param）で変数を宣言する際に、値を代入しておくだけです。
 
-```console
+```console {title="引数のデフォルト値"}
 >  function f($x = 3, $y = 5) { $x * $y }
 >  f
 15
@@ -207,7 +207,7 @@ param1, param2, param3 が自動的に配列 $args に格納されます。
 
 関数中に return と書くと、そこで関数の処理を終了します。
 
-```console
+```console {title="return"}
 >  function f($x) { if($x -lt 5) {return}; $x }
 >  f 3
 # ↓ 値を出力する前に return してる
@@ -224,7 +224,7 @@ param1, param2, param3 が自動的に配列 $args に格納されます。
 値を出力するコマンドを複数並べた場合、
 出力が配列になります。
 
-```console
+```console {title="戻り値"}
 >  function f {1; "test"; pwd}
 >  f
 1
@@ -239,7 +239,7 @@ C:\Users\Public
 return の後ろに戻り値を書くこともできますが、
 まあ、どこに書いても戻り値が出力されちゃうんで、あんまり意味もないです。
 
-```console
+```console {title="return で戻り値"}
 >  function f { 1; 2; return 3}
 >  f
 1
@@ -255,7 +255,7 @@ return の後ろに戻り値を書くこともできますが、
 ちゃんと変数で戻り値を受け取るか、
 [void] を書いておかないと不要な値が出力されてしまいます。
 
-```console
+```console {title="戻り値をちゃんと受け取らないと"}
 >  function parse($str)
 {
   [int] $local:a = 0;
@@ -274,7 +274,7 @@ False
 ```
 
 
-```console
+```console {title="[void] で戻り値を消す"}
 >  function parse($str)
 {
   [int] $local:a = 0;
@@ -302,7 +302,7 @@ PowerShell の関数は、コマンド（Cmdlet や 外部スクリプト）と�
 $input という自動変数に格納されます。
 $input は Enumerator なので、foreach 文などを使って要素を参照します。
 
-```console
+```console {title="$input 自動変数"}
 >  function times([int] $a)
 {
   foreach($x in $input)
@@ -323,7 +323,7 @@ $input は Enumerator なので、foreach 文などを使って要素を参照�
 
 PowerShell の関数には、パイプライン処理専用の以下のような構文も用意されています。
 
-```console
+```console {title="begin, process, end"}
 >  function 関数名
 {
   begin   { 最初に1回呼ばれる }
@@ -350,7 +350,7 @@ PowerShell の関数には、パイプライン処理専用の以下のような
 
 例えば、以下のように使います。
 
-```console
+```console {title="begin, process, end の例"}
 >  function f()
 {
   begin   { $local:count = 0 }
@@ -386,7 +386,7 @@ total 3 objects
 
 関数と同様に、引数を取ったりもできます。
 
-```console
+```console {title="引数付きのフィルタ"}
 >  filter times($a) { $a * $_}
 >  1,2,3 | times 2
 2
@@ -397,7 +397,7 @@ total 3 objects
 
 複数の戻り値を返すこともできます。
 
-```console
+```console {title="複数の戻り値を返すフィルタ"}
 >  filter duplicate { $_; $_ }
 >  1,2,3 | duplicate
 1
@@ -426,7 +426,7 @@ total 3 objects
 スクリプトブロックは、関数と同じように呼び出し可能なんですが、
 呼び出すためにはスクリプトブロックを代入した変数の前に &amp; を付ける必要があります。
 
-```console
+```console {title="スクリプトブロックの呼び出し"}
 >  $block = { $a * $a }
 >  $block
 # ↓ & を付けないと、中身が表示される
@@ -444,7 +444,7 @@ $a * $a
 
 $args や param を使って引数を受け取ることもできます。
 
-```console
+```console {title="スクリプトブロックで引数を使う"}
 >  $block = { param($a); $a * $a }
 >  & $block 3
 9
@@ -506,7 +506,7 @@ process ブロック内では $_ も使えます。
 例えば、
 square.ps1 という名前のファイルに以下の内容を書いておいたとします。
 
-```powershell
+```powershell {title="square.ps1"}
 param($factor)
 
 process
@@ -518,7 +518,7 @@ process
 
 すると、以下のようなスクリプト呼び出しが可能です。
 
-```console
+```console {title="スクリプト呼び出し"}
 >  1,2,3 | .\test.ps1 -factor 2
 2
 8
@@ -551,7 +551,7 @@ process
 
 3番目は以下のような感じ。
 
-```console
+```console {title="&amp; で文字列をコマンドとして実行"}
 >  & "pwd"
 
 Path
@@ -588,7 +588,7 @@ C:\Users\Public
 
 例えば以下のコードを見てください。
 
-```console
+```console {title="普通の呼び出しは1段階下のスコープ"}
 >  function f { $x = 0 }
 >  $x = 1
 >  f
@@ -605,7 +605,7 @@ C:\Users\Public
 これを . で呼び出すとどうなるかと言うと、
 以下の通り。
 
-```console
+```console {title="普通の呼び出しは1段階下のスコープ"}
 >  function f { $x = 0 }
 >  $x = 1
 >  . f

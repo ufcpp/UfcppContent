@@ -47,7 +47,7 @@ side by side (1台のPCに複数バージョンを同時にインストール可
 その検知機構として用意されたのが、`RuntimeFeature`クラス(`System.Runtime.CompilerServices`名前空間)です。
 以下のようなクラスになっていて、`const string`なメンバーが存在するかどうかで、その機能を使えるかどうかを判定します。
 
-```csharp
+```csharp {title="RuntimeFeature クラス"}
 public static partial class RuntimeFeature
 {
 #if FEATURE_DEFAULT_INTERFACES
@@ -89,7 +89,7 @@ PDB は基本的に C# コンパイラーが生成するものなので、`Runti
 その他に、`RuntimeFeature`クラスには
 (.NET Standard 2.1 から)以下のような bool 型の静的プロパティもあります。
 
-```csharp
+```csharp {title="DynamicCode"}
 public static partial class RuntimeFeature
 {
     public static bool IsDynamicCodeSupported { get; }
@@ -159,7 +159,7 @@ DI 用途でほしかったり。
 インデクサーに型引数を取りたいと。
 ↓みたいな。(今は、この`T`がどうやっても使えない。)
 
-```csharp
+```csharp {title="インデクサーに型引数"}
 public interface IOptions
 {
     T this<T>[OptionKey<T> key]
@@ -175,7 +175,7 @@ public interface IOptions
 ジェネリクスの型制約に複雑な条件を付けたいというやつ。
 例として挙がってるのは↓みたいなコード。
 
-```csharp
+```csharp {title="複雑な型制約"}
 public static T<A> To<T, A>(this IEnumerable<A> xs)
     where T : <>, new(), ICollection<>
 {

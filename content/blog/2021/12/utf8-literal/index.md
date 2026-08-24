@@ -26,7 +26,7 @@ aliases: []
 そうこうしているうちに、「生 byte 列で UTF-8 を扱う」と言うのが .NET エコシステム内でデファクトスタンダード化してしまいました(今ここ)。
 例えば `System.Text.Unicode` 名前空間中のメソッドは以下のような感じになっています。
 
-```csharp
+```csharp {highlight-ranges="sha256:5a8403c487ec24ca3b1722140aa8d97f6874a05e74ff404260fbcf922e454267;8:36-8:58,12:9-12:34"}
 using System.Buffers;
 
 namespace System.Text.Unicode;
@@ -55,7 +55,7 @@ public static class Utf8
 UTF-8 扱いで `Span<byte>` とかを使うにあたって困るのが文字列リテラル。
 今だと以下のように `byte` 定数的に `new byte[]` するしか方法がありません。
 
-```csharp
+```csharp {title="UTF-8 代わりの byte 定数"}
 ReadOnlySpan<byte> _true = new byte[] { (byte)'t', (byte)'r', (byte)'u', (byte)'e' };
 ReadOnlySpan<byte> _false = new byte[] { (byte)'f', (byte)'a', (byte)'l', (byte)'s', (byte)'e' };
 ReadOnlySpan<byte> _null = new byte[] { (byte)'n', (byte)'u', (byte)'l', (byte)'l' };
@@ -84,7 +84,7 @@ ReadOnlySpan<byte> _null = new byte[] { (byte)'n', (byte)'u', (byte)'l', (byte)'
 
 暗黙的変換:
 
-```csharp
+```csharp {title="byte[] とかへの文字列リテラル代入は UTF-8 byte 列扱い"}
 byte[] array = "hello";             // new byte[] { 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20 }
 Span<byte> span = "dog";            // new byte[] { 0x64, 0x6f, 0x67 }
 ReadOnlySpan<byte> span = "cat";    // new byte[] { 0x63, 0x61, 0x74 }
@@ -92,7 +92,7 @@ ReadOnlySpan<byte> span = "cat";    // new byte[] { 0x63, 0x61, 0x74 }
 
 `u8` 接尾辞:
 
-```csharp
+```csharp {title="u8 を付けると UTF-8 リテラルに"}
 string s1 = "hello"u8;      // エラー。型が合ってない。
 var s2 = "hello"u8;         // Ok。型は ReadOnlySpan<byte>。
 Span<byte> s3 = "hello"u8;  // Ok。
@@ -102,14 +102,14 @@ byte[] s4 = "hello"u8;      // Ok。
 UTF-8 として不正になる文字列リテラルはコンパイル エラーにするそうです。
 .NET の文字列は UTF-16 というか実際には「古き良き Unicode」(2バイト固定長で行けると思ってた頃の Unicode)なので、「[サロゲート ペア](https://codezine.jp/article/detail/1592)の片割れ」みたいな今となってはダメなやつを受け付けてしまうので。
 
-```csharp
+```csharp {title="不正な UTF-16 はコンパイル エラーに"}
 byte[] array = "\uD801"; // ハイ サロゲートのみ。コンパイル エラーにする。
 ```
 
 ちなみに、`const string` から UTF-8 リテラルも作れるし、
 「不正な UTF-16 を `+` でつないで、その結果が有効な UTF-8 になるなら OK」だそうです。
 
-```csharp
+```csharp {title="不正 UTF-16 な const string 2つ → 有効な UTF-8 リテラル"}
 const string first = "\uD83D";  // ハイ サロゲート。
 const string second = "\uDE00"; // ロー サロゲート。
 ReadOnlySpan<byte> span = first + second; // これは OK

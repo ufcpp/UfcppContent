@@ -32,7 +32,7 @@ aliases: []
 要は、手動で書く通常のプロパティ(以下、手動プロパティ)と自動プロパティの中間で、
 バッキング フィールドのアクセスに `field` というキーワードを使おうというものです。
 
-```csharp
+```csharp {title="手動、(全)自動、半自動プロパティ" highlight-ranges="sha256:aeb150bcf9c959b02d8746f97c71b2a91b7b3d7281e0d36101e02cd22f5df71c;18:27-18:32,18:41-18:46"}
 class A
 {
     // 手動プロパティ (manual property)
@@ -70,7 +70,7 @@ class A
 半自動プロパティの `field` は、極限まで突き詰めて「有効な時だけキーワード扱い」をやろうとすると `var` とか `record` とかよりもだいぶ難しいみたいです。
 一例として挙がっているのは以下のようなコード。
 
-```csharp
+```csharp {title="field の有効性の循環"}
 unsafe struct S
 {
     object Prop
@@ -102,7 +102,7 @@ unsafe struct S
 簡素化するために「スコープを無視して解析」みたいな案もあるみたいなんですが、
 結局は、以下のように「スコープも考慮に入れる」、「内側のスコープやローカル関数でのシャドーイングは認める」という予定だそうです。
 
-```csharp
+```csharp {title="field キーワード/識別子のスコープ"}
 object Prop
 {
     get
@@ -124,7 +124,7 @@ object Prop
 
 というのも、同スコープ内の解析に限っても、それなりに解析が大変そうな文法がいくつかあって、「労力は変わらない」とのこと。
 
-```csharp
+```csharp {title="field のキーワード性の解析が大変そうなやつら"}
 class C
 {
     int Prop
@@ -151,7 +151,7 @@ class Foo { public int field; }
 C# の構造体には「すべてのフィールドを初期化しきるまで関数メンバー(メソッドやプロパティ)を呼べない」という仕様がありました。
 (ただし、[C# 11 で緩和されました](../../../../study/csharp/cheatsheet/ap_ver11.md#auto-default)。)
 
-```csharp
+```csharp {title="すべてのフィールドの初期化が必須"}
 struct S
 {
     int _x;
@@ -170,7 +170,7 @@ struct S
 そんな中、C# 6 で[ get-only プロパティ](../../../../study/csharp/cheatsheet/ap_ver6.md#getter-only)の導入とともに、
 「[コンストラクター内での自動プロパティへの代入は、それのバッキング フィールドへの直接代入への最適化を認める](../../../../study/csharp/cheatsheet/ap_ver6.md#struct-property-init)」という仕様も入っています。
 
-```csharp
+```csharp {title="バッキング フィールドへの代入に展開"}
 struct Point
 {
     public int X { get; private set; }
@@ -188,7 +188,7 @@ struct Point
 その流れで、プロパティ初期化子も「バッキング フィールドへの代入に展開」されます。
 例えば以下のようなコードを書いたとします。
 
-```csharp
+```csharp {title="プロパティ初期化子"}
 struct S
 {
     public int X { get; private set; } = 1;
@@ -203,7 +203,7 @@ record struct R(int X)
 
 このコードは、以下のようなコードとほぼ同じ挙動になります。
 
-```csharp
+```csharp {title="バッキング フィールドへの代入に展開"}
 struct S
 {
     private int _x;
@@ -230,7 +230,7 @@ struct R
 例えば以下のようなコードを認めたいんですが、
 じゃあ、初期化時に `OnXChanged` は呼ばれるのかどうか。
 
-```csharp
+```csharp {title="半自動プロパティのプロパティ初期化子"}
 struct S
 {
     // 流れ的にはこういうプロパティ初期化子も認めたい。
@@ -265,7 +265,7 @@ C# 11 でこの要件は必然ではなくなったわけですが、
 override したときの挙動をどうしようかという問題もあります。
 というのも、例えば以下のコードを考えます。
 
-```csharp
+```csharp {title="自動プロパティの override"}
 class Base
 {
     // 自動プロパティなので、バッキング フィールドが作られる。
@@ -283,7 +283,7 @@ class Derived : Base
 自動プロパティの作るバッキング フィールドは `Base` と `Derived` で独立しています。
 さらに、virtual なプロパティは「`get` だけ override」みたいなことができます。
 
-```csharp
+```csharp {title="get だけ override"}
 var x = new Derived { Prop = 2 }; // set は base.Prop のものがそのまま呼ばれる。
 Console.WriteLine(x.Prop);        // get は Derived.Prop が呼ばれて、4 になる。
 
@@ -301,7 +301,7 @@ class Derived : Base
 
 そんな中、半自動プロパティでの override はどうしよう？という話になります。
 
-```csharp
+```csharp {title="半自動プロパティでの override"}
 var x = new Derived { Prop = 2 };
 Console.WriteLine(x.Prop);
 
@@ -327,7 +327,7 @@ class Derived : Base
 半自動プロパティの導入の動機の1つに遅延初期化、
 すなわち、以下のようなコードを書きたいというものがあります。
 
-```csharp
+```csharp {title="遅延初期化目的の半自動プロパティ"}
 public class LazyInit
 {
     public string Value => field ??= ComputeValue();

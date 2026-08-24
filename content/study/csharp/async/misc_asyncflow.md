@@ -70,7 +70,7 @@ C# 5.0を使えない状況下で非同期処理を書くことになった場�
 
 以下のように書けます。
 
-```csharp
+```csharp {title="同期的にダイアログ表示"}
 private bool CheckBlocking()
 {
     if (this.Check1.IsChecked ?? false)
@@ -116,7 +116,7 @@ public static void BeginShowDialog(string title, string message, Action<bool> on
 <span class="expand-button" title="展開/折畳">（クリックしてソースコードを表示（割と見るに堪えないので初期状態を非表示に））</span>
 <div class="expand-panel" markdown="1" title="（クリックしてソースコードを表示（割と見るに堪えないので初期状態を非表示に））">
     
-```csharp
+```csharp {title="コールバック型 API で無理な制御フローを書いた例"}
 private void BeginCheck(Action<bool> onComplete)
 {
     if (this.Check1.IsChecked ?? false)
@@ -214,7 +214,7 @@ Taskクラスを返す非同期APIを用意して、await演算子を使うだ�
 
 コールバックを渡すタイプのAPIだとawait演算子を使えないので、まずはTaskクラス（System.Threading.Tasks名前空間）を返すタイプのAPIに変換します。以下のようになります。
 
-```csharp
+```csharp {title="Task クラスを返すタイプの API"}
 public static Task<bool> ShowDialogAsync(string title, string message)
 {
     var tcs = new TaskCompletionSource<bool>();
@@ -233,7 +233,7 @@ Taskクラス自体は.NET Framework 4の頃からあるので、それ以降の
 
 そして、ダイアログを表示する部分は以下のように書きます。
 
-```csharp
+```csharp {title="非同期メソッド（await 演算子）を使ったダイアログ表示フロー" highlight-ranges="sha256:4e12db817eff1274f9199369d5f047a3a933ad3e0d51388bcbc00e49eb8076f0;1:9-1:14,1:15-1:19,1:31-1:36,5:22-5:27,5:45-5:50,11:22-11:27,11:45-11:50,17:22-17:27,17:45-17:50"}
 private async Task<bool> CheckAsync()
 {
     if (this.Check1.IsChecked ?? false)
@@ -282,7 +282,7 @@ C# 5.0以前、割と常套手段として知られていたのが、イテレ�
 
 上記の例を、この手法を使って書き直すと、以下のようになります。
 
-```csharp
+```csharp {title="イテレーターを使った非同期処理の例"}
 private void BeginCheckWithIterator(Action<bool> onComplete)
 {
     var e = CheckIterator(onComplete).GetEnumerator();

@@ -22,7 +22,7 @@ aliases: []
 「配列の範囲内に収めるために `index % array.Length` する」とかがあると思います。
 例えば以下のような感じ。
 
-```csharp
+```csharp {title="配列のインデックスを i % Length"}
 var table = new Table([1, 2, 3, 4, 5]);
 
 for (var i = 0; i < 5; i++)
@@ -48,7 +48,7 @@ struct Table(int[] values)
 で、これにちょこっと、「ステップ幅」みたいなのを足したとします。
 インデックスを何個飛ばしするか。
 
-```csharp
+```csharp {title="(i + 1) % Length を (i + step) % Length に変更"}
 var table = new Table([1, 2, 3, 4, 5], 3);
 
 // 3個飛ばしにしたので 1, 4, 2, 5, 3 と出力される。
@@ -71,7 +71,7 @@ struct Table(int[] values, int step)
 
 そしてうっかり、`step` を負にして `IndexOutOfRange`…
 
-```csharp
+```csharp {title="負のステップ"}
 var table = new Table([1, 2, 3, 4, 5], -1);
 
 // IndexOutOfRange で止まる。
@@ -118,7 +118,7 @@ C# を始めとして、そこそこパフォーマンスを気にするプロ�
 
 例えば、以下のコードで得られる `q` と `r` はどの丸め方でも必ず `a == n * q + r`、`Abs(r) < Abs(n)` の条件を満たします。
 
-```csharp
+```csharp {title="丸め方の違いでバリエーションがある商と余り"}
 // 一度 double で計算して、商の丸め方式をいろいろ変えてみる。
 // 余りは常に r = a - q * n で計算。
 static (int q, int r) DivRem(int a, int n, MidpointRounding mode)
@@ -131,7 +131,7 @@ static (int q, int r) DivRem(int a, int n, MidpointRounding mode)
 
 一応、これでどういう結果が得られるかも例示しておきます:
 
-```csharp
+```csharp {title="DivRem の実行例"}
 ShowDivRem(5, 3);
 ShowDivRem(-5, 3);
 ShowDivRem(5, -3);
@@ -146,7 +146,7 @@ static void ShowDivRem(int x, int y)
     Console.WriteLine($"  away  {DivRem(x, y, MidpointRounding.AwayFromZero)}");
 }
 ```
-```console
+```console {title="DivRem の実行例"}
 DivRem(5, 3)
   to 0  (1, 2)
   floor (1, 2)
@@ -219,7 +219,7 @@ C# の整数の `/` と `%` (= 大体の CPU の剰余命令の結果)は、こ�
 
 現状の案では以下のようなメソッドの追加になります。
 
-```csharp
+```csharp {title="丸め方式指定付きの DivRem"}
 namespace System.Numerics;
 
 public enum DivisionRounding

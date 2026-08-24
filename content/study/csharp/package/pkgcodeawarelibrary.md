@@ -57,7 +57,7 @@ aliases: []
 
 簡単な例を上げてみましょう。以下のようなコードをライブラリ化することを考えます。
 
-```csharp
+```csharp {title="fluent interface な算術演算ライブラリ"}
 namespace FluentArithmetic
 {
     public static class FluentExtensions

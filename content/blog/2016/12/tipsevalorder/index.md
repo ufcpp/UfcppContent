@@ -19,7 +19,7 @@ C#小ネタと言いつつ、IL小ネタになりがちだったので、今日�
 まず、中身は何でもいいんですが適当な2引数のメソッドを用意します。
 例として、単純な足し算でも用意しておきましょう。
 
-```csharp
+```csharp {title="2に引数のメソッドをまず用意"}
 static int F(int x, int y) => x + y;
 ```
 
@@ -27,14 +27,14 @@ static int F(int x, int y) => x + y;
 
 1つ目: 一時変数を使用
 
-```csharp
+```csharp {title="一時変数を使用して呼び出し"}
 var temp = F(2, 3);
 var result = F(1, temp);
 ```
 
 2つ目: 1つの式で計算
 
-```csharp
+```csharp {title="1つの式で呼び出し"}
 var result = F(1, F(2, 3));
 ```
 
@@ -49,7 +49,7 @@ var result = F(1, F(2, 3));
 `Console`にログ出力した後、引数を素通しするだけのメソッドです。
 値渡し版と参照渡し版を用意。
 
-```csharp
+```csharp {title="副作用を起こすメソッド"}
 // WriteLine + 素通し
 static T Log<T>(T x) { Console.WriteLine(x); return x; }
 static ref T Log<T>(ref T x) { Console.WriteLine(x); return ref x; }
@@ -57,12 +57,12 @@ static ref T Log<T>(ref T x) { Console.WriteLine(x); return ref x; }
 
 1つ目(一時変数を使用)を改めて:
 
-```csharp
+```csharp {title="一時変数を使用 + 副作用あり"}
 var temp = F(Log(2), Log(3));
 var result = F(Log(1), temp);
 ```
 
-```console
+```console {title="一時変数を使用 + 副作用あり"}
 2
 3
 1
@@ -70,11 +70,11 @@ var result = F(Log(1), temp);
 
 2つ目(1つの式で計算)を改めて:
 
-```csharp
+```csharp {title="1つの式で計算"}
 var result = F(Log(1), F(Log(2), Log(3)));
 ```
 
-```console
+```console {title="1つの式で計算"}
 1
 2
 3
@@ -88,12 +88,12 @@ C#では、式の評価は、上から下へ、左から右へ逐次実行です
 
 例えば以下の通り。
 
-```csharp
+```csharp {title="演算子の優先順位や結合方向とは無関係に、オペランドは左から右に評価"}
 bool x = false, y = true;
 Log(ref x) = Log(ref y) = Log(1) + Log(2) * Log(3) > Log(4) & Log(5) <= Log(6) - Log(7) | Log(8) == Log(9);
 ```
 
-```console
+```console {title="演算子の優先順位や結合方向とは無関係に、オペランドは左から右に評価"}
 False
 True
 1
@@ -111,13 +111,13 @@ True
 
 前節の結果はそんなに不思議なことないでしょう。コードから挙動を予想しやすいって意味では書かれてる順番通りが一番です。それに、パフォーマンス的にも悪い選択ではありません。例えば、
 
-```csharp
+```csharp {title="コンパイル元1"}
 var result = F(1, F(2, 3));
 ```
 
 というようなコードであれば、コンパイル結果は以下のような感じになります(必要なところを抜粋)。
 
-```cil
+```cil {title="コンパイル結果1"}
 ldc.i4.1
 ldc.i4.2
 ldc.i4.3
@@ -134,13 +134,13 @@ call       F
 以下のようなコードを書いたとします。
 `x`, `y`を逆に並べています。
 
-```csharp
+```csharp {title="コンパイル元2"}
 F(1, F(y: 2, x: 3));
 ```
 
 すると、コンパイル結果は以下の通り。C#ソースコード上は1, 2, 3だったものが、IL的には1, 3, 2になります。
 
-```cil
+```cil {title="コンパイル結果2" highlight-ranges="sha256:6e7948f965d39bfda0ab4e68818f6b1b54b56485970bc3e09c4ddc963371ed47;2:8-2:9,3:8-3:9"}
 ldc.i4.1
 ldc.i4.3
 ldc.i4.2
@@ -155,13 +155,13 @@ call       F
 
 例えば以下のようなコードをでは、ちゃんと、1, 2, 3の順での評価が必要です。
 
-```csharp
+```csharp {title="コンパイル元3"}
 F(Log(1), F(y: Log(2), x: Log(3)));
 ```
 
 コンパイル結果は以下の通りです。これまでは必要のなかった一時変数(`stloc`: ローカル変数へのストア)が必要になります。
 
-```cil
+```cil {title="コンパイル結果3"}
 ldc.i4.1
 call       Log
 ldc.i4.2
@@ -181,7 +181,7 @@ C# 5.0でバグ修正した結果、[破壊的変更](https://msdn.microsoft.com
 
 もう1個変な例を挙げておきましょう。C# 7で導入されるタプルと分解で、以下のように、swapコードを書けるようになりました。
 
-```csharp
+```csharp {title="タプルを使ったswap処理"}
 var x = 1;
 var y = 2;
 (x, y) = (y, x);
@@ -190,7 +190,7 @@ Console.WriteLine($"{x}, {y}");
 
 これ、同じ処理をタプルを使わず書くとすると、まあ、以下のようにしますよね。
 
-```csharp
+```csharp {title="タプルを使わないswap処理"}
 var temp = x;
 x = y;
 y = temp;
@@ -200,7 +200,7 @@ y = temp;
 
 まず、タプルを使うもの。
 
-```csharp
+```csharp {title="タプルを使ったswap処理 + 副作用"}
 var x = 1;
 var y = 2;
 (Log(ref x), Log(ref y)) = (Log(y), Log(x));
@@ -208,7 +208,7 @@ var y = 2;
 
 ちゃんと、これも左から右に順に評価されます。すなわち、`ref x`, `ref y`, `y`, `x`の順。なので結果は以下の通り。
 
-```console
+```console {title="タプルを使ったswap処理 + 副作用"}
 1
 2
 2
@@ -219,13 +219,13 @@ var y = 2;
 
 先ほどの類推で以下のように書いてしまうと、副作用の順序が変わります。
 
-```csharp
+```csharp {title="タプルを使わないswap処理 + 副作用 1"}
 var temp = Log(x);
 Log(ref x) = Log(y);
 Log(ref y) = temp;
 ```
 
-```console
+```console {title="タプルを使わないswap処理 + 副作用 1"}
 1
 1
 2
@@ -234,7 +234,7 @@ Log(ref y) = temp;
 
 正しくは、以下のように書かないと同じにはなりません。
 
-```csharp
+```csharp {title="タプルを使わないswap処理 + 副作用 2"}
 ref var rx = ref Log(ref x);
 ref var ry = ref Log(ref y);
 var vy = Log(y);

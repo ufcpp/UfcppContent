@@ -44,7 +44,7 @@ C# 2.0 の「[イテレーター](../data/sp2_iterator.md#iterator)」構文を�
 
 例えば、要点だけ抜き出して書くと、以下のような感じ。
 
-```csharp
+```csharp {title="Update メソッドでオブジェクトの更新"}
 class SimpleBullet : UpdatableObject
 {
   double x, y;
@@ -80,7 +80,7 @@ class SimpleBullet : UpdatableObject
 
 これを Update メソッドを使って書くと以下のようになります。
 
-```csharp
+```csharp {title="ちょっと複雑な Update 処理"}
 class ComplexBullet : UpdatableObject
 {
   double x, y;
@@ -123,7 +123,7 @@ state 変数を使って、
 で、これを、以下のように書けたら便利なんじゃないかなぁというのがマイクロスレッドの目的。
 （このコードは C# でコンパイル不可。あくまで概念説明用。）
 
-```csharp
+```csharp {title="マイクロスレッドの概念（コンパイル不可）例"}
 class ComplexBullet : UpdatableObject
 {
   double x, y;
@@ -189,7 +189,7 @@ yield の部分に System.Monitor.Wait とかを書いてスレッドの動作�
 （ここでする説明に必要な部分だけ抜き出して）再掲してみます。
 （とりあえず、100フレームだけ等速直線運動する。）
 
-```csharp
+```csharp {title="マイクロスレッドの概念（コンパイル不可）例"}
 class SimpleBullet : UpdatableObject
 {
   double x, y;
@@ -210,7 +210,7 @@ class SimpleBullet : UpdatableObject
 
 対比のために、普通のメソッドも書いておきます。
 
-```csharp
+```csharp {title="対比： 普通のメソッド"}
   public void NormalMethod()
   {
     for (int i = 0; i < 100; ++i)
@@ -225,7 +225,7 @@ class SimpleBullet : UpdatableObject
 普通のメソッドの場合、複数のオブジェクトに対して処理するなら、
 例えば、以下のような書き方をします。
 
-```csharp
+```csharp {title="普通のメソッド呼び出し"}
 SimpleBullet o1, o2, o3;
 
 中略。o1～o3 を初期化。
@@ -241,7 +241,7 @@ o3.NormalMethod();
 1フレームごとに Update が呼ばれるようなモデルを考えているので、
 以下のようになると思います。
 
-```csharp
+```csharp {title="普通のメソッド呼び出し"}
 UpdatableObjectManager manager;
 SimpleBullet o1, o2, o3;
 
@@ -292,7 +292,7 @@ yield の行に到達するたびに、処理を中断して呼び出し元に�
 改めて書くと、
 以下のようなコードから、
 
-```csharp
+```csharp {title="マイクロスレッドの概念（コンパイル不可）例"}
   public void MicroThread()
   {
     for (int i = 0; i < 100; ++i)
@@ -307,7 +307,7 @@ yield の行に到達するたびに、処理を中断して呼び出し元に�
 
 以下の Update メソッドのようなものを自動生成できればいいわけです。
 
-```csharp
+```csharp {title="Update メソッド"}
   int i = 0;
   void Update()
   {
@@ -329,7 +329,7 @@ C# で実現するとするならこの方法がいいです。
 それを使って実現可能です。
 例えば以下のような感じ。
 
-```csharp
+```csharp {title="イテレータでマイクロスレッドもどきを作ってみる"}
 using System.Collections;
 
 class SimpleBullet : UpdatableObject

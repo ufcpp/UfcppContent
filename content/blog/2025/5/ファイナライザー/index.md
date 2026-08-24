@@ -15,7 +15,7 @@ aliases: []
 
 以下の `~Class1` のこと、（C# の言語機能名として)なんと呼びますか？
 
-```csharp
+```csharp {title="~Class1"}
 class Class1
 {
     public Class1() { }

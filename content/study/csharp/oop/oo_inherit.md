@@ -71,7 +71,7 @@ C# を始めとするオブジェクト指向言語では、
 あるクラスが他のクラスを継承するための構文が用意されています。
 C# でクラスの継承を行うためには、クラス定義の際に以下のように書きます。
 
-```csharp
+```csharp {title="クラスの継承"}
 class 派生クラス名 : 基底クラス名
 {
   派生クラスの定義
@@ -83,7 +83,7 @@ class 派生クラス名 : 基底クラス名
 <code>Person</code> と <code>Student</code> を
 C# でクラス化すると以下のようになります。
 
-```csharp
+```csharp {title="継承の例。人間と学生。" highlight-lines="7"}
 class Person
 {
   public string name; // 名前
@@ -141,7 +141,7 @@ C# では、基底クラスを指定せずに作成した型は全て自動的�
 まず、<code>Base</code> クラスのコンストラクタが呼ばれ、
 その後 <code>Derived</code> クラスのコンストラクタが呼ばれます。
 
-```csharp
+```csharp {title="呼び出し順序"}
 _ = new Derived();
 
 class Base
@@ -161,7 +161,7 @@ class Derived : Base
 }
 ```
 
-```console
+```console {title="呼び出し順序"}
 Base
 Derived
 ```
@@ -174,7 +174,7 @@ Derived
 3. 基底クラスのコンストラクター
 4. 派生クラスのコンストラクター
 
-```csharp
+```csharp {title="フィールド初期化子を含む場合の実行順序"}
 _ = new Derived();
 
 class Base
@@ -205,7 +205,7 @@ class Derived : Base
 }
 ```
 
-```console
+```console {title="フィールド初期化子を含む場合の実行順序"}
 Derived フィールド初期化子
 Base フィールド初期化子
 Base コンストラクター
@@ -217,7 +217,7 @@ Derived コンストラクター
 以下のように「基底クラスの未初期化のフィールドを読めてしまう」ということが起きます。
 (クラスが分かれているので、派生がない場合よりも深刻です。)
 
-```csharp
+```csharp {title="初期化子内ではインスタンス メソッドを呼んではいけない"}
 class Base
 {
     public int BaseField;
@@ -242,7 +242,7 @@ class Derived : Base
 基底クラスの引数つきのコンストラクタを呼び出すためには、
 以下のように自分でコードを書いて明示的に基底クラスのコンストラクタを呼び出す必要があります。
 
-```csharp
+```csharp {title="基底クラスのコンストラクタ呼び出し"}
 派生クラスのコンストラクタ(引数) : base(基底クラスに渡したい引数)
 {
 }
@@ -252,7 +252,7 @@ class Derived : Base
 例として、先ほどの <code>Person</code> クラスと <code>Student</code> クラスにコンストラクタを追加してみましょう。
 ついでに実装の隠蔽も行った結果を以下に示します。
 
-```csharp
+```csharp {title="Person と Student にコンストラクタを追加"}
 class Person
 {
   private string name; // 名前
@@ -306,7 +306,7 @@ private はクラス内部からのみアクセス可能なレベルです。
 これらに対し、protected はクラスとそのクラスを継承する派生クラス内からアクセス可能なレベルです(private は派生クラス内からアクセスできない)。
 以下に例を挙げます。
 
-```csharp
+```csharp {title="protected" highlight-text="protected_val = 0; // OK   (protected は派生クラスからアクセス可能)"}
 class Base
 {
   public    int public_val;
@@ -353,7 +353,7 @@ class Test
 基底クラスのメンバーが新しく追加されたメンバーに隠れてしまいます。
 このような状態を「基底クラスのメンバーを隠蔽する」といいます。
 
-```csharp
+```csharp {title="基底クラスのメンバーの再定義"}
 using System;
 
 class Base
@@ -402,7 +402,7 @@ Base.Test()
 そこで、C#では基底クラスのメンバーの隠蔽を行う場合、メソッドにnew修飾子を付ける必要があります。
 (new修飾子を付けていない場合、コンパイラが警告を出します。)
 
-```csharp
+```csharp {title="new修飾子" highlight-ranges="sha256:31fac5b419cc0f35b8fa8ad803d0c041aae36df619d842d0a7c642b9cf22f6c1;4:10-4:13"}
 class Derived : Base
 {
   //基底クラスのメンバーを隠蔽するには new を付ける必要がある。
@@ -418,7 +418,7 @@ class Derived : Base
 ちなみに、`base` キーワードを使って基底クラスのメンバーを参照できます。
 この機能を使って、以下のように、隠蔽されたメンバーを呼び出すこともできます。
 
-```csharp
+```csharp {title="隠蔽された基底クラスのメンバー呼び出し" highlight-lines="18-19"}
 class Base
 {
   public void Test()
@@ -445,7 +445,7 @@ class Derived : Base
 ちなみに、[`this`アクセス](oo_class.md#this-access)と同様に、`base`アクセスでも[インデクサー](oo_indexer.md)にアクセスできます。
 (一方で、[拡張メソッド](../functional/sp3_extension.md)の呼び出しには使えません。)
 
-```csharp
+```csharp {title="base を使ってインデクサーにアクセスする例"}
 class Base
 {
     public virtual int this[int i] => i;
@@ -470,7 +470,7 @@ C# 8.0 のプレビュー版で一時的に使える時期はありましたが�
 これに対して、将来的には、`base(T)` という形で、特定のクラスを明示的に指定できるようになりました。
 (主に[インターフェイスのデフォルト実装](oo_interface.md#dim)のための機能でしたが、クラスに対しても認められています。)
 
-```csharp
+```csharp {title="base(T) アクセスの例" highlight-ranges="sha256:46c6554cfc6f6bd484524000f3849b2a6d7ee2674ff3e1623263ead0cf70b62f;20:25-20:32,23:25-23:32"}
 using System;
  
 class A
@@ -522,7 +522,7 @@ C# のクラスは基本的に常に継承して派生クラスを作ること�
 このような場合、クラス定義時に sealed （封印された）というキーワードをつけることで、
 継承を禁止することができます。
 
-```csharp
+```csharp {title="sealed クラス" highlight-text="sealed"}
 sealed class SealedClass { }
 
 class Derived : SealedClass // SealedClass は継承不可なので、エラーになる。

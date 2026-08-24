@@ -21,7 +21,7 @@ aliases: []
 `Type`型に`IsPrimitive`というプロパティがあって、こいつが`true`を返すものがプリミティブ型なんですが。
 以下のコードを見ての通り、どういう基準なのかがパッと見でわからず。
 
-```csharp
+```csharp {title="IsPrimitiveの結果"}
 using static System.Console;
 
 class Program
@@ -91,7 +91,7 @@ C#というか.NETでよくわからなくなる理由は、
 せっかくなので、IL 的な扱いも見てみますか。
 以下のようなコードをコンパイルしてみます。
 
-```csharp
+```csharp {title="2つの引数の + 演算子呼び出しするだけの例"}
 class Program
 {
     static void Main()
@@ -112,7 +112,7 @@ class Program
 まずは`int`の場合。
 メソッド`M(int, int)`の中身が
 
-```cil
+```cil {title="int の +"}
   IL_0000:  ldarg.0
   IL_0001:  ldarg.1
   IL_0002:  add
@@ -120,7 +120,7 @@ class Program
 
 `M(int, int)`を呼び出す側が
 
-```cil
+```cil {title="M(int, int) の呼び出し"}
   IL_0000:  ldc.i4.1
   IL_0001:  ldc.i4.2
   IL_0002:  call       int32 Program::M(int32,
@@ -136,7 +136,7 @@ class Program
 続いて`string`
 メソッド`M(string, string)`の中身が
 
-```cil
+```cil {title="string の +"}
   IL_0000:  ldarg.0
   IL_0001:  ldarg.1
   IL_0002:  call       string [mscorlib]System.String::Concat(string,
@@ -145,7 +145,7 @@ class Program
 
 `M(string, string)`を呼び出す側が
 
-```cil
+```cil {title="M(string, string) の呼び出し"}
   IL_0008:  ldstr      "a"
   IL_000d:  ldstr      "b"
   IL_0012:  call       string Program::M(string,
@@ -165,7 +165,7 @@ IL的にはプリミティブ型ではない、という割には`ldstr`命令�
 最後に`decimal`。
 メソッド`M(decimal, decimal)`の中身が
 
-```cil
+```cil {title="decimal の +"}
   IL_0000:  ldarg.0
   IL_0001:  ldarg.1
   IL_0002:  call       valuetype [mscorlib]System.Decimal [mscorlib]System.Decimal::op_Addition(valuetype [mscorlib]System.Decimal,
@@ -174,7 +174,7 @@ IL的にはプリミティブ型ではない、という割には`ldstr`命令�
 
 `M(decimal, decimal)`を呼び出す側が
 
-```cil
+```cil {title="M(decimal, decimal)の呼び出し"}
   IL_0018:  ldc.i4.s   123
   IL_001a:  ldc.i4.0
   IL_001b:  ldc.i4.0

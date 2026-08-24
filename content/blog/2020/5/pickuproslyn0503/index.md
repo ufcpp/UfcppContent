@@ -126,7 +126,7 @@ positional な Records (プライマリ コンストラクター)の優先度は
 プライマリ コンストラクターに対してコンストラクター本体を持ちたい場合、
 以下のような構文になるみたいです。
 
-```csharp
+```csharp {title="プライマリ コンストラクター本体とバリデーター"}
 class TypeName(int X, int Y) // プライマリ コンストラクター
 {
     // 引数リストなしの型名 = プライマリ コンストラクターの本体
@@ -162,7 +162,7 @@ class TypeName(int X, int Y) : BaseType
 
 要は以下のようなやつ。
 
-```csharp
+```csharp {title="共変戻り値"}
 class Compilation ...
 {
     virtual Compilation WithOptions(Options options)...
@@ -191,7 +191,7 @@ class CSharpCompilation : Compilation
 
 似たようなものとして、クラスの静的コンストラクターがあるんですが…
 
-```csharp
+```csharp {title="静的コンストラクター"}
 class Initializer
 {
     static Initializer()
@@ -208,7 +208,7 @@ class Initializer
 
 今のところ、属性 + 静的コンストラクターで実装したいみたいです。
 
-```csharp
+```csharp {title="モジュール初期化子"}
 using System.Runtime.CompilerServices;
  
 [module: ModuleInitializer(typeof(MyModuleInitializer))]

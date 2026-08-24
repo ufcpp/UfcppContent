@@ -28,7 +28,7 @@ params の改善話は紆余曲折ありまして。
 現在の C# の params (可変長引数)は、`params T[]` (引数の型は配列)しか書けません。
 これに対して、任意のコレクション型を使って、`params List<T>` とか `params IEnumerable<T>` とか書きたいという要望が長らくありました。
 
-```csharp
+```csharp {title="過去の params 改善案"}
 // (あくまでも過去の案)
 M1(1, 2, 3);
 M2(1, 2, 3);
@@ -43,7 +43,7 @@ static void M3(params Span<int> items) { }
 ただ、ここにきて[コレクション リテラル](../../1/collection-literal/index.md)という提案が出ています。
 コレクション リテラルがあれば、別に params がなくても以下のように書くことができます。
 
-```csharp
+```csharp {title="コレクション リテラルがあれば別にいいのでは…"}
 // 呼び出し側をコレクション リテラルにしてしまう。
 // 元の params 案との差は [] の2文字だけ。
 M1([1, 2, 3]);
@@ -82,7 +82,7 @@ ReadOnly で受け取っているので書き換えできず、scoped なので�
 
 以下のようなコードを書いたとき、
 
-```csharp
+```csharp {title="params ReadOnlySpan"}
 M(1, 2, 3);
 M("a", "b", "c");
 

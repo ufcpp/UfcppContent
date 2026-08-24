@@ -18,7 +18,7 @@ aliases: []
 
 割と手短に示せるバグで、以下のような例がわかりやすいんですが、nullable型な引数のデフォルト値として、[`default`式](../../../../study/csharp/cheatsheet/ap_ver7_1.md#default-expr)を使ったとき、値が `null` にならないとおかしいはずなのに 0 になるという問題。
 
-```csharp
+```csharp {title="デフォルト値にデフォルト式"}
 static void Main()
 {
     int? x = default; // null
@@ -73,7 +73,7 @@ C# 7.1は、実質的には初のマイナーリリースですし、半年と�
 
 例えば、値型のデフォルト値なんですが、以下のような感じになっています。
 
-```csharp
+```csharp {title="値型のデフォルト値"}
 // 以下の3つの X は全部同じ意味
 static void X(DateTime d = default(DateTime)) { }
 static void X(DateTime d = new DateTime()) { }
@@ -88,7 +88,7 @@ static void X(DateTime d) { }
 
 IL へのコンパイル結果としても以下のような感じ。
 
-```cil
+```cil {title="上記コードのコンパイル結果のIL"}
 .method private hidebysig static
     void X(
         [opt] valuetype[mscorlib] System.DateTime d
@@ -104,7 +104,7 @@ IL へのコンパイル結果としても以下のような感じ。
 
 nullable 型に対しても、以下のような感じで、null の扱いがちょっと特殊になっています。
 
-```csharp
+```csharp {title="int? への null 代入"}
 // 以下の2行は同じ意味
 int? x = null;
 int? x = new int?(); // null というより、(false, 0) みたいな値

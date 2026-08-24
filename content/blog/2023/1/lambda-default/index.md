@@ -30,7 +30,7 @@ aliases: []
 [C# 10 のときにラムダ式の改善](../../../../study/csharp/cheatsheet/ap_ver10.md#lambda-improvement)がいくつか入りました。
 以下のように、Web アプリがシンプルに書けるようになります。
 
-```csharp
+```csharp {title="C# 10 のラムダ式の改善"}
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
@@ -57,7 +57,7 @@ C# 9 までの状態だと、
 メソッドを使った例で説明すると、
 以下のように、デフォルト引数/params 引数はデリゲート化する際に一切紛失します。
 
-```csharp
+```csharp {title="デフォルト引数/params 引数はデリゲート化すると紛失"}
 m();
 
 // m() と呼べるのに、 Action には代入できない。
@@ -79,7 +79,7 @@ static void m(int x = 1, params int[] y) { }
 ただ、属性は、静的な情報としては紛失したとしても、
 リフレクションを使って属性を取る前提であれば意味があります。
 
-```csharp
+```csharp {title="リフレクションで取る情報としては意味があり、ラムダ式に属性を付ける意義はある"}
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 
@@ -99,7 +99,7 @@ foreach (var a in p.GetCustomAttributes())
 「リフレクションで」というのであれば、
 デフォルト引数と params 引数も同様のはずです。
 
-```csharp
+```csharp {title="リフレクションでデフォルト引数/params 引数を調べる例"}
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -126,7 +126,7 @@ class C
 そこから、もう1歩進めた提案もあって、
 自然な型決定で、デフォルト引数/params 引数付きのデリゲートを作るという話もあります。
 
-```csharp
+```csharp {title="ラムダ式のデフォルト引数/params 引数"}
 static void m(int x = 1, params int[] y) { }
 
 // 今までだったら Action<int, int[]> になってた。

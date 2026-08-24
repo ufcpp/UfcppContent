@@ -22,7 +22,7 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="source"></a>ソース
 
-```xml
+```xml {title="ソース"}
 <section title="結果" id="result">
   <p>
     section タグでセクションを作ります。

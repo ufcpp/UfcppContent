@@ -41,7 +41,7 @@ XAML ベースの GUI アプリケーション開発という点に関しては 
 以下のように Click イベントを設定します。
 
 
-```xml
+```xml {title="イベント処理" highlight-text="Click=&quot;ButtonClicked&quot;"}
 <Window x:Class="XamlWindowsApplication1.Window1"
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -83,7 +83,7 @@ XAML とは別ファイルにすることが可能です。
 例えば、先ほどの例をコードビハインドを使って書き直すと以下のような2つのファイルに分かれます。
 
 
-```xml
+```xml {title="Window1.xaml"}
 <Window x:Class="XamlWindowsApplication1.Window1"
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -94,7 +94,7 @@ XAML とは別ファイルにすることが可能です。
 
 </Window>
 ```
-```xml
+```xml {title="Windows1.xaml.cs"}
 namespace XamlWindowsApplication1
 {
   public partial class Window1 : System.Windows.Window
@@ -132,7 +132,7 @@ GUI 要素を参照するための名前を指定するには Name 属性を使�
 まず、XAML 側では、以下のように、TextBlock 要素に Name 属性をつけます。
 
 
-```xml
+```xml {title="Name 属性" highlight-text="Name=&quot;textBlock&quot;"}
 <Window x:Class="XamlWindowsApplication1.Window1"
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -149,7 +149,7 @@ GUI 要素を参照するための名前を指定するには Name 属性を使�
 これで、このテキストブロックに textBlock という名前が付きました。
 C# コード側では、この名前をそのまま変数名として使えます。
 
-```csharp
+```csharp {title="GUI 要素の参照" highlight-text="this.textBlock.Text"}
 namespace XamlWindowsApplication1
 {
   public partial class Window1 : System.Windows.Window
@@ -199,7 +199,7 @@ StackPanel の下に連なる Button の Click イベントを、
 全部 StackPanel で受けて処理することができます。
 
 
-```xml
+```xml {title="子要素で生じたのイベントを処理" highlight-text="Button.Click=&quot;ButtonClicked&quot;"}
 <Window x:Class="XamlWindowsApplication1.MainWindow"
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -226,7 +226,7 @@ XML ツリーを上にたどってイベントが送られていく（route: 送
 例えば、以下のようにすると、
 どのボタンが押されたのかをメッセージボックスで表示するようなプログラムになります。
 
-```csharp
+```csharp {title="イベントの発生元" highlight-text="e.Source"}
 using System.Windows;
 using System.Windows.Controls;
 

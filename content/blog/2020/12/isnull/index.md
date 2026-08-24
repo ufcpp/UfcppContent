@@ -30,7 +30,7 @@ zero も語源をたどるとアラビア語とかサンスクリット語の「
 null 判定というとまずどういうコードを思い浮かべるでしょうか？
 「昔から書けた」という意味で、まず `x == null` が真っ先に思い浮かぶ人が多いと思います。
 
-```csharp
+```csharp {title="== null"}
 bool M(A x) => x == null;
 class A { }
 ```
@@ -38,14 +38,14 @@ class A { }
 これも、この状態であれば単なる 0 比較になります。
 実際、コンパイル結果を覗いてみればわかるんですが、以下のコードと同じコードが生成されます。
 
-```csharp
+```csharp {title="== 0"}
 bool M(int x) => x == 0;
 ```
 
 ただ、ここで問題になるのが[演算子オーバーロード](../../../../study/csharp/oop/oo_operator.md)でして、これをやっちゃってると「単なる 0 比較」ではなくなってしまいます。
 特に以下のように、`==` の中でそこそこ重たい処理をやっちゃっているときが問題になります。
 
-```csharp
+```csharp {title="== の中でそこそこ重たい処理をやっちゃってる場合"}
 bool M(A x) => x == null;
 class A
 {
@@ -66,7 +66,7 @@ class A
 
 この問題は昔の C# でも簡単に解消する方法が1つあって、それが、`ReferenceEquals` を使うという案。
 
-```csharp
+```csharp {title="ReferenceEquals(null)"}
 bool M(object x) => ReferenceEquals(x, null);
 ```
 
@@ -83,7 +83,7 @@ bool M(object x) => ReferenceEquals(x, null);
 そこに来て、C# 7.0 で[パターン マッチング](../../../../study/csharp/datatype/patterns.md)という文法が入りました。
 この頃には「`== null` の罠」が周知の事実だったので、「`is null` と書いたときにはユーザー定義の `==` を呼ばない。常に 0 比較にする」という判断が下りました。
 
-```csharp
+```csharp {title="is null"}
 bool M(object x) => x is null; // operator == は呼ばない。常に ReferenceEquals(x, null) と同じ。
 class A
 {
@@ -104,7 +104,7 @@ class A
 
 実際に多いのは以下のようなコードだったりします。
 
-```csharp
+```csharp {title="null じゃないときだけ処理"}
 void M(A a)
 {
     var x = a.X; // プロパティ参照コストを避けるために変数に受ける。
@@ -124,7 +124,7 @@ class A
 これはいわゆる early return (先頭で検査して不適切なら即 return)な書き方ですが、
 判定を逆転させて同じ結果になるコードを以下のように書きたいこともあります。
 
-```csharp
+```csharp {title="!(is null)"}
 void M(A a)
 {
     var x = a.X;
@@ -151,7 +151,7 @@ void M(A a)
 C# の場合、「null は型を持っていない」という扱いになるので、すべての型の共通基底クラスである `object` 型にすらマッチしません。
 なので、以下のように、`is object` というパターンを書くと「null じゃない」という判定になります。
 
-```csharp
+```csharp {title="is object"}
 void M(A a)
 {
     if (a.X is object x)
@@ -166,7 +166,7 @@ void M(A a)
 
 ここで注意すべきことが1点。結構な罠なんですが、上記のように `is object` が「null じゃない」判定になるのに対して、`is var` だと null / 非 null に関わらず常にマッチします(`is var` 単体だと常に true)。
 
-```csharp
+```csharp {title="is var の場合は null 判定しないので注意"}
 void M(A a)
 {
     if (a.X is var x)
@@ -186,7 +186,7 @@ void M(A a)
 知らないと何が何だかわからない謎な書き方ですが、
 文法的にいうとこれは「[プロパティ パターン](../../../../study/csharp/datatype/patterns.md#property)」というものになります。
 
-```csharp
+```csharp {title="is { } で null じゃない判定"}
 void M(A a)
 {
     if (a.X is { } x)
@@ -200,7 +200,7 @@ void M(A a)
 
 本来は以下のように、再帰的にプロパティの中身を確認できる「パターン」です。
 
-```csharp
+```csharp {title="{ } の本来の使い方は「再起プロパティ パターン」"}
 void M(A a)
 {
     if (a is { X: object x })
@@ -224,7 +224,7 @@ void M(A a)
 
 あと、以下のような「書き間違い」をする人が後を絶たないという問題も起こしました。
 
-```csharp
+```csharp {title="!is 問題"}
 void M(A a)
 {
     if (a.X !is null) // is not のつもりで !is とか書く
@@ -240,7 +240,7 @@ void M(A a)
 
 一方、C# 9.0 では `not` パターンというものが導入されて、今度こそ is not の意味のパターンが書けるようになりました。
 
-```csharp
+```csharp {title="is not null"}
 void M(A a)
 {
     if (a.X is not null)
@@ -261,7 +261,7 @@ Visual Studio 16.8 (C# 9.0 の初期リリース。2020年11月リリース版)�
 単に「null である」判定をしたいだけなら `is null` と書けばいい話なんですが、
 「変数で受けつつ null である判定」という処理をしたいときに `is not { } x` という書き方をします。
 
-```csharp
+```csharp {title="is not { } で null 時 early return"}
 void M(A a)
 {
     if (a.X is not { } x) return; // null だったら early return。
@@ -276,7 +276,7 @@ void M(A a)
 ですが、バグで、時々その「null じゃない値を変数 `x` で受ける」という処理が消えてしまうことがあるそうです。
 上記コードはちゃんと動くんですが、例えば以下のコードだと `x` が null のままになっていて実行時例外を起こします。
 
-```csharp
+```csharp {title="16.8 時点の is not { } のバグ"}
 using System;
  
 M("abc");

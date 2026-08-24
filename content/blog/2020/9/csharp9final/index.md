@@ -49,7 +49,7 @@ Records とか Function pointers とか、一部の機能はまだちょっと�
 いわゆる共変戻り値。virtual メソッドの override 側で、戻り値の型を共変にできるようになりました。
 要するに、以下のようなやつです。
 
-```csharp
+```csharp {title="クラスの共変戻り値"}
 class Base
 {
     public virtual Base Clone() => new Base();
@@ -80,7 +80,7 @@ Android での Java との相互運用のためもあって、.NET Core と Xama
 
 例えば以下のような拡張メソッドを用意することで、2-[tuple](../../../../study/csharp/datatype/tuples.md) に対する `foreach` が使えます。
 
-```csharp
+```csharp {title="2-tuple を foreach するための拡張メソッド"}
 using System;
 using System.Collections.Generic;
  
@@ -138,7 +138,7 @@ static class TupleExtensions
 
 [#3297](https://github.com/dotnet/csharplang/issues/3297)のうち、たぶん、制約なしジェネリック型に対する `T?` は 16.8 Preview 2 で入ったはず。
 
-```csharp
+```csharp {title="制約なし T?"}
 class C<T>
 //where T :class // これがあれば前からOK
 //where T :struct // これがあれば前からOK
@@ -160,7 +160,7 @@ class C<T>
 上記コメントにもありますが、この場合の `T?` は nullable じゃなくて「defaultable」と呼んだ方がいいかもしれないようなものです。
 以下のように、型引数として非 null 値型を渡すと nullable にはなりません。
 
-```csharp
+```csharp {title="defaultable な T?"}
 string? x1 = C<string?>.M();
 string? x2 = C<string>.M(); // 順当に string?
 int?    x3 = C<int?>.M();   // 順当に int?

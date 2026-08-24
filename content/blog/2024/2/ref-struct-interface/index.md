@@ -44,7 +44,7 @@ C# 13 では、この制限を緩和するため、
 わかりやすい例でいうと、`Span<T>` は `IEnumerable<T>` であってほしいというものです。
 C# 12 時点だと、以下のような2重実装を余儀なくされています。
 
-```csharp
+```csharp {title="C# 12 時点では IEnumerable と Span の2重実装が必須"}
 List<int> list = [1, 2, 3, 4, 5];
 ReadOnlySpan<int> span = [1, 2, 3, 4, 5];
 
@@ -76,7 +76,7 @@ static class MyMath
 ref 構造体にインターフェイス実装を持たせること自体はそこまで問題ではありません。
 問題は、以下のように、「インターフェイス型の変数に直接代入してしまうとボックス化を起こしてまずい」という点です。
 
-```csharp
+```csharp {title="Span をインターフェイス型変数に代入しちゃダメ"}
 Span<int> span = [1, 2, 3, 4, 5];
 
 // たとえ、Span が IEnumerable<T> を実装していたとしても、
@@ -87,7 +87,7 @@ IEnumerable<int> e = span;
 
 じゃあどうすべきかというと、ジェネリクスを介します。
 
-```csharp
+```csharp {title="ジェネリクスを介すればいい"}
 Span<int> span = [1, 2, 3, 4, 5];
 
 // ジェネリクスを介すれば、ボックス化を起こさずにインターフェイスのメンバーを呼べる。
@@ -115,7 +115,7 @@ Sum<int, Span<int>>(span);
 
 というものになります。
 
-```csharp
+```csharp {title="型制約"}
 // 制限なし。
 static void M1<T>() { }
 

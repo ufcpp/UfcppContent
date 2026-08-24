@@ -73,7 +73,7 @@ Visual Studio のプロジェクト テンプレートの「Analyzer with Code F
 
 まず、クラス自体に `INotifyPropertyChanged` インターフェイス実装を用意するマクロ:
 
-```csharp
+```csharp {title="クラス用マクロ属性"}
 [AttributeUsage(AttributeTargets.Class)]
 class NotifyClassAttribute() : TemplateAttribute(
     Global("using System.ComponentModel;"),
@@ -102,7 +102,7 @@ class NotifyClassAttribute() : TemplateAttribute(
 
 次にプロパティ用:
 
-```csharp
+```csharp {title="プロパティ用マクロ属性"}
 [AttributeUsage(AttributeTargets.Property)]
 class NotifyPropertyAttribute() : TemplateAttribute(
 $"""
@@ -117,7 +117,7 @@ Parent($"""
 
 で、これの利用側コード:
 
-```csharp
+```csharp {title="マクロ利用者コードの例"}
 using AttributeTemplateGenerator;
 
 namespace Examples;

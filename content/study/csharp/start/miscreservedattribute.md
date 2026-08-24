@@ -47,7 +47,7 @@ aliases: []
 
 以下のように、指定した以外の属性の使い方をするとコンパイル エラーを起こします。
 
-```csharp
+```csharp {title="AttributeUsage の利用例"}
 [AttributeUsage(AttributeTargets.Class)]
 class ForClass : Attribute { }
 
@@ -64,7 +64,7 @@ class A
 `Obsolete` 属性(`System`名前空間)は、もう廃止(obsolete)したいクラスやメソッドに付けて、そのクラスやメソッドの利用者側コードに警告やエラーを出します。
 通常、廃止理由や移行先に関する情報を書いておきます。
 
-```csharp
+```csharp {title="Obsolete 属性の利用例"}
 HighPerformance.AlgorithmA(); // 警告が出る
 Cryptograph.AlgorithmA();     // エラーになる
 
@@ -95,7 +95,7 @@ class Cryptograph
 
 一番多い用途は「デバッグ時にのみ実行」で、例えば標準ライブラリ中の [`Debug.Assert` メソッド](https://docs.microsoft.com/ja-jp/dotnet/api/system.diagnostics.debug.assert)には `Conditional` 属性が付いています。
 
-```csharp
+```csharp {title="標準ライブラリの Debug.Assert メソッド(宣言部分のみ)"}
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
@@ -111,7 +111,7 @@ namespace System.Diagnostics
 
 これを呼びだすコードはデバッグビルド時にのみ実行されます。
 
-```csharp
+```csharp {title="Debug.Assert の利用例"}
 using System.Diagnostics;
 
 void M(int x)
@@ -143,7 +143,7 @@ void M(int x)
 
 これらは、以下のように、[オプション引数](../structured/st_function.md#default-parameter)になっている引数に属性を付ける形で使います。
 
-```csharp
+```csharp {title="CallerInfo 属性の利用例"}
 static void M(
     int x,
     [CallerLineNumber] int line = 0,
@@ -161,7 +161,7 @@ static void M(
 
 これを、例えば以下のようなコードから呼び出したとします。
 
-```csharp
+```csharp {title="CallerInfo 属性を使ったメソッドを呼び出す例"}
 using System.Runtime.CompilerServices;
 
 class Program
@@ -176,7 +176,7 @@ class Program
 すると、省略したオプション引数の部分に、行番号、ファイルのフルパス、呼び出し元のメンバー名(この場合 `Main` メソッド)、引数に渡した式などの整数/文字列が挿入されます。
 この例の場合、(ファイル名は環境によって変わりますが)以下のような出力が得られます。
 
-```console
+```console {title="CallerInfo 属性を使ったメソッドを呼び出す例"}
 C:\Users\ufcpp\source\repos\ConsoleApp1\ConsoleApp1\Program.cs の 7 行目
 Main から呼ばれていて
 2 * 3 * 5 という式を引数に渡している
@@ -189,7 +189,7 @@ Main から呼ばれていて
 .NET 6 (C# 10.0) で導入された [`ThrowIfNull` メソッド](https://docs.microsoft.com/ja-jp/dotnet/api/system.argumentnullexception.throwifnull)がまさにこの機能を使っています。
 この `ThrowIfNull` は以下のような宣言になっています。
 
-```csharp
+```csharp {title="ThrowIfNull (宣言部分のみ)" highlight-text="[CallerArgumentExpression(&quot;argument&quot;)]"}
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
@@ -206,7 +206,7 @@ namespace System
 
 このメソッドは以下のような使い方をします。
 
-```csharp
+```csharp {title="ThrowIfNull を使ったメソッドの利用例" highlight-text="ThrowIfNull(myArgument)"}
 M(null);
 
 void M(string? myArgument)
@@ -219,7 +219,7 @@ void M(string? myArgument)
 投げられる例外にはちゃんと「何が null だったか」の情報が渡っていて、
 以下のようなメッセージが表示されるはずです。
 
-```console
+```console {title="ThrowIfNull を使ったメソッドの利用例" highlight-text="'myArgument'"}
 Unhandled exception. System.ArgumentNullException: Value cannot be null. (Parameter 'myArgument')
 ```
 
@@ -228,7 +228,7 @@ Unhandled exception. System.ArgumentNullException: Value cannot be null. (Parame
 
 また、これらの属性は拡張メソッドとかでもちゃんと動きます。
 
-```csharp
+```csharp {title="拡張メソッドで CallerArgumentExpression 属性を使う例"}
 using System.Runtime.CompilerServices;
 
 (from x in new[] { 1, 2, 3 } select x * x).Sum().M();
@@ -242,7 +242,7 @@ static class Extensions
 }
 ```
 
-```console
+```console {title="拡張メソッドで CallerArgumentExpression 属性を使う例"}
 (from x in new[] { 1, 2, 3 } select x * x).Sum() = 14
 ```
 
@@ -259,7 +259,7 @@ C# の新機能のうち結構な割合のものが、
 
 例えば nullable enable な場所で以下のようなコードを書いた場合、
 
-```csharp
+```csharp {title="null 許容参照型の例" highlight-ranges="sha256:c655c3bb9e3740e93f7916edd5a44b9db8d4f5b1104df4912cd09af89a15362d;3:26-3:27,4:26-4:27"}
 public class C
 {
     public void M1(string? x) { }
@@ -269,7 +269,7 @@ public class C
 
 旧来の(nullable disable な場所での)コードでいうところの以下のようなコードが得られます。
 
-```csharp
+```csharp {title="null 許容参照型の展開結果の例" highlight-ranges="sha256:9acd3f64bad6ba8cf24a453972d527545a817e92c5cf887b8c9619a037405e81;5:5-5:25,10:5-10:25,11:27-11:40"}
 using System.Runtime.CompilerServices;
 
 public class C
@@ -288,14 +288,14 @@ public class C
 
 逆に古くからあるものだと拡張メソッドがそうで、以下の2つのコードが同じ意味になります。
 
-```csharp
+```csharp {title="拡張メソッドの例" highlight-text="this"}
 public static class C
 {
     public static void M(this string x) { }
 }
 ```
 
-```csharp
+```csharp {title="拡張メソッドの展開結果の例" highlight-text="[Extension]"}
 using System.Runtime.CompilerServices;
 
 public static class C
@@ -334,7 +334,7 @@ C# 3.0 の頃はまさにそうで、`Extension` 属性は public です。
 標準ライブラリにこれらの属性が定義されているわけではなく、
 コンパイル結果に以下のような属性が追加されて、それが使われます。
 
-```csharp
+```csharp {title="コンパイラー生成の null 許容参照型関連属性"}
 using System.Runtime.CompilerServices;
 
 namespace Microsoft.CodeAnalysis
@@ -368,7 +368,7 @@ namespace System.Runtime.CompilerServices
 
 他にも例えば、C# 7.3 の [`unmanaged` 制約](../interop/sp_unsafe.md#unmanaged-constraints)も `IsUnmanaged` 属性がコンパイラー生成されています。
 
-```csharp
+```csharp {title="IsUnmanaged 属性"}
 namespace System.Runtime.CompilerServices
 {
     [CompilerGenerated]

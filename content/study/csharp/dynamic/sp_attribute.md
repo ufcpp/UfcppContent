@@ -55,7 +55,7 @@ C++ などの既存の言語では、このような追加情報を定義する�
 属性は以下のように <code>[]</code> でくくり、
 クラスやメンバーの前に付けて使います。
 
-```csharp
+```csharp {title="属性の使用方法"}
 [属性名(属性パラメータ)]
 メンバーの定義
 ```
@@ -63,7 +63,7 @@ C++ などの既存の言語では、このような追加情報を定義する�
 
 たとえば以下のような感じ。
 
-```csharp
+```csharp {title="属性の例"}
 [DataContract]
 class User
 {
@@ -85,7 +85,7 @@ class User
 特定の条件下でのみ実行されるメソッドを定義するために使用する属性です。
 例えば、以下のようにして使用します。
 
-```csharp
+```csharp {title="Conditional 属性" highlight-ranges="sha256:4b7e2a3f21d718bc029087bd8f4c2ddce727423f95a67fc5e658afa63648e79b;26:13-26:39,53:5-53:39"}
 using System;
 using System.Diagnostics;
 
@@ -173,13 +173,13 @@ class AttributeTest
 
 ちなみに、以下のように <code>,</code> で区切るか、複数の <code>[]</code> を並べることで複数の属性を指定することが出来ます。
 
-```csharp
+```csharp {title="複数の属性を指定 その1"}
 [Conditional("DEBUG"), Conditional("TEST")]
 void DebugOutput(string message)
 ```
 
 
-```csharp
+```csharp {title="複数の属性を指定 その2"}
 [Conditional("DEBUG")]
 [Conditional("TEST")]
 void DebugOutput(string message)
@@ -401,7 +401,7 @@ explorer から参照することができます。
 メソッド定義の直前に属性を付ければメソッドに属性が適用されます。
 以下にその例を挙げます。
 
-```csharp
+```csharp {title="属性の対象の例" highlight-ranges="sha256:ef3d654d72e51c40ab52e3068d067bef8154e008e4a291c6b73987a47c2b96a3;1:1-1:44,3:1-3:15"}
 [assembly: AssemblyTitle("Test Attribute")] // プログラムそのものが対象
  
 [Serializable] // クラスが対象
@@ -420,7 +420,7 @@ public class SampleClass
 メソッドそのものとメソッドの戻り値に属性を適用したい場合がその典型例です。
 以下にその例を挙げます。
 
-```csharp
+```csharp {title="メソッドの戻り値に属性を適用 (悪い例)"}
 [DllImport("msvcrt.dll")]
 [MarshalAs(UnmanagedType.I4)] // メソッドの戻り値に属性を適用したいんだけど、
 // コンパイラはそう解釈してくれない。
@@ -433,14 +433,14 @@ public static extern int puts(
 このような曖昧さを解決するため、
 明示的に属性の対象を指定する構文があります。
 
-```csharp
+```csharp {title="属性の対象の指定"}
 [属性の対象 : 属性名(属性のオプション)]
 ```
 
 
 先ほどの例を属性の対象を明示的に指定して書き直すと以下のようになります。
 
-```csharp
+```csharp {title="メソッドの戻り値に属性を適用" highlight-ranges="sha256:1890051c398171efeea2800d514f2fe79cb61640183a58fa824992f8a78a5210;1:2-1:8,2:2-2:8,4:6-4:11"}
 [method: DllImport("msvcrt.dll")]
 [return: MarshalAs(UnmanagedType.I4)]
 public static extern int puts(
@@ -512,7 +512,7 @@ public static extern int puts(
 
 これらに対して、以下のような書き方で属性を付けることができます。
 
-```csharp
+```csharp {title="プロパティ、イベントが内部的に生成しているフィールドやメソッドへの属性付け"}
 using System;
 
 class XAttribute : Attribute { }
@@ -560,7 +560,7 @@ C# 7.2 以前では自動プロパティでフィールドに対して属性指�
 ちなみに、この「修正」は一応、破壊的変更になります。
 この問題を踏むことはほとんどないとは思いますが、以下のコードは、C# 7.2まではコンパイルできて、7.3ではコンパイルできなくなります。
 
-```csharp
+```csharp {title="field 指定属性による破壊的変更"}
 using System;
 
 // 本来フィールドには付けれない属性
@@ -591,7 +591,7 @@ C# 12 からは普通のクラスや構造体にも使えるようになった[�
 (ただし、[レコード型](../cheatsheet/ap_ver9.md#record)では、
 C# 9 で導入された当初から先行してプライマリ コンストラクターを使えました。)
 
-```csharp
+```csharp {title="プライマリ コンストラクターの例"}
 // クラスの直後に () や引数リストを書ける。
 class A();
 class B(int x);
@@ -601,7 +601,7 @@ class B(int x);
 `method` 指定を付けることでプライマリ コンストラクターに対する属性にできます。
 (ただし、レコード型が対象であっても、この機能が使えるのは C# 12 からです。)
 
-```csharp
+```csharp {title="プライマリ コンストラクターに対する属性指定"}
 [X]         // これはクラスに対する属性。
 [method: X] // これはプライマリ コンストラクターに対する属性。
 class A();
@@ -636,7 +636,7 @@ class XAttribute : Attribute;
 ここでは例として、クラスの作者を記録しておくための属性 <code>Author</code> を作成します。
 まずは最も基本的な部分を作成します。
 
-```csharp
+```csharp {title="AuthorAttribute"}
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
 public class AuthorAttribute : Attribute
 {
@@ -656,7 +656,7 @@ public class AuthorAttribute : Attribute
 
 次に使用する側の例を挙げます。
 
-```csharp
+```csharp {title="Author 属性の使用"}
 [Author("Andrei Hejilsberg")]
 class Test
 {
@@ -672,7 +672,7 @@ class Test
 また、属性クラスの public なフィールドやプロパティは<em>名前付きパラメータ</em>と呼ばれる方法で設定することが出来ます。
 例として、先ほど作成した <code>Author</code> 属性の <code>affiliation</code> フィールドを設定してみましょう。
 
-```csharp
+```csharp {title="Author 属性の名前付きパラメータ"}
 [Author("Andrei Hejilsberg", Affiliation="Microsoft")]
 class Test
 {
@@ -687,7 +687,7 @@ class Test
 
 <code>Attribute</code> にも <code>AllowMultiple</code> と <code>Inherited</code> という2つの名前付きパラメータがあります。
 
-```csharp
+```csharp {title="AttributeUsage の名前付きパラメータ"}
 [AttributeUsage(
    属性の対象,
    AllowMultiple=複数回適用の可否,
@@ -709,7 +709,7 @@ false の場合には属性は継承されません。
 <code>Inherited</code> は false とすべきです。
 以上のことを踏まえ、<code>Author</code> 属性を書き直すと以下のようになります。
 
-```csharp
+```csharp {title="AuthorAttribute その2"}
 [AttributeUsage(
   AttributeTargets.Class | AttributeTargets.Struct,
   AllowMultiple = true,
@@ -734,7 +734,7 @@ public class AuthorAttribute : Attribute
 
 例として、クラス及びそのクラス中の public メソッドに適用された全ての <code>Author</code> 属性を取得するプログラムを以下に示します。
 
-```csharp
+```csharp {title="属性の取得の例"}
 using System;
 using System.Reflection;
   
@@ -844,7 +844,7 @@ type name: AuthorTest
 C# 11.0 で、属性をジェネリック クラスにできるようになりました。
 これまでだと、以下のように引数で `typeof` を使って型を渡すことになっていました。
 
-```csharp
+```csharp {title="C# 10まで"}
 // 属性は非ジェネリックでないとダメ。
 class TypeConverter : Attribute
 {
@@ -858,7 +858,7 @@ class MyClass { }
 
 C# 11.0 以降は以下のようにも書けます。
 
-```csharp
+```csharp {title="C# 11 以降"}
 // ジェネリックにできるように。
 class TypeConverter<T> : Attribute { }
 
@@ -869,7 +869,7 @@ class MyClass { }
 
 ただし、型引数は具象型(仮引数が残っていない状態)でなければなりません。
 
-```csharp
+```csharp {title="仮引数が残っているとダメ"}
 // ただし、型引数は具象型出ないとダメ。
 // 型仮引数を仮引数のままにはできない。
 // CS8968 エラーになる。

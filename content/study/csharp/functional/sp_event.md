@@ -88,7 +88,7 @@ Main 関数内のループで時刻の表示を行い、
 別のスレッドでイベント(ユーザからのキー入力)の発生を待ち続け、
 同時にイベントの処理もこのスレッド内で行います。
 
-```csharp
+```csharp {title="イベント処理の例 version 1"}
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -206,7 +206,7 @@ class Program
 単に[デリゲート](sp_delegate.md)を用いてイベント処理を他のメソッドに譲り渡してしまえばいいだけのことです。
 したがって、イベント発生待受け用クラスは以下のようになります。
 
-```csharp
+```csharp {title="キーボードからの入力イベント待受けクラス"}
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -259,7 +259,7 @@ class KeyboardEventLoop
 このようにしてイベント待受け部から独立させたイベント処理部(この例においては <code>onKeyDown</code> デリゲート)のことを<em>イベント ハンドラー</em>と呼びます。
 そして、このクラスを用いて先ほどのサンプルプログラムを書き換えると以下のようになります。
 
-```csharp
+```csharp {title="イベント処理の例 version 2"}
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -373,7 +373,7 @@ class Program
 そこで、C# にはこの仕組みを実現するために <em>event</em> というキーワードが用意されています。
 利用方法は簡単で、イベント ハンドラーとして使用したいデリゲート型の変数宣言時に <code>event</code> という修飾子を付けるだけです。
 
-```csharp
+```csharp {title="event キーワード"}
 event デリゲート型 イベント ハンドラー名;
 ```
 
@@ -387,7 +387,7 @@ event デリゲート型 イベント ハンドラー名;
 追加/削除時の処理を明示的に指定することもできます。
 （省略可能。省略すると、デリゲートを格納するフィールドと、add/remove アクセサーをコンパイラーが自動生成してくれる。）
 
-```csharp
+```csharp {title="イベントプロパティ"}
 event デリゲート型 イベント ハンドラー名
 {
   add
@@ -411,7 +411,7 @@ event デリゲート型 イベント ハンドラー名
 それでは、先ほど作成したイベント発生待受けクラスを event を用いて書き換えてみましょう。
 （event キーワードを足して public にしただけ。）
 
-```csharp
+```csharp {title="イベント発生待受けクラス 完成形" highlight-text="public event KeyboadEventHandler OnKeyDown;"}
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -476,7 +476,7 @@ class KeyboardEventLoop
 
 例えば、以下のようなイベントを書いたとします。
 
-```csharp
+```csharp {title="自動イベント"}
 using System;
 
 class EventSample
@@ -488,7 +488,7 @@ class EventSample
 
 C# 4.0 以降、コンパイラーによる自動生成の結果は以下のような意味合いのものになります。
 
-```csharp
+```csharp {title="コンパイラーによる自動生成の結果"}
 using System;
 using System.Threading;
 
@@ -531,7 +531,7 @@ class EventSample
 (こういうマルチスレッド動作保証の方法については、別途、非同期処理がらみのページで説明予定。)
 マルチスレッド動作を気にしなくていいなら、意味的には以下のコードと同じです。
 
-```csharp
+```csharp {title="マルチスレッド動作を気にしないならこれでいい"}
 using System;
 
 class EventSample

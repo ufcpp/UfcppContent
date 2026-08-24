@@ -21,7 +21,7 @@ aliases: []
 
 悪名高いんですが、C# のというか、.NET の配列は[共変](../../../../study/csharp/oop/sp4_variance.md#covariant-array)だったりします。
 
-```csharp
+```csharp {title="配列の共変性"}
 // ↓.NET 的に許されていはいるものの、 items[0] = new Base(); が例外を起こすので今となってはあんまり使いたくない機能。
 // 意図的に使うことはめったにないものの…
 Base[] items = new Derived[1];
@@ -57,7 +57,7 @@ class Derived : Base { }
 `Base[] items = new Derived[1];` とかいうわかりやすいコードならやらないのであって、
 型推論が絡むと時々間違っちゃう。
 
-```csharp
+```csharp {title="型推論の過程でやらかし"}
 // 配列の型推論はソース側(右辺側)からしかやらない。
 // となると…
 Base[] items = new[] { new Derived() };
@@ -77,7 +77,7 @@ class Derived : Base { }
 
 ちなみに今年やったのはもうちょっと複雑で、要点を抜き出すと以下のようなコードでした。
 
-```csharp
+```csharp {title="気づきにくい共変配列バグ"}
 var testData = new[]
 {
     // たくさん new A() が並んでる。

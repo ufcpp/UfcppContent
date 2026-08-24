@@ -33,13 +33,13 @@ Visual Studio 2017の正式リリースまではバグ修正くらいしか作�
 
 まず`while`。
 
-```csharp
+```csharp {title="while"}
 while (<cond>) <body>
 ```
 
 こういう`while`ステートメントがあったとき、これまでだと、以下のように展開するという仕様になっていました。
 
-```csharp
+```csharp {title="while 旧仕様"}
 continueLabel:;
 if (!<cond>) goto breakLabel;
 {
@@ -51,7 +51,7 @@ breakLabel:;
 
 これが、以下のように変わります。`{ }` が1段増える。
 
-```csharp
+```csharp {title="while 新仕様"}
 continueLabel:;
 {
     if (!<cond>) goto breakLabel;
@@ -71,13 +71,13 @@ breakLabel:;
 
 同様に、`for`。
 
-```csharp
+```csharp {title="for"}
 for (<decl>; <cond>; <incr>) <body>
 ```
 
 この`for`ステートメントは、以下のような仕様になっていました。
 
-```csharp
+```csharp {title="for 旧仕様"}
 {
     <decl>
     while(<cond>)
@@ -91,7 +91,7 @@ for (<decl>; <cond>; <incr>) <body>
 
 これが以下のように変更。更新式(`<incr>`のところ)に `{ }`が増えます。
 
-```csharp
+```csharp {title="for 新仕様"}
 {
     <decl>
     while(<cond>)

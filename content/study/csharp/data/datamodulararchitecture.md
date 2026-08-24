@@ -34,7 +34,7 @@ LINQは、正確に言うとデータ処理に関連する複数の構文やラ�
 
 1つ目は、データ列の入力元と出力先の組み合わせです。少し恣意的な例になりますが、「入力した整数列のうち、奇数のものだけ抜き出して、二乗したものを出力する」という処理を考えましょう。入力元・出力先が固定でいいならそう難しい話ではありません。例えば、コンソールからの入出力で考えると、以下のようになります。
 
-```csharp
+```csharp {title="入力から出力までを1つのメソッドで実装する例"}
 while (true)
 {
     // コンソールから入力
@@ -58,7 +58,7 @@ while (true)
 
 これは、`IEnumerable<T>`(`System.Collections.Generic`名前空間)を受け取り、`IEnumerable<T>`を返すメソッドを作れば実現できます。[イテレーター](sp2_iterator.md)を使えばそう難しくはありません。以下のような書き方ができます。
 
-```csharp
+```csharp {title="入力(Read)、加工(Filter)、出力(Write)の分離"}
 // コンソールから入力
 static IEnumerable<int> Read()
 {
@@ -108,7 +108,7 @@ static void Write(IEnumerable<int> source)
 
 これらを使って前節のコードと同じ処理を書き直すと、(コード中の`Read`, `Write`に対して)以下のような書き方ができます。
 
-```csharp
+```csharp {title="汎用処理の組み合わせ"}
 Write(Read()
     .Where(x => (x % 2) == 1)
     .Select(x => x * x)

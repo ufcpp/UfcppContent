@@ -28,7 +28,7 @@ aliases: []
 はい。[レコード型](../../../../study/csharp/datatype/record.md)を[値型](../../../../study/csharp/resource/oo_reference.md#valtype)(構造体)でも作れるようになりました。
 C# 9.0 時点で、単に `record` キーワードを使って型定義すると必ず[参照型](../../../../study/csharp/resource/oo_reference.md#reftype)(クラス)になっていたんですが、C# 10.0 では `record struct` と `record class` で値型・参照型を選べるようになりました。
 
-```csharp
+```csharp {title="record struct, record class"}
 // こっちは構造体なのでヒープ アロケーション起きない。
 // あんまりでかいデータを持たせるとコピーのコストが結構でかい。
 var s = new S(1, 2);
@@ -62,7 +62,7 @@ record class C(int X, int Y);
 
 あと、今回一緒に、普通の構造体に対しても [`with` 式](../../../../study/csharp/datatype/record.md#with)が使えるようになっています。
 
-```csharp
+```csharp {title="普通の構造体に対して with "}
 var s1 = new S { X = 1, Y = 2 };
 var s2 = s1 with { X = 3 };
 
@@ -84,7 +84,7 @@ struct S
 
 例えば、ある1ファイルに以下のようなコードを書いたとします。
 
-```csharp
+```csharp {title="global using を書いたファイル"}
 global using static System.Console;
 global using System.Linq;
 global using System.Collections.Generic;
@@ -92,7 +92,7 @@ global using System.Collections.Generic;
 
 そのプロジェクト内では、以下のようなコードが普通に書けます。
 
-```csharp
+```csharp {title="global using の影響下にあるコードの例"}
 var x = new List<int> { 1, 2, 3 };
 var y = x.Select(i => i * i);
 foreach (var i in y) WriteLine(i);
@@ -116,13 +116,13 @@ global using Date = System.DateOnly;
 
 例えばどこかのファイルに以下のような `System` への `global using` があったとします。
 
-```csharp
+```csharp {title="System への global using"}
 global using System;
 ```
 
 で、これと同じプロジェクト内で通常の `using` を書く場合、以下のような挙動をします。
 
-```csharp
+```csharp {title="global using System; 影響下のコード"}
 using System; // すでに global using System; があるので「重複」警告あり
 
 using X = DateTime; // この行はコンパイル エラー。ここでは using System; ありきにはならない。
@@ -145,7 +145,7 @@ namespace A
 嫌がらせしようと思えばいくらでも嫌がらせができます。
 とりあえず名前被りの例:
 
-```csharp
+```csharp {title="同名クラスを持つ別名前空間を global using"}
 // JsonSerializer クラスがどれにもあるので、フルネームで書かないと弁別不能になる。
 global using Newtonsoft.Json;
 global using Utf8Json;
@@ -157,7 +157,7 @@ global using System.Text.Json;
 
 一方で、一応、<em>ファイルの先頭にしか書けない</em>という縛りはあります。
 
-```csharp
+```csharp {title="先頭以外に global using を書くとさすがにエラー"}
 using System;
 
 class Program

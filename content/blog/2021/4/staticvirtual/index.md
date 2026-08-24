@@ -32,7 +32,7 @@ aliases: []
 
 ジェネリックなメソッドを作るとき、`new()` 制約を付けることで引数なしのコンストラクターなら呼び出せるんですが…
 
-```csharp
+```csharp {title="new() 制約"}
 void m<T>() where T : new()
 {
     var x = new T(); // OK
@@ -41,7 +41,7 @@ void m<T>() where T : new()
 
 ところが、この `new` には引数を渡せません。
 
-```csharp
+```csharp {title="new(X) は書けない"}
 void m<T>(int i)
     where T : new(int) // こう書きたい(ダメ)
 {
@@ -51,7 +51,7 @@ void m<T>(int i)
 
 これを例えば以下のように書けるようにすることで代替できるようになります。
 
-```csharp
+```csharp {title="new(X) の代替で T.New(X)"}
 void m<T>(int i)
     where T : IConvartibleFromInt // 普通のインターフェイス制約
 {
@@ -70,7 +70,7 @@ interface IConvartibleFromInt
 わかりやすい例だと「[`Enumerable.Sum`](https://source.dot.net/#System.Linq/System/Linq/Sum.cs,17ae8142727f08ee) の実装何個あるんだ」って話で。
 中身はほぼ定型文で、以下のようなコードのコピペが何個も並んでいます。
 
-```csharp
+```csharp {title="Sum"}
 foreach (int v in source)
 {
     sum += v;
@@ -97,7 +97,7 @@ foreach (int v in source)
 
 上記の `Sum` であれば、「0 を取得」と「足し算」の2つがあれば書けるので、まず以下のようなインターフェイスを用意。
 
-```csharp
+```csharp {title="static virtual / static abstract の宣言"}
 interface IAddable<T> where T : IAddable<T>
 {
     static virtual T Zero { get; } => default(T);
@@ -107,7 +107,7 @@ interface IAddable<T> where T : IAddable<T>
 
 これが入るのであれば、標準の `int` 型(`Int32` 構造体(`System` 名前空間))に以下のような実装も足されることになります。
 
-```csharp
+```csharp {title="static virtual / static abstract の実装"}
 struct Int32 : …, IAddable<Int32>
 {
     static Int32 I.operator +(Int32 x, Int32 y) => x + y; // Explicit
@@ -117,7 +117,7 @@ struct Int32 : …, IAddable<Int32>
 
 これを使って `Sum` メソッドを書くと以下のようになります。
 
-```csharp
+```csharp {title="static virtual / static abstract の利用"}
 public static T Sum<T>(T[] ts) where T : IAddable<T>
 {
     T result = T.Zero;                   // Call static operator
@@ -132,7 +132,7 @@ public static T Sum<T>(T[] ts) where T : IAddable<T>
 
 とはいえ、[前述の3年前のブログ](../../../2018/5/metricspace/index.md)でやっているような「値型ジェネリクスを使った黒魔術」でパフォーマンスは解決できるんですが、型引数が余分に1個増えたり、演算子を使えなかったり、だいぶ使い勝手は悪いです。
 
-```csharp
+```csharp {title="これまでの黒魔術的な回避策"}
 public static T Sum<T, TAddable>(T[] ts) where TAddable : IAddable<T>
 {
     T result = default(TAddable).Zero;
@@ -146,7 +146,7 @@ public static T Sum<T, TAddable>(T[] ts) where TAddable : IAddable<T>
 普通の、既存の virtual/abstract メソッドの場合、
 実際にどのメソッドが呼び出されるかはインスタンスの実行時の型によって決まります。
 
-```csharp
+```csharp {title="通常の virtual/abstract は実行時の型によって呼び出し先が決定される"}
 using System;
  
 // 型引数が何だろうと、インスタンスが A なので表示されるのは "A"。
@@ -180,7 +180,7 @@ class B : A
 コンパイル時に決定済み。
 abstract なままのもの(実態がないもの)を使うとコンパイル自体できません。
 
-```csharp
+```csharp {title="static virtual/abstract はコンパイル時に渡した型引数で決定される"}
 using System;
  
 // static virtual/abstract の場合は型引数の方で呼び出し先が決まる。

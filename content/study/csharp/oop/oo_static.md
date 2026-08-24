@@ -48,7 +48,7 @@ C言語から派生したというC#の歴史的な背景のため、静的変�
 その変数は静的メンバー変数・静的メソッドになります。
 例えば、静的フィールドであれば以下のように書きます。
 
-```csharp
+```csharp {title="static 変数の定義"}
 static 型名 フィールド名
 ```
 
@@ -67,7 +67,7 @@ static 型名 フィールド名
 ここでは説明のためということでご容赦を。
 定数の定義については後ほど説明します。)
 
-```csharp
+```csharp {title="インスタンス フィールドと静的フィールドの例" highlight-text="static"}
 class Person
 {
   public string name; // 名前。個体ごとに違うので、インスタンス フィールドに。
@@ -81,7 +81,7 @@ class Person
 
 静的メンバーはクラスに属する値なので、値を参照するには、変数を介してではなく、以下のようにします。
 
-```csharp
+```csharp {title="静的変数の参照" highlight-text="静的フィールドは [クラス名.フィールド名] で参照する。"}
 Person p = new Person()
 
 p.name = "野上冴子"; // インスタンス フィールドは [インスタンス名.フィールド名] で参照する。
@@ -100,7 +100,7 @@ Person.scientificName = "Homo Sapiens";
 数学関数や数学定数などのように、そもそもインスタンスを持つ必要のないものもあります。
 この場合にも、静的メソッド・静的フィールド（あるいは別項で説明する「定数」）を使います。
 
-```csharp
+```csharp {title="インスタンスを持たない関数の例" highlight-ranges="sha256:4b8169fa20c23646313e75e126519cf991667373e94b3b9b21bbf8f22c6d225d;6:10-6:16"}
 using System;
 
 class MyMath
@@ -163,7 +163,7 @@ C# には「関数」的な動作をするメンバーとして、コンスト�
 静的コンストラクターの定義の仕方は、コンストラクターの前に <code>static</code> キーワードを付ける以外は通常のコンストラクターの定義の仕方と同じです。
 例えば、先ほどの <code>Person</code> クラスを例に挙げると以下のようになります。
 
-```csharp
+```csharp {title="静的コンストラクターの例" highlight-ranges="sha256:e468a55d3e84cf7c7b80fb86ec5c7caf1862501770a671f9a4c5e4530fd90779;16:3-16:9"}
 class Person
 {
   string name; // 名前。インスタンス フィールド。
@@ -194,7 +194,7 @@ class Person
 
 ##### <a id="sec-generated-title-6"></a>サンプル
 
-```csharp
+```csharp {title="静的フィールドのサンプル"}
 using System;
 
 // 1台ごとに固有のIDが振られるような何らかの製品。
@@ -274,7 +274,7 @@ C# 1.0 では、private なコンストラクタを持つ sealed クラスとし
 静的メンバーしか定義できないクラスを作ることが出来ます。
 このようなクラスを<strong id="stclass" class="keyword">静的クラス</strong>（static class）と呼びます。
 
-```csharp
+```csharp {title="静的クラスの例" highlight-ranges="sha256:46b0f0f80f5eac7de7b787eb62c60e54ec90fe9a116ac649bc921dae6cb12fcc;1:1-1:7"}
 static class MyMath
 {
   // double x; というような、非 static な変数・メソッドは定義できない。
@@ -312,14 +312,14 @@ C# 3.0 では、（本来、前置き記法である）静的メソッドを、
 すなわち、
 今までなら、
 
-```csharp
+```csharp {title="静的メソッド"}
 int x = int.Parse("1"); // "1" よりも Parse が前
 ```
 
 
 と書いていたものを、
 
-```csharp
+```csharp {title="拡張メソッドの定義"}
 static class Extensions
 {
     public static int Parse(this string str)
@@ -333,7 +333,7 @@ static class Extensions
 というような静的メソッドを用意することで、
 以下のような構文で呼び出せるようになります。
 
-```csharp
+```csharp {title="拡張メソッドの利用"}
 int x = "1".Parse(); // Parse が後に
 ```
 
@@ -352,7 +352,7 @@ C# 6 で、これと同じようなことが、静的メソッドに対しても
 <strong id="key-using-static" class="keyword">using static</strong> ディレクティブを書くことで、クラス名を省略して、直接静的メソッドを呼べるようになります。
 例えば、Math クラス(System 名前空間)中のメソッド呼び出しであれば、以下のように書けます。
 
-```csharp
+```csharp {highlight-ranges="sha256:efde1688e499f31cfeec38c76f8f917d19713f00edb557466285e5d3deab7209;2:1-2:25,8:22-8:29,9:27-9:29"}
 using System;
 using static System.Math;
 
@@ -369,7 +369,7 @@ class Program
 ちなみに、using static は任意のクラスに対して使えます(静的クラスでないとダメとかの制限はありません)。
 たとえば以下の例では、`TimeSpan`構造体や`Task`クラスを using static していますが、これらは static 修飾子がついていない普通のクラスです。
 
-```csharp
+```csharp {title="static 修飾子がつかないクラスを using static"}
 using System.Threading.Tasks;
 using static System.Threading.Tasks.Task;
 using static System.TimeSpan;
@@ -391,7 +391,7 @@ class UsingStaticNormalClass
 
 列挙型のメンバーも静的なので、using staticを使って、型名を省略して参照できます。
 
-```csharp
+```csharp {title="using static と列挙型"}
 using static Color;
 
 class UsingStaticEnum
@@ -418,7 +418,7 @@ enum Color
 using static を使う場合でも、そのクラス中の[拡張メソッド](../functional/sp3_extension.md)はあくまで拡張メソッドとしてだけ使えます。
 using static だけでは、拡張メソッドを普通の静的メソッドと同じ呼び方で呼べません。
 
-```csharp
+```csharp {title="拡張メソッドと using static"}
 using static System.Linq.Enumerable;
 
 class UsingStaticSample
@@ -446,7 +446,7 @@ class UsingStaticSample
 名前空間の using と静的クラスの using の区別がつかないと結構ひどいコードが書けてしまう問題があったので、この文法に落ち着きました。
 static キーワードを付けなくてよい場合、以下のように、名前空間と同名のクラスを後から足すことで、既存のコードを壊せます。
 
-```csharp
+```csharp {title="using クラス名; ではなく、using static クラス名; な理由"}
 // 正式な C# 6 ではコンパイルできない
 // プレビュー版のころにコンパイルできて問題になったコード
 
@@ -486,7 +486,7 @@ nameof も C# 6 で追加された新文法です。詳しくは「[特殊な文
 [クラス](oo_class.md)の[問題 1](oo_class.md#exercise-str1)の <code>Point</code> 構造体に、
 2点間の距離を求める static メソッド <code>GetDistance</code> を追加せよ。
 
-```csharp
+```csharp {title="GetDistance"}
 /// <summary>
 /// A-B 間の距離を求める。
 /// </summary>
@@ -501,7 +501,7 @@ public static double GetDistance(Point a, Point b)
 <code>Triangle</code> クラスに三角形の周を求めるメソッド
 <code>GetPerimeter</code> を追加せよ。
 
-```csharp
+```csharp {title="GetPerimeter"}
 /// <summary>
 /// 三角形の周の長さを求める。
 /// </summary>
@@ -514,7 +514,7 @@ public double GetPerimeter()
 #### 解答例 1
 
 
-```csharp
+```csharp {title="Point/Triangle"}
 using System;
 
 /// <summary>

@@ -54,7 +54,7 @@ count\total.txt というファイルに書くことにします。
 
 例えば、以下のような感じのコードを Global.asax.cs（Global.asax のコードビハインド）のクラス中に追加します。
 
-```csharp
+```csharp {title="Global.asax.cs に追加"}
 string GetTotalCount()
 {
   string filename = Request.PhysicalApplicationPath +
@@ -123,7 +123,7 @@ Response.Cookies でサーバから送り返す Cookie を設定します。
 ということで、
 「[ログの記録](logging.md#logging)」で作った AddAccessLog メソッドを以下のように書き換えます。
 
-```csharp
+```csharp {title="AddAccessLog を修正" highlight-lines="8-14"}
 void AddAccessLog(string count)
 {
       string basePath = Request.PhysicalApplicationPath + @"\accesslog\";
@@ -175,13 +175,13 @@ Web フォーム（.aspx）ページ中に表示するのは非常に簡単で�
 1番簡単な方法でいうと、カウント数を表示したい位置に以下の1行を書くだけ。
 
 
-```xml
+```xml {title="カウント数の表示"}
 <%= Session["count"] %>
 ```
 例えば、以下のような感じ。
 
 
-```html
+```html {title="Default.aspx"}
 <%@ Page Language="C#" %>
 
 <html>
@@ -207,7 +207,7 @@ Page_Load イベントハンドラに以下のようなコードを書きます�
 （画像の作り方に関してはほんの一例。
 要点は強調表示している4行。）
 
-```csharp
+```csharp {title="画像カウンタ" highlight-lines="13-16"}
 private void Page_Load(object sender, System.EventArgs e)
 {
   string text = (string)Session["TotalCount"];
@@ -241,7 +241,7 @@ Response.ClearContent() メソッドを呼び出すことで、
 （ここでは、これのファイル名は Counter.aspx としておきます。）
 
 
-```html
+```html {title="Counter.aspx"}
 <%@ Page language="c#" %>
 <%@ import Namespace="System.Drawing.Imaging" %>
 <%@ import Namespace="System.Drawing" %>
@@ -274,7 +274,7 @@ private void Page_Load(object sender, System.EventArgs e)
 この画像カウンタを呼び出す HTML 側には以下のような感じで &lt;img&gt; タグを書きます。
 
 
-```html
+```html {title="カウンタ利用側の HTML"}
 <html>
 <head>
   <title>テストページ</title>
@@ -293,7 +293,7 @@ private void Page_Load(object sender, System.EventArgs e)
 同じ理屈で、JavaScript カウンタにしたりもできます。
 
 
-```html
+```html {title="JsCounter.aspx"}
 <%@ Page language="c#" %>
 
 <script runat="server">
@@ -312,7 +312,7 @@ private void Page_Load(object sender, System.EventArgs e)
 呼び出し側の HTML では以下のような書きます。
 
 
-```html
+```html {title="JavaScript カウンタ利用側の HTML"}
 <html>
 <head>
   <title>テストページ</title>

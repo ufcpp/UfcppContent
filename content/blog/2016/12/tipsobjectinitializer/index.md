@@ -19,7 +19,7 @@ aliases: []
 
 唐突ですが問題です。以下の3つのコードはそれぞれどういう意味でしょう。
 
-```csharp
+```csharp {title="オブジェクト初期化子パターン1"}
 var x = new Line
 {
     A = new Point { X = 1, Y = 2 },
@@ -27,7 +27,7 @@ var x = new Line
 };
 ```
 
-```csharp
+```csharp {title="オブジェクト初期化子パターン2"}
 var x = new Line
 {
     A = { X = 1, Y = 2 },
@@ -35,7 +35,7 @@ var x = new Line
 };
 ```
 
-```csharp
+```csharp {title="オブジェクト初期化子パターン3"}
 var x = new Line
 {
     A = new { X = 1, Y = 2 },
@@ -45,7 +45,7 @@ var x = new Line
 
 ついでに、将来的に認められるようになるかもしれないパターンをもう1つ。
 
-```csharp
+```csharp {title="オブジェクト初期化子パターン4 (将来OKになるかも)"}
 var x = new Line
 {
     A = new() { X = 1, Y = 2 },
@@ -59,7 +59,7 @@ var x = new Line
 
 まず、`Point`の方は、どのパターンであっても以下のような感じである必要があります。
 
-```csharp
+```csharp {title="Point の例"}
 class Point
 {
     public int X { get; set; }
@@ -72,7 +72,7 @@ class Point
 `Line`の方は、2パターンあります。
 1つは、プロパティが書き換え可能なもの。
 
-```csharp
+```csharp {title="書き換え可能な Line の例"}
 class Line
 {
     public Point A { get; set; }
@@ -82,7 +82,7 @@ class Line
 
 もう1つは、getのみのプロパティに対して、コンストラクター、もしくは、プロパティ初期化子で初期値を与えているものです。
 
-```csharp
+```csharp {title="get のみな Line の例"}
 class Line
 {
     public Point A { get; } = new Point();
@@ -96,7 +96,7 @@ class Line
 
 パターン1のやつは、一番シンプルというか、多くの方がこれのつもりでオブジェクト初期化子を使っているのではないかと思います。
 
-```csharp
+```csharp {title="パターン1の答え"}
 public static void Q()
 {
     var x = new Line
@@ -123,7 +123,7 @@ getのみの方の `Line` 実装には使えません。
 
 意外と知られてないのはこいつですね。
 
-```csharp
+```csharp {title="パターン2の答え"}
 public static void Q()
 {
     var x = new Line
@@ -159,7 +159,7 @@ public static void A()
 
 パターン3は、単に匿名型を代入しているだけ。
 
-```csharp
+```csharp {title="パターン3の答え"}
 public static void Q()
 {
     // 実はコンパイル エラー
@@ -189,7 +189,7 @@ C#だと、コンパイル時にエラーなことがわかるんでそんなに
 パターン4は将来の話。今現在はコンパイル エラーになります。
 どういう構文が追加されそうかというと、左辺からの型推論です。
 
-```csharp
+```csharp {title="パターン4の答え"}
 public static void Q()
 {
     var x = new Line

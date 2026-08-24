@@ -194,7 +194,7 @@ letter-character に加えて、
 案外、変な記号も識別子に使えちゃうんで、以下のようなまね可能。
 良い子は真似しちゃダメ。
 
-```csharp
+```csharp {title="コンパイル通るよ"}
         var ﾟあ゙か゚ː・ゝゞヽ⁀ヾ〱‿〲〳〴〵 = 123;
 ```
 
@@ -217,7 +217,7 @@ C# は2002年のリリースですが、開発自体は1990年代から始まっ
 
 C# の仕様上は「2バイトに収まるかどうか」には触れておらず、単に「letter であれば使える」となっているので、実は現在の C# コンパイラーは仕様を満たしていない状態です。
 
-```csharp
+```csharp {title="追加面文字識別子"}
 // 以下の文字はカテゴリー的には Other Letter なので本来は識別子として使えるはず。
 // 以下のコードがコンパイル エラーを起こすのは、現在の C# コンパイラーが仕様を満たしていない。
 var 𓀀 = 1; // ヒエログリフ
@@ -242,7 +242,7 @@ var 🀀 = 6;
 [エスケープ シーケンス](st_embeddedtype.md#escape-sequence)のうち、`\u` と `\U` の2つは識別子としても使えます。
 例えば以下のコードは普通に有効な C# コードです。
 
-```csharp
+```csharp {title="エスケープ シーケンス識別子の例"}
 var \u0061 = 1; // var a = 1; と同じ意味
 Console.WriteLine(a); // 1
 Console.WriteLine(\U00000061); // 記法が違ってもやっぱり a の意味で解釈されるので 1 が表示される
@@ -257,7 +257,7 @@ C# では、識別子中に含まれる formatting character を完全に無視�
 なので、`ab` と `a\u200Db` は同じ識別子として認識されて、
 以下のコードはコンパイル可能なコードになります。
 
-```csharp
+```csharp {title="formatting character を含むい識別子の例"}
 var ab = 1;
 Console.WriteLine(a\u200Db); // 間に ZWJ が挟まっていても無視されて ab と同じ意味
 ```
@@ -267,7 +267,7 @@ Console.WriteLine(a\u200Db); // 間に ZWJ が挟まっていても無視され�
 例えば以下のコードは、おそらく今見ているこのページ上では表示がおかしいと思います。
 (ちゃんとコンパイルできるコードです。)
 
-```csharp
+```csharp {title="双方向テキスト用 formatting character の例"}
 var a‮bcd‭e = 1;
 Console.WriteLine(abcde);
 ```

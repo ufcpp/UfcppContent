@@ -17,7 +17,7 @@ aliases: []
 
 [https://paiza.io/projects/WMu7W_PPTqkZRV5iGztJtg](https://paiza.io/projects/WMu7W_PPTqkZRV5iGztJtg)
 
-```java
+```java {title="見た目で区別できない変数"}
 import java.util.*;
 
 public class Main {
@@ -69,7 +69,7 @@ Unicode ではこれらの文字を別文字扱いしています。
 
 こいつらを使えば、割と簡単に「ぱっと見で区別がつかない変数」を作れます。
 
-```csharp
+```csharp {title="ラテン文字、ギリシャ文字、キリル文字な変数"}
 using System;
  
 class Program
@@ -110,7 +110,7 @@ Unicode にはこの手の「同じ文字の別表現」を互いに変換する
 
 結果的に、この手の文字も「ぱっと見で区別がつかない変数」に使えます。
 
-```csharp
+```csharp {title="アクセント記号を含む変数"}
 using System;
  
 class Program

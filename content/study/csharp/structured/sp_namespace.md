@@ -41,7 +41,7 @@ aliases:
 例えば、うちのサイトの場合、以下のようなフォルダ構成になっています。
 （注：今は構成が変わっています。昔はこういう構成でした。）
 
-```csharp
+```csharp {title="うちのサイトの階層構造"}
 /--+-- memo           (ブログ的な何か)
    |
    +-- csharp         (このコーナー)
@@ -67,7 +67,7 @@ aliases:
 <code>System</code>名前空間の下に、<code>Text</code>、<code>IO</code>、<code>Drawing</code>などの名前空間があります。
 以下に、名前空間の階層構造と、各名前空間の説明および名前空間に属するクラスの一部を簡単に示します。
 
-```csharp
+```csharp {title="System名前空間の階層構造の例"}
 System --+
          |
          +-- IO
@@ -90,7 +90,7 @@ System --+
 
 C# では、名前空間の定義(= フォルダーを掘るようなものに) `namespace` キーワードを使います。
 
-```csharp
+```csharp {title="namespace で名前空間を作る"}
 namespace MyNamespace // ← MyNamespace という名前空間(フォルダーみたいなもの)を掘った状態
 {
     // その中にクラスを置く
@@ -100,7 +100,7 @@ namespace MyNamespace // ← MyNamespace という名前空間(フォルダー�
 
 一方で、「パスを通す」(フルネームで書かなくても `File` や `Regex` だけでクラスなどを参照する)ための構文も持っていて、こちらには `using` キーワードを使います。
 
-```csharp
+```csharp {title="using で名前空間の中身を参照する"}
 using System;
 using System.IO;
 
@@ -115,7 +115,7 @@ Console.WriteLine($"フォルダーの下に {count} 個のファイルがあり
 
 ちなみに、名前空間に含まれない部分、ソースコードの一番上の部分を<strong id="global-namespace" class="keyword">グローバル名前空間</strong>(global namespace)と呼びます。
 
-```csharp
+```csharp {title="グローバル"}
 // この辺りの事を「グローバル」(global)と呼ぶ。
 
 namespace MyNamespace
@@ -136,7 +136,7 @@ namespace MyNamespace
 そして、リストクラス<code>List</code>と可変長配列クラス<code>Vector</code>は、名前空間<code>Collections</code>を作ってその下に、画像クラス<code>Image</code>は名前空間<code>Drawing</code>を作ってその下に作ることにします。
 階層構造は以下のようになります。
 
-```csharp
+```csharp {title="課題用の名前空間の階層構造"}
 Ufcpp --+-- String                    (文字列クラス)
         |
         +-- Collections --+-- List    (リストクラス)
@@ -149,7 +149,7 @@ Ufcpp --+-- String                    (文字列クラス)
 
 このような構造の名前空間を作るためには以下のように書きます。
 
-```csharp
+```csharp {title="名前空間の定義の仕方の例"}
 namespace Ufcpp
 {
   class String{// String の内容}
@@ -175,7 +175,7 @@ namespace Ufcpp
 そしてその後に続く {} の中で定義したクラスや名前空間はすべてその名前空間に属することになります。
 また、以下のように書いてもこれとまったく同じ意味になります。
 
-```csharp
+```csharp {title="名前空間の定義の仕方のもう一つの例"}
 namespace Ufcpp
 {
   class String{// String の内容}
@@ -204,7 +204,7 @@ namespace Ufcpp.Drawing
 次に、名前空間中に定義したクラスを参照する方法を説明します。
 名前空間中に定義したクラスは、以下のように、階層構造を「 <code>.</code> 」で区切って指定することで参照できます。
 
-```csharp
+```csharp {title="名前空間中のクラスの参照"}
 class NameSpaceTest
 {
   static void Main()
@@ -228,7 +228,7 @@ class NameSpaceTest
 
 C# 10.0 から `{}` なしの以下のような書き方で名前空間を指定できるようになりました。
 
-```csharp
+```csharp {title="C# 10 からできる名前空間の書き方"}
 namespace Namespace;
 
 class A { }
@@ -236,7 +236,7 @@ class A { }
 
 これで以下のコードと同じ意味になります。
 
-```csharp
+```csharp {title="同じ意味のコード"}
 namespace Namespace
 {
     class A { }
@@ -248,7 +248,7 @@ namespace Namespace
 
 ファイル スコープ名前空間は1つの C# ファイルにつき1つだけ書けます。例えば以下のコードはコンパイル エラーになります。
 
-```csharp
+```csharp {title="複数のファイル スコープ名前空間を書くとエラー"}
 namespace Ns1;
 namespace Ns2;
 
@@ -266,7 +266,7 @@ class A { }
 
 くらいです。このうち頻繁に利用するのはコメントと using くらいでしょう。
 
-```csharp
+```csharp {title="ファイル スコープ名前空間よりも前に書けるもの"}
 // コメントと using は namespace よりも前に書ける。
 using System.Text;
 
@@ -280,7 +280,7 @@ class A { }
 
 これで以下のコードと同じ意味になります。
 
-```csharp
+```csharp {title="同じ意味のコード"}
 // コメントと using は namespace よりも前に書ける。
 using System.Text;
 
@@ -301,7 +301,7 @@ namespace Ns1
 
 また、いちいち完全修飾名を書かなくても済むように、<strong id="using" class="keyword">using ディレクティブ</strong>というものが用意されています。
 
-```csharp
+```csharp {title="usingディレクティブの例1"}
 using Ufcpp; // 名前空間 Ufcpp 内にあるクラスを修飾名なしで使えるようになる
 
 class NameSpaceTest
@@ -316,7 +316,7 @@ class NameSpaceTest
 ```
 
 
-```csharp
+```csharp {title="usingディレクティブの例1"}
 using Ufcpp;
 using Ufcpp.Collections;
 using Ufcpp.Drawing;
@@ -347,7 +347,7 @@ using ディレクティブよりも前に書けるのは、
 コメントや空白のようにプログラムに影響しないものか、
 [プリプロセッサー](../misc/sp_preprocess.md)や[extern alias](#extern)などのめったに使わない構文だけです。
 
-```csharp
+```csharp {title="using よりも前に書けるものはほとんどない"}
 // (コメントを除いて) using より前にはほぼ何も書けない。
 using System;
 
@@ -358,7 +358,7 @@ using System.IO; // この行はコンパイル エラー。
 
 ただ、名前空間自体が入れ子に書けるので、「名前空間の先頭にしか書けない」といっても using ディレクティブも入れ子で書けます。
 
-```csharp
+```csharp {title="入れ子の名前空間と using ディレクティブ"}
 using System;
 
 namespace Ns1
@@ -376,7 +376,7 @@ namespace Ns1
 名前の衝突を避けるために名前空間を掘っているのに、using するとその「名前空間分け」をなくすことになります。
 例えば、以下のように「別名前空間の同名の型」を用意します。
 
-```csharp
+```csharp {title="別名前空間の同名の型"}
 // 名前空間違いで同じ名前のクラスを用意しておく。
 namespace A
 {
@@ -392,7 +392,7 @@ namespace B
 ここで、`using A` と `using B` を同時に書いてしまうと「どちらかわからない」というコンパイル エラーを起こします。
 (こういうエラーを「名前があいまい」(ambiguous)と言います。)
 
-```csharp
+```csharp {title="同列の using でエラーを起こす例"}
 // A と B の using を同列に並べる。
 using A;
 using B;
@@ -417,7 +417,7 @@ C# 10.0 から `using` ディレクティブの前に `global` という修飾�
 
 例えば、プロジェクト内のどこか1つのファイルに以下のようなコードを書いたとします。
 
-```csharp
+```csharp {title="global using の例"}
 global using System.Text.RegularExpressions;
 ```
 
@@ -425,7 +425,7 @@ global using System.Text.RegularExpressions;
 
 例えば別のファイルに以下のようなコードを書いたとき、
 
-```csharp
+```csharp {title="global using と同じプロジェクト内の別ファイルの例"}
 var line = Console.ReadLine();
 var m = Regex.Match(line, @"\d+");
 if (m.Success)
@@ -435,7 +435,7 @@ if (m.Success)
 以下のコードと同じ扱いでコンパイルされます。
 (この例の場合、`Regex` クラスが `System.Text.RegularExpressions` 名前空間内で定義されいているクラスなので、`using System.Text.RegularExpressions` が必要。)
 
-```csharp
+```csharp {title="上記コードと同じ意味のもの"}
 using System.Text.RegularExpressions;
 
 var line = Console.ReadLine();
@@ -448,7 +448,7 @@ if (m.Success)
 
 ちなみに、通常の using ディレクティブに加え、後述する [using static](#using-static) や [using エイリアス](#alias)に対しても同様に `global` 修飾を付けることでプロジェクト全域化できます。
 
-```csharp
+```csharp {title="global using static と global using エイリアス"}
 global using System.Text.RegularExpressions;
 global using static System.Linq.Enumerable;
 global using Date = System.DateOnly;
@@ -457,7 +457,7 @@ global using Date = System.DateOnly;
 global using は通常の using ディレクティブの前にしか書けません。
 例えば以下のコードはコンパイル エラーになります。
 
-```csharp
+```csharp {title="global using は using の前にしか書けない"}
 using System;
 global using System.Text.RegularExpressions;
 ```
@@ -485,7 +485,7 @@ using ディレクティブ自体が、ファイルの中でもかなり先頭�
 初期状態で以下のようなコードが作られます。
 `System`、`System.Collections.Generic` などの名前空間は「ほぼみんな使う」と判断されていて、初期状態で using が付いてきます。
 
-```csharp
+```csharp {title="Visual Studio のテンプレート通りに作ったファイル"}
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -503,7 +503,7 @@ namespace ConsoleApp1
 これを、[ファイル スコープ名前空間](#file-scoped-namespace)と併せて、
 以下のようなコードにまでテンプレートの行数を減らしたいというのが global using の主な目的になります。
 
-```csharp
+```csharp {title="Visual Studio のテンプレート通りに作ったファイル"}
 namespace ConsoleApp1;
 
 class A
@@ -523,7 +523,7 @@ class A
 静的メソッドに対する 「[using static](../oop/oo_static.md#key-using-static)」 です。
 以下のように、静的メソッドの呼び出しに対して、クラス名を省略できるようになる機能です(C# 6からの機能)。
 
-```csharp
+```csharp {highlight-ranges="sha256:efde1688e499f31cfeec38c76f8f917d19713f00edb557466285e5d3deab7209;2:1-2:25,8:22-8:29,9:27-9:29"}
 using System;
 using static System.Math;
 
@@ -547,14 +547,14 @@ class Program
 
 エイリアスは以下のような書き方をします。
 
-```csharp
+```csharp {title="エイリアスの付け方"}
 using MyString = Ufcpp.String;
 ```
 
 
 名前空間の先頭でこのような宣言をすることで、その名前空間中では<code>MyString</code>と書くことで<code>Ufcpp.String</code>を参照することが出来ます。
 
-```csharp
+```csharp {title="エイリアスの利用例"}
 using System;
 using MyString = Ufcpp.String;           // クラスのエイリアス
 using MyCollections = Ufcpp.Collections; // 名前空間のエイリアスも作れる
@@ -658,7 +658,7 @@ namespace Sample
 
 C# 12 から以下のようなコードをコンパイルできるようになりました。
 
-```csharp
+```csharp {title="C# 12 から"}
 using Primitive = int;
 using Array = int[];
 using Nullable = int?;
@@ -672,7 +672,7 @@ using Tuple = (int, int);
 
 C# 11 以前でも以下のように、キーワード・専用構文を使わない書き方はできていました。
 
-```csharp
+```csharp {title="C# 11 でもできる書き方"}
 using Primitive = System.Int32;
 using Nullable = System.Nullable<System.Int32>;
 using Tuple = System.ValueTuple<System.Int32, System.Int32>;
@@ -681,7 +681,7 @@ using Tuple = System.ValueTuple<System.Int32, System.Int32>;
 
 また、少々不可解なことに、以下のようなコードも C# 11 以前から書けていました。
 
-```csharp
+```csharp {title="C# 11 でもできる書き方(解せぬ)"}
 using Primitive = System.ValueTuple<int>;
 using Array = System.ValueTuple<int[]>;
 using Nullable = System.ValueTuple<int?>;
@@ -705,7 +705,7 @@ C# 12 では、なぜか最上位レベルの時にだけかかっていた謎�
 例えば、以下のように、ちょっと長めの名前空間名 Ufcpp.Test.Utilities に、
 短いエイリアス Util を付けたとします。
 
-```csharp
+```csharp {title="エイリアス（これ自体は問題がないけども・・・）" highlight-ranges="sha256:7e7617870bd1efd3ce9c887db4fa3372b95f7b6c6f6a59d3c2fe3fccc80af2ea;8:3-8:37,14:7-14:17"}
 namespace Ufcpp.Test.Utilities
 {
   class Image {}
@@ -731,7 +731,7 @@ namespace TestNamespace
 例えば、複数人で開発しているものとして、
 自分以外の誰かが、TestNamespace 内に Util というクラスを作ってしまったとしましょう。
 
-```csharp
+```csharp {title="エイリアスが原因で問題発生" highlight-text="class Util {}"}
 namespace Ufcpp.Test.Utilities
 {
   class Image {}
@@ -766,7 +766,7 @@ Util と言う名前は既に存在しますと怒られるはず。）
 このため、<code>::</code> の付いている部分の直前はエイリアスであることが確定し、
 エイリアスと同名のクラスが追加されても混乱が起こりません。
 
-```csharp
+```csharp {title="エイリアス修飾子" highlight-ranges="sha256:e51fd96e9dd1792cd0bedddff8290e4b93e9b362b8b049024759382666d0ba35;14:7-14:18"}
 namespace Ufcpp.Test.Utilities
 {
   class Image {}
@@ -796,7 +796,7 @@ namespace TestNamespace
 名前の付け方次第では、完全修飾名で書いても参照できない場合があります。
 以下のように、名前空間の階層に同名の識別子がある場合です。
 
-```csharp
+```csharp {title="完全修飾名で参照できなくなる場合"}
 using static System.Console;
 
 namespace X.Y
@@ -818,7 +818,7 @@ class Y { public static void F() => WriteLine("class Y"); }
 そのために使うのが、`global`名前空間エイリアスです。
 以下のように、`global::`から書き始めれば、最上位から名前をたどれます。
 
-```csharp
+```csharp {title="global エイリアスを使って解決"}
 using static System.Console;
 
 namespace X.Y
@@ -849,7 +849,7 @@ C# 2.0 では、using を使ってエイリアスを定義する代わりに、
 外部エイリアスを使うにはまず、
 ソースファイル中に extern alias という宣言を書きます。
 
-```csharp
+```csharp {title="外部エイリアス" highlight-lines="1"}
 extern alias X;
 
 class Program
@@ -865,7 +865,7 @@ class Program
 そして、ソースファイルのコンパイル時に、
 以下のようなオプションを追加します。
 
-```console
+```console {title="外部エイリアス（コンパイルオプション）" highlight-text="/r:X=Ufcpp.dll"}
 csc /r:X=Ufcpp.dll Test.cs
 ```
 
@@ -936,7 +936,7 @@ namespace UsingBackport
 
 まず、`using`の使い過ぎなどでどちらか判別できない状況になると、コンパイル エラーになります。
 
-```csharp
+```csharp {title="判別できずにコンパイル エラー"}
 using static System.Console;
 using A;
 using B;
@@ -968,7 +968,7 @@ namespace B
 
 優先度ですが、以下のように、使う場所に近いほど優先、直接的なものほど優先です。
 
-```csharp
+```csharp {title="名前参照の優先度"}
 using static System.Console;
 using A;
 

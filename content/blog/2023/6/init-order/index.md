@@ -38,7 +38,7 @@ aliases: []
 
 そしてしかも、これを「ソース ジェネレーターとかを使って裏でこっそり書き換えておきたい」とかやったときに、誰の主張が通ってしまうでしょうという問題。
 
-```csharp
+```csharp {title="一体どの主張が通ってしまうのか"}
 using System.Globalization;
 using System.Runtime.CompilerServices;
 
@@ -110,7 +110,7 @@ C# の仕様書上は「reserved, but deterministic order」
 
 例えば以下のようなコードを1つのファイルに書いた場合、
 
-```csharp
+```csharp {title="複数のモジュール初期化子を1ファイルに並べる例"}
 using System.Runtime.CompilerServices;
 
 class Z
@@ -162,7 +162,7 @@ class A
 
 例えば以下のような2つのファイルを同じプロジェクトに含めた場合、
 
-```csharp
+```csharp {title="A.cs に書く"}
 // このコードを A.cs に書く
 using System.Runtime.CompilerServices;
 
@@ -173,7 +173,7 @@ class Z
 }
 ```
 
-```csharp
+```csharp {title="Z.cs に書く"}
 // このコードを Z.cs に書く
 using System.Runtime.CompilerServices;
 

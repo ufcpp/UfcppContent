@@ -26,7 +26,7 @@ aliases: []
 
 現状ではコンパイル エラーになる以下のコードを書けるようにしようという話です。
 
-```csharp
+```csharp {title="構造体の引数なしコンストラクターとフィールド初期化子"}
 struct S1
 {
     public int X;
@@ -100,7 +100,7 @@ C# 6.0 でこの話が出た時、なんで即座に実装できなかったと�
 実際には多分、無意識に使っています。
 と言うのも、ジェネリクスの `new()` 制約を付けた型を実際に `new T()` すると、内部的に `Activator.CreateInstance<T>()` が呼ばれます。
 
-```csharp
+```csharp {title="new() 制約付きの型 T に対する new T()"}
 class C<T>
     where T : new()
 {
@@ -126,7 +126,7 @@ C# 9.0 で追加された[レコード型](../../../2020/6/record0609/index.md)(
 C# 9.0 のレコード型では、例えば以下のような書き方ができます。
 型名の直後の `()` はプライマリ コンストラクターとか呼ばれています。
 
-```csharp
+```csharp {title="プライマリ コンストラクターの例"}
 // プライマリ コンストラクター
 record A(int x)
 {
@@ -142,7 +142,7 @@ record B() : A(1)
 
 これと同じようなことをしたいんだから、自然と、record struct でも以下のような書き方もできてほしくなります。
 
-```csharp
+```csharp {title="record struct でも引数なしプライマリ コンストラクター"}
 record struct S()
 {
     public int X { get; init; } = 1;
@@ -151,7 +151,7 @@ record struct S()
 
 まあ、record struct は単なる契機であって、元から以下のような書き方をしたいという要望はずっと昔からあります。
 
-```csharp
+```csharp {title="普通の構造体でもフィールド初期化子"}
 struct S
 {
     public int X = 1;
@@ -175,7 +175,7 @@ struct S
 
 以下のようなコードはダメだそうです。
 
-```csharp
+```csharp {title="アクセシビリティの問題"}
 internal struct Internal { }
  
 public struct PublicContainsInternal
@@ -199,7 +199,7 @@ public struct PublicContainsInternal
 これまで、構造体は無条件に `new T()` できていました。
 なので、以下のようなメソッドを書いて、`CreateStruct<T>()` を呼んで実行できないケースは全くありませんでした。
 
-```csharp
+```csharp {title="C# 9.0 までなら絶対に大丈夫なコード"}
 static T CreateNew<T>() where T : new() => new T();
 static T CreateStruct<T>() where T : struct => CreateNew<T>();
 ```
@@ -213,7 +213,7 @@ static T CreateStruct<T>() where T : struct => CreateNew<T>();
 C# のオプション引数で、構造体な引数は `default(T)` だけを既定値設定できます。
 例えば以下のようなコードは `new TimeSpan(0)` のところだけコンパイル エラーになります。
 
-```csharp
+```csharp {title="オプション引数に default(T) は渡せても new T(...) は渡せない"}
 void M(
     int x = 1, // 組み込み型の場合は const にできるもの何でも OK
     CancellationToken c = default, // default だけは渡せる。この行も OK。
@@ -226,7 +226,7 @@ void M(
 ここで問題になるのは、昔は `new T()` と `default(T)` は全く同じ意味だったという点。
 ということで、以下のコードは有効な C# コードになります。
 
-```csharp
+```csharp {title="new T() と default(T) が同じ意味なので OK"}
 void M(
     CancellationToken c = new() // new T() と default(T) が同じ意味なので OK。
     )
@@ -237,7 +237,7 @@ void M(
 で、C# 10.0 では「引数なしコンストラクターを持っている構造体に対しては `new T()` の意味が変わるので…
 以下のような状態になります。
 
-```csharp
+```csharp {title="引数なしコンストラクターを追加すると破壊的変更になる例"}
 void M(S s = new()) // S に引数なしコンストラクターを足したらコンパイル エラーになる。
 {
 }

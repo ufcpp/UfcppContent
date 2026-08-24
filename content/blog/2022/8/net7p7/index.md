@@ -41,7 +41,7 @@ C# 11 の機能追加があるたびに [YouTube 配信](https://www.youtube.com
 
 「ちょっとした修正」も、例えば以下のようなバグの修正みたいなレベルの話です。
 
-```csharp
+```csharp {title="Preview 7 だと挙動が怪しいやつの例"}
 unsafe
 {
     // ref フィールドを持ってる構造体、 .NET 7 Preview 7 では managed 扱いされないバグがあるみたい。
@@ -63,7 +63,7 @@ ref struct RefInt
 注意点として、今回、「`net6.0` と C# 11」みたいな組み合わせにするとちょっと問題を起こすような破壊的変更があったりします。
 以下のようなやつで、まあ、めったに踏むようなコードでもないとは思いますが、一応。
 
-```csharp
+```csharp {title="net6.0 + C# 11 でだけ問題を起こすコードの例"}
 using System.Runtime.InteropServices;
 
 public struct Buffer

@@ -41,7 +41,7 @@ C#では<code>checked, unchecked</code>というキーワードを用いるこ�
 例えば、以下のようなプログラムを実行すると、
 「正の数同士を足し合わせているのに結果が負の数になる」という症状を引き起こします。
 
-```csharp
+```csharp {title="オーバーフローの例"}
 sbyte a = 64;           // 2進表現では 0100 0000。
 sbyte b = 65;           // 2進表現では 0100 0001。
 sbyte c = (sbyte)(a + b); // 2進表現では 1000 0001 ←これは sbyte では -127 を表す。
@@ -61,7 +61,7 @@ C#では、コンパイル時に <code>/checked+</code> というオプション
 そこで、コードの特定の箇所でのみオーバーフローのチェックを行うために、<code>checked</code> というキーワードが用意されています。
 <code>checked</code> キーワードは以下のようにして使用します。
 
-```csharp
+```csharp {title="checked 文"}
 checked
   ブロック
 ```
@@ -69,7 +69,7 @@ checked
 
 または、
 
-```csharp
+```csharp {title="checked 演算子"}
 checked(式)
 ```
 
@@ -79,7 +79,7 @@ checked文中の式や、
 checked演算子の後の式の中でオーバーフローが起きた場合、
 <code>System.OverflowException</code> 例外が発生します。
 
-```csharp
+```csharp {title="checkedの例"}
 using System;
 
 class CheckedSample
@@ -116,7 +116,7 @@ checked のときとは逆に、オーバーフローをあえて無視したい
 そのため、<code>unchecked</code> というキーワードも用意されています。
 <code>unchecked</code> キーワードは以下のようにして使用します。
 
-```csharp
+```csharp {title="unchecked 文"}
 unchecked
   ブロック
 ```
@@ -124,7 +124,7 @@ unchecked
 
 または、
 
-```csharp
+```csharp {title="unchecked 演算子"}
 unchecked(式)
 ```
 
@@ -136,7 +136,7 @@ unchecked文中の式や、
 unchecked演算子の後の式の中ではオーバーフローは無視され、
 例外はスローされません。
 
-```csharp
+```csharp {title="uncheckedの例"}
 using System;
 
 /// <summary>
@@ -169,7 +169,7 @@ class Random
 また、絶対値が浮動小数点数で表せる値の範囲を下回った場合(このような状況を<em>アンダーフロー</em>と呼ぶ)、
 値は0になります。
 
-```csharp
+```csharp {title="浮動小数点数型のオーバーフロー"}
 float x = 1e30f;
 float y = 1e-30f;
 Console.Write("{0}, {1}", x*x, y*y); // +∞, 0 と表示される。
