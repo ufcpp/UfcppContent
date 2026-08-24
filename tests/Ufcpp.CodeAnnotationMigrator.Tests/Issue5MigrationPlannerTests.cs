@@ -8,7 +8,9 @@ public sealed class Issue5MigrationPlannerTests
         var historical = new Dictionary<string, string>
         {
             ["sample.md"] =
-                "<pre><code>token + <span class=\"error\">token</span></code></pre>",
+                "<pre><code>token + "
+                + "<span class=\"error\" title=\"CS1001\">token</span>"
+                + "</code></pre>",
         };
         var current = new Dictionary<string, string>
         {
@@ -31,6 +33,7 @@ public sealed class Issue5MigrationPlannerTests
 
         Assert.Single(first.ChangedDocuments);
         Assert.Contains("error-ranges=", updated["sample.md"]);
+        Assert.Contains("error-diagnostics=", updated["sample.md"]);
         Assert.Equal(
             "token + token",
             Assert.Single(CurrentBlockDiscoverer.Discover(updated["sample.md"])).Code);
@@ -63,7 +66,8 @@ public sealed class Issue5MigrationPlannerTests
     public void Plan_UncataloguedEmptySelectionFailsClosed()
     {
         const string Historical =
-            "<pre><code>x<span class=\"error\">(<span class=\"error\"></span>)</span>;"
+            "<pre><code>x<span class=\"error\">("
+            + "<span class=\"error\" title=\"CS1525\"></span>)</span>;"
             + "</code></pre>";
         const string Current = "```text\nx();\n```\n";
         var input = Input(
@@ -83,7 +87,8 @@ public sealed class Issue5MigrationPlannerTests
     public void Plan_CataloguedEmptySelectionRestoresVisibleSelectionOnly()
     {
         const string Historical =
-            "<pre><code>x<span class=\"error\">(<span class=\"error\"></span>)</span>;"
+            "<pre><code>x<span class=\"error\">("
+            + "<span class=\"error\" title=\"CS1525\"></span>)</span>;"
             + "</code></pre>";
         const string Current = "```text\nx();\n```\n";
         var input = Input(

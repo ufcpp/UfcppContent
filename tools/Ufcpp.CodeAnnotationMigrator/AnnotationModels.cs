@@ -11,7 +11,18 @@ internal sealed record AnnotationSelection(
     AnnotationKind Kind,
     int Start,
     int Length,
-    string Text);
+    string Text,
+    string? DiagnosticId = null,
+    int Order = 0);
+
+internal static class DiagnosticCode
+{
+    public static bool IsValid(string? value) =>
+        value is { Length: 6 }
+        && value[0] is 'C'
+        && value[1] is 'S' or 'A'
+        && value.AsSpan(2).IndexOfAnyExceptInRange('0', '9') < 0;
+}
 
 internal sealed record HistoricalCodeBlock(
     int Ordinal,

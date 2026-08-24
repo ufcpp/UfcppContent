@@ -98,7 +98,7 @@ internal static partial class RawTableAnnotationRewriter
         var bodyStart = codeOpeningEnd + 1;
         var originalBody = source[bodyStart..codeClosing];
         var cleanBody = RemoveExistingAnnotations(path, current, originalBody);
-        var existingSelections = GetExistingCodeRanges(
+        var existingAnnotations = GetExistingAnnotations(
             path,
             current,
             originalBody);
@@ -112,11 +112,14 @@ internal static partial class RawTableAnnotationRewriter
         }
 
         var rawRanges = new List<TypedSourceRange>();
+        var rawIdentities = new List<TypedDiagnosticSourceRange>();
         foreach (var kind in Enum.GetValues<RawAnnotationKind>()
                      .Where(static kind => kind != RawAnnotationKind.None))
         {
-            var existing = existingSelections.GetValueOrDefault(kind) ?? [];
+            var existing =
+                existingAnnotations.VisualRanges.GetValueOrDefault(kind) ?? [];
             IReadOnlyList<HighlightSourceRange> codeRanges;
+            IReadOnlyList<DiagnosticIdentity> codeIdentities;
             if (plannedSelections.TryGetValue(kind, out var selection))
             {
                 codeRanges = GetCodeRanges(current.Code, selection);
@@ -127,50 +130,56 @@ internal static partial class RawTableAnnotationRewriter
                         current,
                         $"has conflicting existing {KindName(kind)} markup.");
                 }
-            }
-            else
-            {
-                codeRanges = existing;
-            }
 
-            foreach (var range in codeRanges)
-            {
-                var candidates = new HashSet<HighlightSourceRange>();
-                foreach (var start in map.GetRawBoundaries(range.Start))
-                {
-                    foreach (var end in map.GetRawBoundaries(range.End)
-                                 .Where(end => end > start))
-                    {
-                        var slice = cleanBody[start..end];
-                        if (slice.Contains('<', StringComparison.Ordinal))
-                        {
-                            continue;
-                        }
-
-                        if (string.Equals(
-                                WebUtility.HtmlDecode(slice),
-                                current.Code[range.Start..range.End],
-                                StringComparison.Ordinal))
-                        {
-                            candidates.Add(new HighlightSourceRange(start, end));
-                        }
-                    }
-                }
-
-                if (candidates.Count != 1)
+                codeIdentities = selection.Diagnostics is null
+                    ? []
+                    : DiagnosticIdentityMetadata.Parse(
+                        current.Code,
+                        selection.Diagnostics,
+                        $"{KindName(kind)} diagnostics");
+                var existingIdentities =
+                    existingAnnotations.DiagnosticIdentities.GetValueOrDefault(kind) ?? [];
+                if (existingIdentities.Count != 0
+                    && !SameIdentities(existingIdentities, codeIdentities))
                 {
                     throw Invalid(
                         path,
                         current,
-                        $"has no unique exact raw source range for {KindName(kind)}.");
+                        $"has conflicting existing {KindName(kind)} titles.");
                 }
+            }
+            else
+            {
+                codeRanges = existing;
+                codeIdentities =
+                    existingAnnotations.DiagnosticIdentities.GetValueOrDefault(kind) ?? [];
+            }
 
-                var mapped = candidates.Single();
+            foreach (var range in codeRanges)
+            {
+                var mapped = MapRawRange(range, kind);
                 rawRanges.Add(new TypedSourceRange(kind, mapped.Start, mapped.End));
+            }
+
+            foreach (var identity in codeIdentities)
+            {
+                var mapped = MapRawRange(
+                    new HighlightSourceRange(identity.Start, identity.End),
+                    kind);
+                rawIdentities.Add(
+                    new TypedDiagnosticSourceRange(
+                        kind,
+                        identity.Id,
+                        mapped.Start,
+                        mapped.End,
+                        identity.Order));
             }
         }
 
-        var desiredBody = ApplyAnnotations(cleanBody, rawRanges);
+        var desiredBody = ApplyAnnotations(
+            cleanBody,
+            rawRanges,
+            rawIdentities);
 
         if (!string.Equals(originalBody, desiredBody, StringComparison.Ordinal))
         {
@@ -192,10 +201,46 @@ internal static partial class RawTableAnnotationRewriter
                 plannedSelections.Add(kind, selection);
             }
         }
+
+        HighlightSourceRange MapRawRange(
+            HighlightSourceRange range,
+            RawAnnotationKind kind)
+        {
+            var candidates = new HashSet<HighlightSourceRange>();
+            foreach (var start in map.GetRawBoundaries(range.Start))
+            {
+                foreach (var end in map.GetRawBoundaries(range.End)
+                             .Where(end => end > start))
+                {
+                    var slice = cleanBody[start..end];
+                    if (slice.Contains('<', StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
+
+                    if (string.Equals(
+                            WebUtility.HtmlDecode(slice),
+                            current.Code[range.Start..range.End],
+                            StringComparison.Ordinal))
+                    {
+                        candidates.Add(new HighlightSourceRange(start, end));
+                    }
+                }
+            }
+
+            if (candidates.Count != 1)
+            {
+                throw Invalid(
+                    path,
+                    current,
+                    $"has no unique exact raw source range for {KindName(kind)}.");
+            }
+
+            return candidates.Single();
+        }
     }
 
-    private static IReadOnlyDictionary<RawAnnotationKind, IReadOnlyList<HighlightSourceRange>>
-        GetExistingCodeRanges(
+    private static RawExistingAnnotations GetExistingAnnotations(
             string path,
             CurrentCodeBlock current,
             string body)
@@ -228,7 +273,7 @@ internal static partial class RawTableAnnotationRewriter
                 "existing annotations do not map to the discovered visible code.");
         }
 
-        return block.Annotations
+        var visual = block.Annotations
             .GroupBy(static annotation => ToRawKind(annotation.Kind))
             .ToDictionary(
                 static group => group.Key,
@@ -236,6 +281,20 @@ internal static partial class RawTableAnnotationRewriter
                     group.Select(static annotation => new HighlightSourceRange(
                         annotation.Start,
                         annotation.Start + annotation.Length))));
+        var identities = block.Annotations
+            .Where(static annotation => annotation.DiagnosticId is not null)
+            .GroupBy(static annotation => ToRawKind(annotation.Kind))
+            .ToDictionary(
+                static group => group.Key,
+                static group => (IReadOnlyList<DiagnosticIdentity>)group
+                    .OrderBy(static annotation => annotation.Order)
+                    .Select((annotation, order) => new DiagnosticIdentity(
+                        annotation.DiagnosticId!,
+                        annotation.Start,
+                        annotation.Start + annotation.Length,
+                        order))
+                    .ToArray());
+        return new RawExistingAnnotations(visual, identities);
 
         static HistoricalCodeBlock AssertSingle(
             IReadOnlyList<HistoricalCodeBlock> blocks) =>
@@ -254,6 +313,15 @@ internal static partial class RawTableAnnotationRewriter
             _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, null),
         };
 
+    private static bool SameIdentities(
+        IReadOnlyList<DiagnosticIdentity> left,
+        IReadOnlyList<DiagnosticIdentity> right) =>
+        left.Count == right.Count
+        && left.Zip(right).All(pair =>
+            pair.First.Id == pair.Second.Id
+            && pair.First.Start == pair.Second.Start
+            && pair.First.End == pair.Second.End);
+
     private static string RemoveExistingAnnotations(
         string path,
         CurrentCodeBlock current,
@@ -271,7 +339,7 @@ internal static partial class RawTableAnnotationRewriter
         bool marksAsEmphasis)
     {
         var output = new StringBuilder(body.Length);
-        var open = new Stack<RawAnnotationKind>();
+        var open = new Stack<RawWrapper>();
         for (var index = 0; index < body.Length;)
         {
             if (body[index] != '<')
@@ -296,10 +364,25 @@ internal static partial class RawTableAnnotationRewriter
 
             var tagEnd = FindTagEnd(body, index);
             var tag = body[index..(tagEnd + 1)];
+            if (TryParseDiagnosticSpanOpening(
+                    tag,
+                    out var diagnosticKind,
+                    out var diagnosticId))
+            {
+                Open(diagnosticKind, diagnosticId);
+                if (marksAsEmphasis)
+                {
+                    output.Append(tag);
+                }
+
+                index = tagEnd + 1;
+                continue;
+            }
+
             switch (tag)
             {
                 case MarkOpening:
-                    Open(RawAnnotationKind.Highlight);
+                    Open(RawAnnotationKind.Highlight, null);
                     if (marksAsEmphasis)
                     {
                         output.Append("<em>");
@@ -312,23 +395,9 @@ internal static partial class RawTableAnnotationRewriter
                         output.Append("</em>");
                     }
                     break;
-                case ErrorOpening:
-                    Open(RawAnnotationKind.Error);
-                    if (marksAsEmphasis)
-                    {
-                        output.Append(tag);
-                    }
-                    break;
-                case WarningOpening:
-                    Open(RawAnnotationKind.Warning);
-                    if (marksAsEmphasis)
-                    {
-                        output.Append(tag);
-                    }
-                    break;
                 case SpanClosing:
                     if (open.Count == 0
-                        || open.Peek() is not (
+                        || open.Peek().Kind is not (
                             RawAnnotationKind.Error or RawAnnotationKind.Warning))
                     {
                         throw Invalid(
@@ -369,10 +438,15 @@ internal static partial class RawTableAnnotationRewriter
 
         return output.ToString();
 
-        void Open(RawAnnotationKind kind)
+        void Open(RawAnnotationKind kind, string? diagnosticId)
         {
-            if (open.Contains(kind)
-                || open.Count != 0 && Rank(kind) <= Rank(open.Peek()))
+            var sameKindNesting = open.Count != 0
+                && open.Peek().Kind == kind
+                && diagnosticId is not null
+                && open.Peek().DiagnosticId is not null;
+            if (open.Any(wrapper => wrapper.Kind == kind) && !sameKindNesting
+                || open.Count != 0
+                && Rank(kind) < Rank(open.Peek().Kind))
             {
                 throw Invalid(
                     path,
@@ -380,12 +454,12 @@ internal static partial class RawTableAnnotationRewriter
                     "contains noncanonical annotation nesting.");
             }
 
-            open.Push(kind);
+            open.Push(new RawWrapper(kind, diagnosticId, open.Count));
         }
 
         void Close(RawAnnotationKind kind)
         {
-            if (open.Count == 0 || open.Pop() != kind)
+            if (open.Count == 0 || open.Pop().Kind != kind)
             {
                 throw Invalid(
                     path,
@@ -402,6 +476,31 @@ internal static partial class RawTableAnnotationRewriter
                 RawAnnotationKind.Warning => 3,
                 _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, null),
             };
+    }
+
+    private static bool TryParseDiagnosticSpanOpening(
+        string tag,
+        out RawAnnotationKind kind,
+        out string? diagnosticId)
+    {
+        var match = Regex.Match(
+            tag,
+            """^<span class="(?<kind>error|warning)"(?: title="(?<id>(?:CS|CA)\d{4})")?>$""",
+            RegexOptions.CultureInvariant);
+        if (!match.Success)
+        {
+            kind = RawAnnotationKind.None;
+            diagnosticId = null;
+            return false;
+        }
+
+        kind = match.Groups["kind"].Value == "error"
+            ? RawAnnotationKind.Error
+            : RawAnnotationKind.Warning;
+        diagnosticId = match.Groups["id"].Success
+            ? match.Groups["id"].Value
+            : null;
+        return true;
     }
 
     private static IReadOnlyList<HighlightSourceRange> GetCodeRanges(
@@ -440,7 +539,8 @@ internal static partial class RawTableAnnotationRewriter
 
     private static string ApplyAnnotations(
         string source,
-        IReadOnlyList<TypedSourceRange> ranges)
+        IReadOnlyList<TypedSourceRange> ranges,
+        IReadOnlyList<TypedDiagnosticSourceRange> identities)
     {
         var boundaries = new SortedSet<int> { 0, source.Length };
         foreach (var range in ranges)
@@ -448,72 +548,115 @@ internal static partial class RawTableAnnotationRewriter
             boundaries.Add(range.Start);
             boundaries.Add(range.End);
         }
+        foreach (var identity in identities)
+        {
+            boundaries.Add(identity.Start);
+            boundaries.Add(identity.End);
+        }
 
         var positions = boundaries.ToArray();
         var output = new StringBuilder(
-            source.Length + ranges.Count * (ErrorOpening.Length + SpanClosing.Length));
-        var active = RawAnnotationKind.None;
+            source.Length
+            + (ranges.Count + identities.Count)
+            * (ErrorOpening.Length + SpanClosing.Length));
+        var active = new List<RawWrapper>();
         for (var index = 0; index < positions.Length - 1; index++)
         {
             var start = positions[index];
             var end = positions[index + 1];
-            var next = RawAnnotationKind.None;
-            foreach (var range in ranges)
+            var next = GetActiveWrappers(start, end);
+            var common = 0;
+            while (common < active.Count
+                   && common < next.Count
+                   && active[common] == next[common])
             {
-                if (range.Start <= start && end <= range.End)
-                {
-                    next |= range.Kind;
-                }
+                common++;
             }
 
-            if (next != active)
+            for (var close = active.Count - 1; close >= common; close--)
             {
-                Close(active);
-                Open(next);
-                active = next;
+                output.Append(Closing(active[close]));
             }
 
+            active.RemoveRange(common, active.Count - common);
+            foreach (var wrapper in next.Skip(common))
+            {
+                output.Append(Opening(wrapper));
+                active.Add(wrapper);
+            }
             output.Append(source, start, end - start);
         }
 
-        Close(active);
+        for (var close = active.Count - 1; close >= 0; close--)
+        {
+            output.Append(Closing(active[close]));
+        }
+
         return output.ToString();
 
-        void Open(RawAnnotationKind kinds)
+        IReadOnlyList<RawWrapper> GetActiveWrappers(int start, int end)
         {
-            if ((kinds & RawAnnotationKind.Highlight) != 0)
+            var wrappers = new List<RawWrapper>();
+            foreach (var kind in new[]
+                     {
+                         RawAnnotationKind.Highlight,
+                         RawAnnotationKind.Error,
+                         RawAnnotationKind.Warning,
+                     })
             {
-                output.Append(MarkOpening);
+                var visual = ranges.Any(range =>
+                    range.Kind == kind
+                    && range.Start <= start
+                    && end <= range.End);
+                var activeIdentities = identities
+                    .Where(identity =>
+                        identity.Kind == kind
+                        && identity.Start <= start
+                        && end <= identity.End)
+                    .OrderBy(static identity => identity.Order)
+                    .ToArray();
+                if (activeIdentities.Length != 0)
+                {
+                    wrappers.AddRange(
+                        activeIdentities.Select(identity => new RawWrapper(
+                            kind,
+                            identity.DiagnosticId,
+                            identity.Order)));
+                }
+                else if (visual)
+                {
+                    wrappers.Add(new RawWrapper(kind, null, -1));
+                }
             }
 
-            if ((kinds & RawAnnotationKind.Error) != 0)
-            {
-                output.Append(ErrorOpening);
-            }
-
-            if ((kinds & RawAnnotationKind.Warning) != 0)
-            {
-                output.Append(WarningOpening);
-            }
+            return wrappers;
         }
 
-        void Close(RawAnnotationKind kinds)
-        {
-            if ((kinds & RawAnnotationKind.Warning) != 0)
+        static string Opening(RawWrapper wrapper) =>
+            wrapper.Kind switch
             {
-                output.Append(SpanClosing);
-            }
+                RawAnnotationKind.Highlight => MarkOpening,
+                RawAnnotationKind.Error or RawAnnotationKind.Warning =>
+                    $"<span class=\"{(wrapper.Kind == RawAnnotationKind.Error ? "error" : "warning")}\""
+                    + (wrapper.DiagnosticId is null
+                        ? ">"
+                        : $" title=\"{wrapper.DiagnosticId}\">"),
+                _ => throw new ArgumentOutOfRangeException(
+                    nameof(wrapper),
+                    wrapper,
+                    null),
+            };
 
-            if ((kinds & RawAnnotationKind.Error) != 0)
+        static string Closing(RawWrapper wrapper) =>
+            wrapper.Kind switch
             {
-                output.Append(SpanClosing);
-            }
-
-            if ((kinds & RawAnnotationKind.Highlight) != 0)
-            {
-                output.Append(MarkClosing);
-            }
-        }
+                RawAnnotationKind.Highlight => MarkClosing,
+                RawAnnotationKind.Error or RawAnnotationKind.Warning => SpanClosing,
+                _ => throw new ArgumentOutOfRangeException(
+                    nameof(wrapper),
+                    wrapper,
+                    null),
+            };
     }
 
     private static string KindName(RawAnnotationKind kind) =>
@@ -674,6 +817,24 @@ internal static partial class RawTableAnnotationRewriter
         RawAnnotationKind Kind,
         int Start,
         int End);
+
+    private readonly record struct TypedDiagnosticSourceRange(
+        RawAnnotationKind Kind,
+        string DiagnosticId,
+        int Start,
+        int End,
+        int Order);
+
+    private readonly record struct RawWrapper(
+        RawAnnotationKind Kind,
+        string? DiagnosticId,
+        int Order);
+
+    private sealed record RawExistingAnnotations(
+        IReadOnlyDictionary<RawAnnotationKind, IReadOnlyList<HighlightSourceRange>>
+            VisualRanges,
+        IReadOnlyDictionary<RawAnnotationKind, IReadOnlyList<DiagnosticIdentity>>
+            DiagnosticIdentities);
 
     private sealed class RawVisibleMap
     {

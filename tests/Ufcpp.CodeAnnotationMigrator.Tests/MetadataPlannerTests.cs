@@ -265,6 +265,45 @@ public sealed class MetadataPlannerTests
     }
 
     [Fact]
+    public void Plan_DiagnosticIdentitiesPreserveNestedAndDuplicateOccurrences()
+    {
+        const string Code = "value";
+        var historical = Historical(
+            Code,
+            null,
+            new AnnotationSelection(
+                AnnotationKind.Error,
+                0,
+                Code.Length,
+                Code,
+                "CS1001",
+                0),
+            new AnnotationSelection(
+                AnnotationKind.Error,
+                0,
+                Code.Length,
+                Code,
+                "CS1002",
+                1),
+            new AnnotationSelection(
+                AnnotationKind.Error,
+                0,
+                Code.Length,
+                Code,
+                "CS1002",
+                2));
+
+        var result = MetadataPlanner.Plan(historical, Current(Code));
+
+        Assert.Empty(result.Diagnostics);
+        Assert.Equal(
+            DiagnosticMetadata(
+                Code,
+                "CS1001@1:1-1:6,CS1002@1:1-1:6,CS1002@1:1-1:6"),
+            result.Plan.Error?.Diagnostics);
+    }
+
+    [Fact]
     public void Plan_EmptySelectionIsDiagnosedWithoutDroppingVisibleSelections()
     {
         const string Code = "x();";
@@ -381,4 +420,7 @@ public sealed class MetadataPlannerTests
             .ToLowerInvariant();
         return $"sha256:{hash};{ranges}";
     }
+
+    private static string DiagnosticMetadata(string code, string entries) =>
+        $"sha256:{HighlightRangePlanner.ComputeHash(code)};{entries}";
 }

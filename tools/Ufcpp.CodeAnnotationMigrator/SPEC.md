@@ -516,8 +516,9 @@ Canonical fenced metadata is serialized in this order, omitting absent values:
 
 1. `title`;
 2. `highlight-lines`, `highlight-text`, `highlight-ranges`;
-3. `error-lines`, `error-text`, `error-ranges`; and
-4. `warning-lines`, `warning-text`, `warning-ranges`.
+3. `error-lines`, `error-text`, `error-ranges`, `error-diagnostics`; and
+4. `warning-lines`, `warning-text`, `warning-ranges`,
+   `warning-diagnostics`.
 
 The Issue #4 one-pass entity encoding rules apply to every value. Duplicate
 properties, a conflicting existing value, noncanonical range spelling or
@@ -526,23 +527,82 @@ empty or newline-only ranges, incompatible text/range pairs, and ambiguous
 error/warning text are hard errors. None of the metadata properties is copied
 to generated HTML.
 
+### Diagnostic identity metadata
+
+Legacy diagnostic spans may also carry a compiler or analyzer ID in their
+native HTML `title`. Visual line/text/range metadata is a union and therefore
+cannot preserve those selection-level identities: same-kind spans may overlap,
+nest, share an identical range, touch, or carry different IDs inside one visual
+merge group. Issue #5 therefore stores titled occurrences separately:
+
+```text
+error-diagnostics   = "sha256:" 64-lowercase-hex ";" diagnostic
+                      *("," diagnostic)
+warning-diagnostics = "sha256:" 64-lowercase-hex ";" diagnostic
+                      *("," diagnostic)
+diagnostic          = diagnostic-id "@" range
+diagnostic-id       = ("CS" / "CA") 4DIGIT
+range               = position "-" position
+position            = positive-decimal ":" positive-decimal
+```
+
+The fingerprint and coordinates have exactly the `*-ranges` meaning. Every
+entry denotes one historical titled span occurrence. IDs are uppercase and must
+match `^(CS|CA)\d{4}$`; arbitrary tooltip text is invalid. Empty selections,
+newline-only selections, stale fingerprints, invalid Unicode, unaddressable or
+out-of-bounds coordinates, and noncanonical decimal/hex spelling fail
+migration or generation.
+
+List order is semantic and records legacy opening-tag order. For a single kind,
+entries must form a properly nested or disjoint interval sequence:
+
+- starts never move backward;
+- when starts are equal, the earlier entry must end no earlier than the later
+  entry, so outer spans precede inner spans;
+- a later entry may be nested, identical, adjacent, or disjoint, but cannot
+  cross an open earlier entry; and
+- identical ID/range entries are retained because they represent distinct
+  legacy occurrences.
+
+Consequently identical ranges with different IDs and duplicate same-ID ranges
+are valid and preserve their input order. Sorting IDs, merging entries, or
+deduplicating them is forbidden. The migrator projects each titled selection
+independently through the existing exact historical-to-current scalar boundary
+map, retains its legacy opening order, and serializes one canonical list per
+kind.
+
+The permanent renderer validates this grammar independently. Visual
+error/warning spans continue to use their existing same-kind union. On each
+source segment, a titled occurrence replaces the otherwise redundant untitled
+visual wrapper for that kind; outside titled ranges, the union still emits one
+class-only wrapper. Multiple active diagnostics of one kind are nested in
+metadata order. The renderer keeps an outer diagnostic wrapper open while
+opening and closing a nested occurrence, so one legacy occurrence is not
+duplicated merely because another diagnostic or a syntax token starts inside
+it.
+
 ### Typed interval rendering
 
-The renderer forms one source interval set per annotation kind and splits at
-every syntax-color and annotation boundary. It emits semantically distinct
-wrappers in this fixed outer-to-inner order:
+The renderer splits at every syntax-color, visual annotation, and diagnostic
+identity boundary. It emits semantically distinct channels in this fixed
+outer-to-inner order:
 
 1. `<mark class="code-highlight">`;
-2. `<span class="error">`;
-3. `<span class="warning">`; and
+2. error spans, with active titled error occurrences nested in their legacy
+   order (or one class-only error wrapper when none is active);
+3. warning spans under the same rule; and
 4. the syntax-color `<span>` returned by Roslyn or ColorCode.
 
-Only active wrappers are emitted for a segment. A partial overlap closes and
-reopens wrappers at the shared boundary instead of producing crossing HTML
-tags. Equal-boundary selections retain all active kinds. Adjacent intervals of
-different kinds remain distinct. The same algorithm applies to C#, ColorCode
-languages, plain/unknown languages, and `console`; before and after wrapping,
-the exact decoded code text must equal the source code.
+Only active wrappers are emitted. The renderer retains the longest common
+wrapper prefix between adjacent source segments, which preserves proper nesting
+for same-kind titled occurrences and splits only a genuinely crossing
+different-kind overlap. Equal-boundary selections retain every occurrence;
+adjacent identities remain distinct. The same algorithm applies to C#,
+ColorCode languages, plain/unknown languages, and `console`; before and after
+wrapping, the exact decoded code text must equal the source code. A rendered
+diagnostic span has exactly `class` and, when present, the validated native
+`title`; no event, data, style, ARIA, role, ID, anchor, focus, or script surface
+is introduced.
 
 ### Raw table annotations
 
@@ -551,6 +611,9 @@ migrator inserts the permanent fixed elements
 `<mark class="code-highlight">`, `<span class="error">`, and
 `<span class="warning">` at exact guarded raw-source boundaries. When kinds
 overlap, it uses the same wrapper order and boundary splitting as fenced blocks.
+Titled raw diagnostics use the exact canonical
+`<span class="error|warning" title="CS####|CA####">` form and retain duplicate
+or nested occurrences in diagnostic-list order.
 It may remove and reconstruct only those three exact canonical wrapper forms to
 prove idempotency; any noncanonical annotation element, unsupported existing
 mark/span, boundary inside an entity or element, malformed wrapper, or missing
@@ -622,6 +685,28 @@ The audited exact projection on the Issue #4 base is:
 | Serialized range intervals | 448 | 142 |
 | Raw-table blocks | 4 | 0 |
 
+The pinned native-title inventory is:
+
+| Result | Error | Warning | Total |
+|---|---:|---:|---:|
+| Historical titled occurrences | 298 | 84 | 382 |
+| Evidenced obsolete empty occurrences | 1 | 0 | 1 |
+| Required live titled occurrences | 297 | 84 | 381 |
+
+All 382 titles are non-empty: 378 are `CS####`, four are `CA####`, and there
+are 152 distinct IDs. They occur in 56 documents and 174 blocks. Fifty-one
+blocks in 30 documents contain multiple distinct IDs. Thirty-five same-kind
+visual merge groups contain titled occurrences; 31 groups across 18 blocks and
+13 documents contain multiple different IDs. Seven titled raw-table selections
+currently collapse to six visual spans and must regain all seven identities,
+including the nested duplicate occurrence.
+
+The sole obsolete titled occurrence is the empty
+`<span class="error" title="CS1525"></span>` in
+`study/misc/list/test.md` historical block 2. The malformed obsolete warning in
+`blog/2022/1/defaultable/index.md` has no title. Every other titled occurrence
+must be projected and rendered; blocked or unexplained identity count is zero.
+
 Two selections are evidenced obsolete: the malformed `defaultable` warning and
 the empty `test.md` error wrapper. The 396 final plans change 120 documents.
 Same-block co-occurrence is 16 error+highlight, 1 warning+highlight, 26
@@ -647,6 +732,9 @@ PR 3 is complete only when:
 
 - all 321 parsed error blocks, all 100 parsed warning blocks, and both malformed
   Issue #5 candidates have exact restored or evidenced-obsolete dispositions;
+- all 382 historical titled occurrences reconcile to 381 exact live
+  diagnostic identities and one evidenced-obsolete empty `CS1525`, with no
+  identity lost to visual merging;
 - every line/text failure has an exact fingerprinted range plan and no
   Issue #5 diagnostic is unexplained;
 - generated HTML preserves exact code text and valid nesting for all typed
@@ -664,10 +752,12 @@ PR 3 is complete only when:
 ## Report
 
 The report is UTF-8 without a byte-order mark, uses LF newlines, is
-pretty-printed JSON with one final LF, and has schema version 2 after the
-addition of `ranges` to selection plans. The PR 1 baseline was schema version
-1. It contains no timestamp, absolute path, machine name, elapsed time, or
-report destination.
+pretty-printed JSON with one final LF, and has schema version 3 after the
+addition of selection-level diagnostic identities. Schema version 2 added
+`ranges`; the PR 1 baseline was schema version 1. Issue #4 reports remain
+schema version 2 because the nullable diagnostic property is omitted when
+absent and that mode does not carry Issue #5 identities. The report contains no
+timestamp, absolute path, machine name, elapsed time, or report destination.
 
 Top-level sections are emitted in this order:
 

@@ -11,6 +11,7 @@ internal sealed record Issue5MigrationReport(
     ReportTarget Target,
     Issue5AcceptanceCounts Acceptance,
     Issue5RepresentationCounts Representations,
+    Issue5DiagnosticIdentityCounts DiagnosticIdentities,
     Issue5OverlapCounts Overlaps,
     IReadOnlyList<string> ChangedDocuments,
     IReadOnlyList<Issue5ExceptionResolution> ExceptionResolutions,
@@ -43,6 +44,26 @@ internal sealed record Issue5RepresentationCounts(
     int WarningRangeIntervals,
     int RawTableErrorBlocks,
     int RawTableWarningBlocks);
+
+internal sealed record Issue5DiagnosticIdentityCounts(
+    int HistoricalOccurrences,
+    int HistoricalErrorOccurrences,
+    int HistoricalWarningOccurrences,
+    int RestoredOccurrences,
+    int RestoredErrorOccurrences,
+    int RestoredWarningOccurrences,
+    int ObsoleteOccurrences,
+    int DistinctIds,
+    int Documents,
+    int Blocks,
+    int MultipleDistinctIdDocuments,
+    int MultipleDistinctIdBlocks,
+    int SameKindMergeGroups,
+    int MultipleIdMergeGroups,
+    int MultipleIdMergeDocuments,
+    int MultipleIdMergeBlocks,
+    int RawTableOccurrences,
+    int MetadataBlocks);
 
 internal sealed record Issue5OverlapCounts(
     int ErrorHighlightSameBlock,
@@ -128,6 +149,7 @@ internal static class Issue5MigrationReportWriter
             .Where(static entry =>
                 entry.Disposition == Issue5ExceptionDisposition.Obsolete)
             .Sum(static entry => entry.HistoricalSelections);
+        var diagnosticIdentities = CountDiagnosticIdentities(input, migration);
         var overlaps = CountOverlaps(input, baseline, migration);
         var report = new Issue5MigrationReport(
             3,
@@ -168,6 +190,7 @@ internal static class Issue5MigrationReportWriter
                 migration.Plans.Count(static plan =>
                     plan.TargetKind == "rawPreInTable"
                     && plan.Metadata.Warning is not null)),
+            diagnosticIdentities,
             overlaps,
             migration.ChangedDocuments.Keys.Order(StringComparer.Ordinal).ToArray(),
             migration.Exceptions
@@ -213,6 +236,152 @@ internal static class Issue5MigrationReportWriter
                 ranges[(ranges.IndexOf(';', StringComparison.Ordinal) + 1)..]
                     .Split(',', StringSplitOptions.None)
                     .Length);
+
+    private static Issue5DiagnosticIdentityCounts CountDiagnosticIdentities(
+        MigrationAnalysisInput input,
+        Issue5MigrationResult migration)
+    {
+        var historical = input.HistoricalDocuments
+            .SelectMany(item => LegacyPreParser.ParseDetailed(item.Value).Blocks
+                .Select(block => new
+                {
+                    Path = item.Key,
+                    Block = block,
+                    Identities = block.Annotations
+                        .Where(static annotation => annotation.DiagnosticId is not null)
+                        .ToArray(),
+                }))
+            .Where(static item => item.Identities.Length != 0)
+            .ToArray();
+        var historicalIdentities = historical
+            .SelectMany(static item => item.Identities)
+            .ToArray();
+        var multipleDistinct = historical
+            .Where(item => item.Identities
+                .Select(static identity => identity.DiagnosticId)
+                .Distinct(StringComparer.Ordinal)
+                .Count() > 1)
+            .ToArray();
+
+        var restored = new List<RestoredIdentityBlock>();
+        foreach (var plan in migration.Plans)
+        {
+            var block = CurrentBlockDiscoverer.Discover(
+                input.CurrentDocuments[plan.Path])[plan.CurrentOrdinal - 1];
+            var error = ParseIdentities(
+                block.Code,
+                plan.Metadata.Error?.Diagnostics,
+                AnnotationKind.Error);
+            var warning = ParseIdentities(
+                block.Code,
+                plan.Metadata.Warning?.Diagnostics,
+                AnnotationKind.Warning);
+            if (error.Count != 0 || warning.Count != 0)
+            {
+                restored.Add(
+                    new RestoredIdentityBlock(
+                        plan.Path,
+                        plan.CurrentOrdinal,
+                        plan.TargetKind,
+                        error.Concat(warning).ToArray()));
+            }
+        }
+
+        var restoredIdentities = restored
+            .SelectMany(static block => block.Identities)
+            .ToArray();
+        var mergeGroups = new List<IdentityMergeGroup>();
+        foreach (var block in restored)
+        {
+            foreach (var kind in new[] { AnnotationKind.Error, AnnotationKind.Warning })
+            {
+                var ordered = block.Identities
+                    .Where(identity => identity.Kind == kind)
+                    .OrderBy(static identity => identity.Start)
+                    .ThenBy(static identity => identity.End)
+                    .ToArray();
+                for (var index = 0; index < ordered.Length;)
+                {
+                    var group = new List<RestoredIdentity> { ordered[index++] };
+                    var end = group[0].End;
+                    while (index < ordered.Length && ordered[index].Start <= end)
+                    {
+                        group.Add(ordered[index]);
+                        end = Math.Max(end, ordered[index].End);
+                        index++;
+                    }
+
+                    if (group.Count > 1)
+                    {
+                        mergeGroups.Add(
+                            new IdentityMergeGroup(
+                                block.Path,
+                                block.Ordinal,
+                                group));
+                    }
+                }
+            }
+        }
+
+        var multipleIdMergeGroups = mergeGroups
+            .Where(group => group.Identities
+                .Select(static identity => identity.Id)
+                .Distinct(StringComparer.Ordinal)
+                .Count() > 1)
+            .ToArray();
+        return new Issue5DiagnosticIdentityCounts(
+            historicalIdentities.Length,
+            historicalIdentities.Count(static identity =>
+                identity.Kind == AnnotationKind.Error),
+            historicalIdentities.Count(static identity =>
+                identity.Kind == AnnotationKind.Warning),
+            restoredIdentities.Length,
+            restoredIdentities.Count(static identity =>
+                identity.Kind == AnnotationKind.Error),
+            restoredIdentities.Count(static identity =>
+                identity.Kind == AnnotationKind.Warning),
+            historicalIdentities.Length - restoredIdentities.Length,
+            historicalIdentities
+                .Select(static identity => identity.DiagnosticId)
+                .Distinct(StringComparer.Ordinal)
+                .Count(),
+            historical.Select(static item => item.Path)
+                .Distinct(StringComparer.Ordinal)
+                .Count(),
+            historical.Length,
+            multipleDistinct.Select(static item => item.Path)
+                .Distinct(StringComparer.Ordinal)
+                .Count(),
+            multipleDistinct.Length,
+            mergeGroups.Count,
+            multipleIdMergeGroups.Length,
+            multipleIdMergeGroups.Select(static group => group.Path)
+                .Distinct(StringComparer.Ordinal)
+                .Count(),
+            multipleIdMergeGroups
+                .Select(static group => (group.Path, group.Ordinal))
+                .Distinct()
+                .Count(),
+            restored
+                .Where(static block => block.TargetKind == "rawPreInTable")
+                .SelectMany(static block => block.Identities)
+                .Count(),
+            restored.Count);
+
+        static IReadOnlyList<RestoredIdentity> ParseIdentities(
+            string code,
+            string? value,
+            AnnotationKind kind) =>
+            value is null
+                ? []
+                : DiagnosticIdentityMetadata.Parse(code, value, $"{kind} diagnostics")
+                    .Select(identity => new RestoredIdentity(
+                        kind,
+                        identity.Id,
+                        identity.Start,
+                        identity.End))
+                    .ToArray();
+    }
 
     private static Issue5OverlapCounts CountOverlaps(
         MigrationAnalysisInput input,
@@ -418,4 +587,21 @@ internal static class Issue5MigrationReportWriter
         Text,
         Ranges,
     }
+
+    private sealed record RestoredIdentityBlock(
+        string Path,
+        int Ordinal,
+        string TargetKind,
+        IReadOnlyList<RestoredIdentity> Identities);
+
+    private sealed record RestoredIdentity(
+        AnnotationKind Kind,
+        string Id,
+        int Start,
+        int End);
+
+    private sealed record IdentityMergeGroup(
+        string Path,
+        int Ordinal,
+        IReadOnlyList<RestoredIdentity> Identities);
 }

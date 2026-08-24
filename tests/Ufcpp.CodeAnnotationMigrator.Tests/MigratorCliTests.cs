@@ -92,7 +92,7 @@ public sealed class MigratorCliTests
         Assert.Equal(0, exitCode);
         Assert.Equal(string.Empty, error.ToString());
         Assert.Contains(
-            "\"schemaVersion\": 2",
+            "\"schemaVersion\": 3",
             Encoding.UTF8.GetString(output.ToArray()),
             StringComparison.Ordinal);
         Assert.Equal(
@@ -214,7 +214,9 @@ public sealed class MigratorCliTests
         using var repository = new TemporaryGitRepository();
         repository.Write(
             "content/a.md",
-            "<pre><code>alpha <span class=\"warning\">beta</span></code></pre>");
+            "<pre><code>alpha "
+            + "<span class=\"warning\" title=\"CS0219\">beta</span>"
+            + "</code></pre>");
         var historicalCommit = repository.Commit("historical");
         repository.Write("content/a.md", "```text\nalpha beta\n```\n");
         repository.Commit("current");
@@ -230,6 +232,9 @@ public sealed class MigratorCliTests
         Assert.Contains("\"mode\": \"issue5-plan\"", report, StringComparison.Ordinal);
         Assert.Contains("\"restoredWarningBlocks\": 1", report, StringComparison.Ordinal);
         Assert.Contains("\"warningTextBlocks\": 1", report, StringComparison.Ordinal);
+        Assert.Contains("\"historicalOccurrences\": 1", report, StringComparison.Ordinal);
+        Assert.Contains("\"restoredOccurrences\": 1", report, StringComparison.Ordinal);
+        Assert.Contains("\"restoredWarningOccurrences\": 1", report, StringComparison.Ordinal);
     }
 
     [Fact]

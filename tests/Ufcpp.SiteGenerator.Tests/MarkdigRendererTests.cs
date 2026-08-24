@@ -766,7 +766,7 @@ public sealed class MarkdigRendererTests
             .Where(element => element.Attribute("class")?.Value == "warning")
             .ToArray();
 
-        Assert.Equal(["ab", "cd"], errors.Select(static element => element.Value));
+        Assert.Equal(["abcd"], errors.Select(static element => element.Value));
         Assert.Equal(["cd", "ef"], warnings.Select(static element => element.Value));
         Assert.Equal("error", warnings[0].Parent?.Attribute("class")?.Value);
         Assert.Equal(Code, code.Value);
@@ -790,6 +790,248 @@ public sealed class MarkdigRendererTests
         Assert.Equal("error", error.Attribute("class")?.Value);
         Assert.Equal("warning", warning.Attribute("class")?.Value);
         Assert.Equal(Code, warning.Value);
+    }
+
+    [Fact]
+    public void Render_DiagnosticIdentities_PreserveNestedSameKindOrder()
+    {
+        const string Code = "value";
+        var html = Render(
+            $"```csharp {{error-ranges=\"{RangeMetadata(Code, "1:1-1:6")}\" "
+            + $"error-diagnostics=\"{DiagnosticMetadata(
+                Code,
+                "CS1001@1:1-1:6,CS1002@1:1-1:6,CS1002@1:1-1:6")}\"}}\n"
+            + $"{Code}\n```");
+
+        var code = ExtractRenderedCodeElement(html);
+        var outer = Assert.Single(code.Elements("span"));
+        var middle = Assert.Single(
+            outer.Elements("span").Where(
+                element => element.Attribute("class")?.Value == "error"));
+        var inner = Assert.Single(
+            middle.Elements("span").Where(
+                element => element.Attribute("class")?.Value == "error"));
+
+        Assert.Equal("error", outer.Attribute("class")?.Value);
+        Assert.Equal("CS1001", outer.Attribute("title")?.Value);
+        Assert.Equal("CS1002", middle.Attribute("title")?.Value);
+        Assert.Equal("CS1002", inner.Attribute("title")?.Value);
+        Assert.Equal(Code, inner.Value);
+        Assert.Contains(
+            inner.Descendants("span"),
+            element => element.Attribute("class")?.Value.Contains(
+                "roslyn-",
+                StringComparison.Ordinal) == true);
+    }
+
+    [Fact]
+    public void Render_DiagnosticIdentity_KeepsOuterWrapperAcrossNestedBoundary()
+    {
+        const string Code = "abc";
+        var html = Render(
+            $"```text {{error-ranges=\"{RangeMetadata(Code, "1:1-1:4")}\" "
+            + $"error-diagnostics=\"{DiagnosticMetadata(
+                Code,
+                "CS1001@1:1-1:4,CS1002@1:2-1:3")}\"}}\n"
+            + $"{Code}\n```");
+
+        var code = ExtractRenderedCodeElement(html);
+        var outer = Assert.Single(code.Elements("span"));
+        var inner = Assert.Single(outer.Elements("span"));
+
+        Assert.Equal("CS1001", outer.Attribute("title")?.Value);
+        Assert.Equal("abc", outer.Value);
+        Assert.Equal("CS1002", inner.Attribute("title")?.Value);
+        Assert.Equal("b", inner.Value);
+        Assert.Single(
+            code.Descendants("span").Where(
+                element => element.Attribute("title")?.Value == "CS1001"));
+    }
+
+    [Fact]
+    public void Render_DiagnosticIdentity_UsesNativeTitleOnly()
+    {
+        const string Code = "x";
+        var html = Render(
+            $"```text {{warning-ranges=\"{RangeMetadata(Code, "1:1-1:2")}\" "
+            + $"warning-diagnostics=\"{DiagnosticMetadata(
+                Code,
+                "CS0219@1:1-1:2")}\"}}\n{Code}\n```");
+
+        var warning = Assert.Single(
+            ExtractRenderedCodeElement(html)
+                .Descendants("span")
+                .Where(element => element.Attribute("class")?.Value == "warning"));
+
+        Assert.Equal("CS0219", warning.Attribute("title")?.Value);
+        Assert.Equal(
+            ["class", "title"],
+            warning.Attributes().Select(static attribute => attribute.Name.LocalName));
+    }
+
+    [Fact]
+    public void Render_DiagnosticIdentity_RestoresRepresentativeIdsOnlyToTheirSelections()
+    {
+        const string Code = "M<int?>();\nT? x = null;";
+        var html = Render(
+            $"```csharp {{error-ranges=\"{RangeMetadata(
+                Code,
+                "1:1-1:8,2:1-2:3")}\" "
+            + $"error-diagnostics=\"{DiagnosticMetadata(
+                Code,
+                "CS0453@1:1-1:8")}\" "
+            + $"warning-ranges=\"{RangeMetadata(Code, "2:4-2:5")}\" "
+            + $"warning-diagnostics=\"{DiagnosticMetadata(
+                Code,
+                "CS0219@2:4-2:5")}\"}}\n{Code}\n```");
+
+        var code = ExtractRenderedCodeElement(html);
+        var titledError = Assert.Single(
+            code.Descendants("span").Where(
+                element => element.Attribute("title")?.Value == "CS0453"));
+        var untitledError = Assert.Single(
+            code.Descendants("span").Where(
+                element => element.Attribute("class")?.Value == "error"
+                    && element.Attribute("title") is null));
+        var warning = Assert.Single(
+            code.Descendants("span").Where(
+                element => element.Attribute("title")?.Value == "CS0219"));
+
+        Assert.Equal("M<int?>", titledError.Value);
+        Assert.Equal("T?", untitledError.Value);
+        Assert.Equal("x", warning.Value);
+    }
+
+    [Fact]
+    public void Render_DiagnosticIdentity_KeepsAdjacentOccurrencesSeparate()
+    {
+        const string Code = "ab";
+        var html = Render(
+            $"```text {{error-ranges=\"{RangeMetadata(Code, "1:1-1:3")}\" "
+            + $"error-diagnostics=\"{DiagnosticMetadata(
+                Code,
+                "CS1001@1:1-1:2,CS1002@1:2-1:3")}\"}}\n{Code}\n```");
+
+        var titled = ExtractRenderedCodeElement(html)
+            .Elements("span")
+            .ToArray();
+        Assert.Equal(["CS1001", "CS1002"], titled.Select(
+            element => element.Attribute("title")?.Value));
+        Assert.Equal(["a", "b"], titled.Select(static element => element.Value));
+    }
+
+    [Fact]
+    public void Render_DiagnosticIdentity_ComposesWithHighlightAndSyntax()
+    {
+        const string Code = "int value = 0;";
+        var html = Render(
+            $"```csharp {{highlight-ranges=\"{RangeMetadata(Code, "1:1-1:15")}\" "
+            + $"error-ranges=\"{RangeMetadata(Code, "1:5-1:10")}\" "
+            + $"error-diagnostics=\"{DiagnosticMetadata(
+                Code,
+                "CS0219@1:5-1:10")}\"}}\n{Code}\n```");
+
+        var code = ExtractRenderedCodeElement(html);
+        var mark = Assert.Single(code.Elements("mark"));
+        var diagnostic = Assert.Single(
+            mark.Descendants("span").Where(
+                element => element.Attribute("title")?.Value == "CS0219"));
+
+        Assert.Equal("value", diagnostic.Value);
+        Assert.Contains(
+            diagnostic.Descendants("span"),
+            element => element.Attribute("class")?.Value.Contains(
+                "roslyn-local-name",
+                StringComparison.Ordinal) == true);
+    }
+
+    [Fact]
+    public void Render_DiagnosticIdentity_SplitsCrossKindOverlapWithoutCrossingTags()
+    {
+        const string Code = "abc";
+        var html = Render(
+            $"```text {{error-ranges=\"{RangeMetadata(Code, "1:1-1:3")}\" "
+            + $"error-diagnostics=\"{DiagnosticMetadata(
+                Code,
+                "CS1001@1:1-1:3")}\" "
+            + $"warning-ranges=\"{RangeMetadata(Code, "1:2-1:4")}\" "
+            + $"warning-diagnostics=\"{DiagnosticMetadata(
+                Code,
+                "CS2001@1:2-1:4")}\"}}\n{Code}\n```");
+
+        var code = ExtractRenderedCodeElement(html);
+        Assert.Equal("abc", code.Value);
+        Assert.Single(
+            code.Descendants("span").Where(
+                element => element.Attribute("title")?.Value == "CS1001"));
+        Assert.Equal(
+            2,
+            code.Descendants("span").Count(
+                element => element.Attribute("title")?.Value == "CS2001"));
+        _ = XElement.Parse(code.ToString(SaveOptions.DisableFormatting));
+    }
+
+    [Fact]
+    public void Render_DiagnosticIdentity_UsesUnicodeScalarCoordinatesAcrossCrLf()
+    {
+        const string CanonicalCode = "`😀`\nvalue";
+        var markdown =
+            $"```text {{warning-ranges=\"{RangeMetadata(
+                CanonicalCode,
+                "1:2-1:3")}\" "
+            + $"warning-diagnostics=\"{DiagnosticMetadata(
+                CanonicalCode,
+                "CA1822@1:2-1:3")}\"}}\r\n"
+            + "`😀`\r\nvalue\r\n```";
+
+        var diagnostic = Assert.Single(
+            ExtractRenderedCodeElement(Render(markdown))
+                .Descendants("span")
+                .Where(element => element.Attribute("title")?.Value == "CA1822"));
+
+        Assert.Equal("😀", diagnostic.Value);
+    }
+
+    [Fact]
+    public void Render_DiagnosticIdentity_RejectsStaleFingerprint()
+    {
+        const string Code = "x";
+        var valid = DiagnosticMetadata(Code, "CS0219@1:1-1:2");
+        var stale = new string('0', 64) + valid[64..];
+
+        Assert.Throws<InvalidDataException>(
+            () => Render(
+                $"```text {{warning-diagnostics=\"{stale}\"}}\n{Code}\n```"));
+    }
+
+    [Fact]
+    public void Render_DiagnosticIdentity_MustBeCoveredByVisualSelection()
+    {
+        const string Code = "x";
+
+        Assert.Throws<InvalidDataException>(
+            () => Render(
+                $"```text {{warning-diagnostics=\"{DiagnosticMetadata(
+                    Code,
+                    "CS0219@1:1-1:2")}\"}}\n{Code}\n```"));
+    }
+
+    [Theory]
+    [InlineData("cs0219@1:1-1:2")]
+    [InlineData("IDE0051@1:1-1:2")]
+    [InlineData("CS123@1:1-1:2")]
+    [InlineData("CS0219@1:1-1:4")]
+    [InlineData("CS1002@1:1-1:2,CS1001@1:1-1:3")]
+    [InlineData("CS1001@1:1-1:3,CS1002@1:2-1:4")]
+    public void Render_DiagnosticIdentity_RejectsInvalidOrNoncanonicalMetadata(
+        string entries)
+    {
+        const string Code = "ab";
+        var markdown =
+            $"```text {{error-diagnostics=\"{DiagnosticMetadata(Code, entries)}\"}}\n"
+            + $"{Code}\n```";
+
+        Assert.Throws<InvalidDataException>(() => Render(markdown));
     }
 
     [Theory]
@@ -1115,6 +1357,30 @@ public sealed class MarkdigRendererTests
         Assert.Equal("error", error.Attribute("class")?.Value);
         Assert.Equal("warning", warning.Attribute("class")?.Value);
         Assert.Equal("value", warning.Value);
+        Assert.Contains(RawTable, html);
+    }
+
+    [Fact]
+    public void Render_RawTable_PreservesNativeDiagnosticTitlesOnly()
+    {
+        const string RawTable =
+            "<table><tr><td><pre><code>"
+            + "<span class=\"error\" title=\"CS1001\">a"
+            + "<span class=\"error\" title=\"CS1002\">b</span></span>"
+            + "</code></pre></td></tr></table>";
+
+        var html = Render(RawTable);
+
+        var code = Assert.IsType<XElement>(
+            Assert.Single(ExtractRenderedPreElements(html)).Element("code"));
+        var outer = Assert.Single(code.Elements("span"));
+        var inner = Assert.Single(outer.Elements("span"));
+        Assert.Equal(["class", "title"], outer.Attributes().Select(
+            static attribute => attribute.Name.LocalName));
+        Assert.Equal(["class", "title"], inner.Attributes().Select(
+            static attribute => attribute.Name.LocalName));
+        Assert.Equal("CS1001", outer.Attribute("title")?.Value);
+        Assert.Equal("CS1002", inner.Attribute("title")?.Value);
         Assert.Contains(RawTable, html);
     }
 
@@ -1733,6 +1999,9 @@ public sealed class MarkdigRendererTests
             .ToLowerInvariant();
         return $"sha256:{hash};{ranges}";
     }
+
+    private static string DiagnosticMetadata(string code, string entries) =>
+        $"sha256:{AnnotationRangeMetadata.ComputeHash(code)};{entries}";
 
     private static RenderedContent RenderWithMetadata(
         string markdown,

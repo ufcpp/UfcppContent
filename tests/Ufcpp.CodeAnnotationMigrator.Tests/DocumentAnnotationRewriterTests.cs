@@ -154,6 +154,39 @@ public sealed class DocumentAnnotationRewriterTests
     }
 
     [Fact]
+    public void Rewrite_SerializesDiagnosticIdentitiesAfterVisualMetadata()
+    {
+        const string Code = "value";
+        var hash = HighlightRangePlanner.ComputeHash(Code);
+        var source = $"```text\n{Code}\n```\n";
+        var plan = Plan(
+            Code,
+            new BlockMetadataPlan(
+                null,
+                null,
+                new SelectionMetadataPlan(
+                    null,
+                    "value",
+                    null,
+                    $"sha256:{hash};CS0219@1:1-1:6"),
+                null));
+
+        var first = DocumentAnnotationRewriter.Rewrite("sample.md", source, [plan]);
+        var second = DocumentAnnotationRewriter.Rewrite(
+            "sample.md",
+            first.Content,
+            [plan]);
+
+        Assert.StartsWith(
+            "```text {error-text=\"value\" "
+            + $"error-diagnostics=\"sha256:{hash};CS0219@1:1-1:6\"}}",
+            first.Content,
+            StringComparison.Ordinal);
+        Assert.Equal(0, second.ReplacementCount);
+        Assert.Equal(first.Content, second.Content);
+    }
+
+    [Fact]
     public void Rewrite_RawTableRangeWrapsWholeEntityAndPreservesVisibleCode()
     {
         const string Code = "alpha < beta";
@@ -232,14 +265,50 @@ public sealed class DocumentAnnotationRewriterTests
             [plan]);
 
         Assert.Contains(
-            "<mark class=\"code-highlight\">ab</mark>"
-            + "<mark class=\"code-highlight\"><span class=\"error\">"
-            + "<span class=\"warning\">cd</span></span></mark>"
+            "<mark class=\"code-highlight\">ab"
+            + "<span class=\"error\"><span class=\"warning\">cd</span></span></mark>"
             + "<span class=\"error\">ef</span>",
             first.Content);
         Assert.Equal(
             Code,
             Assert.Single(CurrentBlockDiscoverer.Discover(first.Content)).Code);
+        Assert.Equal(0, second.ReplacementCount);
+        Assert.Equal(first.Content, second.Content);
+    }
+
+    [Fact]
+    public void Rewrite_RawTableDiagnosticIdentitiesPreserveNestedTitles()
+    {
+        const string Code = "ab";
+        const string Source =
+            "<table><tr><td><pre><code>"
+            + "<span class=\"error\">ab</span>"
+            + "</code></pre></td></tr></table>\n";
+        var hash = HighlightRangePlanner.ComputeHash(Code);
+        var plan = Plan(
+            Code,
+            new BlockMetadataPlan(
+                null,
+                null,
+                new SelectionMetadataPlan(
+                    null,
+                    "ab",
+                    null,
+                    $"sha256:{hash};CS1001@1:1-1:3,CS1002@1:2-1:3"),
+                null),
+            targetKind: "rawPreInTable");
+
+        var first = DocumentAnnotationRewriter.Rewrite("sample.md", Source, [plan]);
+        var second = DocumentAnnotationRewriter.Rewrite(
+            "sample.md",
+            first.Content,
+            [plan]);
+
+        Assert.Contains(
+            "<span class=\"error\" title=\"CS1001\">a"
+            + "<span class=\"error\" title=\"CS1002\">b</span></span>",
+            first.Content);
+        Assert.Equal(Code, Assert.Single(CurrentBlockDiscoverer.Discover(first.Content)).Code);
         Assert.Equal(0, second.ReplacementCount);
         Assert.Equal(first.Content, second.Content);
     }

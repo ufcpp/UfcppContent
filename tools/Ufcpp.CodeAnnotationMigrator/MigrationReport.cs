@@ -304,7 +304,7 @@ internal static class MigrationAnalyzer
         diagnostics.Sort(CompareDiagnostics);
         var allCurrentBlocks = currentBlocksByPath.Values.SelectMany(static blocks => blocks);
         var report = new MigrationReport(
-            2,
+            3,
             "dry-run",
             new ReportSource(input.SourceCommit, input.SourcePath),
             new ReportTarget(input.TargetCommit, input.TargetPath),

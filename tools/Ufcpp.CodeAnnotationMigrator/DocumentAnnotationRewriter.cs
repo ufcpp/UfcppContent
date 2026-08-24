@@ -15,9 +15,11 @@ internal static class DocumentAnnotationRewriter
         "error-lines",
         "error-text",
         "error-ranges",
+        "error-diagnostics",
         "warning-lines",
         "warning-text",
         "warning-ranges",
+        "warning-diagnostics",
     ];
 
     public static DocumentRewriteResult Rewrite(
@@ -136,9 +138,11 @@ internal static class DocumentAnnotationRewriter
         Add("error-lines", plan.Error?.Lines);
         Add("error-text", plan.Error?.Text);
         Add("error-ranges", plan.Error?.Ranges);
+        Add("error-diagnostics", plan.Error?.Diagnostics);
         Add("warning-lines", plan.Warning?.Lines);
         Add("warning-text", plan.Warning?.Text);
         Add("warning-ranges", plan.Warning?.Ranges);
+        Add("warning-diagnostics", plan.Warning?.Diagnostics);
         return metadata;
 
         void Add(string name, string? value)
@@ -250,6 +254,7 @@ internal static class DocumentAnnotationRewriter
         Validate("lines", planned.Lines);
         Validate("text", planned.Text);
         Validate("ranges", planned.Ranges);
+        Validate("diagnostics", planned.Diagnostics);
 
         void Validate(string suffix, string? expected)
         {

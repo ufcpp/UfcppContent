@@ -71,9 +71,11 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
         private const string ErrorLinesAttribute = "error-lines";
         private const string ErrorRangesAttribute = "error-ranges";
         private const string ErrorTextAttribute = "error-text";
+        private const string ErrorDiagnosticsAttribute = "error-diagnostics";
         private const string WarningLinesAttribute = "warning-lines";
         private const string WarningRangesAttribute = "warning-ranges";
         private const string WarningTextAttribute = "warning-text";
+        private const string WarningDiagnosticsAttribute = "warning-diagnostics";
         private const string TitleAttribute = "title";
         private static readonly AnnotationDefinition[] AnnotationDefinitions =
         [
@@ -84,7 +86,8 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                 HighlightRangesAttribute,
                 "mark",
                 "code-highlight",
-                false),
+                false,
+                null),
             new(
                 AnnotationKind.Error,
                 ErrorLinesAttribute,
@@ -92,7 +95,8 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                 ErrorRangesAttribute,
                 "span",
                 "error",
-                true),
+                true,
+                ErrorDiagnosticsAttribute),
             new(
                 AnnotationKind.Warning,
                 WarningLinesAttribute,
@@ -100,7 +104,8 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                 WarningRangesAttribute,
                 "span",
                 "warning",
-                true),
+                true,
+                WarningDiagnosticsAttribute),
         ];
         private readonly Lazy<RoslynCSharpHighlighter> _csharpHighlighter;
 
@@ -303,8 +308,8 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                 }
             }
 
-            var annotationSpans =
-                new Dictionary<AnnotationKind, IReadOnlyList<SourceSpan>>();
+            var annotationChannels =
+                new Dictionary<AnnotationKind, AnnotationChannel>();
             foreach (var definition in AnnotationDefinitions)
             {
                 var lines = annotationValues.GetValueOrDefault(
@@ -313,6 +318,10 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                     definition.TextAttribute);
                 var ranges = annotationValues.GetValueOrDefault(
                     definition.RangesAttribute);
+                var diagnostics = definition.DiagnosticsAttribute is null
+                    ? null
+                    : annotationValues.GetValueOrDefault(
+                        definition.DiagnosticsAttribute);
                 if (text is not null
                     && ranges is not null
                     && definition.Kind != AnnotationKind.Highlight)
@@ -348,10 +357,28 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                             .Select(static span => new SourceSpan(span.Start, span.End)));
                 }
 
-                annotationSpans.Add(definition.Kind, MergeSpans(spans));
+                var identities = diagnostics is null
+                    ? []
+                    : DiagnosticIdentityMetadata.Parse(
+                        code,
+                        diagnostics,
+                        definition.DiagnosticsAttribute!);
+                var mergedSpans = MergeSpans(spans);
+                if (identities.Any(identity => !mergedSpans.Any(
+                        span => span.Start <= identity.Start
+                            && identity.End <= span.End)))
+                {
+                    throw new InvalidDataException(
+                        $"Every {definition.DiagnosticsAttribute} identity must be "
+                        + "covered by its visual annotation metadata.");
+                }
+
+                annotationChannels.Add(
+                    definition.Kind,
+                    new AnnotationChannel(mergedSpans, identities));
             }
 
-            return new CodeBlockMetadata(title, annotationSpans);
+            return new CodeBlockMetadata(title, annotationChannels);
         }
 
         private static bool ContainsAttachedMetadata(string? info) =>
@@ -363,7 +390,8 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
         {
             return new InvalidDataException(
                 "Fenced code metadata supports only title and highlight/error/"
-                + "warning line, text, and range properties; found unsupported "
+                + "warning line, text, range, and diagnostic properties; "
+                + "found unsupported "
                 + $"'{propertyName}' metadata "
                 + $"for language '{languageName ?? string.Empty}'.");
         }
@@ -560,10 +588,12 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
         private static void WritePlainCode(
             HtmlRenderer renderer,
             string code,
-            IReadOnlyDictionary<AnnotationKind, IReadOnlyList<SourceSpan>>
-                annotationSpans)
+            IReadOnlyDictionary<AnnotationKind, AnnotationChannel>
+                annotationChannels)
         {
-            if (!annotationSpans.Values.Any(static spans => spans.Count != 0))
+            if (!annotationChannels.Values.Any(static channel =>
+                    channel.VisualSpans.Count != 0
+                    || channel.DiagnosticIdentities.Count != 0))
             {
                 renderer.WriteEscape(code);
                 return;
@@ -573,16 +603,18 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                 ApplyAnnotations(
                     WebUtility.HtmlEncode(code),
                     code,
-                    annotationSpans));
+                    annotationChannels));
         }
 
         private static string ApplyAnnotations(
             string highlightedCode,
             string code,
-            IReadOnlyDictionary<AnnotationKind, IReadOnlyList<SourceSpan>>
-                annotationSpans)
+            IReadOnlyDictionary<AnnotationKind, AnnotationChannel>
+                annotationChannels)
         {
-            if (!annotationSpans.Values.Any(static spans => spans.Count != 0))
+            if (!annotationChannels.Values.Any(static channel =>
+                    channel.VisualSpans.Count != 0
+                    || channel.DiagnosticIdentities.Count != 0))
             {
                 return highlightedCode;
             }
@@ -607,7 +639,7 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                     "The syntax highlighter fragment does not map exactly to the source code.");
             }
 
-            InsertAnnotations(root, code, annotationSpans);
+            InsertAnnotations(root, code, annotationChannels);
             if (!string.Equals(root.Value, code, StringComparison.Ordinal))
             {
                 throw new InvalidDataException(
@@ -666,8 +698,8 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
         private static void InsertAnnotations(
             XElement root,
             string code,
-            IReadOnlyDictionary<AnnotationKind, IReadOnlyList<SourceSpan>>
-                annotationSpans)
+            IReadOnlyDictionary<AnnotationKind, AnnotationChannel>
+                annotationChannels)
         {
             var segments = new List<RenderedSegment>();
             var sourcePosition = 0;
@@ -693,8 +725,8 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
 
                 var nodeEnd = sourcePosition + text.Length;
                 var boundaries = new SortedSet<int> { 0, text.Length };
-                foreach (var span in annotationSpans.Values.SelectMany(
-                             static spans => spans))
+                foreach (var span in annotationChannels.Values.SelectMany(
+                             static channel => channel.VisualSpans))
                 {
                     if (span.End <= sourcePosition || span.Start >= nodeEnd)
                     {
@@ -703,6 +735,19 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
 
                     boundaries.Add(Math.Max(span.Start, sourcePosition) - sourcePosition);
                     boundaries.Add(Math.Min(span.End, nodeEnd) - sourcePosition);
+                }
+                foreach (var identity in annotationChannels.Values.SelectMany(
+                             static channel => channel.DiagnosticIdentities))
+                {
+                    if (identity.End <= sourcePosition || identity.Start >= nodeEnd)
+                    {
+                        continue;
+                    }
+
+                    boundaries.Add(
+                        Math.Max(identity.Start, sourcePosition) - sourcePosition);
+                    boundaries.Add(
+                        Math.Min(identity.End, nodeEnd) - sourcePosition);
                 }
 
                 var positions = boundaries.ToArray();
@@ -717,17 +762,6 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
 
                     var absoluteStart = sourcePosition + start;
                     var absoluteEnd = sourcePosition + end;
-                    var activeKinds = AnnotationKind.None;
-                    foreach (var (kind, spans) in annotationSpans)
-                    {
-                        if (spans.Any(
-                                span => span.Start <= absoluteStart
-                                    && absoluteEnd <= span.End))
-                        {
-                            activeKinds |= kind;
-                        }
-                    }
-
                     var value = text[start..end];
                     XNode renderedNode = element is null
                         ? new XText(value)
@@ -736,7 +770,13 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
                             element.Attributes().Select(
                                 static attribute => new XAttribute(attribute)),
                             value);
-                    segments.Add(new RenderedSegment(renderedNode, activeKinds));
+                    segments.Add(
+                        new RenderedSegment(
+                            renderedNode,
+                            GetActiveWrappers(
+                                annotationChannels,
+                                absoluteStart,
+                                absoluteEnd)));
                 }
 
                 sourcePosition = nodeEnd;
@@ -749,56 +789,82 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
             }
 
             root.RemoveNodes();
-            var run = new List<XNode>();
-            AnnotationKind? runKinds = null;
+            var activeWrappers = new List<AnnotationWrapper>();
+            var activeElements = new List<XElement>();
+            XElement parent = root;
             foreach (var segment in segments)
             {
-                if (runKinds != segment.ActiveKinds)
+                var common = 0;
+                while (common < activeWrappers.Count
+                       && common < segment.ActiveWrappers.Count
+                       && activeWrappers[common] == segment.ActiveWrappers[common])
                 {
-                    FlushRun();
-                    runKinds = segment.ActiveKinds;
+                    common++;
                 }
 
-                run.Add(segment.Node);
-            }
-
-            FlushRun();
-
-            void FlushRun()
-            {
-                if (run.Count == 0)
+                while (activeWrappers.Count > common)
                 {
-                    return;
+                    activeWrappers.RemoveAt(activeWrappers.Count - 1);
+                    activeElements.RemoveAt(activeElements.Count - 1);
                 }
 
-                if (runKinds is { } kinds && kinds != AnnotationKind.None)
+                parent = activeElements.Count == 0 ? root : activeElements[^1];
+                foreach (var wrapper in segment.ActiveWrappers.Skip(common))
                 {
-                    XNode[] wrapped = run.ToArray();
-                    foreach (var definition in AnnotationDefinitions.Reverse())
+                    var element = new XElement(
+                        wrapper.ElementName,
+                        new XAttribute("class", wrapper.ClassName));
+                    if (wrapper.DiagnosticId is not null)
                     {
-                        if ((kinds & definition.Kind) == 0)
-                        {
-                            continue;
-                        }
-
-                        wrapped =
-                        [
-                            new XElement(
-                                definition.ElementName,
-                                new XAttribute("class", definition.ClassName),
-                                wrapped),
-                        ];
+                        element.Add(new XAttribute("title", wrapper.DiagnosticId));
                     }
 
-                    root.Add(wrapped);
-                }
-                else
-                {
-                    root.Add(run);
+                    parent.Add(element);
+                    parent = element;
+                    activeWrappers.Add(wrapper);
+                    activeElements.Add(element);
                 }
 
-                run.Clear();
+                parent.Add(segment.Node);
             }
+        }
+
+        private static IReadOnlyList<AnnotationWrapper> GetActiveWrappers(
+            IReadOnlyDictionary<AnnotationKind, AnnotationChannel> channels,
+            int start,
+            int end)
+        {
+            var wrappers = new List<AnnotationWrapper>();
+            foreach (var definition in AnnotationDefinitions)
+            {
+                var channel = channels[definition.Kind];
+                var visual = channel.VisualSpans.Any(
+                    span => span.Start <= start && end <= span.End);
+                var identities = channel.DiagnosticIdentities
+                    .Where(identity => identity.Start <= start && end <= identity.End)
+                    .OrderBy(static identity => identity.Order)
+                    .ToArray();
+                if (identities.Length != 0)
+                {
+                    wrappers.AddRange(
+                        identities.Select(identity => new AnnotationWrapper(
+                            definition.ElementName,
+                            definition.ClassName,
+                            identity.Id,
+                            identity.Order)));
+                }
+                else if (visual)
+                {
+                    wrappers.Add(
+                        new AnnotationWrapper(
+                            definition.ElementName,
+                            definition.ClassName,
+                            null,
+                            -1));
+                }
+            }
+
+            return wrappers;
         }
 
         private static HighlightedFragment ExtractHighlightedCode(string html)
@@ -851,12 +917,22 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
 
         private readonly record struct CodeBlockMetadata(
             string? Title,
-            IReadOnlyDictionary<AnnotationKind, IReadOnlyList<SourceSpan>>
+            IReadOnlyDictionary<AnnotationKind, AnnotationChannel>
                 AnnotationSpans);
 
         private readonly record struct RenderedSegment(
             XNode Node,
-            AnnotationKind ActiveKinds);
+            IReadOnlyList<AnnotationWrapper> ActiveWrappers);
+
+        private readonly record struct AnnotationChannel(
+            IReadOnlyList<SourceSpan> VisualSpans,
+            IReadOnlyList<DiagnosticIdentity> DiagnosticIdentities);
+
+        private readonly record struct AnnotationWrapper(
+            string ElementName,
+            string ClassName,
+            string? DiagnosticId,
+            int Order);
 
         [Flags]
         private enum AnnotationKind
@@ -874,10 +950,18 @@ internal sealed class SyntaxHighlightingExtension : IMarkdownExtension
             string RangesAttribute,
             string ElementName,
             string ClassName,
-            bool RequiresUniqueText)
+            bool RequiresUniqueText,
+            string? DiagnosticsAttribute)
         {
             public IReadOnlyList<string> AttributeNames { get; } =
-                [LinesAttribute, TextAttribute, RangesAttribute];
+                DiagnosticsAttribute is null
+                    ? [LinesAttribute, TextAttribute, RangesAttribute]
+                    : [
+                        LinesAttribute,
+                        TextAttribute,
+                        RangesAttribute,
+                        DiagnosticsAttribute,
+                    ];
         }
 
         private readonly record struct SourceSpan(int Start, int End);

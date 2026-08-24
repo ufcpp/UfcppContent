@@ -1,11 +1,14 @@
 using System.Net;
+using System.Text.Json.Serialization;
 
 namespace Ufcpp.CodeAnnotationMigrator;
 
 internal sealed record SelectionMetadataPlan(
     string? Lines,
     string? Text,
-    string? Ranges = null);
+    string? Ranges = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    string? Diagnostics = null);
 
 internal sealed record BlockMetadataPlan(
     string? Title,
@@ -108,6 +111,46 @@ internal static class MetadataPlanner
     }
 
     private static SelectionMetadataPlan? PlanSelections(
+        AnnotationKind kind,
+        IReadOnlyList<AnnotationSelection> annotations,
+        CodeLayout historical,
+        CodeLayout current,
+        ICollection<MetadataPlanningDiagnostic> diagnostics)
+    {
+        var visual = PlanVisualSelections(
+            kind,
+            annotations,
+            historical,
+            current,
+            diagnostics);
+        var identity = DiagnosticIdentityPlanner.Plan(
+            annotations
+                .Where(annotation =>
+                    annotation.Kind == kind
+                    && annotation.DiagnosticId is not null
+                    && annotation.Length > 0)
+                .OrderBy(static annotation => annotation.Order)
+                .ToArray(),
+            historical.Original,
+            current.Original);
+        if (identity.Error is not null)
+        {
+            diagnostics.Add(new MetadataPlanningDiagnostic(
+                "UNREPRESENTABLE_DIAGNOSTIC_IDENTITY",
+                kind,
+                identity.Error));
+            return visual;
+        }
+
+        return identity.Value is null
+            ? visual
+            : (visual ?? new SelectionMetadataPlan(null, null)) with
+            {
+                Diagnostics = identity.Value,
+            };
+    }
+
+    private static SelectionMetadataPlan? PlanVisualSelections(
         AnnotationKind kind,
         IReadOnlyList<AnnotationSelection> annotations,
         CodeLayout historical,
