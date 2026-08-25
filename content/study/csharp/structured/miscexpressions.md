@@ -107,28 +107,52 @@ C# でも、バージョンアップを重ねるたびに、式の比率が増�
 </tr>
 <tr>
 <td><a href="../resource/rm_nullusage.md#key-null-coalesce">null 合体演算子</a></td>
-<td><pre class="source" title=""><code class="language-csharp">var y = x ?? &quot;&quot;;</code></pre></td>
-<td><pre class="source" title=""><code class="language-csharp">var y = x;
-if (y == null) y = &quot;&quot;;</code></pre></td>
+<td markdown="1">
+
+```csharp
+var y = x ?? "";
+```
+
+</td>
+<td markdown="1">
+
+```csharp
+var y = x;
+if (y == null) y = "";
+```
+
+</td>
 </tr>
 <tr>
 <td><a href="../functional/sp_delegate.md#anonymous">匿名メソッド式</a></td>
-<td><pre class="source" title=""><code class="language-csharp">static void Main()
+<td markdown="1">
+
+```csharp
+static void Main()
 {
-    Func&lt;int, int&gt; f = delegate (int x)
+    Func<int, int> f = delegate (int x)
     {
         return x * x;
     };
-}</code></pre></td>
-<td><pre class="source" title=""><code class="language-csharp">static void Main()
+}
+```
+
+</td>
+<td markdown="1">
+
+```csharp
+static void Main()
 {
-    Func&lt;int, int&gt; f = M;
+    Func<int, int> f = M;
 }
  
 static int M(int x)
 {
     return x * x;
-}</code></pre></td>
+}
+```
+
+</td>
 </tr>
 </table>
 
@@ -142,22 +166,58 @@ static int M(int x)
 </tr>
 <tr>
 <td><a href="../cheatsheet/ap_ver3.md#functional">オブジェクト初期化子</a></td>
-<td><pre class="source" title=""><code class="language-csharp">var p = new Point { X = 1, Y = 2 };</code></pre></td>
-<td><pre class="source" title=""><code class="language-csharp">var p = new Point();
+<td markdown="1">
+
+```csharp
+var p = new Point { X = 1, Y = 2 };
+```
+
+</td>
+<td markdown="1">
+
+```csharp
+var p = new Point();
 p.X = 1;
-p.Y = 2;</code></pre></td>
+p.Y = 2;
+```
+
+</td>
 </tr>
 <tr>
 <td><a href="../cheatsheet/ap_ver3.md#functional">コレクション初期化子</a></td>
-<td><pre class="source" title=""><code class="language-csharp">var list = new List&lt;int&gt; { 1, 2 };</code></pre></td>
-<td><pre class="source" title=""><code class="language-csharp">var list = new List&lt;int&gt;();
+<td markdown="1">
+
+```csharp
+var list = new List<int> { 1, 2 };
+```
+
+</td>
+<td markdown="1">
+
+```csharp
+var list = new List<int>();
 list.Add(1);
-list.Add(2);</code></pre></td>
+list.Add(2);
+```
+
+</td>
 </tr>
 <tr>
 <td><a href="../functional/sp3_lambda.md">ラムダ式</a></td>
-<td><pre class="source" title=""><code class="language-csharp">Func&lt;int, int&gt; f = x =&gt; x * x;</code></pre></td>
-<td><pre class="source" title=""><code class="language-csharp">Func&lt;int, int&gt; f = delegate (int x) { return x; };</code></pre></td>
+<td markdown="1">
+
+```csharp
+Func<int, int> f = x => x * x;
+```
+
+</td>
+<td markdown="1">
+
+```csharp
+Func<int, int> f = delegate (int x) { return x; };
+```
+
+</td>
 </tr>
 <tr>
 </table>
@@ -173,29 +233,65 @@ list.Add(2);</code></pre></td>
 </tr>
 <tr>
 <td><a href="../resource/rm_nullusage.md#key-null-conditional">null条件演算子</a></td>
-<td><pre class="source" title=""><code class="language-csharp">var y = x?.Length;</code></pre></td>
-<td><pre class="source" title=""><code class="language-csharp">int? y;
+<td markdown="1">
+
+```csharp
+var y = x?.Length;
+```
+
+</td>
+<td markdown="1">
+
+```csharp
+int? y;
 if (x == null) y = null;
-else y = x.Length;</code></pre></td>
+else y = x.Length;
+```
+
+</td>
 </tr>
 <tr>
 <td><a href="../cheatsheet/ap_ver6.md#index-initializer">インデックス初期化子</a></td>
-<td><pre class="source" title=""><code class="language-csharp">var dic = new Dictionary&lt;string, int&gt;
+<td markdown="1">
+
+```csharp
+var dic = new Dictionary<string, int>
 {
-    [&quot;one&quot;] = 1,
-    [&quot;two&quot;] = 2
-};</code></pre></td>
-<td><pre class="source" title=""><code class="language-csharp">var dic = new Dictionary&lt;string, int&gt;();
-dic[&quot;one&quot;] = 1;
-dic[&quot;two&quot;] = 2;</code></pre></td>
+    ["one"] = 1,
+    ["two"] = 2
+};
+```
+
+</td>
+<td markdown="1">
+
+```csharp
+var dic = new Dictionary<string, int>();
+dic["one"] = 1;
+dic["two"] = 2;
+```
+
+</td>
 </tr>
 <tr>
 <td><a href="../cheatsheet/ap_ver6.md#sec-expression-bodied">式形式メンバー</a></td>
-<td><pre class="source" title=""><code class="language-csharp">static int M(int x) =&gt; x * x;</code></pre></td>
-<td><pre class="source" title=""><code class="language-csharp">static int M(int x)
+<td markdown="1">
+
+```csharp
+static int M(int x) => x * x;
+```
+
+</td>
+<td markdown="1">
+
+```csharp
+static int M(int x)
 {
     return x * x;
-}</code></pre></td>
+}
+```
+
+</td>
 </tr>
 </table>
 
@@ -209,13 +305,22 @@ dic[&quot;two&quot;] = 2;</code></pre></td>
 </tr>
 <tr>
 <td><a href="st_function.md#sec-expression-bodied">式形式メンバー(追加)</a></td>
-<td><pre class="source" title=""><code class="language-csharp">struct Point
+<td markdown="1">
+
+```csharp
+struct Point
 {
     public int X, Y;
     public Point(int x, int y)
-        =&gt; (X, Y) = (x, y);
-}</code></pre></td>
-<td><pre class="source" title=""><code class="language-csharp">struct Point
+        => (X, Y) = (x, y);
+}
+```
+
+</td>
+<td markdown="1">
+
+```csharp
+struct Point
 {
     public int X, Y;
     public Point(int x, int y)
@@ -223,39 +328,78 @@ dic[&quot;two&quot;] = 2;</code></pre></td>
         X = x;
         Y = y;
     }
-}</code></pre></td>
+}
+```
+
+</td>
 </tr>
 <tr>
 <td><a href="oo_exception.md#throwexpr">throw 式</a></td>
-<td><pre class="source" title=""><code class="language-csharp">static string M(string s)
-        =&gt; s ?? throw new Exception();</code></pre></td>
-<td><pre class="source" title=""><code class="language-csharp">static string M(string s)
+<td markdown="1">
+
+```csharp
+static string M(string s)
+        => s ?? throw new Exception();
+```
+
+</td>
+<td markdown="1">
+
+```csharp
+static string M(string s)
 {
     if (s == null) throw new Exception();
     return s;
-}</code></pre></td>
+}
+```
+
+</td>
 </tr>
 <tr>
 <td><a href="../resource/sp_ref.md#out-var">出力変数宣言</a></td>
-<td><pre class="source" title=""><code class="language-csharp">static int M(string s)
-         =&gt; int.TryParse(s, out var x) ? x : -1;</code></pre></td>
-<td><pre class="source" title=""><code class="language-csharp">static int M(string s)
+<td markdown="1">
+
+```csharp
+static int M(string s)
+         => int.TryParse(s, out var x) ? x : -1;
+```
+
+</td>
+<td markdown="1">
+
+```csharp
+static int M(string s)
 {
     int x;
     if (int.TryParse(s, out x)) return x;
     else return -1;
-}</code></pre></td>
+}
+```
+
+</td>
 </tr>
 <tr>
 <td><a href="../datatype/patterns.md#declaration">宣言パターン</a></td>
-<td><pre class="source" title=""><code class="language-csharp">static int M(object x)
-        =&gt; x is string s ? s.Length : 0;</code></pre></td>
-<td><pre class="source" title=""><code class="language-csharp">static int M(object x)
+<td markdown="1">
+
+```csharp
+static int M(object x)
+        => x is string s ? s.Length : 0;
+```
+
+</td>
+<td markdown="1">
+
+```csharp
+static int M(object x)
 {
     var s = x as string;
     if (s != null) return s.Length;
     return 0;
-}</code></pre></td>
+}
+```
+
+</td>
 </tr>
 </table>
 
@@ -269,15 +413,24 @@ dic[&quot;two&quot;] = 2;</code></pre></td>
 </tr>
 <tr>
 <td><a href="#abstract">switch 式</a></td>
-<td><pre class="source" title=""><code class="language-csharp">static int M(int? x, int? y)
-    =&gt; (x, y) switch
+<td markdown="1">
+
+```csharp
+static int M(int? x, int? y)
+    => (x, y) switch
     {
-        (null, null) =&gt; 0,
-        (null, { }) =&gt; 1,
-        ({ }, null) =&gt; -1,
-        (int i, int j) =&gt; i.CompareTo(j),
-    };</code></pre></td>
-<td><pre class="source" title=""><code class="language-csharp">static int M(int? x, int? y)
+        (null, null) => 0,
+        (null, { }) => 1,
+        ({ }, null) => -1,
+        (int i, int j) => i.CompareTo(j),
+    };
+```
+
+</td>
+<td markdown="1">
+
+```csharp
+static int M(int? x, int? y)
 {
     if (x is int i)
     {
@@ -289,6 +442,9 @@ dic[&quot;two&quot;] = 2;</code></pre></td>
         if (y is int) return 1;
         else return 0;
     }
-}</code></pre></td>
+}
+```
+
+</td>
 </tr>
 </table>

@@ -1456,6 +1456,48 @@ public sealed class MarkdigRendererTests
     }
 
     [Fact]
+    public void Render_LegacyMarkdownTableCell_RendersAnnotatedFencedCode()
+    {
+        const string Code = "if (left < right) return;";
+        var highlight = RangeMetadata(Code, "1:5-1:9");
+        var error = RangeMetadata(Code, "1:12-1:17");
+        var diagnostics = DiagnosticMetadata(Code, "CS1001@1:12-1:17");
+        var html = Render(
+            $$"""
+            <table summary="">
+              <tr>
+                <td markdown="1">
+
+            ```csharp {title="comparison" highlight-ranges="{{highlight}}" error-ranges="{{error}}" error-diagnostics="{{diagnostics}}"}
+            {{Code}}
+            ```
+
+            </td>
+              </tr>
+            </table>
+            """);
+
+        var pre = Assert.Single(ExtractRenderedPreElements(html));
+        var code = Assert.IsType<XElement>(pre.Element("code"));
+        var errorSpan = Assert.Single(code.Descendants("span").Where(
+            static span => span.Attribute("class")?.Value == "error"));
+        Assert.Contains("<table summary=\"\">", html);
+        Assert.Contains("<td>", html);
+        Assert.DoesNotContain("markdown=\"1\"", html);
+        Assert.Equal("comparison", pre.Attribute("title")?.Value);
+        Assert.Equal("language-csharp", code.Attribute("class")?.Value);
+        Assert.Contains(
+            code.Descendants("span"),
+            static span => span.Attribute("class")?.Value.Contains(
+                "roslyn-keyword",
+                StringComparison.Ordinal) == true);
+        Assert.Equal("left", Assert.Single(code.Descendants("mark")).Value);
+        Assert.Equal("right", errorSpan.Value);
+        Assert.Equal("CS1001", errorSpan.Attribute("title")?.Value);
+        Assert.Equal(Code, code.Value);
+    }
+
+    [Fact]
     public void Render_NestedLegacyMarkdownElements_RendersInnerTableBeforeOuterBlock()
     {
         var html = Render(

@@ -372,19 +372,25 @@ for(int i=0; i<a.Length; ++i) // a.Length は a の行数を表す。
 	<tr>
 		<th>書き方</th>
 		<td markdown="1">
-<pre class="source" title="多次元配列の例" lang=""><code class="language-csharp">int[,] rect =
+
+```csharp {title="多次元配列の例"}
+int[,] rect =
 {
     { 1, 2 },
     { 3, 4 },
-};</code></pre>
+};
+```
 
 </td>
 		<td markdown="1">
-<pre class="source" title="多次元配列の例" lang=""><code class="language-csharp">int[][] jug =
+
+```csharp {title="多次元配列の例"}
+int[][] jug =
 {
     new[] { 1 },
     new[] { 2, 3, 4 },
-};</code></pre>
+};
+```
 
 </td>
 	</tr>

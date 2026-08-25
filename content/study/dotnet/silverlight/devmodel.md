@@ -46,23 +46,28 @@ XAML で書いたビューに加えて、ロジックが必要な部分には C#
 
 以下のような XML でビューを記述します。
 
+```xml {title="XAML の例"}
+<Grid>
+    <Button
+         Content="hello"
+         Click="Button_Click" />
+</Grid>
+```
 
-<pre class="xsource" title="XAML の例"><code class="language-xml">&lt;Grid&gt;
-    &lt;Button
-         Content=&quot;hello&quot;
-         Click=&quot;Button_Click&quot; /&gt;
-&lt;/Grid&gt;</code></pre></td>
+</td>
 		<td markdown="1">
 
 ##### <a id="sec-generated-title-4"></a>C
 
 イベント処理などを行う場合は C# で記述します。
 
-<pre class="source" title="C# でイベント処理" lang=""><code class="language-csharp">private void Button_Click(
+```csharp {title="C# でイベント処理"}
+private void Button_Click(
     object sender, RoutedEventArgs e)
 {
-    MessageBox.Show(&quot;初めての Silverlight&quot;);
-}</code></pre>
+    MessageBox.Show("初めての Silverlight");
+}
+```
 
 </td>
 	</tr>

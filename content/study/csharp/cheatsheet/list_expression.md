@@ -308,9 +308,12 @@ class Program
 		<td markdown="1" rowspan="2">宣言</td>
 		<td markdown="1">ローカル変数</td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">int x;
-string s = &quot;sample&quot;;
-var a = 10;</code></pre>
+
+```csharp
+int x;
+string s = "sample";
+var a = 10;
+```
 
 </td>
 		<td markdown="1">「[変数と式](../start/st_variable.md)」</td>
@@ -318,8 +321,11 @@ var a = 10;</code></pre>
 	<tr>
 		<td markdown="1">ローカル定数</td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">const int x = 100;
-const double e = 2.71828;</code></pre>
+
+```csharp
+const int x = 100;
+const double e = 2.71828;
+```
 
 </td>
 		<td markdown="1">「[定数](../start/sp_const.md)」</td>
@@ -327,8 +333,11 @@ const double e = 2.71828;</code></pre>
 	<tr>
 		<td markdown="1" colspan="2">式</td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">x = 1 + 2;
-Math.Sin(1);</code></pre>
+
+```csharp
+x = 1 + 2;
+Math.Sin(1);
+```
 
 </td>
 		<td markdown="1">式単体。 「式;」。「[変数と式](../start/st_variable.md)」「[式](#expression)」</td>
@@ -336,14 +345,17 @@ Math.Sin(1);</code></pre>
 	<tr>
 		<td markdown="1" colspan="2">オーバーフローのチェック</td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">checked
+
+```csharp
+checked
 {
     int z = x * y;
 }
 unchecked
 {
     int z = x * y;
-}</code></pre>
+}
+```
 
 </td>
 		<td markdown="1">「[オーバーフローのチェック](../start/sp_checked.md)」</td>
@@ -352,7 +364,10 @@ unchecked
 		<td markdown="1" rowspan="2">条件分岐</td>
 		<td markdown="1">if 文</td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">if (条件) { } else { }</code></pre>
+
+```csharp
+if (条件) { } else { }
+```
 
 </td>
 		<td markdown="1">「[制御フロー](../structured/st_control.md)」「[if 文](../structured/st_branch.md#if)」</td>
@@ -360,13 +375,16 @@ unchecked
 	<tr>
 		<td markdown="1">switch 文</td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">switch(値)
+
+```csharp
+switch(値)
 {
     case 0:
         break;
     default:
         break;
-}</code></pre>
+}
+```
 
 </td>
 		<td markdown="1">「[switch 文](../structured/st_branch.md#switch)」</td>
@@ -375,11 +393,14 @@ unchecked
 		<td markdown="1" rowspan="4">反復処理</td>
 		<td markdown="1">while 文</td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">int n = 10;
-while (n &gt; 0)
+
+```csharp
+int n = 10;
+while (n > 0)
 {
     --n;
-}</code></pre>
+}
+```
 
 </td>
 		<td markdown="1">「[制御フロー](../structured/st_control.md)」「[while 文](../structured/st_loop.md#while)」</td>
@@ -387,11 +408,14 @@ while (n &gt; 0)
 	<tr>
 		<td markdown="1">do 文</td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">string s;
+
+```csharp
+string s;
 do
 {
     s = Console.ReadLine();
-} while (s.Length == 0);</code></pre>
+} while (s.Length == 0);
+```
 
 </td>
 		<td markdown="1">「[制御フロー](../structured/st_control.md)」「[do-while 文](../structured/st_loop.md#dowhile)」</td>
@@ -399,10 +423,13 @@ do
 	<tr>
 		<td markdown="1">for 文</td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">for (int i = 0; i &lt; 10; i++)
+
+```csharp
+for (int i = 0; i < 10; i++)
 {
 
-}</code></pre>
+}
+```
 
 </td>
 		<td markdown="1">「[制御フロー](../structured/st_control.md)」「[for 文](../structured/st_loop.md#for)」</td>
@@ -410,11 +437,14 @@ do
 	<tr>
 		<td markdown="1">foreach 文</td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">var array = new[] { 1, 2, 3 };
+
+```csharp
+var array = new[] { 1, 2, 3 };
 foreach (var x in array)
 {
 
-}</code></pre>
+}
+```
 
 </td>
 		<td markdown="1">「[制御フロー](../structured/st_control.md)」「[foreach文](../structured/st_loop.md#foreach)」「[foreach](../data/sp_foreach.md)」</td>
@@ -423,14 +453,17 @@ foreach (var x in array)
 		<td markdown="1" rowspan="2">反復の中断</td>
 		<td markdown="1">break 文</td>
 		<td markdown="1" rowspan="2">
-<pre class="source" title="" lang=""><code class="language-csharp">while (true)
+
+```csharp
+while (true)
 {
     if (nothingToDo)
         continue;
 
     if (!isActive)
         break;
-}</code></pre>
+}
+```
 
 </td>
 		<td markdown="1">「[反復処理](../structured/st_loop.md)」</td>
@@ -442,14 +475,17 @@ foreach (var x in array)
 	<tr>
 		<td markdown="1" colspan="2">goto 文</td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">while (true)
+
+```csharp
+while (true)
 {
     while (true)
     {
         goto LOOP_END;
     }
 }
-LOOP_END: ;</code></pre>
+LOOP_END: ;
+```
 
 </td>
 		<td markdown="1">「[goto 文](../structured/st_branch.md#goto)」</td>
@@ -457,10 +493,13 @@ LOOP_END: ;</code></pre>
 	<tr>
 		<td markdown="1" colspan="2">return 文</td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">int Add(int x, int y)
+
+```csharp
+int Add(int x, int y)
 {
     return x + y;
-}</code></pre>
+}
+```
 
 </td>
 		<td markdown="1">「[関数](../structured/st_function.md)」</td>
@@ -468,13 +507,16 @@ LOOP_END: ;</code></pre>
 	<tr>
 		<td markdown="1" colspan="2">yield 文</td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">IEnumerable&lt;int&gt; ZeroTo(int x)
+
+```csharp
+IEnumerable<int> ZeroTo(int x)
 {
-    for (int i = 0; i &lt;= x; i++)
+    for (int i = 0; i <= x; i++)
     {
         yield return i;
     }
-}</code></pre>
+}
+```
 
 </td>
 		<td markdown="1">「[イテレーター](../data/sp2_iterator.md)」</td>
@@ -482,7 +524,9 @@ LOOP_END: ;</code></pre>
 	<tr>
 		<td markdown="1" colspan="2">例外処理</td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">try
+
+```csharp
+try
 {
 }
 catch (IOException)
@@ -490,7 +534,8 @@ catch (IOException)
 }
 finally
 {
-}</code></pre>
+}
+```
 
 </td>
 		<td markdown="1">「[例外処理](../structured/oo_exception.md)」</td>
@@ -498,10 +543,13 @@ finally
 	<tr>
 		<td markdown="1" colspan="2">リソース破棄</td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">using (var r = File.OpenText(&quot;a.txt&quot;))
+
+```csharp
+using (var r = File.OpenText("a.txt"))
 {
     var s = r.ReadLine();
-}</code></pre>
+}
+```
 
 </td>
 		<td markdown="1">「[リソースの破棄](../resource/oo_dispose.md)」</td>
@@ -509,14 +557,17 @@ finally
 	<tr>
 		<td markdown="1" colspan="2">ロック</td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">object syncObj = new object();
-Parallel.ForEach(data, x =&gt;
+
+```csharp
+object syncObj = new object();
+Parallel.ForEach(data, x =>
 {
     lock (syncObj)
     {
         sum += x;
     }
-});</code></pre>
+});
+```
 
 </td>
 		<td markdown="1">「[lock 文](../async/sp_thread.md#lock)」</td>

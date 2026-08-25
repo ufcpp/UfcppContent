@@ -77,7 +77,9 @@ C# に関わるもう1つの大きな変化としては、C# コンパイラー�
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">class Point
+
+```csharp
+class Point
 {
     private int _x;
 
@@ -88,15 +90,19 @@ C# に関わるもう1つの大きな変化としては、C# コンパイラー�
     }
     
     // Y とか Z も同様に実装
-}</code></pre>
+}
+```
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">class Point
+
+```csharp
+class Point
 {
     public int X { get; set; }
     public int Y { get; set; }
-}</code></pre>
+}
+```
 
 </td>
 	</tr>
@@ -119,7 +125,9 @@ C# 6 では、自動プロパティに初期化子(プロパティの後ろに =
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">class Point
+
+```csharp
+class Point
 {
     // ↓この初期値を設定するためだけに自動実装をやめることに
     private int _x = 10;
@@ -131,21 +139,27 @@ C# 6 では、自動プロパティに初期化子(プロパティの後ろに =
     }
 
     // Y も同様に実装
-}</code></pre>
+}
+```
 
 </td>
 		<td markdown="1" rowspan="2">
-<pre class="source" title="" lang=""><code class="language-csharp">class Point
+
+```csharp {highlight-ranges="sha256:9722a7311933e59eb28a0f30572455e368db90523deced1a0d84ebaacd9e95e0;3:34-3:36,4:34-4:36"}
+class Point
 {
-    public int X { get; set; } = <mark class="code-highlight">10</mark>;
-    public int Y { get; set; } = <mark class="code-highlight">20</mark>;
-}</code></pre>
+    public int X { get; set; } = 10;
+    public int Y { get; set; } = 20;
+}
+```
 
 </td>
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">class Point
+
+```csharp
+class Point
 {
     public int X { get; set; }
     public int Y { get; set; }
@@ -156,7 +170,8 @@ C# 6 では、自動プロパティに初期化子(プロパティの後ろに =
         X = 10;
         Y = 20;
     }
-}</code></pre>
+}
+```
 
 </td>
 	</tr>
@@ -176,7 +191,9 @@ C# 6 では、自動プロパティに初期化子(プロパティの後ろに =
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">class Point
+
+```csharp
+class Point
 {
     // ↓getのみの自動実装はできないので仕方なくフィールドを用意
     private readonly int _x = 10;
@@ -184,22 +201,28 @@ C# 6 では、自動プロパティに初期化子(プロパティの後ろに =
 
     private readonly int _y = 20;
     public int Y { get { return _y; } }
-}</code></pre>
+}
+```
 
 </td>
 		<td markdown="1" rowspan="2">
-<pre class="source" title="" lang=""><code class="language-csharp">class Point
+
+```csharp
+class Point
 {
     // ↓ set; を消すだけ
     public int X { get; } = 10;
     public int Y { get; } = 20;
-}</code></pre>
+}
+```
 
 </td>
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">class Point
+
+```csharp
+class Point
 {
     // ↓setをprivateにすることで外からは書き替えれないように
     public int X { get; private set; } 
@@ -210,7 +233,8 @@ C# 6 では、自動プロパティに初期化子(プロパティの後ろに =
         X = 10;
         Y = 20;
     }
-}</code></pre>
+}
+```
 
 </td>
 	</tr>
@@ -228,7 +252,9 @@ getだけ書いたプロパティは、readonlyフィールドと同じような
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">public class Point
+
+```csharp
+public class Point
 {
     public int X { get; }
     public int Y { get; }
@@ -240,24 +266,28 @@ getだけ書いたプロパティは、readonlyフィールドと同じような
         X = x;
         Y = y;
     }
-}</code></pre>
+}
+```
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">public class Point
+
+```csharp
+public class Point
 {
     private readonly int _x;
-    public int X =&gt; _x;
+    public int X => _x;
 
     private readonly int _y;
-    public int Y =&gt; _y;
+    public int Y => _y;
 
     public Point(int x, int y)
     {
         _x = x;
         _y = y;
     }
-}</code></pre>
+}
+```
 
 </td>
 	</tr>
@@ -282,7 +312,9 @@ C# 6 では、関数メンバーの関数本体の部分が1つの式だけか�
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">public class Point
+
+```csharp
+public class Point
 {
     public int X { get; set; }
     public int Y { get; set; }
@@ -296,19 +328,23 @@ C# 6 では、関数メンバーの関数本体の部分が1つの式だけか�
     {
         return new Point(-p.X, -p.Y);
     }
-}</code></pre>
+}
+```
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">public class Point
+
+```csharp {highlight-ranges="sha256:af1ec14b4bf8db2d37f22afa9ec7a8192200bd5d7f4f7d09c5aeaf3b5e463987;7:38-7:40,8:45-8:47"}
+public class Point
 {
     public int X { get; set; }
     public int Y { get; set; }
     public Point(int x = 0, int y = 0) { X = x; Y = y; }
 
-    public int InnerProduct(Point p) <mark class="code-highlight">=&gt;</mark> X * p.X + Y * p.Y;
-    public static Point operator -(Point p) <mark class="code-highlight">=&gt;</mark> new Point(-p.X, -p.Y);
-}</code></pre>
+    public int InnerProduct(Point p) => X * p.X + Y * p.Y;
+    public static Point operator -(Point p) => new Point(-p.X, -p.Y);
+}
+```
 
 </td>
 	</tr>
@@ -326,7 +362,9 @@ C# 6 では、関数メンバーの関数本体の部分が1つの式だけか�
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">public class Polygon
+
+```csharp
+public class Polygon
 {
     private Point[] _vertexes;
 
@@ -344,17 +382,21 @@ C# 6 では、関数メンバーの関数本体の部分が1つの式だけか�
             return _vertexes[i];
         }
     }
-}</code></pre>
+}
+```
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">public class Polygon
+
+```csharp {highlight-ranges="sha256:ae260243c98ace942f4b15fabc34e44c4f91731b8a8fadef569f785ec7025c7f;5:22-5:24,6:30-6:32"}
+public class Polygon
 {
     private Point[] _vertexes;
 
-    public int Count <mark class="code-highlight">=&gt;</mark> _vertexes.Length;
-    public Point this[int i] <mark class="code-highlight">=&gt;</mark> _vertexes[i];
-}</code></pre>
+    public int Count => _vertexes.Length;
+    public Point this[int i] => _vertexes[i];
+}
+```
 
 </td>
 	</tr>
@@ -376,7 +418,9 @@ C# 6 では、関数メンバーの関数本体の部分が1つの式だけか�
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">public class Sample
+
+```csharp
+public class Sample
 {
     public string Name { get; set; }
 
@@ -387,16 +431,20 @@ C# 6 では、関数メンバーの関数本体の部分が1つの式だけか�
         if (name == null) return null;
         return name.Length;
     }
-}</code></pre>
+}
+```
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">public class Sample
+
+```csharp {highlight-ranges="sha256:682be6a075bf38f063d767544bebf76fb770e089e7d7289dd6002f9767b28df4;5:39-5:54"}
+public class Sample
 {
     public string Name { get; set; }
 
-    public static int? X(Sample s) =&gt; <mark class="code-highlight">s?.Name?.Length</mark>;
-}</code></pre>
+    public static int? X(Sample s) => s?.Name?.Length;
+}
+```
 
 </td>
 	</tr>
@@ -433,11 +481,17 @@ static T Y<T>(Func<T> f)
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">var formatted = string.Format(&quot;({0}, {1})&quot;, x, y);</code></pre>
+
+```csharp
+var formatted = string.Format("({0}, {1})", x, y);
+```
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">var formatted = $&quot;({x}, {y})&quot;;</code></pre>
+
+```csharp
+var formatted = $"({x}, {y})";
+```
 
 </td>
 	</tr>
@@ -459,7 +513,9 @@ static T Y<T>(Func<T> f)
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">using System;
+
+```csharp
+using System;
 
 class MyClass
 {
@@ -469,33 +525,37 @@ class MyClass
     public void MyMethod()
     {
         var myLocal = 10;
-        Console.WriteLine(&quot;MyClass&quot;);
-        Console.WriteLine(&quot;MyProperty = &quot; + MyProperty);
-        Console.WriteLine(&quot;myField = &quot; + myField);
-        Console.WriteLine(&quot;MyMethod&quot;);
-        Console.WriteLine(&quot;myLocal = &quot; + myLocal);
+        Console.WriteLine("MyClass");
+        Console.WriteLine("MyProperty = " + MyProperty);
+        Console.WriteLine("myField = " + myField);
+        Console.WriteLine("MyMethod");
+        Console.WriteLine("myLocal = " + myLocal);
     }
-}</code></pre>
+}
+```
 
 </td>
 		<td markdown="1">
-<pre class="source" title="nameof 演算子の例" lang=""><code class="language-csharp">using System;
+
+```csharp {title="nameof 演算子の例" highlight-ranges="sha256:69c2183ca756cd66e697978c08d08bf48e942483523c5aa693258e8013913d89;11:27-11:42"}
+using System;
 
 class MyClass
 {
-    public int MyProperty =&gt; myField;
+    public int MyProperty => myField;
     private int myField = 10;
 
     public void MyMethod()
     {
         var myLocal = 10;
-        Console.WriteLine(<mark class="code-highlight">nameof(MyClass)</mark>);
-        Console.WriteLine(nameof(MyProperty) + &quot; = &quot; + MyProperty);
-        Console.WriteLine(nameof(myField) + &quot; = &quot; + myField);
+        Console.WriteLine(nameof(MyClass));
+        Console.WriteLine(nameof(MyProperty) + " = " + MyProperty);
+        Console.WriteLine(nameof(myField) + " = " + myField);
         Console.WriteLine(nameof(MyMethod));
-        Console.WriteLine(nameof(myLocal) + &quot; = &quot; + myLocal);
+        Console.WriteLine(nameof(myLocal) + " = " + myLocal);
     }
-}</code></pre>
+}
+```
 
 </td>
 	</tr>
@@ -518,7 +578,9 @@ class MyClass
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">using System;
+
+```csharp
+using System;
 
 class Program
 {
@@ -527,21 +589,25 @@ class Program
         var pi = 2 * Math.Asin(1);
         Console.WriteLine(Math.PI == pi);
     }
-}</code></pre>
+}
+```
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">using System;
-<mark class="code-highlight">using static System.Math</mark>;
+
+```csharp {highlight-ranges="sha256:efde1688e499f31cfeec38c76f8f917d19713f00edb557466285e5d3deab7209;2:1-2:25,8:22-8:29,9:27-9:29"}
+using System;
+using static System.Math;
 
 class Program
 {
     static void Main()
     {
-        var pi = 2 * <mark class="code-highlight">Asin(1)</mark>;
-        Console.WriteLine(<mark class="code-highlight">PI</mark> == pi);
+        var pi = 2 * Asin(1);
+        Console.WriteLine(PI == pi);
     }
-}</code></pre>
+}
+```
 
 </td>
 	</tr>
@@ -565,17 +631,23 @@ Math クラス(System 名前空間)など、純粋な関数のみを持ったク
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">var dic = new Dictionary&lt;string, int&gt;();
-dic[&quot;one&quot;] = 1;
-dic[&quot;two&quot;] = 2;</code></pre>
+
+```csharp
+var dic = new Dictionary<string, int>();
+dic["one"] = 1;
+dic["two"] = 2;
+```
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">var dic = new Dictionary&lt;string, int&gt;
+
+```csharp
+var dic = new Dictionary<string, int>
 {
-    [&quot;one&quot;] = 1,
-    [&quot;two&quot;] = 2,
-};</code></pre>
+    ["one"] = 1,
+    ["two"] = 2,
+};
+```
 
 </td>
 	</tr>
