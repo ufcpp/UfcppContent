@@ -177,7 +177,7 @@ node tools/css-parity-compare.mjs '[{"label":"expand","path":"/study/csharp/asyn
 
 ## 未定義のまま許容するクラス
 
-次の 11 クラスは `content/` で使われているが `site.css` に定義が無い。いずれも
+次の 8 クラスは `content/` で使われているが `site.css` に定義が無い。いずれも
 **参照 CSS 側にも定義が無い**、つまり ufcpp.net でもスタイルが当たっていないため、
 差分ではない。`SiteCssParityTests` の許可リストに理由付きで登録している。
 
@@ -186,13 +186,11 @@ node tools/css-parity-compare.mjs '[{"label":"expand","path":"/study/csharp/asyn
 | `color` | ASCIIMath の余白用スペーサー |
 | `speakerdeck-embed` | 外部埋め込み（Speaker Deck 側の CSS） |
 | `subject` | ブログ本文の見出し補助。元サイトでも未定義 |
-| `language-console` / `language-xml` | Markdown の言語指定がそのまま残ったもの |
 | `silverlightControlHost` | 廃止済みプラグインのホスト要素 |
 | `key-file-local-type` | 記事内の一時的なマーカー |
 | `twitter-tweet` | 外部埋め込み（X / Twitter 側の CSS） |
 | `site-footer-links` | 本リポジトリ側。`.site-footer p` / `a` が既に賄っている |
 | `version11*` | `st_operator.md:228` の誤記（末尾の `*`）。元サイトでも壊れている |
-| `xsource` | `devmodel.md:50` の誤記。`source` の打ち間違いと思われる |
 
 許可リストは「もう使われていない項目」も検出するので、コンテンツ側で誤記が直れば
 テストが落ちて気付ける。
@@ -346,7 +344,6 @@ Roslyn には「型を表す分類の一覧」を返す API が無いため、�
 移行元から引き継いだ記述の揺れ。CSS の問題ではないので記録のみ。
 
 - `content/study/csharp/start/st_operator.md:228` — `class="version version11*"`（末尾に `*`）
-- `content/study/dotnet/silverlight/devmodel.md:50` — `<pre class="xsource">`
 - `ap_ver7_2.md:18`、`ap_ver7_3.md:16`、`stnumber.md:131`、`sp4_optional.md:187` —
   本文が「Ver. 7.2」「Ver. 7.3」なのにクラスが `version7_1`
 

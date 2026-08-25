@@ -364,8 +364,10 @@ C#はコンパイル時間にもかなり気を使っているプログラミン
 
 <table>
 <tr>
-<td>
-<pre class="source" title="c は int"><code class="language-csharp">class A
+<td markdown="1">
+
+```csharp {title="c は int"}
+class A
 {
     public static var a = 1;
 }
@@ -376,12 +378,16 @@ class B
 class C
 {
     public static var c = B.b * B.b;
-}</code></pre>
+}
+```
+
 </td>
-<td>
-<pre class="source" title="c は double"><code class="language-csharp">class A
+<td markdown="1">
+
+```csharp {title="c は double" highlight-ranges="sha256:23da38c8a868df2fc609588d2a2a96f08e443c9584a619443d8538978f50e1a0;3:27-3:30"}
+class A
 {
-    public static var a = <mark class="code-highlight">1.0</mark>;
+    public static var a = 1.0;
 }
 class B
 {
@@ -390,7 +396,9 @@ class B
 class C
 {
     public static var c = B.b * B.b;
-}</code></pre>
+}
+```
+
 </td>
 </tr>
 </table>
@@ -415,13 +423,15 @@ class C
 
 <table>
 <tr>
-<td>
-<pre class="source" title="変更前"><code class="language-csharp">using System;
+<td markdown="1">
+
+```csharp {title="変更前"}
+using System;
 
 class A
 {
     public static var F(int x, int y)
-        =&gt; new { x, y };
+        => new { x, y };
 }
 class B
 {
@@ -435,20 +445,24 @@ class Program
         var p = B.G(1);
         Console.WriteLine(p.x);
     }
-}</code></pre>
+}
+```
+
 </td>
-<td>
-<pre class="source" title="変更後"><code class="language-csharp">using System;
+<td markdown="1">
+
+```csharp {title="変更後" highlight-ranges="sha256:8bdc6fdcb576f374fa56383e85178b1e8ae6187ffce86d58fcf66a433930f224;6:18-6:19,6:29-6:30,19:27-19:30"}
+using System;
 
 class A
 {
     public static var F(int x, int y)
-        =&gt; new { <mark class="code-highlight">X</mark> = x + y, <mark class="code-highlight">Y</mark> = x - y };
+        => new { X = x + y, Y = x - y };
     // ↑ new { x, y } だったのが new { X, Y } に変わった
 }
 class B
 {
-    public static var G(int x) =&gt; A.F(x, x);
+    public static var G(int x) => A.F(x, x);
 }
 
 class Program
@@ -456,9 +470,11 @@ class Program
     static void Main()
     {
         var p = B.G(1);
-        Console.WriteLine(<mark class="code-highlight">p.x</mark>); // ここでエラー
+        Console.WriteLine(p.x); // ここでエラー
     }
-}</code></pre>
+}
+```
+
 </td>
 </tr>
 </table>

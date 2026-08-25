@@ -424,34 +424,40 @@ class Program
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">class Base
+
+```csharp
+class Base
 {
-    public void A() { Console.WriteLine(&quot;Base.A&quot;); }
+    public void A() { Console.WriteLine("Base.A"); }
 }
  
 class Derived : Base
 {
-    public void B() { Console.WriteLine(&quot;Derived.B&quot;); }
-}</code></pre>
+    public void B() { Console.WriteLine("Derived.B"); }
+}
+```
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">class Base
+
+```csharp
+class Base
 {
-    public void A() { Console.WriteLine(&quot;Base.A&quot;); }
+    public void A() { Console.WriteLine("Base.A"); }
  
     // 派生クラスに B メソッドがあることなんて知らないから足してしまった
-    public void B() { Console.WriteLine(&quot;Base.B&quot;); }
+    public void B() { Console.WriteLine("Base.B"); }
 }
  
 class Derived : Base
 {
     // エラーにはならない。ただし、警告あり。
-    public void B() { Console.WriteLine(&quot;Derived.B&quot;); }
+    public void B() { Console.WriteLine("Derived.B"); }
  
     // （別に問題ない場合）警告を消すためには public new void B() とする
     // （たいていは問題になったりするので早めにメソッド名を変えてしまえる方がいいのだけども）
-}</code></pre>
+}
+```
 
 </td>
 	</tr>
@@ -476,30 +482,36 @@ Base 側開発者は Derived 側のことを何も知らないので、悪意な
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">class Base
+
+```csharp
+class Base
 {
-    public void A() { Console.WriteLine(&quot;Base.A&quot;); }
+    public void A() { Console.WriteLine("Base.A"); }
 }
  
 class Derived : Base
 {
     // 意図して Base と同じ名前のメソッドを定義
-    public new void A() { Console.WriteLine(&quot;Derived.B&quot;); }
-}</code></pre>
+    public new void A() { Console.WriteLine("Derived.B"); }
+}
+```
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">class Base
+
+```csharp
+class Base
 {
-    public void ARenamed() { Console.WriteLine(&quot;Base.A&quot;); }
+    public void ARenamed() { Console.WriteLine("Base.A"); }
 }
  
 class Derived : Base
 {
     // 警告が出る。基底クラスに A がないのに new 修飾。
     // 少なくとも、Base 側の変更に気づきはする。
-    public new void A() { Console.WriteLine(&quot;Derived.B&quot;); }
-}</code></pre>
+    public new void A() { Console.WriteLine("Derived.B"); }
+}
+```
 
 </td>
 	</tr>
@@ -520,28 +532,34 @@ Derived 側で A メソッドをわざわざ再定義（new）しているわけ
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">class Base
+
+```csharp
+class Base
 {
-    public virtual void A() { Console.WriteLine(&quot;Base.A&quot;); }
+    public virtual void A() { Console.WriteLine("Base.A"); }
 }
  
 class Derived : Base
 {
-    public override void A() { Console.WriteLine(&quot;Derived.B&quot;); }
-}</code></pre>
+    public override void A() { Console.WriteLine("Derived.B"); }
+}
+```
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">class Base
+
+```csharp
+class Base
 {
-    public virtual void ARenamed() { Console.WriteLine(&quot;Base.A&quot;); }
+    public virtual void ARenamed() { Console.WriteLine("Base.A"); }
 }
  
 class Derived : Base
 {
     // この場合はコンパイル エラー。
-    public override void A() { Console.WriteLine(&quot;Derived.B&quot;); }
-}</code></pre>
+    public override void A() { Console.WriteLine("Derived.B"); }
+}
+```
 
 </td>
 	</tr>
@@ -590,7 +608,9 @@ class Program
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">using System;
+
+```csharp
+using System;
  
 class Base
 {
@@ -598,7 +618,7 @@ class Base
  
 class Derived : Base
 {
-    public void A(object x) { Console.WriteLine(&quot;object&quot;); }
+    public void A(object x) { Console.WriteLine("object"); }
 }
  
 class Program
@@ -606,22 +626,25 @@ class Program
     static void Main()
     {
         var x = new Derived();
-        x.A(&quot;&quot;); // 1個しかないので当然 A(object x) が呼ばれる
+        x.A(""); // 1個しかないので当然 A(object x) が呼ばれる
     }
-}</code></pre>
+}
+```
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">using System;
+
+```csharp
+using System;
  
 class Base
 {
-    public void A(string x) { Console.WriteLine(&quot;string&quot;); }
+    public void A(string x) { Console.WriteLine("string"); }
 }
  
 class Derived : Base
 {
-    public void A(object x) { Console.WriteLine(&quot;object&quot;); }
+    public void A(object x) { Console.WriteLine("object"); }
 }
  
 class Program
@@ -629,9 +652,10 @@ class Program
     static void Main()
     {
         var x = new Derived();
-        x.A(&quot;&quot;); // 型の一致よりも、Derived にあることが優先されて、A(object) が呼ばれる
+        x.A(""); // 型の一致よりも、Derived にあることが優先されて、A(object) が呼ばれる
     }
-}</code></pre>
+}
+```
 
 </td>
 	</tr>
@@ -842,19 +866,25 @@ class Program
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="console" title=""><code class="language-console">5
+
+```console
 5
 5
 5
-5</code></pre>
+5
+5
+```
 
 </td>
 		<td markdown="1">
-<pre class="console" title=""><code class="language-console">1
+
+```console
+1
 2
 3
 4
-5</code></pre>
+5
+```
 
 </td>
 	</tr>

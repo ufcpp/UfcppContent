@@ -70,9 +70,12 @@ Debugビルド時とReleaseビルド時で挙動が違います。
 	<tr>
 		<th>初期化済み</th>
 		<td markdown="1">
-<pre class="source" title="未初期化領域を読む" lang=""><code class="language-csharp">int* x = new int[1];
+
+```cpp {title="未初期化領域を読む"}
+int* x = new int[1];
 x[0] = 0xFFFFFFFF;
-printf(&quot;%08x\n&quot;, x[0]);</code></pre>
+printf("%08x\n", x[0]);
+```
 
 </td>
 		<td markdown="1">ffffffff</td>
@@ -83,9 +86,12 @@ printf(&quot;%08x\n&quot;, x[0]);</code></pre>
 	<tr>
 		<th>削除済み</th>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">int* px = x;
+
+```cpp
+int* px = x;
 delete x;
-printf(&quot;%08x\n&quot;, px[0]);</code></pre>
+printf("%08x\n", px[0]);
+```
 
 </td>
 		<td markdown="1">dddddddd</td>
@@ -96,9 +102,12 @@ printf(&quot;%08x\n&quot;, px[0]);</code></pre>
 	<tr>
 		<th>未初期化</th>
 		<td markdown="1">
-<pre class="source" title="" lang=""><code class="language-csharp">    int* y = new int[1];
-    printf(&quot;%08x\n&quot;, y[0]);
-}</code></pre>
+
+```cpp
+    int* y = new int[1];
+    printf("%08x\n", y[0]);
+}
+```
 
 </td>
 		<td markdown="1">cdcdcdcd</td>

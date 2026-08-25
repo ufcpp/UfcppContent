@@ -28,12 +28,9 @@ public sealed class SiteCssParityTests
         ["twitter-tweet"] = "Third-party embed hook styled by Twitter's own script.",
         ["silverlightControlHost"] = "Legacy Silverlight embed; sized by its inline style attribute.",
         ["subject"] = "Legacy hook with no bare .subject rule upstream (only ul.subject-menu).",
-        ["language-console"] = "Code-fence language hook; highlighting is emitted as token spans instead.",
-        ["language-xml"] = "Code-fence language hook; highlighting is emitted as token spans instead.",
         ["key-file-local-type"] = "Anchor marker on a <strong>; carries no styling upstream.",
         ["site-footer-links"] = "Our own footer wrapper; .site-footer p / .site-footer a already cover it.",
         ["version11*"] = "Content typo for \"version11\" in study/csharp/start/st_operator.md; broken upstream too.",
-        ["xsource"] = "Content typo for \"source\" in study/dotnet/silverlight/devmodel.md; unstyled upstream too.",
     };
 
     /// <summary>

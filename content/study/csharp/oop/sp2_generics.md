@@ -624,34 +624,38 @@ C# 13 で [`allows ref struct`](../resource/refstruct.md#ref-struct-interface) �
 <th>制約なし</th>
 </tr>
 <tr>
-<td>
+<td markdown="1">
 
-<pre class="source" title="制約あり"><code class="language-csharp">M&lt;int&gt;();
-M&lt;object&gt;();
-<span class="error" title="CS0310">M&lt;string&gt;</span>(); // 書けなくなる。
-<span class="error" title="CS0310">M&lt;Uri&gt;</span>();    // 書けなくなる。
+```csharp {title="制約あり" error-ranges="sha256:5242417708d4571f127ae994af3fb197bf1a87a1638510bf7309f784e18e20c5;3:1-3:10,4:1-4:7" error-diagnostics="sha256:5242417708d4571f127ae994af3fb197bf1a87a1638510bf7309f784e18e20c5;CS0310@3:1-3:10,CS0310@4:1-4:7"}
+M<int>();
+M<object>();
+M<string>(); // 書けなくなる。
+M<Uri>();    // 書けなくなる。
 
-static object M&lt;T&gt;()
+static object M<T>()
     where T : new()
 {
     // new T() が書ける。
     return new T();
-}</code></pre>
+}
+```
 
 </td>
-<td>
+<td markdown="1">
 
-<pre class="source" title="制約なし"><code class="language-csharp">M&lt;int&gt;();
-M&lt;object&gt;();
-M&lt;string&gt;(); // 書ける。
-M&lt;Uri&gt;();    // 書ける。
+```csharp {title="制約なし" error-ranges="sha256:1d61e3f1537d0480edbcaf4b58ee21dbf36c052e89ca9ca04e6d44c490662f4d;10:12-10:19" error-diagnostics="sha256:1d61e3f1537d0480edbcaf4b58ee21dbf36c052e89ca9ca04e6d44c490662f4d;CS0304@10:12-10:19"}
+M<int>();
+M<object>();
+M<string>(); // 書ける。
+M<Uri>();    // 書ける。
 
-static object M&lt;T&gt;()
+static object M<T>()
     // 制約なしの場合
 {
     // こっちが書けない。
-    return <span class="error" title="CS0304">new T()</span>;
-}</code></pre>
+    return new T();
+}
+```
 
 </td>
 </tr>
@@ -669,34 +673,38 @@ static object M&lt;T&gt;()
 <th>アンチ制約なし</th>
 </tr>
 <tr>
-<td>
+<td markdown="1">
 
-<pre class="source" title="アンチ制約あり"><code class="language-csharp">M&lt;int&gt;();
-M&lt;object&gt;();
-M&lt;Span&lt;string&gt;&gt;();      // 書ける。
-M&lt;ReadOnlySpan&lt;int&gt;&gt;(); // 書ける。
+```csharp {title="アンチ制約あり" error-ranges="sha256:19fc20329ffb2d2e6dc7412f7315a653f4afbbc10c62bd115e7cd784691eb504;10:12-10:22" error-diagnostics="sha256:19fc20329ffb2d2e6dc7412f7315a653f4afbbc10c62bd115e7cd784691eb504;CS0029@10:12-10:22,CS0029@10:12-10:22"}
+M<int>();
+M<object>();
+M<Span<string>>();      // 書ける。
+M<ReadOnlySpan<int>>(); // 書ける。
 
-static object? M&lt;T&gt;()
+static object? M<T>()
     where T : allows ref struct
 {
     // ref struct を object に渡せない。
-    return <span class="error" title="CS0029"><span class="error" title="CS0029">default(T)</span></span>;
-}</code></pre>
+    return default(T);
+}
+```
 
 </td>
-<td>
+<td markdown="1">
 
-<pre class="source" title="アンチ制約なし"><code class="language-csharp">M&lt;int&gt;();
-M&lt;object&gt;();
-<span class="error" title="CS9244">M&lt;Span&lt;string&gt;&gt;</span>();      // 書けない。
-<span class="error" title="CS9244">M&lt;ReadOnlySpan&lt;int&gt;&gt;</span>(); // 書けない。
+```csharp {title="アンチ制約なし" error-ranges="sha256:9bd87b8e714226bb98ee333610542dd163bc80d81aa3e78d2600f3e61fa7aae1;3:1-3:16,4:1-4:21" error-diagnostics="sha256:9bd87b8e714226bb98ee333610542dd163bc80d81aa3e78d2600f3e61fa7aae1;CS9244@3:1-3:16,CS9244@4:1-4:21"}
+M<int>();
+M<object>();
+M<Span<string>>();      // 書けない。
+M<ReadOnlySpan<int>>(); // 書けない。
 
-static object? M&lt;T&gt;()
+static object? M<T>()
     // アンチ制約なしの場合
 {
     // 書けるようになる。
     return default(T);
-}</code></pre>
+}
+```
 
 </td>
 </tr>

@@ -42,51 +42,69 @@ Parallel クラスは Invoke、For、ForEach の3つの静的メソッドを持�
 	<tr>
 		<td markdown="1">Invoke</td>
 		<td markdown="1">
-<pre class="source" title="3つのメソッドを逐次呼び出し" lang=""><code class="language-csharp">A();
+
+```csharp {title="3つのメソッドを逐次呼び出し"}
+A();
 B();
-C();</code></pre>
+C();
+```
 
 </td>
 		<td markdown="1">
-<pre class="source" title="3つのメソッドを並列呼び出し" lang=""><code class="language-csharp">Parallel.Invoke(A, B, C);</code></pre>
+
+```csharp {title="3つのメソッドを並列呼び出し"}
+Parallel.Invoke(A, B, C);
+```
 
 </td>
 	</tr>
 	<tr>
 		<td markdown="1">For</td>
 		<td markdown="1">
-<pre class="source" title="0～N まで逐次処理" lang=""><code class="language-csharp">for (int i = 0; i &lt; N; i++)
+
+```csharp {title="0～N まで逐次処理"}
+for (int i = 0; i < N; i++)
 {
     Console.WriteLine(i * i);
-}</code></pre>
+}
+```
 
 </td>
 		<td markdown="1">
-<pre class="source" title="0～N まで並列処理" lang=""><code class="language-csharp">Parallel.For(0, N, i =&gt;
+
+```csharp {title="0～N まで並列処理"}
+Parallel.For(0, N, i =>
 {
     Console.WriteLine(i * i);
-});</code></pre>
+});
+```
 
 </td>
 	</tr>
 	<tr>
 		<td markdown="1">ForEach</td>
 		<td markdown="1">
-<pre class="source" title="data の要素を逐次列挙" lang=""><code class="language-csharp">var data = Enumerable.Range(0, N);
+
+```csharp {title="data の要素を逐次列挙"}
+var data = Enumerable.Range(0, N);
  
 foreach (var x in data)
 {
     Console.WriteLine(x * x);
-}</code></pre>
+}
+```
 
 </td>
 		<td markdown="1">
-<pre class="source" title="data の要素を並列列挙" lang=""><code class="language-csharp">var data = Enumerable.Range(0, N);
+
+```csharp {title="data の要素を並列列挙"}
+var data = Enumerable.Range(0, N);
  
-Parallel.ForEach(data, x =&gt;
+Parallel.ForEach(data, x =>
 {
     Console.WriteLine(x * x);
-});</code></pre>
+});
+```
 
 </td>
 	</tr>

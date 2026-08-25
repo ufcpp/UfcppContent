@@ -54,8 +54,9 @@ extension-less variants derived while parsing the IIS rewrite maps) are excluded
   order. Known legacy code blocks default to C#; bare preformatted prose defaults to `text`.
 - Existing fenced code blocks keep their language, or receive one by the same inference when the
   info string is empty.
-- Code blocks inside HTML tables retain their HTML structure and receive the equivalent standard
-  `language-*` class because fenced Markdown cannot be rendered inside an HTML table.
+- Code blocks inside HTML tables use fenced Markdown inside `td`/`th` elements marked with
+  `markdown="1"`. The site generator renders those cells recursively, so table code uses the same
+  syntax highlighting and annotation metadata as every other fenced block.
 - `bodyTextParsed` is not used.
 - HTML tables and MathML remain embedded HTML.
 - Legacy heading anchors are normalized to valid empty HTML anchors for GitHub rendering.

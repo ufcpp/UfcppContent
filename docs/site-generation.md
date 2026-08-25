@@ -210,7 +210,8 @@ misinterpreting `++C++` (a C-related joke in the site name) as `<ins>C</ins>`.
 Raw HTML blocks in Markdown are preserved verbatim. Legacy `markdown="1"` content
 inside `blockquote`, `div`, `th`, and `td` elements is rendered recursively, including
 nested raw tables. This keeps indented table rows as table markup instead of turning
-them into Markdown code blocks.
+them into Markdown code blocks, while fenced code inside those containers still uses
+the standard syntax-highlighting and annotation pipeline.
 
 Two ufcpp.net components only worked with JavaScript, which this site does not ship.
 `LegacyControlRewriter` rewrites their Markdown source into markup CSS alone can
@@ -397,13 +398,13 @@ generated HTML. Malformed attributes, incompatible text/range pairs, ambiguous
 error/warning text, invalid line syntax, non-positive or out-of-range line
 numbers, an empty literal, a literal with no match, a stale range fingerprint,
 invalid Unicode, or non-canonical range coordinates fail site generation
-explicitly. Raw table code retained as HTML uses the same permanent mark/error/
-warning elements; migration verifies that decoded visible code and all
-non-annotation markup remain unchanged. Before inserting fixed annotation
-elements, the renderer parses the trusted syntax-highlighter fragment
-structurally and verifies that its text maps exactly to the source code. This
-preserves syntax-token spans and escaped plain code without rewriting generated
-HTML with regular expressions.
+explicitly. Table code uses fenced blocks inside `markdown="1"` cells and therefore
+shares this metadata path. Raw annotation elements are still preserved as generic
+HTML compatibility behavior, but canonical content does not use legacy `<pre>`
+blocks. Before inserting fixed annotation elements, the renderer parses the trusted
+syntax-highlighter fragment structurally and verifies that its text maps exactly to
+the source code. This preserves syntax-token spans and escaped plain code without
+rewriting generated HTML with regular expressions.
 
 Rendered diagnostic spans use the browser-native tooltip only:
 `<span class="error|warning" title="CS####|CA####">`. They receive no event,
