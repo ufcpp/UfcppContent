@@ -24,7 +24,7 @@ C#に馴れちゃってる人だと、LINQとかasync/awaitとかの機能が最
 
 `Dictionary<TKey, TValue>`の列挙を、キーも値も両方使うのに、`Keys`を使ってやろうとする人が結構いるらしいという話を聞きます。要するに以下のような書き方。
 
-```csharp {title="C#っぽくない書き方" highlight-ranges="sha256:a86a747abcba52a20e8e19a587a220c903dba33fb43dae17f8bf40dffbd83e68;15:29-15:37,17:13-17:34"}
+```csharp {title="C#っぽくない書き方" highlight-ranges="15:29-15:37,17:13-17:34"}
 using System;
 using System.Collections.Generic;
 

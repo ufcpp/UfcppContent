@@ -213,13 +213,13 @@ ReadOnlySpan 版
 (ハンドラー型が使える状況下で)書式指定した場合、`AppendFormatted` メソッドの第2、第3引数に書式が渡ります。
 例えば以下のようなコードを書いた場合、
 
-```csharp {title="書式指定付きの補間文字列の例" highlight-ranges="sha256:40484bcb4803d6c82b692374431e1dfdb686e2742995beca8cfcfbe883e39946;1:39-1:44,1:50-1:52,1:58-1:60"}
+```csharp {title="書式指定付きの補間文字列の例" highlight-ranges="1:39-1:44,1:50-1:52,1:58-1:60"}
 string m(int a, int b, int c) => $"({a, 8:X}) ({b:X}) ({c,4})";
 ```
 
 以下のように展開されます。
 
-```csharp {title="書式指定付きの補間文字列の例の展開結果" highlight-ranges="sha256:688c31e248371bce8c9a236762046a2fc640db82b0740e5a67ff314199a592e2;5:26-5:32,7:26-7:29,9:26-9:27"}
+```csharp {title="書式指定付きの補間文字列の例の展開結果" highlight-ranges="5:26-5:32,7:26-7:29,9:26-9:27"}
 string m(int a, int b, int c)
 {
     DefaultInterpolatedStringHandler h = new(8, 3);
@@ -405,7 +405,7 @@ FormattableString を優先してほしいのに優先してもらえなくて�
 ちなみに、ハンドラーの条件を満たす型が複数あって、
 それでオーバーロードした場合、オーバーロード解決できません。
 
-```csharp {error-ranges="sha256:8917bebb30567b31b4a721b03c3386af40cab8e407c43bca50e31c46f2783791;4:5-4:6"}
+```csharp {error-ranges="4:5-4:6"}
 public static void Caller()
 {
     // 優先度は付かないので不明瞭エラーを起こす。

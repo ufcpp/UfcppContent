@@ -214,7 +214,7 @@ C# 7で、[`is`演算子](../oop/oo_polymorphism.md#downcast)や[`switch`ステ�
 この機能を型スイッチ(type switch)と呼びます。
 以下のような書き方ができます。
 
-```csharp {title="isとcaseの拡張の例" highlight-ranges="sha256:0d7e16f6933255420c8fb81235b9ea9a56a5f27559ba37bcbb5b4f2e4412542c;1:19-1:20,11:10-11:26,15:10-15:15"}
+```csharp {title="isとcaseの拡張の例" highlight-ranges="1:19-1:20,11:10-11:26,15:10-15:15"}
 if (obj is string s)
 {
     Console.WriteLine("string #" + s.Length);

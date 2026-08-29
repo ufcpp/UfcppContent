@@ -174,7 +174,7 @@ C# ではこのような強い制限を設けています。
 
 ちなみに、C# コンパイラーのオプションは `/unsafe` ですが、csproj ファイルに書くタグとしては `AllowUnsafeBlocks` という名前になっています。
 
-```xml {title="AllowUnsafeBlocks オプション" highlight-ranges="sha256:cede241731a1aac8962fe75fbcf7ba75467e006349313f3c55c2667d774c1da1;5:6-5:23"}
+```xml {title="AllowUnsafeBlocks オプション" highlight-ranges="5:6-5:23"}
 <Project Sdk="Microsoft.NET.Sdk">
  
   <PropertyGroup>
@@ -978,7 +978,7 @@ class Program
 しかし、C# 7.3では、`unmanaged`という型制約が増えて、
 ジェネリック型引数に対してもポインターなどを使えるようになりました。
 
-```csharp {highlight-ranges="sha256:70eaca64c44565fd615908ecca41730836427e4fbe68d39ce8561373017fb4fd;2:15-2:24"}
+```csharp {highlight-ranges="2:15-2:24"}
 unsafe static void MemSet0<T>(ref T x)
     where T : unmanaged
 {
@@ -1010,7 +1010,7 @@ static void SafeStackalloc<T>()
 
 これらは、ちゃんと呼び出し側で制約のチェックが行われます。
 
-```csharp {title="unmanaged 制約" error-ranges="sha256:2ad2f187a591c8da2128fd0db3ff290c88351259695e6bdf27668664df3dc128;19:9-19:31,22:9-22:47,23:9-23:34"}
+```csharp {title="unmanaged 制約" error-ranges="19:9-19:31,22:9-22:47,23:9-23:34"}
 using System;
 using System.Collections.Generic;
 
@@ -1105,7 +1105,7 @@ var py = &y;
 
 C# では通常、[未初期化](../resource/rm_default.md#uninitialized)のままの変数を読むことはできません。
 
-```csharp {title="未初期化エラー" error-ranges="sha256:f3816a45f02c0b2d2a2593aa33cb08b469a655b417ff59172497302bc89a5451;8:19-8:20"}
+```csharp {title="未初期化エラー" error-ranges="8:19-8:20"}
 using System;
  
 // ローカル変数には初期化が必須。
@@ -1229,7 +1229,7 @@ C# 11 から、マネージ型のポインターを使えるようになりま�
 `T*` や `R*` みたいなポインター型を書いたり、
 それらの変数 `x` に対して `&x` でアドレス取得できるようになりました。
 
-```csharp {title="マネージ型のポインター型/アドレス取得" warning-ranges="sha256:c4f90d1bdbbd94b6a92f6c28ec8d0f9e41c46bddf1b31451691e5cef3cfb2496;8:5-8:12,8:18-8:20,9:5-9:16,9:22-9:24" warning-diagnostics="sha256:c4f90d1bdbbd94b6a92f6c28ec8d0f9e41c46bddf1b31451691e5cef3cfb2496;CS8500@8:5-8:12,CS8500@8:18-8:20,CS8500@9:5-9:16,CS8500@9:22-9:24"}
+```csharp {title="マネージ型のポインター型/アドレス取得" warning-ranges="8:5-8:12,8:18-8:20,9:5-9:16,9:22-9:24" warning-diagnostics="CS8500@8:5-8:12,CS8500@8:18-8:20,CS8500@9:5-9:16,CS8500@9:22-9:24"}
 unsafe
 {
     string s = "";

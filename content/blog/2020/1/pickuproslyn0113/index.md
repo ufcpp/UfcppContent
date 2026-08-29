@@ -25,7 +25,7 @@ C# 9.0 に向けた [null 許容参照型](../../../../study/csharp/resource/nul
 
 C# 8.0 だと、以下のような感じのコードの null 警告は [`!` 演算子](../../../../study/csharp/resource/nullablereferencetype.md#null-forgiving) で無視する以外に消す方法がありません。
 
-```csharp {title="属性がメソッド内に効いてない" warning-ranges="sha256:aa12af2905d7d374db347fb1d902e2ea082e6aec8c518b4e49f1656a466850a2;3:9-3:13,9:12-9:16"}
+```csharp {title="属性がメソッド内に効いてない" warning-ranges="3:9-3:13,9:12-9:16"}
 bool TryGetValue<T>([NotNullWhen(true)]out T t) where T: class
 {
     t = null; // 今、警告が出る
@@ -46,7 +46,7 @@ C# 8.0 ではスケジュール都合で放置(属性をメソッドの中にま
 
 Task-like (= 要は非同期メソッドの戻り値)の[変性](../../../../study/csharp/oop/sp4_variance.md)も不便な場面がよくあります。
 
-```csharp {title="Task の null 許容共変性" warning-ranges="sha256:eecd58b1358c95f6a5a81fb6b85c7e4a3edc675634f9937c449306a50dddc0be;2:22-2:25"}
+```csharp {title="Task の null 許容共変性" warning-ranges="2:22-2:25"}
 Task<string> A() => Task.FromResult("");
 Task<string?> B() => A(); // async/await が付いていればOKなものの、この書き方だと警告
 ```
@@ -58,7 +58,7 @@ Task<string?> B() => A(); // async/await が付いていればOKなものの、�
 Task-like (`Task` とか `ValueTask` とか、非同期メソッドの戻り値に使うもの)だけ特別扱いするのも気持ち悪い話なんですが、
 特別扱いというなら今、どうもそもそも、`IEnumerable<T>` だけ特別扱いしているそうなので今更とのこと。
 
-```csharp {warning-ranges="sha256:16e475471d3baaf99980e75cb111421d96a627315787dc0a8b12ebb583e13d80;11:21-11:23"}
+```csharp {warning-ranges="11:21-11:23"}
 interface I<in T> { }
 class C<T> : I<T> { }
  

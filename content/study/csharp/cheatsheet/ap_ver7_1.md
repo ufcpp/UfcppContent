@@ -86,7 +86,7 @@ static async Task DefaultExpression(CancellationToken c = default(CancellationTo
 これに対して、C# 7.1では、左辺(代入先)から推論できる場合に、`(T)`を省略して`default`だけで既定値を作れるようになりました。
 例えば先ほどのコードは以下のように書き直せます。
 
-```csharp {highlight-ranges="sha256:a8ae71972af92dac2edd4c271d4afa794e94de2479d8c330edf324c8916bb470;1:59-1:66,3:17-3:24"}
+```csharp {highlight-ranges="1:59-1:66,3:17-3:24"}
 static async Task DefaultExpression(CancellationToken c = default)
 {
     while (c != default && !c.IsCancellationRequested)

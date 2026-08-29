@@ -42,7 +42,7 @@ C#以前からある良いとされる習慣の1つに、「クラスの持つ�
 
 そこで、例えば`X`というデータを読み書きする際には、`GetX`, `SetX`というメソッドを介する習慣ができました。これらのメソッドをそれぞれgetter/setterといい、2つ合わせてアクセサー(accessor)と呼びます。単純なデータの読み書きであっても以下のように`Get`/`Set`メソッドを書くべきということです。
 
-```csharp {title="Get/Setメソッド" highlight-ranges="sha256:f72a626cae8404cbc83db4897675fcdb1ec2500a0b245c249a4570cc166ca23e;4:16-4:20,5:17-5:21"}
+```csharp {title="Get/Setメソッド" highlight-ranges="4:16-4:20,5:17-5:21"}
 class Sample
 {
     private int _x;

@@ -169,7 +169,7 @@ static int Square(int x)
 
 また、C# 7.1 以前では、通常の(位置指定の)引数と名前付き引数を混在させる場合、名前付きにできるのは後ろの方の引数だけです。
 
-```csharp {title="混在時、名前付き引数を使えるのは後ろの方の引数だけ" error-ranges="sha256:294dd42a4e1204a0bd85767305d10ace1485b6bf798d3d8eff8fb1cc19474473;7:12-7:13"}
+```csharp {title="混在時、名前付き引数を使えるのは後ろの方の引数だけ" error-ranges="7:12-7:13"}
 static void Order()
 {
     // OK: 前の方は位置指定、後ろの方は名前指定

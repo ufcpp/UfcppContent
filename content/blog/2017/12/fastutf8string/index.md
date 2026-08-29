@@ -139,7 +139,7 @@ struct Utf8String
 
 ということで、以下のように変化。
 
-```csharp {highlight-ranges="sha256:a573b43ef520db6e75f153dd2d1528127a52d5019fbf40db13793369d8276c64;7:20-7:23,8:1-8:6"}
+```csharp {highlight-ranges="7:20-7:23,8:1-8:6"}
 // stack-only
 ref struct Utf8Span
 {

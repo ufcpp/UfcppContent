@@ -283,7 +283,7 @@ class NestedVariance<TIn, TOut> : INestedVariance<TIn, TOut>
 実用例の代表は、`IObserver<T>`インターフェイスと`IObservable<T>`インターフェイス(どちらも標準ライブラリの`System`名前空間に含まれるインターフェイス)でしょう。
 以下のようなインターフェイスになっています。
 
-```csharp {title="in/outが逆になる実用例" highlight-ranges="sha256:88f9bfa1ac706698d373f2c6c536e61afecd0ca2072fac63cab4ba0c79f73d66;1:27-1:33,8:29-8:36,10:27-10:39"}
+```csharp {title="in/outが逆になる実用例" highlight-ranges="1:27-1:33,8:29-8:36,10:27-10:39"}
 public interface IObserver<in T>
 {
     void OnCompleted();

@@ -107,7 +107,7 @@ class Page1 : Page
 XAML では、XML の属性として「[プロパティ](../../csharp/oop/oo_property.md#property)」の値を設定できます。
 
 
-```xml {title="XML 属性としてプロパティの値を設定" highlight-ranges="sha256:0573d83ebec3c0417c2685fb2628b46335d24322fa4c401c9405bdec10a620ed;2:3-2:48,3:3-3:43"}
+```xml {title="XML 属性としてプロパティの値を設定" highlight-ranges="2:3-2:48,3:3-3:43"}
 <TextBox 
   Width = "100" FontSize = "30" Text = "text 1"
   Background = "White" Foreground = "Blue" />
@@ -196,7 +196,7 @@ TextBox の場合、Text がコンテントプロパティです。
 例えば、以下のような書き方はエラーになります。
 
 
-```html {title="コンテントプロパティを分断（エラーになる）" highlight-ranges="sha256:562e48af9808b83ffcfa7a49ac424bf5795927a31eacfdf24fc4db9c7cc331c0;2:3-2:16,5:3-5:14"}
+```html {title="コンテントプロパティを分断（エラーになる）" highlight-ranges="2:3-2:16,5:3-5:14"}
 <Button>
   他の要素よりも前にテキスト
   <Button.Background>Gray</Button.Background>
@@ -235,7 +235,7 @@ WrapPanel の「[コンテントプロパティ](#content)」は Children なん
 上の例は以下のようになります。
 
 
-```xml {title="コレクションを省略せずに表記" highlight-ranges="sha256:8fafe08c96d225d0415414163f2d4a956e788f089993ba22674fcd070e82f93f;3:5-3:26,6:5-6:27"}
+```xml {title="コレクションを省略せずに表記" highlight-ranges="3:5-3:26,6:5-6:27"}
 <WrapPanel>
   <WrapPanel.Children>
     <UIElementCollection>

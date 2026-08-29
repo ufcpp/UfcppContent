@@ -286,7 +286,7 @@ record struct Value(int X, int Y);
 また、構造体の場合、mutable (最初に作ったタイミング以外でも好きなタイミングでメンバーを書き換え可能)であっても `record class` ほど問題は起こしません。
 なので、`record struct` (だけ書く)だと、mutable なプロパティが生成されます。
 
-```csharp {title="record class と record struct からの生成物" highlight-ranges="sha256:265d48ba081e83d96b6348cbc22b4c61ec2c49ddc123f98e56519e5c69538df7;2:24-2:29,3:24-3:29,7:24-7:28,8:24-8:28"}
+```csharp {title="record class と record struct からの生成物" highlight-ranges="2:24-2:29,3:24-3:29,7:24-7:28,8:24-8:28"}
 // class の場合、X, Y から生成されるプロパティは
 // public int X { get; init; }
 // public int Y { get; init; }
@@ -301,7 +301,7 @@ record struct RecordStruct(int X, int Y);
 構造体には [`readonly` 修飾](../resource/readonlyness.md#readonly-struct)を付けることができるので、immutable (書き換え不能)な `record struct` を作りたければ `readonly record struct` と書きます。
 この場合は `record class` と同じようなプロパティが生成されます。
 
-```csharp {title="readonly record struct からの生成物" highlight-ranges="sha256:a4e9753d42580f7e6ac723ff59c7e631f9ebd1ff0ce2b61fcad1c9fc74bd6930;2:24-2:29,3:24-3:29"}
+```csharp {title="readonly record struct からの生成物" highlight-ranges="2:24-2:29,3:24-3:29"}
 // readonly struct の場合は、
 // public int X { get; init; }
 // public int Y { get; init; }
@@ -444,7 +444,7 @@ record Person(string Name, DateTime Birthday)
 
 ちなみに、プライマリ コンストラクターの引数に [`in`](../resource/sp_ref.md#in) と [`params`](../structured/sp_params.md) を付けることはできます(その引数からプロパティの生成もされます)が、[`ref`](../resource/sp_ref.md#sec-byref) と [`out`](../resource/sp_ref.md#out) は付けれません。
 
-```csharp {title="プライマリ コンストラクター引数に対する in/params" error-ranges="sha256:f448a72828244463accd083f4fac434dd91b6f18795357e29c3f65596a06f6f9;5:23-5:26,5:34-5:37"}
+```csharp {title="プライマリ コンストラクター引数に対する in/params" error-ranges="5:23-5:26,5:34-5:37"}
 // in と params は受け付ける。
 public record Record(in int X, params int[] Y);
 
@@ -462,7 +462,7 @@ public record Record2(ref int X, out int Y);
 コンパイラー生成されるプロパティやフィールドに対しても、
 以下のような書き方で属性を付けることができます。
 
-```csharp {title="プライマリ コンストラクターから生成されるプロパティ、フィールドに属性を付ける例" highlight-ranges="sha256:7a7047429fb7fcb0597d3e998b879545d7717430c6d99962a0020aeb874dcc72;17:6-17:14,18:6-18:11"}
+```csharp {title="プライマリ コンストラクターから生成されるプロパティ、フィールドに属性を付ける例" highlight-ranges="17:6-17:14,18:6-18:11"}
 using System;
 using System.Reflection;
  
@@ -514,7 +514,7 @@ record Person(string Name, DateTime Birthday)
 他の例として、本来あまり好ましくはないんですが、プロパティを書き換え可能にしてしまいたい場合、
 以下のようにプロパティを手書きで足してしまうことでできます。
 
-```csharp {title="生成されるプロパティのカスタマイズする例" highlight-ranges="sha256:f57a2b0f47fc7cb12a6c724e17a91e1c9056ed41e8f4ad2eac3850ecf0005666;3:31-3:34,4:37-4:40"}
+```csharp {title="生成されるプロパティのカスタマイズする例" highlight-ranges="3:31-3:34,4:37-4:40"}
 record Person(string Name, DateTime Birthday)
 {
     public string Name { get; set; } = Name;
@@ -564,7 +564,7 @@ record B(string S) : Base;
 派生クラスからそのプライマリ コンストラクターの呼び出しが必要です。
 以下のように、基底クラス名の後ろに `()` を付けることで呼び出せます。
 
-```csharp {title="基底クラスのプライマリ コンストラクター呼び出しの例" error-ranges="sha256:ea495ecddb828aa5c68d9486bdd86deac23277f8fb821f4dc4f4db3579af47e8;4:8-4:14,18:8-18:14"}
+```csharp {title="基底クラスのプライマリ コンストラクター呼び出しの例" error-ranges="4:8-4:14,18:8-18:14"}
 record Base(int X);
  
 // Base(int X) を呼んでいないのでエラーになる。

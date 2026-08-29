@@ -142,7 +142,7 @@ enum 列挙型名 : 内部的な型
 
 例えば、<code>byte</code> 型で、値が1から始まる列挙型を定義したければ以下のようにします。
 
-```csharp {title="列挙型の型と値を指定する例" highlight-ranges="sha256:7ed5c3472655f6a45bde9bac592b1e1b70362f87b2652a44938bfd2067ec48cd;1:11-1:18,3:10-3:14"}
+```csharp {title="列挙型の型と値を指定する例" highlight-ranges="1:11-1:18,3:10-3:14"}
 enum Month : byte
 {
   January = 1, February, March, April,

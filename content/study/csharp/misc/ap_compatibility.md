@@ -84,7 +84,7 @@ class Program
 もう1つ、C# 3.0で導入された「[型推論](../start/sp3_inference.md#type-inference)」に関する <code>var</code> キーワードは、変数宣言出来る文脈でだけキーワード扱いされます。
 以下のようなコードも C# 3.0 でコンパイルできます。
 
-```csharp {title="var 変数" highlight-ranges="sha256:2d741fb0d241d554558f555947c89c818e40f5f7cb128a57e2d4553f74185c15;15:12-15:15"}
+```csharp {title="var 変数" highlight-ranges="15:12-15:15"}
 static double Calc(IEnumerable<double> data)
 {
     int count = 0;

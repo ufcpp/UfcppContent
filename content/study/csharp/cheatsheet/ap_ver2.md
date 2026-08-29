@@ -62,7 +62,7 @@ C++ で言うところの template。
 （ただし、template とは実装の方式が違います。）
 以下のような感じで、“型をパラメータに持つ型”を作ることが出来ます。
 
-```csharp {title="Generics の例" highlight-ranges="sha256:4aa66c60e8e3de774bb339077efce70f3b2a1b8e3641eb887fbbcbe2c050f677;1:19-1:22,3:2-3:3,5:19-5:20,6:9-6:10"}
+```csharp {title="Generics の例" highlight-ranges="1:19-1:22,3:2-3:3,5:19-5:20,6:9-6:10"}
 public class Stack<T>
 {
 	T[] items;
@@ -179,7 +179,7 @@ public class Stack<T>: IEnumerable<T>
 自動的に <code>IEnumerator</code> インターフェース実装するクラスを生成してくれます。
 また、イテレータは以下のように、<code>IEnumerable</code> を返すメソッド/プロパティとしても定義することが出来ます。
 
-```csharp {title="イテレータ(IEnumerable を返すメソッド)" highlight-ranges="sha256:5681551522ae1e89512624a46e9eaea3f26ed8544d10b656629b660540dfc305;1:10-1:24,6:9-6:14"}
+```csharp {title="イテレータ(IEnumerable を返すメソッド)" highlight-ranges="1:10-1:24,6:9-6:14"}
   public IEnumerable<T> BottomToTop
   {
     get
@@ -193,7 +193,7 @@ public class Stack<T>: IEnumerable<T>
 
 利用者側では以下のようにして使用します。
 
-```csharp {title="イテレータ(利用者側のコード)" highlight-ranges="sha256:a46ca33f7b41d156641c5fbd40a513df52e0338174cc000027e23c67183e31c6;3:20-3:28,5:20-5:40"}
+```csharp {title="イテレータ(利用者側のコード)" highlight-ranges="3:20-3:28,5:20-5:40"}
     Stack<int> stack = new Stack<int>();
     for (int i = 0; i < 10; i++) stack.Push(i);
     foreach (int i in stack) Console.Write("{0} ", i);

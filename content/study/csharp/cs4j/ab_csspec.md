@@ -436,7 +436,7 @@ class EventSample : Form
 C++ や Java ではクラスやメソッドに対して public や private などといった<strong id="attribute" class="keyword">属性</strong>(attribute)を付加することができます。
 Java の例をあげると、
 
-```csharp {highlight-ranges="sha256:dcac7d2796b67f1aac0bcc595af4097391942644a5df4fb0b462d752fb217ed9;1:1-1:6,3:4-3:10"}
+```csharp {highlight-ranges="1:1-1:6,3:4-3:10"}
 final class MyClass
 {
    public int myMethod();

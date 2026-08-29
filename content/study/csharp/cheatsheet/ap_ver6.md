@@ -145,7 +145,7 @@ class Point
 </td>
 		<td markdown="1" rowspan="2">
 
-```csharp {highlight-ranges="sha256:9722a7311933e59eb28a0f30572455e368db90523deced1a0d84ebaacd9e95e0;3:34-3:36,4:34-4:36"}
+```csharp {highlight-ranges="3:34-3:36,4:34-4:36"}
 class Point
 {
     public int X { get; set; } = 10;
@@ -334,7 +334,7 @@ public class Point
 </td>
 		<td markdown="1">
 
-```csharp {highlight-ranges="sha256:af1ec14b4bf8db2d37f22afa9ec7a8192200bd5d7f4f7d09c5aeaf3b5e463987;7:38-7:40,8:45-8:47"}
+```csharp {highlight-ranges="7:38-7:40,8:45-8:47"}
 public class Point
 {
     public int X { get; set; }
@@ -388,7 +388,7 @@ public class Polygon
 </td>
 		<td markdown="1">
 
-```csharp {highlight-ranges="sha256:ae260243c98ace942f4b15fabc34e44c4f91731b8a8fadef569f785ec7025c7f;5:22-5:24,6:30-6:32"}
+```csharp {highlight-ranges="5:22-5:24,6:30-6:32"}
 public class Polygon
 {
     private Point[] _vertexes;
@@ -437,7 +437,7 @@ public class Sample
 </td>
 		<td markdown="1">
 
-```csharp {highlight-ranges="sha256:682be6a075bf38f063d767544bebf76fb770e089e7d7289dd6002f9767b28df4;5:39-5:54"}
+```csharp {highlight-ranges="5:39-5:54"}
 public class Sample
 {
     public string Name { get; set; }
@@ -537,7 +537,7 @@ class MyClass
 </td>
 		<td markdown="1">
 
-```csharp {title="nameof 演算子の例" highlight-ranges="sha256:69c2183ca756cd66e697978c08d08bf48e942483523c5aa693258e8013913d89;11:27-11:42"}
+```csharp {title="nameof 演算子の例" highlight-ranges="11:27-11:42"}
 using System;
 
 class MyClass
@@ -595,7 +595,7 @@ class Program
 </td>
 		<td markdown="1">
 
-```csharp {highlight-ranges="sha256:efde1688e499f31cfeec38c76f8f917d19713f00edb557466285e5d3deab7209;2:1-2:25,8:22-8:29,9:27-9:29"}
+```csharp {highlight-ranges="2:1-2:25,8:22-8:29,9:27-9:29"}
 using System;
 using static System.Math;
 

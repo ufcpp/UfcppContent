@@ -2,8 +2,6 @@ using Ufcpp.SiteGenerator.Models;
 using Ufcpp.SiteGenerator.Loading;
 using Ufcpp.SiteGenerator.Rendering;
 using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Microsoft.CodeAnalysis.Classification;
@@ -560,7 +558,7 @@ public sealed class MarkdigRendererTests
     {
         const string Code = "alpha beta\nsecond line";
         var html = Render(
-            $"```text {{highlight-ranges=\"{RangeMetadata(Code, "1:7-2:7")}\"}}\n"
+            $"```text {{highlight-ranges=\"1:7-2:7\"}}\n"
             + $"{Code}\n```");
 
         var code = ExtractRenderedCodeElement(html);
@@ -574,7 +572,7 @@ public sealed class MarkdigRendererTests
     {
         const string Code = "a😀b";
         var html = Render(
-            $"```text {{highlight-ranges=\"{RangeMetadata(Code, "1:2-1:3")}\"}}\n"
+            $"```text {{highlight-ranges=\"1:2-1:3\"}}\n"
             + $"{Code}\n```");
 
         Assert.Equal(
@@ -587,7 +585,7 @@ public sealed class MarkdigRendererTests
     {
         const string Code = "if (value == \"x\") return;";
         var html = Render(
-            $"```csharp {{highlight-ranges=\"{RangeMetadata(Code, "1:1-1:15")}\"}}\n"
+            $"```csharp {{highlight-ranges=\"1:1-1:15\"}}\n"
             + $"{Code}\n```");
 
         var mark = Assert.Single(ExtractRenderedCodeElement(html).Descendants("mark"));
@@ -596,11 +594,10 @@ public sealed class MarkdigRendererTests
     }
 
     [Fact]
-    public void Render_HighlightRanges_NormalizesCrLfForFingerprintAndCoordinates()
+    public void Render_HighlightRanges_NormalizesCrLfForCoordinates()
     {
-        const string Code = "one\ntwo";
         var markdown =
-            $"```text {{highlight-ranges=\"{RangeMetadata(Code, "2:1-2:4")}\"}}\r\n"
+            $"```text {{highlight-ranges=\"2:1-2:4\"}}\r\n"
             + "one\r\ntwo\r\n```";
 
         Assert.Equal(
@@ -609,23 +606,16 @@ public sealed class MarkdigRendererTests
     }
 
     [Fact]
-    public void Render_HighlightRanges_FingerprintUsesExactMarkdigCodeValue()
+    public void Render_HighlightRanges_PreserveExactMarkdigCodeValue()
     {
-        const string WithoutFinalBlankLine =
-            "sha256:8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4;1:1-1:3";
-        const string WithFinalBlankLine =
-            "sha256:98ea6e4f216f2fb4b69fff9b3a44842c38686ca685f3f55dc48c5d3fb1107be4;1:1-1:3";
-        const string Utf8WithoutPreamble =
-            "sha256:77710aedc74ecfa33685e33a6c7df5cc83004da1bdcef7fb280f5c2b2e97e0a5;1:1-1:4";
-
         var ordinary = Render(
-            $"```text {{highlight-ranges=\"{WithoutFinalBlankLine}\"}}\r\n"
+            "```text {highlight-ranges=\"1:1-1:3\"}\r\n"
             + "hi\r\n```");
         var finalBlankLine = Render(
-            $"```text {{highlight-ranges=\"{WithFinalBlankLine}\"}}\r\n"
+            "```text {highlight-ranges=\"1:1-1:3\"}\r\n"
             + "hi\r\n\r\n```");
         var unicode = Render(
-            $"```text {{highlight-ranges=\"{Utf8WithoutPreamble}\"}}\n"
+            "```text {highlight-ranges=\"1:1-1:4\"}\n"
             + "日本語\n```");
 
         Assert.Equal("hi", ExtractRenderedCodeElement(ordinary).Value);
@@ -638,7 +628,7 @@ public sealed class MarkdigRendererTests
     {
         const string Code = "value &lt; limit";
         var html = Render(
-            $"```text {{highlight-ranges=\"{RangeMetadata(Code, "1:7-1:11")}\"}}\n"
+            $"```text {{highlight-ranges=\"1:7-1:11\"}}\n"
             + $"{Code}\n```");
 
         var rendered = ExtractRenderedCodeElement(html);
@@ -651,7 +641,7 @@ public sealed class MarkdigRendererTests
     {
         const string Code = "value    ";
         var html = Render(
-            $"```text {{highlight-ranges=\"{RangeMetadata(Code, "1:6-1:10")}\"}}\n"
+            $"```text {{highlight-ranges=\"1:6-1:10\"}}\n"
             + $"{Code}\n```");
 
         Assert.Equal(
@@ -664,7 +654,7 @@ public sealed class MarkdigRendererTests
     {
         const string Code = """<root attr="value" />""";
         var html = Render(
-            $"```xml {{highlight-ranges=\"{RangeMetadata(Code, "1:7-1:19")}\"}}\n"
+            $"```xml {{highlight-ranges=\"1:7-1:19\"}}\n"
             + $"{Code}\n```");
 
         var mark = Assert.Single(ExtractRenderedCodeElement(html).Descendants("mark"));
@@ -695,7 +685,7 @@ public sealed class MarkdigRendererTests
         const string Code = "whole\npartial value";
         var html = Render(
             $"```text {{highlight-lines=\"1\" "
-            + $"highlight-ranges=\"{RangeMetadata(Code, "2:9-2:14")}\"}}\n"
+            + $"highlight-ranges=\"2:9-2:14\"}}\n"
             + $"{Code}\n```");
 
         Assert.Equal(
@@ -709,7 +699,7 @@ public sealed class MarkdigRendererTests
         const string Code = "alpha beta";
         var html = Render(
             $"```text {{highlight-text=\"alpha\" "
-            + $"highlight-ranges=\"{RangeMetadata(Code, "1:7-1:11")}\"}}\n"
+            + $"highlight-ranges=\"1:7-1:11\"}}\n"
             + $"{Code}\n```");
 
         Assert.Equal(
@@ -723,7 +713,7 @@ public sealed class MarkdigRendererTests
         const string Code = "int value = 0;";
         var html = Render(
             $"```csharp {{highlight-lines=\"1\" "
-            + $"error-ranges=\"{RangeMetadata(Code, "1:1-1:10")}\" "
+            + $"error-ranges=\"1:1-1:10\" "
             + "warning-text=\"value\"}\n"
             + $"{Code}\n```");
 
@@ -779,8 +769,8 @@ public sealed class MarkdigRendererTests
     {
         const string Code = "abcdef";
         var html = Render(
-            $"```text {{error-ranges=\"{RangeMetadata(Code, "1:1-1:5")}\" "
-            + $"warning-ranges=\"{RangeMetadata(Code, "1:3-1:7")}\"}}\n"
+            $"```text {{error-ranges=\"1:1-1:5\" "
+            + $"warning-ranges=\"1:3-1:7\"}}\n"
             + $"{Code}\n```");
 
         var code = ExtractRenderedCodeElement(html);
@@ -801,7 +791,7 @@ public sealed class MarkdigRendererTests
     public void Render_TypedAnnotations_RetainAllKindsAtEqualBoundaries()
     {
         const string Code = "value";
-        var range = RangeMetadata(Code, "1:1-1:6");
+        var range = "1:1-1:6";
         var html = Render(
             $"```text {{highlight-ranges=\"{range}\" error-ranges=\"{range}\" "
             + $"warning-ranges=\"{range}\"}}\n{Code}\n```");
@@ -822,10 +812,8 @@ public sealed class MarkdigRendererTests
     {
         const string Code = "value";
         var html = Render(
-            $"```csharp {{error-ranges=\"{RangeMetadata(Code, "1:1-1:6")}\" "
-            + $"error-diagnostics=\"{DiagnosticMetadata(
-                Code,
-                "CS1001@1:1-1:6,CS1002@1:1-1:6,CS1002@1:1-1:6")}\"}}\n"
+            $"```csharp {{error-ranges=\"1:1-1:6\" "
+            + $"error-diagnostics=\"CS1001@1:1-1:6,CS1002@1:1-1:6,CS1002@1:1-1:6\"}}\n"
             + $"{Code}\n```");
 
         var code = ExtractRenderedCodeElement(html);
@@ -854,10 +842,8 @@ public sealed class MarkdigRendererTests
     {
         const string Code = "abc";
         var html = Render(
-            $"```text {{error-ranges=\"{RangeMetadata(Code, "1:1-1:4")}\" "
-            + $"error-diagnostics=\"{DiagnosticMetadata(
-                Code,
-                "CS1001@1:1-1:4,CS1002@1:2-1:3")}\"}}\n"
+            $"```text {{error-ranges=\"1:1-1:4\" "
+            + $"error-diagnostics=\"CS1001@1:1-1:4,CS1002@1:2-1:3\"}}\n"
             + $"{Code}\n```");
 
         var code = ExtractRenderedCodeElement(html);
@@ -878,10 +864,8 @@ public sealed class MarkdigRendererTests
     {
         const string Code = "x";
         var html = Render(
-            $"```text {{warning-ranges=\"{RangeMetadata(Code, "1:1-1:2")}\" "
-            + $"warning-diagnostics=\"{DiagnosticMetadata(
-                Code,
-                "CS0219@1:1-1:2")}\"}}\n{Code}\n```");
+            $"```text {{warning-ranges=\"1:1-1:2\" "
+            + $"warning-diagnostics=\"CS0219@1:1-1:2\"}}\n{Code}\n```");
 
         var warning = Assert.Single(
             ExtractRenderedCodeElement(html)
@@ -899,16 +883,10 @@ public sealed class MarkdigRendererTests
     {
         const string Code = "M<int?>();\nT? x = null;";
         var html = Render(
-            $"```csharp {{error-ranges=\"{RangeMetadata(
-                Code,
-                "1:1-1:8,2:1-2:3")}\" "
-            + $"error-diagnostics=\"{DiagnosticMetadata(
-                Code,
-                "CS0453@1:1-1:8")}\" "
-            + $"warning-ranges=\"{RangeMetadata(Code, "2:4-2:5")}\" "
-            + $"warning-diagnostics=\"{DiagnosticMetadata(
-                Code,
-                "CS0219@2:4-2:5")}\"}}\n{Code}\n```");
+            $"```csharp {{error-ranges=\"1:1-1:8,2:1-2:3\" "
+            + $"error-diagnostics=\"CS0453@1:1-1:8\" "
+            + $"warning-ranges=\"2:4-2:5\" "
+            + $"warning-diagnostics=\"CS0219@2:4-2:5\"}}\n{Code}\n```");
 
         var code = ExtractRenderedCodeElement(html);
         var titledError = Assert.Single(
@@ -932,10 +910,8 @@ public sealed class MarkdigRendererTests
     {
         const string Code = "ab";
         var html = Render(
-            $"```text {{error-ranges=\"{RangeMetadata(Code, "1:1-1:3")}\" "
-            + $"error-diagnostics=\"{DiagnosticMetadata(
-                Code,
-                "CS1001@1:1-1:2,CS1002@1:2-1:3")}\"}}\n{Code}\n```");
+            $"```text {{error-ranges=\"1:1-1:3\" "
+            + $"error-diagnostics=\"CS1001@1:1-1:2,CS1002@1:2-1:3\"}}\n{Code}\n```");
 
         var titled = ExtractRenderedCodeElement(html)
             .Elements("span")
@@ -950,11 +926,9 @@ public sealed class MarkdigRendererTests
     {
         const string Code = "int value = 0;";
         var html = Render(
-            $"```csharp {{highlight-ranges=\"{RangeMetadata(Code, "1:1-1:15")}\" "
-            + $"error-ranges=\"{RangeMetadata(Code, "1:5-1:10")}\" "
-            + $"error-diagnostics=\"{DiagnosticMetadata(
-                Code,
-                "CS0219@1:5-1:10")}\"}}\n{Code}\n```");
+            $"```csharp {{highlight-ranges=\"1:1-1:15\" "
+            + $"error-ranges=\"1:5-1:10\" "
+            + $"error-diagnostics=\"CS0219@1:5-1:10\"}}\n{Code}\n```");
 
         var code = ExtractRenderedCodeElement(html);
         var mark = Assert.Single(code.Elements("mark"));
@@ -975,14 +949,10 @@ public sealed class MarkdigRendererTests
     {
         const string Code = "abc";
         var html = Render(
-            $"```text {{error-ranges=\"{RangeMetadata(Code, "1:1-1:3")}\" "
-            + $"error-diagnostics=\"{DiagnosticMetadata(
-                Code,
-                "CS1001@1:1-1:3")}\" "
-            + $"warning-ranges=\"{RangeMetadata(Code, "1:2-1:4")}\" "
-            + $"warning-diagnostics=\"{DiagnosticMetadata(
-                Code,
-                "CS2001@1:2-1:4")}\"}}\n{Code}\n```");
+            $"```text {{error-ranges=\"1:1-1:3\" "
+            + $"error-diagnostics=\"CS1001@1:1-1:3\" "
+            + $"warning-ranges=\"1:2-1:4\" "
+            + $"warning-diagnostics=\"CS2001@1:2-1:4\"}}\n{Code}\n```");
 
         var code = ExtractRenderedCodeElement(html);
         Assert.Equal("abc", code.Value);
@@ -999,14 +969,9 @@ public sealed class MarkdigRendererTests
     [Fact]
     public void Render_DiagnosticIdentity_UsesUnicodeScalarCoordinatesAcrossCrLf()
     {
-        const string CanonicalCode = "`😀`\nvalue";
         var markdown =
-            $"```text {{warning-ranges=\"{RangeMetadata(
-                CanonicalCode,
-                "1:2-1:3")}\" "
-            + $"warning-diagnostics=\"{DiagnosticMetadata(
-                CanonicalCode,
-                "CA1822@1:2-1:3")}\"}}\r\n"
+            $"```text {{warning-ranges=\"1:2-1:3\" "
+            + $"warning-diagnostics=\"CA1822@1:2-1:3\"}}\r\n"
             + "`😀`\r\nvalue\r\n```";
 
         var diagnostic = Assert.Single(
@@ -1018,15 +983,15 @@ public sealed class MarkdigRendererTests
     }
 
     [Fact]
-    public void Render_DiagnosticIdentity_RejectsStaleFingerprint()
+    public void Render_DiagnosticIdentity_RejectsLegacyFingerprintSyntax()
     {
         const string Code = "x";
-        var valid = DiagnosticMetadata(Code, "CS0219@1:1-1:2");
-        var stale = new string('0', 64) + valid[64..];
+        var legacy =
+            $"sha256:{new string('0', 64)};CS0219@1:1-1:2";
 
         Assert.Throws<InvalidDataException>(
             () => Render(
-                $"```text {{warning-diagnostics=\"{stale}\"}}\n{Code}\n```"));
+                $"```text {{warning-diagnostics=\"{legacy}\"}}\n{Code}\n```"));
     }
 
     [Fact]
@@ -1036,9 +1001,7 @@ public sealed class MarkdigRendererTests
 
         Assert.Throws<InvalidDataException>(
             () => Render(
-                $"```text {{warning-diagnostics=\"{DiagnosticMetadata(
-                    Code,
-                    "CS0219@1:1-1:2")}\"}}\n{Code}\n```"));
+                $"```text {{warning-diagnostics=\"CS0219@1:1-1:2\"}}\n{Code}\n```"));
     }
 
     [Theory]
@@ -1053,7 +1016,7 @@ public sealed class MarkdigRendererTests
     {
         const string Code = "ab";
         var markdown =
-            $"```text {{error-diagnostics=\"{DiagnosticMetadata(Code, entries)}\"}}\n"
+            $"```text {{error-diagnostics=\"{entries}\"}}\n"
             + $"{Code}\n```";
 
         Assert.Throws<InvalidDataException>(() => Render(markdown));
@@ -1074,7 +1037,7 @@ public sealed class MarkdigRendererTests
     public void Render_TypedAnnotationTextAndRanges_AreMutuallyExclusive(string kind)
     {
         const string Code = "value";
-        var range = RangeMetadata(Code, "1:1-1:6");
+        var range = "1:1-1:6";
 
         Assert.Throws<InvalidDataException>(
             () => Render(
@@ -1083,17 +1046,17 @@ public sealed class MarkdigRendererTests
     }
 
     [Theory]
+    [InlineData("highlight-ranges")]
     [InlineData("error-ranges")]
     [InlineData("warning-ranges")]
-    public void Render_TypedRanges_ReportTheirOwnAttributeOnStaleFingerprint(
+    public void Render_TypedRanges_ReportTheirOwnAttributeOnLegacyFingerprint(
         string attribute)
     {
         const string Code = "value";
-        var valid = RangeMetadata(Code, "1:1-1:6");
-        var stale = new string('0', 64) + valid[64..];
+        var legacy = $"sha256:{new string('0', 64)};1:1-1:6";
 
         var exception = Assert.Throws<InvalidDataException>(
-            () => Render($"```text {{{attribute}=\"{stale}\"}}\n{Code}\n```"));
+            () => Render($"```text {{{attribute}=\"{legacy}\"}}\n{Code}\n```"));
 
         Assert.Contains(attribute, exception.Message, StringComparison.Ordinal);
     }
@@ -1101,9 +1064,8 @@ public sealed class MarkdigRendererTests
     [Fact]
     public void Render_WarningRanges_UseUnicodeScalarsAcrossCrLf()
     {
-        const string CanonicalCode = "a😀\nsecond";
         var markdown =
-            $"```text {{warning-ranges=\"{RangeMetadata(CanonicalCode, "1:2-2:4")}\"}}\r\n"
+            $"```text {{warning-ranges=\"1:2-2:4\"}}\r\n"
             + "a😀\r\nsecond\r\n```";
 
         var warning = Assert.Single(
@@ -1119,7 +1081,7 @@ public sealed class MarkdigRendererTests
     {
         const string Code = """<root attr="value" />""";
         var html = Render(
-            $"```xml {{error-ranges=\"{RangeMetadata(Code, "1:7-1:19")}\" "
+            $"```xml {{error-ranges=\"1:7-1:19\" "
             + "warning-text=\"value\"}\n"
             + $"{Code}\n```");
 
@@ -1197,7 +1159,7 @@ public sealed class MarkdigRendererTests
     {
         const string Code = "a\uD800b";
         var markdown =
-            $"```text {{error-ranges=\"{RangeMetadata(Code, "1:1-1:2")}\"}}\n"
+            $"```text {{error-ranges=\"1:1-1:2\"}}\n"
             + $"{Code}\n```";
 
         var exception = Assert.Throws<InvalidDataException>(() => Render(markdown));
@@ -1209,7 +1171,7 @@ public sealed class MarkdigRendererTests
     public void Render_HighlightRanges_RejectsRepeatedAttribute()
     {
         const string Code = "value";
-        var value = RangeMetadata(Code, "1:1-1:6");
+        var value = "1:1-1:6";
 
         Assert.Throws<InvalidDataException>(
             () => Render(
@@ -1229,24 +1191,23 @@ public sealed class MarkdigRendererTests
     {
         const string Code = "one\ntwo";
         var markdown =
-            $"```text {{highlight-ranges=\"{RangeMetadata(Code, ranges)}\"}}\n"
+            $"```text {{highlight-ranges=\"{ranges}\"}}\n"
             + $"{Code}\n```";
 
         Assert.Throws<InvalidDataException>(() => Render(markdown));
     }
 
     [Fact]
-    public void Render_HighlightRanges_RejectsStaleOrNonCanonicalFingerprint()
+    public void Render_HighlightRanges_AcceptsEditedCodeWithoutFingerprint()
     {
-        const string Code = "value";
-        var valid = RangeMetadata(Code, "1:1-1:6");
-        var stale = new string('0', 64) + valid[64..];
-        var uppercase = valid.ToUpperInvariant();
+        const string EditedCode = "other";
 
-        Assert.Throws<InvalidDataException>(
-            () => Render($"```text {{highlight-ranges=\"{stale}\"}}\n{Code}\n```"));
-        Assert.Throws<InvalidDataException>(
-            () => Render($"```text {{highlight-ranges=\"{uppercase}\"}}\n{Code}\n```"));
+        var rendered = ExtractRenderedCodeElement(
+            Render(
+                $"```text {{highlight-ranges=\"1:1-1:6\"}}\n"
+                + $"{EditedCode}\n```"));
+
+        Assert.Equal([EditedCode], GetHighlightedRegions(rendered));
     }
 
     [Theory]
@@ -1459,9 +1420,9 @@ public sealed class MarkdigRendererTests
     public void Render_LegacyMarkdownTableCell_RendersAnnotatedFencedCode()
     {
         const string Code = "if (left < right) return;";
-        var highlight = RangeMetadata(Code, "1:5-1:9");
-        var error = RangeMetadata(Code, "1:12-1:17");
-        var diagnostics = DiagnosticMetadata(Code, "CS1001@1:12-1:17");
+        var highlight = "1:5-1:9";
+        var error = "1:12-1:17";
+        var diagnostics = "CS1001@1:12-1:17";
         var html = Render(
             $$"""
             <table summary="">
@@ -2055,20 +2016,6 @@ public sealed class MarkdigRendererTests
 
     private static IReadOnlyList<string> GetHighlightedRegions(XElement code) =>
         code.Descendants("mark").Select(static mark => mark.Value).ToArray();
-
-    private static string RangeMetadata(string code, string ranges)
-    {
-        var normalized = code
-            .Replace("\r\n", "\n", StringComparison.Ordinal)
-            .Replace('\r', '\n');
-        var hash = Convert.ToHexString(
-                SHA256.HashData(Encoding.UTF8.GetBytes(normalized)))
-            .ToLowerInvariant();
-        return $"sha256:{hash};{ranges}";
-    }
-
-    private static string DiagnosticMetadata(string code, string entries) =>
-        $"sha256:{AnnotationRangeMetadata.ComputeHash(code)};{entries}";
 
     private static RenderedContent RenderWithMetadata(
         string markdown,

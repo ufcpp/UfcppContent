@@ -35,7 +35,7 @@ aliases: []
 配列だけではなく、コレクション(`List<T>` 型など)、`Span<T>` なども全く同じ書き方で初期化できます。
 これをコレクション式(collection expression)と言います。
 
-```csharp {title="コレクション式" highlight-ranges="sha256:f910249d2a264e3d542e6b64cb3d32585edd0d2a69bea57c15c964163f3ebd18;3:15-3:24,4:18-4:27,5:18-5:27,6:25-6:34,7:33-7:42"}
+```csharp {title="コレクション式" highlight-ranges="3:15-3:24,4:18-4:27,5:18-5:27,6:25-6:34,7:33-7:42"}
 using System.Collections.Immutable;
 
 int[] array = [1, 2, 3];
@@ -48,7 +48,7 @@ ImmutableArray<int> immutable = [1, 2, 3];
 また、コレクション式中では、`..` を使うことで「別のコレクションの中身の展開」ができます。
 これを スプレッド (spread)演算子と言います。
 
-```csharp {highlight-ranges="sha256:69f2146a3dd2229ba74d69539a785a324542af8ee84d16dd1e8f9e876feb4108;5:22-5:24,5:32-5:34"}
+```csharp {highlight-ranges="5:22-5:24,5:32-5:34"}
 int[] array1 = [1, 2, 3];
 int[] array2 = [4, 5, 6];
 
@@ -112,7 +112,7 @@ var f3 = (int x = 1, params int[] y) => 0;
 ref 引数、in 引数の亜種として、
 「書き換えはしないけども、右辺値は受け付けたくない」ということを表す ref readonly 引数というものを導入しました。
 
-```csharp {title="ref readonly 引数" warning-ranges="sha256:433efe44affde8b8f29e8515c895292f8386c8cb7d64e005c29ae60f8b1cb693;4:3-4:5,8:3-8:8,11:3-11:4" warning-diagnostics="sha256:433efe44affde8b8f29e8515c895292f8386c8cb7d64e005c29ae60f8b1cb693;CS9193@4:3-4:5,CS9193@8:3-8:8,CS9192@11:3-11:4"}
+```csharp {title="ref readonly 引数" warning-ranges="4:3-4:5,8:3-8:8,11:3-11:4" warning-diagnostics="CS9193@4:3-4:5,CS9193@8:3-8:8,CS9192@11:3-11:4"}
 // in 引数の代わりに ref readonly 引数。
 void m(ref readonly int x) { }
 
@@ -191,7 +191,7 @@ foreach (var x in buffer)
 C# 11 以前だと、以下の例の最後の行のように、
 静的メンバー内から「インスタンス メンバーのインスタンス メンバー」みたいな名前の参照ができなかったようです。
 
-```csharp {title="C# 11 まではエラーになっていたコードの例" error-ranges="sha256:15785c8e6a478bc26b230251be71613ff8ccd4975b105f3324500ef2dc1dfa38;11:46-11:54" error-diagnostics="sha256:15785c8e6a478bc26b230251be71613ff8ccd4975b105f3324500ef2dc1dfa38;CS0120@11:46-11:54"}
+```csharp {title="C# 11 まではエラーになっていたコードの例" error-ranges="11:46-11:54" error-diagnostics="CS0120@11:46-11:54"}
 class A
 {
     public string? Instance { get; }

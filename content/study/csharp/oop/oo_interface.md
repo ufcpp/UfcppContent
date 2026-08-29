@@ -995,7 +995,7 @@ interface IDerived : I
 
 例えば以下のようなコードでは、どの実装を使いたいのか不明瞭なので、コンパイル エラーを起こします。
 
-```csharp {title="実装が不明瞭な場合はコンパイル エラーに" error-ranges="sha256:245e55ad8a7503ab301a998e6e417d7d695fa6fd0608eb1a8ea05afa9e93c1a8;19:11-19:13"}
+```csharp {title="実装が不明瞭な場合はコンパイル エラーに" error-ranges="19:11-19:13"}
 using System;
  
 interface IA
@@ -1087,7 +1087,7 @@ class C : B
 
 まず、派生インターフェイスでは、オーバーライドは常に[明示的実装](#explicit-impl)が必要です。
 
-```csharp {title="オーバーライドには明示的実装が必須" warning-ranges="sha256:d7ba904d2d269e7466ef5338ad1242afaac8a1ff9b42d7fda6a5a494f204724a;13:10-13:11"}
+```csharp {title="オーバーライドには明示的実装が必須" warning-ranges="13:10-13:11"}
 interface I
 {
     void M() { }
@@ -1117,7 +1117,7 @@ class C : I
 一方、派生側がクラスの場合、デフォルト実装しかない(自分自身はオーバーライドしていない)時にはそのメンバーを直接呼べません。
 また、`protected` なものには触れません。
 
-```csharp {title="派生側での扱い" error-ranges="sha256:34911f1fa0eca701a3fba3872775420ecd771b6e067b8fe434c7cc67bbc201ca;32:9-32:16,38:19-38:28"}
+```csharp {title="派生側での扱い" error-ranges="32:9-32:16,38:19-38:28"}
 interface I
 {
     void Abstract();
@@ -1214,7 +1214,7 @@ record struct Point(int X, int Y) : IUtf8Parsable<Point>
 
 文法的には割かし素直で、 `abstract`/`virtual` と `static` を併用できるようになりました。
 
-```csharp {highlight-ranges="sha256:7c99e400d3d8cb748f6ec35b7f13b3e02bdad2da3a11c0f8824eb2e30d8e042e;3:5-3:20,4:5-4:19"}
+```csharp {highlight-ranges="3:5-3:20,4:5-4:19"}
 interface IA
 {
     static abstract void StaticAbstract();
@@ -1294,7 +1294,7 @@ class Explicit : IA
 この点はインスタンス メンバーと同じというわけにはいきません。
 以下のようなコードはエラーになります。
 
-```csharp {title="クラスでは static virtual とは書けない" error-ranges="sha256:5e58e6c1ca1c3c00a6ae40c17f94d27e47634a6dfc37af441bba02beb69221fe;13:32-13:38" error-diagnostics="sha256:5e58e6c1ca1c3c00a6ae40c17f94d27e47634a6dfc37af441bba02beb69221fe;CS0112@13:32-13:38"}
+```csharp {title="クラスでは static virtual とは書けない" error-ranges="13:32-13:38" error-diagnostics="CS0112@13:32-13:38"}
 interface IA
 {
     abstract void Instance();
@@ -1419,7 +1419,7 @@ interface IA
 
 一方で、以下のように `abstract` (実装を持っていない)だとコンパイル エラーになります。
 
-```csharp {title="abstract は実装を持っていないので呼べない" error-ranges="sha256:ee9a19689553f5b3154985a028b7eda8ad0362d86839a9761d6ab6b000f1e9c7;1:1-1:2" error-diagnostics="sha256:ee9a19689553f5b3154985a028b7eda8ad0362d86839a9761d6ab6b000f1e9c7;CS8920@1:1-1:2"}
+```csharp {title="abstract は実装を持っていないので呼べない" error-ranges="1:1-1:2" error-diagnostics="CS8920@1:1-1:2"}
 M<IA>(); // ここでエラーに。
 
 M<A>(); // これ(実装クラス)ならOK。
@@ -1447,7 +1447,7 @@ class A : IA
 
 例えばこれまで、以下のようなメソッドすらジェネリックな実装を持てませんでした。
 
-```csharp {title="+ 演算子の例" error-text="new float[] { 1, 2, 3, 4 }" error-diagnostics="sha256:68147047b5dc86a81ae9c70e51dccfe0f5929de8843749f0f220eb6992289e5e;CS1503@3:23-3:49"}
+```csharp {title="+ 演算子の例" error-text="new float[] { 1, 2, 3, 4 }" error-diagnostics="CS1503@3:23-3:49"}
 Console.WriteLine(Sum(new[] { 1, 2, 3, 4 }));
 
 Console.WriteLine(Sum(new float[] { 1, 2, 3, 4 })); // こう書きたいのにエラーに…

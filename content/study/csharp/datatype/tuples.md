@@ -100,7 +100,7 @@ Console.WriteLine(dic[("a", "b")]); // (1, 2)
 
 例えば以下のコードはコンパイル エラーを起こします。
 
-```csharp {title="タプル型を掛けない場所" error-ranges="sha256:158c2bf68361293dafe82e5255f661a18e25ac8b21e18516b55b53f91c155855;9:22-9:36,10:22-10:36"}
+```csharp {title="タプル型を掛けない場所" error-ranges="9:22-9:36,10:22-10:36"}
 // using でエイリアスを付けることはできない(C# 11 以前)
 using T = (int x, int y);
 

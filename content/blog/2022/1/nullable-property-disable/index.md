@@ -19,7 +19,7 @@ aliases: []
 
 [null 許容参照型](../../../../study/csharp/resource/nullablereferencetype.md)の仕様が入って以来、以下のようなコードに警告が出るようになりました。
 
-```csharp {title="NRT 警告がどうしても出てしまう例" warning-ranges="sha256:8457653a14ad4f0e57e8b51ad6a52187c1bb799152ec0713f0a809481dd46ce5;3:19-3:20,4:19-4:20,5:19-5:20"}
+```csharp {title="NRT 警告がどうしても出てしまう例" warning-ranges="3:19-3:20,4:19-4:20,5:19-5:20"}
 class A
 {
     public string X;
@@ -51,7 +51,7 @@ class A
 将来的には解消する予定です。
 今のところ C# 11.0 目標で、`required` 修飾子を付けるという案が進められています。
 
-```csharp {title="required 修飾子" highlight-ranges="sha256:1ee69f0f34e96938847ed0233e2fbac240c5774242b45d180490adbdbc795b1d;3:12-3:20,4:12-4:20,5:12-5:20"}
+```csharp {title="required 修飾子" highlight-ranges="3:12-3:20,4:12-4:20,5:12-5:20"}
 class A
 {
     public required string X;
@@ -62,7 +62,7 @@ class A
 
 これが付いていると、オブジェクト初期化子で非 null な値を渡すことを義務付けられるようになるので、クラス定義側には警告が出なくなります。
 
-```csharp {title="required の効果" warning-ranges="sha256:bfc10c7fd2c597489c0e76fde10267146e25399c3de250430f022ce76300524c;1:14-1:15,5:9-5:13"}
+```csharp {title="required の効果" warning-ranges="1:14-1:15,5:9-5:13"}
 var a1 = new A(); // required プロパティ/フィールドに値を与えていないので警告
 
 var a2 = new A()
@@ -133,7 +133,7 @@ class A
 
 選択肢4. ノーガード。警告出っぱなしなのをあきらめる
 
-```csharp {title="あきらめて警告出っぱなし" warning-ranges="sha256:8457653a14ad4f0e57e8b51ad6a52187c1bb799152ec0713f0a809481dd46ce5;3:19-3:20,4:19-4:20,5:19-5:20"}
+```csharp {title="あきらめて警告出っぱなし" warning-ranges="3:19-3:20,4:19-4:20,5:19-5:20"}
 class A
 {
     public string X;

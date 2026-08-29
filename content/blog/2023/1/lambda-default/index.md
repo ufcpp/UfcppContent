@@ -57,7 +57,7 @@ C# 9 までの状態だと、
 メソッドを使った例で説明すると、
 以下のように、デフォルト引数/params 引数はデリゲート化する際に一切紛失します。
 
-```csharp {title="デフォルト引数/params 引数はデリゲート化すると紛失" error-ranges="sha256:f5070708d626a93f66859ce5a38cde7bf2ca8bebcbfe10820787a719e5b97781;4:13-4:14,10:1-10:3" error-diagnostics="sha256:f5070708d626a93f66859ce5a38cde7bf2ca8bebcbfe10820787a719e5b97781;CS0123@4:13-4:14,CS7036@10:1-10:3"}
+```csharp {title="デフォルト引数/params 引数はデリゲート化すると紛失" error-ranges="4:13-4:14,10:1-10:3" error-diagnostics="CS0123@4:13-4:14,CS7036@10:1-10:3"}
 m();
 
 // m() と呼べるのに、 Action には代入できない。
@@ -126,7 +126,7 @@ class C
 そこから、もう1歩進めた提案もあって、
 自然な型決定で、デフォルト引数/params 引数付きのデリゲートを作るという話もあります。
 
-```csharp {title="ラムダ式のデフォルト引数/params 引数" error-ranges="sha256:8f2f3344344cde2bed12f45548cb3998fbd892d9afb8d8219d03c477b567ac25;15:6-15:7,16:3-16:4,17:3-17:4" error-diagnostics="sha256:8f2f3344344cde2bed12f45548cb3998fbd892d9afb8d8219d03c477b567ac25;CS1503@15:6-15:7,CS1746@16:3-16:4,CS1746@17:3-17:4"}
+```csharp {title="ラムダ式のデフォルト引数/params 引数" error-ranges="15:6-15:7,16:3-16:4,17:3-17:4" error-diagnostics="CS1503@15:6-15:7,CS1746@16:3-16:4,CS1746@17:3-17:4"}
 static void m(int x = 1, params int[] y) { }
 
 // 今までだったら Action<int, int[]> になってた。

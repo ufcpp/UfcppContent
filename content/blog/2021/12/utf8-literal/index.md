@@ -26,7 +26,7 @@ aliases: []
 そうこうしているうちに、「生 byte 列で UTF-8 を扱う」と言うのが .NET エコシステム内でデファクトスタンダード化してしまいました(今ここ)。
 例えば `System.Text.Unicode` 名前空間中のメソッドは以下のような感じになっています。
 
-```csharp {highlight-ranges="sha256:5a8403c487ec24ca3b1722140aa8d97f6874a05e74ff404260fbcf922e454267;8:36-8:58,12:9-12:34"}
+```csharp {highlight-ranges="8:36-8:58,12:9-12:34"}
 using System.Buffers;
 
 namespace System.Text.Unicode;

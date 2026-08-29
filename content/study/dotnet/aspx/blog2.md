@@ -98,7 +98,7 @@ namespace WebsiteSample
 この GetIntFrom メソッドを使って、
 BlogLatest の Page_Load イベントハンドラを以下のように書き換えます。
 
-```html {title="BlogLatest.aspx.cs を書き換え" highlight-ranges="sha256:e57dae3f2782a1552a33102f825d23f384879ca4f04cf7cc7c2a29574974e656;3:3-3:67,9:3-9:51"}
+```html {title="BlogLatest.aspx.cs を書き換え" highlight-ranges="3:3-3:67,9:3-9:51"}
 protected void Page_Load(object sender, EventArgs e)
 {
   int days = Util.GetIntFrom(Request.QueryString, 0, "days", "d");

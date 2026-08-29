@@ -32,7 +32,7 @@ aliases: []
 要は、手動で書く通常のプロパティ(以下、手動プロパティ)と自動プロパティの中間で、
 バッキング フィールドのアクセスに `field` というキーワードを使おうというものです。
 
-```csharp {title="手動、(全)自動、半自動プロパティ" highlight-ranges="sha256:aeb150bcf9c959b02d8746f97c71b2a91b7b3d7281e0d36101e02cd22f5df71c;18:27-18:32,18:41-18:46"}
+```csharp {title="手動、(全)自動、半自動プロパティ" highlight-ranges="18:27-18:32,18:41-18:46"}
 class A
 {
     // 手動プロパティ (manual property)
@@ -151,7 +151,7 @@ class Foo { public int field; }
 C# の構造体には「すべてのフィールドを初期化しきるまで関数メンバー(メソッドやプロパティ)を呼べない」という仕様がありました。
 (ただし、[C# 11 で緩和されました](../../../../study/csharp/cheatsheet/ap_ver11.md#auto-default)。)
 
-```csharp {title="すべてのフィールドの初期化が必須" error-ranges="sha256:185cf3d64025c010a1eb00607103430c954fbb9b26c17ac488918947e1c98118;10:9-10:10" error-diagnostics="sha256:185cf3d64025c010a1eb00607103430c954fbb9b26c17ac488918947e1c98118;CS0188@10:9-10:10"}
+```csharp {title="すべてのフィールドの初期化が必須" error-ranges="10:9-10:10" error-diagnostics="CS0188@10:9-10:10"}
 struct S
 {
     int _x;

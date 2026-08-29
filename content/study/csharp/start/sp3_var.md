@@ -384,7 +384,7 @@ class C
 </td>
 <td markdown="1">
 
-```csharp {title="c は double" highlight-ranges="sha256:23da38c8a868df2fc609588d2a2a96f08e443c9584a619443d8538978f50e1a0;3:27-3:30"}
+```csharp {title="c は double" highlight-ranges="3:27-3:30"}
 class A
 {
     public static var a = 1.0;
@@ -451,7 +451,7 @@ class Program
 </td>
 <td markdown="1">
 
-```csharp {title="変更後" highlight-ranges="sha256:8bdc6fdcb576f374fa56383e85178b1e8ae6187ffce86d58fcf66a433930f224;6:18-6:19,6:29-6:30,19:27-19:30"}
+```csharp {title="変更後" highlight-ranges="6:18-6:19,6:29-6:30,19:27-19:30"}
 using System;
 
 class A

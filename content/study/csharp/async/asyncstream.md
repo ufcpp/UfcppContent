@@ -304,7 +304,7 @@ public class Program
 以下のように、直接的には`IAsyncDisposable`インターフェイスを実装していなくて、
 パターンも満たさない型に対して`await using`を使うとコンパイル エラーになります。
 
-```csharp {error-ranges="sha256:d6d7b72a94fe78a0986d56e297acc75e1f56cafa8dfcd152b01cbfa0bfdd2675;24:22-24:23"}
+```csharp {error-ranges="24:22-24:23"}
 using System;
 using System.Threading.Tasks;
  
@@ -411,7 +411,7 @@ public class Program
 
 例えば以下のような書き方で、1秒に1回、整数値を生成するイテレーターになります。
 
-```csharp {title="非同期イテレーターの例" highlight-ranges="sha256:0e2c9c79a3db26d3897b26e5b938ceaaa2cd94cc6eabe50e0d837b7f652a870c;1:8-1:13,5:9-5:21,6:9-6:14"}
+```csharp {title="非同期イテレーターの例" highlight-ranges="1:8-1:13,5:9-5:21,6:9-6:14"}
 static async IAsyncEnumerable<int> GenerateAsync()
 {
     for (int i = 0; ; i++)

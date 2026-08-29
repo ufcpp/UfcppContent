@@ -131,7 +131,7 @@ C# 9.0 から条件演算子に[ターゲット型](../start/misctyperesolution.
 
 例えば以下のようなコードはコンパイルできません。
 
-```csharp {title="共通型を判別できない例" error-ranges="sha256:e15c39261d921a7e79d438d0dfe31f57364d0cb6229e537fa5e810a0fb866aea;5:13-5:25,9:13-9:34"}
+```csharp {title="共通型を判別できない例" error-ranges="5:13-5:25,9:13-9:34"}
 void M(bool b)
 {
     // C# では整数型と null の共通型判定ができない。
@@ -294,7 +294,7 @@ case 2:
 以下のように、<code>braek</code> を挿入して、
 case ラベルを超えてコードが実行されないようにします。
 
-```cpp {title="C/C++ では許されたコード" highlight-ranges="sha256:db4a199d6c55517cc99e65614219319d0094385052ce1c995522433633de11c7;5:3-5:9,8:3-8:9"}
+```cpp {title="C/C++ では許されたコード" highlight-ranges="5:3-5:9,8:3-8:9"}
 swicth(x)
 {
 case 1:

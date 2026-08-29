@@ -282,7 +282,7 @@ class Triangle
 オブジェクト初期化子では、[配列の初期化子](../structured/st_array.md#use)と同様に、末尾のコンマはあってもなくてもかまいません。
 以下の2行は同じ意味になります。
 
-```csharp {title="初期化子の末尾コンマ" highlight-ranges="sha256:0c817601cad77a95566deff91511967f955974f1b2a768196dd2beb4eb03b6d9;2:34-2:35"}
+```csharp {title="初期化子の末尾コンマ" highlight-ranges="2:34-2:35"}
 var p1 = new Point { X = 0, Y = 1 };
 var p2 = new Point { X = 0, Y = 1, };
 ```

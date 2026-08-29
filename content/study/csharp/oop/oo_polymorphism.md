@@ -182,7 +182,7 @@ is 演算子はキャスト可能かどうかを調べるための演算子で�
 is 演算子を適用した結果は bool 型になり、
 左辺の変数が右辺の型にキャスト可能ならば true を、不能ならば false を返します。
 
-```csharp {title="is 演算子の例" highlight-ranges="sha256:ad777eb5165d3ac4a9c8aba50ce68131796cc98070574f205af24cf3e1bb3710;14:8-14:21,18:8-18:21"}
+```csharp {title="is 演算子の例" highlight-ranges="14:8-14:21,18:8-18:21"}
 using System;
 
 class Base{}
@@ -222,7 +222,7 @@ as 演算子はキャストと同じような働きをする演算子で、以�
 キャストとの違いは、
 もし型変換が出来ない場合には結果が null になるということです。
 
-```csharp {highlight-ranges="sha256:1478b6a7e13160662a467bb15a56fe14ba02b8cda32166be50931ce59d5ed7f6;15:9-15:22,20:9-20:22"}
+```csharp {highlight-ranges="15:9-15:22,20:9-20:22"}
 using System;
 
 class Base{}
@@ -331,7 +331,7 @@ Derived.Test()
 以下のように、
 メソッドに <em>virtual</em> という修飾子を付けます。
 
-```csharp {title="動的型情報に基づいたメソッドが呼び出し" highlight-ranges="sha256:aae84d9edcc4f46f43bb91d76c5d95468916f3cbadf09a66003e6a56fe025b29;5:10-5:17,10:10-10:18"}
+```csharp {title="動的型情報に基づいたメソッドが呼び出し" highlight-ranges="5:10-5:17,10:10-10:18"}
 using System;
 
 class Base
@@ -645,7 +645,7 @@ C# 9.0 時点では共変戻り値を使えるのはクラスの仮想メソッ�
 
 例えば以下のようなコードはおそらく書きたい意図とは異なる挙動になると思います。
 
-```csharp {title="インターフェイスの共変戻り値は C# 9.0 時点ではないという例1" warning-ranges="sha256:7f17aae47ab1ba285f2c844bb04fa169d54f0bad165390dcaeb885b346f3c70c;10:8-10:9"}
+```csharp {title="インターフェイスの共変戻り値は C# 9.0 時点ではないという例1" warning-ranges="10:8-10:9"}
 interface IA
 {
     IA M();
@@ -661,7 +661,7 @@ interface IB : IA
 
 以下のようなコードはコンパイル エラーになります。
 
-```csharp {title="インターフェイスの共変戻り値は C# 9.0 時点ではないという例2" error-ranges="sha256:2235d994b0ca3def2faed32a1b7068fcd3d5571a74d313b70c50392e30516398;9:11-9:12"}
+```csharp {title="インターフェイスの共変戻り値は C# 9.0 時点ではないという例2" error-ranges="9:11-9:12"}
 interface IA
 {
     public IA M() => null;
@@ -676,7 +676,7 @@ interface IB : IA
 
 以下のような実装クラスもコンパイル エラーになります。
 
-```csharp {title="インターフェイスの共変戻り値は C# 9.0 時点ではないという例3" error-ranges="sha256:cad49684ff30da2d00092a4851ec9f4f201243e02d767bebfa78dba3a8d53a44;6:16-6:18"}
+```csharp {title="インターフェイスの共変戻り値は C# 9.0 時点ではないという例3" error-ranges="6:16-6:18"}
 interface IA
 {
     IA M();
