@@ -169,13 +169,13 @@ Console.WriteLine(raw); // 「raw」から始まる。「    raw」にはなら�
 試してみると、コンパイル エラーでした。
 CS9003「閉じ行と異なる空白を含んでいます」エラー。
 
-```csharp {title="異なる空白文字を使うとコンパイル エラー" error-text="　　　　" error-diagnostics="sha256:88eded92592f2eb65eb016edb86ca55c67740f9abe86c57b72fd8f8f3b01ea66;CS9003@2:1-2:5"}
+```csharp {title="異なる空白文字を使うとコンパイル エラー" error-text="　　　　" error-diagnostics="CS9003@2:1-2:5"}
 _ = """
 　　　　全角スペース4つ。
     """; // スペース4つ。
 ```
 
-```csharp {title="1個だけ変えてもダメ" error-text="   　" error-diagnostics="sha256:cdc890249be9187f3bb0d3bf6022b00620349050ea5710af81c5242550ef3893;CS9003@2:1-2:5"}
+```csharp {title="1個だけ変えてもダメ" error-text="   　" error-diagnostics="CS9003@2:1-2:5"}
 _ = """
    　4つ中1個だけ全角。
     """; // スペース4つ。

@@ -47,7 +47,7 @@ aliases: []
 
 以下のように、指定した以外の属性の使い方をするとコンパイル エラーを起こします。
 
-```csharp {title="AttributeUsage の利用例" error-ranges="sha256:084e0b68c419a8a1166fdff00662ce4e32879711168aa7e659d0659fb8c3301e;7:6-7:14"}
+```csharp {title="AttributeUsage の利用例" error-ranges="7:6-7:14"}
 [AttributeUsage(AttributeTargets.Class)]
 class ForClass : Attribute { }
 
@@ -259,7 +259,7 @@ C# の新機能のうち結構な割合のものが、
 
 例えば nullable enable な場所で以下のようなコードを書いた場合、
 
-```csharp {title="null 許容参照型の例" highlight-ranges="sha256:c655c3bb9e3740e93f7916edd5a44b9db8d4f5b1104df4912cd09af89a15362d;3:26-3:27,4:26-4:27"}
+```csharp {title="null 許容参照型の例" highlight-ranges="3:26-3:27,4:26-4:27"}
 public class C
 {
     public void M1(string? x) { }
@@ -269,7 +269,7 @@ public class C
 
 旧来の(nullable disable な場所での)コードでいうところの以下のようなコードが得られます。
 
-```csharp {title="null 許容参照型の展開結果の例" highlight-ranges="sha256:9acd3f64bad6ba8cf24a453972d527545a817e92c5cf887b8c9619a037405e81;5:5-5:25,10:5-10:25,11:27-11:40"}
+```csharp {title="null 許容参照型の展開結果の例" highlight-ranges="5:5-5:25,10:5-10:25,11:27-11:40"}
 using System.Runtime.CompilerServices;
 
 public class C

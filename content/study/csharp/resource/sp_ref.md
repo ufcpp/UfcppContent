@@ -152,7 +152,7 @@ C# で単に「参照引数」という場合、`ref`引数を指します。
 
 以下の例のように、メソッドの引数に <code>ref</code> キーワードを付けることでその引数は参照渡しになります。
 
-```csharp {title="参照渡しの例" highlight-ranges="sha256:571dd0bb9bee0efc989a772ab79c387d32f42a1c8efaf2e22a79554e362e91f0;8:10-8:13,12:20-12:23"}
+```csharp {title="参照渡しの例" highlight-ranges="8:10-8:13,12:20-12:23"}
 using System;
 class ByReferenceTest
 {
@@ -265,7 +265,7 @@ C# 7.2 から、「参照渡しだけども読み取り専用」というよう�
 「入力用」ということを示すように、`in`キーワードを使います。
 (`in` を使うのは、C# 1.0の頃からある `out` 引数(次節で説明)との対比もあります。)
 
-```csharp {title="in 引数" highlight-ranges="sha256:dad40c06b3e06be351af2c521e66c02cb9907ce6f22b0341072c1fe09b71b19f;5:19-5:21" error-ranges="sha256:dad40c06b3e06be351af2c521e66c02cb9907ce6f22b0341072c1fe09b71b19f;11:9-11:10"}
+```csharp {title="in 引数" highlight-ranges="5:19-5:21" error-ranges="11:9-11:10"}
 using System;
 
 public partial class Program
@@ -347,7 +347,7 @@ static void Main()
 大きめの構造体を値渡し(コピーが発生)すると、結構大きな負担が発生します。
 そういう場合に `in` 引数が有用です。
 
-```csharp {title="in 引数でコピーを避ける" highlight-ranges="sha256:22f783dac611c8e27191d032e27cc01b38c975d3ccad25eac947580e7dcaa403;18:41-18:43,18:58-18:60"}
+```csharp {title="in 引数でコピーを避ける" highlight-ranges="18:41-18:43,18:58-18:60"}
 public struct Quaternion
 {
     public double W;
@@ -461,7 +461,7 @@ m(in temp);
 例えば `Nullable` 型には .NET 7 から [`GetValueRefOrDefaultRef`](https://learn.microsoft.com/ja-jp/dotnet/api/system.nullable.getvaluerefordefaultref) というメソッドが追加されたんですが、
 これが問題になりました。
 
-```csharp {title="GetValueRefOrDefaultRef に右辺値を渡せて困った" warning-ranges="sha256:da93053c86658070428457b69f1a3ddd5344250cc90c84f8d7c1147ef6a6cd50;10:60-10:91,11:72-11:77" warning-diagnostics="sha256:da93053c86658070428457b69f1a3ddd5344250cc90c84f8d7c1147ef6a6cd50;CS9193@10:60-10:91,CS9193@11:72-11:77"}
+```csharp {title="GetValueRefOrDefaultRef に右辺値を渡せて困った" warning-ranges="10:60-10:91,11:72-11:77" warning-diagnostics="CS9193@10:60-10:91,CS9193@11:72-11:77"}
 using System.Numerics;
 
 Quaternion? x = new(1, 2, 3, 0);
@@ -483,7 +483,7 @@ C# 11 時点/ .NET 7 時点では警告が出ません。)
 そこで C# 12 では改めて、「書き換えはしないけども、右辺値は受け付けたくない」ということを表す、
 ref readonly 引数というものを導入しました。
 
-```csharp {title="ref readonly 引数" warning-ranges="sha256:671d5346c53107f1303255ddd7b42227765e4cfc3cc7b07d499c04a19b36c9ca;4:3-4:5,8:3-8:8,11:3-11:4" warning-diagnostics="sha256:671d5346c53107f1303255ddd7b42227765e4cfc3cc7b07d499c04a19b36c9ca;CS9193@4:3-4:5,CS9193@8:3-8:8,CS9192@11:3-11:4"}
+```csharp {title="ref readonly 引数" warning-ranges="4:3-4:5,8:3-8:8,11:3-11:4" warning-diagnostics="CS9193@4:3-4:5,CS9193@8:3-8:8,CS9192@11:3-11:4"}
 // 冒頭の例から in を ref readonly に変更。
 void m(ref readonly int x) { }
 
@@ -564,7 +564,7 @@ class Program
 そこで、戻り値として使いたい場合(メソッド内で変数を初期化する予定である場合)、
 以下のように <code>out</code> 修飾子を用いて、出力用の参照引数であることを明示してやります。
 
-```csharp {title="出力変数の例" highlight-ranges="sha256:19d7371a364a6094180122494cc5719de23659d3086902373533f1574b360fef;7:10-7:13,11:20-11:23"}
+```csharp {title="出力変数の例" highlight-ranges="7:10-7:13,11:20-11:23"}
 using System;
 class ByValueTest
 {
@@ -766,7 +766,7 @@ C# コンパイラーとしては`in`引数や`out`引数を`ref`引数と区別
 まず、`ref`、`in`、`out`だけの違いのオーバーロードは作れません。
 例えば以下のコードでは`F`、`G`、`H`のいずれもコンパイル エラーになります。
 
-```csharp {title="ref/in/out 違いのオーバーロードは不可" error-ranges="sha256:ef2885cbd7674d9662ad7316c431592fe6425d7097660eed75e44d0e32b3aa71;2:6-2:7,5:6-5:7,8:6-8:7"}
+```csharp {title="ref/in/out 違いのオーバーロードは不可" error-ranges="2:6-2:7,5:6-5:7,8:6-8:7"}
 void F(ref int x) { }
 void F(in int x) { }
 
@@ -786,7 +786,7 @@ void H(out int x) => x = 0;
 「入力/出力にしか使わない」という判定ができません。
 以下のようなコードはコンパイル エラーになります。
 
-```csharp {title="in/out引数を使うと、in/out型制約が付けられない" error-ranges="sha256:2b8c5b0be352d6631811a561e4d868c64d49903c69a250eacc057e756a96001c;7:15-7:16,16:16-16:17"}
+```csharp {title="in/out引数を使うと、in/out型制約が付けられない" error-ranges="7:15-7:16,16:16-16:17"}
 interface Contravariance<in T>
 {
     // 普通の引数は共変
@@ -821,7 +821,7 @@ interface Covariance<out T>
 
 例えば以下のコードはコンパイル エラーになります。
 
-```csharp {title="参照引数の制限" error-ranges="sha256:2ebc19149600295ca357aebf1bed8a1bfb0adbeabcd05f753e4217642126b5f4;10:30-10:31,11:26-11:27,15:34-15:35,21:30-21:31"}
+```csharp {title="参照引数の制限" error-ranges="10:30-10:31,11:26-11:27,15:34-15:35,21:30-21:31"}
 using System;
 using System.Collections;
 using System.Threading.Tasks;
@@ -863,7 +863,7 @@ C# 7から、戻り値とローカル変数でも参照渡しを使えるよう�
 
 例として、配列のi番目の要素を参照で返してみましょう。以下のようになります。
 
-```csharp {title="参照戻り値" highlight-ranges="sha256:d5cc76fac1d9114d9d6e3533d0ee6a19bd292e0f4e6123ffe56ccd24a01cff53;21:12-21:19,21:47-21:50"}
+```csharp {title="参照戻り値" highlight-ranges="21:12-21:19,21:47-21:50"}
 using System;
 
 class Program
@@ -894,7 +894,7 @@ class Program
 
 また、ローカル変数に対しても、`ref`修飾子を付けることで参照渡しができます。
 
-```csharp {title="参照ローカル変数" highlight-ranges="sha256:729cd13544e5415318b5b941425281a3d24397173179bb33ff7289403c640e73;9:10-9:17,9:22-9:25,12:9-12:16,12:21-12:24,16:9-16:16,16:21-16:24"}
+```csharp {title="参照ローカル変数" highlight-ranges="9:10-9:17,9:22-9:25,12:9-12:16,12:21-12:24,16:9-16:16,16:21-16:24"}
 using System;
 
 class Program
@@ -980,7 +980,7 @@ C#は、コンパイラーが厳しめにチェックして、安全でない参
 
 例えば、以下のようなコードは、赤色の下線で強調表示しているところがコンパイル エラーになります。
 
-```csharp {error-ranges="sha256:d6e6c232721dd5171089b0d2572528fb47c244895907a3e603492fdc63da8cd4;5:45-5:46,11:16-11:17,33:16-33:18,44:16-44:18"}
+```csharp {error-ranges="5:45-5:46,11:16-11:17,33:16-33:18,44:16-44:18"}
 // 参照引数は参照戻り値で返せる
 private static ref int Success1(ref int x) => ref x;
 
@@ -1064,7 +1064,7 @@ C# コンパイラーが行う「参照戻り値に返して安全かどうか�
 
 例えば、以下のコードはコンパイル エラーになります。
 
-```csharp {title="構造体のフィールドは参照戻り値で返せない" error-ranges="sha256:7e39f0efea759416e6560cd9da4c60fffa88a87cb92f7d26ede39bfcd746ed5c;4:33-4:35"}
+```csharp {title="構造体のフィールドは参照戻り値で返せない" error-ranges="4:33-4:35"}
 struct Struct
 {
     int _v;
@@ -1173,7 +1173,7 @@ class Program
 
 あと、以下のように、[ジェネリクス](../oop/sp2_generics.md)絡みの問題を避けるためにもこの仕様を選ぶ必要があったそうです。
 
-```csharp {title="構造体がフィールドの参照を返せるとジェネリクス絡みで困る" error-ranges="sha256:f7cdb9fab7db7392aa4dbd1d0e71067ec7880d0fe77bba2a9b759f61922c95ea;17:33-17:39"}
+```csharp {title="構造体がフィールドの参照を返せるとジェネリクス絡みで困る" error-ranges="17:33-17:39"}
 using System;
 
 interface IReference
@@ -1293,7 +1293,7 @@ C# 7.3で、参照引数、参照ローカル変数のref再代入(ref reassignm
 
 以下のように、参照ローカル変数への代入時に、右辺に`ref`を付けることでref再代入になります。
 
-```csharp {title="ref 再代入" highlight-ranges="sha256:f57bc9b72f6b24b073591f83a6fc6403065757b2c25232d3e88abd649d9da71b;12:5-12:8"}
+```csharp {title="ref 再代入" highlight-ranges="12:5-12:8"}
 int x = 1;
 int y = 2;
 
@@ -1406,7 +1406,7 @@ Console.WriteLine(x); // break した時点の i の値 = 2
 `foreach`の方も、[通常の`foreach`と同じパターン](../data/sp_foreach.md#foreach)で、`MoveNext`や`Current`の呼び出しに展開されるだけです。
 `Current`が参照戻り値を返すとき、それをrefループ変数で受け取ることができます。
 
-```csharp {title="ref foreach" highlight-ranges="sha256:f4a0b91674cf8a92c5b5380932d371a78e6928b0f1d1609b80a6176cd9233fe8;8:18-8:21,36:12-36:15"}
+```csharp {title="ref foreach" highlight-ranges="8:18-8:21,36:12-36:15"}
 using System;
 
 class Program

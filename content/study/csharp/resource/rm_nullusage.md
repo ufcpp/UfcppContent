@@ -182,7 +182,7 @@ static int? M(WeaponSlots w)
 null 条件演算子 `?.` を使えば、[null許容型](sp2_nullable.md)のメンバー アクセスが少し楽になります。
 例えば以下のコードでは、`x` の行はコンパイル エラーになりますが、`y` の行は OK です。
 
-```csharp {highlight-text="w?.ImagePath" error-ranges="sha256:8867eb1cad2d5ec7420565d90a5a7435eb6c0bccdd90051b193c19b18536c2bb;18:19-18:28"}
+```csharp {highlight-text="w?.ImagePath" error-ranges="18:19-18:28"}
 // さっきと違って Weapon が構造体
 struct Weapon
 {
@@ -240,7 +240,7 @@ public void Dispose()
 
 戻り値はないので、以下のようなコードは書けません。
 
-```csharp {title="void の ?. 結果は void" error-text="x = Weapon1?.Dispose()" error-diagnostics="sha256:057126a0295bd592c4267b95d866b2b4199ba2bedaf1bc6ddf74a9e414df8d15;CS0815@3:5-3:27"}
+```csharp {title="void の ?. 結果は void" error-text="x = Weapon1?.Dispose()" error-diagnostics="CS0815@3:5-3:27"}
 // void の ?. 結果は void。
 // 何の値も返って来ず、変数に受けたりはできない。
 var x = Weapon1?.Dispose();
@@ -754,7 +754,7 @@ class Canvas
 混乱の元なのでおすすめはしませんが、[演算子を自作](../oop/oo_operator.md)して、「null を自称できる型」を作ることができます。
 例えば以下のようなものです。
 
-```csharp {title="null を自称できる型の例" warning-ranges="sha256:02d928a43fa6c457cbf314560ca3492e6a1fba3950399686ee03cc95966dd9f3;19:26-19:27,20:26-20:27" warning-diagnostics="sha256:02d928a43fa6c457cbf314560ca3492e6a1fba3950399686ee03cc95966dd9f3;CS8602@19:26-19:27,CS8602@20:26-20:27"}
+```csharp {title="null を自称できる型の例" warning-ranges="19:26-19:27,20:26-20:27" warning-diagnostics="CS8602@19:26-19:27,CS8602@20:26-20:27"}
 // null じゃないのに this == null が成り立ってしまうかなりタチが悪いクラス
 class FalseNullable
 {
@@ -786,7 +786,7 @@ class FalseNullable
 真のnullと自称nullで、`is`演算子や`??`演算子の挙動が変わります。
 例えば、上記のクラスに対して以下のような処理を書いたとします。
 
-```csharp {title="自称 null に対する挙動の差を示す例" warning-ranges="sha256:adf27164a0b4b82231bdd34af382a717606e4180a698a589de66f198313c84c3;15:29-15:30" warning-diagnostics="sha256:adf27164a0b4b82231bdd34af382a717606e4180a698a589de66f198313c84c3;CS8602@15:29-15:30"}
+```csharp {title="自称 null に対する挙動の差を示す例" warning-ranges="15:29-15:30" warning-diagnostics="CS8602@15:29-15:30"}
 static void Write(FalseNullable? x)
 {
     Console.WriteLine(x);

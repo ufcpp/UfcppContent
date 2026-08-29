@@ -276,7 +276,7 @@ Console.Write(" after\n\n");
 前者は foreach の行で初めて hook が実行され、
 後者は ToList の時点で実行されます。
 
-```console {title="実行結果" highlight-ranges="sha256:7338ac1c33fda3607b9a96c21683fb37fdfee1b185c493fcb9ef865bbb4abf34;2:16-2:26,5:8-5:18"}
+```console {title="実行結果" highlight-ranges="2:16-2:26,5:8-5:18"}
 AsEnumerable
 before  middle 0011223344 after
 

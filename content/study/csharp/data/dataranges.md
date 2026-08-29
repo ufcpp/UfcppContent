@@ -298,7 +298,7 @@ int offset = i.GetOffset(a.Count);
 a[offset];
 ```
 
-```csharp {title="Range 型インデクサーの展開結果(Count)" highlight-ranges="sha256:62b99ca45943e030a309af90a4c669933fd957fb0711e0f78cb137d77dea41bf;1:35-1:40,2:33-2:38"}
+```csharp {title="Range 型インデクサーの展開結果(Count)" highlight-ranges="1:35-1:40,2:33-2:38"}
 var offset1 = r.Start.GetOffset(a.Count);
 var offset2 = r.End.GetOffset(a.Count);
 a.Slice(offset1, offset2 - offset1);
@@ -333,7 +333,7 @@ for (int i = 0; i < 100; i++)
 コピーを発生させたくない場合、[`Span<T>`](../resource/span.md)を経由します。
 要するに、`AsSpan()` や `AsMemory()` を挟めばコピーを回避できます。
 
-```csharp {highlight-ranges="sha256:7742c796b8279d9c9634949ab500f37d174ab812445a937fda068d1a42ca46fa;8:25-8:34,9:21-9:30"}
+```csharp {highlight-ranges="8:25-8:34,9:21-9:30"}
 var array = new[] { 1, 2, 3, 4, 5 };
 var str = "abcde";
  

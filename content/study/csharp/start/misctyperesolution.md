@@ -37,7 +37,7 @@ var x = "abc";
 [デリゲート](../functional/sp_delegate.md)や[匿名関数](../functional/fun_localfunctions.md#anonymous-function)が代表例で、
 例えば以下のコードは「型が決定できなくてコンパイル エラー」になります。
 
-```csharp {title="左辺の型が必須な構文" error-ranges="sha256:727915d81048d1638424807fc8439278f386bf0d3a9785838daff9c510e36d3a;7:13-7:21,8:13-8:26"}
+```csharp {title="左辺の型が必須な構文" error-ranges="7:13-7:21,8:13-8:26"}
 using System;
  
 class Program
@@ -223,7 +223,7 @@ static void Main()
 整数リテラルや null などは実は「ターゲット型からの型決定」をしています
 (正確に言うと「暗黙的型変換」なんですが、いずれにせよターゲット型が決まるまで解釈が確定しません)。
 
-```csharp {title="整数リテラルの型決定" error-ranges="sha256:f3644c0841c905c1ea92bde78bbda4bb8ebb15cc7208f24ea51baa790f8fb10d;7:5-7:6,10:5-10:8,20:12-20:26"}
+```csharp {title="整数リテラルの型決定" error-ranges="7:5-7:6,10:5-10:8,20:12-20:26"}
 // byte リテラルや short リテラルは存在していなくて、「整数リテラル」の暗黙的型変換で代用している。
 byte a = 1;  // この 1 は byte (に代入可能)
 short b = 1; // この 1 は short (に代入可能)
@@ -251,7 +251,7 @@ byte[] e = new[] { 1, 2 };
 ソースから型決定する構文とターゲットから型決定する構文は、当然ですが両立はできません。
 どちらもあいまいでは型決定できません。片方は明示的な型指定が必要になります。
 
-```csharp {title="推論に推論は重ねられない" error-ranges="sha256:e93f90077f537cb40225a52c4bdfb8aafa342ba2b2411942ec499a9df596af51;12:9-12:10"}
+```csharp {title="推論に推論は重ねられない" error-ranges="12:9-12:10"}
 class Program
 {
     static void Main()
@@ -291,7 +291,7 @@ class Program
 
 ここに1行、オーバーロードを増やすとどちらを呼ぶべきか決定できなくてコンパイル エラーになります。
 
-```csharp {title="オーバーロードの追加が破壊的変更になり得る" error-ranges="sha256:ddf753605b881e4c907ee0b5f1108536b6aa45f27f143b8394d396c8b443d3c0;10:9-10:10,11:9-11:10,12:9-12:10"}
+```csharp {title="オーバーロードの追加が破壊的変更になり得る" error-ranges="10:9-10:10,11:9-11:10,12:9-12:10"}
 using System;
  
 class Program
@@ -513,7 +513,7 @@ static byte? M(object obj) => obj switch
 以下のコードはコンパイル エラーになります。
 (ただし、条件演算子については C# 9.0 でターゲット型推論を導入する予定があります。)
 
-```csharp {title="ターゲット型からの型推論を持っていない構文" error-ranges="sha256:7b990bd17fe7bc23c311a1213df87061bfa1e865b9be94f1135676685ddd3723;4:15-4:30,5:28-5:32,6:20-6:24"}
+```csharp {title="ターゲット型からの型推論を持っていない構文" error-ranges="4:15-4:30,5:28-5:32,6:20-6:24"}
 static void Fail()
 {
     // 以下のいずれもコンパイル エラー。
@@ -550,7 +550,7 @@ class B : Base { }
 
 このクラスと、あと、int を使って共通型を決定できるかどうかの例を示します。
 
-```csharp {title="共通型の決定" error-ranges="sha256:986d3328318848c2e430333804e05c1ef6756247bbdb076e1191c161ca0331bb;2:11-2:32,5:11-5:23"}
+```csharp {title="共通型の決定" error-ranges="2:11-2:32,5:11-5:23"}
 // 型の候補は A, B。それぞれお互いには変換不可なので、共通型の決定不可。
 var ng1 = x ? new A() : new B();
  

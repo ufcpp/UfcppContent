@@ -113,7 +113,7 @@ C# 11.0 で[`required`](../../../../study/csharp/cheatsheet/ap_ver11.md#required
 
 ただ、幸い、これらは(当然、[文脈キーワード](../../../../study/csharp/misc/ap_compatibility.md#contextual-keyword)で)「型名として使おうとする時だけまずい」という仕様になっています。
 
-```csharp {title="record の破壊的変更の影響は型名に対してのみ" warning-ranges="sha256:72ecb3615ba7d634bdc624dc4959702c9203ece1b6274c3050d3a141609e4b92;15:12-15:13,18:7-18:13" warning-diagnostics="sha256:72ecb3615ba7d634bdc624dc4959702c9203ece1b6274c3050d3a141609e4b92;CS8981@15:12-15:13,CS8860@18:7-18:13"}
+```csharp {title="record の破壊的変更の影響は型名に対してのみ" warning-ranges="15:12-15:13,18:7-18:13" warning-diagnostics="CS8981@15:12-15:13,CS8860@18:7-18:13"}
 class A
 {
     // 全然平気。
@@ -152,7 +152,7 @@ class record { }
 今何で困っているかというと、1月にブログに書いた[半自動プロパティ](../../1/semi-auto-property/index.md)です。
 `field` キーワードの追加。
 
-```csharp {title="手動、(全)自動、半自動プロパティ" highlight-ranges="sha256:aeb150bcf9c959b02d8746f97c71b2a91b7b3d7281e0d36101e02cd22f5df71c;18:27-18:32,18:41-18:46"}
+```csharp {title="手動、(全)自動、半自動プロパティ" highlight-ranges="18:27-18:32,18:41-18:46"}
 class A
 {
     // 手動プロパティ (manual property)

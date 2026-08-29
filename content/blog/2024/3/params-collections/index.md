@@ -34,7 +34,7 @@ params を配列以外のコレクションに対して使えるようにする�
 コレクション式を実装した今改めて検討して、
 むしろ「コレクション式とそろえるのがいいのではないか」という感じに変わったみたいです。
 
-```csharp {title="params コレクション(案)" error-ranges="sha256:d303e6d958b4a65a89cdafde735d128b615f19d935f21a20358e33b4920acd75;10:26-10:32,11:26-11:32" error-diagnostics="sha256:d303e6d958b4a65a89cdafde735d128b615f19d935f21a20358e33b4920acd75;CS0225@10:26-10:32,CS0225@11:26-11:32"}
+```csharp {title="params コレクション(案)" error-ranges="10:26-10:32,11:26-11:32" error-diagnostics="CS0225@10:26-10:32,CS0225@11:26-11:32"}
 // ReadOnlySpan を優先するようになる予定。
 C.M(1, 2, 3);
 
@@ -56,7 +56,7 @@ params に配列以外の型を認めたいという話の前提には、パフ�
 
 で、ref struct にはスコープの概念があって、引数や変数を [`scoped`](../../../../study/csharp/resource/refstruct.md#scoped) で修飾するかどうかでちょっと挙動が変わります。
 
-```csharp {title="scoped の有無" error-ranges="sha256:280ed02899f2dccdbe0b66c5dca90d7ae41bf7eda85725a47faee8e65563ebbf;8:16-8:37,25:54-25:63" error-diagnostics="sha256:280ed02899f2dccdbe0b66c5dca90d7ae41bf7eda85725a47faee8e65563ebbf;CS8347@8:16-8:37,CS9203@8:27-8:36,CS8347@25:54-25:63,CS8352@25:58-25:62"}
+```csharp {title="scoped の有無" error-ranges="8:16-8:37,25:54-25:63" error-diagnostics="CS8347@8:16-8:37,CS9203@8:27-8:36,CS8347@25:54-25:63,CS8352@25:58-25:62"}
 M(true);
 
 static S M(bool b)
@@ -122,7 +122,7 @@ class Derived : Base
 なので、「params の部分を `[]` で覆っても同じ結果になる」というのは**成り立たない**ことになります。
 例えば以下のようなもの。
 
-```csharp {title="params と []" error-ranges="sha256:64ad33d2cc2646031f4e5a35c29bf52554eecec17b9f29bb452a3c11b4658652;1:3-1:4" error-diagnostics="sha256:64ad33d2cc2646031f4e5a35c29bf52554eecec17b9f29bb452a3c11b4658652;CS0121@1:3-1:4"}
+```csharp {title="params と []" error-ranges="1:3-1:4" error-diagnostics="CS0121@1:3-1:4"}
 C.M([1, 2, 3]); // こちらは解決できなくてエラーに。
 C.M(1, 2, 3); // こちらは int[] 側に解決。
 

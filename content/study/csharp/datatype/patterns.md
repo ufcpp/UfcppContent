@@ -50,7 +50,7 @@ C# 7.0 からあるパターンは1層限り、8.0 で追加されたパター�
 C# 6.0以前から元々あった [`is` 演算子](../oop/oo_polymorphism.md#is-operator)の自然な拡張になっているのが型パターン(type pattern)です。
 以下のように、型の後ろに続けて、マッチした結果を変数で受け取れます。
 
-```csharp {title="型パターンの例" highlight-ranges="sha256:31e5778ca46661b7315087a65e0073918fb7d815ed30e5fbfe9f4eb61cce00c1;3:14-3:19,4:19-4:27"}
+```csharp {title="型パターンの例" highlight-ranges="3:14-3:19,4:19-4:27"}
 static void M(object x)
 {
     if (x is int i) Console.WriteLine("int " + i);
@@ -385,7 +385,7 @@ C# 8.0 で、再帰的に使えるパターンが追加されて、ようやく�
 
 例えば以下のような感じです。
 
-```csharp {title="再帰パターンの例" highlight-ranges="sha256:cec146ec782bcf929f31a52b1b79c2f300a7bbc6831d70979c8b028a23cee7ab;16:9-16:21,17:9-17:33"}
+```csharp {title="再帰パターンの例" highlight-ranges="16:9-16:21,17:9-17:33"}
 public class Point
 {
     public int X { get; set; }
@@ -464,7 +464,7 @@ obj switch
 
 位置パターンとか言いつつ、名前付き引数のノリで、名前付きなパターン マッチングもできます。
 
-```csharp {title="名前付き位置パターン" highlight-ranges="sha256:85d59d9b77dd1ed12b7adc16900a3a17f8077d539a7a05c3ccd6aff5c430e213;4:6-4:8,4:12-4:14,5:6-5:8,5:16-5:18"}
+```csharp {title="名前付き位置パターン" highlight-ranges="4:6-4:8,4:12-4:14,5:6-5:8,5:16-5:18"}
 static int NamedPattern(Point p)
     => p switch
 {
@@ -1047,7 +1047,7 @@ Console.WriteLine(a3 is [.., 1, 2]); // true
 
 ちなみに、2か所以上に `..` を置いてしまうとコンパイル エラーになります。
 
-```csharp {title="2か所以上に .. を置くとコンパイル エラー" error-ranges="sha256:15adf19c8f4037c28722a3810172477c42a6caf7897e81b0d3ff1ad23ccb3da3;3:33-3:35"}
+```csharp {title="2か所以上に .. を置くとコンパイル エラー" error-ranges="3:33-3:35"}
 var array = new[] { 1, 2 };
 
 Console.WriteLine(array is [.., ..]);
@@ -1510,7 +1510,7 @@ int M(byte x) => x switch
 `byte` も高々256個の値しか持ちません。
 [型スイッチのページにも書いていますが](typeswitch.md#exhaustive)、パターン マッチングではこれらの値をすべて網羅しているかどうか(exhaustiveness: 網羅性)の検査をしてくれます。
 
-```csharp {title="bool, bool? の網羅性検査" warning-ranges="sha256:ea62bbfe01227de78dc6f15e5c6e5dd351cda481cd2fc802e47d9ace61faa946;9:21-9:27"}
+```csharp {title="bool, bool? の網羅性検査" warning-ranges="9:21-9:27"}
 // 無警告
 int A(bool x) => x switch
 {
@@ -1602,7 +1602,7 @@ int M(object obj) => obj switch
 ちなみに、[`when`句](typeswitch.md#switch)だと重複チェックが漏れることがあります。
 一方、同じような条件でも、[再帰パターン](#recursive)を使うとチェックが働きやすいです。
 
-```csharp {title="再帰パターンの方が重複チェックが正確" error-ranges="sha256:2157360ac959168c5637c06c248a8ab16933eb82bff87d82f2bc5798ef6e2256;13:5-13:25"}
+```csharp {title="再帰パターンの方が重複チェックが正確" error-ranges="13:5-13:25"}
 int M1(object obj) => obj switch
 {
     // when 句を使うと「同じ条件」判定ができなくなる。コンパイルできてしまう。

@@ -85,7 +85,7 @@ class User
 特定の条件下でのみ実行されるメソッドを定義するために使用する属性です。
 例えば、以下のようにして使用します。
 
-```csharp {title="Conditional 属性" highlight-ranges="sha256:4b7e2a3f21d718bc029087bd8f4c2ddce727423f95a67fc5e658afa63648e79b;26:13-26:39,53:5-53:39"}
+```csharp {title="Conditional 属性" highlight-ranges="26:13-26:39,53:5-53:39"}
 using System;
 using System.Diagnostics;
 
@@ -401,7 +401,7 @@ explorer から参照することができます。
 メソッド定義の直前に属性を付ければメソッドに属性が適用されます。
 以下にその例を挙げます。
 
-```csharp {title="属性の対象の例" highlight-ranges="sha256:ef3d654d72e51c40ab52e3068d067bef8154e008e4a291c6b73987a47c2b96a3;1:1-1:44,3:1-3:15"}
+```csharp {title="属性の対象の例" highlight-ranges="1:1-1:44,3:1-3:15"}
 [assembly: AssemblyTitle("Test Attribute")] // プログラムそのものが対象
  
 [Serializable] // クラスが対象
@@ -440,7 +440,7 @@ public static extern int puts(
 
 先ほどの例を属性の対象を明示的に指定して書き直すと以下のようになります。
 
-```csharp {title="メソッドの戻り値に属性を適用" highlight-ranges="sha256:1890051c398171efeea2800d514f2fe79cb61640183a58fa824992f8a78a5210;1:2-1:8,2:2-2:8,4:6-4:11"}
+```csharp {title="メソッドの戻り値に属性を適用" highlight-ranges="1:2-1:8,2:2-2:8,4:6-4:11"}
 [method: DllImport("msvcrt.dll")]
 [return: MarshalAs(UnmanagedType.I4)]
 public static extern int puts(

@@ -141,7 +141,7 @@ C# で複数のクラスに `Main` メソッドを書くこともできますが
 素の状態ではコンパイル エラーになります。
 (エラー内容は「複数のエントリー ポイントが定義されています」。)
 
-```csharp {error-ranges="sha256:30efedae33bf9f29c43e21e06b2bd6e453fe2bb2266f5660aeefa76d54a79e30;3:17-3:21"}
+```csharp {error-ranges="3:17-3:21"}
 class A
 {
     static void Main()

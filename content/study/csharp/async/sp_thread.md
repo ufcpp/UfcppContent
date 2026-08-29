@@ -90,7 +90,7 @@ C# でマルチスレッドプログラムを作成する場合、
 以下にスレッド作成の例を示します。
 
       
-```csharp {title="スレッド作成の例" highlight-ranges="sha256:1dd4e323f8e0ef374134fdd83049c8b8993736e6a72eb85a208ef889cd9423ca;11:6-11:8,39:10-39:12,43:10-43:12,51:10-51:12"}
+```csharp {title="スレッド作成の例" highlight-ranges="11:6-11:8,39:10-39:12,43:10-43:12,51:10-51:12"}
 using System;
 using System.Collections;
 using System.Threading;
@@ -429,7 +429,7 @@ q
 <span class="expand-button" title="展開/折畳">（古いコード（Thread クラスを直接利用））</span>
 <div class="expand-panel" markdown="1" title="（古いコード（Thread クラスを直接利用））">
       
-```csharp {title="複数のスレッドが同時に同じデータにアクセス" highlight-ranges="sha256:3e6e2730234597462c2892c8b7cdf72762aa6468ed3c1df8a3acd69488ebe37d;7:22-7:42,32:8-32:51"}
+```csharp {title="複数のスレッドが同時に同じデータにアクセス" highlight-ranges="7:22-7:42,32:8-32:51"}
 using System;
 using System.Collections;
 using System.Threading;
@@ -610,7 +610,7 @@ Monitor クラスでは、参照型の任意の変数を同期オブジェクト
 <span class="expand-button" title="展開/折畳">（古いコード）</span>
 <div class="expand-panel" markdown="1" title="（古いコード）">
     
-```csharp {title="Monitor を用いた排他制御の例" highlight-ranges="sha256:63a39cfaeb2bba8fb05ed2c6e16eed113ea77666c7b3ddce43954a46d94a328b;1:3-1:52,7:7-7:33,18:9-18:34"}
+```csharp {title="Monitor を用いた排他制御の例" highlight-ranges="1:3-1:52,7:7-7:33,18:9-18:34"}
   static readonly object syncObject = new object(); // 同期オブジェクト
 
   static void CountUp()

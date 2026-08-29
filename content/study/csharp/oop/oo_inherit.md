@@ -217,7 +217,7 @@ Derived コンストラクター
 以下のように「基底クラスの未初期化のフィールドを読めてしまう」ということが起きます。
 (クラスが分かれているので、派生がない場合よりも深刻です。)
 
-```csharp {title="初期化子内ではインスタンス メソッドを呼んではいけない" error-ranges="sha256:0242fc8e3b028f6e49a711ac6bf3776df28d137c245a1e03b6521966f201a38f;11:31-11:32" error-diagnostics="sha256:0242fc8e3b028f6e49a711ac6bf3776df28d137c245a1e03b6521966f201a38f;CS0236@11:31-11:32" warning-ranges="sha256:0242fc8e3b028f6e49a711ac6bf3776df28d137c245a1e03b6521966f201a38f;3:16-3:25" warning-diagnostics="sha256:0242fc8e3b028f6e49a711ac6bf3776df28d137c245a1e03b6521966f201a38f;CS0649@3:16-3:25"}
+```csharp {title="初期化子内ではインスタンス メソッドを呼んではいけない" error-ranges="11:31-11:32" error-diagnostics="CS0236@11:31-11:32" warning-ranges="3:16-3:25" warning-diagnostics="CS0649@3:16-3:25"}
 class Base
 {
     public int BaseField;
@@ -402,7 +402,7 @@ Base.Test()
 そこで、C#では基底クラスのメンバーの隠蔽を行う場合、メソッドにnew修飾子を付ける必要があります。
 (new修飾子を付けていない場合、コンパイラが警告を出します。)
 
-```csharp {title="new修飾子" highlight-ranges="sha256:31fac5b419cc0f35b8fa8ad803d0c041aae36df619d842d0a7c642b9cf22f6c1;4:10-4:13"}
+```csharp {title="new修飾子" highlight-ranges="4:10-4:13"}
 class Derived : Base
 {
   //基底クラスのメンバーを隠蔽するには new を付ける必要がある。
@@ -470,7 +470,7 @@ C# 8.0 のプレビュー版で一時的に使える時期はありましたが�
 これに対して、将来的には、`base(T)` という形で、特定のクラスを明示的に指定できるようになりました。
 (主に[インターフェイスのデフォルト実装](oo_interface.md#dim)のための機能でしたが、クラスに対しても認められています。)
 
-```csharp {title="base(T) アクセスの例" highlight-ranges="sha256:46c6554cfc6f6bd484524000f3849b2a6d7ee2674ff3e1623263ead0cf70b62f;20:25-20:32,23:25-23:32"}
+```csharp {title="base(T) アクセスの例" highlight-ranges="20:25-20:32,23:25-23:32"}
 using System;
  
 class A

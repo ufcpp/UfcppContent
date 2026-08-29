@@ -122,7 +122,7 @@ global using System;
 
 で、これと同じプロジェクト内で通常の `using` を書く場合、以下のような挙動をします。
 
-```csharp {title="global using System; 影響下のコード" error-ranges="sha256:8a66cef71416eeb306b97c19d36193e45cf3a20307edbccf8196df549035ea6b;3:11-3:19" warning-ranges="sha256:8a66cef71416eeb306b97c19d36193e45cf3a20307edbccf8196df549035ea6b;1:7-1:13"}
+```csharp {title="global using System; 影響下のコード" error-ranges="3:11-3:19" warning-ranges="1:7-1:13"}
 using System; // すでに global using System; があるので「重複」警告あり
 
 using X = DateTime; // この行はコンパイル エラー。ここでは using System; ありきにはならない。

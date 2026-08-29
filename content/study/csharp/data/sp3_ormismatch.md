@@ -773,7 +773,7 @@ Entity Framework を使うと、ただ単に他のエンティティを参照す
 データベース テーブルの関係性を表現できます。
 例えば、先ほどの Author / Series クラスに以下のような修正を加えます。
 
-```csharp {title="テーブル間の関係性を、エンティティ クラスの階層構造で表現" highlight-ranges="sha256:fab63ba58ccd87920b0e6fd0a2a2c0454ccbd3acf27b48e2ca05989f10b5c1b9;14:9-14:58,25:9-25:43"}
+```csharp {title="テーブル間の関係性を、エンティティ クラスの階層構造で表現" highlight-ranges="14:9-14:58,25:9-25:43"}
     public class Author
     {
         public int Id { get; set; }

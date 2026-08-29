@@ -392,7 +392,7 @@ namespace B
 ここで、`using A` と `using B` を同時に書いてしまうと「どちらかわからない」というコンパイル エラーを起こします。
 (こういうエラーを「名前があいまい」(ambiguous)と言います。)
 
-```csharp {title="同列の using でエラーを起こす例" error-ranges="sha256:5093177aaf2a030787cee52ef259c7af477412c161ff76e39c9be00ee1f9a423;7:5-7:6"}
+```csharp {title="同列の using でエラーを起こす例" error-ranges="7:5-7:6"}
 // A と B の using を同列に並べる。
 using A;
 using B;
@@ -523,7 +523,7 @@ class A
 静的メソッドに対する 「[using static](../oop/oo_static.md#key-using-static)」 です。
 以下のように、静的メソッドの呼び出しに対して、クラス名を省略できるようになる機能です(C# 6からの機能)。
 
-```csharp {highlight-ranges="sha256:efde1688e499f31cfeec38c76f8f917d19713f00edb557466285e5d3deab7209;2:1-2:25,8:22-8:29,9:27-9:29"}
+```csharp {highlight-ranges="2:1-2:25,8:22-8:29,9:27-9:29"}
 using System;
 using static System.Math;
 
@@ -705,7 +705,7 @@ C# 12 では、なぜか最上位レベルの時にだけかかっていた謎�
 例えば、以下のように、ちょっと長めの名前空間名 Ufcpp.Test.Utilities に、
 短いエイリアス Util を付けたとします。
 
-```csharp {title="エイリアス（これ自体は問題がないけども・・・）" highlight-ranges="sha256:7e7617870bd1efd3ce9c887db4fa3372b95f7b6c6f6a59d3c2fe3fccc80af2ea;8:3-8:37,14:7-14:17"}
+```csharp {title="エイリアス（これ自体は問題がないけども・・・）" highlight-ranges="8:3-8:37,14:7-14:17"}
 namespace Ufcpp.Test.Utilities
 {
   class Image {}
@@ -766,7 +766,7 @@ Util と言う名前は既に存在しますと怒られるはず。）
 このため、<code>::</code> の付いている部分の直前はエイリアスであることが確定し、
 エイリアスと同名のクラスが追加されても混乱が起こりません。
 
-```csharp {title="エイリアス修飾子" highlight-ranges="sha256:e51fd96e9dd1792cd0bedddff8290e4b93e9b362b8b049024759382666d0ba35;14:7-14:18"}
+```csharp {title="エイリアス修飾子" highlight-ranges="14:7-14:18"}
 namespace Ufcpp.Test.Utilities
 {
   class Image {}

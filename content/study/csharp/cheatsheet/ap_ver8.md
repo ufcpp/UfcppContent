@@ -75,7 +75,7 @@ C# 8.0 の全ての機能を一切の小細工なしで満足に使えるのは 
 null 許容参照型と呼びます。
 ただ、これまでと型 `T` の意味を変えてしまうので、opt-in (オプションを明示しないと有効にならない)方式になっています。
 
-```csharp {title="null 許容参照型の例" warning-ranges="sha256:83690f01cc8e5c9f4a518fb2763bbdd59afde31c96a46e710c552d87cdc7ee36;16:39-16:41"}
+```csharp {title="null 許容参照型の例" warning-ranges="16:39-16:41"}
 // 有効化のためのディレクティブ
 #nullable enable
  
@@ -108,7 +108,7 @@ C# 8.0 で追加されるパターンは再帰的なマッチングが可能で�
 
 例えば以下のような感じです(new! と書いている行が再帰パターン)。
 
-```csharp {title="再帰パターンの例" highlight-ranges="sha256:f63711e8e1f05016695070baf6b2d36d11e7029ee23390d3e33b412cce6996eb;16:9-16:21,17:9-17:33"}
+```csharp {title="再帰パターンの例" highlight-ranges="16:9-16:21,17:9-17:33"}
 public class Point
 {
     public int X { get; set; }
@@ -134,7 +134,7 @@ class Program
 単に短く書けるというだけではなく、以下のように、
 コンパイラーによるチェックが掛かりやすく、人的ミスの回避にも貢献します。
 
-```csharp {title="再帰パターンはコンパイラーによるチェックがちょっと賢い" error-ranges="sha256:65448b27aa326358105e7bf4e69d5c8a5daf04829e2f77887b8740dd0db0548f;17:14-17:34"}
+```csharp {title="再帰パターンはコンパイラーによるチェックがちょっと賢い" error-ranges="17:14-17:34"}
 void M(object obj)
 {
     switch (obj)
@@ -287,7 +287,7 @@ C# 8.0 では非同期メソッドが大幅に拡張されました。
 
 例えば以下のように書けます。
 
-```csharp {title="非同期イテレーターと非同期foreachの例" highlight-ranges="sha256:901065610c10ba0803d0764f585d8969a7de31129165f5638cf0a5c114c9db78;14:9-14:21,23:9-23:22"}
+```csharp {title="非同期イテレーターと非同期foreachの例" highlight-ranges="14:9-14:21,23:9-23:22"}
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -419,7 +419,7 @@ C# 8.0 から、外部の変数を捕獲しないことを明示するため、
 ローカル関数に `static` 修飾を付けれるようになりました。
 この機能を<strong id="key-static-local-function" class="keyword">静的ローカル関数</strong>(static local function)と呼びます。
 
-```csharp {title="静的ローカル関数の例" error-ranges="sha256:408ca1f53cba8bf0943640a50b14a3766d01feb7e030c7fccd19b2782ff34e12;8:28-8:29"}
+```csharp {title="静的ローカル関数の例" error-ranges="8:28-8:29"}
 void M(int a)
 {
     // 外部の変数(引数)を捕獲(クロージャ化)。

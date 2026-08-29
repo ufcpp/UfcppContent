@@ -68,7 +68,7 @@ var var = new var();
 ところで、C# 9.0 で導入された[レコード型](../../../2020/6/record0609/index.md)についてはちょっと条件が違ったりします。
 以下のコードはコンパイル エラー。
 
-```csharp {title="record は型名よりもキーワードの優先度が高い" error-ranges="sha256:990695e5ca044a3fbfd74c03865cbe886378c75cb72685ada437e9faa707cfc5;1:15-1:30,2:8-2:14" warning-ranges="sha256:990695e5ca044a3fbfd74c03865cbe886378c75cb72685ada437e9faa707cfc5;1:8-1:14"}
+```csharp {title="record は型名よりもキーワードの優先度が高い" error-ranges="1:15-1:30,2:8-2:14" warning-ranges="1:8-1:14"}
 record record = new record();
 record record { }
 ```
@@ -94,7 +94,7 @@ class record { }
 これを C# 9.0 でコンパイルすると以下のようになります。
 色付けが変わって、コンパイル エラーが出ます。
 
-```csharp {title="さっきと同じコード。C# 9.0 では無効" error-ranges="sha256:026ad1ff87298374c0d76e26f40bb7f1e86ef67a8c952625c9e81a3c0a4af337;3:19-3:20,3:25-3:31" warning-ranges="sha256:026ad1ff87298374c0d76e26f40bb7f1e86ef67a8c952625c9e81a3c0a4af337;3:12-3:18,6:7-6:13"}
+```csharp {title="さっきと同じコード。C# 9.0 では無効" error-ranges="3:19-3:20,3:25-3:31" warning-ranges="3:12-3:18,6:7-6:13"}
 class A
 {
     record record = new record();

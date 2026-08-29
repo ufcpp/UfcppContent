@@ -306,7 +306,7 @@ discriminator にしたいプロパティの Column 属性に <code>IsDiscrimina
 例えば、図2のようにしたい場合には、以下のようなコードを書きます。
 
         
-```csharp {title="InheritanceMapping の例1" highlight-ranges="sha256:e93baa0a3ecfaeaa889ebb33a685b12dda14f19b4920c5fe1217dade2c4d5d57;22:4-22:22,23:4-23:22,24:4-24:22,30:13-30:28"}
+```csharp {title="InheritanceMapping の例1" highlight-ranges="22:4-22:22,23:4-23:22,24:4-24:22,30:13-30:28"}
 using System;
 using System.Data.Linq;
 using System.Data.Linq.Mapping;
@@ -374,7 +374,7 @@ namespace LinqToSqlSample
 あるいは、図3のようにしたい場合には、以下のようなコードを書きます。
 
         
-```csharp {title="InheritanceMapping の例2" highlight-ranges="sha256:58536271b8eebb834dea5c9651b63d263f4e12ffa6d087ec4c5f3403dec98cf3;22:4-22:22,23:4-23:22,24:4-24:22,30:13-30:28"}
+```csharp {title="InheritanceMapping の例2" highlight-ranges="22:4-22:22,23:4-23:22,24:4-24:22,30:13-30:28"}
 using System;
 using System.Data.Linq;
 using System.Data.Linq.Mapping;

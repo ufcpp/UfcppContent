@@ -39,7 +39,7 @@ Proposal: "data" classes for C# #1667](https://github.com/dotnet/csharplang/pull
 
 印象としては、[匿名型](../../../../study/csharp/oop/oo_class.md#anonymous)の延長で、ちゃんとしたクラス・構造体に昇格させたいとい時に使うものな感じです。
 
-```csharp {title="data クラス" highlight-ranges="sha256:964c7acb1a6d854722291dcd681a537ce4d72743b7c71dd13e5e4305a0fd44af;4:1-4:5"}
+```csharp {title="data クラス" highlight-ranges="4:1-4:5"}
 using System;
 
 // class に data 修飾子を付ける

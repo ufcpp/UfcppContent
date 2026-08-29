@@ -99,7 +99,7 @@ Grid は、子要素をテーブル状にレイアウトするためのもので
 Grid.Row と Grid.Column を使って指定します。
 
 
-```xml {title="Grid と添付プロパティ" highlight-ranges="sha256:d19b09078a7b1a0f721ffab8c551f101e10dc3c1b9d32ba86cf1fa2a33950396;15:13-15:41,17:13-17:41,19:13-19:41,21:13-21:41"}
+```xml {title="Grid と添付プロパティ" highlight-ranges="15:13-15:41,17:13-17:41,19:13-19:41,21:13-21:41"}
 <Page
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -159,7 +159,7 @@ Resources プロパティ中で定義します。
 以下のようにします。
 
 
-```xml {title="リソースの例" highlight-ranges="sha256:470a86c57bc712fce7fd959bb703ea20de2d7d68e29b3e3914d9ca8b18ff6510;4:3-4:19,10:3-10:20"}
+```xml {title="リソースの例" highlight-ranges="4:3-4:19,10:3-10:20"}
 <Page
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -421,7 +421,7 @@ Style 中には、Setter というものを並べて、
 適用したい要素には、Style 属性を付けます。
 
 
-```xml {title="特定の TextBlock にスタイルを適用" highlight-ranges="sha256:9861b61236b7a6160449f97c2878ce6c6d3271648de3ac0d76438169e39f4199;6:35-6:45,14:16-14:43"}
+```xml {title="特定の TextBlock にスタイルを適用" highlight-ranges="6:35-6:45,14:16-14:43"}
 <Page
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -481,7 +481,7 @@ Style 要素に対して BasedOn 属性を指定します。
 BasedOn 属性には、x:Key 名か TargetType で指定した型を参照するようにします。
 
 
-```xml {highlight-ranges="sha256:1315de650c467e0eb1e8ef82065dd16631b90ac74950eefa4e8e59f2b56e7900;10:12-10:57,14:12-14:41"}
+```xml {highlight-ranges="10:12-10:57,14:12-14:41"}
 <Page
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

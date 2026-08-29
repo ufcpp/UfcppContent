@@ -99,7 +99,7 @@ class A
 
 1． PropertyChanged
 
-```csharp {highlight-ranges="sha256:851826c9564b993aabafe1e424d7009b13c15b3c72266e8b56066be3ab3f0546;3:27-3:32,3:57-3:62"}
+```csharp {highlight-ranges="3:27-3:32,3:57-3:62"}
 class A : INotifyPropertyChanged
 {
     public int X { get => field; set => SetProperty(ref field, value); }

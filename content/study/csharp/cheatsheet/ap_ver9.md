@@ -55,7 +55,7 @@ record Person(string Name, DateTime birthday);
 
 以下のように `init` という新しいアクセサーを使って、「オブジェクト初期化子までは書き換え可能で、それ以降は書き換えできないプロパティ」を作れるようになりました。
 
-```csharp {title="オブジェクト初期化子でだけ書き換え可能" highlight-ranges="sha256:16786cdd6f117b8e9bba8406daabae0a7c4ee1ad66ea4ff0406968d188743910;6:25-6:29,7:25-7:29" error-text="p.X"}
+```csharp {title="オブジェクト初期化子でだけ書き換え可能" highlight-ranges="6:25-6:29,7:25-7:29" error-text="p.X"}
 var p = new Point { X = 1, Y = 2 };
 p.X = 3; // ダメ。
  
@@ -322,7 +322,7 @@ static void Subscribe(INotifyPropertyChanged source)
 匿名関数に対しても `static` 修飾子を付けれるようになりました。
 「外部の変数を捕獲しない」という意味になります。
 
-```csharp {title="静的匿名関数" highlight-ranges="sha256:b04aded3c3417ac1f26cf6166f2498c20c12d1b4f71170587adfa7ff9b32bd35;6:21-6:27,9:21-9:27" error-ranges="sha256:b04aded3c3417ac1f26cf6166f2498c20c12d1b4f71170587adfa7ff9b32bd35;9:33-9:34"}
+```csharp {title="静的匿名関数" highlight-ranges="6:21-6:27,9:21-9:27" error-ranges="9:33-9:34"}
 using System;
  
 int a = 0;

@@ -94,7 +94,7 @@ dotnet_diagnostic.CA1310.severity = error
 
 例えば以下のようなメソッドを警告にできます。
 
-```csharp {error-ranges="sha256:b38aaaa15019e4165f010836e93dbe57a31251c90e78ab5901fe3c207fe382e7;3:40-3:55,4:1-4:24,5:1-5:16,6:1-6:24" error-diagnostics="sha256:b38aaaa15019e4165f010836e93dbe57a31251c90e78ab5901fe3c207fe382e7;CA1304@3:40-3:55,CA1305@4:1-4:24,CA1307@5:1-5:16,CA1310@6:1-6:24"}
+```csharp {error-ranges="3:40-3:55,4:1-4:24,5:1-5:16,6:1-6:24" error-diagnostics="CA1304@3:40-3:55,CA1305@4:1-4:24,CA1307@5:1-5:16,CA1310@6:1-6:24"}
 using System.Resources;
 
 static string? M(ResourceManager m) => m.GetString(""); // CA1304

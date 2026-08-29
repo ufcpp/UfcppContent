@@ -1,14 +1,11 @@
 using System.Buffers;
 using System.Globalization;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace Ufcpp.SiteGenerator.Rendering;
 
 internal static class AnnotationRangeMetadata
 {
-    private const string Prefix = "sha256:";
-
     public static IReadOnlyList<(int Start, int End)> Parse(
         string code,
         string value,
@@ -18,31 +15,10 @@ internal static class AnnotationRangeMetadata
         ArgumentNullException.ThrowIfNull(value);
         ArgumentException.ThrowIfNullOrWhiteSpace(attributeName);
 
-        if (!value.StartsWith(Prefix, StringComparison.Ordinal)
-            || value.Length <= Prefix.Length + 65)
-        {
-            throw InvalidSyntax(attributeName);
-        }
-
-        var hash = value.AsSpan(Prefix.Length, 64);
-        if (!hash.ToArray().All(static character =>
-                character is >= '0' and <= '9' or >= 'a' and <= 'f')
-            || value[Prefix.Length + 64] != ';')
-        {
-            throw InvalidSyntax(attributeName);
-        }
-
-        if (!hash.SequenceEqual(ComputeHash(code)))
-        {
-            throw new InvalidDataException(
-                $"The {attributeName} fingerprint does not match the code block.");
-        }
-
         var lines = GetSourceLines(code, attributeName);
-        var serializedRanges = value[(Prefix.Length + 65)..];
         var spans = new List<(int Start, int End)>();
         var canonical = new List<string>();
-        foreach (var serializedRange in serializedRanges.Split(
+        foreach (var serializedRange in value.Split(
                      ',',
                      StringSplitOptions.None))
         {
@@ -91,7 +67,7 @@ internal static class AnnotationRangeMetadata
 
         if (spans.Count == 0
             || !string.Equals(
-                serializedRanges,
+                value,
                 string.Join(',', canonical),
                 StringComparison.Ordinal))
         {
@@ -99,16 +75,6 @@ internal static class AnnotationRangeMetadata
         }
 
         return spans;
-    }
-
-    public static string ComputeHash(string code)
-    {
-        var normalized = code
-            .Replace("\r\n", "\n", StringComparison.Ordinal)
-            .Replace('\r', '\n');
-        return Convert.ToHexString(
-                SHA256.HashData(Encoding.UTF8.GetBytes(normalized)))
-            .ToLowerInvariant();
     }
 
     private static SourcePosition ParsePosition(
@@ -223,8 +189,8 @@ internal static class AnnotationRangeMetadata
 
     private static InvalidDataException InvalidSyntax(string attributeName) =>
         new(
-            $"The {attributeName} attribute must contain a lowercase SHA-256 "
-            + "fingerprint and canonical 1-based, end-exclusive line:column ranges.");
+            $"The {attributeName} attribute must contain canonical 1-based, "
+            + "end-exclusive line:column ranges.");
 
     private sealed record SourceLine(IReadOnlyList<int> ScalarBoundaries);
 

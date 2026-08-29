@@ -148,7 +148,7 @@ struct DefiniteAssignement
 そうすると、以下のような問題のあるコードが書けてしまいます。
 (そうならないように、赤線の部分をコンパイル エラーにしている。)
 
-```csharp {title="managedな型のポインターが作れた場合の問題" error-ranges="sha256:cb4a685be7ce3c7cf96374842e8ce5625a1ead650d3ffae76c21d7e95442885b;16:38-16:53,17:23-17:31"}
+```csharp {title="managedな型のポインターが作れた場合の問題" error-ranges="16:38-16:53,17:23-17:31"}
 using System.Runtime.InteropServices;
 
 // 参照型を含む構造体
@@ -211,7 +211,7 @@ PCLプロジェクトから参照しているいくつかの参照アセンブ�
 
 1つ目。確実な初期化に漏れるケース。
 
-```csharp {title="本来は未初期化エラーになるはず" error-ranges="sha256:dc54482cfa6aa4a461a7dd013dc870a2363cf0ac5876c50f0b0a451955468801;8:12-8:30"}
+```csharp {title="本来は未初期化エラーになるはず" error-ranges="8:12-8:30"}
 using System;
 
 struct DefiniteAssignment
@@ -225,7 +225,7 @@ struct DefiniteAssignment
 
 2つ目。ポインター化できるかどうかの判定をミスるケース。
 
-```csharp {title="本来はポインター化できない型をポインター化" error-ranges="sha256:63795f5824542e565e452d29494a8fc3a629cd1eb5e03b08fadc969c491112f9;10:38-10:57,13:27-13:39"}
+```csharp {title="本来はポインター化できない型をポインター化" error-ranges="10:38-10:57,13:27-13:39"}
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 

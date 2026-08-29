@@ -275,7 +275,7 @@ namespace BindingDependencyProperty
 で、XAML 側では、以下のようにして Binding に Converter を設定します。
 
 
-```xml {title="Converter の設定" highlight-ranges="sha256:5b4e874344729671a57ecef15e613f05922bde2587a0aa1d397d4f52ec74c4d3;8:5-8:52,16:9-16:49,22:13-22:53"}
+```xml {title="Converter の設定" highlight-ranges="8:5-8:52,16:9-16:49,22:13-22:53"}
 <Window x:Class="BindingDependencyProperty.Window1"
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

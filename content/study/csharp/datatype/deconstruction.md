@@ -320,7 +320,7 @@ var (x, y) = tuple;
 分解構文では、引数の数が同じ`Deconstruct`メソッドを呼び分けることができません。
 例えば以下の例のように、引数の型が`double, double`のものと、`double, Radian`のものという2つの`Deconstruct`メソッドを定義してしまうと、2変数の分解ができなくなります。
 
-```csharp {title="Deconstructメソッドの呼び分けができない(引数の数が同じ)例" error-ranges="sha256:f27c8601d049de2b3117159e106361471d2b8564443fbcbd9f3cdd3ab047dc3d;35:32-35:33,36:32-36:33"}
+```csharp {title="Deconstructメソッドの呼び分けができない(引数の数が同じ)例" error-ranges="35:32-35:33,36:32-36:33"}
 using static System.Math;
 
 struct Radian

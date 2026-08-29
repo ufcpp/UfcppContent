@@ -139,7 +139,7 @@ static T LogicalRightShift<T>(T s, int bits)
 そこで、C# 11 では普通に「符号なし右シフト演算子」の `>>>` (`>` 3つ)を導入することにしました。
 (Java にあるやつです。Java の場合は `uint` などの符号なし整数型がなくて、`>>` か `>>>` で右シフトを切り替えます。)
 
-```csharp {title="C# にも符号なし右シフト演算子を導入" highlight-ranges="sha256:6292cfbfd01ca537fe9b8029d5dd6dc3ffa82531dca0d931cdbb2d2886d575f4;16:10-16:13"}
+```csharp {title="C# にも符号なし右シフト演算子を導入" highlight-ranges="16:10-16:13"}
 using System.Numerics;
 
 sbyte s = -1;
@@ -160,7 +160,7 @@ static T LogicalRightShift<T>(T s, int bits)
 
 ちなみに、演算子オーバーロードもできます。
 
-```csharp {title="&gt;&gt;&gt; 演算子オーバーロードの例" highlight-ranges="sha256:f44dd9205a1bc2be49384b18ddef4048898d3be6a6ef24c20a418a7fc23de8ce;20:36-20:39"}
+```csharp {title="&gt;&gt;&gt; 演算子オーバーロードの例" highlight-ranges="20:36-20:39"}
 for (int i = 0; i < 4; i++)
 {
     var x = new Int2Bit(i);
@@ -283,7 +283,7 @@ readonly struct Int2Bit
 
 ちなみに、通常演算子なしで `checked` 演算子だけを定義することはできません。
 
-```csharp {title="checked のみの定義はコンパイル エラーになる" error-ranges="sha256:38d57406e061e5dbddcf02a2756e98006510377a47390e234edae4afbf0e2110;12:38-12:39"}
+```csharp {title="checked のみの定義はコンパイル エラーになる" error-ranges="12:38-12:39"}
 struct A
 {
     // OK: 通常演算子のみ
@@ -304,7 +304,7 @@ struct A
 [キャスト](oo_operator.md#cast)も `checked` にできます。
 ただし、`explicit` (明示的型変換)のみ OK で、`implicit` (暗黙的型変換)には `checked` は使えません。
 
-```csharp {error-ranges="sha256:00db65787b3c352de290171dc7a5fee2ee3146f2709a276a73f1169e0829a43f;9:37-9:46"}
+```csharp {error-ranges="9:37-9:46"}
 struct A
 {
     // OK: explicit キャスト
@@ -360,7 +360,7 @@ var x = 1 << 1.1;
 右オペランドが `uint` や `long` の場合ですら制限されていて、
 ちょっと厳しい感じがします。
 
-```csharp {title="U や L がついてもダメ" error-ranges="sha256:d901706f0eda345c716645a8bb1d00e929eff2a434f1bfd1ba6b7f9517388712;1:9-1:16,2:9-2:16"}
+```csharp {title="U や L がついてもダメ" error-ranges="1:9-1:16,2:9-2:16"}
 var x = 1 << 1U;
 var y = 1 << 1L;
 ```

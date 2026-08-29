@@ -165,7 +165,7 @@ ControlTemplate は、リソース中に 書くこともできます。
 TemplateBinding マークアップ拡張を用います。
 
 
-```xml {title="TemplateBinding マークアップ拡張" highlight-ranges="sha256:f45c2da9decdd65a5422993514f9260799b93e19d8987c0ef8c7742b11d15784;9:18-9:53,19:22-19:42,21:22-21:42,23:22-23:42"}
+```xml {title="TemplateBinding マークアップ拡張" highlight-ranges="9:18-9:53,19:22-19:42,21:22-21:42,23:22-23:42"}
 <WrapPanel
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

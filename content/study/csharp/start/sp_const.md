@@ -39,7 +39,7 @@ aliases:
 
 例えば、以下のようなコードを見てください。
 
-```csharp {title="リテラルをちりばめたコード" highlight-ranges="sha256:66585cf0ccfb14dedf6796d506c873fc904267fbb4d16eba00e4ce81d4baee10;1:23-1:24,3:16-3:17,16:21-16:22,17:24-17:25"}
+```csharp {title="リテラルをちりばめたコード" highlight-ranges="1:23-1:24,3:16-3:17,16:21-16:22,17:24-17:25"}
 int[] array = new int[5];
 
 for(int i=0; i<5; ++i)

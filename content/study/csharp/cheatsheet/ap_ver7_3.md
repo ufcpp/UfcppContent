@@ -64,7 +64,7 @@ void M((int a, (int x, int y) b) t)
 参照引数、参照ローカル変数に対して、
 参照先の値の書き換えではなく、「どこを参照しているか」自体を書き換えることができるようになりました。
 
-```csharp {title="ref 再代入" highlight-ranges="sha256:f57bc9b72f6b24b073591f83a6fc6403065757b2c25232d3e88abd649d9da71b;12:5-12:8"}
+```csharp {title="ref 再代入" highlight-ranges="12:5-12:8"}
 int x = 1;
 int y = 2;
 
@@ -102,7 +102,7 @@ C# 7.3で、これまではできなかった以下の個所でも変数宣言�
 - [クエリ式](../start/st_scope.md#query-expression)
 - [初期化子](../start/st_scope.md#initializer)
 
-```csharp {title="クエリ式中での変数宣言" highlight-ranges="sha256:b3b3f7fa45d7605f35ce8d3f00f41379fcc39c46e405e160751b6b3022291705;3:23-3:24,4:35-4:36"}
+```csharp {title="クエリ式中での変数宣言" highlight-ranges="3:23-3:24,4:35-4:36"}
 var q =
     from s in new[] { "a", "abc", "112", "132", "451", null }
     where s is string x && x.Length > 1
@@ -110,7 +110,7 @@ var q =
     select s;
 ```
 
-```csharp {title="初期化子内での変数宣言" highlight-ranges="sha256:3558b7226640c3b0288a2ef7ad709b78f16418f3c37bbeaaa41718421023ea15;5:61-5:62,11:42-11:43,18:52-18:53,19:68-19:69"}
+```csharp {title="初期化子内での変数宣言" highlight-ranges="5:61-5:62,11:42-11:43,18:52-18:53,19:68-19:69"}
 using System;
 
 class Derived : base

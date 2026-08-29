@@ -13,31 +13,10 @@ internal static class DiagnosticIdentityMetadata
         string value,
         string attributeName)
     {
-        const string Prefix = "sha256:";
-        if (!value.StartsWith(Prefix, StringComparison.Ordinal)
-            || value.Length <= Prefix.Length + 65
-            || value[Prefix.Length + 64] != ';')
-        {
-            throw Invalid(attributeName);
-        }
-
-        var hash = value.Substring(Prefix.Length, 64);
-        if (hash.Any(static character =>
-                character is not (>= '0' and <= '9' or >= 'a' and <= 'f'))
-            || !string.Equals(
-                hash,
-                AnnotationRangeMetadata.ComputeHash(code),
-                StringComparison.Ordinal))
-        {
-            throw new InvalidDataException(
-                $"The {attributeName} fingerprint is invalid or stale.");
-        }
-
         var identities = new List<DiagnosticIdentity>();
         var open = new Stack<DiagnosticIdentity>();
         var previousStart = -1;
-        foreach (var item in value[(Prefix.Length + 65)..]
-                     .Split(',', StringSplitOptions.None))
+        foreach (var item in value.Split(',', StringSplitOptions.None))
         {
             var separator = item.IndexOf('@');
             if (separator != 6
@@ -50,7 +29,7 @@ internal static class DiagnosticIdentityMetadata
             var range = AssertSingle(
                 AnnotationRangeMetadata.Parse(
                     code,
-                    $"{Prefix}{hash};{item[(separator + 1)..]}",
+                    item[(separator + 1)..],
                     attributeName),
                 attributeName);
             if (range.Start < previousStart)
@@ -101,8 +80,8 @@ internal static class DiagnosticIdentityMetadata
 
     private static InvalidDataException Invalid(string attributeName) =>
         new(
-            $"The {attributeName} attribute must contain a lowercase SHA-256 "
-            + "fingerprint and ordered CS#### or CA#### diagnostic ranges.");
+            $"The {attributeName} attribute must contain ordered CS#### or "
+            + "CA#### diagnostic ranges.");
 
     private static InvalidDataException Noncanonical(string attributeName) =>
         new(

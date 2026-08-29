@@ -76,7 +76,7 @@ static int X(string s)
 例えば、分解の場合、複数の値のうち、1つだけを受け取りたい場合があったとします。
 そういう場面が複数並んでしまった場合、以下のようなコードになりがちです。
 
-```csharp {title="要らない値を無視するための適当な変数" highlight-ranges="sha256:9565df7b7a4bb7a9d4ebec5eb1d0fdd4b9c6198d4665d2395046b4501ee88036;9:8-9:28,10:10-10:12"}
+```csharp {title="要らない値を無視するための適当な変数" highlight-ranges="9:8-9:28,10:10-10:12"}
 static void Deconstruct()
 {
     // 商と余りを計算するメソッドがあるけども、ここでは商しか要らない
@@ -98,7 +98,7 @@ static (int quotient, int remainder) DivRem(int dividend, int divisor)
 こういう時に使うのが、値の<strong id="discard" class="keyword">破棄</strong>(discard)です。
 以下のように、`_`を書くことで値を無視できます。
 
-```csharp {title="_ で値の破棄" highlight-ranges="sha256:0c80d9d65a7cbf856249c3d4a503df7393e585c32dd61fa88c4eca7c13d63f69;3:13-3:14,7:6-7:7"}
+```csharp {title="_ で値の破棄" highlight-ranges="3:13-3:14,7:6-7:7"}
 {
     // _ を書いたところでは、値を受け取らずに無視する
     var (q, _) = DivRem(123, 11);
@@ -188,7 +188,7 @@ static void Deconstruct1()
 以下のコードはコンパイル エラーになります。
 (同名の引数が2つある状態。)
 
-```csharp {title="引数の _ は破棄の意味にならない" error-ranges="sha256:7591e643764093d54c1e117dfeacd59ef0e56121994c131af579ec60e28357cb;1:26-1:27"}
+```csharp {title="引数の _ は破棄の意味にならない" error-ranges="1:26-1:27"}
 static void M(int _, int _)
 {
 }
@@ -201,7 +201,7 @@ static void M(int _, int _)
 既存の構文で破棄を使いたいものの代表例は、ラムダ式の引数でしょう。
 C# 8.0 までは破棄の意味で`_`を使えず、「`_1`」みたいな名前が必要でした。
 
-```csharp {title="C# 8.0時点では使えない _ 破棄" error-ranges="sha256:9a4ee039d313df902a9a70b5af4ad5d5fb8db9f5dceccf91a4321ede5ba40476;4:35-4:36"}
+```csharp {title="C# 8.0時点では使えない _ 破棄" error-ranges="4:35-4:36"}
 static void Subscribe(INotifyPropertyChanged source)
 {
     // C# 8.0 以前、2個目の _ が「同じ名前被ってる」エラーになる

@@ -25,7 +25,7 @@ aliases: []
 
 C# 8.0 で[null 許容参照型](../../../../study/csharp/resource/nullablereferencetype.md)(nullable reference type、通称 NRT)が入って、以下のように、null 参照例外が出そうな箇所にはコンパイル時に警告を出してくれるようになりました。
 
-```csharp {title="C# 8.0 の NRT" warning-ranges="sha256:e3984a0b5135427427982b763c4668c86ec79b6bf61b562b34ea2b836e144653;4:12-4:16,7:19-7:20,13:19-13:20"}
+```csharp {title="C# 8.0 の NRT" warning-ranges="4:12-4:16,7:19-7:20,13:19-13:20"}
 #nullable enable
 
 // 警告: ? が付いてない変数に null を渡してる。
@@ -133,7 +133,7 @@ Console.WriteLine(a6.IsDefault); // false
 
 この仮の `~` を使って話を進めると、とりあえず書きたいコードは以下のようなものになります。
 
-```csharp {title="defaultable value type の例 (~ 案)" highlight-text="~" warning-ranges="sha256:c364fcfe5748da99f0aa6b0d647e5d919a51fdf4d35fb2b0ae699778f3dd930a;3:4-3:11,16:23-16:24"}
+```csharp {title="defaultable value type の例 (~ 案)" highlight-text="~" warning-ranges="3:4-3:11,16:23-16:24"}
 using System.Collections.Immutable;
 
 m1(default); // 警告
@@ -170,7 +170,7 @@ void m2(ImmutableArray<int>~ a)
 
 という判定を自動的にする予定です。
 
-```csharp {title="非 null 参照型フィールドで自動判定" warning-ranges="sha256:4193c3a87f09bf6c5ad1611012ccffc1442bd30201d63fc7423997387ef032fa;4:19-4:20"}
+```csharp {title="非 null 参照型フィールドで自動判定" warning-ranges="4:19-4:20"}
 A a = default;
 
 // 警告: default のまま使った。
@@ -197,7 +197,7 @@ record struct A(string S);
 それとも属性か何かでアノテーションを付けるかはまだ検討の余地がありますが、
 仮に属性を使う案でいうと以下のような感じになります。
 
-```csharp {title="属性を使って defaultable value type opt-in" warning-ranges="sha256:fb2c3cf9ab513789108e47098af11c07bbbf462c7547574ce61c6d4689591987;25:4-25:11"}
+```csharp {title="属性を使って defaultable value type opt-in" warning-ranges="25:4-25:11"}
 [MaybeDefault] // 「default 放置はダメ」を表す何らかの属性
 public struct BlobHandle
 {

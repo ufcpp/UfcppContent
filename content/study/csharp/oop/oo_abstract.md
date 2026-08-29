@@ -99,7 +99,7 @@ class Person
 そして、もう1つの方法は、<code>Person</code> クラスのインスタンスを生成出来ないようにすることです。
 例えば、<code>Person</code> クラスのコンストラクタを protected にしてしまえば、<code>Person</code> クラスのインスタンスは外部から生成できなくなります。
 
-```csharp {title="Person クラスのインスタンスを生成不能に" highlight-ranges="sha256:4d3bf539bb3def74623e5a19e5145d5f597cb55af9633b72ab0be961a131d804;7:3-7:12"}
+```csharp {title="Person クラスのインスタンスを生成不能に" highlight-ranges="7:3-7:12"}
 class Person
 {
   protected int age;
@@ -147,7 +147,7 @@ abstract class Person
 ちなみに、「[プロパティ](oo_property.md#property)」も、内部的に見るとメソッドのようなものなので、
 abstract を付けて抽象プロパティにすることができます。
 
-```csharp {title="抽象メソッドの定義" highlight-ranges="sha256:f585a65a72130778627f57f2078515994a15c1590613c008a461eb78db928a3b;7:10-7:18"}
+```csharp {title="抽象メソッドの定義" highlight-ranges="7:10-7:18"}
 abstract class Person
 {
   protected int age;

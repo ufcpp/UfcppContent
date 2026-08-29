@@ -104,7 +104,7 @@ aliases:
 
 ##### <a id="sec-generated-title-4"></a>サンプル
 
-```csharp {title="アクセシビリティのサンプル" highlight-ranges="sha256:188a5a299ba0f74191c135a8de32f20590823c3c8b4d69966781c1a50df051cd;3:3-3:9,4:3-4:12,5:3-5:10"}
+```csharp {title="アクセシビリティのサンプル" highlight-ranges="3:3-3:9,4:3-4:12,5:3-5:10"}
 class A
 {
   public    int pub; // どこからでもアクセス可能

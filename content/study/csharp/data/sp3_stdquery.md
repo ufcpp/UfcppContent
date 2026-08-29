@@ -197,7 +197,7 @@ var b =
 <code>a.Where(p =&gt; p.Y &lt; 12);</code> だけになります。
 （要するに、Select の中身が <code>.Select(x =&gt; x)</code> みたいに、素通しになる場合。）
 
-```csharp {title="末尾の Select が省略される場合" highlight-ranges="sha256:15f683cdfe258c152c0f4dc0ef55e5262d0c7771b627ba3e0867235b695d529b;2:8-2:9,4:10-4:11"}
+```csharp {title="末尾の Select が省略される場合" highlight-ranges="2:8-2:9,4:10-4:11"}
 var b =
   from p in a
   where p.Y < 12

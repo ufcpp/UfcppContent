@@ -292,7 +292,7 @@ combined and overlapping or adjacent ranges are merged.
 Legacy compiler annotations use parallel `error-lines`, `error-text`,
 `error-ranges`, `warning-lines`, `warning-text`, and `warning-ranges`
 properties. Error/warning text must occur exactly once; repeated text uses the
-fingerprinted range form instead of guessing an occurrence. Within one kind,
+positional range form instead of guessing an occurrence. Within one kind,
 overlapping or adjacent intervals are merged. Different kinds stay distinct
 even at the same boundaries.
 
@@ -300,22 +300,22 @@ Compiler/analyzer IDs use selection-level `error-diagnostics` and
 `warning-diagnostics` metadata rather than a block-level title:
 
 ````markdown
-```csharp {error-ranges="sha256:…;1:1-1:6" error-diagnostics="sha256:…;CS0219@1:1-1:2,CS0453@1:1-1:6"}
+```csharp {error-ranges="1:1-1:6" error-diagnostics="CS0219@1:1-1:2,CS0453@1:1-1:6"}
 // Code
 ```
 ````
 
-Each entry is `CS####@range` or `CA####@range`; the fingerprint and one-based
-Unicode-scalar/end-exclusive coordinates match `*-ranges`. Entry order
-preserves legacy outer-to-inner opening order. Identical/nested ranges,
-different IDs on one range, and duplicate same-ID occurrences remain separate;
-crossing same-kind ranges and non-CS/CA titles are invalid.
+Each entry is `CS####@range` or `CA####@range`; its one-based
+Unicode-scalar/end-exclusive coordinates match `*-ranges`. Entry order preserves
+legacy outer-to-inner opening order. Identical/nested ranges, different IDs on
+one range, and duplicate same-ID occurrences remain separate; crossing same-kind
+ranges and non-CS/CA titles are invalid.
 
 Legacy highlights that cannot be expressed exactly by a whole line or a unique
-literal use a fingerprinted positional fallback:
+literal use a positional fallback:
 
 ````markdown
-```text {highlight-ranges="sha256:8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4;1:1-1:3"}
+```text {highlight-ranges="1:1-1:3"}
 hi
 ```
 ````
@@ -326,56 +326,22 @@ The formal grammar shared by all positional annotation properties is:
 highlight-ranges = range-value
 error-ranges     = range-value
 warning-ranges   = range-value
-range-value      = "sha256:" 64-lowercase-hex ";" range *("," range)
+range-value      = range *("," range)
 range            = position "-" position
 position         = positive-decimal ":" positive-decimal
 ```
 
-`64-lowercase-hex` is exactly 64 lowercase hexadecimal digits.
 `positive-decimal` is greater than zero and has no sign or leading zero; the
 grammar contains no whitespace.
 
 Each range is `startLine:startColumn-endLine:endColumn`, with one-based lines
 and Unicode-scalar columns and an exclusive end. Multiple ranges are
 comma-separated. CRLF and bare CR count as one logical line break; tabs count as
-one scalar and are not expanded.
-
-The fingerprint input is exactly the string consumed by the renderer from
-`FencedCodeBlock.Lines.ToString()`: Markdig's parsed code content only, without
-the opening or closing fence, language/info string, or attributes. Entity
-spellings and all spaces, tabs, and blank content lines remain literal. The line
-break that merely terminates the last code line before the closing fence is not
-part of this value. An additional empty content line is significant, however:
-the example above produces `hi`, while an empty line between `hi` and the
-closing fence produces `hi\n`.
-
-Before hashing, every CRLF pair and lone CR in that string is replaced with one
-LF. The normalized string is encoded with UTF-8 and the resulting bytes are
-passed directly to SHA-256; no byte-order mark or other prefix is included. A
-minimal equivalent C# recipe is:
-
-```csharp
-using System;
-using System.Security.Cryptography;
-using System.Text;
-
-static string Fingerprint(string markdigCodeValue)
-{
-    var normalized = markdigCodeValue
-        .Replace("\r\n", "\n", StringComparison.Ordinal)
-        .Replace('\r', '\n');
-    var bytes = Encoding.UTF8.GetBytes(normalized);
-    return Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
-}
-
-Console.WriteLine(Fingerprint("hi"));
-// 8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4
-```
-
-Editing any part of a range-annotated block makes stale metadata fail the build
-rather than silently moving a highlight. Values must use the single canonical
-ordering and spelling: ranges are non-empty, in bounds, strictly increasing,
-disjoint, and non-adjacent.
+one scalar and are not expanded. Values must use the single canonical ordering
+and spelling: ranges are non-empty, in bounds, strictly increasing, disjoint,
+and non-adjacent. Editing a code block does not automatically adjust or reject
+an otherwise valid range, so authors must update coordinates when the intended
+selection moves.
 
 All three `*-ranges` properties share the same grammar and compose with their
 kind's line selection. Error/warning text and range properties are mutually
@@ -396,9 +362,9 @@ extensions are ignored rather than copied.
 Annotation metadata is consumed by the renderer and is never copied into
 generated HTML. Malformed attributes, incompatible text/range pairs, ambiguous
 error/warning text, invalid line syntax, non-positive or out-of-range line
-numbers, an empty literal, a literal with no match, a stale range fingerprint,
-invalid Unicode, or non-canonical range coordinates fail site generation
-explicitly. Table code uses fenced blocks inside `markdown="1"` cells and therefore
+numbers, an empty literal, a literal with no match, invalid Unicode, or
+non-canonical range coordinates fail site generation explicitly. Table code uses
+fenced blocks inside `markdown="1"` cells and therefore
 shares this metadata path. Raw annotation elements are still preserved as generic
 HTML compatibility behavior, but canonical content does not use legacy `<pre>`
 blocks. Before inserting fixed annotation elements, the renderer parses the trusted

@@ -90,7 +90,7 @@ if (s != null)
 
 これに対して、C# 7では、`is`演算子で以下のような書き方ができるようになりました。
 
-```csharp {highlight-ranges="sha256:bb0d6e435eed7cc146b92c5e1e143d28ec4842239541ad6e24267f5f8220fd96;2:19-2:20"}
+```csharp {highlight-ranges="2:19-2:20"}
 // C# 7での新しい書き方
 if (obj is string s)
 {
@@ -158,7 +158,7 @@ static void F(int? x)
 
 これが、C# 7で以下のように書けるようになります。
 
-```csharp {title="C# 7からのnull許容型のnullチェック" highlight-ranges="sha256:c9d53b30f52e4221e2f5b00d91cf0897deea20bce98f6e843bcafa066f497316;3:18-3:19"}
+```csharp {title="C# 7からのnull許容型のnullチェック" highlight-ranges="3:18-3:19"}
 static void F(int? x)
 {
     if (x is int n)
@@ -895,7 +895,7 @@ int? x = null;
 例えば、以下のように、(例え同じクラスから派生していたとしても)異なる型 `A` と `B` の「共通の型」は判定できず、
 コンパイル エラーを起こします。
 
-```csharp {title="共通の型を見つけられなくてエラーになる例" error-ranges="sha256:acfcaf1ef8f9ff5e015cfeaa225136a87138985c0bafdda14158bee6cedc1c1f;9:15-9:21"}
+```csharp {title="共通の型を見つけられなくてエラーになる例" error-ranges="9:15-9:21"}
 class Base { }
 class A : Base { }
 class B : Base { }
@@ -958,7 +958,7 @@ Base x = i switch
 
 特に役立つのは「1 と null」(`int?` になってほしい)とかでしょう。
 
-```csharp {title="1 と null の共通型を判定できないので代わりにターゲット型で解決" error-ranges="sha256:c5e8d6670de9eba7d1e74da20f29f9989cc85c57ce9645c1b458db0446681f86;4:15-4:21"}
+```csharp {title="1 と null の共通型を判定できないので代わりにターゲット型で解決" error-ranges="4:15-4:21"}
 static void M(bool b)
 {
     // これはコンパイル エラー。1 と null の共通型は C# 8.0 時点では決定できない。

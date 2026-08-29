@@ -29,7 +29,7 @@ aliases: []
 例えば以下のコードを見てください。`Program`クラスのフィールド`c`には`readonly`が付いていますが、
 `c`が普通に書き換え可能なクラスのフィールドなので、クラスの中身は自由に書き換えられます。
 
-```csharp {title="参照型のフィールドに対してreadonlyを付ける例" error-ranges="sha256:365b6fc5f7814a69e4593752c30877d96e16fc8a605194e623b81f2d2a993d39;21:9-21:10"}
+```csharp {title="参照型のフィールドに対してreadonlyを付ける例" error-ranges="21:9-21:10"}
 // 書き換え可能なクラス
 class MutableClass
 {
@@ -74,7 +74,7 @@ class Program
 
 例えば以下のように、`readonly`が付いたフィールド`c`自体に加えて、`c`のフィールドも書き換えできません。
 
-```csharp {title="値型のフィールドに対してreadonlyを付ける例" error-ranges="sha256:fcb5ba5d2d85822b11a9d036f8068a75f2868bb8ccd93d88580610c3ebeb9da3;22:9-22:10,25:9-25:12"}
+```csharp {title="値型のフィールドに対してreadonlyを付ける例" error-ranges="22:9-22:10,25:9-25:12"}
 using System;
 
 // 書き換え可能な構造体
@@ -196,7 +196,7 @@ C# 7.2で、構造体自体に`readonly`修飾を付けられるようになり�
 
 `this`が`readonly`扱いになるので、前節のような`this`書き換えの問題は起きません。
 
-```csharp {title="readonly struct の例" highlight-ranges="sha256:21da70407e540f167b51cc7429f2cbf4ef167b38c2a5c845e47127250bba82ef;4:1-4:9"}
+```csharp {title="readonly struct の例" highlight-ranges="4:1-4:9"}
 using System;
 
 // 構造体自体に readonly を付ける
@@ -346,7 +346,7 @@ C# 8.0 で、[関数メンバー](../structured/st_function.md#sec-function-memb
 
 以下のように、関数メンバーに `readonly` 修飾を付けます。
 
-```csharp {title="readonly 関数メンバーの例" highlight-ranges="sha256:7ea4e8f60840f607314fa5e8f3fa2bd6a9bd2ac3b09db53ba2482a3064d9c257;19:12-19:20"}
+```csharp {title="readonly 関数メンバーの例" highlight-ranges="19:12-19:20"}
 // 構造体自体は readonly にしない。
 // フィールドは書き換えたい
 struct NonReadOnly

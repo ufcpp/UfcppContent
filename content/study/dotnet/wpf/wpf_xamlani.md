@@ -791,7 +791,7 @@ namespace WPFApplication1
   </Canvas>
 </Window>
 ```
-```xml {title="Windows1.xaml.cs" highlight-ranges="sha256:18d5db85d9d54bea3411bb9a3862376cabf0d6c0732d526b414da47607652304;31:7-32:55"}
+```xml {title="Windows1.xaml.cs" highlight-ranges="31:7-32:55"}
 using System;
 using System.Windows;
 using System.Windows.Controls;

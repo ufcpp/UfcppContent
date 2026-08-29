@@ -118,7 +118,7 @@ x > y ? ref x : ref y
 
 引数の場合には`in`修飾子を使って以下のように書きます。
 
-```csharp {title="in 引数でコピーを避ける" highlight-ranges="sha256:4dae60902d739b1b95068ce16bd61304953faaf8ed501c2118cd915245e085ed;9:41-9:43,9:58-9:60"}
+```csharp {title="in 引数でコピーを避ける" highlight-ranges="9:41-9:43,9:58-9:60"}
 public struct Quaternion
 {
     public double W;
@@ -162,7 +162,7 @@ static ref readonly int Max(in int x, in int y)
 これまで、[演算子オーバーロード](../oop/oo_operator.md)の引数は値渡しである必要がありました。
 C# 7.2では、`in`引数も演算子の引数にできるようになりました。
 
-```csharp {title="演算子の in 引数" highlight-ranges="sha256:b73f9a2a7bd21eed3ad73392e58bb225f838b0120cd6723965321adee23fdbc6;16:38-16:40,16:52-16:54" error-ranges="sha256:b73f9a2a7bd21eed3ad73392e58bb225f838b0120cd6723965321adee23fdbc6;12:36-12:37"}
+```csharp {title="演算子の in 引数" highlight-ranges="16:38-16:40,16:52-16:54" error-ranges="12:36-12:37"}
 struct Complex
 {
     public double X;
@@ -187,7 +187,7 @@ struct Complex
 
 拡張メソッドの第1引数(`this`が付いている引数)を参照渡し([`ref`](../resource/sp_ref.md#sec-byref)もしくは[`in`](../resource/sp_ref.md#in))で渡せるようになりました。
 
-```csharp {title="参照渡しの拡張メソッドの例" highlight-ranges="sha256:dd10b8979f2495beabbf37738a5783cec18383130f84bc5d9e55215fffadf486;4:34-4:42,14:37-14:44"}
+```csharp {title="参照渡しの拡張メソッドの例" highlight-ranges="4:34-4:42,14:37-14:44"}
 public static class QuaternionExtensions
 {
     // 構造体の書き換えを拡張メソッドでやりたい場合に ref 引数が使える
@@ -219,7 +219,7 @@ public static class QuaternionExtensions
 - すべてのフィールドに`readonly`を付けることが必須
 - `this`参照も`readonly`扱いされて、構造体の書き換えが完全にできなくなる
 
-```csharp {title="readonly struct の例" highlight-ranges="sha256:8f1f7745881bc6cfa077176420f98037659ca5129c89f30d64f3731234153ae7;2:1-2:9"}
+```csharp {title="readonly struct の例" highlight-ranges="2:1-2:9"}
 // 構造体自体に readonly を付ける
 readonly struct Point
 {
@@ -290,7 +290,7 @@ ref struct RefStruct
 `ref`構造体には参照ローカル変数・参照戻りと同じ制限がかかります。
 
 
-```csharp {title="戻り値に返せるかどうか" error-ranges="sha256:704a81f1b4ea26fe4ae486554ce7621d50bc979f595ecf40b80a06b822035436;8:12-8:13"}
+```csharp {title="戻り値に返せるかどうか" error-ranges="8:12-8:13"}
 // 引数で受け取ったものは戻り値で返せる
 private static Span<int> Success(Span<int> x) => x;
 
@@ -305,7 +305,7 @@ private static Span<int> Error()
 その他、`ref`構造体には「スタック上になければならない(stack-only)」という制限があり、
 その結果、例えば以下のような制限がかかります(一部抜粋)。
 
-```csharp {title="ref構造体は stack-only" error-ranges="sha256:468cc2bc4e600899f98b49ce5b92247d500878df808fbb50efa0330bf4159b9a;5:24-5:35,10:39-10:40,13:9-13:18,21:30-21:35,22:20-22:25,25:14-25:23"}
+```csharp {title="ref構造体は stack-only" error-ranges="5:24-5:35,10:39-10:40,13:9-13:18,21:30-21:35,22:20-22:25,25:14-25:23"}
 using System;
 using System.Threading.Tasks;
 

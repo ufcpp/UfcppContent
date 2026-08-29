@@ -67,7 +67,7 @@ C# ではライブラリを利用する際、プログラムのソースには�
 <code>Math</code> クラスは <code>System</code> という名前空間に属しています。
 そのため、<code>Math</code> クラスを利用するには、以下のように完全修飾名で書くか、
 
-```csharp {title="完全修飾名でクラスを利用" highlight-ranges="sha256:d5375619e108f3b5039c9abc643ef2ac2d1b653c5d3b9d98b907fd94aeec1040;6:7-6:21,6:51-6:62"}
+```csharp {title="完全修飾名でクラスを利用" highlight-ranges="6:7-6:21,6:51-6:62"}
 class LibrarySample
 {
   static void Main()
@@ -82,7 +82,7 @@ class LibrarySample
 以下のように using ディレクティブを利用します。
 (using ディレクティブに関しても「[名前空間](sp_namespace.md)」で説明します。)
 
-```csharp {title="using を使ってクラスを利用" highlight-ranges="sha256:6e53ad0603c325a21110f84cf22fe521a8dd404eb6babab59a8bdc2a33664c9b;8:7-8:14,8:44-8:48"}
+```csharp {title="using を使ってクラスを利用" highlight-ranges="8:7-8:14,8:44-8:48"}
 using System;
 
 class LibrarySample

@@ -241,7 +241,7 @@ foreach文の実態は<code>IEnumerable</code> インターフェースを介し
 <code>IEnumerable</code> インターフェースを実装しているならどんなコレクションクラスの要素でも読み出すことが出来ます。
 例えば、.NET Framework標準ライブラリの<code>ArrayList</code>クラスは<code>IEnumrable</code>インターフェースを実装していますので、以下のようにforeach文を使ってコレクション内の要素を列挙することが出来ます。
 
-```csharp {title="ArrayListに対してforeachを使う" highlight-lines="8" highlight-ranges="sha256:4862f48da986bdb33fd177568b0d5ad579f5ceb4e9efaa6352cdc9540b1b4e82;1:1-1:10"}
+```csharp {title="ArrayListに対してforeachを使う" highlight-lines="8" highlight-ranges="1:1-1:10"}
 ArrayList list = new ArrayList();
 
 for(int i=0; i<10; ++i)
@@ -322,7 +322,7 @@ static class RangeExtension
 <code>MoveNext</code>メソッドは列挙子をコレクションの次の要素に進めます。
 また、<code>Reset</code>メソッドは列挙子を初期位置、つまりコレクションの最初の要素の前に戻します。
 
-```csharp {title="コレクションクラスと列挙子の自作の例" highlight-ranges="sha256:1ec65c02f9e2a1621a2f6bff28f6d43e5a1a47aeda5b6ec23a529c693cfc3904;7:20-7:31,25:7-25:22,27:40-27:51,41:19-41:26,49:17-49:25,64:17-64:22,88:22-88:35"}
+```csharp {title="コレクションクラスと列挙子の自作の例" highlight-ranges="7:20-7:31,25:7-25:22,27:40-27:51,41:19-41:26,49:17-49:25,64:17-64:22,88:22-88:35"}
 using System;
 using System.Collections;
 

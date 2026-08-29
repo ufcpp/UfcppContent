@@ -634,7 +634,7 @@ foreach (var x in m.Groups)
 
 グループには、名前を付けておくこともできます。<code>(?&lt;id&gt;パターン)</code> というように、<code>()</code> 内の先頭に <code>?&lt;&gt;</code> をつけます。
 
-```csharp {title="正規表現グループに名前を付ける" highlight-ranges="sha256:9cd604c51a12696c240083f7ec68c5da1e84a5f249589db5901cd0029339694f;1:22-1:26,1:34-1:38,1:46-1:50"}
+```csharp {title="正規表現グループに名前を付ける" highlight-ranges="1:22-1:26,1:34-1:38,1:46-1:50"}
 var r = new Regex(@"(?<y>\d{4})/(?<m>\d{2})/(?<d>\d{2})");
 var m = r.Match("2011/12/15");
 

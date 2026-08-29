@@ -100,7 +100,7 @@ Person.scientificName = "Homo Sapiens";
 数学関数や数学定数などのように、そもそもインスタンスを持つ必要のないものもあります。
 この場合にも、静的メソッド・静的フィールド（あるいは別項で説明する「定数」）を使います。
 
-```csharp {title="インスタンスを持たない関数の例" highlight-ranges="sha256:4b8169fa20c23646313e75e126519cf991667373e94b3b9b21bbf8f22c6d225d;6:10-6:16"}
+```csharp {title="インスタンスを持たない関数の例" highlight-ranges="6:10-6:16"}
 using System;
 
 class MyMath
@@ -163,7 +163,7 @@ C# には「関数」的な動作をするメンバーとして、コンスト�
 静的コンストラクターの定義の仕方は、コンストラクターの前に <code>static</code> キーワードを付ける以外は通常のコンストラクターの定義の仕方と同じです。
 例えば、先ほどの <code>Person</code> クラスを例に挙げると以下のようになります。
 
-```csharp {title="静的コンストラクターの例" highlight-ranges="sha256:e468a55d3e84cf7c7b80fb86ec5c7caf1862501770a671f9a4c5e4530fd90779;16:3-16:9"}
+```csharp {title="静的コンストラクターの例" highlight-ranges="16:3-16:9"}
 class Person
 {
   string name; // 名前。インスタンス フィールド。
@@ -274,7 +274,7 @@ C# 1.0 では、private なコンストラクタを持つ sealed クラスとし
 静的メンバーしか定義できないクラスを作ることが出来ます。
 このようなクラスを<strong id="stclass" class="keyword">静的クラス</strong>（static class）と呼びます。
 
-```csharp {title="静的クラスの例" highlight-ranges="sha256:46b0f0f80f5eac7de7b787eb62c60e54ec90fe9a116ac649bc921dae6cb12fcc;1:1-1:7"}
+```csharp {title="静的クラスの例" highlight-ranges="1:1-1:7"}
 static class MyMath
 {
   // double x; というような、非 static な変数・メソッドは定義できない。
@@ -352,7 +352,7 @@ C# 6 で、これと同じようなことが、静的メソッドに対しても
 <strong id="key-using-static" class="keyword">using static</strong> ディレクティブを書くことで、クラス名を省略して、直接静的メソッドを呼べるようになります。
 例えば、Math クラス(System 名前空間)中のメソッド呼び出しであれば、以下のように書けます。
 
-```csharp {highlight-ranges="sha256:efde1688e499f31cfeec38c76f8f917d19713f00edb557466285e5d3deab7209;2:1-2:25,8:22-8:29,9:27-9:29"}
+```csharp {highlight-ranges="2:1-2:25,8:22-8:29,9:27-9:29"}
 using System;
 using static System.Math;
 

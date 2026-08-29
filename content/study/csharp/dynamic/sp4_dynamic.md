@@ -412,7 +412,7 @@ dynamic を使うと、
 
 例えば、上述のコードは以下のような書き直すことができます。
 
-```csharp {title="dynamic を使った XML の読み出し" highlight-ranges="sha256:db684f10741cf7a8bda611b432a4b394f86eef72bc088c003373edbffe2de81e;8:19-8:24,9:19-9:24"}
+```csharp {title="dynamic を使った XML の読み出し" highlight-ranges="8:19-8:24,9:19-9:24"}
 dynamic doc = new DynamicXml(XDocument.Parse(@"
 <Point>
     <X>1</X>

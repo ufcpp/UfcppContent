@@ -147,7 +147,7 @@ class StackInt
 
 これを任意の型を格納できるように、ジェネリックを使って記述すると以下のようになります。
 
-```csharp {title="Stack クラス（generics 版）" highlight-ranges="sha256:702a9b46b35e79583bcb1d022cb3fd61db37202ae8fca5f693886803247bd7ed;2:12-2:18,4:3-4:7,6:42-6:46,7:20-7:24,8:10-8:14"}
+```csharp {title="Stack クラス（generics 版）" highlight-ranges="2:12-2:18,4:3-4:7,6:42-6:46,7:20-7:24,8:10-8:14"}
 // generics 版スタッククラス
 class Stack<Type>
 {
@@ -437,7 +437,7 @@ class X<TItem, TList>
 ちなみに、互いに矛盾したり、意味が重複していて無駄な制約は同時には指定できません。
 具体的には、`class`、`struct`、基底型は同時には指定できません。
 
-```csharp {title="排他な制約" error-ranges="sha256:015f823547ad220a3fa65e48d05ce17e0e3b7d97c83b05110f80c216098f8c77;2:23-2:28,8:21-8:26"}
+```csharp {title="排他な制約" error-ranges="2:23-2:28,8:21-8:26"}
 class X<T>
     where T : struct, class // 「クラス、かつ、構造体」なんてことはあり得ない。エラーに
 {
@@ -452,7 +452,7 @@ class X<T>
 
 また、`class`、`struct`、基底型の3つは、インターフェイス、`new()`の2つよりも前に書く必要があります。
 
-```csharp {title="制約の順序" error-ranges="sha256:7e92256bb69de5f818497ebcd9772223febb0df3a34a4153b67baa70432ebb0e;9:28-9:34"}
+```csharp {title="制約の順序" error-ranges="9:28-9:34"}
 using System;
 
 class Ok<T>
@@ -535,7 +535,7 @@ C# 8.0 で `notnull` 制約が増えました。
 `class` 制約や、基底クラス制約は「非 null」の意味になり、
 null 許容参照型を受け付けたい場合は制約に `?` を付けることになります。
 
-```csharp {title="null 許容参照型がらみの制約" error-ranges="sha256:9e420e7cfdeb6514b583d44aa8cea2e661eb8c88a23c2eade044ef53ac75f669;31:9-31:19,32:9-32:22" warning-ranges="sha256:9e420e7cfdeb6514b583d44aa8cea2e661eb8c88a23c2eade044ef53ac75f669;25:9-25:23,26:9-26:37,27:9-27:22,28:9-28:25"}
+```csharp {title="null 許容参照型がらみの制約" error-ranges="31:9-31:19,32:9-32:22" warning-ranges="25:9-25:23,26:9-26:37,27:9-27:22,28:9-28:25"}
 #nullable enable
 using System;
  
@@ -626,7 +626,7 @@ C# 13 で [`allows ref struct`](../resource/refstruct.md#ref-struct-interface) �
 <tr>
 <td markdown="1">
 
-```csharp {title="制約あり" error-ranges="sha256:5242417708d4571f127ae994af3fb197bf1a87a1638510bf7309f784e18e20c5;3:1-3:10,4:1-4:7" error-diagnostics="sha256:5242417708d4571f127ae994af3fb197bf1a87a1638510bf7309f784e18e20c5;CS0310@3:1-3:10,CS0310@4:1-4:7"}
+```csharp {title="制約あり" error-ranges="3:1-3:10,4:1-4:7" error-diagnostics="CS0310@3:1-3:10,CS0310@4:1-4:7"}
 M<int>();
 M<object>();
 M<string>(); // 書けなくなる。
@@ -643,7 +643,7 @@ static object M<T>()
 </td>
 <td markdown="1">
 
-```csharp {title="制約なし" error-ranges="sha256:1d61e3f1537d0480edbcaf4b58ee21dbf36c052e89ca9ca04e6d44c490662f4d;10:12-10:19" error-diagnostics="sha256:1d61e3f1537d0480edbcaf4b58ee21dbf36c052e89ca9ca04e6d44c490662f4d;CS0304@10:12-10:19"}
+```csharp {title="制約なし" error-ranges="10:12-10:19" error-diagnostics="CS0304@10:12-10:19"}
 M<int>();
 M<object>();
 M<string>(); // 書ける。
@@ -675,7 +675,7 @@ static object M<T>()
 <tr>
 <td markdown="1">
 
-```csharp {title="アンチ制約あり" error-ranges="sha256:19fc20329ffb2d2e6dc7412f7315a653f4afbbc10c62bd115e7cd784691eb504;10:12-10:22" error-diagnostics="sha256:19fc20329ffb2d2e6dc7412f7315a653f4afbbc10c62bd115e7cd784691eb504;CS0029@10:12-10:22,CS0029@10:12-10:22"}
+```csharp {title="アンチ制約あり" error-ranges="10:12-10:22" error-diagnostics="CS0029@10:12-10:22,CS0029@10:12-10:22"}
 M<int>();
 M<object>();
 M<Span<string>>();      // 書ける。
@@ -692,7 +692,7 @@ static object? M<T>()
 </td>
 <td markdown="1">
 
-```csharp {title="アンチ制約なし" error-ranges="sha256:9bd87b8e714226bb98ee333610542dd163bc80d81aa3e78d2600f3e61fa7aae1;3:1-3:16,4:1-4:21" error-diagnostics="sha256:9bd87b8e714226bb98ee333610542dd163bc80d81aa3e78d2600f3e61fa7aae1;CS9244@3:1-3:16,CS9244@4:1-4:21"}
+```csharp {title="アンチ制約なし" error-ranges="3:1-3:16,4:1-4:21" error-diagnostics="CS9244@3:1-3:16,CS9244@4:1-4:21"}
 M<int>();
 M<object>();
 M<Span<string>>();      // 書けない。
@@ -723,7 +723,7 @@ C# 13 時点でアンチ制約(= `allows` を使うもの)は `ref struct` だ�
 
 これまで、`where T : struct` 制約を指定すると null 許容値型を `T` に渡せなくなるという制約がありました。
 
-```csharp {title="where T : struct では null 許容値型を使えなくなる" error-text="M&lt;int?&gt;" error-diagnostics="sha256:49cab88cb9d9cb6c654dcedf98d16669674f89b9da5e05d538c723177f634655;CS0453@2:1-2:8" warning-text="x" warning-diagnostics="sha256:49cab88cb9d9cb6c654dcedf98d16669674f89b9da5e05d538c723177f634655;CS0219@9:8-9:9"}
+```csharp {title="where T : struct では null 許容値型を使えなくなる" error-text="M&lt;int?&gt;" error-diagnostics="CS0453@2:1-2:8" warning-text="x" warning-diagnostics="CS0219@9:8-9:9"}
 // struct 制約が付いていると null 許容型を指定できなくなる。
 M<int?>();
 
@@ -738,7 +738,7 @@ static void M<T>()
 
 そこで、`allows nullable` (仮)アンチ制約を導入してはどうかという案が出ています。
 
-```csharp {title="null 許容値型アンチ制約を追加する案" error-text="T?" warning-text="x" warning-diagnostics="sha256:fc0348a16eafecb583e0e9e51397f99889f446135d89651d2686e60633005c07;CS0219@8:8-8:9"}
+```csharp {title="null 許容値型アンチ制約を追加する案" error-text="T?" warning-text="x" warning-diagnostics="CS0219@8:8-8:9"}
 // これができるようになってほしい。
 M<int?>();
 

@@ -51,7 +51,7 @@ ref 構造体に掛かっている制限は多少緩めることができます�
 ということで、デリゲートに対して `ref T` を型引数として与えられるようにしたのが上記 pull request。
 以下のようなコードが書けるようになります。
 
-```csharp {title="デリゲートの ref T 型引数" highlight-ranges="sha256:b00dae055ad385cac31a2ca975a7ca2dc4f4c697da8df60e69aea24421506903;1:6-1:13,1:15-1:22"}
+```csharp {title="デリゲートの ref T 型引数" highlight-ranges="1:6-1:13,1:15-1:22"}
 Func<ref int, ref int> f = (ref int x) => ref x;
 ```
 

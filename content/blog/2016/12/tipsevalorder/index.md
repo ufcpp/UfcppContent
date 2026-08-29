@@ -140,7 +140,7 @@ F(1, F(y: 2, x: 3));
 
 すると、コンパイル結果は以下の通り。C#ソースコード上は1, 2, 3だったものが、IL的には1, 3, 2になります。
 
-```cil {title="コンパイル結果2" highlight-ranges="sha256:6e7948f965d39bfda0ab4e68818f6b1b54b56485970bc3e09c4ddc963371ed47;2:8-2:9,3:8-3:9"}
+```cil {title="コンパイル結果2" highlight-ranges="2:8-2:9,3:8-3:9"}
 ldc.i4.1
 ldc.i4.3
 ldc.i4.2

@@ -726,7 +726,7 @@ static void M(object obj)
 そうなると問題は、式中で宣言した変数のスコープがどうなるかです。
 これには、仕様を決める段階で紆余曲折あったんですが、「式を囲うブロック、埋め込みステートメント、while、for、foreach、using、 case内」ということになりました。
 
-```csharp {error-ranges="sha256:90e6e6d60804ad65cc83823bf5322f7a375aac98764bce2004558f194f5181a6;25:1-25:2"}
+```csharp {error-ranges="25:1-25:2"}
 if (true)
 {
     Console.WriteLine(obj is int x ? 1 : 2); // もちろん、ブロック内がスコープ
@@ -807,7 +807,7 @@ void M(string s)
 後者であっても、この中で宣言した変数のスコープはラムダ式内に限られます。
 (要するに、`() => x` みたいなのの`x`の部分は、前述の「埋め込みステートメント」と同じ扱いになっています。)
 
-```csharp {title="ラムダ式中の変数宣言" error-ranges="sha256:3fad362d301dbd498f7d8ec0a24573a3cc809d8ebd010e60ef3d7708506b69a3;3:19-3:20"}
+```csharp {title="ラムダ式中の変数宣言" error-ranges="3:19-3:20"}
 Func<string, int> f = s => int.TryParse(s, out var x) ? x : -1;
 f("123");
 Console.WriteLine(x); // ここで x は使えない
@@ -935,7 +935,7 @@ C# 7.3までは、クエリ式中では式中での変数宣言ができませ�
 (変数のスコープをどうするかがちょっと悩ましく、7.0時点では「先送り」していました。)
 C# 7.3で、これが許されるようになりました。
 
-```csharp {title="クエリ式中での変数宣言" highlight-ranges="sha256:b3b3f7fa45d7605f35ce8d3f00f41379fcc39c46e405e160751b6b3022291705;3:23-3:24,4:35-4:36"}
+```csharp {title="クエリ式中での変数宣言" highlight-ranges="3:23-3:24,4:35-4:36"}
 var q =
     from s in new[] { "a", "abc", "112", "132", "451", null }
     where s is string x && x.Length > 1
@@ -949,7 +949,7 @@ var q =
 
 これは、クエリ式が実際には以下のようなメソッド チェーンに展開されるためです。
 
-```csharp {title="クエリ式のメソッド チェーンへの展開" highlight-ranges="sha256:386e2fbc713ece3552135074bc64b1136e99aeaf593b7f3cb06ba8619747ea1c;3:29-3:30,4:41-4:42"}
+```csharp {title="クエリ式のメソッド チェーンへの展開" highlight-ranges="3:29-3:30,4:41-4:42"}
 var q =
     new[] { "a", "abc", "112", "132", "451", null }
     .Where(s => s is string x && x.Length > 1)
@@ -967,7 +967,7 @@ var q =
 ラムダ式同様、スコープをどうするか悩ましくて保留になっていたものに初期化子があります。
 C# 7.3で、以下のように、初期化子内でも変数宣言できるようになりました。
 
-```csharp {title="初期化子内での変数宣言" highlight-ranges="sha256:87c77dca538723ddd55e16d3fd3cdf0fc345d6494407a2fbc34720e0d7207a5a;5:61-5:62,11:42-11:43,18:52-18:53,19:68-19:69"}
+```csharp {title="初期化子内での変数宣言" highlight-ranges="5:61-5:62,11:42-11:43,18:52-18:53,19:68-19:69"}
 using System;
 
 class Derived : Base

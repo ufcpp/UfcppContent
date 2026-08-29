@@ -178,7 +178,7 @@ private void Button_Click(object sender_, RoutedEventArgs e_)
 ```
 
 
-```csharp {title="非同期に文字列をダウンロード" highlight-ranges="sha256:cbdf4677697e670be32cfbf2176db603b20023feda4596b371718f8bafb3e9ea;1:9-1:14,4:16-4:21,4:43-4:52"}
+```csharp {title="非同期に文字列をダウンロード" highlight-ranges="1:9-1:14,4:16-4:21,4:43-4:52"}
 private async void Button_Click(object sender_, RoutedEventArgs e_)
 {
     var client = new WebClient();
@@ -191,7 +191,7 @@ private async void Button_Click(object sender_, RoutedEventArgs e_)
 複雑な場合でも、ずいぶんと楽に書けるようになります。
 前節の最後で書いた、複数の URL からダウンロードしてくる処理は以下のように書けます。
 
-```csharp {highlight-ranges="sha256:d3a52676d1a13dee518155011184e718932672a011b0399b2a04155c8cd5438c;1:9-1:14,10:20-10:25,10:47-10:56"}
+```csharp {highlight-ranges="1:9-1:14,10:20-10:25,10:47-10:56"}
 private async void Button_Click(object sender_, RoutedEventArgs e_)
 {
     var client = new WebClient();

@@ -218,7 +218,7 @@ class Program
 
 例えば、上記のコードは以下のように書き換えてもコンパイルできます。
 
-```csharp {title="拡張メソッドやオプション引数の許容" highlight-ranges="sha256:8d1becb1264fad7b76d31b16d94659ea1f5499449b2f01a1ea24818b9aa3770a;5:47-5:65,10:36-10:40,10:72-10:85"}
+```csharp {title="拡張メソッドやオプション引数の許容" highlight-ranges="5:47-5:65,10:36-10:40,10:72-10:85"}
 using System;
  
 struct Queryable
