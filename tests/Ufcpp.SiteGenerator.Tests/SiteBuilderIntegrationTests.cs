@@ -143,6 +143,9 @@ public sealed class SiteBuilderIntegrationTests
         var stylesheet = Assert.Single(
             document.Descendants("link"),
             element => (string?)element.Attribute("rel") == "stylesheet");
+        var favicon = Assert.Single(
+            document.Descendants("link"),
+            element => (string?)element.Attribute("rel") == "icon");
         var canonical = Assert.Single(
             document.Descendants("link"),
             element => (string?)element.Attribute("rel") == "canonical");
@@ -168,6 +171,10 @@ public sealed class SiteBuilderIntegrationTests
             "assets/css/site.css");
         AssertPortableUrl(
             "study/csharp/async/sample/",
+            (string?)favicon.Attribute("href"),
+            "assets/images/favicon.ico");
+        AssertPortableUrl(
+            "study/csharp/async/sample/",
             (string?)logo.Attribute("src"),
             "assets/images/sitelogo_l.jpg");
         AssertPortableUrl(
@@ -188,6 +195,7 @@ public sealed class SiteBuilderIntegrationTests
     public async Task BuildAsync_Page_WritesUfcppBrandShellAndPalette()
     {
         using var site = new SiteFixture();
+        site.WriteAsset("images/favicon.ico", "fixture favicon");
         site.AddPage(new(
             "index.md",
             "Home",
@@ -207,6 +215,18 @@ public sealed class SiteBuilderIntegrationTests
             head.Elements("meta"),
             element => (string?)element.Attribute("name") == "theme-color");
         Assert.Equal("#ccccff", (string?)themeColor.Attribute("content"));
+        var favicon = Assert.Single(
+            head.Elements("link"),
+            element => (string?)element.Attribute("rel") == "icon");
+        Assert.Null(favicon.Attribute("type"));
+        Assert.Equal("assets/images/favicon.ico", (string?)favicon.Attribute("href"));
+        Assert.Equal(
+            "fixture favicon",
+            await File.ReadAllTextAsync(Path.Combine(
+                output,
+                "assets",
+                "images",
+                "favicon.ico")));
 
         var header = Assert.Single(document.Root.Elements("body").Elements("header"));
         var logo = Assert.Single(
