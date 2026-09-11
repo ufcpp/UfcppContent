@@ -125,6 +125,9 @@ public sealed class SiteBuilder
                 _options.NoIndex);
         }
 
+        _logger.LogInformation("Writing 404.html...");
+        NotFoundWriter.Write(_options.OutputDirectory);
+
         _logger.LogInformation("Writing sitemap.xml...");
         SitemapWriter.Write(pages, _options.OutputDirectory);
 
