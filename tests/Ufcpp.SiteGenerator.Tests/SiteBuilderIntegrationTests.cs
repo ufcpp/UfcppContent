@@ -9,6 +9,30 @@ namespace Ufcpp.SiteGenerator.Tests;
 public sealed class SiteBuilderIntegrationTests
 {
     [Fact]
+    public async Task BuildAsync_Always_WritesCaseInsensitivePageFallback()
+    {
+        using var site = new SiteFixture();
+        site.AddPage(new(
+            "blog/2018/7/docsmistranslation/index.md",
+            "Mistranslation",
+            "/blog/2018/7/docsmistranslation/",
+            "BlogEntry",
+            2164,
+            -1,
+            0,
+            "# Mistranslation"));
+        var output = site.GetOutputDirectory("case-insensitive-fallback");
+
+        await site.BuildAsync(output);
+
+        var fallback = File.ReadAllText(Path.Combine(output, "404.html"));
+        Assert.Contains("var lowerPath = path.toLowerCase();", fallback);
+        Assert.Contains(
+            "location.replace(lowerPath + location.search + location.hash);",
+            fallback);
+    }
+
+    [Fact]
     public async Task BuildAsync_SearchPage_WritesAccessibleGoogleSiteSearchForm()
     {
         using var site = new SiteFixture();
